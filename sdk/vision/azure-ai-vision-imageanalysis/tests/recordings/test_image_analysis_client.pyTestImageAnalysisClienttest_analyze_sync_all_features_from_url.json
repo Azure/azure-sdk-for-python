@@ -18,17 +18,17 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "4.0-pre1,2022-07-31-preview,2022-10-12-preview,2023-02-01-preview,2023-04-01-preview,2023-06-01-preview,2023-07-01-preview,2023-10-01",
-        "apim-request-id": "b40a0ca5-10a8-4e48-b395-446cea2ca4cc",
-        "Content-Length": "4242",
+        "apim-request-id": "84c44bee-563d-4021-be8f-1a7bee083b10",
+        "Content-Length": "4241",
         "Content-Type": "application/json; charset=utf-8",
         "CSP-Billing-Usage": "CognitiveServices.ComputerVision.Transaction=1",
-        "Date": "Mon, 18 Dec 2023 22:11:10 GMT",
-        "ms-vision-response-time-input-processed": "964",
-        "ms-vision-response-time-input-received": "1854",
-        "request-id": "b40a0ca5-10a8-4e48-b395-446cea2ca4cc",
+        "Date": "Mon, 18 Dec 2023 23:10:12 GMT",
+        "ms-vision-response-time-input-processed": "945",
+        "ms-vision-response-time-input-received": "1421",
+        "request-id": "84c44bee-563d-4021-be8f-1a7bee083b10",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "2824",
+        "x-envoy-upstream-service-time": "2371",
         "x-ms-region": "East US"
       },
       "ResponseBody": {
@@ -41,7 +41,7 @@
           "values": [
             {
               "text": "a person wearing a mask sitting at a table with a laptop",
-              "confidence": 0.8502674698829651,
+              "confidence": 0.8500158786773682,
               "boundingBox": {
                 "x": 0,
                 "y": 0,
@@ -51,7 +51,7 @@
             },
             {
               "text": "a person using a laptop",
-              "confidence": 0.7729847431182861,
+              "confidence": 0.772520124912262,
               "boundingBox": {
                 "x": 293,
                 "y": 383,
@@ -81,7 +81,7 @@
             },
             {
               "text": "a person wearing a colorful cloth face mask",
-              "confidence": 0.7086368799209595,
+              "confidence": 0.7087528109550476,
               "boundingBox": {
                 "x": 473,
                 "y": 294,
@@ -91,7 +91,7 @@
             },
             {
               "text": "a person using a laptop",
-              "confidence": 0.7640900611877441,
+              "confidence": 0.7642353177070618,
               "boundingBox": {
                 "x": 288,
                 "y": 211,
@@ -101,7 +101,7 @@
             },
             {
               "text": "a person wearing a colorful fabric face mask",
-              "confidence": 0.7733591794967651,
+              "confidence": 0.7736908793449402,
               "boundingBox": {
                 "x": 433,
                 "y": 240,
@@ -121,7 +121,7 @@
             },
             {
               "text": "a person wearing a mask and using a laptop",
-              "confidence": 0.7810136675834656,
+              "confidence": 0.7816153764724731,
               "boundingBox": {
                 "x": 0,
                 "y": 0,

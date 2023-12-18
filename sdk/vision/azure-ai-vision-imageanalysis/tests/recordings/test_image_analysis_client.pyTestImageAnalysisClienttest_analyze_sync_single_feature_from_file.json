@@ -16,24 +16,24 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "4.0-pre1,2022-07-31-preview,2022-10-12-preview,2023-02-01-preview,2023-04-01-preview,2023-06-01-preview,2023-07-01-preview,2023-10-01",
-        "apim-request-id": "fe2af7c9-ac6f-497a-bdc7-d51c0a9ab5fb",
+        "apim-request-id": "5bd52064-8c08-41f9-8434-914c9c8e1436",
         "Content-Length": "182",
         "Content-Type": "application/json; charset=utf-8",
         "CSP-Billing-Usage": "CognitiveServices.ComputerVision.Transaction=1",
-        "Date": "Mon, 18 Dec 2023 22:11:12 GMT",
-        "ms-vision-response-time-input-processed": "250",
-        "ms-vision-response-time-input-received": "8",
-        "request-id": "fe2af7c9-ac6f-497a-bdc7-d51c0a9ab5fb",
+        "Date": "Mon, 18 Dec 2023 23:10:13 GMT",
+        "ms-vision-response-time-input-processed": "205",
+        "ms-vision-response-time-input-received": "3",
+        "request-id": "5bd52064-8c08-41f9-8434-914c9c8e1436",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "252",
+        "x-envoy-upstream-service-time": "207",
         "x-ms-region": "East US"
       },
       "ResponseBody": {
         "modelVersion": "2023-10-01",
         "captionResult": {
           "text": "a woman wearing a mask sitting at a table with a laptop",
-          "confidence": 0.8498482704162598
+          "confidence": 0.8502674698829651
         },
         "metadata": {
           "width": 864,
@@ -57,17 +57,17 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "4.0-pre1,2022-07-31-preview,2022-10-12-preview,2023-02-01-preview,2023-04-01-preview,2023-06-01-preview,2023-07-01-preview,2023-10-01",
-        "apim-request-id": "5549ae2a-5712-4050-9798-da0391d35c1b",
+        "apim-request-id": "1f8059a0-3495-41ae-aa32-9db4ed2d62c3",
         "Content-Length": "1242",
         "Content-Type": "application/json; charset=utf-8",
         "CSP-Billing-Usage": "CognitiveServices.ComputerVision.Transaction=1",
-        "Date": "Mon, 18 Dec 2023 22:11:13 GMT",
-        "ms-vision-response-time-input-processed": "164",
-        "ms-vision-response-time-input-received": "6",
-        "request-id": "5549ae2a-5712-4050-9798-da0391d35c1b",
+        "Date": "Mon, 18 Dec 2023 23:10:14 GMT",
+        "ms-vision-response-time-input-processed": "154",
+        "ms-vision-response-time-input-received": "4",
+        "request-id": "1f8059a0-3495-41ae-aa32-9db4ed2d62c3",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "167",
+        "x-envoy-upstream-service-time": "156",
         "x-ms-region": "East US"
       },
       "ResponseBody": {
@@ -303,17 +303,17 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "4.0-pre1,2022-07-31-preview,2022-10-12-preview,2023-02-01-preview,2023-04-01-preview,2023-06-01-preview,2023-07-01-preview,2023-10-01",
-        "apim-request-id": "433cf811-2c76-459c-aefd-fba22dc88fb0",
+        "apim-request-id": "09d9bb0c-f9dc-4f7f-905a-2ee9dbb8cdc9",
         "Content-Length": "797",
         "Content-Type": "application/json; charset=utf-8",
         "CSP-Billing-Usage": "CognitiveServices.ComputerVision.Transaction=1",
-        "Date": "Mon, 18 Dec 2023 22:11:14 GMT",
-        "ms-vision-response-time-input-processed": "156",
-        "ms-vision-response-time-input-received": "7",
-        "request-id": "433cf811-2c76-459c-aefd-fba22dc88fb0",
+        "Date": "Mon, 18 Dec 2023 23:10:15 GMT",
+        "ms-vision-response-time-input-processed": "175",
+        "ms-vision-response-time-input-received": "5",
+        "request-id": "09d9bb0c-f9dc-4f7f-905a-2ee9dbb8cdc9",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "159",
+        "x-envoy-upstream-service-time": "180",
         "x-ms-region": "East US"
       },
       "ResponseBody": {

@@ -1,0 +1,33 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fake-resource-name.cognitiveservices.azure.com/computervision/imageanalysis:analyze?api-version=2023-10-01\u0026features=tags",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "63",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
+        "User-Agent": "azsdk-python-ai-vision-imageanalysis/1.0.0b1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "url": "https://aka.ms/azai/vision/image-analysis-sample.jpg"
+      },
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "apim-request-id": "48c7eed3-2068-4e7a-8d4f-209d07175be6",
+        "Content-Length": "224",
+        "Content-Type": "application/json",
+        "Date": "Mon, 18 Dec 2023 23:10:10 GMT"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "401",
+          "message": "Access denied due to invalid subscription key or wrong API endpoint. Make sure to provide a valid key for an active subscription and use a correct regional API endpoint for your resource."
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

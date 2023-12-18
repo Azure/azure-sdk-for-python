@@ -1,0 +1,365 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fake-resource-name.cognitiveservices.azure.com/computervision/imageanalysis:analyze?api-version=2023-10-01\u0026features=denseCaptions\u0026gender-neutral-caption=true",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "63",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
+        "User-Agent": "azsdk-python-ai-vision-imageanalysis/1.0.0b1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "url": "https://aka.ms/azai/vision/image-analysis-sample.jpg"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "4.0-pre1,2022-07-31-preview,2022-10-12-preview,2023-02-01-preview,2023-04-01-preview,2023-06-01-preview,2023-07-01-preview,2023-10-01",
+        "apim-request-id": "3eb77306-f61b-44ee-86ac-d9813c265245",
+        "Content-Length": "1349",
+        "Content-Type": "application/json; charset=utf-8",
+        "CSP-Billing-Usage": "CognitiveServices.ComputerVision.Transaction=1",
+        "Date": "Mon, 18 Dec 2023 23:10:05 GMT",
+        "ms-vision-response-time-input-processed": "913",
+        "ms-vision-response-time-input-received": "1263",
+        "request-id": "3eb77306-f61b-44ee-86ac-d9813c265245",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "2182",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "modelVersion": "2023-10-01",
+        "denseCaptionsResult": {
+          "values": [
+            {
+              "text": "a person wearing a mask sitting at a table with a laptop",
+              "confidence": 0.8502674698829651,
+              "boundingBox": {
+                "x": 0,
+                "y": 0,
+                "w": 864,
+                "h": 576
+              }
+            },
+            {
+              "text": "a person using a laptop",
+              "confidence": 0.772520124912262,
+              "boundingBox": {
+                "x": 293,
+                "y": 383,
+                "w": 195,
+                "h": 100
+              }
+            },
+            {
+              "text": "a person wearing a face mask",
+              "confidence": 0.8209426999092102,
+              "boundingBox": {
+                "x": 383,
+                "y": 233,
+                "w": 275,
+                "h": 336
+              }
+            },
+            {
+              "text": "a close-up of a green chair",
+              "confidence": 0.8763102889060974,
+              "boundingBox": {
+                "x": 616,
+                "y": 211,
+                "w": 164,
+                "h": 249
+              }
+            },
+            {
+              "text": "a person wearing a colorful cloth face mask",
+              "confidence": 0.7086368799209595,
+              "boundingBox": {
+                "x": 473,
+                "y": 294,
+                "w": 68,
+                "h": 56
+              }
+            },
+            {
+              "text": "a person using a laptop",
+              "confidence": 0.7638993859291077,
+              "boundingBox": {
+                "x": 288,
+                "y": 211,
+                "w": 151,
+                "h": 244
+              }
+            },
+            {
+              "text": "a person wearing a colorful fabric face mask",
+              "confidence": 0.7733591794967651,
+              "boundingBox": {
+                "x": 433,
+                "y": 240,
+                "w": 180,
+                "h": 236
+              }
+            },
+            {
+              "text": "a close-up of a laptop on a table",
+              "confidence": 0.8535196781158447,
+              "boundingBox": {
+                "x": 115,
+                "y": 443,
+                "w": 476,
+                "h": 125
+              }
+            },
+            {
+              "text": "a person wearing a mask and using a laptop",
+              "confidence": 0.7811402678489685,
+              "boundingBox": {
+                "x": 0,
+                "y": 0,
+                "w": 775,
+                "h": 432
+              }
+            },
+            {
+              "text": "a close up of a text",
+              "confidence": 0.6402827501296997,
+              "boundingBox": {
+                "x": 714,
+                "y": 493,
+                "w": 130,
+                "h": 80
+              }
+            }
+          ]
+        },
+        "metadata": {
+          "width": 864,
+          "height": 576
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fake-resource-name.cognitiveservices.azure.com/computervision/imageanalysis:analyze?api-version=2023-10-01\u0026features=smartCrops\u0026smartcrops-aspect-ratios=0.9,1.33",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "63",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
+        "User-Agent": "azsdk-python-ai-vision-imageanalysis/1.0.0b1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "url": "https://aka.ms/azai/vision/image-analysis-sample.jpg"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "4.0-pre1,2022-07-31-preview,2022-10-12-preview,2023-02-01-preview,2023-04-01-preview,2023-06-01-preview,2023-07-01-preview,2023-10-01",
+        "apim-request-id": "df0f03f0-dd83-41aa-ac55-6206b118636c",
+        "Content-Length": "231",
+        "Content-Type": "application/json; charset=utf-8",
+        "CSP-Billing-Usage": "CognitiveServices.ComputerVision.Transaction=1",
+        "Date": "Mon, 18 Dec 2023 23:10:07 GMT",
+        "ms-vision-response-time-input-processed": "558",
+        "ms-vision-response-time-input-received": "1182",
+        "request-id": "df0f03f0-dd83-41aa-ac55-6206b118636c",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "1744",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "modelVersion": "2023-10-01",
+        "metadata": {
+          "width": 864,
+          "height": 576
+        },
+        "smartCropsResult": {
+          "values": [
+            {
+              "aspectRatio": 0.9,
+              "boundingBox": {
+                "x": 238,
+                "y": 0,
+                "w": 511,
+                "h": 568
+              }
+            },
+            {
+              "aspectRatio": 1.33,
+              "boundingBox": {
+                "x": 54,
+                "y": 0,
+                "w": 760,
+                "h": 571
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fake-resource-name.cognitiveservices.azure.com/computervision/imageanalysis:analyze?api-version=2023-10-01\u0026features=tags\u0026language=en",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "63",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
+        "User-Agent": "azsdk-python-ai-vision-imageanalysis/1.0.0b1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "url": "https://aka.ms/azai/vision/image-analysis-sample.jpg"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "4.0-pre1,2022-07-31-preview,2022-10-12-preview,2023-02-01-preview,2023-04-01-preview,2023-06-01-preview,2023-07-01-preview,2023-10-01",
+        "apim-request-id": "59a40cac-f4cf-4fcc-b9a4-be514ac43974",
+        "Content-Length": "797",
+        "Content-Type": "application/json; charset=utf-8",
+        "CSP-Billing-Usage": "CognitiveServices.ComputerVision.Transaction=1",
+        "Date": "Mon, 18 Dec 2023 23:10:08 GMT",
+        "ms-vision-response-time-input-processed": "139",
+        "ms-vision-response-time-input-received": "280",
+        "request-id": "59a40cac-f4cf-4fcc-b9a4-be514ac43974",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "422",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "modelVersion": "2023-10-01",
+        "metadata": {
+          "width": 864,
+          "height": 576
+        },
+        "tagsResult": {
+          "values": [
+            {
+              "name": "furniture",
+              "confidence": 0.9874445199966431
+            },
+            {
+              "name": "clothing",
+              "confidence": 0.9792501926422119
+            },
+            {
+              "name": "person",
+              "confidence": 0.9427268505096436
+            },
+            {
+              "name": "houseplant",
+              "confidence": 0.9400016069412231
+            },
+            {
+              "name": "desk",
+              "confidence": 0.9182863235473633
+            },
+            {
+              "name": "indoor",
+              "confidence": 0.8963587284088135
+            },
+            {
+              "name": "laptop",
+              "confidence": 0.8781813383102417
+            },
+            {
+              "name": "computer",
+              "confidence": 0.8481525182723999
+            },
+            {
+              "name": "sitting",
+              "confidence": 0.8134784698486328
+            },
+            {
+              "name": "wall",
+              "confidence": 0.7511615753173828
+            },
+            {
+              "name": "woman",
+              "confidence": 0.7410731911659241
+            },
+            {
+              "name": "table",
+              "confidence": 0.6811168789863586
+            },
+            {
+              "name": "plant",
+              "confidence": 0.6445199847221375
+            },
+            {
+              "name": "using",
+              "confidence": 0.5358931422233582
+            }
+          ]
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fake-resource-name.cognitiveservices.azure.com/computervision/imageanalysis:analyze?api-version=2023-10-01\u0026features=people",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "63",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
+        "User-Agent": "azsdk-python-ai-vision-imageanalysis/1.0.0b1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "url": "https://aka.ms/azai/vision/image-analysis-sample.jpg"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "4.0-pre1,2022-07-31-preview,2022-10-12-preview,2023-02-01-preview,2023-04-01-preview,2023-06-01-preview,2023-07-01-preview,2023-10-01",
+        "apim-request-id": "b9cca1d5-cb7b-46ab-8c18-6f18cdfcc7e5",
+        "Content-Length": "261",
+        "Content-Type": "application/json; charset=utf-8",
+        "CSP-Billing-Usage": "CognitiveServices.ComputerVision.Transaction=1",
+        "Date": "Mon, 18 Dec 2023 23:10:09 GMT",
+        "ms-vision-response-time-input-processed": "338",
+        "ms-vision-response-time-input-received": "1278",
+        "request-id": "b9cca1d5-cb7b-46ab-8c18-6f18cdfcc7e5",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "1621",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "modelVersion": "2023-10-01",
+        "metadata": {
+          "width": 864,
+          "height": 576
+        },
+        "peopleResult": {
+          "values": [
+            {
+              "boundingBox": {
+                "x": 395,
+                "y": 241,
+                "w": 261,
+                "h": 333
+              },
+              "confidence": 0.9602553248405457
+            },
+            {
+              "boundingBox": {
+                "x": 831,
+                "y": 246,
+                "w": 31,
+                "h": 255
+              },
+              "confidence": 0.0016505217645317316
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}
