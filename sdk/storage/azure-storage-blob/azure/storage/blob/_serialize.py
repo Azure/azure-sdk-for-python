@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from csv import Dialect
 from typing import Any, Dict, Optional, Tuple, Union, TYPE_CHECKING
 
 try:
@@ -30,7 +31,6 @@ from ._generated.models import (
 from ._models import ContainerEncryptionScope, DelimitedJsonDialect
 
 if TYPE_CHECKING:
-    from csv import Dialect
     from ._lease import BlobLeaseClient
 
 
@@ -178,7 +178,7 @@ def serialize_blob_tags(tags: Optional[Dict[str, str]] = None) -> Union[BlobTags
     return BlobTags(blob_tag_set=tag_list)
 
 
-def serialize_query_format(formater: Union[str, DelimitedJsonDialect, "Dialect"]) -> Optional[QuerySerialization]:
+def serialize_query_format(formater: Union[str, DelimitedJsonDialect, Dialect]) -> Optional[QuerySerialization]:
     if formater == "ParquetDialect":
         qq_format = QueryFormat(type=QueryFormatType.PARQUET, parquet_text_configuration=None)
     elif isinstance(formater, DelimitedJsonDialect):
