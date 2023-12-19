@@ -212,21 +212,21 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
                         label,
                     )
                 else:
-                    _prekill(start_time)
+                    _min_uptime(start_time)
                     raise e
             except Exception as e:
-                _prekill(start_time)
+                _min_uptime(start_time)
                 raise e
     return provider
 
 
-def _prekill(start_time: datetime.datetime) -> None:
+def _min_uptime(start_time: datetime.datetime) -> None:
     # We want to make sure we are up a minimum amount of time before we kill the process. Otherwise, we could get stuck
     # in a quick restart loop.
     min_time = datetime.timedelta(seconds=min_uptime)
     current_time = datetime.datetime.now()
     if current_time - start_time < min_time:
-        time.sleep(min_time - (current_time - start_time))
+        time.sleep((min_time - (current_time - start_time)).total_seconds())
 
 
 def _get_headers(request_type, **kwargs) -> str:

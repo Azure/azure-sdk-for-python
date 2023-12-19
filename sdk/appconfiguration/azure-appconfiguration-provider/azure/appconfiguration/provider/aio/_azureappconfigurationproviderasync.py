@@ -44,7 +44,7 @@ from .._azureappconfigurationprovider import (
     _get_headers,
     _RefreshTimer,
     _build_sentinel,
-    _prekill,
+    _min_uptime,
 )
 from .._user_agent import USER_AGENT
 
@@ -213,10 +213,10 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
                     )
                     provider._refresh_on[(key, label)] = None
                 else:
-                    _prekill(start_time)
+                    _min_uptime(start_time)
                     raise e
             except Exception as e:
-                _prekill(start_time)
+                _min_uptime(start_time)
                 raise e
     return provider
 
