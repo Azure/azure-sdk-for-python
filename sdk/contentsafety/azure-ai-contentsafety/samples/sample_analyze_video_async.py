@@ -8,7 +8,7 @@
 import asyncio
 
 
-def analyze_video_async():
+async def analyze_video_async():
     # [START analyze_video_async]
 
     import os
