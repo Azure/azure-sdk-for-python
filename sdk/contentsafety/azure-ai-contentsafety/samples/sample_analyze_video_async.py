@@ -5,10 +5,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import asyncio
 
 
-def analyze_video():
-    # [START analyze_video]
+def analyze_video_async():
+    # [START analyze_video_async]
 
     import os
     from azure.ai.contentsafety import ContentSafetyClient
@@ -81,8 +82,13 @@ def analyze_video():
         if violence_result:
             print(f"Violence severity: {violence_result.severity}")
 
-        # [END analyze_video]
+        # [END analyze_video_async]
+
+
+async def main():
+    await analyze_video_async()
 
 
 if __name__ == "__main__":
-    analyze_video()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
