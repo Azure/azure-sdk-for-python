@@ -14,7 +14,7 @@ from azure.mgmt.sql import SqlManagementClient
     pip install azure-identity
     pip install azure-mgmt-sql
 # USAGE
-    python server_list_with_expand_equals_administrators.py
+    python change_long_term_retention_backup_access_tier.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,11 +29,16 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.servers.list()
-    for item in response:
-        print(item)
+    response = client.long_term_retention_backups.begin_change_access_tier(
+        location_name="japaneast",
+        long_term_retention_server_name="serverName",
+        long_term_retention_database_name="databaseName",
+        backup_name="55555555-6666-7777-8888-999999999999;131637960820000000;Archive",
+        parameters={"backupStorageAccessTier": "Hot", "operationMode": "Copy"},
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2023-05-01-preview/examples/ServerListWithExpandEqualsAdministrators.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2023-05-01-preview/examples/ChangeLongTermRetentionBackupAccessTier.json
 if __name__ == "__main__":
     main()
