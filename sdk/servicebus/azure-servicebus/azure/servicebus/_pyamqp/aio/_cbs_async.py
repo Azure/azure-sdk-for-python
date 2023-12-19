@@ -213,7 +213,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
 
     async def update_token(self) -> None:
         self.auth_state = CbsAuthState.IN_PROGRESS
-        access_token = self._auth.get_token()
+        access_token = await self._auth.get_token()
         if not access_token:
             _LOGGER.info(
                 "Token refresh function received an empty token object.",
