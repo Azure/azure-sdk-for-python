@@ -26,14 +26,14 @@ def analyze_video():
 
     key = os.environ["CONTENT_SAFETY_KEY"]
     endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
-    video_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_data/[Content Warning] video.mp4"))
+    video_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_data/video.mp4"))
 
     # Create a Content Safety client
     client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
 
     # Read the video
     video = VideoReader(video_path)
-    sampling_fps = 3  # process at 3 frames per second
+    sampling_fps = 1  # process at 1 frames per second
     key_frames = video.get_batch(np.int_(np.arange(0, len(video), video.get_avg_fps()/sampling_fps))).asnumpy()
 
     # Iterate over key frames
