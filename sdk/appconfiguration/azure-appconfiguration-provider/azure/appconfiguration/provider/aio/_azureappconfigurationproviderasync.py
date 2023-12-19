@@ -44,7 +44,7 @@ from .._azureappconfigurationprovider import (
     _get_headers,
     _RefreshTimer,
     _build_sentinel,
-    _min_uptime,
+    _delay_failure,
 )
 from .._user_agent import USER_AGENT
 
@@ -194,7 +194,7 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     try:
         await provider._load_all(headers=headers)
     except Exception as e:
-        _min_uptime(start_time)
+        _delay_failure(start_time)
         raise e
 
     # Refresh-All sentinels are not updated on load_all, as they are not necessarily included in the provider.
@@ -213,10 +213,10 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
                     )
                     provider._refresh_on[(key, label)] = None
                 else:
-                    _min_uptime(start_time)
+                    _delay_failure(start_time)
                     raise e
             except Exception as e:
-                _min_uptime(start_time)
+                _delay_failure(start_time)
                 raise e
     return provider
 

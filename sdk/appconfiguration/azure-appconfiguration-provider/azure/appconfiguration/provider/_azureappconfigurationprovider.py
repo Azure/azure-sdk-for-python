@@ -194,7 +194,7 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     try:
         provider._load_all(headers=headers)
     except Exception as e:
-        _min_uptime(start_time)
+        _delay_failure(start_time)
         raise e
 
     # Refresh-All sentinels are not updated on load_all, as they are not necessarily included in the provider.
@@ -212,15 +212,15 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
                         label,
                     )
                 else:
-                    _min_uptime(start_time)
+                    _delay_failure(start_time)
                     raise e
             except Exception as e:
-                _min_uptime(start_time)
+                _delay_failure(start_time)
                 raise e
     return provider
 
 
-def _min_uptime(start_time: datetime.datetime) -> None:
+def _delay_failure(start_time: datetime.datetime) -> None:
     # We want to make sure we are up a minimum amount of time before we kill the process. Otherwise, we could get stuck
     # in a quick restart loop.
     min_time = datetime.timedelta(seconds=min_uptime)

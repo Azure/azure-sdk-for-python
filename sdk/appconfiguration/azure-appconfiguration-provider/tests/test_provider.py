@@ -10,7 +10,7 @@ from testcase import AppConfigTestCase
 import datetime
 from unittest.mock import patch
 
-from azure.appconfiguration.provider._azureappconfigurationprovider import _min_uptime
+from azure.appconfiguration.provider._azureappconfigurationprovider import _delay_failure
 
 
 def sleep(seconds):
@@ -112,16 +112,16 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         )
         assert client["secret"] == "Reslover Value"
 
-    # method: _min_uptime
+    # method: _delay_failure
     @patch("time.sleep", side_effect=sleep)
-    def test_min_uptime(self, mock_sleep, **kwargs):
+    def test_delay_failure(self, mock_sleep, **kwargs):
         start_time = datetime.datetime.now()
-        _min_uptime(start_time)
+        _delay_failure(start_time)
         assert mock_sleep.call_count == 1
 
         mock_sleep.reset_mock()
         start_time = datetime.datetime.now() - datetime.timedelta(seconds=10)
-        _min_uptime(start_time)
+        _delay_failure(start_time)
         mock_sleep.assert_not_called()
 
 
