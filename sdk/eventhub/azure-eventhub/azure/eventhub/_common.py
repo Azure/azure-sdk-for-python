@@ -104,7 +104,7 @@ _SYS_PROP_KEYS_TO_MSG_PROPERTIES = (
 )
 
 
-class EventData(object):
+class EventData:
     """The EventData class is a container for event content.
 
     :param body: The data to send in a single message. body can be type of str or bytes.
@@ -520,7 +520,7 @@ class EventData(object):
         self._raw_amqp_message.properties.message_id = value
 
 
-class EventDataBatch(object):
+class EventDataBatch:
     """A batch of events.
 
     Sending events in a batch is more performant than sending individual events.

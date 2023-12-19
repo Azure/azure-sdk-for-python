@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from .._common import EventData
 
 
-class PartitionContext(object):
+class PartitionContext:
     """Contains partition related context information.
 
     A `PartitionContext` instance will be passed to the event, error and initialization callbacks defined
