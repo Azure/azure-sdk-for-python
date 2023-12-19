@@ -194,7 +194,7 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     try:
         provider._load_all(headers=headers)
     except Exception as e:
-        _prekill(start_time)
+        _min_uptime(start_time)
         raise e
 
     # Refresh-All sentinels are not updated on load_all, as they are not necessarily included in the provider.
