@@ -160,6 +160,10 @@ class ComputeInstance(Compute):
     :type setup_scripts: Optional[~azure.ai.ml.entities.SetupScripts]
     :param custom_applications: List of custom applications and their endpoints for the compute instance.
     :type custom_applications: Optional[List[~azure.ai.ml.entities.CustomApplications]]
+    :param enable_sso: Enable or disable single sign-on. Defaults to True.
+    :type enable_sso: bool
+    :param enable_root_access: Enable or disable root access. Defaults to True.
+    :type enable_root_access: bool
 
     .. admonition:: Example:
 
