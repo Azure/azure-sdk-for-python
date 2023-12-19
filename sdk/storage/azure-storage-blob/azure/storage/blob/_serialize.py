@@ -86,7 +86,7 @@ def _get_match_headers(
     return if_match, if_none_match
 
 
-def get_access_conditions(lease: Optional[Union[BlobLeaseClient, str]]) -> Union[LeaseAccessConditions, None]:
+def get_access_conditions(lease: Optional[Union["BlobLeaseClient", str]]) -> Union[LeaseAccessConditions, None]:
     try:
         lease_id = lease.id # type: ignore
     except AttributeError:
