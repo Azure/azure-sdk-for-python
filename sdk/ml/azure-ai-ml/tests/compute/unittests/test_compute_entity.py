@@ -145,6 +145,12 @@ class TestComputeEntity:
         assert compute_instance2.enable_sso is False
         assert compute_instance2.enable_root_access is False
 
+        compute_instance3: ComputeInstance = load_compute(
+            source="tests/test_configs/compute/compute-ci-defaults-unit.yaml",
+        )._to_rest_object()
+        assert compute_instance3.properties.properties.enable_sso is True
+        assert compute_instance3.properties.properties.enable_root_access is True
+
     def test_compute_instance_with_image_metadata(self):
         os_image_metadata = ImageMetadata(
             current_image_version="22.08.19",
