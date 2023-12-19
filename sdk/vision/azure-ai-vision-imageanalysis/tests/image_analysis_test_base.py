@@ -8,6 +8,7 @@ import sys
 import azure.ai.vision.imageanalysis as sdk
 import azure.ai.vision.imageanalysis.aio as async_sdk
 
+from os import path
 from typing import List, Optional, Union
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from azure.core.credentials import AzureKeyCredential
@@ -42,9 +43,9 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
     async_client: async_sdk.ImageAnalysisClient
     connection_url: str
 
-    # We a single image (the same one) for all error-free tests, one hosted on the web and one local
+    # We use a single image (the same one) for all error-free tests, one hosted on the web and one local
     IMAGE_URL = "https://aka.ms/azai/vision/image-analysis-sample.jpg"
-    IMAGE_FILE = "sample.jpg"
+    IMAGE_FILE = path.abspath(path.join(path.abspath(__file__), "..", "./sample.jpg"))
 
     def _create_client_for_standard_analysis(self, sync: bool, get_connection_url: bool = False, **kwargs):
         endpoint = kwargs.pop("vision_endpoint")
