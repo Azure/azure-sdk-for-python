@@ -111,7 +111,7 @@ def deserialize_container_properties(
     return container_properties
 
 
-def get_page_ranges_result(ranges: PageList) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]:
+def get_page_ranges_result(ranges: "PageList") -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]:
     page_range = []
     clear_range: List = []
     if ranges.page_range:
