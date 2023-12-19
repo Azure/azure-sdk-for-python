@@ -28,6 +28,7 @@ from corehttp.runtime.policies import (
     NetworkTraceLoggingPolicy,
 )
 
+
 async def run():
     policies: Iterable[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = [
         HeadersPolicy(),
@@ -36,7 +37,9 @@ async def run():
         AsyncRetryPolicy(),
         NetworkTraceLoggingPolicy(),
     ]
-    client: AsyncPipelineClient[HttpRequest, AsyncHttpResponse] = AsyncPipelineClient("https://bing.com", policies=policies)
+    client: AsyncPipelineClient[HttpRequest, AsyncHttpResponse] = AsyncPipelineClient(
+        "https://bing.com", policies=policies
+    )
     request = HttpRequest("GET", "https://bing.com")
     async with client:
         response = await client.send_request(request)
@@ -45,5 +48,5 @@ async def run():
         print(pipeline_response)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(run())

@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0 (2023-10-27)
+
+### Breaking Changes
+
+  - Model Fleet no longer has parameter hub_profile
+
 ## 1.0.0b3 (2023-10-23)
 
 ### Features Added

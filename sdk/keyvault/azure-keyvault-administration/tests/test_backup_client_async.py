@@ -3,9 +3,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
+from functools import wraps
+from unittest import mock
 
 import pytest
 from azure.core.exceptions import ResourceExistsError
+from azure.keyvault.administration.aio import KeyVaultBackupClient
 from devtools_testutils import set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 
@@ -50,7 +53,7 @@ class TestBackupClientTests(KeyVaultTestCase):
         # backup the vault
         container_uri = kwargs.pop("container_uri")
         sas_token = kwargs.pop("sas_token")
-        backup_poller = await client.begin_backup(container_uri, sas_token)
+        backup_poller = await client.begin_backup(blob_storage_url=container_uri, sas_token=sas_token)
 
         # create a new poller from a continuation token
         token = backup_poller.continuation_token()
@@ -156,3 +159,60 @@ class TestBackupClientTests(KeyVaultTestCase):
 
         if self.is_live:
             await asyncio.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
+
+
+@pytest.mark.asyncio
+async def test_backup_restore_managed_identity():
+    """Try first with a non-MI credential to authenticate the client."""
+
+    def get_completed_future(result=None):
+        future = asyncio.Future()
+        future.set_result(result)
+        return future
+
+    def wrap_in_future(fn):
+        """Return a completed Future whose result is the return of fn.
+
+        Added to simplify using unittest.Mock in async code. Python 3.8's AsyncMock would be preferable.
+        """
+
+        @wraps(fn)
+        def wrapper(*args, **kwargs):
+            result = fn(*args, **kwargs)
+            return get_completed_future(result)
+
+        return wrapper
+
+    # backup
+    mock_client = mock.Mock()
+    client = KeyVaultBackupClient("https://vault-url.vault.azure.net", mock.Mock())
+    client._client = mock_client
+    begin_full_backup = mock.Mock()
+    mock_client.begin_full_backup = wrap_in_future(begin_full_backup)
+    await client.begin_backup("container_uri", use_managed_identity=True)
+
+    called_with = begin_full_backup.call_args
+    assert "use_managed_identity" not in called_with[1]  # ensure we pop off the kwarg correctly
+    sas_token_parameters = called_with[1]["azure_storage_blob_container_uri"]
+    assert sas_token_parameters.use_managed_identity is True
+
+    # full restore
+    begin_full_restore_operation = mock.Mock()
+    mock_client.begin_full_restore_operation = wrap_in_future(begin_full_restore_operation)
+    await client.begin_restore("folder_uri", use_managed_identity=True)
+    called_with = begin_full_restore_operation.call_args
+    assert "use_managed_identity" not in called_with[1]  # ensure we pop off the kwarg correctly
+    restore_details = called_with[1]["restore_blob_details"]
+    sas_token_parameters = restore_details.sas_token_parameters
+    assert sas_token_parameters.use_managed_identity is True
+
+    # selective restore
+    begin_selective_key_restore_operation = mock.Mock()
+    mock_client.begin_selective_key_restore_operation = wrap_in_future(begin_selective_key_restore_operation)
+    await client.begin_restore("folder_uri", use_managed_identity=True, key_name="key-name")
+    called_with = begin_selective_key_restore_operation.call_args
+    assert "use_managed_identity" not in called_with[1]  # ensure we pop off the kwarg correctly
+    assert called_with[1]["key_name"] == "key-name"
+    restore_details = called_with[1]["restore_blob_details"]
+    sas_token_parameters = restore_details.sas_token_parameters
+    assert sas_token_parameters.use_managed_identity is True

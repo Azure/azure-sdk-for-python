@@ -478,7 +478,6 @@ class DataOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_activity(logger, "Data.ListMaterializationStatus", ActivityType.PUBLICAPI)
-    @experimental
     def list_materialization_status(
         self,
         name: str,

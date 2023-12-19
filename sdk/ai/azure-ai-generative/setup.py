@@ -40,7 +40,7 @@ setup(
     author="Microsoft Corporation",
     author_email="azuresdkengsysadmins@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python",
-    keywords="azure, azuresdk",
+    keywords="azure, azuresdk, azure sdk",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
@@ -63,34 +63,24 @@ setup(
             "samples",
         ]
     ),
+    package_data={
+        "azure.ai.generative": [
+            "azure/ai/generative/index/_utils/encodings/*",
+            "azure/ai/generative/synthetic/templates/*",
+            "azure/ai/generative/py.typed",
+        ]
+    },
     python_requires="<4.0,>=3.8",
     install_requires=[
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
-        "azure-ai-ml",
-        "azureml-telemetry",
-        "mlflow<3",
-        "azure-mgmt-authorization",
-        "opencensus-ext-azure<2.0.0",
-        "opencensus-ext-logging",
+        "azure-ai-resources<2.0.0,>=1.0.0b1",
+        "mlflow-skinny<3",
+        "opencensus-ext-azure~=1.0",
+        "opencensus-ext-logging<=0.1.1",
     ],
     extras_require={
-        "cognitive_search": [
-            "azure-search-documents==11.4.0b8",
-        ],
-        "document_parsing": [
-            "pandas>=1",
-            "nltk>=3.8,<4",
-            "markdown>=3.4,<4",
-            "beautifulsoup4>=4.11,<5",
-            "tika>=2.6,<3",
-            "pypdf>=3.7,<4",
-            "unstructured>=0.10,<1",
-            "GitPython>=3.1,<4"
-        ],
         "evaluate": [
-            "azureml-metrics[prompt-flow]==0.1.0.105202174",
-            "promptflow>=0.1.0b7",
-            "promptflow-tools",
+            "azureml-metrics[generative-ai]>=0.0.33", # generative-ai extra doesn't exist before this version
         ],
         "faiss": [
             "faiss-cpu>=1.7,<1.8"
@@ -108,17 +98,26 @@ setup(
             "tiktoken>=0.3,<1",
             "mmh3",
             "requests",
+            "pandas>=1",
+            "nltk>=3.8,<4",
+            "markdown>=3.4,<4",
+            "beautifulsoup4>=4.11,<5",
+            "tika>=2.6,<3",
+            "pypdf>=3.7,<4",
+            "unstructured>=0.10,<1",
+            "GitPython>=3.1,<4",
+            "azure-search-documents==11.4.0b11"
         ],
         "promptflow": [
-            "promptflow[azure]",
-            "promptflow-tools",
+            "promptflow[azure]==0.1.0b8",
+            "promptflow-tools==0.1.0b15",
             "promptflow-vectordb"
         ],
         "qa_generation": [
             "openai>=0.27.8,<1"
         ],
         "simulator": [
-            "aiohttp>=3.8.5,<4",
+            "aiohttp>=3.8.5",
             "aiohttp_retry>=2,<3",
             "Jinja2>=3,<4",
             "json5>=0.9,<1",
@@ -128,7 +127,7 @@ setup(
             "PyYAML>=4.1,<7",
             "tiktoken>=0.3,<1",
             "websocket_client>=1,<2",
-            "azure-identity>=1,<2"
+            "azure-keyvault-secrets>=1,<5",
         ],
     },
     project_urls={

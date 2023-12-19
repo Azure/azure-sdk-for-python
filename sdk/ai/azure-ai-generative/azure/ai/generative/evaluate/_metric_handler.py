@@ -4,6 +4,7 @@
 import copy
 
 from azure.ai.generative.evaluate._constants import TYPE_TO_KWARGS_MAPPING
+from azure.ai.generative.evaluate._constants import TASK_TYPE_TO_METRICS_MAPPING
 
 
 class MetricHandler(object):
@@ -64,8 +65,8 @@ class MetricHandler(object):
                             data_column: data_source[metrics_mapping[data_column]].values.tolist()
                         }
                     )
-                poped_value = metrics_mapping.pop(data_column, None)
-                metrics_mapping_to_log[data_column] = poped_value
+                popped_value = metrics_mapping.pop(data_column, None)
+                metrics_mapping_to_log[data_column] = popped_value
 
         metrics_data.update(metrics_mapping)
 
@@ -74,13 +75,15 @@ class MetricHandler(object):
         return metrics_data
 
     def calculate_metrics(self):
-        from azureml.metrics import compute_metrics
+        from azureml.metrics import compute_metrics, constants
 
         metrics_calculation_data = self._get_data_for_metrics()
 
+        metrics = self.metrics if self.metrics is not None else TASK_TYPE_TO_METRICS_MAPPING[self.task_type].DEFAULT_LIST
+
         return compute_metrics(
-            metrics=self.metrics,
+            metrics=metrics,
             task_type=self.task_type,
-            use_chat_completion=True,
-            **metrics_calculation_data
+            use_chat_completion_api=True,
+            **metrics_calculation_data,
         )

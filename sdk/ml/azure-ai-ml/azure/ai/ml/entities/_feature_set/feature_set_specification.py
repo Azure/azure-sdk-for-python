@@ -5,11 +5,9 @@
 from typing import Optional
 
 from azure.ai.ml._restclient.v2023_10_01.models import FeaturesetSpecification as RestFeaturesetSpecification
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
-@experimental
 class FeatureSetSpecification(RestTranslatableMixin):
     """Feature Set Specification
 

@@ -129,24 +129,23 @@ class PipelineRunOperations:
         else:
             _json = self._serialize.body(filter_parameters, "RunFilterParameters")
 
-        request = build_query_pipeline_runs_by_workspace_request(
+        _request = build_query_pipeline_runs_by_workspace_request(
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.query_pipeline_runs_by_workspace.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -158,11 +157,9 @@ class PipelineRunOperations:
         deserialized = self._deserialize("PipelineRunsQueryResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    query_pipeline_runs_by_workspace.metadata = {"url": "/queryPipelineRuns"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_pipeline_run(self, run_id: str, **kwargs: Any) -> _models.PipelineRun:
@@ -189,22 +186,21 @@ class PipelineRunOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[_models.PipelineRun] = kwargs.pop("cls", None)
 
-        request = build_get_pipeline_run_request(
+        _request = build_get_pipeline_run_request(
             run_id=run_id,
             api_version=api_version,
-            template_url=self.get_pipeline_run.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -216,11 +212,9 @@ class PipelineRunOperations:
         deserialized = self._deserialize("PipelineRun", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_pipeline_run.metadata = {"url": "/pipelineruns/{runId}"}
+        return deserialized  # type: ignore
 
     @overload
     async def query_activity_runs(
@@ -320,26 +314,25 @@ class PipelineRunOperations:
         else:
             _json = self._serialize.body(filter_parameters, "RunFilterParameters")
 
-        request = build_query_activity_runs_request(
+        _request = build_query_activity_runs_request(
             pipeline_name=pipeline_name,
             run_id=run_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.query_activity_runs.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -351,11 +344,9 @@ class PipelineRunOperations:
         deserialized = self._deserialize("ActivityRunsQueryResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    query_activity_runs.metadata = {"url": "/pipelines/{pipelineName}/pipelineruns/{runId}/queryActivityruns"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def cancel_pipeline_run(  # pylint: disable=inconsistent-return-statements
@@ -387,23 +378,22 @@ class PipelineRunOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_cancel_pipeline_run_request(
+        _request = build_cancel_pipeline_run_request(
             run_id=run_id,
             is_recursive=is_recursive,
             api_version=api_version,
-            template_url=self.cancel_pipeline_run.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -413,6 +403,4 @@ class PipelineRunOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    cancel_pipeline_run.metadata = {"url": "/pipelineruns/{runId}/cancel"}
+            return cls(pipeline_response, None, {})  # type: ignore

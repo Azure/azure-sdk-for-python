@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -24,7 +24,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ...operations._operations import build_metrics_batch_request
+from ...operations._operations import build_metrics_batch_batch_request
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -35,14 +35,14 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class MetricsOperations:
+class MetricsBatchOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~monitor_batch_metrics_client.aio.MonitorBatchMetricsClient`'s
-        :attr:`metrics` attribute.
+        :attr:`metrics_batch` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -70,6 +70,7 @@ class MetricsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Lists the metric values for multiple resources.
 
         :param subscription_id: The subscription identifier for the resources in this batch. Required.
@@ -140,9 +141,7 @@ class MetricsOperations:
                               for which the data was retrieved. Required.
                             "value": [
                                 {
-                                    "displayDescription": "str",  # Description
-                                      of this metric. Required.
-                                    "id": "str",  # The metric Id. Required.
+                                    "id": "str",  # the metric Id. Required.
                                     "name": {
                                         "value": "str",  # The invariant
                                           value. Required.
@@ -188,13 +187,15 @@ class MetricsOperations:
                                             ]
                                         }
                                     ],
-                                    "type": "str",  # The resource type of the
+                                    "type": "str",  # the resource type of the
                                       metric resource. Required.
                                     "unit": "str",  # The unit of the metric.
                                       Required. Known values are: "Count", "Bytes", "Seconds",
                                       "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds",
                                       "ByteSeconds", "Unspecified", "Cores", "MilliCores", "NanoCores",
                                       and "BitsPerSecond".
+                                    "displayDescription": "str",  # Optional.
+                                      Detailed description of this metric.
                                     "errorCode": "str",  # Optional. 'Success' or
                                       the error details on query failures for this metric.
                                     "errorMessage": "str"  # Optional. Error
@@ -221,7 +222,7 @@ class MetricsOperations:
     async def batch(
         self,
         subscription_id: str,
-        resource_ids: IO,
+        resource_ids: IO[bytes],
         *,
         metricnamespace: str,
         metricnames: List[str],
@@ -235,12 +236,13 @@ class MetricsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Lists the metric values for multiple resources.
 
         :param subscription_id: The subscription identifier for the resources in this batch. Required.
         :type subscription_id: str
         :param resource_ids: The comma separated list of resource IDs to query metrics for. Required.
-        :type resource_ids: IO
+        :type resource_ids: IO[bytes]
         :keyword metricnamespace: Metric namespace that contains the requested metric names. Required.
         :paramtype metricnamespace: str
         :keyword metricnames: The names of the metrics (comma separated) to retrieve. Required.
@@ -298,9 +300,7 @@ class MetricsOperations:
                               for which the data was retrieved. Required.
                             "value": [
                                 {
-                                    "displayDescription": "str",  # Description
-                                      of this metric. Required.
-                                    "id": "str",  # The metric Id. Required.
+                                    "id": "str",  # the metric Id. Required.
                                     "name": {
                                         "value": "str",  # The invariant
                                           value. Required.
@@ -346,13 +346,15 @@ class MetricsOperations:
                                             ]
                                         }
                                     ],
-                                    "type": "str",  # The resource type of the
+                                    "type": "str",  # the resource type of the
                                       metric resource. Required.
                                     "unit": "str",  # The unit of the metric.
                                       Required. Known values are: "Count", "Bytes", "Seconds",
                                       "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds",
                                       "ByteSeconds", "Unspecified", "Cores", "MilliCores", "NanoCores",
                                       and "BitsPerSecond".
+                                    "displayDescription": "str",  # Optional.
+                                      Detailed description of this metric.
                                     "errorCode": "str",  # Optional. 'Success' or
                                       the error details on query failures for this metric.
                                     "errorMessage": "str"  # Optional. Error
@@ -379,7 +381,7 @@ class MetricsOperations:
     async def batch(
         self,
         subscription_id: str,
-        resource_ids: Union[JSON, IO],
+        resource_ids: Union[JSON, IO[bytes]],
         *,
         metricnamespace: str,
         metricnames: List[str],
@@ -392,13 +394,14 @@ class MetricsOperations:
         filter: Optional[str] = None,
         **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Lists the metric values for multiple resources.
 
         :param subscription_id: The subscription identifier for the resources in this batch. Required.
         :type subscription_id: str
         :param resource_ids: The comma separated list of resource IDs to query metrics for. Is either a
-         JSON type or a IO type. Required.
-        :type resource_ids: JSON or IO
+         JSON type or a IO[bytes] type. Required.
+        :type resource_ids: JSON or IO[bytes]
         :keyword metricnamespace: Metric namespace that contains the requested metric names. Required.
         :paramtype metricnamespace: str
         :keyword metricnames: The names of the metrics (comma separated) to retrieve. Required.
@@ -463,9 +466,7 @@ class MetricsOperations:
                               for which the data was retrieved. Required.
                             "value": [
                                 {
-                                    "displayDescription": "str",  # Description
-                                      of this metric. Required.
-                                    "id": "str",  # The metric Id. Required.
+                                    "id": "str",  # the metric Id. Required.
                                     "name": {
                                         "value": "str",  # The invariant
                                           value. Required.
@@ -511,13 +512,15 @@ class MetricsOperations:
                                             ]
                                         }
                                     ],
-                                    "type": "str",  # The resource type of the
+                                    "type": "str",  # the resource type of the
                                       metric resource. Required.
                                     "unit": "str",  # The unit of the metric.
                                       Required. Known values are: "Count", "Bytes", "Seconds",
                                       "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds",
                                       "ByteSeconds", "Unspecified", "Cores", "MilliCores", "NanoCores",
                                       and "BitsPerSecond".
+                                    "displayDescription": "str",  # Optional.
+                                      Detailed description of this metric.
                                     "errorCode": "str",  # Optional. 'Success' or
                                       the error details on query failures for this metric.
                                     "errorMessage": "str"  # Optional. Error
@@ -561,7 +564,7 @@ class MetricsOperations:
         else:
             _json = resource_ids
 
-        request = build_metrics_batch_request(
+        _request = build_metrics_batch_batch_request(
             subscription_id=subscription_id,
             metricnamespace=metricnamespace,
             metricnames=metricnames,
@@ -582,11 +585,11 @@ class MetricsOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -603,6 +606,6 @@ class MetricsOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore

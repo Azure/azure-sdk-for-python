@@ -72,6 +72,8 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     to_rest_dataset_literal_inputs,
     from_rest_inputs_to_dataset_literal,
 )
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml._exception_helper import log_and_raise_error
 
 
 @experimental
@@ -131,31 +133,43 @@ class MonitorFeatureFilter(RestTranslatableMixin):
 
 @experimental
 class BaselineDataRange:
+    """Baseline data range for monitoring.
+
+    This class is used when initializing a data_window for a ReferenceData object.
+    For trailing input, set lookback_window_size and lookback_window_offset to a desired value.
+    For static input, set window_start and window_end to a desired value.
+
+    """
+
     def __init__(
         self,
         *,
         window_start: str = None,
         window_end: str = None,
-        trailing_window_size: str = None,
-        trailing_window_offset: str = None,
+        lookback_window_size: str = None,
+        lookback_window_offset: str = None,
     ):
         self.window_start = window_start
         self.window_end = window_end
-        self.trailing_window_size = trailing_window_size
-        self.trailing_window_offset = trailing_window_offset
+        self.lookback_window_size = lookback_window_size
+        self.lookback_window_offset = lookback_window_offset
 
 
 @experimental
 class ProductionData(RestTranslatableMixin):
     """Production Data
+
     :param input_data: The data for which drift will be calculated
     :type Input: ~azure.ai.ml.entities._input_outputs
-    :param data_context: The data to calculate drift against
-    :type MonitorDatasetContext: ~azure.ai.ml.constants._monitoring
-    :param pre_processing_component :
+    :param data_context: The context of the input dataset. Possible values
+        include: model_inputs, model_outputs, training, test, validation,
+        ground_truth
+    :type MonitorDatasetContext: ~azure.ai.ml.constants.MonitorDatasetContext
+    :param pre_processing_component : ARM resource ID of the component resource used to
+        preprocess the data.
     :type pre_processing_component: string
-    :param data_window_size:
-    :type data_window_size: string
+    :param data_window: The number of days or a time frame that a singal monitor looks back over the target.
+    :type data_window_size: BaselineDataRange
     """
 
     def __init__(
@@ -164,17 +178,22 @@ class ProductionData(RestTranslatableMixin):
         input_data: Input,
         data_context: MonitorDatasetContext = None,
         pre_processing_component: str = None,
-        data_window_size: str = None,
+        data_window: Optional[BaselineDataRange] = None,
     ):
         self.input_data = input_data
         self.data_context = data_context
         self.pre_processing_component = pre_processing_component
-        self.data_window_size = data_window_size
+        self.data_window = data_window
 
     def _to_rest_object(self, **kwargs) -> RestMonitoringInputData:
+        self._validate()
         default_data_window_size = kwargs.get("default_data_window_size")
-        if self.data_window_size is None:
-            self.data_window_size = default_data_window_size
+        if self.data_window is None:
+            self.data_window = BaselineDataRange(
+                lookback_window_size=default_data_window_size, lookback_window_offset="P0D"
+            )
+        if self.data_window.lookback_window_size in ["default", None]:
+            self.data_window.lookback_window_size = default_data_window_size
         uri = self.input_data.path
         job_type = self.input_data.type
         monitoring_input_data = TrailingInputData(
@@ -183,13 +202,19 @@ class ProductionData(RestTranslatableMixin):
             job_type=job_type,
             uri=uri,
             pre_processing_component_id=self.pre_processing_component,
-            window_size=self.data_window_size,
-            window_offset=self.data_window_size,
+            window_size=self.data_window.lookback_window_size,
+            window_offset=self.data_window.lookback_window_offset
+            if self.data_window.lookback_window_offset is not None
+            else "P0D",
         )
         return monitoring_input_data._to_rest_object()
 
     @classmethod
     def _from_rest_object(cls, obj: RestMonitoringInputData) -> "ProductionData":
+        data_window = BaselineDataRange(
+            lookback_window_size=isodate.duration_isoformat(obj.window_size),
+            lookback_window_offset=isodate.duration_isoformat(obj.window_offset),
+        )
         return cls(
             input_data=Input(
                 path=obj.uri,
@@ -197,8 +222,21 @@ class ProductionData(RestTranslatableMixin):
             ),
             data_context=obj.data_context,
             pre_processing_component=obj.preprocessing_component_id,
-            data_window_size=isodate.duration_isoformat(obj.window_size),
+            data_window=data_window,
         )
+
+    def _validate(self):
+        if self.data_window:
+            if self.data_window.window_start or self.data_window.window_end:
+                msg = "ProductionData only accepts lookback_window_size and lookback_window_offset."
+                err = ValidationException(
+                    message=msg,
+                    target=ErrorTarget.MODEL_MONITORING,
+                    no_personal_data_message=msg,
+                    error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.MISSING_FIELD,
+                )
+                log_and_raise_error(err)
 
 
 @experimental
@@ -206,13 +244,16 @@ class ReferenceData(RestTranslatableMixin):
     """Reference Data
     :param input_data: The data for which drift will be calculated
     :type Input: ~azure.ai.ml.entities._input_outputs
-    :param data_context: The data to calculate drift against
-    :type MonitorDatasetContext: ~azure.ai.ml.constants._monitoring
-    :param pre_processing_component :
+    :param data_context: The context of the input dataset. Possible values
+        include: model_inputs, model_outputs, training, test, validation,
+        ground_truth
+    :type MonitorDatasetContext: ~azure.ai.ml.constants.MonitorDatasetContext
+    :param pre_processing_component: ARM resource ID of the component resource used to
+        preprocess the data.
     :type pre_processing_component: string
-    :param target_column_name:
+    :param target_column_name: The name of the target column in the dataset.
     :type target_column_name: string
-    :param data_window:
+    :param data_window: The number of days or a time frame that a singal monitor looks back over the target.
     :type data_window_size: BaselineDataRange
     """
 
@@ -231,9 +272,12 @@ class ReferenceData(RestTranslatableMixin):
         self.target_column_name = target_column_name
         self.data_window = data_window
 
-    def _to_rest_object(self) -> RestMonitoringInputData:
+    def _to_rest_object(self, **kwargs) -> RestMonitoringInputData:
+        default_data_window = kwargs.get("default_data_window")
         if self.data_window is not None:
-            if self.data_window.trailing_window_size is not None:
+            if self.data_window.lookback_window_size is not None:
+                if self.data_window.lookback_window_offset == "default":
+                    self.data_window.lookback_window_offset = default_data_window
                 return TrailingInputData(
                     data_context=self.data_context,
                     target_columns={"target_column": self.target_column_name}
@@ -242,10 +286,10 @@ class ReferenceData(RestTranslatableMixin):
                     job_type=self.input_data.type,
                     uri=self.input_data.path,
                     pre_processing_component_id=self.pre_processing_component,
-                    window_size=self.data_window.trailing_window_size,
-                    window_offset=self.data_window.trailing_window_offset
-                    if self.data_window.trailing_window_offset is not None
-                    else self.data_window.trailing_window_size,
+                    window_size=self.data_window.lookback_window_size,
+                    window_offset=self.data_window.lookback_window_offset
+                    if self.data_window.lookback_window_offset is not None
+                    else "P0D",
                 )._to_rest_object()
             if self.data_window.window_start is not None and self.data_window.window_end is not None:
                 return StaticInputData(
@@ -277,8 +321,8 @@ class ReferenceData(RestTranslatableMixin):
             )
         if obj.input_data_type == "Trailing":
             data_window = BaselineDataRange(
-                trailing_window_size=isodate.duration_isoformat(obj.window_size),
-                trailing_window_offset=isodate.duration_isoformat(obj.window_offset),
+                lookback_window_size=isodate.duration_isoformat(obj.window_size),
+                lookback_window_offset=isodate.duration_isoformat(obj.window_offset),
             )
 
         return cls(
@@ -309,12 +353,14 @@ class MonitoringSignal(RestTranslatableMixin):
         ~azure.ai.ml.entities.PredictionDriftMetricThreshold,
         ~azure.ai.ml.entities.FeatureAttributionDriftMetricThreshold,
         ~azure.ai.ml.entities.CustomMonitoringMetricThreshold,
+        ~azure.ai.ml.entities.GenerationSafetyQualityMonitoringMetricThreshold,
         list[Union[
             ~azure.ai.ml.entities.DataDriftMetricThreshold,
             ~azure.ai.ml.entities.DataQualityMetricThreshold,
             ~azure.ai.ml.entities.PredictionDriftMetricThreshold,
             ~azure.ai.ml.entities.FeatureAttributionDriftMetricThreshold,
-            ~azure.ai.ml.entities.CustomMonitoringMetricThreshold
+            ~azure.ai.ml.entities.CustomMonitoringMetricThreshold,
+            ~azure.ai.ml.entities.GenerationSafetyQualityMonitoringMetricThreshold,
         ]]]
     :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
     :paramtype alert_enabled: bool
@@ -373,7 +419,8 @@ class DataSignal(MonitoringSignal):
         ~azure.ai.ml.entities.DataQualityMetricThreshold,
         ~azure.ai.ml.entities.PredictionDriftMetricThreshold,
         ~azure.ai.ml.entities.FeatureAttributionDriftMetricThreshold,
-        ~azure.ai.ml.entities.CustomMonitoringMetricThreshold
+        ~azure.ai.ml.entities.CustomMonitoringMetricThreshold,
+        ~azure.ai.ml.entities.GenerationSafetyQualityMonitoringMetricThreshold,
     ]]
     :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
     :paramtype alert_enabled: bool
@@ -405,22 +452,26 @@ class DataSignal(MonitoringSignal):
 class DataDriftSignal(DataSignal):
     """Data drift signal.
 
-    :ivar type: The type of the signal
+    :ivar type: The type of the signal, set to "data_drift" for this class.
     :vartype type: str
     :param production_data: The data for which drift will be calculated
-    :type production_data: ~azure.ai.ml.entities.ProductionData
+    :paramtype production_data: ~azure.ai.ml.entities.ProductionData
     :param reference_data: The data to calculate drift against
-    :type reference_data: ~azure.ai.ml.entities.ReferenceData
-    :param metric_thresholds :A list of metrics to calculate and their
+    :paramtype reference_data: ~azure.ai.ml.entities.ReferenceData
+    :param metric_thresholds :Metrics to calculate and their
         associated thresholds
-    :type metric_thresholds: List[~azure.ai.ml.entities.DataDriftMetricThreshold]
+    :paramtype metric_thresholds: ~azure.ai.ml.entities.DataDriftMetricThreshold
     :param alert_enabled: The current notification mode for this signal
-    :type alert_enabled: bool
-    :keyword data_segment: The data segment used for scoping on a subset of the data population.
+    :paramtype alert_enabled: bool
+    :param data_segment: The data segment used for scoping on a subset of the data population.
     :paramtype data_segment: ~azure.ai.ml.entities.DataSegment
     :keyword features: The feature filter identifying which feature(s) to
         calculate drift over.
     :paramtype features: Union[list[str], ~azure.ai.ml.entities.MonitorFeatureFilter, Literal['all_features']]
+    :param feature_type_override: Dictionary of features and what they should be overridden to.
+    :paramtype feature_type_override: dict[str, str]
+    :param properties: Dictionary of additional properties.
+    :paramtype properties: dict[str, str]
     """
 
     def __init__(
@@ -449,12 +500,12 @@ class DataDriftSignal(DataSignal):
 
     def _to_rest_object(self, **kwargs) -> RestMonitoringDataDriftSignal:
         default_data_window_size = kwargs.get("default_data_window_size")
-        if self.production_data.data_window_size is None:
-            self.production_data.data_window_size = default_data_window_size
+        if self.production_data.data_window is None:
+            self.production_data.data_window = BaselineDataRange(lookback_window_size=default_data_window_size)
         rest_features = _to_rest_features(self.features) if self.features else None
         return RestMonitoringDataDriftSignal(
-            production_data=self.production_data._to_rest_object(),
-            reference_data=self.reference_data._to_rest_object(),
+            production_data=self.production_data._to_rest_object(default_data_window_size=default_data_window_size),
+            reference_data=self.reference_data._to_rest_object(default_data_window=default_data_window_size),
             features=rest_features,
             feature_data_type_override=self.feature_type_override,
             metric_thresholds=self.metric_thresholds._to_rest_object(),
@@ -490,14 +541,19 @@ class DataDriftSignal(DataSignal):
 class PredictionDriftSignal(MonitoringSignal):
     """Prediction drift signal.
 
-    :ivar type: The type of the signal. Set to "prediction_drift" for this class.
+    :ivar type: The type of the signal, set to "prediction_drift" for this class.
     :vartype type: str
-    :keyword baseline_dataset: The dataset to calculate drift against.
-    :paramtype baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
-    :keyword metric_thresholds: A list of metrics to calculate and their associated thresholds
-    :paramtype metric_thresholds: list[~azure.ai.ml.entities.PredictionDriftMetricThreshold]
-    :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
+    :param production_data: The data for which drift will be calculated
+    :paramtype production_data: ~azure.ai.ml.entities.ProductionData
+    :param reference_data: The data to calculate drift against
+    :paramtype reference_data: ~azure.ai.ml.entities.ReferenceData
+    :param metric_thresholds :Metrics to calculate and their
+        associated thresholds
+    :paramtype metric_thresholds: ~azure.ai.ml.entities.DataDriftMetricThreshold
+    :param alert_enabled: The current notification mode for this signal
     :paramtype alert_enabled: bool
+    :param properties: Dictionary of additional properties.
+    :paramtype properties: dict[str, str]
     """
 
     def __init__(
@@ -520,11 +576,11 @@ class PredictionDriftSignal(MonitoringSignal):
 
     def _to_rest_object(self, **kwargs) -> RestPredictionDriftMonitoringSignal:
         default_data_window_size = kwargs.get("default_data_window_size")
-        if self.production_data.data_window_size is None:
-            self.production_data.data_window_size = default_data_window_size
+        if self.production_data.data_window is None:
+            self.production_data.data_window = BaselineDataRange(lookback_window_size=default_data_window_size)
         return RestPredictionDriftMonitoringSignal(
-            production_data=self.production_data._to_rest_object(),
-            reference_data=self.reference_data._to_rest_object(),
+            production_data=self.production_data._to_rest_object(default_data_window_size=default_data_window_size),
+            reference_data=self.reference_data._to_rest_object(default_data_window=default_data_window_size),
             metric_thresholds=self.metric_thresholds._to_rest_object(),
             properties=self.properties,
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
@@ -556,16 +612,22 @@ class DataQualitySignal(DataSignal):
 
     :ivar type: The type of the signal. Set to "data_quality" for this class.
     :vartype type: str
-    :keyword baseline_dataset: The data to calculate quality against.
-    :paramtype baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
-    :keyword metric_thresholds: A list of metrics to calculate and their
-        associated thresholds.
-    :paramtype metric_thresholds: list[~azure.ai.ml.entities.DataQualityMetricThreshold]
-    :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
+    :param production_data: The data for which drift will be calculated
+    :paramtype production_data: ~azure.ai.ml.entities.ProductionData
+    :param reference_data: The data to calculate drift against
+    :paramtype reference_data: ~azure.ai.ml.entities.ReferenceData
+    :param metric_thresholds :Metrics to calculate and their
+        associated thresholds
+    :paramtype metric_thresholds: ~azure.ai.ml.entities.DataDriftMetricThreshold
+    :param alert_enabled: The current notification mode for this signal
     :paramtype alert_enabled: bool
     :keyword features: The feature filter identifying which feature(s) to
-        calculate quality over.
+        calculate drift over.
     :paramtype features: Union[list[str], ~azure.ai.ml.entities.MonitorFeatureFilter, Literal['all_features']]
+    :param feature_type_override: Dictionary of features and what they should be overridden to.
+    :paramtype feature_type_override: dict[str, str]
+    :param properties: Dictionary of additional properties.
+    :paramtype properties: dict[str, str]
     """
 
     def __init__(
@@ -592,15 +654,17 @@ class DataQualitySignal(DataSignal):
 
     def _to_rest_object(self, **kwargs) -> RestMonitoringDataQualitySignal:
         default_data_window_size = kwargs.get("default_data_window_size")
-        if self.production_data.data_window_size is None:
-            self.production_data.data_window_size = default_data_window_size
+        if self.production_data.data_window is None:
+            self.production_data.data_window = BaselineDataRange(
+                lookback_window_size=default_data_window_size,
+            )
         rest_features = _to_rest_features(self.features) if self.features else None
         rest_metrics = _to_rest_data_quality_metrics(
             self.metric_thresholds.numerical, self.metric_thresholds.categorical
         )
         return RestMonitoringDataQualitySignal(
-            production_data=self.production_data._to_rest_object(),
-            reference_data=self.reference_data._to_rest_object(),
+            production_data=self.production_data._to_rest_object(default_data_window_size=default_data_window_size),
+            reference_data=self.reference_data._to_rest_object(default_data_window=default_data_window_size),
             features=rest_features,
             feature_data_type_override=self.feature_type_override,
             metric_thresholds=rest_metrics,
@@ -681,8 +745,8 @@ class FADProductionData(RestTranslatableMixin):
     :keyword pre_processing_component : The ARM (Azure Resource Manager) resource ID of the component resource used to
         preprocess the data.
     :paramtype pre_processing_component: string
-    :param data_window_size: The number of days a single monitor looks back over the target.
-    :type data_window_size: string
+    :param data_window: The number of days or a time frame that a singal monitor looks back over the target.
+    :type data_window: BaselineDataRange
     """
 
     def __init__(
@@ -692,18 +756,22 @@ class FADProductionData(RestTranslatableMixin):
         data_context: MonitorDatasetContext = None,
         data_column_names: Dict = None,
         pre_processing_component: str = None,
-        data_window_size: str = None,
+        data_window: Optional[BaselineDataRange] = None,
     ):
         self.input_data = input_data
         self.data_context = data_context
         self.data_column_names = data_column_names
         self.pre_processing_component = pre_processing_component
-        self.data_window_size = data_window_size
+        self.data_window = data_window
 
     def _to_rest_object(self, **kwargs) -> RestMonitoringInputData:
         default_data_window_size = kwargs.get("default")
-        if self.data_window_size is None:
-            self.data_window_size = default_data_window_size
+        if self.data_window is None:
+            self.data_window = BaselineDataRange(
+                lookback_window_size=default_data_window_size, lookback_window_offset="P0D"
+            )
+        if self.data_window.lookback_window_size == "default":
+            self.data_window.lookback_window_size = default_data_window_size
         uri = self.input_data.path
         job_type = self.input_data.type
         monitoring_input_data = TrailingInputData(
@@ -712,13 +780,19 @@ class FADProductionData(RestTranslatableMixin):
             job_type=job_type,
             uri=uri,
             pre_processing_component_id=self.pre_processing_component,
-            window_size=self.data_window_size,
-            window_offset=self.data_window_size,
+            window_size=self.data_window.lookback_window_size,
+            window_offset=self.data_window.lookback_window_offset
+            if self.data_window.lookback_window_offset is not None
+            else "P0D",
         )
         return monitoring_input_data._to_rest_object()
 
     @classmethod
     def _from_rest_object(cls, obj: RestMonitoringInputData) -> "FADProductionData":
+        data_window = BaselineDataRange(
+            lookback_window_size=isodate.duration_isoformat(obj.window_size),
+            lookback_window_offset=isodate.duration_isoformat(obj.window_offset),
+        )
         return cls(
             input_data=Input(
                 path=obj.uri,
@@ -727,7 +801,7 @@ class FADProductionData(RestTranslatableMixin):
             data_context=obj.data_context,
             data_column_names=obj.columns,
             pre_processing_component=obj.preprocessing_component_id,
-            data_window_size=isodate.duration_isoformat(obj.window_size),
+            data_window=data_window,
         )
 
 
@@ -741,7 +815,7 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
     :paratype production_data: ~azure.ai.ml.entities.FADProductionData
     :keyword reference_data: The data to calculate drift against.
     :paramtype reference_data: ~azure.ai.ml.entities.ReferenceData
-    :keyword metric_thresholds: A list of metrics to calculate and their
+    :keyword metric_thresholds: Metrics to calculate and their
         associated thresholds.
     :paramtype metric_thresholds: ~azure.ai.ml.entities.FeatureAttributionDriftMetricThreshold
     :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
@@ -828,8 +902,10 @@ class ModelPerformanceSignal(ModelSignal):
 
     def _to_rest_object(self, **kwargs) -> RestModelPerformanceSignal:
         default_data_window_size = kwargs.get("default_data_window_size")
-        if self.production_data.data_window_size is None:
-            self.production_data.data_window_size = default_data_window_size
+        if self.production_data.data_window is None:
+            self.production_data.data_window = BaselineDataRange(
+                lookback_window_size=default_data_window_size,
+            )
         return RestModelPerformanceSignal(
             production_data=self.production_data._to_rest_object(),
             reference_data=self.reference_data._to_rest_object(),
@@ -856,9 +932,9 @@ class ModelPerformanceSignal(ModelSignal):
 class WorkspaceConnection(RestTranslatableMixin):
     """Monitoring Workspace Connection
 
-    :keyword environment_variables: A dictionary of environment variables to set for the workspace.
+    :param environment_variables: A dictionary of environment variables to set for the workspace.
     :paramtype environment_variables: Optional[dict[str, str]]
-    :keyword secret_config: A dictionary of secrets to set for the workspace.
+    :param secret_config: A dictionary of secrets to set for the workspace.
     :paramtype secret_config: Optional[dict[str, str]]
     """
 
@@ -968,13 +1044,12 @@ class CustomMonitoringSignal(RestTranslatableMixin):
 class LlmData(RestTranslatableMixin):
     """LLM Request Response Data
 
-    :keyword input_data: Input data used by the monitor.
+    :param input_data: Input data used by the monitor.
     :paramtype input_data: ~azure.ai.ml.entities.Input
-    :keyword data_column_names: The names of columns in the input data.
+    :param data_column_names: The names of columns in the input data.
     :paramtype data_column_names: Dict[str, str]
-    :keyword data_window_size: The number of days a single monitor looks back
-        over the target
-    :paramtype data_window_size: Optional[int]
+    :param data_window: The number of days or a time frame that a singal monitor looks back over the target.
+    :type data_window_size: BaselineDataRange
     """
 
     def __init__(
@@ -982,32 +1057,40 @@ class LlmData(RestTranslatableMixin):
         *,
         input_data: Input,
         data_column_names: Optional[Dict[str, str]] = None,
-        data_window_size: Optional[str] = None,
+        data_window: Optional[BaselineDataRange] = None,
     ):
         self.input_data = input_data
         self.data_column_names = data_column_names
-        self.data_window_size = data_window_size
+        self.data_window = data_window
 
     def _to_rest_object(self, **kwargs) -> RestMonitoringInputData:
-        if self.data_window_size is None:
-            self.data_window_size = kwargs.get("default")
+        if self.data_window is None:
+            self.data_window = BaselineDataRange(
+                lookback_window_size=kwargs.get("default"),
+            )
         return TrailingInputData(
             target_columns=self.data_column_names,
             job_type=self.input_data.type,
             uri=self.input_data.path,
-            window_size=self.data_window_size,
-            window_offset=self.data_window_size,
+            window_size=self.data_window.lookback_window_size,
+            window_offset=self.data_window.lookback_window_offset
+            if self.data_window.lookback_window_offset is not None
+            else "P0D",
         )._to_rest_object()
 
     @classmethod
     def _from_rest_object(cls, obj: RestMonitoringInputData) -> "LlmData":
+        data_window = BaselineDataRange(
+            lookback_window_size=isodate.duration_isoformat(obj.window_size),
+            lookback_window_offset=isodate.duration_isoformat(obj.window_offset),
+        )
         return cls(
             input_data=Input(
                 path=obj.uri,
                 type=obj.job_input_type,
             ),
             data_column_names=obj.columns,
-            data_window_size=isodate.duration_isoformat(obj.window_size),
+            data_window=data_window,
         )
 
 

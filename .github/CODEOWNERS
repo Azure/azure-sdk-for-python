@@ -43,6 +43,9 @@
 # Service team
 ####
 
+# PRLabel: %AI
+/sdk/ai/                                                             @luigiw @needuv @paulshealy1 @singankit
+
 # PRLabel: %AgriFood
 /sdk/agrifood/azure-agrifood-farming/                                @bhargav-kansagara
 
@@ -103,6 +106,9 @@
 # PRLabel: %Confidential Ledger
 /sdk/confidentialledger/azure-confidentialledger/                    @lynshi
 
+# PRLabel: %Content Safety
+/sdk/contentsafety/                                                  @mengaims @JieZhou000
+
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @mccoyp
 
@@ -111,9 +117,18 @@
 
 # PRLabel: %Monitor
 /sdk/loganalytics/azure-loganalytics/                                @azmonapplicationinsights @pvaneck
+
+# PRLabel: %Monitor
 /sdk/loganalytics/                                                   @pvaneck
+
+# PRLabel: %Monitor
 /sdk/monitor/azure-monitor-ingestion/                                @pvaneck @Azure/azure-sdk-write-monitor-data-plane
+
+# PRLabel: %Monitor
 /sdk/monitor/azure-monitor-query/                                    @pvaneck @Azure/azure-sdk-write-monitor-data-plane
+
+# PRLabel: %Monitor
+/sdk/monitor/*                                                       @pvaneck
 
 # PRLabel: %Monitor - ApplicationInsights
 /sdk/applicationinsights/azure-applicationinsights/                  @azmonapplicationinsights @pvaneck
@@ -266,7 +281,7 @@
 /sdk/remoterendering/                                                @FlorianBorn71
 
 # PRLabel: %Open AI
-/sdk/openai                                                          @kristapratico @glecaros
+/sdk/openai/                                                         @kristapratico @glecaros
 
 # PRLabel: %Purview
 /sdk/purview/                                                        @iscai-msft @msyyc
@@ -941,3 +956,5 @@
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
 /eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312
+
+/pylintrc                                                            @l0lawrence

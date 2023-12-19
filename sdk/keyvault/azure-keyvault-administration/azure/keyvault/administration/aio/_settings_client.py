@@ -6,7 +6,7 @@ from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from .._generated_models import UpdateSettingRequest
+from .._generated.models import UpdateSettingRequest
 from .._internal import AsyncKeyVaultClientBase
 from .._models import KeyVaultSetting
 

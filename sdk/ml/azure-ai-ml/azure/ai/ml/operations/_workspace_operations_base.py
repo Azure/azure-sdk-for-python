@@ -1,17 +1,18 @@
+# pylint: disable=too-many-lines
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
 # pylint: disable=protected-access
 
-from abc import ABC
 import time
-from typing import Callable, Dict, Optional, Tuple
+from abc import ABC
+from typing import Any, Callable, Dict, MutableMapping, Optional, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
-from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
     WorkspaceUpdateParameters,
@@ -22,9 +23,9 @@ from azure.ai.ml._utils._appinsights_utils import get_log_analytics_arm_id
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._workspace_utils import (
-    get_generic_arm_resource_by_arm_id,
     delete_resource_by_arm_id,
     get_deployment_name,
+    get_generic_arm_resource_by_arm_id,
     get_name_for_dependent_resource,
     get_resource_and_group_name,
     get_resource_group_location,
@@ -37,7 +38,11 @@ from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory
 from azure.ai.ml.entities import Workspace
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
-from azure.ai.ml.entities._workspace_hub._constants import PROJECT_WORKSPACE_KIND, WORKSPACE_HUB_KIND
+from azure.ai.ml.entities._workspace_hub._constants import (
+    ENDPOINT_AI_SERVICE_KIND,
+    PROJECT_WORKSPACE_KIND,
+    WORKSPACE_HUB_KIND,
+)
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller, PollingMethod
@@ -52,7 +57,7 @@ class WorkspaceOperationsBase(ABC):
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient062023Preview,
+        service_client: ServiceClient082023Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
@@ -105,7 +110,8 @@ class WorkspaceOperationsBase(ABC):
         """
         existing_workspace = None
         resource_group = kwargs.get("resource_group") or workspace.resource_group or self._resource_group_name
-        byo_open_ai_resource_id = kwargs.pop("byo_open_ai_resource_id", "")
+        endpoint_resource_id = kwargs.pop("endpoint_resource_id", "")
+        endpoint_kind = kwargs.pop("endpoint_kind", ENDPOINT_AI_SERVICE_KIND)
 
         try:
             existing_workspace = self.get(workspace.name, resource_group=resource_group)
@@ -118,8 +124,12 @@ class WorkspaceOperationsBase(ABC):
                 workspace.tags.pop("createdByToolkit")
             existing_workspace.tags.update(workspace.tags)
             workspace.tags = existing_workspace.tags
-            workspace.container_registry = workspace.container_registry or existing_workspace.container_registry
-            workspace.application_insights = workspace.application_insights or existing_workspace.application_insights
+            # TODO do we want projects to do this?
+            if workspace._kind != PROJECT_WORKSPACE_KIND:
+                workspace.container_registry = workspace.container_registry or existing_workspace.container_registry
+                workspace.application_insights = (
+                    workspace.application_insights or existing_workspace.application_insights
+                )
             workspace.identity = workspace.identity or existing_workspace.identity
             workspace.primary_user_assigned_identity = (
                 workspace.primary_user_assigned_identity or existing_workspace.primary_user_assigned_identity
@@ -139,11 +149,12 @@ class WorkspaceOperationsBase(ABC):
             workspace.tags["createdByToolkit"] = "sdk-v2-{}".format(VERSION)
 
         workspace.resource_group = resource_group
-        (
-            template,
-            param,
-            resources_being_deployed,
-        ) = self._populate_arm_parameters(workspace, byo_open_ai_resource_id=byo_open_ai_resource_id, **kwargs)
+        (template, param, resources_being_deployed,) = self._populate_arm_parameters(
+            workspace,
+            endpoint_resource_id=endpoint_resource_id,
+            endpoint_kind=endpoint_kind,
+            **kwargs,
+        )
         # check if create with workspace hub request is valid
         if workspace._kind == PROJECT_WORKSPACE_KIND:
             if not all(
@@ -312,6 +323,12 @@ class WorkspaceOperationsBase(ABC):
         if feature_store_settings:
             feature_store_settings = feature_store_settings._to_rest_object()
 
+        serverless_compute_settings = kwargs.get("serverless_compute", workspace.serverless_compute)
+        if serverless_compute_settings:
+            serverless_compute_settings = (
+                serverless_compute_settings._to_rest_object()
+            )  # pylint: disable=protected-access
+
         update_param = WorkspaceUpdateParameters(
             tags=kwargs.get("tags", workspace.tags),
             description=kwargs.get("description", workspace.description),
@@ -325,6 +342,8 @@ class WorkspaceOperationsBase(ABC):
             managed_network=managed_network,
             feature_store_settings=feature_store_settings,
         )
+        if serverless_compute_settings:
+            update_param.serverless_compute_settings = serverless_compute_settings
         update_param.container_registry = container_registry or None
         update_param.application_insights = application_insights or None
 
@@ -509,8 +528,8 @@ class WorkspaceOperationsBase(ABC):
         param = get_template(resource_type=ArmConstants.WORKSPACE_PARAM)
         if workspace._kind == PROJECT_WORKSPACE_KIND:
             template = get_template(resource_type=ArmConstants.WORKSPACE_PROJECT)
-        byo_open_ai_resource_id = kwargs.get("byo_open_ai_resource_id") or ""
-        _set_val(param["byo_open_ai_resource_id"], byo_open_ai_resource_id)
+        endpoint_resource_id = kwargs.get("endpoint_resource_id") or ""
+        endpoint_kind = kwargs.get("endpoint_kind") or ENDPOINT_AI_SERVICE_KIND
         _set_val(param["workspaceName"], workspace.name)
         if not workspace.display_name:
             _set_val(param["friendlyName"], workspace.name)
@@ -635,46 +654,67 @@ class WorkspaceOperationsBase(ABC):
             _set_val(
                 param["spark_runtime_version"], workspace._feature_store_settings.compute_runtime.spark_runtime_version
             )
-            _set_val(
-                param["offline_store_connection_name"],
-                workspace._feature_store_settings.offline_store_connection_name
-                if workspace._feature_store_settings.offline_store_connection_name
-                else "",
-            )
-            _set_val(
-                param["online_store_connection_name"],
-                workspace._feature_store_settings.online_store_connection_name
-                if workspace._feature_store_settings.online_store_connection_name
-                else "",
-            )
+            if workspace._feature_store_settings.offline_store_connection_name:
+                _set_val(
+                    param["offline_store_connection_name"],
+                    workspace._feature_store_settings.offline_store_connection_name,
+                )
+            if workspace._feature_store_settings.online_store_connection_name:
+                _set_val(
+                    param["online_store_connection_name"],
+                    workspace._feature_store_settings.online_store_connection_name,
+                )
 
         if workspace._kind and workspace._kind.lower() == "featurestore":
             materialization_identity = kwargs.get("materialization_identity", None)
             offline_store_target = kwargs.get("offline_store_target", None)
             online_store_target = kwargs.get("online_store_target", None)
 
-            _set_val(param["set_up_feature_store"], "true")
+            from azure.ai.ml._utils._arm_id_utils import AzureResourceId, AzureStorageContainerResourceId
 
-            from azure.ai.ml._utils._arm_id_utils import AzureResourceId
-
-            if offline_store_target is not None:
-                arm_id = AzureResourceId(offline_store_target)
-                _set_val(param["offline_store_target"], offline_store_target)
+            if offline_store_target:
+                arm_id = AzureStorageContainerResourceId(offline_store_target)
+                _set_val(param["offlineStoreStorageAccountOption"], "existing")
+                _set_val(param["offline_store_container_name"], arm_id.container)
+                _set_val(param["offline_store_storage_account_name"], arm_id.storage_account)
                 _set_val(param["offline_store_resource_group_name"], arm_id.resource_group_name)
                 _set_val(param["offline_store_subscription_id"], arm_id.subscription_id)
-            if online_store_target is not None:
+            else:
+                _set_val(param["offlineStoreStorageAccountOption"], "new")
+                _set_val(
+                    param["offline_store_container_name"],
+                    _generate_storage_container(workspace.name, resources_being_deployed),
+                )
+                if not workspace.storage_account:
+                    _set_val(param["offline_store_storage_account_name"], param["storageAccountName"]["value"])
+                else:
+                    _set_val(
+                        param["offline_store_storage_account_name"],
+                        _generate_storage(workspace.name, resources_being_deployed),
+                    )
+                _set_val(param["offline_store_resource_group_name"], workspace.resource_group)
+                _set_val(param["offline_store_subscription_id"], self._subscription_id)
+
+            if online_store_target:
                 arm_id = AzureResourceId(online_store_target)
-                _set_val(param["online_store_target"], online_store_target)
+                _set_val(param["online_store_resource_id"], online_store_target)
                 _set_val(param["online_store_resource_group_name"], arm_id.resource_group_name)
                 _set_val(param["online_store_subscription_id"], arm_id.subscription_id)
 
             if materialization_identity:
-                _set_val(param["materialization_identity_resource_id"], materialization_identity.resource_id)
+                arm_id = AzureResourceId(materialization_identity.resource_id)
+                _set_val(param["materializationIdentityOption"], "existing")
+                _set_val(param["materialization_identity_name"], arm_id.asset_name)
+                _set_val(param["materialization_identity_resource_group_name"], arm_id.resource_group_name)
+                _set_val(param["materialization_identity_subscription_id"], arm_id.subscription_id)
             else:
+                _set_val(param["materializationIdentityOption"], "new")
                 _set_val(
                     param["materialization_identity_name"],
-                    f"materialization-uai-{workspace.resource_group}-{workspace.name}",
+                    _generate_materialization_identity(workspace, self._subscription_id, resources_being_deployed),
                 )
+                _set_val(param["materialization_identity_resource_group_name"], workspace.resource_group)
+                _set_val(param["materialization_identity_subscription_id"], self._subscription_id)
 
             if not kwargs.get("grant_materialization_permissions", None):
                 _set_val(param["grant_materialization_permissions"], "false")
@@ -684,21 +724,40 @@ class WorkspaceOperationsBase(ABC):
             managed_network = workspace.managed_network._to_rest_object()
         else:
             managed_network = ManagedNetwork(isolation_mode=IsolationMode.DISABLED)._to_rest_object()
-        _set_val(param["managedNetwork"], managed_network)
+        _set_obj_val(param["managedNetwork"], managed_network)
         if workspace.enable_data_isolation:
             _set_val(param["enable_data_isolation"], "true")
 
-        # Hub related param
+        # Hub related params
         if workspace._kind and workspace._kind.lower() == WORKSPACE_HUB_KIND:
             if workspace.workspace_hub_config:
-                _set_val(param["workspace_hub_config"], workspace.workspace_hub_config._to_rest_object())
+                _set_obj_val(param["workspace_hub_config"], workspace.workspace_hub_config._to_rest_object())
             if workspace.existing_workspaces:
                 _set_val(param["existing_workspaces"], workspace.existing_workspaces)
+            # A user-supplied resource ID (either AOAI or AI Services or null)
+            # endpoint_kind differentiates between a 'Bring a legacy AOAI resource hub' and 'any other kind of hub'
+            # The former doesn't create non-AOAI endpoints, and is set below if the user provided a byo AOAI
+            # resource ID. The latter case is the default and not shown here.
+            elif endpoint_resource_id != "":
+                _set_val(param["endpoint_resource_id"], endpoint_resource_id)
+                _set_val(param["endpoint_kind"], endpoint_kind)
+
+            # Hubs must have an azure container registry on-provision. If none was provided, create one.
+            if not workspace.container_registry:
+                _set_val(param["containerRegistryOption"], "new")
+                container_registry = _generate_container_registry(workspace.name, resources_being_deployed)
+                _set_val(param["containerRegistryName"], container_registry)
+                _set_val(param["containerRegistryResourceGroupName"], self._resource_group_name)
 
         # Lean related param
         if workspace._kind and workspace._kind.lower() == PROJECT_WORKSPACE_KIND:
             if workspace.workspace_hub:
                 _set_val(param["workspace_hub"], workspace.workspace_hub)
+
+        # Serverless compute related param
+        serverless_compute = workspace.serverless_compute if workspace.serverless_compute else None
+        if serverless_compute:
+            _set_obj_val(param["serverless_compute_settings"], serverless_compute._to_rest_object())
 
         resources_being_deployed[workspace.name] = (ArmConstants.WORKSPACE, None)
         return template, param, resources_being_deployed
@@ -718,7 +777,8 @@ class WorkspaceOperationsBase(ABC):
         param = get_template(resource_type=ArmConstants.FEATURE_STORE_ROLE_ASSIGNMENTS_PARAM)
 
         materialization_identity_id = kwargs.get("materialization_identity_id", None)
-        _set_val(param["materialization_identity_resource_id"], materialization_identity_id)
+        if materialization_identity_id:
+            _set_val(param["materialization_identity_resource_id"], materialization_identity_id)
 
         _set_val(param["workspace_name"], workspace.name)
         resource_group = kwargs.get("resource_group", workspace.resource_group)
@@ -789,6 +849,22 @@ def _set_val(dict: dict, val: str) -> None:
     dict["value"] = val
 
 
+def _set_obj_val(dict: dict, val: Any) -> None:
+    """Serializes a JSON string into the parameters dict.
+
+    :param dict: Parameters dict.
+    :type dict: dict
+    :param val: The obj to serialize.
+    :type val: Any type. Must have `.serialize() -> MutableMapping[str, Any]` method.
+    :return: No Return.
+    :rtype: None
+    """
+    from copy import deepcopy
+
+    json: MutableMapping[str, Any] = val.serialize()
+    dict["value"] = deepcopy(json)
+
+
 def _generate_key_vault(name: str, resources_being_deployed: dict) -> str:
     """Generates a name for a key vault resource to be created with workspace based on workspace name,
     sets name and type in resources_being_deployed.
@@ -822,6 +898,22 @@ def _generate_storage(name: str, resources_being_deployed: dict) -> str:
     storage = get_name_for_dependent_resource(name, "storage")
     resources_being_deployed[storage] = (ArmConstants.STORAGE, None)
     return storage
+
+
+def _generate_storage_container(name: str, resources_being_deployed: dict) -> str:
+    """Generates a name for a storage container resource to be created with workspace based on workspace name,
+    sets name and type in resources_being_deployed.
+
+    :param name: The name for the related workspace.
+    :type name: str
+    :param resources_being_deployed: Dict for resources being deployed.
+    :type resources_being_deployed: dict
+    :return: String for name of storage container
+    :rtype: str
+    """
+    storage_container = get_name_for_dependent_resource(name, "container")
+    resources_being_deployed[storage_container] = (ArmConstants.STORAGE_CONTAINER, None)
+    return storage_container
 
 
 def _generate_log_analytics(name: str, resources_being_deployed: dict) -> str:
@@ -862,6 +954,60 @@ def _generate_app_insights(name: str, resources_being_deployed: dict) -> str:
         None,
     )
     return app_insights
+
+
+def _generate_container_registry(name: str, resources_being_deployed: dict) -> str:
+    """Generates a name for a container registry resource to be created with workspace based on workspace name,
+    sets name and type in resources_being_deployed.
+
+    :param name: The name for the related workspace.
+    :type name: str
+    :param resources_being_deployed: Dict for resources being deployed.
+    :type resources_being_deployed: dict
+    :return: String for name of container registry.
+    :rtype: str
+    """
+    # Application name only allows alphanumeric characters, periods, underscores,
+    # hyphens and parenthesis and cannot end in a period
+    con_reg = get_name_for_dependent_resource(name, "containerRegistry")
+    resources_being_deployed[con_reg] = (
+        ArmConstants.CONTAINER_REGISTRY,
+        None,
+    )
+    return con_reg
+
+
+def _generate_materialization_identity(
+    workspace: Workspace, subscription_id: str, resources_being_deployed: dict
+) -> str:
+    """Generates a name for a materialization identity resource to be created
+    with feature store based on workspace information,
+    sets name and type in resources_being_deployed.
+
+    :param workspace: The workspace object.
+    :type workspace: Workspace
+    :param subscription_id: The subscription id
+    :type subscription_id: str
+    :param resources_being_deployed: Dict for resources being deployed.
+    :type resources_being_deployed: dict
+    :return: String for name of materialization identity.
+    :rtype: str
+    """
+    import uuid
+
+    namespace = ""
+    namespace_raw = f"{subscription_id[:12]}_{workspace.resource_group[:12]}_{workspace.location}"
+    for char in namespace_raw.lower():
+        if char.isalpha() or char.isdigit():
+            namespace = namespace + char
+    namespace = namespace.encode("utf-8").hex()
+    namespace = uuid.UUID(namespace[:32].ljust(32, "0"))
+    materialization_identity = f"materialization-uai-" f"{uuid.uuid3(namespace, workspace.name.lower()).hex}"
+    resources_being_deployed[materialization_identity] = (
+        ArmConstants.USER_ASSIGNED_IDENTITIES,
+        None,
+    )
+    return materialization_identity
 
 
 class CustomArmTemplateDeploymentPollingMethod(PollingMethod):

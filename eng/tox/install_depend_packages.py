@@ -61,11 +61,7 @@ MINIMUM_VERSION_SPECIFIC_OVERRIDES = {
     "azure-identity": {"msal": "1.23.0"},
 }
 
-MAXIMUM_VERSION_SPECIFIC_OVERRIDES = {
-    "azure-core-tracing-opentelemetry": {
-        "opentelemetry-api": "1.19.0"
-    }
-}
+MAXIMUM_VERSION_SPECIFIC_OVERRIDES = {}
 
 # PLATFORM SPECIFIC OVERRIDES provide additional generic (EG not tied to the package whos dependencies are being processed)
 # filtering on a _per platform_ basis. Primarily used to limit certain packages due to platform compatbility

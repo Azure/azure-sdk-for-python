@@ -11,6 +11,13 @@ CONVERSATION = "conversation"
 SUMMARIZATION = "summarization"
 SEARCH = "search"
 
+CONTEXT_KEY = {
+    "conversation": ["metadata"],
+    "summarization": ["file_content"],
+    "search": []
+}
+
+
 ALL_TEMPLATES = {
     "conversation": CONVERSATION_PATH,
     "summarization": SUMMARIZATION_PATH,

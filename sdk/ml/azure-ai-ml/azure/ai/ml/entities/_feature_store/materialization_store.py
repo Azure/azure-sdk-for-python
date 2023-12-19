@@ -3,10 +3,8 @@
 # ---------------------------------------------------------
 
 from azure.ai.ml._utils._arm_id_utils import AzureResourceId
-from azure.ai.ml._utils._experimental import experimental
 
 
-@experimental
 class MaterializationStore:
     """Materialization Store
 

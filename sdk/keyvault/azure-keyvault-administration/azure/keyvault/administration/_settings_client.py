@@ -5,7 +5,7 @@
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
-from ._generated_models import UpdateSettingRequest
+from ._generated.models import UpdateSettingRequest
 from ._internal import KeyVaultClientBase
 from ._models import KeyVaultSetting
 

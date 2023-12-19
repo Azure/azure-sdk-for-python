@@ -18,7 +18,7 @@ class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
 
     @EventGridPreparer()
     @recorded_by_proxy
-    def test_send_cloud_event_data_dict(self, variables, eventgrid_cloud_event_topic_endpoint):
+    def test_send_cloud_event_data_dict(self, eventgrid_cloud_event_topic_endpoint):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
         attributes = {
             "type": "com.example.sampletype1",
@@ -37,7 +37,7 @@ class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
 
     @EventGridPreparer()
     @recorded_by_proxy
-    def test_send_cloud_event_data_base64_using_data(self, variables, eventgrid_cloud_event_topic_endpoint):
+    def test_send_cloud_event_data_base64_using_data(self, eventgrid_cloud_event_topic_endpoint):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
         attributes = {
             "type": "com.example.sampletype1",
@@ -54,7 +54,7 @@ class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
 
     @EventGridPreparer()
     @recorded_by_proxy
-    def test_send_cloud_event_data_none(self, variables, eventgrid_cloud_event_topic_endpoint):
+    def test_send_cloud_event_data_none(self, eventgrid_cloud_event_topic_endpoint):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
         attributes = {
             "type": "com.example.sampletype1",
@@ -66,7 +66,7 @@ class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
 
     @EventGridPreparer()
     @recorded_by_proxy
-    def test_send_cloud_event_data_str(self, variables, eventgrid_cloud_event_topic_endpoint):
+    def test_send_cloud_event_data_str(self, eventgrid_cloud_event_topic_endpoint):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
         attributes = {
             "type": "com.example.sampletype1",
@@ -82,7 +82,7 @@ class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
 
     @EventGridPreparer()
     @recorded_by_proxy
-    def test_send_cloud_event_data_as_list(self, variables, eventgrid_cloud_event_topic_endpoint):
+    def test_send_cloud_event_data_as_list(self, eventgrid_cloud_event_topic_endpoint):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
         attributes = {
             "type": "com.example.sampletype1",
@@ -94,7 +94,7 @@ class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
 
     @EventGridPreparer()
     @recorded_by_proxy
-    def test_send_cloud_event_data_with_extensions(self, variables, eventgrid_cloud_event_topic_endpoint):
+    def test_send_cloud_event_data_with_extensions(self, eventgrid_cloud_event_topic_endpoint):
         client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
         attributes = {
             "type": "com.example.sampletype1",

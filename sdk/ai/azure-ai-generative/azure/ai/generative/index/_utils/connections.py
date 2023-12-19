@@ -11,11 +11,9 @@ from azure.ai.generative.index._utils.logging import get_logger
 from azure.ai.generative.index._utils.requests import create_session_with_retry, send_post_request
 
 try:
-    from azure.ai.generative import AIClient
-    from azure.ai.generative.entities import Connection
+    from azure.ai.resources.entities import BaseConnection
 except Exception:
-    AIClient = None
-    Connection = None
+    BaseConnection = None
 try:
     from azure.ai.ml import MLClient
     from azure.ai.ml.entities import WorkspaceConnection
@@ -28,6 +26,16 @@ except Exception:
     TokenCredential = object
 
 logger = get_logger("connections")
+
+def get_pinecone_environment(config, credential: Optional[TokenCredential] = None):
+    """Get the Pinecone project environment from a connection."""
+    connection_type = config.get("connection_type", None)
+    if connection_type != "workspace_connection":
+        raise ValueError(f"Unsupported connection type for Pinecone index: {connection_type}")
+
+    connection_id = config.get("connection", {}).get("id")
+    connection = get_connection_by_id_v2(connection_id, credential=credential)
+    return get_metadata_from_connection(connection)["environment"]
 
 
 def get_connection_credential(config, credential: Optional[TokenCredential] = None):
@@ -84,12 +92,12 @@ def get_connection_credential(config, credential: Optional[TokenCredential] = No
     return connection_credential
 
 
-def workspace_connection_to_credential(connection: Union[dict, Connection, WorkspaceConnection]):
+def workspace_connection_to_credential(connection: Union[dict, BaseConnection, WorkspaceConnection]):
     """Get a credential for a workspace connection."""
     return connection_to_credential(connection)
 
 
-def connection_to_credential(connection: Union[dict, Connection, WorkspaceConnection]):
+def connection_to_credential(connection: Union[dict, BaseConnection, WorkspaceConnection]):
     """Get a credential for a workspace connection."""
     if isinstance(connection, dict):
         props = connection["properties"]
@@ -145,7 +153,7 @@ def connection_to_credential(connection: Union[dict, Connection, WorkspaceConnec
             raise ValueError(f"Unknown auth type '{connection.credentials.type}' for connection '{connection.name}'")
 
 
-def get_connection_by_id_v2(connection_id: str, credential: TokenCredential = None, client: str = "sdk") -> Union[dict, WorkspaceConnection, Connection]:
+def get_connection_by_id_v2(connection_id: str, credential: TokenCredential = None, client: str = "sdk") -> Union[dict, WorkspaceConnection, BaseConnection]:
     """
     Get a connection by id using azure.ai.ml or azure.ai.generative.
 
@@ -204,37 +212,37 @@ def get_connection_by_id_v2(connection_id: str, credential: TokenCredential = No
     return connection
 
 
-def get_id_from_connection(connection: Union[dict, WorkspaceConnection, Connection]) -> str:
+def get_id_from_connection(connection: Union[dict, WorkspaceConnection, BaseConnection]) -> str:
     """Get a connection id from a connection."""
     if isinstance(connection, dict):
         return connection["id"]
     elif isinstance(connection, WorkspaceConnection):
         return connection.id
-    elif isinstance(connection, Connection):
+    elif isinstance(connection, BaseConnection):
         return connection.id
     else:
         raise ValueError(f"Unknown connection type: {type(connection)}")
 
 
-def get_target_from_connection(connection: Union[dict, WorkspaceConnection, Connection]) -> str:
+def get_target_from_connection(connection: Union[dict, WorkspaceConnection, BaseConnection]) -> str:
     """Get a connection target from a connection."""
     if isinstance(connection, dict):
         return connection["properties"]["target"]
     elif isinstance(connection, WorkspaceConnection):
         return connection.target
-    elif isinstance(connection, Connection):
+    elif isinstance(connection, BaseConnection):
         return connection.target
     else:
         raise ValueError(f"Unknown connection type: {type(connection)}")
 
 
-def get_metadata_from_connection(connection: Union[dict, WorkspaceConnection, Connection]) -> dict:
+def get_metadata_from_connection(connection: Union[dict, WorkspaceConnection, BaseConnection]) -> dict:
     """Get a connection metadata from a connection."""
     if isinstance(connection, dict):
         return connection["properties"]["metadata"]
     elif isinstance(connection, WorkspaceConnection):
         return connection.metadata
-    elif isinstance(connection, Connection):
+    elif isinstance(connection, BaseConnection):
         return connection.metadata
     else:
         raise ValueError(f"Unknown connection type: {type(connection)}")

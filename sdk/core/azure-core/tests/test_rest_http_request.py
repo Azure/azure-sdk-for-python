@@ -21,7 +21,7 @@ from azure.core.configuration import Configuration
 from azure.core.rest import HttpRequest
 from azure.core.pipeline.policies import CustomHookPolicy, UserAgentPolicy, SansIOHTTPPolicy, RetryPolicy
 from azure.core.pipeline._tools import is_rest
-from rest_client import TestRestClient
+from rest_client import MockRestClient
 from azure.core import PipelineClient
 
 
@@ -350,7 +350,7 @@ def test_request_policies_raw_request_hook(port):
 
     custom_hook_policy = CustomHookPolicy(raw_request_hook=callback)
     policies = [UserAgentPolicy("myuseragent"), custom_hook_policy]
-    client = TestRestClient(port=port, policies=policies)
+    client = MockRestClient(port=port, policies=policies)
 
     with pytest.raises(ValueError) as ex:
         client.send_request(request)
@@ -397,7 +397,7 @@ def test_request_policies_chain(port):
         OldPolicySerializeRequest(),
     ]
     request = HttpRequest("DELETE", "/container0/blob0")
-    client = TestRestClient(port="5000", policies=policies)
+    client = MockRestClient(port="5000", policies=policies)
     with pytest.raises(ValueError) as ex:
         client.send_request(
             request,
@@ -431,7 +431,7 @@ def test_per_call_policies_old_then_new(port):
     pipeline_client = PipelineClient(
         base_url="http://localhost:{}".format(port), config=config, per_call_policies=[OldPolicy(), NewPolicy()]
     )
-    client = TestRestClient(port=port)
+    client = MockRestClient(port=port)
     client._client = pipeline_client
 
     with pytest.raises(ValueError) as ex:

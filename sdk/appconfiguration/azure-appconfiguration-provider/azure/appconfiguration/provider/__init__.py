@@ -8,7 +8,7 @@ from ._azureappconfigurationprovider import load, AzureAppConfigurationProvider
 from ._models import (
     AzureAppConfigurationKeyVaultOptions,
     SettingSelector,
-    SentinelKey,
+    WatchKey,
 )
 
 from ._version import VERSION
@@ -19,5 +19,5 @@ __all__ = [
     "AzureAppConfigurationProvider",
     "AzureAppConfigurationKeyVaultOptions",
     "SettingSelector",
-    "SentinelKey",
+    "WatchKey",
 ]

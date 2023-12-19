@@ -1090,7 +1090,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         """
         if isinstance(name, BlobProperties):
             warnings.warn(
-                "The use of a 'BlobProperties' instance for param blob is deprecated. Please use str instead.",
+                "The use of a 'BlobProperties' instance for param name is deprecated. " +
+                "Please use 'BlobProperties.name' or any other str input type instead.",
                 DeprecationWarning
             )
         blob = self.get_blob_client(name)
@@ -1177,7 +1178,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         """
         if isinstance(blob, BlobProperties):
             warnings.warn(
-                "The use of a 'BlobProperties' instance for param blob is deprecated. Please use str instead.",
+                "The use of a 'BlobProperties' instance for param blob is deprecated. " +
+                "Please use 'BlobProperties.name' or any other str input type instead.",
                 DeprecationWarning
             )
         blob_client = self.get_blob_client(blob) # type: ignore
@@ -1302,7 +1304,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         """
         if isinstance(blob, BlobProperties):
             warnings.warn(
-                "The use of a 'BlobProperties' instance for param blob is deprecated. Please use str instead.",
+                "The use of a 'BlobProperties' instance for param blob is deprecated. " +
+                "Please use 'BlobProperties.name' or any other str input type instead.",
                 DeprecationWarning
             )
         blob_client = self.get_blob_client(blob) # type: ignore
@@ -1776,7 +1779,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         """
         if isinstance(blob, BlobProperties):
             warnings.warn(
-                "The use of a 'BlobProperties' instance for param blob is deprecated. Please use str instead.",
+                "The use of a 'BlobProperties' instance for param blob is deprecated. " +
+                "Please use 'BlobProperties.name' or any other str input type instead.",
                 DeprecationWarning
             )
         blob_name = _get_blob_name(blob)

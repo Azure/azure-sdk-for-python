@@ -29,7 +29,7 @@ import os
 # -------------------------------------------------------------------------
 # Text translation client
 # -------------------------------------------------------------------------
-def create_text_translation_client_with_endpoint():    
+def create_text_translation_client_with_endpoint():
     from azure.ai.translation.text import TextTranslationClient
 
     endpoint = os.environ["AZURE_TEXT_TRANSLATION_ENDPOINT"]
@@ -38,8 +38,9 @@ def create_text_translation_client_with_endpoint():
     # [END create_text_translation_client_with_endpoint]
     return text_translator
 
+
 def create_text_translation_client_with_credential():
-    from azure.ai.translation.text import (TextTranslationClient, TranslatorCredential)
+    from azure.ai.translation.text import TextTranslationClient, TranslatorCredential
 
     endpoint = os.environ["AZURE_TEXT_TRANSLATION_ENDPOINT"]
     apikey = os.environ["AZURE_TEXT_TRANSLATION_APIKEY"]
@@ -49,6 +50,3 @@ def create_text_translation_client_with_credential():
     text_translator = TextTranslationClient(credential, endpoint)
     # [END create_text_translation_client_with_credential]
     return text_translator
-
-
-

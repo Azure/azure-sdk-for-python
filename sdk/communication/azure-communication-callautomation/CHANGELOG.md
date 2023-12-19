@@ -1,18 +1,39 @@
 # Release History
 
-## 1.1.0b1 (Unreleased)
+## 1.2.0b1 (Unreleased)
+
+### Features Added
+- StartRecording now accepts PauseOnStart.
+- Start, Stop, Update transcript added.
+- Start, Stop hold music added.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.1.0 (2023-11-23)
+### Features Added
+- Mid Call actions support overriding callback url.
+- Cancel adding Participant invitation.
+- Support transfer a participant in a group call to another participant.
+- Add Custom Context payload to Transfer and AddParticipant API.
+
+## 1.1.0b1 (2023-08-17)
 ### Features Added
 - Play and recognize supports TTS and SSML source prompts.
 - Recognize supports choices and freeform speech.
 - Start/Stop continuous DTMF recognition by subscribing/unsubscribing to tones.
 - Send DTMF tones to a participant in the call.
-- Mute participants in the call.
+- Mute participant in the call.
 
 ### Other Changes
 - The models `ServerCallLocator` and `GroupCallLocator` have been deprecated, and the ID values can now be passed directly into `CallAutomationClient.start_recording` as keyword arguments.
 - The model `CallInvite` has been deprecated and now the target `CommunicationIdentifier` and associated properties can be passed directly into `create_call`, `redirect_call` and `add_participant`.
 - The method `CallAutomationClient.create_group_call` has been deprecated, this can now be achieved by passing a list of `CommunicationIdentifier`s into `create_call`.
 - The method `CallConnectionClient.play_media_to_all` has been deprecated, this can now be achieved as the default behaviour of `play_media`.
+- The `MicrosoftBotIdentifier` has been deprecated.
 
 ## 1.0.0 (2023-06-14)
 Call Automation enables developers to build call workflows. Personalise customer interactions by listening to call events and take actions based on your business logic. For more information, please see the [README][read_me].

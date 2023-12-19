@@ -7,11 +7,11 @@ from typing import Dict, Optional
 from dataclasses import dataclass
 
 from azure.ai.ml.entities import Data
-from azure.ai.resources.entities.connection import Connection
+from azure.ai.resources.entities import AzureOpenAIConnection, AzureAISearchConnection
 
 
 @dataclass
-class MLIndex:
+class Index:
     name: str
     path: str
     version: str = None
@@ -22,15 +22,15 @@ class MLIndex:
 
     def query(self, text: str):
         try:
-            from azure.ai.resources.index._mlindex import MLIndex as InternalMLIndex
+            from azure.ai.resources._index._mlindex import MLIndex as InternalMLIndex
         except ImportError as e:
-            print("In order to query an MLIndex, you must have azure-ai-generative[index] installed")
+            print("In order to query an Index, you must have azure-ai-generative[index] installed")
             raise e
 
         retriever = InternalMLIndex(str(self.path)).as_langchain_retriever()
         return retriever.get_relevant_documents(text)
 
-    def override_connections(self, aoai_connection: Connection = None, acs_connection: Connection = None) -> None:
+    def override_connections(self, aoai_connection: AzureOpenAIConnection = None, acs_connection: AzureAISearchConnection = None) -> None:
         with open(self.path/"MLIndex", "r") as f:
             mlindex_dict = yaml.safe_load(f)
 
@@ -51,7 +51,7 @@ class MLIndex:
             yaml.safe_dump(mlindex_dict, f)
 
     @classmethod
-    def _from_data_asset(cls, data: Data) -> "MLIndex":
+    def _from_data_asset(cls, data: Data) -> "Index":
         return cls(
             name=data.name,
             version=data.version,

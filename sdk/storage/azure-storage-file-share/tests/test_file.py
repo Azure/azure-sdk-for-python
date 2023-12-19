@@ -233,6 +233,26 @@ class TestStorageFile(StorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy
+    def test_exists(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key)
+
+        # Act / Assert
+        assert not file_client.exists()
+
+        file_client.create_file(1024)
+        assert file_client.exists()
+
+    @FileSharePreparer()
+    @recorded_by_proxy
     def test_create_file(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1446,6 +1466,8 @@ class TestStorageFile(StorageRecordedTestCase):
             source_file_client.share_name,
             source_file_client.file_path,
             source_file_client.credential.account_key,
+            FileSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)
         )
 
         source_file_url = source_file_client.url + '?' + sas_token_for_source_file

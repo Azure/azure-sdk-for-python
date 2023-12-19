@@ -36,6 +36,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import (
     _FEATURE_TYPES,
     _StatsbeatFeature,
     _StatsbeatMetrics,
+    _AttachTypes,
     _RP_NAMES,
 )
 
@@ -57,7 +58,7 @@ def throw(exc_type, *args, **kwargs):
 # pylint: disable=protected-access
 class TestStatsbeat(unittest.TestCase):
     def setUp(self):
-        _statsbeat._STATSBEAT_METER_PROVIDER = None
+        _statsbeat._STATSBEAT_METRICS = None
 
     @mock.patch.object(MeterProvider, 'shutdown')
     @mock.patch.object(MeterProvider, 'force_flush')
@@ -71,9 +72,9 @@ class TestStatsbeat(unittest.TestCase):
         exporter = mock.Mock()
         exporter._endpoint = "test endpoint"
         exporter._instrumentation_key = "test ikey"
-        self.assertIsNone(_statsbeat._STATSBEAT_METER_PROVIDER)
+        self.assertIsNone(_statsbeat._STATSBEAT_METRICS)
         _statsbeat.collect_statsbeat_metrics(exporter)
-        mp = _statsbeat._STATSBEAT_METER_PROVIDER
+        mp = _statsbeat._STATSBEAT_METRICS._meter_provider
         self.assertTrue(isinstance(mp, MeterProvider))
         self.assertTrue(len(mp._sdk_config.metric_readers), 1)
         mr = mp._sdk_config.metric_readers[0]
@@ -85,11 +86,11 @@ class TestStatsbeat(unittest.TestCase):
 
     def test_collect_statsbeat_metrics_exists(self):
         exporter = mock.Mock()
-        mock_mp = mock.Mock()
-        self.assertIsNone(_statsbeat._STATSBEAT_METER_PROVIDER)
-        _statsbeat._STATSBEAT_METER_PROVIDER = mock_mp
+        mock_metrics = mock.Mock()
+        self.assertIsNone(_statsbeat._STATSBEAT_METRICS)
+        _statsbeat._STATSBEAT_METRICS = mock_metrics
         _statsbeat.collect_statsbeat_metrics(exporter)
-        self.assertEqual(_statsbeat._STATSBEAT_METER_PROVIDER, mock_mp)
+        self.assertEqual(_statsbeat._STATSBEAT_METRICS, mock_metrics)
 
     @mock.patch.object(MeterProvider, 'shutdown')
     @mock.patch.object(MeterProvider, 'force_flush')
@@ -103,13 +104,14 @@ class TestStatsbeat(unittest.TestCase):
         exporter = mock.Mock()
         exporter._instrumentation_key = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3333"
         exporter._endpoint = "https://westus-0.in.applicationinsights.azure.com/"
-        self.assertIsNone(_statsbeat._STATSBEAT_METER_PROVIDER)
+        self.assertIsNone(_statsbeat._STATSBEAT_METRICS)
         with mock.patch.dict(
             os.environ, {
                 "APPLICATION_INSIGHTS_STATS_CONNECTION_STRING": "",
             }):
             _statsbeat.collect_statsbeat_metrics(exporter)
-        mp = _statsbeat._STATSBEAT_METER_PROVIDER
+        self.assertIsNotNone(_statsbeat._STATSBEAT_METRICS)
+        mp = _statsbeat._STATSBEAT_METRICS._meter_provider
         mr = mp._sdk_config.metric_readers[0]
         stats_exporter = mr._exporter
         self.assertEqual(
@@ -133,13 +135,14 @@ class TestStatsbeat(unittest.TestCase):
         exporter = mock.Mock()
         exporter._instrumentation_key = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3333"
         exporter._endpoint = "https://northeurope-0.in.applicationinsights.azure.com/"
-        self.assertIsNone(_statsbeat._STATSBEAT_METER_PROVIDER)
+        self.assertIsNone(_statsbeat._STATSBEAT_METRICS)
         with mock.patch.dict(
             os.environ, {
                 "APPLICATION_INSIGHTS_STATS_CONNECTION_STRING": "",
             }):
             _statsbeat.collect_statsbeat_metrics(exporter)
-        mp = _statsbeat._STATSBEAT_METER_PROVIDER
+        self.assertIsNotNone(_statsbeat._STATSBEAT_METRICS)
+        mp = _statsbeat._STATSBEAT_METRICS._meter_provider
         mr = mp._sdk_config.metric_readers[0]
         stats_exporter = mr._exporter
         self.assertEqual(
@@ -174,7 +177,7 @@ class TestStatsbeat(unittest.TestCase):
         exporter._credential = TEST_CREDENTIAL
         _statsbeat.collect_statsbeat_metrics(exporter)
         mock_statsbeat_metrics.assert_called_once_with(
-            _statsbeat._STATSBEAT_METER_PROVIDER,
+            mock.ANY,
             TEST_IKEY,
             TEST_ENDPOINT,
             False,
@@ -205,7 +208,7 @@ class TestStatsbeat(unittest.TestCase):
         exporter._credential = TEST_CREDENTIAL
         _statsbeat.collect_statsbeat_metrics(exporter)
         mock_statsbeat_metrics.assert_called_once_with(
-            _statsbeat._STATSBEAT_METER_PROVIDER,
+            mock.ANY,
             TEST_IKEY,
             TEST_ENDPOINT,
             False,
@@ -213,14 +216,16 @@ class TestStatsbeat(unittest.TestCase):
             False,
         )
 
-    @mock.patch.object(MeterProvider, 'shutdown')
-    def test_shutdown_statsbeat_metrics(self, shutdown_mock):
+    def test_shutdown_statsbeat_metrics(self):
         _STATSBEAT_STATE["SHUTDOWN"] = False
-        _statsbeat._STATSBEAT_METER_PROVIDER = MeterProvider(metric_readers=[])
+        metric_mock = mock.Mock()
+        mp_mock = mock.Mock()
+        metric_mock._meter_provider = mp_mock
+        _statsbeat._STATSBEAT_METRICS = metric_mock
         _statsbeat.shutdown_statsbeat_metrics()
-        self.assertIsNone(_statsbeat._STATSBEAT_METER_PROVIDER)
+        mp_mock.shutdown.assert_called_once()
+        self.assertIsNone(_statsbeat._STATSBEAT_METRICS)
         self.assertTrue(_STATSBEAT_STATE["SHUTDOWN"])
-        shutdown_mock.assert_called_once()
 
 
 _StatsbeatMetrics_COMMON_ATTRS = dict(
@@ -255,7 +260,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
         )
 
     def setUp(self):
-        _statsbeat._STATSBEAT_METER_PROVIDER = None
+        _statsbeat._STATSBEAT_METRICS = None
         _StatsbeatMetrics._COMMON_ATTRIBUTES = dict(
             _StatsbeatMetrics_COMMON_ATTRS
         )
@@ -283,10 +288,46 @@ class TestStatsbeatMetrics(unittest.TestCase):
             False,
         )
         self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["cikey"], ikey)
+        self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["attach"], _AttachTypes.MANUAL)
         self.assertEqual(_StatsbeatMetrics._NETWORK_ATTRIBUTES["host"], "westus-1")
         self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_NAMES[3])
         self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], 1)
         self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["type"], _FEATURE_TYPES.FEATURE)
+        self.assertEqual(metric._meter_provider, mp)
+        self.assertTrue(isinstance(metric._meter, Meter))
+        self.assertEqual(metric._ikey, ikey)
+        self.assertEqual(metric._long_interval_threshold, 5)
+        self.assertTrue(metric._vm_retry)
+        self.assertEqual(len(metric._vm_data), 0)
+        self.assertEqual(metric._feature, 1)
+        for count in metric._long_interval_count_map.values():
+            self.assertEqual(count, sys.maxsize)
+        self.assertTrue(isinstance(metric._attach_metric, ObservableGauge))
+        self.assertTrue(isinstance(metric._feature_metric, ObservableGauge))
+        self.assertEqual(metric._attach_metric.name, _ATTACH_METRIC_NAME[0])
+        self.assertEqual(metric._feature_metric.name, _FEATURE_METRIC_NAME[0])
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._utils._is_attach_enabled")
+    def test_statsbeat_metric_init_attach_enabled(self, attach_mock):
+        mp = MeterProvider()
+        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        attach_mock.return_value = True
+        metric = _StatsbeatMetrics(
+            mp,
+            ikey,
+            endpoint,
+            False,
+            5,
+            False,
+        )
+        self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["cikey"], ikey)
+        self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["attach"], _AttachTypes.INTEGRATED)
+        self.assertEqual(_StatsbeatMetrics._NETWORK_ATTRIBUTES["host"], "westus-1")
+        self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_NAMES[3])
+        self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], 1)
+        self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["type"], _FEATURE_TYPES.FEATURE)
+        self.assertEqual(metric._meter_provider, mp)
         self.assertTrue(isinstance(metric._meter, Meter))
         self.assertEqual(metric._ikey, ikey)
         self.assertEqual(metric._long_interval_threshold, 5)
@@ -880,21 +921,21 @@ class TestStatsbeatMetrics(unittest.TestCase):
         self.assertEqual(len(observations), 0)
 
     def test_shorten_host(self):
-            url = "https://fakehost-1.example.com/"
-            self.assertEqual(_shorten_host(url), "fakehost-1")
-            url = "https://fakehost-2.example.com/"
-            self.assertEqual(_shorten_host(url), "fakehost-2")
-            url = "http://www.fakehost-3.example.com/"
-            self.assertEqual(_shorten_host(url), "fakehost-3")
-            url = "http://www.fakehost.com/v2/track"
-            self.assertEqual(_shorten_host(url), "fakehost")
-            url = "https://www.fakehost0-4.com/"
-            self.assertEqual(_shorten_host(url), "fakehost0-4")
-            url = "https://www.fakehost-5.com"
-            self.assertEqual(_shorten_host(url), "fakehost-5")
-            url = "https://fakehost.com"
-            self.assertEqual(_shorten_host(url), "fakehost")
-            url = "http://fakehost-5/"
-            self.assertEqual(_shorten_host(url), "fakehost-5")
+        url = "https://fakehost-1.example.com/"
+        self.assertEqual(_shorten_host(url), "fakehost-1")
+        url = "https://fakehost-2.example.com/"
+        self.assertEqual(_shorten_host(url), "fakehost-2")
+        url = "http://www.fakehost-3.example.com/"
+        self.assertEqual(_shorten_host(url), "fakehost-3")
+        url = "http://www.fakehost.com/v2/track"
+        self.assertEqual(_shorten_host(url), "fakehost")
+        url = "https://www.fakehost0-4.com/"
+        self.assertEqual(_shorten_host(url), "fakehost0-4")
+        url = "https://www.fakehost-5.com"
+        self.assertEqual(_shorten_host(url), "fakehost-5")
+        url = "https://fakehost.com"
+        self.assertEqual(_shorten_host(url), "fakehost")
+        url = "http://fakehost-5/"
+        self.assertEqual(_shorten_host(url), "fakehost-5")
 
 # cSpell:enable

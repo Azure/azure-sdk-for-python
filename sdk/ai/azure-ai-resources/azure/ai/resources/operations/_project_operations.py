@@ -3,6 +3,8 @@
 # ---------------------------------------------------------
 from typing import Any, Dict, Iterable, Optional
 
+from azure.core.tracing.decorator import distributed_trace
+
 from azure.ai.resources.entities.project import Project
 from azure.ai.ml import MLClient
 from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
@@ -11,6 +13,11 @@ from azure.ai.ml.constants._common import Scope
 # TODO remove resclient references once v2 SDK operations supports lean filtering
 from azure.ai.ml.entities import Workspace
 from azure.core.polling import LROPoller
+
+from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, ActivityLogger
+
+ops_logger = ActivityLogger(__name__)
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class ProjectOperations:
@@ -28,7 +35,11 @@ class ProjectOperations:
         self._ml_client = ml_client
         self._service_client = service_client
         self._resource_group_name = resource_group_name
+        ops_logger.update_info(kwargs)
 
+
+    @distributed_trace
+    @monitor_with_activity(logger, "Project.Get", ActivityType.PUBLICAPI)
     # Note: Can get non-lean workspaces this way. Should we prevent that? Does not currently seem possible via restclient.
     def get(self, *, name: Optional[str] = None, **kwargs: Dict) -> Project:
         """Get a project by name.
@@ -43,6 +54,8 @@ class ProjectOperations:
         project = Project._from_v2_workspace(workspace)
         return project
 
+    @distributed_trace
+    @monitor_with_activity(logger, "Project.List", ActivityType.PUBLICAPI)
     def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[Project]:
         """List all projects that the user has access to in the current resource group or subscription.
 
@@ -66,6 +79,8 @@ class ProjectOperations:
             )
         return [Project._from_v2_workspace(ws) for ws in workspaces]
 
+    @distributed_trace
+    @monitor_with_activity(logger, "Project.BeginCreate", ActivityType.PUBLICAPI)
     def begin_create(
         self, *, project: Project, update_dependent_resources: bool = False, **kwargs
     ) -> LROPoller[Project]:
@@ -85,6 +100,8 @@ class ProjectOperations:
             **kwargs,
         )
 
+    @distributed_trace
+    @monitor_with_activity(logger, "Project.BeginUpdate", ActivityType.PUBLICAPI)
     def begin_update(
         self, *, project: Project, update_dependent_resources: bool = False, **kwargs
     ) -> LROPoller[Project]:
@@ -104,6 +121,8 @@ class ProjectOperations:
             **kwargs,
         )
 
+    @distributed_trace
+    @monitor_with_activity(logger, "Project.BeginDelete", ActivityType.PUBLICAPI)
     def begin_delete(
         self,
         *,

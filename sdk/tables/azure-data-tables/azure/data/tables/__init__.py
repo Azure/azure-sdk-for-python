@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from ._encoder import TableEntityEncoder
-from ._entity import TableEntity, EntityProperty, EdmType
+from ._entity import TableEntity, EntityProperty, EdmType, EntityMetadata
 from ._error import RequestTooLargeError, TableTransactionError, TableErrorCode
 from ._table_shared_access_signature import generate_table_sas, generate_account_sas
 from ._table_client import TableClient
@@ -51,4 +51,5 @@ __all__ = [
     "TableTransactionError",
     "TransactionOperation",
     "RequestTooLargeError",
+    "EntityMetadata",
 ]

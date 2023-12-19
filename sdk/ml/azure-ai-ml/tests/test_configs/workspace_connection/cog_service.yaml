@@ -1,10 +1,10 @@
 name: test_ws_conn_cog_service
 type: cognitive_service
-target: dummy
-metadata:
-  Kind: dummy
-  ApiVersion: dummy
+target: my_endpoint
+kind: some_kind
+tags:
+  one: two
+api_version: dummy
 credentials:
-  type: username_password
-  username: dummy
-  password: dummy
+  type: api_key
+  key: "2222"

@@ -14,6 +14,7 @@ from marshmallow import EXCLUDE, Schema, ValidationError
 from azure.ai.ml.constants._common import (
     BASE_PATH_CONTEXT_KEY,
     COMPONENT_TYPE,
+    PROMPTFLOW_AZUREML_OVERRIDE_KEY,
     SOURCE_PATH_CONTEXT_KEY,
     AssetTypes,
     SchemaUrl,
@@ -24,6 +25,7 @@ from ..._restclient.v2022_10_01.models import ComponentVersion
 from ..._schema import PathAwareSchema
 from ..._schema.component.flow import FlowComponentSchema, FlowSchema, RunSchema
 from ...exceptions import ErrorCategory, ErrorTarget, ValidationException
+from .. import Environment
 from .._assets import Code
 from .._inputs_outputs import GroupInput, Input, Output
 from ._additional_includes import AdditionalIncludesMixin
@@ -188,6 +190,8 @@ class FlowComponent(Component, AdditionalIncludesMixin):
     :type connections: Optional[dict[str, dict[str, str]]]
     :keyword environment_variables: The environment variables for the flow. Defaults to None.
     :type environment_variables: Optional[dict[str, str]]
+    :keyword environment: The environment for the flow component. Defaults to None.
+    :type environment: Optional[Union[str, Environment])
     :keyword is_deterministic: Specifies whether the Flow will return the same output given the same input.
         Defaults to True. When True, if a Flow (component) is deterministic and has been run before in the
         current workspace with the same input and settings, it will reuse results from a previous submitted job
@@ -214,6 +218,7 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         variant: Optional[str] = None,
         connections: Optional[Dict[str, Dict[str, str]]] = None,
         environment_variables: Optional[Dict[str, str]] = None,
+        environment: Optional[Union[str, Environment]] = None,
         is_deterministic: bool = True,
         additional_includes: Optional[List] = None,
         properties: Optional[Dict] = None,
@@ -234,7 +239,7 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         kwargs[BASE_PATH_CONTEXT_KEY] = flow_dir
 
         super().__init__(
-            name=name or flow_dir.name,
+            name=name or self._normalize_component_name(flow_dir.name),
             version=version or "1",
             description=description,
             tags=tags,
@@ -245,6 +250,7 @@ class FlowComponent(Component, AdditionalIncludesMixin):
             properties=properties,
             **kwargs,
         )
+        self._environment = environment
         self._column_mapping = column_mapping or {}
         self._variant = variant
         self._connections = connections or {}
@@ -274,6 +280,23 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         :rtype: str
         """
         return self._flow
+
+    @property
+    def environment(self) -> Union[str, Environment]:
+        """The environment for the flow component. Defaults to None.
+
+        :rtype: Union[str, Environment])
+        """
+        return self._environment
+
+    @environment.setter
+    def environment(self, value: Union[str, Environment]) -> None:
+        """The environment for the flow component. Defaults to None.
+
+        :param value: The column mapping for the flow.
+        :type value: Union[str, Environment])
+        """
+        self._environment = value
 
     @property
     def column_mapping(self) -> Dict[str, str]:
@@ -364,6 +387,10 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         self._additional_includes = value or []
 
     # endregion
+
+    @classmethod
+    def _normalize_component_name(cls, value: str):
+        return value.replace("-", "_")
 
     # region Component
     @classmethod
@@ -456,7 +483,7 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         # too much understanding of flow.dag.yaml & run.yaml
         kwargs["unknown"] = EXCLUDE
         try:
-            return schema.load(data, **kwargs)
+            loaded_dict = schema.load(data, **kwargs)
         except ValidationError as e:
             if raise_original_exception:
                 raise e
@@ -468,6 +495,8 @@ class FlowComponent(Component, AdditionalIncludesMixin):
                 message=msg,
                 no_personal_data_message=str(e),
             ) from e
+        loaded_dict.update(loaded_dict.pop(PROMPTFLOW_AZUREML_OVERRIDE_KEY, {}))
+        return loaded_dict
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:

@@ -1,5 +1,7 @@
 msrest
+anyio
 azure-ai-ml
+azure-ai-resources
 azure-common
 azure-mgmt-authorization
 azure-mgmt-core
@@ -14,7 +16,6 @@ azure-monitor-opentelemetry-exporter
 azureml-telemetry
 cryptography
 msrestazure
-python-dateutil
 requests
 opencensus
 opencensus-ext-azure
@@ -24,6 +25,7 @@ opentelemetry-api
 azure-eventhub
 aiohttp
 mlflow
+mlflow-skinny
 msal
 msal-extensions
 azure-keyvault-certificates

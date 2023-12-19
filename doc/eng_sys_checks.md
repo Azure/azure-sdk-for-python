@@ -153,6 +153,8 @@ The various tooling abstracted by the environments within `eng/tox/tox.ini` take
 
 Packages with classifier `Development Status :: 7 - Inactive`, are **not** built by default and as such normal `checks` like `mypy` and `pylint` are also not run against them. Older "core" packages like `azure-common` and `azure-servicemanagement-legacy` are present, but excluded from the build due to this restriction.
 
+Additionally, packages with the pyproject.toml option `ci_enabled = false` will **skip** normal checks and tests. This is used for packages that are not yet compliant with certain CI checks. If `ci_enabled = false` is present in the package's pyproject.toml, it will be blocked from releasing until it is removed and all required CI checks pass.
+
 To temporarily **override** this restriction, a dev need only set the queue time variable: `ENABLE_PACKAGE_NAME`. The `-` in package names should be replaced by an `_`, as that is how the environment variable will be set on the actual CI machine anyway.
 
 - `ENABLE_AZURE_COMMON=true`
@@ -337,7 +339,7 @@ Note: Any dependency mentioned only in dev_requirements are not considered to id
 Tox name of this test is `latestdependency` and steps to manually run this test locally is as follows.
 
 1. Go to package root. For e.g azure-storage-blob or azure-identity
-2. Run command `tox run -e latestdependency -c ../../../tox/tox.ini --root .`
+2. Run command `tox run -e latestdependency -c ../../../eng/tox/tox.ini --root .`
 
 #### Minimum Dependency Test
 
@@ -354,7 +356,7 @@ Tox name of this test is `mindependency` and steps to manually run this test loc
 
 1. Go to package root. For e.g azure-storage-blob or azure-identity
 2. Run following command
-`tox run -e mindependency -c ../../../tox/tox.ini --root .`
+`tox run -e mindependency -c ../../../eng/tox/tox.ini --root .`
 
 #### Regression Test
 

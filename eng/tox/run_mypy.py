@@ -55,12 +55,13 @@ if __name__ == "__main__":
 
     pkg_details = ParsedSetup.from_path(package_dir)
     top_level_module = pkg_details.namespace.split(".")[0]
+    python_version = "3.8"
     commands = [
         sys.executable,
         "-m",
         "mypy",
         "--python-version",
-        "3.7",
+        python_version,
         "--show-error-codes",
         "--ignore-missing-imports",
     ]
@@ -100,7 +101,7 @@ if __name__ == "__main__":
             except CalledProcessError as sample_err:
                 sample_code_error = sample_err
 
-    if args.next and in_ci() and is_check_enabled(args.target_package, "mypy") and not is_typing_ignored(package_name):
+    if args.next and in_ci() and not is_typing_ignored(package_name):
         if src_code_error or sample_code_error:
             create_vnext_issue(package_name, "mypy")
 

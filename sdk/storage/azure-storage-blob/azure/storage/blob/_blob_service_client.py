@@ -776,7 +776,8 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         """
         if isinstance(blob, BlobProperties):
             warnings.warn(
-                "The use of a 'BlobProperties' instance for param blob is deprecated. Please use str instead.",
+                "The use of a 'BlobProperties' instance for param blob is deprecated. " +
+                "Please use 'BlobProperties.name' or any other str input type instead.",
                 DeprecationWarning
             )
         try:

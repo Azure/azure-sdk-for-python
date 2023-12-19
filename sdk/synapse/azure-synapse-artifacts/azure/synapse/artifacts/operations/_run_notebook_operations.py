@@ -27,7 +27,7 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -50,7 +50,7 @@ def build_create_run_request(run_id: str, **kwargs: Any) -> HttpRequest:
         "runId": _SERIALIZER.url("run_id", run_id, "str", max_length=100),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -76,7 +76,7 @@ def build_get_status_request(run_id: str, **kwargs: Any) -> HttpRequest:
         "runId": _SERIALIZER.url("run_id", run_id, "str", max_length=100),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -100,7 +100,7 @@ def build_cancel_run_request(run_id: str, **kwargs: Any) -> HttpRequest:
         "runId": _SERIALIZER.url("run_id", run_id, "str", max_length=100),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -124,7 +124,7 @@ def build_get_snapshot_request(run_id: str, **kwargs: Any) -> HttpRequest:
         "runId": _SERIALIZER.url("run_id", run_id, "str", max_length=100),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -180,25 +180,24 @@ class RunNotebookOperations:
         else:
             _json = self._serialize.body(run_notebook_request, "RunNotebookRequest")
 
-        request = build_create_run_request(
+        _request = build_create_run_request(
             run_id=run_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_run_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -213,11 +212,9 @@ class RunNotebookOperations:
         deserialized = self._deserialize("RunNotebookResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _create_run_initial.metadata = {"url": "/notebooks/runs/{runId}"}
+        return deserialized  # type: ignore
 
     @overload
     def begin_create_run(
@@ -334,7 +331,7 @@ class RunNotebookOperations:
 
             deserialized = self._deserialize("RunNotebookResponse", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -357,8 +354,6 @@ class RunNotebookOperations:
                 deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_run.metadata = {"url": "/notebooks/runs/{runId}"}
 
     @distributed_trace
     def get_status(self, run_id: str, **kwargs: Any) -> _models.RunNotebookResponse:
@@ -385,22 +380,21 @@ class RunNotebookOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))
         cls: ClsType[_models.RunNotebookResponse] = kwargs.pop("cls", None)
 
-        request = build_get_status_request(
+        _request = build_get_status_request(
             run_id=run_id,
             api_version=api_version,
-            template_url=self.get_status.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -412,11 +406,9 @@ class RunNotebookOperations:
         deserialized = self._deserialize("RunNotebookResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_status.metadata = {"url": "/notebooks/runs/{runId}"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def cancel_run(self, run_id: str, **kwargs: Any) -> _models.RunNotebookResponse:
@@ -445,22 +437,21 @@ class RunNotebookOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))
         cls: ClsType[_models.RunNotebookResponse] = kwargs.pop("cls", None)
 
-        request = build_cancel_run_request(
+        _request = build_cancel_run_request(
             run_id=run_id,
             api_version=api_version,
-            template_url=self.cancel_run.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -472,11 +463,9 @@ class RunNotebookOperations:
         deserialized = self._deserialize("RunNotebookResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    cancel_run.metadata = {"url": "/notebooks/runs/{runId}/cancel"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get_snapshot(self, run_id: str, **kwargs: Any) -> _models.RunNotebookSnapshotResponse:
@@ -503,22 +492,21 @@ class RunNotebookOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))
         cls: ClsType[_models.RunNotebookSnapshotResponse] = kwargs.pop("cls", None)
 
-        request = build_get_snapshot_request(
+        _request = build_get_snapshot_request(
             run_id=run_id,
             api_version=api_version,
-            template_url=self.get_snapshot.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -530,8 +518,6 @@ class RunNotebookOperations:
         deserialized = self._deserialize("RunNotebookSnapshotResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_snapshot.metadata = {"url": "/notebooks/runs/{runId}/snapshot"}
+        return deserialized  # type: ignore

@@ -8,12 +8,10 @@ from typing import Dict, Optional
 
 from azure.ai.ml._restclient.v2023_10_01.models import Feature as RestFeature
 from azure.ai.ml._restclient.v2023_10_01.models import FeatureProperties
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._feature_store_entity.data_column_type import DataColumnType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
-@experimental
 class Feature(RestTranslatableMixin):
     """Feature
 

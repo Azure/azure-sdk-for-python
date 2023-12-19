@@ -33,11 +33,12 @@ def main():
         resource_group_name="resourcegroupname",
         elastic_san_name="elasticsanname",
         parameters={
-            "location": "South Central US",
+            "location": "France Central",
             "properties": {
                 "availabilityZones": ["1"],
                 "baseSizeTiB": 5,
                 "extendedCapacitySizeTiB": 25,
+                "publicNetworkAccess": "Enabled",
                 "sku": {"name": "Premium_LRS", "tier": "Premium"},
             },
             "tags": {"key9316": "ihndtieqibtob"},
@@ -46,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/preview/2022-12-01-preview/examples/ElasticSans_Create_MaximumSet_Gen.json
+# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2023-01-01/examples/ElasticSans_Create_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
