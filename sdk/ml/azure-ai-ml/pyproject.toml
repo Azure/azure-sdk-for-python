@@ -26,13 +26,3 @@ extend_skip_glob = [
   "*/doc/*",
   "*/.tox/*",
 ]
-
-[tool.mypy] 
-exclude = ["^(?!azure/ai/ml/entities/).*"]
-disallow_untyped_defs = true 
-warn_unused_ignores = true 
-warn_return_any = true 
-warn_unreachable = true 
-ignore_missing_imports = true 
-follow_imports = "skip" 
-follow_imports_for_stubs = "skip"
