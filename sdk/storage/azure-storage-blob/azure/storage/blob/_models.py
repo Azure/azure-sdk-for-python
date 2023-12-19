@@ -7,7 +7,7 @@
 # pylint: disable=super-init-not-called, too-many-lines
 
 from enum import Enum
-from typing import Dict, List, Optional, TYPE_CHECKING
+from typing import Dict, List, Optional, Union, TYPE_CHECKING
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.paging import PageIterator
@@ -26,6 +26,7 @@ from ._generated.models import AccessPolicy as GenAccessPolicy
 
 if TYPE_CHECKING:
     from datetime import datetime
+    from ._generated.models import AccessTier
 
 # Parse a generated PageList into a single list of PageRange sorted by start.
 def parse_page_list(page_list):
@@ -1144,7 +1145,7 @@ class BlobProperties(DictMixin):
     """The container in which the blob resides."""
     snapshot: Optional[str]
     """Datetime value that uniquely identifies the blob snapshot."""
-    blob_type: "BlobType"
+    blob_type: Optional["BlobType"]
     """String indicating this blob's type."""
     metadata: Dict[str, str]
     """Name-value pairs associated with the blob as metadata."""
@@ -1153,7 +1154,7 @@ class BlobProperties(DictMixin):
     etag: str
     """The ETag contains a value that you can use to perform operations
         conditionally."""
-    size: int
+    size: Optional[int]
     """The size of the content returned. If the entire blob was requested,
         the length of blob in bytes. If a subset of the blob was requested, the
         length of the returned subset."""
@@ -1167,7 +1168,7 @@ class BlobProperties(DictMixin):
     page_blob_sequence_number: Optional[int]
     """(For Page Blobs) Sequence number for page blob used for coordinating
         concurrent writes."""
-    server_encrypted: bool
+    server_encrypted: Optional[bool]
     """Set to true if the blob is encrypted on the server."""
     copy: "CopyProperties"
     """Stores all the copy properties for the blob."""
@@ -1175,7 +1176,7 @@ class BlobProperties(DictMixin):
     """Stores all the content settings for the blob."""
     lease: LeaseProperties
     """Stores all the lease information for the blob."""
-    blob_tier: Optional[StandardBlobTier]
+    blob_tier: Optional[Union["AccessTier", str]]
     """Indicates the access tier of the blob. The hot tier is optimized
         for storing data that is accessed frequently. The cool storage tier
         is optimized for storing data that is infrequently accessed and stored
@@ -1195,7 +1196,7 @@ class BlobProperties(DictMixin):
     """A datetime object representing the time at which the blob was deleted."""
     remaining_retention_days: Optional[int]
     """The number of days that the blob will be retained before being permanently deleted by the service."""
-    creation_time: "datetime"
+    creation_time: Optional["datetime"]
     """Indicates when the blob was created, in UTC."""
     archive_status: Optional[str]
     """Archive status of blob."""

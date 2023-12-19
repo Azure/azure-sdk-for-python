@@ -4,10 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import (
-    Dict, List, Optional, Tuple, Union,
-    TYPE_CHECKING
-)
+from datetime import datetime
+from typing import Any, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
 from urllib.parse import unquote
 from xml.etree.ElementTree import Element
 
@@ -25,16 +23,23 @@ from ._models import (
     ObjectReplicationPolicy,
     ObjectReplicationRule,
     RetentionPolicy,
-    StaticWebsite,
+    StaticWebsite
 )
 from ._shared.models import get_enum_value
 from ._shared.response_handlers import deserialize_metadata
 
 if TYPE_CHECKING:
-    from ._generated.models import BlobTag, PageList
+    from azure.core.pipeline import PipelineResponse
+    from ._generated.models import (
+        BlobItemInternal,
+        BlobTags,
+        PageList,
+        StorageServiceProperties,
+        StorageServiceStats,
+    )
+    from ._shared.models import LocationMode
 
-
-def deserialize_pipeline_response_into_cls(cls_method, response, obj, headers):
+def deserialize_pipeline_response_into_cls(cls_method, response: "PipelineResponse", obj: Any, headers: Dict[str, Any]):
     try:
         deserialized_response = response.http_response
     except AttributeError:
@@ -42,7 +47,7 @@ def deserialize_pipeline_response_into_cls(cls_method, response, obj, headers):
     return cls_method(deserialized_response, obj, headers)
 
 
-def deserialize_blob_properties(response, obj, headers):
+def deserialize_blob_properties(response: "PipelineResponse", obj: Any, headers: Dict[str, Any]) -> BlobProperties:
     blob_properties = BlobProperties(
         metadata=deserialize_metadata(response, obj, headers),
         object_replication_source_properties=deserialize_ors_policies(response.http_response.headers),
@@ -56,7 +61,7 @@ def deserialize_blob_properties(response, obj, headers):
     return blob_properties
 
 
-def deserialize_ors_policies(policy_dictionary):
+def deserialize_ors_policies(policy_dictionary: Optional[Dict[str, str]]) -> Optional[List[ObjectReplicationPolicy]]:
 
     if policy_dictionary is None:
         return None
@@ -83,13 +88,21 @@ def deserialize_ors_policies(policy_dictionary):
     return result_list
 
 
-def deserialize_blob_stream(response, obj, headers):
+def deserialize_blob_stream(
+    response: "PipelineResponse",
+    obj: Any,
+    headers: Dict[str, Any]
+) -> Tuple["LocationMode", Any]:
     blob_properties = deserialize_blob_properties(response, obj, headers)
     obj.properties = blob_properties
     return response.http_response.location_mode, obj
 
 
-def deserialize_container_properties(response, obj, headers):
+def deserialize_container_properties(
+    response: "PipelineResponse",
+    obj: Any,
+    headers: Dict[str, Any]
+) -> ContainerProperties:
     metadata = deserialize_metadata(response, obj, headers)
     container_properties = ContainerProperties(
         metadata=metadata,
@@ -98,45 +111,50 @@ def deserialize_container_properties(response, obj, headers):
     return container_properties
 
 
-def get_page_ranges_result(ranges):
-    # type: (PageList) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]
-    page_range = []  # type: ignore
-    clear_range = []  # type: List
+def get_page_ranges_result(ranges: PageList) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]:
+    page_range = []
+    clear_range: List = []
     if ranges.page_range:
-        page_range = [{'start': b.start, 'end': b.end} for b in ranges.page_range]  # type: ignore
+        page_range = [{'start': b.start, 'end': b.end} for b in ranges.page_range]
     if ranges.clear_range:
         clear_range = [{'start': b.start, 'end': b.end} for b in ranges.clear_range]
-    return page_range, clear_range  # type: ignore
+    return page_range, clear_range
 
 
-# Deserialize a ServiceStats objects into a dict.
-def service_stats_deserialize(generated):
+def service_stats_deserialize(generated: "StorageServiceStats") -> Dict[str, Any]:
+    status = None
+    last_sync_time = None
+    if generated.geo_replication is not None:
+        status = generated.geo_replication.status
+        last_sync_time = generated.geo_replication.last_sync_time
     return {
         'geo_replication': {
-            'status': generated.geo_replication.status,
-            'last_sync_time': generated.geo_replication.last_sync_time,
+            'status': status,
+            'last_sync_time': last_sync_time
         }
     }
 
-# Deserialize a ServiceProperties objects into a dict.
-def service_properties_deserialize(generated):
+def service_properties_deserialize(generated: "StorageServiceProperties") -> Dict[str, Any]:
+    cors_list = None
+    if generated.cors is not None:
+        cors_list = [CorsRule._from_generated(cors) for cors in generated.cors]
     return {
         'analytics_logging': BlobAnalyticsLogging._from_generated(generated.logging),  # pylint: disable=protected-access
         'hour_metrics': Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
         'minute_metrics': Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
-        'cors': [CorsRule._from_generated(cors) for cors in generated.cors],  # pylint: disable=protected-access
+        'cors': cors_list,
         'target_version': generated.default_service_version,  # pylint: disable=protected-access
         'delete_retention_policy': RetentionPolicy._from_generated(generated.delete_retention_policy),  # pylint: disable=protected-access
         'static_website': StaticWebsite._from_generated(generated.static_website),  # pylint: disable=protected-access
     }
 
 
-def get_blob_properties_from_generated_code(generated):
+def get_blob_properties_from_generated_code(generated: "BlobItemInternal") -> BlobProperties:
     blob = BlobProperties()
-    if generated.name.encoded:
+    if generated.name.encoded and generated.name.content is not None:
         blob.name = unquote(generated.name.content)
     else:
-        blob.name = generated.name.content
+        blob.name = generated.name.content  #type: ignore
     blob_type = get_enum_value(generated.properties.blob_type)
     blob.blob_type = BlobType(blob_type) if blob_type else None
     blob.etag = generated.properties.etag
@@ -172,11 +190,11 @@ def get_blob_properties_from_generated_code(generated):
     blob.has_versions_only = generated.has_versions_only
     return blob
 
-def parse_tags(generated_tags: Optional[List["BlobTag"]]) -> Union[Dict[str, str], None]:
+def parse_tags(generated_tags: Optional["BlobTags"]) -> Union[Dict[str, str], None]:
     """Deserialize a list of BlobTag objects into a dict.
 
-    :param Optional[List[BlobTag]] generated_tags:
-        A list containing the BlobTag objects from generated code.
+    :param Optional[[BlobTags]] generated_tags:
+        The BlobTags objects from generated code.
     :returns: A dictionary of the BlobTag objects.
     :rtype: Dict[str, str] or None
     """
@@ -186,24 +204,31 @@ def parse_tags(generated_tags: Optional[List["BlobTag"]]) -> Union[Dict[str, str
     return None
 
 
-def load_single_xml_node(element: Element, name: str) -> Union[Element, None]:
+def load_single_xml_node(element: Element, name: str) -> Optional[Element]:
     return element.find(name)
 
 
-def load_many_xml_nodes(element: Element, name: str, wrapper: Element = None) -> List[Union[Element, None]]:
+def load_many_xml_nodes(
+    element: Element,
+    name: str,
+    wrapper: Optional[str] = None
+) -> Any:
     if wrapper:
-        element = load_single_xml_node(element, wrapper)
-    return list(element.findall(name))
+        element_output = load_single_xml_node(element, wrapper)
+    if element_output is not None:
+        return List[element_output.findall(name)]  #type: ignore
+    else:
+        return None
 
 
-def load_xml_string(element: Element, name: str) -> str:
+def load_xml_string(element: Element, name: str) -> Optional[str]:
     node = element.find(name)
     if node is None or not node.text:
         return None
     return node.text
 
 
-def load_xml_int(element: Element, name: str) -> int:
+def load_xml_int(element: Element, name: str) -> Optional[int]:
     node = element.find(name)
     if node is None or not node.text:
         return None
