@@ -26,6 +26,8 @@ Various documentation is available to help you get started
 
 ```bash
 pip install azure-ai-contentsafety
+# Optionally, install the dependencies for the sample for video analysis
+pip install decord tqdm numpy pillow
 ```
 
 ### Authenticate the client
