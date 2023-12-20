@@ -302,19 +302,20 @@ class _ChunkIterator(object):
 
 
 class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-attributes
-    """A streaming object to download from Azure Storage.
-
-    :ivar str name:
-        The name of the blob being downloaded.
-    :ivar str container:
-        The name of the container where the blob is.
-    :ivar ~azure.storage.blob.BlobProperties properties:
-        The properties of the blob being downloaded. If only a range of the data is being
-        downloaded, this will be reflected in the properties.
-    :ivar int size:
-        The size of the total data in the stream. This will be the byte range if specified,
-        otherwise the total size of the blob.
     """
+    A streaming object to download from Azure Storage.
+    """
+
+    name: str
+    """The name of the blob being downloaded."""
+    container: str
+    """The name of the container where the blob is."""
+    properties: "BlobProperties"
+    """The properties of the blob being downloaded. If only a range of the data is being
+    downloaded, this will be reflected in the properties."""
+    size: int
+    """The size of the total data in the stream. This will be the byte range if specified,
+    otherwise the total size of the blob."""
 
     def __init__(
         self,
@@ -396,7 +397,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         # Overwrite the content MD5 as it is the MD5 for the last range instead
         # of the stored MD5
         # TODO: Set to the stored MD5 when the service returns this
-        self.properties.content_md5 = None
+        self.properties.content_md5 = None  #type: ignore
 
     def __len__(self):
         return self.size
