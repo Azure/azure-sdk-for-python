@@ -14,12 +14,7 @@ from ._shared.shared_access_signature import QueryStringConstants, SharedAccessS
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from ..blob import (
-        AccountSasPermissions,
-        BlobSasPermissions,
-        ContainerSasPermissions,
-        ResourceTypes
-    )
+    from ..blob import AccountSasPermissions, BlobSasPermissions, ContainerSasPermissions, ResourceTypes
 
 
 class BlobQueryStringConstants(object):
