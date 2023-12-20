@@ -24,36 +24,33 @@ Add the following method to the bottom of the source file `azure\ai\vision\image
          Use 'str' to provide a publicly accessible URL of the image to analyze. Use
          'bytes' to provide the image content directly.
         :type image_content: str or bytes
-        :param visual_features: A list of visual features to analyze. Required. Seven visual features 
-         are supported: Caption, DenseCaptions, Read (OCR), Tags, Objects, SmartCrops, and People. At 
+        :param visual_features: A list of visual features to analyze. Required. Seven visual features
+         are supported: Caption, DenseCaptions, Read (OCR), Tags, Objects, SmartCrops, and People. At
          least one visual feature must be specified.
         :type visual_features: list[~azure.ai.vision.imageanalysis.models.VisualFeatures]
-        :param language: The desired language for result generation (a two-letter language code).
-         If this option is not specified, the default value 'en' is used (English).
-         See https://aka.ms/cv-languages for a list of supported languages.
-         At the moment, only tags can be generated in none-English languages. Default value is None.
-        :type language: str
-        :param gender_neutral_caption: Boolean flag for enabling gender-neutral captioning for
-         Caption and Dense Captions features.
-         By default captions may contain gender terms (for example: 'man', 'woman', or 'boy', 'girl').
-         If you set this to "true", those will be replaced with gender-neutral terms (for example:
-         'person' or 'child'). Default value is None.
-        :type gender_neutral_caption: bool
-        :param smart_crops_aspect_ratios: A list of aspect ratios to use for smart cropping.
-         Aspect ratios are calculated by dividing the target crop width in pixels by the height in
-         pixels.
-         Supported values are between 0.75 and 1.8 (inclusive).
-         If this parameter is not specified, the service will return one crop region with an aspect
-         ratio it sees fit between 0.5 and 2.0 (inclusive). Default value is None.
-        :type smart_crops_aspect_ratios: list[float]
-        :param model_version: The version of cloud AI-model used for analysis.
-         The format is the following: 'latest' (default value) or 'YYYY-MM-DD' or 'YYYY-MM-DD-preview',
+        :keyword language: The desired language for result generation (a two-letter language code).
+         Defaults to 'en' (English). See https://aka.ms/cv-languages for a list of supported languages.
+         At the moment, only tags can be generated in none-English languages.
+        :paramtype language: str
+        :keyword gender_neutral_caption: Boolean flag for enabling gender-neutral captioning for
+         Caption and Dense Captions features. Defaults to 'false'.
+         Captions may contain gender terms (for example: 'man', 'woman', or 'boy', 'girl').
+         If you set this to 'true', those will be replaced with gender-neutral terms (for example:
+         'person' or 'child').
+        :paramtype gender_neutral_caption: bool
+        :keyword smart_crops_aspect_ratios: A list of aspect ratios to use for smart cropping.
+         Defaults to one crop region with an aspect ratio the service sees fit between
+         0.5 and 2.0 (inclusive). Aspect ratios are calculated by dividing the target crop
+         width in pixels by the height in pixels. When set, supported values are
+         between 0.75 and 1.8 (inclusive).
+        :paramtype smart_crops_aspect_ratios: list[float]
+        :keyword model_version: The version of cloud AI-model used for analysis. Defaults to 'latest',
+         for the latest AI model with recent improvements.
+         The format is the following: 'latest' or 'YYYY-MM-DD' or 'YYYY-MM-DD-preview',
          where 'YYYY', 'MM', 'DD' are the year, month and day associated with the model.
-         This is not commonly set, as the default always gives the latest AI model with recent
-         improvements.
-         If however you would like to make sure analysis results do not change over time, set this
-         value to a specific model version. Default value is None.
-        :type model_version: str
+         If you would like to make sure analysis results do not change over time, set this
+         value to a specific model version.
+        :paramtype model_version: str
         :return: ImageAnalysisResult. The ImageAnalysisResult is compatible with MutableMapping
         :rtype: ~azure.ai.vision.imageanalysis.models.ImageAnalysisResult
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -102,36 +99,33 @@ Add the following method to the bottom of the source file `azure\ai\vision\image
          Use 'str' to provide a publicly accessible URL of the image to analyze. Use
          'bytes' to provide the image content directly.
         :type image_content: str or bytes
-        :param visual_features: A list of visual features to analyze. Required. Seven visual features 
-         are supported: Caption, DenseCaptions, Read (OCR), Tags, Objects, SmartCrops, and People. At 
+        :param visual_features: A list of visual features to analyze. Required. Seven visual features
+         are supported: Caption, DenseCaptions, Read (OCR), Tags, Objects, SmartCrops, and People. At
          least one visual feature must be specified.
         :type visual_features: list[~azure.ai.vision.imageanalysis.models.VisualFeatures]
-        :param language: The desired language for result generation (a two-letter language code).
-         If this option is not specified, the default value 'en' is used (English).
-         See https://aka.ms/cv-languages for a list of supported languages.
-         At the moment, only tags can be generated in none-English languages. Default value is None.
-        :type language: str
-        :param gender_neutral_caption: Boolean flag for enabling gender-neutral captioning for
-         Caption and Dense Captions features.
-         By default captions may contain gender terms (for example: 'man', 'woman', or 'boy', 'girl').
-         If you set this to "true", those will be replaced with gender-neutral terms (for example:
-         'person' or 'child'). Default value is None.
-        :type gender_neutral_caption: bool
-        :param smart_crops_aspect_ratios: A list of aspect ratios to use for smart cropping.
-         Aspect ratios are calculated by dividing the target crop width in pixels by the height in
-         pixels.
-         Supported values are between 0.75 and 1.8 (inclusive).
-         If this parameter is not specified, the service will return one crop region with an aspect
-         ratio it sees fit between 0.5 and 2.0 (inclusive). Default value is None.
-        :type smart_crops_aspect_ratios: list[float]
-        :param model_version: The version of cloud AI-model used for analysis.
-         The format is the following: 'latest' (default value) or 'YYYY-MM-DD' or 'YYYY-MM-DD-preview',
+        :keyword language: The desired language for result generation (a two-letter language code).
+         Defaults to 'en' (English). See https://aka.ms/cv-languages for a list of supported languages.
+         At the moment, only tags can be generated in none-English languages.
+        :paramtype language: str
+        :keyword gender_neutral_caption: Boolean flag for enabling gender-neutral captioning for
+         Caption and Dense Captions features. Defaults to 'false'.
+         Captions may contain gender terms (for example: 'man', 'woman', or 'boy', 'girl').
+         If you set this to 'true', those will be replaced with gender-neutral terms (for example:
+         'person' or 'child').
+        :paramtype gender_neutral_caption: bool
+        :keyword smart_crops_aspect_ratios: A list of aspect ratios to use for smart cropping.
+         Defaults to one crop region with an aspect ratio the service sees fit between
+         0.5 and 2.0 (inclusive). Aspect ratios are calculated by dividing the target crop
+         width in pixels by the height in pixels. When set, supported values are
+         between 0.75 and 1.8 (inclusive).
+        :paramtype smart_crops_aspect_ratios: list[float]
+        :keyword model_version: The version of cloud AI-model used for analysis. Defaults to 'latest',
+         for the latest AI model with recent improvements.
+         The format is the following: 'latest' or 'YYYY-MM-DD' or 'YYYY-MM-DD-preview',
          where 'YYYY', 'MM', 'DD' are the year, month and day associated with the model.
-         This is not commonly set, as the default always gives the latest AI model with recent
-         improvements.
-         If however you would like to make sure analysis results do not change over time, set this
-         value to a specific model version. Default value is None.
-        :type model_version: str
+         If you would like to make sure analysis results do not change over time, set this
+         value to a specific model version.
+        :paramtype model_version: str
         :return: ImageAnalysisResult. The ImageAnalysisResult is compatible with MutableMapping
         :rtype: ~azure.ai.vision.imageanalysis.models.ImageAnalysisResult
         :raises: ~azure.core.exceptions.HttpResponseError
