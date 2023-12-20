@@ -53,8 +53,8 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         snapshot: Optional[str] = None,
         version_id: Optional[str] = None,
         permission: Optional[Union["BlobSasPermissions", str]] = None,
-        expiry: Optional[Union[datetime, str]] = None,
-        start: Optional[Union[datetime, str]] = None,
+        expiry: Optional[Union["datetime", str]] = None,
+        start: Optional[Union["datetime", str]] = None,
         policy_id: Optional[str] = None,
         ip: Optional[str] = None,
         protocol: Optional[str] = None,
@@ -74,7 +74,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :param str blob_name:
             Name of blob.
         :param str snapshot:
-            The snapshot parameter is an opaque DateTime value that,
+            The snapshot parameter is an opaque datetime value that,
             when present, specifies the blob snapshot to grant permission.
         :param str version_id:
             An optional blob version ID. This parameter is only applicable for versioning-enabled
@@ -160,8 +160,8 @@ class BlobSharedAccessSignature(SharedAccessSignature):
     def generate_container(
         self, container_name: str,
         permission: Optional[Union["ContainerSasPermissions", str]] = None,
-        expiry: Optional[Union[datetime, str]] = None,
-        start: Optional[Union[datetime, str]] = None,
+        expiry: Optional[Union["datetime", str]] = None,
+        start: Optional[Union["datetime", str]] = None,
         policy_id: Optional[str] = None,
         ip: Optional[str] = None,
         protocol: Optional[str] = None,
@@ -331,8 +331,8 @@ def generate_account_sas(
     account_key: str,
     resource_types: Union["ResourceTypes", str],
     permission: Union["AccountSasPermissions", str],
-    expiry: Union[datetime, str],
-    start: Optional[Union[datetime, str]],
+    expiry: Union["datetime", str],
+    start: Optional[Union["datetime", str]],
     ip: Optional[str] = None,
     **kwargs: Any
 ) -> str:
@@ -404,8 +404,8 @@ def generate_container_sas(
     account_key: Optional[str] = None,
     user_delegation_key: Optional[UserDelegationKey] = None,
     permission: Optional[Union["ContainerSasPermissions", str]] = None,
-    expiry: Optional[Union[datetime, str]] = None,
-    start: Optional[Union[datetime, str]] = None,
+    expiry: Optional[Union["datetime", str]] = None,
+    start: Optional[Union["datetime", str]] = None,
     policy_id: Optional[str] = None,
     ip: Optional[str] = None,
     **kwargs: Any
@@ -526,8 +526,8 @@ def generate_blob_sas(
     account_key: Optional[str] = None,
     user_delegation_key: Optional[UserDelegationKey] = None,
     permission: Optional[Union["BlobSasPermissions", str]] = None,
-    expiry: Optional[Union[datetime, str]] = None,
-    start: Optional[Union[datetime, str]] = None,
+    expiry: Optional[Union["datetime", str]] = None,
+    start: Optional[Union["datetime", str]] = None,
     policy_id: Optional[str] = None,
     ip: Optional[str] = None,
     **kwargs: Any

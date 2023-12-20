@@ -5,37 +5,36 @@
 # --------------------------------------------------------------------------
 
 from io import BytesIO
-from typing import Union, Iterable, IO  # pylint: disable=unused-import
+from typing import Any, Dict, Generator, IO, Iterable, Optional, Union
 
-from ._shared.avro.datafile import DataFileReader
 from ._shared.avro.avro_io import DatumReader
+from ._shared.avro.datafile import DataFileReader
 
 
 class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
-    """A streaming object to read query results.
+    """A streaming object to read query results."""
 
-    :ivar str name:
-        The name of the blob being quered.
-    :ivar str container:
-        The name of the container where the blob is.
-    :ivar dict response_headers:
-        The response_headers of the quick query request.
-    :ivar bytes record_delimiter:
-        The delimiter used to separate lines, or records with the data. The `records`
-        method will return these lines via a generator.
-    """
+    name: str
+    """The name of the blob being quered."""
+    container: str
+    """The name of the container where the blob is."""
+    response_headers: Dict[str, Any]
+    """The response_headers of the quick query request."""
+    record_delimiter: str
+    """The delimiter used to separate lines, or records with the data. The `records`
+    method will return these lines via a generator."""
 
     def __init__(
         self,
-        name=None,
-        container=None,
-        errors=None,
-        record_delimiter='\n',
-        encoding=None,
-        headers=None,
-        response=None,
-        error_cls=None,
-    ):
+        name: str,
+        container: str,
+        headers: Dict[str, Any],
+        errors: Any = None,
+        record_delimiter: str = '\n',
+        encoding: Any = None,
+        response: Any = None,
+        error_cls = None,
+    ) -> None:
         self.name = name
         self.container = container
         self.response_headers = headers
@@ -51,7 +50,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
     def __len__(self):
         return self._size
 
-    def _process_record(self, result):
+    def _process_record(self, result: Dict[str, Any]) -> Optional[Any]:
         self._size = result.get('totalBytes', self._size)
         self._bytes_processed = result.get('bytesScanned', self._bytes_processed)
         if 'data' in result:
@@ -67,7 +66,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
                 self._errors(error)
         return None
 
-    def _iter_stream(self):
+    def _iter_stream(self) -> Generator[Any, Any, Any]:
         if self._first_result is not None:
             yield self._first_result
         for next_result in self._parsed_results:
@@ -75,8 +74,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
             if processed_result is not None:
                 yield processed_result
 
-    def readall(self):
-        # type: () -> Union[bytes, str]
+    def readall(self) -> Union[bytes, str]:
         """Return all query results.
 
         This operation is blocking until all data is downloaded.
@@ -93,8 +91,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
             return data.decode(self._encoding)
         return data
 
-    def readinto(self, stream):
-        # type: (IO) -> None
+    def readinto(self, stream) -> None:
         """Download the query result to a stream.
 
         :param IO stream:
@@ -105,8 +102,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
         for record in self._iter_stream():
             stream.write(record)
 
-    def records(self):
-        # type: () -> Iterable[Union[bytes, str]]
+    def records(self) -> Iterable[Union[bytes, str]]:
         """Returns a record generator for the query result.
 
         Records will be returned line by line.
@@ -130,14 +126,14 @@ class QuickQueryStreamer(object):
     File-like streaming iterator.
     """
 
-    def __init__(self, generator):
+    def __init__(self, generator: Any) -> None:
         self.generator = generator
         self.iterator = iter(generator)
         self._buf = b""
         self._point = 0
         self._download_offset = 0
         self._buf_start = 0
-        self.file_length = None
+        self.file_length: Optional[int] = None
 
     def __len__(self):
         return self.file_length
@@ -167,7 +163,7 @@ class QuickQueryStreamer(object):
         if self._point < 0:    # pylint: disable=consider-using-max-builtin
             self._point = 0  # XXX is this right?
 
-    def read(self, size):
+    def read(self, size: int) -> Any:
         try:
             # keep reading from the generator until the buffer of this stream has enough data to read
             while self._point + size > self._download_offset:
