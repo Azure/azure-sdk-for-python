@@ -23,7 +23,6 @@ from ._encryption import (
     decrypt_blob,
     get_adjusted_download_range_and_offset,
     is_encryption_v2,
-    KeyEncryptionKey,
     parse_encryption_data
 )
 
@@ -56,35 +55,27 @@ def process_range_and_offset(
     return (start_range, end_range), (start_offset, end_offset)
 
 
-def process_content(data, start_offset: int, end_offset: int, encryption: Dict[str, Any]):
+def process_content(data: Any, start_offset: int, end_offset: int, encryption: Dict[str, Any]):
     if data is None:
         raise ValueError("Response cannot be None.")
 
-    content = b"".join(list(data))
+    content = b"".join(list(data))  #type: ignore
 
-    required: Optional[bool] = None
-    key: Optional[KeyEncryptionKey] = None
-    resolver: Optional[Callable[[str], KeyEncryptionKey]] = None
-    if content:
-        if encryption.get('required') is not None and isinstance(encryption.get('required'), bool):
-            required = encryption.get('required')
-        if encryption.get('key') is not None and isinstance(encryption.get('key'), bool):
-            key = encryption.get('key')
-        if encryption.get('resolver') is not None and isinstance(encryption.get('resolver'), (Callable, KeyEncryptionKey)):
-            resolver = encryption.get('resolver')
-        if required is not None and key is not None and resolver is not None:
-            try:
+    if content and encryption.get("key") is not None or encryption.get("resolver") is not None:
+        try:
+            if encryption.get("required") is not None and isinstance(encryption.get("required"), bool):
+                required = encryption.get("required")
                 return decrypt_blob(
                     required,
-                    key,
-                    resolver,
+                    encryption.get("key"),
+                    encryption.get("resolver"),
                     content,
                     start_offset,
                     end_offset,
                     data.response.headers,
                 )
-            except Exception as error:
-                raise HttpResponseError(message="Decryption failed.", response=data.response, error=error) from error
+        except Exception as error:
+            raise HttpResponseError(message="Decryption failed.", response=data.response, error=error) from error
     return content
 
 
