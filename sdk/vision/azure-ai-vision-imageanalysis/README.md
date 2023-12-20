@@ -137,7 +137,7 @@ with open("sample.jpg", 'rb') as f:
     image_buffer = bytes(f.read())
 
 # Get a caption for the image. This will be a synchronously (blocking) call.
-result = client.analyze(
+result = client.analyze( # type: ignore[attr-defined]
     image_content = image_buffer,
     visual_features = [ VisualFeatures.CAPTION ],
     gender_neutral_caption = True) # Optional (default is False)
@@ -163,7 +163,7 @@ This example is similar to the above, expect it calls the `analyze` method and p
 
 ```python
 # Get a caption for the image. This will be a synchronously (blocking) call.
-result = client.analyze(
+result = client.analyze( # type: ignore[attr-defined]
     image_content = "https://aka.ms/azai/vision/image-analysis-sample.jpg",
     visual_features = [ VisualFeatures.CAPTION ],
     gender_neutral_caption = True) # Optional (default is False)
@@ -191,7 +191,7 @@ with open("sample.jpg", 'rb') as f:
     image_buffer = bytes(f.read())
 
 # Extract text (OCR) from an image stream. This will be a synchronously (blocking) call.
-result = client.analyze(
+result = client.analyze( # type: ignore[attr-defined]
     image_content = image_buffer,
     visual_features = [ VisualFeatures.READ ])
 
@@ -220,7 +220,7 @@ This example is similar to the above, expect it calls the `analyze` method and p
 
 ```python
 # Extract text (OCR) from an image stream. This will be a synchronously (blocking) call.
-result = client.analyze(
+result = client.analyze( # type: ignore[attr-defined]
     image_content = "https://aka.ms/azai/vision/image-analysis-sample.jpg",
     visual_features = [ VisualFeatures.READ ])
 
