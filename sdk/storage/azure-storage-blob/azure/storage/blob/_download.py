@@ -766,7 +766,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         # Write the content to the user stream if there is data left
         if self._offset < len(self._current_content):
             content = self._current_content[self._offset:]
-            stream.write(BytesIO(content))
+            stream.write(content)
             self._offset += len(content)
             if self._progress_hook:
                 self._progress_hook(len(content), self.size)
