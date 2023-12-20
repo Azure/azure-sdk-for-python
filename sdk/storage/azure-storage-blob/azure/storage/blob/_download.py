@@ -351,7 +351,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         self._download_complete = False
         self._current_content: bytes = b''
         self._file_size: Optional[int] = None
-        self._non_empty_ranges: List[Dict[str, int]] = []
+        self._non_empty_ranges: Optional[List[Dict[str, int]]] = None
         self._response = None
         self._encryption_data: Optional["_EncryptionData"] = None
         self._offset = 0
@@ -566,7 +566,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
             iter_downloader = _ChunkDownloader(
                 client=self._clients.blob,
-                non_empty_ranges=self._non_empty_ranges,
+                non_empty_ranges=self._non_empty_ranges,  #type: ignore
                 total_size=self.size,
                 chunk_size=self._config.max_chunk_get_size,
                 current_progress=self._first_get_size,
