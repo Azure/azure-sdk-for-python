@@ -287,11 +287,18 @@ class DatabaseProxy(object):
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
+        :keyword List[Dict[str, str]] computed_properties: Computed properties must be at the top level in the item and
+            can't have a nested path. Each computed property definition has two components: a name and a query.
+            The name is the computed property name, and the query defines logic to calculate the property value
+            for each item. Computed properties are scoped to an individual item and therefore can't use values
+            from multiple items or rely on other computed properties. Every container can have
+            a maximum of 20 computed properties.
         :returns: A `ContainerProxy` instance representing the container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
         """
         analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
+        computed_properties = kwargs.pop("computed_properties", None)
         try:
             container_proxy = self.get_container_client(id)
             container_proxy.read(
@@ -310,6 +317,7 @@ class DatabaseProxy(object):
                 unique_key_policy=unique_key_policy,
                 conflict_resolution_policy=conflict_resolution_policy,
                 analytical_storage_ttl=analytical_storage_ttl,
+                computed_properties=computed_properties
             )
 
     @distributed_trace
