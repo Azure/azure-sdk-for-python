@@ -15,39 +15,34 @@ from ._serialize import get_modify_conditions
 from ._shared.response_handlers import process_storage_error, return_response_headers
 
 if TYPE_CHECKING:
+    from azure.storage.blob import BlobClient, ContainerClient
     from datetime import datetime
-
-    BlobClient = TypeVar("BlobClient")
-    ContainerClient = TypeVar("ContainerClient")
 
 
 class BlobLeaseClient(object):  # pylint: disable=client-accepts-api-version-keyword
     """Creates a new BlobLeaseClient.
 
-    This client provides lease operations on a BlobClient or ContainerClient.
+    This client provides lease operations on a BlobClient or ContainerClient."""
 
-    :ivar str id:
-        The ID of the lease currently being maintained. This will be `None` if no
-        lease has yet been acquired.
-    :ivar str etag:
-        The ETag of the lease currently being maintained. This will be `None` if no
-        lease has yet been acquired or modified.
-    :ivar ~datetime.datetime last_modified:
-        The last modified timestamp of the lease currently being maintained.
-        This will be `None` if no lease has yet been acquired or modified.
+    id: str
+    """The ID of the lease currently being maintained. This will be `None` if no
+    lease has yet been acquired."""
+    etag: Optional[str]
+    """The ETag of the lease currently being maintained. This will be `None` if no
+    lease has yet been acquired or modified."""
+    last_modified: Optional["datetime"]
+    """The last modified timestamp of the lease currently being maintained.
+    This will be `None` if no lease has yet been acquired or modified."""
+    client: Union["BlobClient", "ContainerClient"]
+    """The client of the blob or container to lease."""
+    lease_id: str
+    """A string representing the lease ID of an existing lease. This value does not
+    need to be specified in order to acquire a new lease, or break one."""
 
-    :param client:
-        The client of the blob or container to lease.
-    :type client: ~azure.storage.blob.BlobClient or
-        ~azure.storage.blob.ContainerClient
-    :param str lease_id:
-        A string representing the lease ID of an existing lease. This value does not
-        need to be specified in order to acquire a new lease, or break one.
-    """
     def __init__(
-            self, client, lease_id=None
-    ):  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
-        # type: (Union[BlobClient, ContainerClient], Optional[str]) -> None
+        self, client: Union["BlobClient", "ContainerClient"],
+        lease_id: Optional[str] = None
+    ) -> None:  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
         self.id = lease_id or str(uuid.uuid4())
         self.last_modified = None
         self.etag = None
@@ -65,8 +60,7 @@ class BlobLeaseClient(object):  # pylint: disable=client-accepts-api-version-key
         self.release()
 
     @distributed_trace
-    def acquire(self, lease_duration=-1, **kwargs):
-        # type: (int, **Any) -> None
+    def acquire(self, lease_duration: int = -1, **kwargs: Any) -> None:
         """Requests a new lease.
 
         If the container does not have an active lease, the Blob service creates a
@@ -119,13 +113,12 @@ class BlobLeaseClient(object):  # pylint: disable=client-accepts-api-version-key
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
-        self.etag = response.get('etag')  # type: str
+        self.id = response.get('lease_id')
+        self.last_modified = response.get('last_modified')
+        self.etag = response.get('etag')
 
     @distributed_trace
-    def renew(self, **kwargs):
-        # type: (Any) -> None
+    def renew(self, **kwargs: Any) -> None:
         """Renews the lease.
 
         The lease can be renewed if the lease ID specified in the
@@ -175,13 +168,12 @@ class BlobLeaseClient(object):  # pylint: disable=client-accepts-api-version-key
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        self.etag = response.get('etag')  # type: str
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
+        self.etag = response.get('etag')
+        self.id = response.get('lease_id')
+        self.last_modified = response.get('last_modified')
 
     @distributed_trace
-    def release(self, **kwargs):
-        # type: (Any) -> None
+    def release(self, **kwargs: Any) -> None:
         """Release the lease.
 
         The lease may be released if the client lease id specified matches
@@ -229,13 +221,12 @@ class BlobLeaseClient(object):  # pylint: disable=client-accepts-api-version-key
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        self.etag = response.get('etag')  # type: str
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
+        self.etag = response.get('etag')
+        self.id = response.get('lease_id')
+        self.last_modified = response.get('last_modified')
 
     @distributed_trace
-    def change(self, proposed_lease_id, **kwargs):
-        # type: (str, Any) -> None
+    def change(self, proposed_lease_id: str, **kwargs: Any) -> None:
         """Change the lease ID of an active lease.
 
         :param str proposed_lease_id:
@@ -283,13 +274,12 @@ class BlobLeaseClient(object):  # pylint: disable=client-accepts-api-version-key
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        self.etag = response.get('etag')  # type: str
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
+        self.etag = response.get('etag')
+        self.id = response.get('lease_id')
+        self.last_modified = response.get('last_modified')
 
     @distributed_trace
-    def break_lease(self, lease_break_period=None, **kwargs):
-        # type: (Optional[int], Any) -> int
+    def break_lease(self, lease_break_period: Optional[int] = None, **kwargs: Any) -> int:
         """Break the lease, if the container or blob has an active lease.
 
         Once a lease is broken, it cannot be renewed. Any authorized request can break the lease;
