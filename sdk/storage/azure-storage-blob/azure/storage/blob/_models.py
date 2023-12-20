@@ -7,7 +7,7 @@
 # pylint: disable=super-init-not-called, too-many-lines
 
 from enum import Enum
-from typing import Dict, List, Optional, Union, TYPE_CHECKING
+from typing import Any, Callable, Dict, List, Optional, Union, TYPE_CHECKING
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.paging import PageIterator
@@ -16,23 +16,28 @@ from azure.core.exceptions import HttpResponseError
 from ._shared import decode_base64_to_bytes
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from ._shared.models import DictMixin, get_enum_value
+from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import ArrowField
+from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import Logging as GeneratedLogging
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import StaticWebsite as GeneratedStaticWebsite
-from ._generated.models import CorsRule as GeneratedCorsRule
-from ._generated.models import AccessPolicy as GenAccessPolicy
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from ._generated.models import AccessTier
+    from ._generated.models import AccessTier, PageList
 
 # Parse a generated PageList into a single list of PageRange sorted by start.
-def parse_page_list(page_list):
+def parse_page_list(page_list: "PageList") -> List["PageRange"]:
 
     page_ranges = page_list.page_range
     clear_ranges = page_list.clear_range
+
+    if page_ranges is None:
+        raise ValueError("PageList's 'page_range' is malformed or None.")
+    if clear_ranges is None:
+        raise ValueError("PageList's 'clear_ranges' is malformed or None.")
 
     ranges = []
     p_i, c_i = 0, 0
@@ -43,18 +48,18 @@ def parse_page_list(page_list):
 
         if p.start < c.start:
             ranges.append(
-                PageRange(p.start, p.end, cleared=False)
+                PageRange(start=p.start, end=p.end, cleared=False)
             )
             p_i += 1
         else:
             ranges.append(
-                PageRange(c.start, c.end, cleared=True)
+                PageRange(start=c.start, end=c.end, cleared=True)
             )
             c_i += 1
 
     # Grab remaining elements in either list
-    ranges += [PageRange(r.start, r.end, cleared=False) for r in page_ranges[p_i:]]
-    ranges += [PageRange(r.start, r.end, cleared=True) for r in clear_ranges[c_i:]]
+    ranges += [PageRange(start=r.start, end=r.end, cleared=False) for r in page_ranges[p_i:]]
+    ranges += [PageRange(start=r.start, end=r.end, cleared=True) for r in clear_ranges[c_i:]]
 
     return ranges
 
@@ -185,7 +190,7 @@ class BlobAnalyticsLogging(GeneratedLogging):
         policy will be disabled by default.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self.version = kwargs.get('version', '1.0')
         self.delete = kwargs.get('delete', False)
         self.read = kwargs.get('read', False)
@@ -221,7 +226,7 @@ class Metrics(GeneratedMetrics):
         policy will be disabled by default.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self.version = kwargs.get('version', '1.0')
         self.enabled = kwargs.get('enabled', False)
         self.include_apis = kwargs.get('include_apis')
@@ -246,13 +251,13 @@ class RetentionPolicy(GeneratedRetentionPolicy):
     :param bool enabled:
         Indicates whether a retention policy is enabled for the storage service.
         The default value is False.
-    :param int days:
+    :param Optional[int] days:
         Indicates the number of days that metrics or logging or
         soft-deleted data should be retained. All data older than this value will
         be deleted. If enabled=True, the number of days must be specified.
     """
 
-    def __init__(self, enabled=False, days=None):
+    def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
         super(RetentionPolicy, self).__init__(enabled=enabled, days=days, allow_permanent_delete=None)
         if self.enabled and (self.days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
@@ -281,7 +286,7 @@ class StaticWebsite(GeneratedStaticWebsite):
         Absolute path of the default index page.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self.enabled = kwargs.get('enabled', False)
         if self.enabled:
             self.index_document = kwargs.get('index_document')
@@ -332,7 +337,7 @@ class CorsRule(GeneratedCorsRule):
         preflight response.
     """
 
-    def __init__(self, allowed_origins, allowed_methods, **kwargs):
+    def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
         self.allowed_origins = ','.join(allowed_origins)
         self.allowed_methods = ','.join(allowed_methods)
         self.allowed_headers = ','.join(kwargs.get('allowed_headers', []))
@@ -355,40 +360,40 @@ class ContainerProperties(DictMixin):
 
     Returned ``ContainerProperties`` instances expose these values through a
     dictionary interface, for example: ``container_props["last_modified"]``.
-    Additionally, the container name is available as ``container_props["name"]``.
+    Additionally, the container name is available as ``container_props["name"]``."""
 
-    :ivar str name:
-        Name of the container.
-    :ivar ~datetime.datetime last_modified:
-        A datetime object representing the last time the container was modified.
-    :ivar str etag:
-        The ETag contains a value that you can use to perform operations
-        conditionally.
-    :ivar ~azure.storage.blob.LeaseProperties lease:
-        Stores all the lease information for the container.
-    :ivar str public_access: Specifies whether data in the container may be accessed
-        publicly and the level of access.
-    :ivar bool has_immutability_policy:
-        Represents whether the container has an immutability policy.
-    :ivar bool has_legal_hold:
-        Represents whether the container has a legal hold.
-    :ivar bool immutable_storage_with_versioning_enabled:
-        Represents whether immutable storage with versioning enabled on the container.
+    name: Optional[str]
+    """Name of the container."""
+    last_modified: Optional["datetime"]
+    """A datetime object representing the last time the container was modified."""
+    etag: Optional[str]
+    """The ETag contains a value that you can use to perform operations
+        conditionally."""
+    lease: "LeaseProperties"
+    """Stores all the lease information for the container."""
+    public_access: Optional[str]
+    """Specifies whether data in the container may be accessed publicly and the level of access."""
+    has_immutability_policy: Optional[bool]
+    """Represents whether the container has an immutability policy."""
+    has_legal_hold: Optional[bool]
+    """Represents whether the container has a legal hold."""
+    immutable_storage_with_versioning_enabled: Optional[bool]
+    """Represents whether immutable storage with versioning enabled on the container.
 
         .. versionadded:: 12.10.0
             This was introduced in API version '2020-10-02'.
-
-    :ivar dict metadata: A dict with name-value pairs to associate with the
-        container as metadata.
-    :ivar ~azure.storage.blob.ContainerEncryptionScope encryption_scope:
-        The default encryption scope configuration for the container.
-    :ivar bool deleted:
-        Whether this container was deleted.
-    :ivar str version:
-        The version of a deleted container.
     """
+    metadata: Optional[Dict[str, Any]]
+    """A dict with name-value pairs to associate with the
+        container as metadata."""
+    encryption_scope: Optional["ContainerEncryptionScope"]
+    """The default encryption scope configuration for the container."""
+    deleted: Optional[bool]
+    """Whether this container was deleted."""
+    version: Optional[str]
+    """The version of a deleted container."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self.name = None
         self.last_modified = kwargs.get('Last-Modified')
         self.etag = kwargs.get('ETag')
@@ -429,24 +434,36 @@ class ContainerProperties(DictMixin):
 class ContainerPropertiesPaged(PageIterator):
     """An Iterable of Container properties.
 
-    :ivar str service_endpoint: The service URL.
-    :ivar str prefix: A container name prefix being used to filter the list.
-    :ivar str marker: The continuation token of the current page of results.
-    :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str continuation_token: The continuation token to retrieve the next page of results.
-    :ivar str location_mode: The location mode being used to list results. The available
-        options include "primary" and "secondary".
-    :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.blob.ContainerProperties)
-
-    :param callable command: Function to retrieve the next page of items.
-    :param str prefix: Filters the results to return only containers whose names
+    :param Callable command: Function to retrieve the next page of items.
+    :param Optional[str] prefix: Filters the results to return only containers whose names
         begin with the specified prefix.
-    :param int results_per_page: The maximum number of container names to retrieve per
+    :param Optional[int] results_per_page: The maximum number of container names to retrieve per
         call.
-    :param str continuation_token: An opaque continuation token.
+    :param Optional[str] continuation_token: An opaque continuation token.
     """
-    def __init__(self, command, prefix=None, results_per_page=None, continuation_token=None):
+
+    service_endpoint: Optional[str] 
+    """The service URL."""
+    prefix: Optional[str] 
+    """A container name prefix being used to filter the list."""
+    marker: Optional[str]
+    """The continuation token of the current page of results."""
+    results_per_page: Optional[int]
+    """The maximum number of results retrieved per API call."""
+    continuation_token: Optional[str]
+    """The continuation token to retrieve the next page of results."""
+    location_mode: Optional[str]
+    """The location mode being used to list results. The available
+        options include "primary" and "secondary"."""
+    current_page: List["ContainerProperties"]
+    """The current page of listed results."""
+    
+    def __init__(
+        self, command: Callable,
+        prefix: Optional[str] = None,
+        results_per_page: Optional[int] = None,
+        continuation_token: Optional[str] = None
+    ) -> None:
         super(ContainerPropertiesPaged, self).__init__(
             get_next=self._get_next_cb,
             extract_data=self._extract_data_cb,
@@ -499,7 +516,7 @@ class ImmutabilityPolicy(DictMixin):
         "Mutable" can only be returned by service, don't set to "Mutable".
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self.expiry_time = kwargs.pop('expiry_time', None)
         self.policy_mode = kwargs.pop('policy_mode', None)
 
@@ -521,7 +538,7 @@ class FilteredBlob(DictMixin):
     :ivar tags: Key value pairs of blob tags.
     :type tags: Dict[str, str]
     """
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self.name = kwargs.get('name', None)
         self.container_name = kwargs.get('container_name', None)
         self.tags = kwargs.get('tags', None)
@@ -538,7 +555,7 @@ class LeaseProperties(DictMixin):
         When a blob is leased, specifies whether the lease is of infinite or fixed duration.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self.status = get_enum_value(kwargs.get('x-ms-lease-status'))
         self.state = get_enum_value(kwargs.get('x-ms-lease-state'))
         self.duration = get_enum_value(kwargs.get('x-ms-lease-duration'))
@@ -555,33 +572,38 @@ class LeaseProperties(DictMixin):
 class ContentSettings(DictMixin):
     """The content settings of a blob.
 
-    :param str content_type:
+    :param Optional[str] content_type:
         The content type specified for the blob. If no content type was
         specified, the default content type is application/octet-stream.
-    :param str content_encoding:
+    :param Optional[str] content_encoding:
         If the content_encoding has previously been set
         for the blob, that value is stored.
-    :param str content_language:
+    :param Optional[str] content_language:
         If the content_language has previously been set
         for the blob, that value is stored.
-    :param str content_disposition:
+    :param Optional[str] content_disposition:
         content_disposition conveys additional information about how to
         process the response payload, and also can be used to attach
         additional metadata. If content_disposition has previously been set
         for the blob, that value is stored.
-    :param str cache_control:
+    :param Optional[str] cache_control:
         If the cache_control has previously been set for
         the blob, that value is stored.
-    :param bytearray content_md5:
+    :param Optional[bytearray] content_md5:
         If the content_md5 has been set for the blob, this response
         header is stored so that the client can check for message content
         integrity.
     """
 
     def __init__(
-            self, content_type=None, content_encoding=None,
-            content_language=None, content_disposition=None,
-            cache_control=None, content_md5=None, **kwargs):
+        self, content_type: Optional[str] = None,
+        content_encoding: Optional[str] = None,
+        content_language: Optional[str] = None,
+        content_disposition: Optional[str] = None,
+        cache_control: Optional[str] = None,
+        content_md5: Optional[bytearray] = None,
+        **kwargs: Any
+    ) -> None:
 
         self.content_type = content_type or kwargs.get('Content-Type')
         self.content_encoding = content_encoding or kwargs.get('Content-Encoding')
@@ -647,7 +669,7 @@ class CopyProperties(DictMixin):
         incremental copy snapshot for this blob.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self.id = kwargs.get('x-ms-copy-id')
         self.source = kwargs.get('x-ms-copy-source')
         self.status = get_enum_value(kwargs.get('x-ms-copy-status'))
@@ -682,7 +704,7 @@ class BlobBlock(DictMixin):
         Block size in bytes.
     """
 
-    def __init__(self, block_id, state=BlockState.Latest):
+    def __init__(self, block_id: str, state: Union[str, Enum] = BlockState.Latest) -> None:
         self.id = block_id
         self.state = state
         self.size = None
@@ -713,7 +735,7 @@ class PageRange(DictMixin):
         Whether the range has been cleared.
     """
 
-    def __init__(self, start=None, end=None, *, cleared=False):
+    def __init__(self, start: Optional[int] = None, end: Optional[int] = None, *, cleared: bool = False) -> None:
         self.start = start
         self.end = end
         self.cleared = cleared
@@ -781,7 +803,7 @@ class AccessPolicy(GenAccessPolicy):
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
-    :type permission: str or ~azure.storage.blob.ContainerSasPermissions
+    :type permission: Optional[Union[ContainerSasPermissions, str]]
     :param expiry:
         The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy
@@ -789,19 +811,23 @@ class AccessPolicy(GenAccessPolicy):
         been specified in an associated stored access policy. Azure will always
         convert values to UTC. If a date is passed in without timezone info, it
         is assumed to be UTC.
-    :type expiry: ~datetime.datetime or str
+    :type expiry: Optional[Union[str, datetime]]
     :param start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
         storage service receives the request. Azure will always convert values
         to UTC. If a date is passed in without timezone info, it is assumed to
         be UTC.
-    :type start: ~datetime.datetime or str
+    :type start: Optional[Union[str, datetime]]
     """
-    def __init__(self, permission=None, expiry=None, start=None):
-        self.start = start
-        self.expiry = expiry
-        self.permission = permission
+    def __init__(
+        self, permission: Optional[Union["ContainerSasPermissions", str]] = None,
+        expiry: Optional[Union[str, "datetime"]] = None,
+        start: Optional[Union[str, "datetime"]] = None
+    ) -> None:
+        self.start = start  #type: ignore
+        self.expiry = expiry  #type: ignore
+        self.permission = permission  #type: ignore
 
 
 class ContainerSasPermissions(object):
@@ -846,8 +872,15 @@ class ContainerSasPermissions(object):
         To enable operations related to set/delete immutability policy.
         To get immutability policy, you just need read permission.
     """
-    def __init__(self, read=False, write=False, delete=False,
-                 list=False, delete_previous_version=False, tag=False, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(
+        self, read: bool = False,
+        write: bool = False,
+        delete: bool = False,
+        list: bool = False,
+        delete_previous_version: bool = False,
+        tag: bool = False,
+        **kwargs: Any
+    ) -> None:  # pylint: disable=redefined-builtin
         self.read = read
         self.add = kwargs.pop('add', False)
         self.create = kwargs.pop('create', False)
@@ -879,7 +912,7 @@ class ContainerSasPermissions(object):
         return self._str
 
     @classmethod
-    def from_string(cls, permission):
+    def from_string(cls, permission: str) -> "ContainerSasPermissions":
         """Create a ContainerSasPermissions from a string.
 
         To specify read, write, delete, or list permissions you need only to
@@ -944,8 +977,16 @@ class BlobSasPermissions(object):
         To enable operations related to set/delete immutability policy.
         To get immutability policy, you just need read permission.
     """
-    def __init__(self, read=False, add=False, create=False, write=False,
-                 delete=False, delete_previous_version=False, tag=False, **kwargs):
+    def __init__(
+        self, read: bool = False,
+        add: bool = False,
+        create: bool = False,
+        write: bool = False,
+        delete: bool = False,
+        delete_previous_version: bool = False,
+        tag: bool = False,
+        **kwargs: Any
+    ) -> None:
         self.read = read
         self.add = add
         self.create = create
@@ -973,7 +1014,7 @@ class BlobSasPermissions(object):
         return self._str
 
     @classmethod
-    def from_string(cls, permission):
+    def from_string(cls, permission: str) -> "BlobSasPermissions":
         """Create a BlobSasPermissions from a string.
 
         To specify read, add, create, write, or delete permissions you need only to
@@ -1026,7 +1067,7 @@ class CustomerProvidedEncryptionKey(object):
     :ivar str algorithm:
         Specifies the algorithm to use when encrypting data using the given key. Must be AES256.
     """
-    def __init__(self, key_value, key_hash):
+    def __init__(self, key_value: str, key_hash: str) -> None:
         self.key_value = key_value
         self.key_hash = key_hash
         self.algorithm = 'AES256'
@@ -1048,7 +1089,7 @@ class ContainerEncryptionScope(object):
         set on the container. Default value is false.
     """
 
-    def __init__(self, default_encryption_scope, **kwargs):
+    def __init__(self, default_encryption_scope: str, **kwargs: Any) -> None:
         self.default_encryption_scope = default_encryption_scope
         self.prevent_encryption_scope_override = kwargs.get('prevent_encryption_scope_override', False)
 
@@ -1069,7 +1110,7 @@ class DelimitedJsonDialect(DictMixin):
     :keyword str delimiter: The line separator character, default value is '\n'
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self.delimiter = kwargs.pop('delimiter', '\n')
 
 
@@ -1089,7 +1130,7 @@ class DelimitedTextDialect(DictMixin):
         data will be returned inclusive of the first line. If set to True, the data will be returned exclusive
         of the first line.
     """
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self.delimiter = kwargs.pop('delimiter', ',')
         self.quotechar = kwargs.pop('quotechar', '"')
         self.lineterminator = kwargs.pop('lineterminator', '\n')
@@ -1107,7 +1148,7 @@ class ArrowDialect(ArrowField):
     :keyword int precision: The precision of the field.
     :keyword int scale: The scale of the field.
     """
-    def __init__(self, type, **kwargs):   # pylint: disable=redefined-builtin
+    def __init__(self, type, **kwargs: Any) -> None:   # pylint: disable=redefined-builtin
         super(ArrowDialect, self).__init__(type=type, **kwargs)
 
 
@@ -1131,7 +1172,7 @@ class ObjectReplicationPolicy(DictMixin):
         e.g. rule 1= src/container/.pdf to dst/container2/; rule2 = src/container1/.jpg to dst/container3
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self.policy_id = kwargs.pop('policy_id', None)
         self.rules = kwargs.pop('rules', None)
 
@@ -1139,19 +1180,19 @@ class ObjectReplicationPolicy(DictMixin):
 class BlobProperties(DictMixin):
     """Blob Properties."""
 
-    name: str
+    name: Optional[str]
     """The name of the blob."""
-    container: str
+    container: Optional[str]
     """The container in which the blob resides."""
     snapshot: Optional[str]
     """Datetime value that uniquely identifies the blob snapshot."""
     blob_type: Optional["BlobType"]
     """String indicating this blob's type."""
-    metadata: Dict[str, str]
+    metadata: Optional[Dict[str, str]]
     """Name-value pairs associated with the blob as metadata."""
-    last_modified: "datetime"
+    last_modified: Optional["datetime"]
     """A datetime object representing the last time the blob was modified."""
-    etag: str
+    etag: Optional[str]
     """The ETag contains a value that you can use to perform operations
         conditionally."""
     size: Optional[int]
@@ -1227,7 +1268,7 @@ class BlobProperties(DictMixin):
     """Specified if a legal hold should be set on the blob.
         Currently this parameter of upload_blob() API is for BlockBlob only."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self.name = kwargs.get('name')
         self.container = None
         self.snapshot = kwargs.get('x-ms-snapshot')
@@ -1279,7 +1320,7 @@ class ObjectReplicationRule(DictMixin):
         The status of the rule. It could be "Complete" or "Failed"
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self.rule_id = kwargs.pop('rule_id', None)
         self.status = kwargs.pop('status', None)
 
@@ -1298,7 +1339,12 @@ class BlobQueryError(object):
     :ivar int position:
         The blob offset at which the error occurred.
     """
-    def __init__(self, error=None, is_fatal=False, description=None, position=None):
+    def __init__(
+        self, error: Optional[str] = None,
+        is_fatal: bool = False,
+        description: Optional[str] = None,
+        position: Optional[int] = None
+    ) -> None:
         self.error = error
         self.is_fatal = is_fatal
         self.description = description
