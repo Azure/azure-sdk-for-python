@@ -1,0 +1,5 @@
+name: banchci
+type: computeinstance
+description: some_desc_ci
+
+size: Standard_DS2_v2
