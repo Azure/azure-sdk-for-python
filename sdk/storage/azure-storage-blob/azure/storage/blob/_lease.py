@@ -6,23 +6,30 @@
 
 import uuid
 
-from typing import Any, Optional, TypeVar, Union, TYPE_CHECKING
+from typing import Any, Optional, Union, TYPE_CHECKING
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
-from ._serialize import get_modify_conditions
 from ._shared.response_handlers import process_storage_error, return_response_headers
+from ._serialize import get_modify_conditions
 
 if TYPE_CHECKING:
     from azure.storage.blob import BlobClient, ContainerClient
     from datetime import datetime
 
 
-class BlobLeaseClient(object):  # pylint: disable=client-accepts-api-version-keyword
+class BlobLeaseClient(object):
     """Creates a new BlobLeaseClient.
 
-    This client provides lease operations on a BlobClient or ContainerClient."""
+    This client provides lease operations on a BlobClient or ContainerClient.
+    :param  client:
+        The client of the blob or container to lease.
+    :type client: Union[BlobClient, ContainerClient]
+    :param Optional[str] lease_id:
+        A string representing the lease ID of an existing lease. This value does not
+        need to be specified in order to acquire a new lease, or break one.
+    """
 
     id: str
     """The ID of the lease currently being maintained. This will be `None` if no
@@ -33,16 +40,11 @@ class BlobLeaseClient(object):  # pylint: disable=client-accepts-api-version-key
     last_modified: Optional["datetime"]
     """The last modified timestamp of the lease currently being maintained.
     This will be `None` if no lease has yet been acquired or modified."""
-    client: Union["BlobClient", "ContainerClient"]
-    """The client of the blob or container to lease."""
-    lease_id: str
-    """A string representing the lease ID of an existing lease. This value does not
-    need to be specified in order to acquire a new lease, or break one."""
 
     def __init__(
         self, client: Union["BlobClient", "ContainerClient"],
         lease_id: Optional[str] = None
-    ) -> None:  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+    ) -> None:
         self.id = lease_id or str(uuid.uuid4())
         self.last_modified = None
         self.etag = None
