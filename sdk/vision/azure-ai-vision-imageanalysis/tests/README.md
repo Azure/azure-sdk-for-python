@@ -16,9 +16,9 @@ See [Prerequisites](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/
     pip install -r dev_requirements.txt
     python setup.py bdist_wheel
     ```
-1. Install the resulting local Image Analysis client library package (updated the version number `0.16.0b1` to the current one):
+1. Install the resulting local Image Analysis client library package (updated the version number `1.0.0b1` to the current one):
     ```bash
-    pip install dist\azure_ai_vision_imageanalysis-0.16.0b1-py3-none-any.whl --user --force-reinstall
+    pip install dist\azure_ai_vision_imageanalysis-1.0.0b1-py3-none-any.whl --user --force-reinstall
     ```
 
 

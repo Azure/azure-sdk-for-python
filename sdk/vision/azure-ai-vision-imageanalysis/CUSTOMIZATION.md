@@ -166,3 +166,10 @@ Add the following method to the bottom of the source file `azure\ai\vision\image
             model_version = model_version,
             **kwargs)
 ```
+
+## Set the desired SDK version (as needed)
+
+Update the SDK version in the following files:
+* `azure/ai/vision/imageanalysis/_version.py`
+* `CHANGELOG.md`
+* `tests/README.md`
