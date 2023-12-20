@@ -77,7 +77,11 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
             if self._need_new_token:
                 # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
                 scope = challenge.get_scope() or challenge.get_resource() + "/.default"
-                self._token = self._credential.get_token(scope, tenant_id=challenge.tenant_id)
+                # Exclude tenant for AD FS authentication
+                if challenge.tenant_id and challenge.tenant_id.lower().endswith("adfs"):
+                    self._token = self._credential.get_token(scope)
+                else:
+                    self._token = self._credential.get_token(scope, tenant_id=challenge.tenant_id)
 
             # ignore mypy's warning -- although self._token is Optional, get_token raises when it fails to get a token
             request.http_request.headers["Authorization"] = f"Bearer {self._token.token}"  # type: ignore
