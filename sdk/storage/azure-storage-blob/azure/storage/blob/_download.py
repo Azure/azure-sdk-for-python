@@ -198,8 +198,6 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
     def _download_chunk(self, chunk_start: int, chunk_end: int):
         if self.encryption_options is None:
             raise ValueError("Required argument is missing: encryption_options")
-        if self.encryption_data is None:
-            raise ValueError("Required argument is missing: encryption_data")
         download_range, offset = process_range_and_offset(
             chunk_start, chunk_end, chunk_end, self.encryption_options, self.encryption_data
         )
