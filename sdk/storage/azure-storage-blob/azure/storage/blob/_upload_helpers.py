@@ -5,35 +5,38 @@
 # --------------------------------------------------------------------------
 
 from io import SEEK_SET, UnsupportedOperation
-from typing import TypeVar, TYPE_CHECKING
+from typing import Any, AnyStr, Dict, IO, Iterable, Optional, TypeVar, Union, TYPE_CHECKING
 
 from azure.core.exceptions import ResourceExistsError, ResourceModifiedError, HttpResponseError
 
-from ._shared.response_handlers import process_storage_error, return_response_headers
-from ._shared.models import StorageErrorCode
-from ._shared.uploads import (
-    upload_data_chunks,
-    upload_substream_blocks,
-    BlockBlobChunkUploader,
-    PageBlobChunkUploader,
-    AppendBlobChunkUploader
+from ._encryption import (
+    _ENCRYPTION_PROTOCOL_V1,
+    _ENCRYPTION_PROTOCOL_V2,
+    encrypt_blob,
+    GCMBlobEncryptionStream,
+    generate_blob_encryption_data,
+    get_adjusted_upload_size,
+    get_blob_encryptor_and_padder
 )
 from ._generated.models import (
-    BlockLookupList,
     AppendPositionAccessConditions,
-    ModifiedAccessConditions,
+    BlockLookupList,
+    ModifiedAccessConditions
 )
-from ._encryption import (
-    GCMBlobEncryptionStream,
-    encrypt_blob,
-    get_adjusted_upload_size,
-    get_blob_encryptor_and_padder,
-    generate_blob_encryption_data,
-    _ENCRYPTION_PROTOCOL_V1,
-    _ENCRYPTION_PROTOCOL_V2
+from ._shared.models import StorageErrorCode
+from ._shared.response_handlers import process_storage_error, return_response_headers
+from ._shared.uploads import (
+    AppendBlobChunkUploader,
+    BlockBlobChunkUploader,
+    PageBlobChunkUploader,
+    upload_data_chunks,
+    upload_substream_blocks
 )
 
 if TYPE_CHECKING:
+    from ._generated import AzureBlobStorage
+    from ._generated.operations import AppendBlobOperations, BlockBlobOperations, PageBlobOperations
+    from ._shared.models import StorageConfiguration
     BlobLeaseClient = TypeVar("BlobLeaseClient")
 
 _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
@@ -53,7 +56,7 @@ def _convert_mod_error(error):
     raise overwrite_error
 
 
-def _any_conditions(modified_access_conditions=None, **kwargs):  # pylint: disable=unused-argument
+def _any_conditions(modified_access_conditions=None, **kwargs: Any) -> bool:  # pylint: disable=unused-argument
     return any([
         modified_access_conditions.if_modified_since,
         modified_access_conditions.if_unmodified_since,
@@ -63,17 +66,18 @@ def _any_conditions(modified_access_conditions=None, **kwargs):  # pylint: disab
 
 
 def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
-        client=None,
-        data=None,
-        stream=None,
-        length=None,
-        overwrite=None,
-        headers=None,
-        validate_content=None,
-        max_concurrency=None,
-        blob_settings=None,
-        encryption_options=None,
-        **kwargs):
+    client: "BlockBlobOperations",
+    data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+    overwrite: bool,
+    encryption_options: Dict[str, Any],
+    blob_settings: "StorageConfiguration",
+    headers: Dict[str, Any],
+    stream = None,
+    length: Optional[int] = None,
+    validate_content: Optional[bool] = None,
+    max_concurrency: Optional[int] = None,
+    **kwargs: Any
+) -> Any:
     try:
         if not overwrite and not _any_conditions(**kwargs):
             kwargs['modified_access_conditions'].if_none_match = '*'
@@ -93,17 +97,19 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
         # Do single put if the size is smaller than or equal config.max_single_put_size
         if adjusted_count is not None and (adjusted_count <= blob_settings.max_single_put_size):
             try:
-                data = data.read(length)
+                data = data.read(length)  #type: ignore
                 if not isinstance(data, bytes):
                     raise TypeError('Blob data should be of type bytes.')
             except AttributeError:
                 pass
             if encryption_options.get('key'):
+                if not isinstance(data, bytes):
+                    raise TypeError('Blob data should be of type bytes.')
                 encryption_data, data = encrypt_blob(data, encryption_options['key'], encryption_options['version'])
                 headers['x-ms-meta-encryptiondata'] = encryption_data
 
             response = client.upload(
-                body=data,
+                body=data,  #type: ignore
                 content_length=adjusted_count,
                 blob_http_headers=blob_headers,
                 headers=headers,
@@ -136,6 +142,10 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
                 cek, iv, encryption_data = generate_blob_encryption_data(
                     encryption_options['key'],
                     encryption_options['version'])
+                if cek is None:
+                    raise ValueError("Generate encryption metadata failed. 'cek' is None.")
+                if iv is None:
+                    raise ValueError("Generate encryption metadata failed. 'iv' is None.")
                 headers['x-ms-meta-encryptiondata'] = encryption_data
 
                 if encryption_options['version'] == _ENCRYPTION_PROTOCOL_V1:
@@ -200,16 +210,17 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
 
 
 def upload_page_blob(
-        client=None,
-        stream=None,
-        length=None,
-        overwrite=None,
-        headers=None,
-        validate_content=None,
-        max_concurrency=None,
-        blob_settings=None,
-        encryption_options=None,
-        **kwargs):
+    client: "PageBlobOperations",
+    overwrite: bool,
+    encryption_options: Dict[str, Any],
+    blob_settings: "StorageConfiguration",
+    headers: Dict[str, Any],
+    stream=None,
+    length: Optional[int] = None,
+    validate_content: Optional[bool] = None,
+    max_concurrency: Optional[int] = None,
+    **kwargs: Any
+) -> Any:
     try:
         if not overwrite and not _any_conditions(**kwargs):
             kwargs['modified_access_conditions'].if_none_match = '*'
@@ -238,7 +249,7 @@ def upload_page_blob(
         response = client.create(
             content_length=0,
             blob_content_length=length,
-            blob_sequence_number=None,
+            blob_sequence_number=None,  #type: ignore
             blob_http_headers=kwargs.pop('blob_headers', None),
             blob_tags_string=blob_tags_string,
             tier=tier,
@@ -254,7 +265,7 @@ def upload_page_blob(
                 kwargs['encryptor'] = encryptor
                 kwargs['padder'] = padder
 
-        kwargs['modified_access_conditions'] = ModifiedAccessConditions(if_match=response['etag'])
+        kwargs['modified_access_conditions'] = ModifiedAccessConditions(if_match=response['etag'])  #type: ignore
         return upload_data_chunks(
             service=client,
             uploader_class=PageBlobChunkUploader,
@@ -277,16 +288,17 @@ def upload_page_blob(
 
 
 def upload_append_blob(  # pylint: disable=unused-argument
-        client=None,
-        stream=None,
-        length=None,
-        overwrite=None,
-        headers=None,
-        validate_content=None,
-        max_concurrency=None,
-        blob_settings=None,
-        encryption_options=None,
-        **kwargs):
+    client: "AppendBlobOperations",
+    overwrite: bool,
+    encryption_options: Dict[str, Any],
+    blob_settings: "StorageConfiguration",
+    headers: Dict[str, Any],
+    stream = None,
+    length: Optional[int] = None,
+    validate_content: Optional[bool] = None,
+    max_concurrency: Optional[int] = None,
+    **kwargs: Any
+) -> Any:
     try:
         if length == 0:
             return {}
@@ -318,7 +330,7 @@ def upload_append_blob(  # pylint: disable=unused-argument
                 headers=headers,
                 **kwargs)
         except HttpResponseError as error:
-            if error.response.status_code != 404:
+            if error.response.status_code != 404:  #type: ignore
                 raise
             # rewind the request body if it is a stream
             if hasattr(stream, 'read'):
