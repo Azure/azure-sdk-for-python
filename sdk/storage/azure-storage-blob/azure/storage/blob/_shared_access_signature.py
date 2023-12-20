@@ -332,7 +332,7 @@ def generate_account_sas(
     resource_types: Union["ResourceTypes", str],
     permission: Union["AccountSasPermissions", str],
     expiry: Union["datetime", str],
-    start: Optional[Union["datetime", str]],
+    start: Optional[Union["datetime", str]] = None,
     ip: Optional[str] = None,
     **kwargs: Any
 ) -> str:

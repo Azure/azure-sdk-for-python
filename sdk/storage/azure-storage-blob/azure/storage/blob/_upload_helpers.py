@@ -142,10 +142,6 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
                 cek, iv, encryption_data = generate_blob_encryption_data(
                     encryption_options['key'],
                     encryption_options['version'])
-                if cek is None:
-                    raise ValueError("Generate encryption metadata failed. 'cek' is None.")
-                if iv is None:
-                    raise ValueError("Generate encryption metadata failed. 'iv' is None.")
                 headers['x-ms-meta-encryptiondata'] = encryption_data
 
                 if encryption_options['version'] == _ENCRYPTION_PROTOCOL_V1:
@@ -156,6 +152,8 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
                     # Adjust total_size for encryption V2
                     total_size = adjusted_count
                     # V2 wraps the data stream with an encryption stream
+                    if cek is None:
+                        raise ValueError("Generate encryption metadata failed. 'cek' is None.")
                     stream = GCMBlobEncryptionStream(cek, stream)
 
             block_ids = upload_data_chunks(

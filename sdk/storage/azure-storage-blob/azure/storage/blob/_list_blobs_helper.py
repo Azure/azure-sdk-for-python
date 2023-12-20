@@ -1,30 +1,30 @@
-# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
 
+from typing import Any, Callable, List, Optional, Union, TYPE_CHECKING
 from urllib.parse import unquote
 
-from azure.core.paging import PageIterator, ItemPaged
 from azure.core.exceptions import HttpResponseError
+from azure.core.paging import ItemPaged, PageIterator
 
 from ._deserialize import (
     get_blob_properties_from_generated_code,
     load_many_xml_nodes,
     load_xml_int,
     load_xml_string,
-    parse_tags,
+    parse_tags
 )
 from ._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix, FilterBlobItem
 from ._generated._serialization import Deserializer
 from ._models import BlobProperties, FilteredBlob
 from ._shared.models import DictMixin
 from ._shared.response_handlers import (
-    return_context_and_deserialized,
-    return_raw_deserialized,
     process_storage_error,
+    return_context_and_deserialized,
+    return_raw_deserialized
 )
 
 
@@ -36,43 +36,39 @@ class IgnoreListBlobsDeserializer(Deserializer):
 
 
 class BlobPropertiesPaged(PageIterator):
-    """An Iterable of Blob properties.
+    """An Iterable of Blob properties."""
 
-    :ivar str service_endpoint: The service URL.
-    :ivar str prefix: A blob name prefix being used to filter the list.
-    :ivar str marker: The continuation token of the current page of results.
-    :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str continuation_token: The continuation token to retrieve the next page of results.
-    :ivar str location_mode: The location mode being used to list results. The available
-        options include "primary" and "secondary".
-    :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.blob.BlobProperties)
-    :ivar str container: The container that the blobs are listed from.
-    :ivar str delimiter: A delimiting character used for hierarchy listing.
+    service_endpoint: Optional[str]
+    """The service URL."""
+    prefix: str
+    """A blob name prefix being used to filter the list."""
+    marker: Optional[str]
+    """The continuation token of the current page of results."""
+    results_per_page: int
+    """The maximum number of results retrieved per API call."""
+    continuation_token: str
+    """The continuation token to retrieve the next page of results."""
+    location_mode: str
+    """The location mode being used to list results. The available
+    options include "primary" and "secondary"."""
+    current_page: Optional[List[BlobProperties]]
+    """The current page of listed results."""
+    container: str
+    """The container that the blobs are listed from."""
+    delimiter: str
+    """A delimiting character used for hierarchy listing."""
+    command: Callable
+    """Function to retrieve the next page of items."""
 
-    :param callable command: Function to retrieve the next page of items.
-    :param str container: The name of the container.
-    :param str prefix: Filters the results to return only blobs whose names
-        begin with the specified prefix.
-    :param int results_per_page: The maximum number of blobs to retrieve per
-        call.
-    :param str continuation_token: An opaque continuation token.
-    :param str delimiter:
-        Used to capture blobs whose names begin with the same substring up to
-        the appearance of the delimiter character. The delimiter may be a single
-        character or a string.
-    :param location_mode: Specifies the location the request should be sent to.
-        This mode only applies for RA-GRS accounts which allow secondary read access.
-        Options include 'primary' or 'secondary'.
-    """
     def __init__(
-            self, command,
-            container=None,
-            prefix=None,
-            results_per_page=None,
-            continuation_token=None,
-            delimiter=None,
-            location_mode=None):
+        self, command: Callable,
+        container: str,
+        prefix: str,
+        results_per_page: int,
+        continuation_token: str,
+        delimiter: str,
+        location_mode: str
+    ) -> None:
         super(BlobPropertiesPaged, self).__init__(
             get_next=self._get_next_cb,
             extract_data=self._extract_data_cb,
@@ -110,7 +106,7 @@ class BlobPropertiesPaged(PageIterator):
 
         return self._response.next_marker or None, self.current_page
 
-    def _build_item(self, item):
+    def _build_item(self, item: Union[BlobItemInternal, BlobProperties]) -> BlobProperties:
         if isinstance(item, BlobProperties):
             return item
         if isinstance(item, BlobItemInternal):
@@ -121,38 +117,36 @@ class BlobPropertiesPaged(PageIterator):
 
 
 class BlobNamesPaged(PageIterator):
-    """An Iterable of Blob names.
+    """An Iterable of Blob names."""
 
-    :ivar str service_endpoint: The service URL.
-    :ivar str prefix: A blob name prefix being used to filter the list.
-    :ivar str marker: The continuation token of the current page of results.
-    :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str continuation_token: The continuation token to retrieve the next page of results.
-    :ivar str location_mode: The location mode being used to list results. The available
-        options include "primary" and "secondary".
-    :ivar current_page: The current page of listed results.
-    :vartype current_page: list(str)
-    :ivar str container: The container that the blobs are listed from.
-    :ivar str delimiter: A delimiting character used for hierarchy listing.
+    service_endpoint: Optional[str]
+    """The service URL."""
+    prefix: str
+    """A blob name prefix being used to filter the list."""
+    continuation_token: str
+    """The continuation token to retrieve the next page of results."""
+    location_mode: str
+    """The location mode being used to list results. The available
+    options include "primary" and "secondary"."""
+    current_page: Optional[List[BlobProperties]]
+    """The current page of listed results."""
+    container: str
+    """The container that the blobs are listed from."""
+    delimiter: str
+    """A delimiting character used for hierarchy listing."""
+    command: Callable
+    """Function to retrieve the next page of items."""
+    results_per_page: int
+    """The maximum number of blobs to retrieve per call."""
 
-    :param callable command: Function to retrieve the next page of items.
-    :param str container: The name of the container.
-    :param str prefix: Filters the results to return only blobs whose names
-        begin with the specified prefix.
-    :param int results_per_page: The maximum number of blobs to retrieve per
-        call.
-    :param str continuation_token: An opaque continuation token.
-    :param location_mode: Specifies the location the request should be sent to.
-        This mode only applies for RA-GRS accounts which allow secondary read access.
-        Options include 'primary' or 'secondary'.
-    """
     def __init__(
-            self, command,
-            container=None,
-            prefix=None,
-            results_per_page=None,
-            continuation_token=None,
-            location_mode=None):
+        self, command: Callable,
+        container: str,
+        prefix: str,
+        results_per_page: int,
+        continuation_token: str,
+        location_mode: str
+    ) -> None:
         super(BlobNamesPaged, self).__init__(
             get_next=self._get_next_cb,
             extract_data=self._extract_data_cb,
@@ -226,36 +220,29 @@ class BlobPrefix(ItemPaged, DictMixin):
     """An Iterable of Blob properties.
 
     Returned from walk_blobs when a delimiter is used.
-    Can be thought of as a virtual blob directory.
+    Can be thought of as a virtual blob directory."""
 
-    :ivar str name: The prefix, or "directory name" of the blob.
-    :ivar str service_endpoint: The service URL.
-    :ivar str prefix: A blob name prefix being used to filter the list.
-    :ivar str marker: The continuation token of the current page of results.
-    :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str next_marker: The continuation token to retrieve the next page of results.
-    :ivar str location_mode: The location mode being used to list results. The available
-        options include "primary" and "secondary".
-    :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.blob.BlobProperties)
-    :ivar str container: The container that the blobs are listed from.
-    :ivar str delimiter: A delimiting character used for hierarchy listing.
+    service_endpoint: str
+    """The service URL."""
+    prefix: str
+    """A blob name prefix being used to filter the list."""
+    marker: str
+    """The continuation token of the current page of results."""
+    results_per_page: int
+    """The maximum number of results retrieved per API call."""
+    location_mode: str
+    """The location mode being used to list results. The available
+    options include "primary" and "secondary"."""
+    current_page: List[BlobProperties]
+    """The current page of listed results."""
+    delimiter: str
+    """A delimiting character used for hierarchy listing."""
+    command: Callable
+    """Function to retrieve the next page of items."""
+    container: str
+    """The name of the container."""
 
-    :param callable command: Function to retrieve the next page of items.
-    :param str prefix: Filters the results to return only blobs whose names
-        begin with the specified prefix.
-    :param int results_per_page: The maximum number of blobs to retrieve per
-        call.
-    :param str marker: An opaque continuation token.
-    :param str delimiter:
-        Used to capture blobs whose names begin with the same substring up to
-        the appearance of the delimiter character. The delimiter may be a single
-        character or a string.
-    :param location_mode: Specifies the location the request should be sent to.
-        This mode only applies for RA-GRS accounts which allow secondary read access.
-        Options include 'primary' or 'secondary'.
-    """
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super(BlobPrefix, self).__init__(*args, page_iterator_class=BlobPrefixPaged, **kwargs)
         self.name = kwargs.get('prefix')
         self.prefix = kwargs.get('prefix')
@@ -266,34 +253,37 @@ class BlobPrefix(ItemPaged, DictMixin):
 
 
 class FilteredBlobPaged(PageIterator):
-    """An Iterable of Blob properties.
+    """An Iterable of Blob properties."""
 
-    :ivar str service_endpoint: The service URL.
-    :ivar str prefix: A blob name prefix being used to filter the list.
-    :ivar str marker: The continuation token of the current page of results.
-    :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str continuation_token: The continuation token to retrieve the next page of results.
-    :ivar str location_mode: The location mode being used to list results. The available
-        options include "primary" and "secondary".
-    :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.blob.FilteredBlob)
-    :ivar str container: The container that the blobs are listed from.
+    service_endpoint: Optional[str]
+    """The service URL."""
+    prefix: str
+    """A blob name prefix being used to filter the list."""
+    marker: str
+    """The continuation token of the current page of results."""
+    results_per_page: int
+    """The maximum number of results retrieved per API call."""
+    location_mode: Optional[str]
+    """The location mode being used to list results. The available
+    options include "primary" and "secondary"."""
+    current_page: Optional[List[BlobProperties]]
+    """The current page of listed results."""
+    delimiter: str
+    """A delimiting character used for hierarchy listing."""
+    command: Callable
+    """Function to retrieve the next page of items."""
+    container: str
+    """The name of the container."""
+    continuation_token: str
+    """An opaque continuation token."""
 
-    :param callable command: Function to retrieve the next page of items.
-    :param str container: The name of the container.
-    :param int results_per_page: The maximum number of blobs to retrieve per
-        call.
-    :param str continuation_token: An opaque continuation token.
-    :param location_mode: Specifies the location the request should be sent to.
-        This mode only applies for RA-GRS accounts which allow secondary read access.
-        Options include 'primary' or 'secondary'.
-    """
     def __init__(
-            self, command,
-            container=None,
-            results_per_page=None,
-            continuation_token=None,
-            location_mode=None):
+        self, command: Callable,
+        container: str,
+        results_per_page: int,
+        continuation_token: str,
+        location_mode: Optional[str]
+    ) -> None:
         super(FilteredBlobPaged, self).__init__(
             get_next=self._get_next_cb,
             extract_data=self._extract_data_cb,
