@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from csv import Dialect
 from typing import Any, Dict, Optional, Tuple, Union, TYPE_CHECKING
 
 try:
@@ -178,28 +177,31 @@ def serialize_blob_tags(tags: Optional[Dict[str, str]] = None) -> Union[BlobTags
     return BlobTags(blob_tag_set=tag_list)
 
 
-def serialize_query_format(formater: Union[str, DelimitedJsonDialect, Dialect]) -> Optional[QuerySerialization]:
+def serialize_query_format(formater: Union[str, DelimitedJsonDialect]) -> Optional[QuerySerialization]:
     if formater == "ParquetDialect":
         qq_format = QueryFormat(type=QueryFormatType.PARQUET, parquet_text_configuration=None)
     elif isinstance(formater, DelimitedJsonDialect):
         json_serialization_settings = JsonTextConfiguration(record_separator=formater.delimiter)
         qq_format = QueryFormat(type=QueryFormatType.JSON, json_text_configuration=json_serialization_settings)
-    elif hasattr(formater, 'quotechar') and isinstance(formater, Dialect):  # This supports a csv.Dialect as well
+    elif hasattr(formater, 'quotechar'):  # This supports a csv.Dialect as well
         try:
             headers = formater.has_header  # type: ignore
         except AttributeError:
             headers = False
-        csv_serialization_settings = DelimitedTextConfiguration(
-            column_separator=formater.delimiter,
-            field_quote=formater.quotechar,
-            record_separator=formater.lineterminator,
-            escape_char=formater.escapechar,
-            headers_present=headers
-        )
-        qq_format = QueryFormat(
-            type=QueryFormatType.DELIMITED,
-            delimited_text_configuration=csv_serialization_settings
-        )
+        if isinstance(formater, str):
+            raise ValueError("Unknown string value provided. Accepted values: ParquetDialect")
+        else:
+            csv_serialization_settings = DelimitedTextConfiguration(
+                column_separator=formater.delimiter,
+                field_quote=formater.quotechar,
+                record_separator=formater.lineterminator,
+                escape_char=formater.escapechar,
+                headers_present=headers
+            )
+            qq_format = QueryFormat(
+                type=QueryFormatType.DELIMITED,
+                delimited_text_configuration=csv_serialization_settings
+            )
     elif isinstance(formater, list):
         arrow_serialization_settings = ArrowConfiguration(schema=formater)
         qq_format = QueryFormat(type=QueryFormatType.arrow, arrow_configuration=arrow_serialization_settings)
