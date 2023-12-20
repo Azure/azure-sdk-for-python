@@ -260,9 +260,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     :vartype job_versions: azure.mgmt.sql.operations.JobVersionsOperations
     :ivar capabilities: CapabilitiesOperations operations
     :vartype capabilities: azure.mgmt.sql.operations.CapabilitiesOperations
-    :ivar long_term_retention_policies: LongTermRetentionPoliciesOperations operations
-    :vartype long_term_retention_policies:
-     azure.mgmt.sql.operations.LongTermRetentionPoliciesOperations
     :ivar maintenance_window_options: MaintenanceWindowOptionsOperations operations
     :vartype maintenance_window_options:
      azure.mgmt.sql.operations.MaintenanceWindowOptionsOperations
@@ -422,9 +419,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     :vartype outbound_firewall_rules: azure.mgmt.sql.operations.OutboundFirewallRulesOperations
     :ivar usages: UsagesOperations operations
     :vartype usages: azure.mgmt.sql.operations.UsagesOperations
-    :ivar long_term_retention_backups: LongTermRetentionBackupsOperations operations
-    :vartype long_term_retention_backups:
-     azure.mgmt.sql.operations.LongTermRetentionBackupsOperations
     :ivar long_term_retention_managed_instance_backups:
      LongTermRetentionManagedInstanceBackupsOperations operations
     :vartype long_term_retention_managed_instance_backups:
@@ -590,12 +584,18 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
      DatabaseSqlVulnerabilityAssessmentsSettingsOperations operations
     :vartype database_sql_vulnerability_assessments_settings:
      azure.mgmt.sql.operations.DatabaseSqlVulnerabilityAssessmentsSettingsOperations
-    :ivar servers: ServersOperations operations
-    :vartype servers: azure.mgmt.sql.operations.ServersOperations
     :ivar failover_groups: FailoverGroupsOperations operations
     :vartype failover_groups: azure.mgmt.sql.operations.FailoverGroupsOperations
     :ivar instance_pools: InstancePoolsOperations operations
     :vartype instance_pools: azure.mgmt.sql.operations.InstancePoolsOperations
+    :ivar long_term_retention_backups: LongTermRetentionBackupsOperations operations
+    :vartype long_term_retention_backups:
+     azure.mgmt.sql.operations.LongTermRetentionBackupsOperations
+    :ivar long_term_retention_policies: LongTermRetentionPoliciesOperations operations
+    :vartype long_term_retention_policies:
+     azure.mgmt.sql.operations.LongTermRetentionPoliciesOperations
+    :ivar servers: ServersOperations operations
+    :vartype servers: azure.mgmt.sql.operations.ServersOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The subscription ID that identifies an Azure subscription. Required.
@@ -704,9 +704,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         )
         self.job_versions = JobVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.capabilities = CapabilitiesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.long_term_retention_policies = LongTermRetentionPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.maintenance_window_options = MaintenanceWindowOptionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -861,9 +858,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
             self._client, self._config, self._serialize, self._deserialize
         )
         self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.long_term_retention_backups = LongTermRetentionBackupsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.long_term_retention_managed_instance_backups = LongTermRetentionManagedInstanceBackupsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -1025,9 +1019,15 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         self.database_sql_vulnerability_assessments_settings = DatabaseSqlVulnerabilityAssessmentsSettingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.failover_groups = FailoverGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.instance_pools = InstancePoolsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.long_term_retention_backups = LongTermRetentionBackupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.long_term_retention_policies = LongTermRetentionPoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
