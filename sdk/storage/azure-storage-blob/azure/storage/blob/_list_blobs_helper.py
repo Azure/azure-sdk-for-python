@@ -40,34 +40,34 @@ class BlobPropertiesPaged(PageIterator):
 
     service_endpoint: Optional[str]
     """The service URL."""
-    prefix: str
+    prefix: Optional[str]
     """A blob name prefix being used to filter the list."""
     marker: Optional[str]
     """The continuation token of the current page of results."""
-    results_per_page: int
+    results_per_page: Optional[int]
     """The maximum number of results retrieved per API call."""
-    continuation_token: str
+    continuation_token: Optional[str]
     """The continuation token to retrieve the next page of results."""
-    location_mode: str
+    location_mode: Optional[str]
     """The location mode being used to list results. The available
     options include "primary" and "secondary"."""
     current_page: Optional[List[BlobProperties]]
     """The current page of listed results."""
-    container: str
+    container: Optional[str]
     """The container that the blobs are listed from."""
-    delimiter: str
+    delimiter: Optional[str]
     """A delimiting character used for hierarchy listing."""
     command: Callable
     """Function to retrieve the next page of items."""
 
     def __init__(
         self, command: Callable,
-        container: str,
-        prefix: str,
-        results_per_page: int,
-        continuation_token: str,
-        delimiter: str,
-        location_mode: str
+        container: Optional[str] = None,
+        prefix: Optional[str] = None,
+        results_per_page: Optional[int] = None,
+        continuation_token: Optional[str] = None,
+        delimiter: Optional[str] = None,
+        location_mode: Optional[str] = None,
     ) -> None:
         super(BlobPropertiesPaged, self).__init__(
             get_next=self._get_next_cb,
@@ -121,31 +121,33 @@ class BlobNamesPaged(PageIterator):
 
     service_endpoint: Optional[str]
     """The service URL."""
-    prefix: str
+    prefix: Optional[str]
     """A blob name prefix being used to filter the list."""
-    continuation_token: str
+    marker: Optional[str]
+    """The continuation token of the current page of results."""
+    results_per_page: Optional[int]
+    """The maximum number of blobs to retrieve per call."""
+    continuation_token: Optional[str]
     """The continuation token to retrieve the next page of results."""
-    location_mode: str
+    location_mode: Optional[str]
     """The location mode being used to list results. The available
     options include "primary" and "secondary"."""
     current_page: Optional[List[BlobProperties]]
     """The current page of listed results."""
-    container: str
+    container: Optional[str]
     """The container that the blobs are listed from."""
-    delimiter: str
+    delimiter: Optional[str]
     """A delimiting character used for hierarchy listing."""
     command: Callable
     """Function to retrieve the next page of items."""
-    results_per_page: int
-    """The maximum number of blobs to retrieve per call."""
 
     def __init__(
         self, command: Callable,
-        container: str,
-        prefix: str,
-        results_per_page: int,
-        continuation_token: str,
-        location_mode: str
+        container: Optional[str] = None,
+        prefix: Optional[str] = None,
+        results_per_page: Optional[int] = None,
+        continuation_token: Optional[str] = None,
+        location_mode: Optional[str] = None
     ) -> None:
         super(BlobNamesPaged, self).__init__(
             get_next=self._get_next_cb,
@@ -222,24 +224,28 @@ class BlobPrefix(ItemPaged, DictMixin):
     Returned from walk_blobs when a delimiter is used.
     Can be thought of as a virtual blob directory."""
 
-    service_endpoint: str
+    name: Optional[str]
+    """The prefix, or "directory name" of the blob."""
+    service_endpoint: Optional[str]
     """The service URL."""
-    prefix: str
+    prefix: Optional[str]
     """A blob name prefix being used to filter the list."""
-    marker: str
+    marker: Optional[str]
     """The continuation token of the current page of results."""
-    results_per_page: int
+    results_per_page: Optional[str]
     """The maximum number of results retrieved per API call."""
-    location_mode: str
+    next_marker: Optional[str]
+    """The continuation token to retrieve the next page of results."""
+    location_mode: Optional[str]
     """The location mode being used to list results. The available
     options include "primary" and "secondary"."""
-    current_page: List[BlobProperties]
+    current_page: Optional[List[BlobProperties]]
     """The current page of listed results."""
-    delimiter: str
+    delimiter: Optional[str]
     """A delimiting character used for hierarchy listing."""
     command: Callable
     """Function to retrieve the next page of items."""
-    container: str
+    container: Optional[str]
     """The name of the container."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -257,32 +263,30 @@ class FilteredBlobPaged(PageIterator):
 
     service_endpoint: Optional[str]
     """The service URL."""
-    prefix: str
+    prefix: Optional[str]
     """A blob name prefix being used to filter the list."""
-    marker: str
+    marker: Optional[str]
     """The continuation token of the current page of results."""
-    results_per_page: int
+    results_per_page: Optional[int]
     """The maximum number of results retrieved per API call."""
+    continuation_token: Optional[str]
+    """The continuation token to retrieve the next page of results."""
     location_mode: Optional[str]
     """The location mode being used to list results. The available
     options include "primary" and "secondary"."""
     current_page: Optional[List[BlobProperties]]
     """The current page of listed results."""
-    delimiter: str
-    """A delimiting character used for hierarchy listing."""
     command: Callable
     """Function to retrieve the next page of items."""
-    container: str
+    container: Optional[str]
     """The name of the container."""
-    continuation_token: str
-    """An opaque continuation token."""
 
     def __init__(
         self, command: Callable,
-        container: str,
-        results_per_page: int,
-        continuation_token: str,
-        location_mode: Optional[str]
+        container: Optional[str] = None,
+        results_per_page: Optional[int] = None,
+        continuation_token: Optional[str] = None,
+        location_mode: Optional[str] = None
     ) -> None:
         super(FilteredBlobPaged, self).__init__(
             get_next=self._get_next_cb,
