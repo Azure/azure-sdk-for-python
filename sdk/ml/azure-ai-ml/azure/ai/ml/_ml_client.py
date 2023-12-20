@@ -452,7 +452,7 @@ class MLClient:
         self._compute = ComputeOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2022_preview,
+            self._service_client_08_2023_preview,
             **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.COMPUTE, self._compute)

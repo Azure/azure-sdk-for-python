@@ -20,6 +20,7 @@ if TYPE_CHECKING:
 class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
     def _populate_attributes(self, **kwargs):
         self._amqp_transport: Union["AmqpTransport", "AmqpTransportAsync"]
+        self.entity_path: str
         if kwargs.get("subscription_name"):
             self._subscription_name = kwargs.get("subscription_name")
             self._is_subscription = True
@@ -46,7 +47,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
             is_session=bool(self._session_id)
         )
 
-        self._name = kwargs.get("client_identifier", "SBReceiver-{}".format(uuid.uuid4()))
+        self._name = kwargs.get("client_identifier") or "SBReceiver-{}".format(uuid.uuid4())
         self._last_received_sequenced_number = None
         self._message_iter = None
         self._connection = kwargs.get("connection")
