@@ -1,5 +1,3 @@
-import sys
-sys.path.append(r"C:\Users\bryanambriz\REPOS\azure-sdk-for-python\sdk\cosmos\azure-cosmos")
 import unittest
 import uuid
 import azure.cosmos.cosmos_client as cosmos_client
