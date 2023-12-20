@@ -57,7 +57,7 @@ def sample_dense_captions_image_file():
 
     # Extract multiple captions, each for a different area of the image.
     # This will be a synchronously (blocking) call.
-    result = client.analyze(
+    result = client.analyze( # type: ignore[attr-defined]
         image_content = image_buffer,
         visual_features = [ VisualFeatures.DENSE_CAPTIONS ],
         gender_neutral_caption = True) # Optional (default is False)

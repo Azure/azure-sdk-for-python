@@ -50,7 +50,7 @@ def sample_tags_image_file():
         image_buffer = bytes(f.read())
 
     # Do 'Tags' analysis on an image stream. This will be a synchronously (blocking) call.
-    result = client.analyze(
+    result = client.analyze( # type: ignore[attr-defined]
         image_content = image_buffer,
         visual_features = [ VisualFeatures.TAGS ],
         language = "en") # Optional. See https://aka.ms/cv-languages for supported languages.

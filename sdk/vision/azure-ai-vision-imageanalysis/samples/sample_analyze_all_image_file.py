@@ -76,7 +76,7 @@ def sample_analyze_all_image_file():
     # [END create_client_with_logging]
 
     # Analyze all visual features from an image stream. This will be a synchronously (blocking) call.
-    result = client.analyze(
+    result = client.analyze( # type: ignore[attr-defined]
         image_content = image_buffer,
         visual_features = [
             VisualFeatures.TAGS,

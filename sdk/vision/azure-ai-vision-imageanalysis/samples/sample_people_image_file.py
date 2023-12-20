@@ -48,7 +48,7 @@ def sample_people_image_file():
         image_buffer = bytes(f.read())
 
     # Find people in an image stream. This will be a synchronously (blocking) call.
-    result = client.analyze(
+    result = client.analyze( # type: ignore[attr-defined]
         image_content = image_buffer,
         visual_features = [ VisualFeatures.PEOPLE ])
 
