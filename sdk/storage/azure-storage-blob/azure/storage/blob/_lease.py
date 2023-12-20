@@ -73,13 +73,13 @@ class BlobLeaseClient(object):
             (-1) for a lease that never expires. A non-infinite lease can be
             between 15 and 60 seconds. A lease duration cannot be changed
             using renew or change. Default is -1 (infinite lease).
-        :keyword ~datetime.datetime if_modified_since:
+        :keyword datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :keyword ~datetime.datetime if_unmodified_since:
+        :keyword datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -129,13 +129,13 @@ class BlobLeaseClient(object):
         or blob has not been leased again since the expiration of that lease. When you
         renew a lease, the lease duration clock resets.
 
-        :keyword ~datetime.datetime if_modified_since:
+        :keyword datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :keyword ~datetime.datetime if_unmodified_since:
+        :keyword datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -182,13 +182,13 @@ class BlobLeaseClient(object):
         that associated with the container or blob. Releasing the lease allows another client
         to immediately acquire the lease for the container or blob as soon as the release is complete.
 
-        :keyword ~datetime.datetime if_modified_since:
+        :keyword datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :keyword ~datetime.datetime if_unmodified_since:
+        :keyword datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -234,13 +234,13 @@ class BlobLeaseClient(object):
         :param str proposed_lease_id:
             Proposed lease ID, in a GUID string format. The Blob service returns 400
             (Invalid request) if the proposed lease ID is not in the correct format.
-        :keyword ~datetime.datetime if_modified_since:
+        :keyword datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :keyword ~datetime.datetime if_unmodified_since:
+        :keyword datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -301,13 +301,13 @@ class BlobLeaseClient(object):
             period. If this header does not appear with a break
             operation, a fixed-duration lease breaks after the remaining lease
             period elapses, and an infinite lease breaks immediately.
-        :keyword ~datetime.datetime if_modified_since:
+        :keyword datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :keyword ~datetime.datetime if_unmodified_since:
+        :keyword datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.

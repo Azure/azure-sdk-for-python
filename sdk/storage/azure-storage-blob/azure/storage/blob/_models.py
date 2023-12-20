@@ -529,15 +529,15 @@ class ImmutabilityPolicy(DictMixin):
 
 
 class FilteredBlob(DictMixin):
-    """Blob info from a Filter Blobs API call.
+    """Blob info from a Filter Blobs API call."""
 
-    :ivar name: Blob name
-    :type name: str
-    :ivar container_name: Container name.
-    :type container_name: str
-    :ivar tags: Key value pairs of blob tags.
-    :type tags: Dict[str, str]
-    """
+    name: Optional[str] 
+    """Blob name"""
+    container_name: Optional[str]
+    """Container name."""
+    tags: Optional[Dict[str, str]]
+    """Key value pairs of blob tags."""
+
     def __init__(self, **kwargs: Any) -> None:
         self.name = kwargs.get('name', None)
         self.container_name = kwargs.get('container_name', None)
@@ -545,15 +545,14 @@ class FilteredBlob(DictMixin):
 
 
 class LeaseProperties(DictMixin):
-    """Blob Lease Properties.
+    """Blob Lease Properties."""
 
-    :ivar str status:
-        The lease status of the blob. Possible values: locked|unlocked
-    :ivar str state:
-        Lease state of the blob. Possible values: available|leased|expired|breaking|broken
-    :ivar str duration:
-        When a blob is leased, specifies whether the lease is of infinite or fixed duration.
-    """
+    status: Optional[str]
+    """The lease status of the blob. Possible values: locked|unlocked"""
+    state: Optional[str]
+    """Lease state of the blob. Possible values: available|leased|expired|breaking|broken"""
+    duration: Optional[str]
+    """When a blob is leased, specifies whether the lease is of infinite or fixed duration."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.status = get_enum_value(kwargs.get('x-ms-lease-status'))
@@ -630,44 +629,44 @@ class CopyProperties(DictMixin):
     These properties will be `None` if this blob has never been the destination
     in a Copy Blob operation, or if this blob has been modified after a concluded
     Copy Blob operation, for example, using Set Blob Properties, Upload Blob, or Commit Block List.
-
-    :ivar str id:
-        String identifier for the last attempted Copy Blob operation where this blob
-        was the destination blob.
-    :ivar str source:
-        URL up to 2 KB in length that specifies the source blob used in the last attempted
-        Copy Blob operation where this blob was the destination blob.
-    :ivar str status:
-        State of the copy operation identified by Copy ID, with these values:
-            success:
-                Copy completed successfully.
-            pending:
-                Copy is in progress. Check copy_status_description if intermittent,
-                non-fatal errors impede copy progress but don't cause failure.
-            aborted:
-                Copy was ended by Abort Copy Blob.
-            failed:
-                Copy failed. See copy_status_description for failure details.
-    :ivar str progress:
-        Contains the number of bytes copied and the total bytes in the source in the last
-        attempted Copy Blob operation where this blob was the destination blob. Can show
-        between 0 and Content-Length bytes copied.
-    :ivar ~datetime.datetime completion_time:
-        Conclusion time of the last attempted Copy Blob operation where this blob was the
-        destination blob. This value can specify the time of a completed, aborted, or
-        failed copy attempt.
-    :ivar str status_description:
-        Only appears when x-ms-copy-status is failed or pending. Describes cause of fatal
-        or non-fatal copy operation failure.
-    :ivar bool incremental_copy:
-        Copies the snapshot of the source page blob to a destination page blob.
-        The snapshot is copied such that only the differential changes between
-        the previously copied snapshot are transferred to the destination
-    :ivar ~datetime.datetime destination_snapshot:
-        Included if the blob is incremental copy blob or incremental copy snapshot,
-        if x-ms-copy-status is success. Snapshot time of the last successful
-        incremental copy snapshot for this blob.
     """
+
+    id: Optional[str]
+    """String identifier for the last attempted Copy Blob operation where this blob
+        was the destination blob."""
+    source: Optional[str]
+    """URL up to 2 KB in length that specifies the source blob used in the last attempted
+        Copy Blob operation where this blob was the destination blob."""
+    status: Optional[str]
+    """State of the copy operation identified by Copy ID, with these values:
+        success:
+            Copy completed successfully.
+        pending:
+            Copy is in progress. Check copy_status_description if intermittent,
+            non-fatal errors impede copy progress but don't cause failure.
+        aborted:
+            Copy was ended by Abort Copy Blob.
+        failed:
+            Copy failed. See copy_status_description for failure details."""
+    progress: Optional[str]
+    """Contains the number of bytes copied and the total bytes in the source in the last
+        attempted Copy Blob operation where this blob was the destination blob. Can show
+        between 0 and Content-Length bytes copied."""
+    completion_time: Optional["datetime"]
+    """Conclusion time of the last attempted Copy Blob operation where this blob was the
+        destination blob. This value can specify the time of a completed, aborted, or
+        failed copy attempt."""
+    status_description: Optional[str]
+    """Only appears when x-ms-copy-status is failed or pending. Describes cause of fatal
+        or non-fatal copy operation failure."""
+    incremental_copy: Optional[bool]
+    """Copies the snapshot of the source page blob to a destination page blob.
+        The snapshot is copied such that only the differential changes between
+        the previously copied snapshot are transferred to the destination."""
+    destination_snapshot: Optional["datetime"]
+    """Included if the blob is incremental copy blob or incremental copy snapshot,
+        if x-ms-copy-status is success. Snapshot time of the last successful
+        incremental copy snapshot for this blob."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.id = kwargs.get('x-ms-copy-id')
@@ -700,8 +699,6 @@ class BlobBlock(DictMixin):
         Block id.
     :param str state:
         Block state. Possible values: committed|uncommitted
-    :ivar int size:
-        Block size in bytes.
     """
 
     def __init__(self, block_id: str, state: Union[str, Enum] = BlockState.Latest) -> None:
@@ -731,9 +728,10 @@ class PageRange(DictMixin):
         Start of page range in bytes.
     :param int end:
         End of page range in bytes.
-    :ivar bool cleared:
-        Whether the range has been cleared.
     """
+
+    cleared: Optional[bool]
+    """Whether the range has been cleared."""
 
     def __init__(self, start: Optional[int] = None, end: Optional[int] = None, *, cleared: bool = False) -> None:
         self.start = start
@@ -1064,9 +1062,11 @@ class CustomerProvidedEncryptionKey(object):
         Base64-encoded AES-256 encryption key value.
     :param str key_hash:
         Base64-encoded SHA256 of the encryption key.
-    :ivar str algorithm:
-        Specifies the algorithm to use when encrypting data using the given key. Must be AES256.
     """
+
+    algorithm: str
+    """Specifies the algorithm to use when encrypting data using the given key. Must be AES256."""
+
     def __init__(self, key_value: str, key_hash: str) -> None:
         self.key_value = key_value
         self.key_hash = key_hash
@@ -1163,14 +1163,13 @@ class ArrowType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ObjectReplicationPolicy(DictMixin):
-    """Policy id and rule ids applied to a blob.
+    """Policy id and rule ids applied to a blob."""
 
-    :ivar str policy_id:
-        Policy id for the blob. A replication policy gets created (policy id) when creating a source/destination pair.
-    :ivar list(~azure.storage.blob.ObjectReplicationRule) rules:
-        Within each policy there may be multiple replication rules.
-        e.g. rule 1= src/container/.pdf to dst/container2/; rule2 = src/container1/.jpg to dst/container3
-    """
+    policy_id: Optional[str]
+    """Policy id for the blob. A replication policy gets created (policy id) when creating a source/destination pair."""
+    algorithm: Optional[List["ObjectReplicationRule"]]
+    """Within each policy there may be multiple replication rules.
+        e.g. rule 1= src/container/.pdf to dst/container2/; rule2 = src/container1/.jpg to dst/container3"""
 
     def __init__(self, **kwargs: Any) -> None:
         self.policy_id = kwargs.pop('policy_id', None)
@@ -1312,13 +1311,12 @@ class BlobProperties(DictMixin):
 
 
 class ObjectReplicationRule(DictMixin):
-    """Policy id and rule ids applied to a blob.
+    """Policy id and rule ids applied to a blob."""
 
-    :ivar str rule_id:
-        Rule id.
-    :ivar str status:
-        The status of the rule. It could be "Complete" or "Failed"
-    """
+    rule_id: Optional[str]
+    """Rule id."""
+    status: Optional[str]
+    """The status of the rule. It could be "Complete" or "Failed" """
 
     def __init__(self, **kwargs: Any) -> None:
         self.rule_id = kwargs.pop('rule_id', None)
@@ -1326,19 +1324,19 @@ class ObjectReplicationRule(DictMixin):
 
 
 class BlobQueryError(object):
-    """The error happened during quick query operation.
+    """The error happened during quick query operation."""
 
-    :ivar str error:
-        The name of the error.
-    :ivar bool is_fatal:
-        If true, this error prevents further query processing. More result data may be returned,
+    error: Optional[str]
+    """The name of the error."""
+    is_fatal: bool
+    """If true, this error prevents further query processing. More result data may be returned,
         but there is no guarantee that all of the original data will be processed.
-        If false, this error does not prevent further query processing.
-    :ivar str description:
-        A description of the error.
-    :ivar int position:
-        The blob offset at which the error occurred.
-    """
+        If false, this error does not prevent further query processing."""
+    description: Optional[str]
+    """A description of the error."""
+    position: Optional[int]
+    """The blob offset at which the error occurred."""
+
     def __init__(
         self, error: Optional[str] = None,
         is_fatal: bool = False,
