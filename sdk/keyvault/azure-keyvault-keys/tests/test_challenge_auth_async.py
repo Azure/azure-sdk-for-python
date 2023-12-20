@@ -218,7 +218,7 @@ async def test_adfs():
                 assert not request.body
                 assert request.headers["Content-Length"] == "0"
                 return challenge
-            elif Requests.count == 2:
+            elif Requests.count in (2, 3):
                 # second request should be authorized according to challenge and have the expected content
                 assert request.headers["Content-Length"]
                 assert request.body == expected_content
@@ -232,14 +232,16 @@ async def test_adfs():
             return AccessToken(expected_token, 0)
 
         credential = Mock(get_token=Mock(wraps=get_token))
-        pipeline = AsyncPipeline(
-            policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=Mock(send=send)
-        )
+        policy = AsyncChallengeAuthPolicy(credential=credential)
+        pipeline = AsyncPipeline(policies=[policy], transport=Mock(send=send))
         request = HttpRequest("POST", get_random_url())
         request.set_bytes_body(expected_content)
         await pipeline.run(request)
-
         assert credential.get_token.call_count == 1
+
+        # Regression test: https://github.com/Azure/azure-sdk-for-python/issues/33621
+        policy._token = None
+        await pipeline.run(request)
 
     tenant = "tenant-id"
     # AD FS challenges have an unusual authority format; see https://github.com/Azure/azure-sdk-for-python/issues/28648
