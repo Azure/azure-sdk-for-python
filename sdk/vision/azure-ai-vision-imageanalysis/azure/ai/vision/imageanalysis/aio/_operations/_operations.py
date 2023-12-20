@@ -660,47 +660,43 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
     ) -> _models.ImageAnalysisResult:
         """Performs a single Image Analysis operation.
 
-        :param image_content: The image to be analyzed. Required.
-        :type image_content: ~azure.ai.vision.imageanalysis.models.ImageUrl
-        :keyword visual_features: A list of visual features to analyze.
-         Seven visual features are supported: Caption, DenseCaptions, Read (OCR), Tags, Objects,
-         SmartCrops, and People.
-         At least one visual feature must be specified. Required.
-        :paramtype visual_features: list[str or ~azure.ai.vision.imageanalysis.models.VisualFeatures]
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword language: The desired language for result generation (a two-letter language code).
+        :param image_content: The image to be analyzed. Required. One of the following two types: 'str' or 'bytes'.
+         Use 'str' to provide a publicly accessible URL of the image to analyze. Use
+         'bytes' to provide the image content directly.
+        :type image_content: str or bytes
+        :param visual_features: A list of visual features to analyze. Required. Seven visual features 
+         are supported: Caption, DenseCaptions, Read (OCR), Tags, Objects, SmartCrops, and People. At 
+         least one visual feature must be specified.
+        :type visual_features: list[~azure.ai.vision.imageanalysis.models.VisualFeatures]
+        :param language: The desired language for result generation (a two-letter language code).
          If this option is not specified, the default value 'en' is used (English).
          See https://aka.ms/cv-languages for a list of supported languages.
          At the moment, only tags can be generated in none-English languages. Default value is None.
-        :paramtype language: str
-        :keyword gender_neutral_caption: Boolean flag for enabling gender-neutral captioning for
+        :type language: str
+        :param gender_neutral_caption: Boolean flag for enabling gender-neutral captioning for
          Caption and Dense Captions features.
          By default captions may contain gender terms (for example: 'man', 'woman', or 'boy', 'girl').
          If you set this to "true", those will be replaced with gender-neutral terms (for example:
          'person' or 'child'). Default value is None.
-        :paramtype gender_neutral_caption: bool
-        :keyword smart_crops_aspect_ratios: A list of aspect ratios to use for smart cropping.
+        :type gender_neutral_caption: bool
+        :param smart_crops_aspect_ratios: A list of aspect ratios to use for smart cropping.
          Aspect ratios are calculated by dividing the target crop width in pixels by the height in
          pixels.
          Supported values are between 0.75 and 1.8 (inclusive).
          If this parameter is not specified, the service will return one crop region with an aspect
          ratio it sees fit between 0.5 and 2.0 (inclusive). Default value is None.
-        :paramtype smart_crops_aspect_ratios: list[float]
-        :keyword model_version: The version of cloud AI-model used for analysis.
+        :type smart_crops_aspect_ratios: list[float]
+        :param model_version: The version of cloud AI-model used for analysis.
          The format is the following: 'latest' (default value) or 'YYYY-MM-DD' or 'YYYY-MM-DD-preview',
          where 'YYYY', 'MM', 'DD' are the year, month and day associated with the model.
          This is not commonly set, as the default always gives the latest AI model with recent
          improvements.
          If however you would like to make sure analysis results do not change over time, set this
          value to a specific model version. Default value is None.
-        :paramtype model_version: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
+        :type model_version: str
         :return: ImageAnalysisResult. The ImageAnalysisResult is compatible with MutableMapping
         :rtype: ~azure.ai.vision.imageanalysis.models.ImageAnalysisResult
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         visual_features_impl: List[Union[str, _models.VisualFeatures]] = list(visual_features)
 
