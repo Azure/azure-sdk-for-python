@@ -3,6 +3,7 @@
 ### 4.5.2b4 (Unreleased)
 
 #### Features Added
+* Added conditional support for preview feature of Computed Properties on Python SDK. See [PR 33626](https://github.com/Azure/azure-sdk-for-python/pull/33626)
 
 #### Breaking Changes
 
