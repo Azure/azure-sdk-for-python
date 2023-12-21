@@ -29,6 +29,6 @@ class ACSOutputConfig:
         *,
         acs_index_name: Optional[str] = None,
         acs_connection_id: Optional[str] = None,
-    ):
+    ) -> None:
         self.acs_index_name = acs_index_name
         self.acs_connection_id = acs_connection_id
