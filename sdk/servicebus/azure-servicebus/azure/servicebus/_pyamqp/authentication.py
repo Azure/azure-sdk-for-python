@@ -7,7 +7,7 @@
 import time
 from functools import partial
 
-from typing import Any, Awaitable, Callable, NamedTuple, Optional, Tuple, Union
+from typing import Any, Callable, NamedTuple, Optional, Tuple, Union
 from .sasl import SASLAnonymousCredential, SASLPlainCredential
 from .utils import generate_sas_token
 
