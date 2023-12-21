@@ -46,7 +46,7 @@ class AzureOpenAIConnection(BaseConnection):
         api_version: Optional[str] = None,
         api_type: str = "Azure",
         **kwargs,
-    ):
+    ) -> None:
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="azure_open_ai", credentials=credentials, api_version=api_version, api_type=api_type, **kwargs)
 
@@ -157,7 +157,7 @@ class AzureAISearchConnection(BaseConnection):
         credentials: ApiKeyConfiguration,
         api_version: Optional[str] = None,
         **kwargs,
-    ):
+    ) -> None:
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="cognitive_search", credentials=credentials, api_version=api_version, **kwargs)
 
@@ -232,7 +232,7 @@ class AzureAIServiceConnection(BaseConnection):
         api_version: Optional[str] = None,
         kind: str,
         **kwargs,
-    ):
+    ) -> None:
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="cognitive_service", credentials=credentials, api_version=api_version, kind=kind, **kwargs)
 
@@ -299,7 +299,7 @@ class GitHubConnection(BaseConnection):
         target: str,
         credentials: ApiKeyConfiguration,
         **kwargs,
-    ):
+    ) -> None:
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="git", credentials=credentials, **kwargs)
 
@@ -325,6 +325,6 @@ class CustomConnection(BaseConnection):
         target: str,
         credentials: ApiKeyConfiguration,
         **kwargs,
-    ):
+    )  -> None:
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="custom", credentials=credentials, **kwargs)

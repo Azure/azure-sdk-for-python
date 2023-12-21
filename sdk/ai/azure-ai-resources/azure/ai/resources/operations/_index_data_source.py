@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 import os
 import json
+from typing import Optional
 
 from azure.ai.ml import Input, load_component
 
@@ -31,7 +32,7 @@ class IndexDataSource:
     def __init__(self, *, input_type: IndexInputType):
         self.input_type = input_type
 
-    def _createComponent(self, index_config: IndexConfig, acs_config: ACSOutputConfig = None) -> Pipeline:
+    def _createComponent(self, index_config: IndexConfig, acs_config: Optional[ACSOutputConfig] = None) -> Pipeline:
         """Given the general config values, as well as the config values related to the output index, produce
         and populate a component that creates an index of the specified type from this input config's data source.
 
@@ -63,7 +64,7 @@ class GitSource(IndexDataSource):
         self.git_connection_id = git_connection_id
         super().__init__(input_type=IndexInputType.GIT)
 
-    def _createComponent(self, index_config: IndexConfig, acs_config: ACSOutputConfig = None) -> Pipeline:
+    def _createComponent(self, index_config: IndexConfig, acs_config: Optional[ACSOutputConfig] = None) -> Pipeline:
         curr_file_path = os.path.dirname(__file__)
         if acs_config:
             acs_index_name = acs_config.acs_index_name
@@ -127,7 +128,7 @@ class ACSSource(IndexDataSource):
         acs_embedding_key: str,
         acs_title_key: str,
         acs_metadata_key: str,
-        acs_connection_id: str = None,
+        acs_connection_id: Optional[str] = None,
         num_docs_to_import=50,
     ):
         self.acs_index_name = acs_index_name
@@ -164,14 +165,14 @@ class LocalSource(IndexDataSource):
     """Config class for creating an ML index from a collection of local files.
 
     :param input_data: An input object describing the local location of index source files.
-    :type input_data: ~azure.ai.ml.input
+    :type input_data: ~azure.ai.ml.Input
     """
 
     def __init__(self, *, input_data: str):  # todo Make sure type of input_data is correct
         self.input_data = Input(type="uri_folder", path=input_data)
         super().__init__(input_type=IndexInputType.LOCAL)
 
-    def _createComponent(self, index_config: IndexConfig, acs_config: ACSOutputConfig = None) -> Pipeline:
+    def _createComponent(self, index_config: IndexConfig, acs_config: Optional[ACSOutputConfig] = None) -> Pipeline:
         curr_file_path = os.path.dirname(__file__)
         if acs_config:
             acs_index_name = acs_config.acs_index_name

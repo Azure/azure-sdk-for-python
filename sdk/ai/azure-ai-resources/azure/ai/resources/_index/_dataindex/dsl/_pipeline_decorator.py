@@ -74,7 +74,7 @@ def pipeline(
 # Overload the returns a decorated function when func isn't None
 @overload
 def pipeline(
-    func: Callable[P, T] = None,
+    func: Optional[Callable[P, T]] = None,
     *,
     name: Optional[str] = None,
     version: Optional[str] = None,

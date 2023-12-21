@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from dataclasses import dataclass
-from typing import Dict, Union
+from typing import Dict, Union, Optional
 
 from azure.ai.ml.entities import OnlineEndpoint, OnlineDeployment
 
@@ -16,13 +16,13 @@ class Deployment:
     model: Union[str, Model, PromptflowModel]
     app_insights_enabled: bool = True
     data_collector_enabled: bool = True
-    endpoint_name: str = None
-    environment_variables: Dict[str, str] = None
-    instance_type: str = None
+    endpoint_name: Optional[str] = None
+    environment_variables: Optional[Dict[str, str]] = None
+    instance_type: Optional[str] = None
     instance_count: str = 1
-    scoring_uri: str = None
-    properties: Dict[str, str] = None
-    tags: Dict[str, str] = None
+    scoring_uri: Optional[str] = None
+    properties: Optional[Dict[str, str]] = None
+    tags: Optional[Dict[str, str]] = None
 
 
     @classmethod

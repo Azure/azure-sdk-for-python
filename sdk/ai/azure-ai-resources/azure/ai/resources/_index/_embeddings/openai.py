@@ -19,7 +19,7 @@ class OpenAIEmbedder:
         self,
         api_base: str,
         api_type: str,
-        api_version: str = None,
+        api_version: Optional[str] = None,
         api_key: Optional[str] = None,
         azure_credential: Optional[Any] = None,
         model: str = "text-embedding-ada-002",

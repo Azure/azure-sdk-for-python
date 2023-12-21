@@ -228,10 +228,10 @@ def data_index_incremental_update_acs(
         chunk_size: int = 768,
         chunk_overlap: int = 0,
         input_glob: str = "**/*",
-        citation_url: str = None,
-        citation_replacement_regex: str = None,
-        aoai_connection_id: str = None,
-        embeddings_container: Input = None,
+        citation_url: Optional[str] = None,
+        citation_replacement_regex: Optional[str] = None,
+        aoai_connection_id: Optional[str] = None,
+        embeddings_container: Optional[Input] = None,
     ):
         """
         Generate embeddings for a `input_data` source and push them into an Azure Cognitive Search index.
@@ -379,11 +379,11 @@ def data_index_faiss(
         input_data: Input,
         embeddings_model: str,
         chunk_size: int = 1024,
-        data_source_glob: str = None,
-        data_source_url: str = None,
-        document_path_replacement_regex: str = None,
-        aoai_connection_id: str = None,
-        embeddings_container: Input = None,
+        data_source_glob: Optional[str] = None,
+        data_source_url: Optional[str] = None,
+        document_path_replacement_regex: Optional[str] = None,
+        aoai_connection_id: Optional[str] = None,
+        embeddings_container: Optional[Input] = None,
     ):
         """
         Generate embeddings for a `input_data` source and create a Faiss index from them.
@@ -519,11 +519,11 @@ def data_index_acs(
         acs_config: str,
         acs_connection_id: str,
         chunk_size: int = 1024,
-        data_source_glob: str = None,
-        data_source_url: str = None,
-        document_path_replacement_regex: str = None,
-        aoai_connection_id: str = None,
-        embeddings_container: Input = None,
+        data_source_glob: Optional[str] = None,
+        data_source_url: Optional[str] = None,
+        document_path_replacement_regex: Optional[str] = None,
+        aoai_connection_id: Optional[str] = None,
+        embeddings_container: Optional[Input] = None,
     ):
         """
         Generate embeddings for a `input_data` source and push them into an Azure Cognitive Search index.

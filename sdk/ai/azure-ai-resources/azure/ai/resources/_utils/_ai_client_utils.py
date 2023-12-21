@@ -14,7 +14,7 @@ from azure.ai.ml.constants._common import LOCAL_PATH
 
 def find_config_file_path(
     path: Optional[Union[os.PathLike, str]] = None,
-    file_name: str = None,
+    file_name: Optional[str] = None,
 ) -> str:
     path = Path(".") if path is None else Path(path)
 

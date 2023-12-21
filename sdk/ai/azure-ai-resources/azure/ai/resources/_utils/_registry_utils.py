@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 import re
+from typing import Optional
 
 REGISTRY_VERSIONED_ID_REGEX = "^azureml://registries/([^/]+)/([^/]+)/([^/]+)/versions/([^/]+)"
 REGISTRY_LABEL_ID_REGEX = "^azureml://registries/([^/]+)/([^/]+)/([^/]+)/labels/([^/]+)"
@@ -10,11 +11,11 @@ REGISTRY_LABEL_ID_REGEX = "^azureml://registries/([^/]+)/([^/]+)/([^/]+)/labels/
 
 def get_registry_model(
     credential,
-    registry_name: str = None,
-    id: str = None,
-    model_name: str = None,
-    version: str = None,
-    label: str = None,
+    registry_name: Optional[str] = None,
+    id: Optional[str] = None,
+    model_name: Optional[str] = None,
+    version: Optional[str] = None,
+    label: Optional[str] = None,
 ):
     from azure.ai.ml import MLClient
 
