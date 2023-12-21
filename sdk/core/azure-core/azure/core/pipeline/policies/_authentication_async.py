@@ -6,7 +6,6 @@
 import time
 from typing import TYPE_CHECKING, Any, Awaitable, Optional, cast, TypeVar
 
-from anyio import Lock
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
@@ -20,6 +19,11 @@ from .._tools_async import await_result
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
+
+try:
+    from anyio import Lock
+except ImportError:
+    from asyncio import Lock
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", AsyncHttpResponse, LegacyAsyncHttpResponse)
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
