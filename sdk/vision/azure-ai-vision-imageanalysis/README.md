@@ -83,7 +83,7 @@ from azure.ai.vision.imageanalysis.aio import ImageAnalysisClient
 Once you've initialized an `ImageAnalysisClient`, you need to select one or more visual features to analyze. The options are specified by the enum class `VisualFeatures`. The following features are supported:
 
 1. `VisualFeatures.CAPTION` ([Examples](#generate-an-image-caption-for-an-image-file) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/vision/azure-ai-vision-imageanalysis/samples)): Generate a human-readable sentence that describes the content of an image.
-1. `VisualFeatures.READ` ([Examples](#extract-text-from-an-image-file) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/vision/azure-ai-vision-imageanalysis/samples)): Also known as Optical Character Recognition (OCR). Extract printed or handwritten text from images.
+1. `VisualFeatures.READ` ([Examples](#extract-text-from-an-image-file) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/vision/azure-ai-vision-imageanalysis/samples)): Also known as Optical Character Recognition (OCR). Extract printed or handwritten text from images. **Note**: For extracting text from PDF, Office, and HTML documents and document images, use the Document Intelligence service with the [Read model](https://learn.microsoft.com/azure/ai-services/document-intelligence/concept-read?view=doc-intel-4.0.0). This model is optimized for text-heavy digital and scanned documents with an asynchronous REST API that makes it easy to power your intelligent document processing scenarios. This service is separate from the Image Analysis service and has its own SDK.
 1. `VisualFeatures.DENSE_CAPTIONS` ([Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/vision/azure-ai-vision-imageanalysis/samples)): Dense Captions provides more details by generating one-sentence captions for up to 10 different regions in the image, including one for the whole image. 
 1. `VisualFeatures.TAGS` ([Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/vision/azure-ai-vision-imageanalysis/samples)): Extract content tags for thousands of recognizable objects, living beings, scenery, and actions that appear in images.
 1. `VisualFeatures.OBJECTS` ([Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/vision/azure-ai-vision-imageanalysis/samples)): Object detection. This is similar to tagging, but focused on detecting physical objects in the image and returning their location.
@@ -211,6 +211,7 @@ if result.read is not None:
 
 To extract text for additional images, simply call `analyze` multiple times. You can use the same ImageAnalysisClient do to multiple analysis calls.
 
+**Note**: For extracting text from PDF, Office, and HTML documents and document images, use the Document Intelligence service with the [Read model](https://learn.microsoft.com/azure/ai-services/document-intelligence/concept-read?view=doc-intel-4.0.0). This model is optimized for text-heavy digital and scanned documents with an asynchronous REST API that makes it easy to power your intelligent document processing scenarios. This service is separate from the Image Analysis service and has its own SDK.
 
 ### Extract text from an image URL
 
