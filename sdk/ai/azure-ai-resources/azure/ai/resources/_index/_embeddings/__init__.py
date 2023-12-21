@@ -27,7 +27,7 @@ def get_langchain_embeddings(embedding_kind: str, arguments: dict, credential: O
 
         embedder = OpenAIEmbedder(
             model=arguments.get("model"),
-            api_base=arguments.get("api_base", openai.api_base),
+            api_base=arguments.get("api_base", openai.api_base if hasattr(openai, "api_base") else openai.base_url),
             api_type=arguments.get("api_type", openai.api_type),
             api_version=arguments.get("api_version", openai.api_version),
             api_key=arguments.get("api_key", openai.api_key),
@@ -51,7 +51,7 @@ def get_langchain_embeddings(embedding_kind: str, arguments: dict, credential: O
             raise ValueError("HuggingFace embeddings require a model name.")
 
         class ActivitySafeHuggingFaceEmbeddings(Embedder):
-            """HuggingFaceEmbeddings with kwargs argument to embed_doceuments to support loggers being passed in."""
+            """HuggingFaceEmbeddings with kwargs argument to embed_documents to support loggers being passed in."""
 
             def __init__(self, embeddings):
                 """Initialize the ActivitySafeHuggingFaceEmbeddings."""
@@ -113,7 +113,7 @@ def get_embed_fn(embedding_kind: str, arguments: dict, credential: Optional[Toke
 
         embedder = OpenAIEmbedder(
             model=arguments.get("model"),
-            api_base=arguments.get("api_base", openai.api_base),
+            api_base=arguments.get("api_base", openai.api_base if hasattr(openai, "api_base") else openai.base_url),
             api_type=arguments.get("api_type", openai.api_type),
             api_version=arguments.get("api_version", openai.api_version),
             api_key=arguments.get("api_key", openai.api_key),

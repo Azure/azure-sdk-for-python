@@ -124,7 +124,7 @@ class AzureCognitiveSearchVectorStore(VectorStore):
 
         return []
 
-    def add_texts(self, texts: Iterable[str], metadatas: Optional[List[dict]] = None, **kwargs: Any) -> List[str]:
+    def add_texts(self, texts: Iterable[str], metadata: Optional[List[dict]] = None, **kwargs: Any) -> List[str]:
         """Add texts to the vector store."""
         raise NotImplementedError
 
@@ -141,6 +141,6 @@ class AzureCognitiveSearchVectorStore(VectorStore):
         return [doc for (doc, _) in self._similarity_search_by_vector_with_relevance_scores(None, vector, k, **kwargs)]
 
     @classmethod
-    def from_texts(cls, texts: Iterable[str], metadatas: Optional[List[dict]] = None, **kwargs: Any) -> VectorStore:
+    def from_texts(cls, texts: Iterable[str], metadata: Optional[List[dict]] = None, **kwargs: Any) -> VectorStore:
         """Create a vector store from a list of texts."""
         raise NotImplementedError

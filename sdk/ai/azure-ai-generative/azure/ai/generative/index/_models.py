@@ -120,7 +120,7 @@ def init_open_ai_from_config(config: dict, credential: Optional[TokenCredential]
             logger.warning(f"Failed to get credential for ACS with {e}, falling back to env vars.")
             config["api_key"] = os.environ["OPENAI_API_KEY"]
             config["api_type"] = os.environ.get("OPENAI_API_TYPE", "azure")
-            config["api_base"] = os.environ.get("OPENAI_API_BASE", openai.api_base)
+            config["api_base"] = os.environ.get("OPENAI_API_BASE", openai.api_base if hasattr(openai, "api_base") else openai.base_url)
             config["api_version"] = os.environ.get("OPENAI_API_VERSION", openai.api_version)
         else:
             raise e

@@ -72,7 +72,11 @@ def get_model_config(llm_config: Dict[str, Union[str, int]], openai_api_type: st
 
     # Only add base and version if using AOAI
     if model_config["api_type"] == "azure":
-        openai.api_base = model_config["api_base"]
+        # openai.api_base is replaced by openai.base_url in openai 1.x
+        if hasattr(openai, "api_base"):
+            openai.api_base = model_config["api_base"]
+        else:
+            openai.base_url = model_config["api_base"]
         openai.api_version = model_config["api_version"]
     return model_config
 
