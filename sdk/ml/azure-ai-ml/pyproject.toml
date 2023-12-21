@@ -1,5 +1,5 @@
 [tool.azure-sdk-build]
-mypy = false
+mypy = true
 pyright = false
 type_check_samples = false
 verifytypes = false
@@ -26,13 +26,3 @@ extend_skip_glob = [
   "*/doc/*",
   "*/.tox/*",
 ]
-
-[tool.mypy] 
-exclude = ["azure/ai/ml/_vendor", "azure/ai/ml/_restclient"] 
-disallow_untyped_defs = true 
-warn_unused_ignores = true 
-warn_return_any = true 
-warn_unreachable = true 
-ignore_missing_imports = true 
-follow_imports = "skip" 
-follow_imports_for_stubs = "skip"
