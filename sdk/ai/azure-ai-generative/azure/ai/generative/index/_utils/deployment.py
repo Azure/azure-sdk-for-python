@@ -22,11 +22,15 @@ def infer_deployment(aoai_connection, model_name):
     openai.api_version = connection_metadata.get(
         "ApiVersion", connection_metadata.get("apiVersion", "2023-03-15-preview")
     )
-    openai.api_base = get_target_from_connection(aoai_connection)
+    api_base = get_target_from_connection(aoai_connection)
+    if hasattr(openai, "api_base"):
+        openai.api_base = api_base
+    else:
+        openai.base_url = api_base
     credential = connection_to_credential(aoai_connection)
     openai.api_key = credential.key if isinstance(credential, AzureKeyCredential) else credential.get_token().token
     deployment_list = convert_to_dict(
-        Deployment.list(api_key=openai.api_key, api_base=openai.api_base, api_type=openai.api_type)
+        Deployment.list(api_key=openai.api_key, api_base=api_base, api_type=openai.api_type)
     )
     for deployment in deployment_list["data"]:
         if deployment["model"] == model_name:
