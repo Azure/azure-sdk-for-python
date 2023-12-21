@@ -3,7 +3,7 @@
 ### 4.5.2b4 (Unreleased)
 
 #### Features Added
-
+* Added a sample file to showcase using concurrency for python sdk. See [PR 33637](https://github.com/Azure/azure-sdk-for-python/pull/33637)
 #### Breaking Changes
 
 #### Bugs Fixed
