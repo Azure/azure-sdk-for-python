@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
+# mypy: disable-error-code="attr-defined"
 """
 DESCRIPTION:
     This sample demonstrates how to generate up to 10 human-readable sentences (captions) that describe
@@ -57,7 +57,7 @@ def sample_dense_captions_image_file():
 
     # Extract multiple captions, each for a different area of the image.
     # This will be a synchronously (blocking) call.
-    result = client.analyze( # type: ignore[attr-defined]
+    result = client.analyze(
         image_content = image_buffer,
         visual_features = [ VisualFeatures.DENSE_CAPTIONS ],
         gender_neutral_caption = True) # Optional (default is False)

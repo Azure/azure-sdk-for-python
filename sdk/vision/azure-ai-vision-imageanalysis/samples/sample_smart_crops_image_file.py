@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
+# mypy: disable-error-code="attr-defined"
 """
 DESCRIPTION:
     This sample demonstrates how to find representatives sub-regions of the image file sample.jpg,
@@ -57,7 +57,7 @@ def sample_smart_crops_image_file():
         image_buffer = bytes(f.read())
 
     # Do Smart Cropping analysis on an image stream. This will be a synchronously (blocking) call.
-    result = client.analyze( # type: ignore[attr-defined]
+    result = client.analyze(
         image_content = image_buffer,
         visual_features = [ VisualFeatures.SMART_CROPS ],
         smart_crops_aspect_ratios = [0.9, 1.33]) # Optional. Specify one more desired aspect ratios

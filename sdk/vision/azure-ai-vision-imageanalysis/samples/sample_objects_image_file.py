@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
+# mypy: disable-error-code="attr-defined"
 """
 DESCRIPTION:
     This sample demonstrates how to detect physical objects in an image file sample.jpg, using a synchronous client.
@@ -49,7 +49,7 @@ def sample_objects_image_file():
         image_buffer = bytes(f.read())
 
     # Detect objects in an image stream. This will be a synchronously (blocking) call.
-    result = client.analyze( # type: ignore[attr-defined]
+    result = client.analyze(
         image_content = image_buffer,
         visual_features = [ VisualFeatures.OBJECTS ])
 

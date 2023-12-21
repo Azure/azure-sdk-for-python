@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
+# mypy: disable-error-code="attr-defined"
 """
 DESCRIPTION:
     This sample demonstrates how to analyze all supported visual features from the image file sample.jpg,
@@ -76,7 +76,7 @@ def sample_analyze_all_image_file():
     # [END create_client_with_logging]
 
     # Analyze all visual features from an image stream. This will be a synchronously (blocking) call.
-    result = client.analyze( # type: ignore[attr-defined]
+    result = client.analyze(
         image_content = image_buffer,
         visual_features = [
             VisualFeatures.TAGS,

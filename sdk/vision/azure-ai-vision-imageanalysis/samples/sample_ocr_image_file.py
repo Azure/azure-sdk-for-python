@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
+# mypy: disable-error-code="attr-defined"
 """
 DESCRIPTION:
     This sample demonstrates how to extract printed or hand-written text for the image file sample.jpg
@@ -56,7 +56,7 @@ def sample_ocr_image_file():
         image_buffer = bytes(f.read())
 
     # Extract text (OCR) from an image stream. This will be a synchronously (blocking) call.
-    result = client.analyze( # type: ignore[attr-defined]
+    result = client.analyze(
         image_content = image_buffer,
         visual_features = [ VisualFeatures.READ ])
 

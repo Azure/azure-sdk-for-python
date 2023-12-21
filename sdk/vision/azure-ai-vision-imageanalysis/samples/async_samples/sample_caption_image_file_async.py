@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
+# mypy: disable-error-code="attr-defined"
 """
 DESCRIPTION:
     This sample demonstrates how to generate a human-readable sentence that describes the content
@@ -53,7 +53,7 @@ async def sample_caption_image_file_async():
         credential = AzureKeyCredential(key))
 
     # Analyze a visual feature (Tags) from an image URL, asynchronously.
-    result = await client.analyze( # type: ignore[attr-defined]
+    result = await client.analyze(
         image_content = image_buffer,
         visual_features = [ VisualFeatures.CAPTION ])
 

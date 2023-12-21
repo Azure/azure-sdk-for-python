@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
+# mypy: disable-error-code="attr-defined"
 """
 DESCRIPTION:
     This sample demonstrates how to extract content tags in an image file sample.jpg, using a synchronous client.
@@ -50,7 +50,7 @@ def sample_tags_image_file():
         image_buffer = bytes(f.read())
 
     # Do 'Tags' analysis on an image stream. This will be a synchronously (blocking) call.
-    result = client.analyze( # type: ignore[attr-defined]
+    result = client.analyze(
         image_content = image_buffer,
         visual_features = [ VisualFeatures.TAGS ],
         language = "en") # Optional. See https://aka.ms/cv-languages for supported languages.

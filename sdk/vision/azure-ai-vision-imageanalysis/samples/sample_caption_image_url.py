@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
+# mypy: disable-error-code="attr-defined"
 """
 DESCRIPTION:
     This sample demonstrates how to generate a human-readable sentence that describes the content
@@ -49,7 +49,7 @@ def sample_caption_image_url():
 
     # [START caption]
     # Get a caption for the image. This will be a synchronously (blocking) call.
-    result = client.analyze( # type: ignore[attr-defined]
+    result = client.analyze(
         image_content = "https://aka.ms/azai/vision/image-analysis-sample.jpg",
         visual_features = [ VisualFeatures.CAPTION ],
         gender_neutral_caption = True) # Optional (default is False)
