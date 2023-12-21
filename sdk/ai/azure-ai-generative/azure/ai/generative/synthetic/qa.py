@@ -11,7 +11,7 @@ try:
     import time
     from enum import Enum
     from functools import lru_cache
-    from typing import Dict, List, Tuple, Any, Union
+    from typing import Dict, List, Tuple, Any, Union, Optional
     from collections import defaultdict
     from azure.ai.resources.entities import BaseConnection
     from azure.identity import DefaultAzureCredential
