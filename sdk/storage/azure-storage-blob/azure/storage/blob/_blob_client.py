@@ -50,6 +50,7 @@ from ._blob_client_helpers import (
     _upload_page_options,
     _upload_pages_from_url_options
 )
+from ._container_client import ContainerClient
 from ._deserialize import (
     deserialize_blob_properties,
     deserialize_pipeline_response_into_cls,
@@ -160,13 +161,13 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             :caption: Creating the BlobClient from a SAS URL to a blob.
     """
     def __init__(
-            self, account_url: str,
-            container_name: str,
-            blob_name: str,
-            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
-        ) -> None:
+        self, account_url: str,
+        container_name: str,
+        blob_name: str,
+        snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> None:
         parsed_url, sas_token, path_snapshot = _parse_url(
             account_url=account_url,
             container_name=container_name,
@@ -174,10 +175,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         self.container_name = container_name
         self.blob_name = blob_name
         try:
-            self.snapshot = snapshot.snapshot # type: ignore
+            self.snapshot = snapshot.snapshot  # type: ignore
         except AttributeError:
             try:
-                self.snapshot = snapshot['snapshot'] # type: ignore
+                self.snapshot = snapshot['snapshot']  # type: ignore
             except TypeError:
                 self.snapshot = snapshot or path_snapshot
         self.version_id = kwargs.pop('version_id', None)
@@ -187,10 +188,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
         super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment] # pylint: disable=protected-access
         self._configure_encryption(kwargs)
 
-    def _format_url(self, hostname):
+    def _format_url(self, hostname: str) -> str:
         return _format_url(
             container_name=self.container_name,
             scheme=self.scheme,
@@ -201,11 +202,11 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     @classmethod
     def from_blob_url(
-            cls, blob_url: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-            **kwargs: Any
-        ) -> Self:
+        cls, blob_url: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+        **kwargs: Any
+    ) -> Self:
         """Create BlobClient from a blob url. This doesn't support customized blob url with '/' in blob name.
 
         :param str blob_url:
@@ -243,13 +244,13 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     @classmethod
     def from_connection_string(
-            cls, conn_str: str,
-            container_name: str,
-            blob_name: str,
-            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
-        ) -> Self:
+        cls, conn_str: str,
+        container_name: str,
+        blob_name: str,
+        snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> Self:
         """Create BlobClient from a Connection String.
 
         :param str conn_str:
@@ -297,8 +298,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         )
 
     @distributed_trace
-    def get_account_information(self, **kwargs):
-        # type: (**Any) -> Dict[str, str]
+    def get_account_information(self, **kwargs: Any) -> Dict[str, str]:
         """Gets information related to the storage account in which the blob resides.
 
         The information can also be retrieved if the user has a SAS to a container or blob.
@@ -313,8 +313,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     @distributed_trace
-    def upload_blob_from_url(self, source_url, **kwargs):
-        # type: (str, Any) -> Dict[str, Any]
+    def upload_blob_from_url(self, source_url: str, **kwargs: Any) -> Dict[str, Any]:
         """
         Creates a new Block Blob where the content of the blob is read from a given URL.
         The content of an existing blob is overwritten with the new blob.
@@ -416,18 +415,18 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             source_url=source_url,
             **kwargs)
         try:
-            return self._client.block_blob.put_blob_from_url(**options)
+            return self._client.block_blob.put_blob_from_url(**options)  # type: ignore
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
     def upload_blob(
-            self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
-            blob_type: Union[str, BlobType] = BlobType.BlockBlob,
-            length: Optional[int] = None,
-            metadata: Optional[Dict[str, str]] = None,
-            **kwargs
-        ) -> Dict[str, Any]:
+        self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        blob_type: Union[str, BlobType] = BlobType.BLOCKBLOB,
+        length: Optional[int] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Creates a new blob from a data source with automatic chunking.
 
         :param data: The blob data to upload.
@@ -584,36 +583,39 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             client=self._client,
             **kwargs)
         if blob_type == BlobType.BlockBlob:
-            return upload_block_blob(**options)
+            return upload_block_blob(**options)  # type: ignore
         if blob_type == BlobType.PageBlob:
-            return upload_page_blob(**options)
-        return upload_append_blob(**options)
+            return upload_page_blob(**options)  # type: ignore
+        return upload_append_blob(**options)  # type: ignore
 
     @overload
     def download_blob(
-            self, offset: int = None,
-            length: int = None,
-            *,
-            encoding: str,
-            **kwargs) -> StorageStreamDownloader[str]:
+        self, offset: Optional[int] = None,
+        length: Optional[int] = None,
+        *,
+        encoding: str,
+        **kwargs: Any
+    ) -> StorageStreamDownloader[str]:
         ...
 
     @overload
     def download_blob(
-            self, offset: int = None,
-            length: int = None,
-            *,
-            encoding: None = None,
-            **kwargs) -> StorageStreamDownloader[bytes]:
+        self, offset: Optional[int] = None,
+        length: Optional[int] = None,
+        *,
+        encoding: Optional[str] = None,
+        **kwargs: Any
+    ) -> StorageStreamDownloader[bytes]:
         ...
 
     @distributed_trace
     def download_blob(
-            self, offset: int = None,
-            length: int = None,
-            *,
-            encoding: Optional[str] = None,
-            **kwargs) -> StorageStreamDownloader:
+        self, offset: Optional[int] = None,
+        length: Optional[int] = None,
+        *,
+        encoding: Optional[str] = None,
+        **kwargs: Any
+    ) -> StorageStreamDownloader:
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
         a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
@@ -675,7 +677,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             a secure connection must be established to transfer the key.
         :keyword int max_concurrency:
             The number of parallel connections with which to download.
-        :keyword str encoding:
+        :keyword Optional[str] encoding:
             Encoding to decode the downloaded bytes. Default is None, i.e. no decoding.
         :keyword progress_hook:
             A callback to track the progress of a long running download. The signature is
@@ -729,8 +731,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         return StorageStreamDownloader(**options)
 
     @distributed_trace
-    def query_blob(self, query_expression, **kwargs):
-        # type: (str, **Any) -> BlobQueryReader
+    def query_blob(self, query_expression: str, **kwargs: Any) -> BlobQueryReader:
         """Enables users to select/project on blob/or blob snapshot data by providing simple query expressions.
         This operations returns a BlobQueryReader, users need to use readall() or readinto() to get query data.
 
@@ -829,8 +830,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             error_cls=error_cls)
 
     @distributed_trace
-    def delete_blob(self, delete_snapshots=None, **kwargs):
-        # type: (str, **Any) -> None
+    def delete_blob(self, delete_snapshots: Optional[str] = None, **kwargs: Any) -> None:
         """Marks the specified blob for deletion.
 
         The blob is later deleted during garbage collection.
@@ -844,11 +844,11 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         Soft deleted blob is accessible through :func:`~ContainerClient.list_blobs()` specifying `include=['deleted']`
         option. Soft-deleted blob can be restored using :func:`undelete` operation.
 
-        :param str delete_snapshots:
+        :param Optional[str] delete_snapshots:
             Required if the blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
              - "include": Deletes the blob along with all snapshots.
-        :keyword str version_id:
+        :keyword Optional[str] version_id:
             The version id parameter is an opaque DateTime
             value that, when present, specifies the version of the blob to delete.
 
@@ -911,8 +911,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     @distributed_trace
-    def undelete_blob(self, **kwargs):
-        # type: (**Any) -> None
+    def undelete_blob(self, **kwargs: Any) -> None:
         """Restores soft-deleted blobs or snapshots.
 
         Operation will only be successful if used within the specified number of days
@@ -945,8 +944,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     @distributed_trace
-    def exists(self, **kwargs):
-        # type: (**Any) -> bool
+    def exists(self, **kwargs: Any) -> bool:
         """
         Returns True if a blob exists with the defined parameters, and returns
         False otherwise.
@@ -980,8 +978,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 return False
 
     @distributed_trace
-    def get_blob_properties(self, **kwargs):
-        # type: (**Any) -> BlobProperties
+    def get_blob_properties(self, **kwargs: Any) -> BlobProperties:
         """Returns all user-defined metadata, standard HTTP properties, and
         system properties for the blob. It does not return the content of the blob.
 
@@ -1075,8 +1072,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         return blob_props # type: ignore
 
     @distributed_trace
-    def set_http_headers(self, content_settings=None, **kwargs):
-        # type: (Optional[ContentSettings], **Any) -> None
+    def set_http_headers(self, content_settings: Optional[ContentSettings] = None, **kwargs: Any) -> None:
         """Sets system properties on the blob.
 
         If one property is set for the content_settings, all properties will be overridden.
@@ -1127,8 +1123,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     @distributed_trace
-    def set_blob_metadata(self, metadata=None, **kwargs):
-        # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Union[str, datetime]]
+    def set_blob_metadata(
+        self, metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, datetime]]:
         """Sets user-defined metadata for the blob as one or more name-value pairs.
 
         :param metadata:
@@ -1193,8 +1191,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     @distributed_trace
-    def set_immutability_policy(self, immutability_policy, **kwargs):
-        # type: (ImmutabilityPolicy, **Any) -> Dict[str, str]
+    def set_immutability_policy(
+        self, immutability_policy: ImmutabilityPolicy,
+        **kwargs: Any
+    ) -> Dict[str, str]:
         """The Set Immutability Policy operation sets the immutability policy on the blob.
 
         .. versionadded:: 12.10.0
@@ -1218,11 +1218,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
         kwargs['immutability_policy_expiry'] = immutability_policy.expiry_time
         kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
-        return self._client.blob.set_immutability_policy(cls=return_response_headers, **kwargs)
+        return self._client.blob.set_immutability_policy(cls=return_response_headers, **kwargs)  # type: ignore
 
     @distributed_trace
-    def delete_immutability_policy(self, **kwargs):
-        # type: (**Any) -> None
+    def delete_immutability_policy(self, **kwargs: Any) -> None:
         """The Delete Immutability Policy operation deletes the immutability policy on the blob.
 
         .. versionadded:: 12.10.0
@@ -1241,8 +1240,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         self._client.blob.delete_immutability_policy(**kwargs)
 
     @distributed_trace
-    def set_legal_hold(self, legal_hold, **kwargs):
-        # type: (bool, **Any) -> Dict[str, Union[str, datetime, bool]]
+    def set_legal_hold(self, legal_hold: bool, **kwargs: Any) -> Dict[str, Union[str, datetime, bool]]:
         """The Set Legal Hold operation sets a legal hold on the blob.
 
         .. versionadded:: 12.10.0
@@ -1260,17 +1258,16 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :rtype: Dict[str, Union[str, datetime, bool]]
         """
 
-        return self._client.blob.set_legal_hold(legal_hold, cls=return_response_headers, **kwargs)
+        return self._client.blob.set_legal_hold(legal_hold, cls=return_response_headers, **kwargs)  # type: ignore
 
     @distributed_trace
-    def create_page_blob(  # type: ignore
-            self, size,  # type: int
-            content_settings=None,  # type: Optional[ContentSettings]
-            metadata=None, # type: Optional[Dict[str, str]]
-            premium_page_blob_tier=None,  # type: Optional[Union[str, PremiumPageBlobTier]]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+    def create_page_blob(
+        self, size: int,
+        content_settings: Optional[ContentSettings] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        premium_page_blob_tier: Optional[Union[str, PremiumPageBlobTier]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, datetime]]:
         """Creates a new Page Blob of the specified size.
 
         :param int size:
@@ -1371,8 +1368,11 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     @distributed_trace
-    def create_append_blob(self, content_settings=None, metadata=None, **kwargs):
-        # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Union[str, datetime]]
+    def create_append_blob(
+        self, content_settings: Optional[ContentSettings] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, datetime]]:
         """Creates a new Append Blob. This operation creates a new 0-length append blob. The content
         of any existing blob is overwritten with the newly initialized append blob. To add content to
         the append blob, call the :func:`append_block` or :func:`append_block_from_url` method.
@@ -1462,8 +1462,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     @distributed_trace
-    def create_snapshot(self, metadata=None, **kwargs):
-        # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Union[str, datetime]]
+    def create_snapshot(
+        self, metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, datetime]]:
         """Creates a snapshot of the blob.
 
         A snapshot is a read-only version of a blob that's taken at a point in time.
@@ -1543,8 +1545,12 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     @distributed_trace
-    def start_copy_from_url(self, source_url, metadata=None, incremental_copy=False, **kwargs):
-        # type: (str, Optional[Dict[str, str]], bool, **Any) -> Dict[str, Union[str, datetime]]
+    def start_copy_from_url(
+        self, source_url: str,
+        metadata: Optional[Dict[str, str]] = None,
+        incremental_copy: bool = False,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, datetime]]:
         """Copies a blob from the given URL.
 
         This operation returns a dictionary containing `copy_status` and `copy_id`,
@@ -1728,14 +1734,16 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             **kwargs)
         try:
             if incremental_copy:
-                return self._client.page_blob.copy_incremental(**options)
-            return self._client.blob.start_copy_from_url(**options)
+                return self._client.page_blob.copy_incremental(**options)  # type: ignore
+            return self._client.blob.start_copy_from_url(**options)  # type: ignore
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
-    def abort_copy(self, copy_id, **kwargs):
-        # type: (Union[str, Dict[str, Any], BlobProperties], **Any) -> None
+    def abort_copy(
+        self, copy_id: Union[str, Dict[str, Any], BlobProperties],
+        **kwargs: Any
+    ) -> None:
         """Abort an ongoing copy operation.
 
         This will leave a destination blob with zero length and full metadata.
@@ -1763,8 +1771,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     @distributed_trace
-    def acquire_lease(self, lease_duration=-1, lease_id=None, **kwargs):
-        # type: (int, Optional[str], **Any) -> BlobLeaseClient
+    def acquire_lease(self, lease_duration: int =-1, lease_id: Optional[str] = None, **kwargs: Any) -> BlobLeaseClient:
         """Requests a new lease.
 
         If the blob does not have an active lease, the Blob
@@ -1825,8 +1832,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         return lease
 
     @distributed_trace
-    def set_standard_blob_tier(self, standard_blob_tier, **kwargs):
-        # type: (Union[str, StandardBlobTier], Any) -> None
+    def set_standard_blob_tier(self, standard_blob_tier: Union[str, StandardBlobTier], **kwargs: Any) -> None:
         """This operation sets the tier on a block blob.
 
         A block blob's tier determines Hot/Cool/Archive storage type.
@@ -1886,12 +1892,11 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     @distributed_trace
     def stage_block(
-            self, block_id,  # type: str
-            data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
-            length=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Any]
+        self, block_id: str,
+        data: Union[Iterable[AnyStr], IO[AnyStr]],
+        length: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Creates a new block to be committed as part of a blob.
 
         :param str block_id: A string value that identifies the block.
@@ -1946,20 +1951,19 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             length=length,
             **kwargs)
         try:
-            return self._client.block_blob.stage_block(**options)
+            return self._client.block_blob.stage_block(**options)  # type: ignore
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
     def stage_block_from_url(
-            self, block_id,  # type: Union[str, int]
-            source_url,  # type: str
-            source_offset=None,  # type: Optional[int]
-            source_length=None,  # type: Optional[int]
-            source_content_md5=None,  # type: Optional[Union[bytes, bytearray]]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Any]
+        self, block_id: str,
+        source_url: str,
+        source_offset: Optional[int] = None,
+        source_length: Optional[int] = None,
+        source_content_md5: Optional[Union[bytes, bytearray]] = None,
+        **kwargs: Any
+        ) -> Dict[str, Any]:
         """Creates a new block to be committed as part of a blob where
         the contents are read from a URL.
 
@@ -2013,13 +2017,15 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             source_content_md5=source_content_md5,
             **kwargs)
         try:
-            return self._client.block_blob.stage_block_from_url(**options)
+            return self._client.block_blob.stage_block_from_url(**options)  # type: ignore
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
-    def get_block_list(self, block_list_type="committed", **kwargs):
-        # type: (Optional[str], **Any) -> Tuple[List[BlobBlock], List[BlobBlock]]
+    def get_block_list(
+        self, block_list_type: str = "committed",
+        **kwargs: Any
+    ) -> Tuple[List[BlobBlock], List[BlobBlock]]:
         """The Get Block List operation retrieves the list of blocks that have
         been uploaded as part of a block blob.
 
@@ -2057,16 +2063,15 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        return _get_block_list_result(blocks)
+        return _get_block_list_result(blocks)  # type: ignore
 
     @distributed_trace
-    def commit_block_list( # type: ignore
-            self, block_list,  # type: List[BlobBlock]
-            content_settings=None,  # type: Optional[ContentSettings]
-            metadata=None,  # type: Optional[Dict[str, str]]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+    def commit_block_list(
+        self, block_list: List[BlobBlock],
+        content_settings: Optional[ContentSettings] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, datetime]]:
         """The Commit Block List operation writes a blob by specifying the list of
         block IDs that make up the blob.
 
@@ -2173,8 +2178,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     @distributed_trace
-    def set_premium_page_blob_tier(self, premium_page_blob_tier, **kwargs):
-        # type: (Union[str, PremiumPageBlobTier], **Any) -> None
+    def set_premium_page_blob_tier(self, premium_page_blob_tier: PremiumPageBlobTier, **kwargs: Any) -> None:
         """Sets the page blob tiers on the blob. This API is only supported for page blobs on premium accounts.
 
         :param premium_page_blob_tier:
@@ -2215,8 +2219,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     @distributed_trace
-    def set_blob_tags(self, tags=None, **kwargs):
-        # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Any]
+    def set_blob_tags(self, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> Dict[str, Any]:
         """The Set Tags operation enables users to set tags on a blob or specific blob version, but not snapshot.
             Each call to this operation replaces all existing tags attached to the blob. To remove all
             tags from the blob, call this operation with no tags set.
@@ -2260,19 +2263,18 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         version_id = get_version_id(self.version_id, kwargs)
         options = _set_blob_tags_options(version_id=version_id, tags=tags, **kwargs)
         try:
-            return self._client.blob.set_tags(**options)
+            return self._client.blob.set_tags(**options)  # type: ignore
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
-    def get_blob_tags(self, **kwargs):
-        # type: (**Any) -> Dict[str, str]
+    def get_blob_tags(self, **kwargs: Any) -> Dict[str, Any]:
         """The Get Tags operation enables users to get tags on a blob or specific blob version, or snapshot.
 
         .. versionadded:: 12.4.0
             This operation was introduced in API version '2019-12-12'.
 
-        :keyword str version_id:
+        :keyword Optional[str] version_id:
             The version id parameter is an opaque DateTime
             value that, when present, specifies the version of the blob to add tags to.
         :keyword str if_tags_match_condition:
@@ -2295,18 +2297,17 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         options = _get_blob_tags_options(version_id=version_id, snapshot=self.snapshot, **kwargs)
         try:
             _, tags = self._client.blob.get_tags(**options)
-            return parse_tags(tags) # pylint: disable=protected-access
+            return parse_tags(tags)   # type: ignore  # pylint: disable=protected-access
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
-    def get_page_ranges( # type: ignore
-            self, offset=None, # type: Optional[int]
-            length=None, # type: Optional[int]
-            previous_snapshot_diff=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            **kwargs
-        ):
-        # type: (...) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]
+    def get_page_ranges(
+        self, offset: Optional[int] = None,
+        length: Optional[int] = None,
+        previous_snapshot_diff: Optional[Union[str, Dict[str, Any]]] = None,
+        **kwargs: Any
+    ) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]:
         """DEPRECATED: Returns the list of valid page ranges for a Page Blob or snapshot
         of a page blob.
 
@@ -2388,13 +2389,13 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     @distributed_trace
     def list_page_ranges(
-            self,
-            *,
-            offset: Optional[int] = None,
-            length: Optional[int] = None,
-            previous_snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-            **kwargs: Any
-        ) -> ItemPaged[PageRange]:
+        self,
+        *,
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        previous_snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+        **kwargs: Any
+    ) -> ItemPaged[PageRange]:
         """Returns the list of valid page ranges for a Page Blob or snapshot
         of a page blob. If `previous_snapshot` is specified, the result will be
         a diff of changes between the target blob and the previous snapshot.
@@ -2479,12 +2480,11 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     @distributed_trace
     def get_page_range_diff_for_managed_disk(
-            self, previous_snapshot_url,  # type: str
-            offset=None, # type: Optional[int]
-            length=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]
+        self, previous_snapshot_url: str,
+        offset: Optional[int] = None,
+        length:Optional[int] = None,
+        **kwargs: Any
+    ) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]:
         """Returns the list of valid page ranges for a managed disk or snapshot.
 
         .. note::
@@ -2556,8 +2556,11 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         return get_page_ranges_result(ranges)
 
     @distributed_trace
-    def set_sequence_number(self, sequence_number_action, sequence_number=None, **kwargs):
-        # type: (Union[str, SequenceNumberAction], Optional[str], **Any) -> Dict[str, Union[str, datetime]]
+    def set_sequence_number(
+        self, sequence_number_action: Union[str, SequenceNumberAction],
+        sequence_number: Optional[str] = None,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, datetime]]:
         """Sets the blob sequence number.
 
         :param str sequence_number_action:
@@ -2610,8 +2613,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     @distributed_trace
-    def resize_blob(self, size, **kwargs):
-        # type: (int, **Any) -> Dict[str, Union[str, datetime]]
+    def resize_blob(self, size: int, **kwargs: Any) -> Dict[str, Union[str, datetime]]:
         """Resizes a page blob to the specified size.
 
         If the specified value is less than the current size of the blob,
@@ -2664,18 +2666,17 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _resize_blob_options(size=size, **kwargs)
         try:
-            return self._client.page_blob.resize(**options) # type: ignore
+            return self._client.page_blob.resize(**options)  # type: ignore
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
-    def upload_page( # type: ignore
-            self, page,  # type: bytes
-            offset,  # type: int
-            length,  # type: int
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+    def upload_page(
+        self, page: bytes,
+        offset: int,
+        length: int,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, datetime]]:
         """The Upload Pages operation writes a range of pages to a page blob.
 
         :param bytes page:
@@ -2772,13 +2773,13 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     @distributed_trace
-    def upload_pages_from_url(self, source_url,  # type: str
-                              offset,  # type: int
-                              length,  # type: int
-                              source_offset,  # type: int
-                              **kwargs
-                              ):
-        # type: (...) -> Dict[str, Any]
+    def upload_pages_from_url(
+        self, source_url: str,
+        offset: int,
+        length: int,
+        source_offset: int,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """
         The Upload Pages operation writes a range of pages to a page blob where
         the contents are read from a URL.
@@ -2894,8 +2895,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     @distributed_trace
-    def clear_page(self, offset, length, **kwargs):
-        # type: (int, int, **Any) -> Dict[str, Union[str, datetime]]
+    def clear_page(self, offset: int, length: int, **kwargs: Any) -> Dict[str, Union[str, datetime]]:
         """Clears a range of pages.
 
         :param int offset:
@@ -2973,12 +2973,11 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     @distributed_trace
-    def append_block( # type: ignore
-            self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
-            length=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Union[str, datetime, int]]
+    def append_block(
+        self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        length: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, datetime, int]]:
         """Commits a new block of data to the end of the existing append blob.
 
         :param data:
@@ -3071,11 +3070,12 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     @distributed_trace
-    def append_block_from_url(self, copy_source_url,  # type: str
-                              source_offset=None,  # type: Optional[int]
-                              source_length=None,  # type: Optional[int]
-                              **kwargs):
-        # type: (...) -> Dict[str, Union[str, datetime, int]]
+    def append_block_from_url(
+        self, copy_source_url: str,
+        source_offset: Optional[int] = None,
+        source_length: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, datetime, int]]:
         """
         Creates a new block to be committed as part of a blob, where the contents are read from a source url.
 
@@ -3184,8 +3184,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     @distributed_trace
-    def seal_append_blob(self, **kwargs):
-        # type: (...) -> Dict[str, Union[str, datetime, int]]
+    def seal_append_blob(self, **kwargs: Any) -> Dict[str, Union[str, datetime, int]]:
         """The Seal operation seals the Append Blob to make it read-only.
 
             .. versionadded:: 12.4.0
@@ -3230,13 +3229,12 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         options = _seal_append_blob_options(**kwargs)
         try:
-            return self._client.append_blob.seal(**options) # type: ignore
+            return self._client.append_blob.seal(**options)  # type: ignore
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
-    def _get_container_client(self): # pylint: disable=client-method-missing-kwargs
-        # type: (...) -> ContainerClient
+    def _get_container_client(self) -> ContainerClient:
         """Get a client to interact with the blob's parent container.
 
         The container need not already exist. Defaults to current blob's credentials.
@@ -3253,7 +3251,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 :dedent: 8
                 :caption: Get container client from blob object.
         """
-        from ._container_client import ContainerClient
         if not isinstance(self._pipeline._transport, TransportWrapper): # pylint: disable = protected-access
             _pipeline = Pipeline(
                 transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access

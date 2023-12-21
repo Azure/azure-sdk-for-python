@@ -302,10 +302,10 @@ def _upload_blob_from_url_options(
 def _download_blob_options(
     blob_name: str,
     container_name: str,
-    version_id: str,
-    offset: int,
-    length: int,
-    encoding: str,
+    version_id: Optional[str],
+    offset: Optional[int],
+    length: Optional[int],
+    encoding: Optional[str],
     encryption_options: Dict[str, Any],
     config: "StorageConfiguration",
     sdk_moniker: str,
@@ -318,13 +318,13 @@ def _download_blob_options(
         The name of the blob.
     :param str container_name:
         The name of the container.
-    :param str version_id:
+    :param Optional[str] version_id:
         The version id parameter is a value that, when present, specifies the version of the blob to download.
-    :param int offset:
+    :param Optional[int] offset:
         Start of byte range to use for downloading a section of the blob. Must be set if length is provided.
-    :param int length:
+    :param Optional[int] length:
         Number of bytes to read from the stream. This is optional, but should be supplied for optimal performance.
-    :param int encoding:
+    :param Optional[str] encoding:
         Encoding to decode the downloaded bytes. Default is None, i.e. no decoding.
     :param Dict[str, Any] encryption_options:
         The options for encryption, if enabled.
@@ -481,7 +481,7 @@ def _generic_delete_blob_options(delete_snapshots: Optional[str] = None, **kwarg
 
 def _delete_blob_options(
     snapshot: str,
-    version_id: str,
+    version_id: Optional[str],
     delete_snapshots: Optional[str] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
@@ -489,7 +489,7 @@ def _delete_blob_options(
 
     :param str snapshot:
         The snapshot data of the blob.
-    :param str version_id:
+    :param Optional[str] version_id:
         The version id that specifies the version of the blob to operate on.
     :param Optional[str] delete_snapshots:
         Required if the blob has associated snapshots. Values include:
@@ -1057,10 +1057,10 @@ def _commit_block_list_options(
     options.update(kwargs)
     return options
 
-def _set_blob_tags_options(version_id: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> Dict[str, Any]:
+def _set_blob_tags_options(version_id: Optional[str], tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> Dict[str, Any]:
     """Creates a dictionary containing the options for setting blob tags.
 
-    :param str version_id:
+    :param Optional[str] version_id:
         The version id that specifies the version of the blob to operate on.
     :param tags:
         Name-value pairs associated with the blob as tag. Tags are case-sensitive.
@@ -1085,10 +1085,10 @@ def _set_blob_tags_options(version_id: str, tags: Optional[Dict[str, str]] = Non
     options.update(kwargs)
     return options
 
-def _get_blob_tags_options(version_id: str, snapshot: str, **kwargs: Any) -> Dict[str, Any]:
+def _get_blob_tags_options(version_id: Optional[str], snapshot: str, **kwargs: Any) -> Dict[str, Any]:
     """Creates a dictionary containing the options for getting blob tags.
 
-    :param str version_id:
+    :param Optional[str] version_id:
         The version id that specifies the version of the blob to operate on.
     :param str snapshot:
         The snapshot data of the blob.
