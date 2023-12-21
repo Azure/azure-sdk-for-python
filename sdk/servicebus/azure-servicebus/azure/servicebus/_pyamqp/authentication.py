@@ -7,7 +7,7 @@
 import time
 from functools import partial
 
-from typing import Any, Callable, NamedTuple, Optional, Tuple, Union
+from typing import Any, Awaitable, Callable, NamedTuple, Optional, Tuple, Union
 from .sasl import SASLAnonymousCredential, SASLPlainCredential
 from .utils import generate_sas_token
 
@@ -56,7 +56,7 @@ class _CBSAuth:
         uri: str,
         audience: str,
         token_type: Union[str, bytes],
-        get_token: Callable[..., AccessToken],
+        get_token: Callable[[], AccessToken],
         *,
         expires_in: float = AUTH_DEFAULT_EXPIRATION_SECONDS,
         expires_on: Optional[float] = None,

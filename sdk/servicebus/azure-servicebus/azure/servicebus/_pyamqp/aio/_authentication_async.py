@@ -9,11 +9,17 @@ from typing import Optional, Union, Any
 from ..authentication import (
     _generate_sas_access_token,
     SASTokenAuth,
-    JWTTokenAuth
+    JWTTokenAuth,
+    AccessToken
 )
 from ..constants import AUTH_DEFAULT_EXPIRATION_SECONDS, TOKEN_TYPE_SASTOKEN
 
-async def _generate_sas_token_async(auth_uri: str, sas_name: str, sas_key: str, expiry_in: float = AUTH_DEFAULT_EXPIRATION_SECONDS):
+async def _generate_sas_token_async(
+        auth_uri: str,
+        sas_name: str,
+        sas_key: str,
+        expiry_in: float = AUTH_DEFAULT_EXPIRATION_SECONDS
+    ) -> AccessToken:
     return _generate_sas_access_token(auth_uri, sas_name, sas_key, expiry_in=expiry_in)
 
 
@@ -74,4 +80,4 @@ class SASTokenAuthAsync(SASTokenAuth):
             token_type=token_type,
             **kwargs
         )
-        self.get_token = partial(_generate_sas_token_async, uri, username, password, self.expires_in)
+        self.get_token = partial(_generate_sas_token_async, uri, username, password, self.expires_in) #type: ignore

@@ -6,7 +6,7 @@
 
 import logging
 from datetime import datetime
-from typing import Any, Optional, Union
+from typing import Any, Optional, Union, cast
 
 from ..utils import utc_now, utc_from_timestamp
 from ._management_link_async import ManagementLink
@@ -169,7 +169,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
     async def _update_status(self):
         if self.auth_state in (CbsAuthState.OK, CbsAuthState.REFRESH_REQUIRED):
             is_expired, is_refresh_required = check_expiration_and_refresh_status(
-                self._expires_on, self._refresh_window
+                cast(int, self._expires_on), cast(int, self._refresh_window)
             )
             _LOGGER.debug(
                 "CBS status check: state == %r, expired == %r, refresh required == %r",
@@ -213,7 +213,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
 
     async def update_token(self) -> None:
         self.auth_state = CbsAuthState.IN_PROGRESS
-        access_token = await self._auth.get_token()
+        access_token = await self._auth.get_token() #type: ignore
         if not access_token:
             _LOGGER.info(
                 "Token refresh function received an empty token object.",
@@ -225,7 +225,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
                 extra=self._network_trace_params
             )
         self._expires_on = access_token.expires_on
-        expires_in = self._expires_on - int(utc_now().timestamp())
+        expires_in = cast(int, self._expires_on) - int(utc_now().timestamp())
         self._refresh_window = int(float(expires_in) * 0.1)
         if isinstance(access_token.token, bytes):
             self._token = access_token.token.decode()
@@ -238,7 +238,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
 
         self._token_put_time = int(utc_now().timestamp())
         await self._put_token(
-            self._token, token_type, self._auth.audience, utc_from_timestamp(self._expires_on)
+            cast(str, self._token), cast(str, token_type), self._auth.audience, utc_from_timestamp(self._expires_on)
         )
 
     async def handle_token(self) -> Optional[bool]:

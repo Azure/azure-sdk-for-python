@@ -152,15 +152,17 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             self._transport = transport
         elif "sasl_credential" in kwargs:
             sasl_transport: Union[Type[SASLTransport], Type[SASLWithWebSocket]] = SASLTransport
-            if sasl_transport is SASLWithWebSocket:
+            if self._transport_type.name == "AmqpOverWebsocket" or kwargs.get(
+                "http_proxy"
+            ):
+                sasl_transport = SASLWithWebSocket
                 endpoint = parsed_url.hostname + parsed_url.path
             self._transport = sasl_transport(
                 host=endpoint,
                 credential=kwargs["sasl_credential"],
                 custom_endpoint=custom_endpoint,
-                socket_timeout=self._socket_timeout,
                 network_trace_params=self._network_trace_params,
-                **kwargs
+                **kwargs,
             )
         else:
             self._transport = Transport(
