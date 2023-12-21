@@ -2,27 +2,20 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from unittest import mock
+
 import requests
+from corehttp.rest import HttpRequest
 from corehttp.transport import HttpTransport
 from corehttp.runtime.pipeline import Pipeline
-from corehttp.rest._requests_basic import StreamDownloadGenerator
-
-try:
-    from unittest import mock
-except ImportError:
-    import mock
+from corehttp.rest._requests_basic import StreamDownloadGenerator, RestRequestsTransportResponse
 import pytest
-from utils import (
-    HTTP_RESPONSES,
-    REQUESTS_TRANSPORT_RESPONSES,
-    create_http_response,
-    create_transport_response,
-    request_and_responses_product,
-)
+
+from utils import HTTP_RESPONSES, create_http_response, create_transport_response
 
 
-@pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
-def test_connection_error_response(http_request, http_response):
+@pytest.mark.parametrize("http_response", HTTP_RESPONSES)
+def test_connection_error_response(http_response):
     class MockTransport(HttpTransport):
         def __init__(self):
             self._count = 0
@@ -37,7 +30,7 @@ def test_connection_error_response(http_request, http_response):
             pass
 
         def send(self, request, **kwargs):
-            request = http_request("GET", "http://localhost/")
+            request = HttpRequest("GET", "http://localhost/")
             response = create_http_response(http_response, request, None, status_code=200)
             return response
 
@@ -63,7 +56,7 @@ def test_connection_error_response(http_request, http_response):
         def close(self):
             pass
 
-    http_request = http_request("GET", "http://localhost/")
+    http_request = HttpRequest("GET", "http://localhost/")
     pipeline = Pipeline(MockTransport())
     http_response = create_http_response(http_response, http_request, MockInternalResponse())
     stream = StreamDownloadGenerator(pipeline, http_response, decompress=False)
@@ -72,8 +65,7 @@ def test_connection_error_response(http_request, http_response):
             stream.__next__()
 
 
-@pytest.mark.parametrize("http_response", REQUESTS_TRANSPORT_RESPONSES)
-def test_response_streaming_error_behavior(http_response):
+def test_response_streaming_error_behavior():
     block_size = 103
     total_response_size = 500
     req_response = requests.Response()
@@ -109,7 +101,7 @@ def test_response_streaming_error_behavior(http_response):
     req_response.raw = FakeStreamWithConnectionError()
 
     response = create_transport_response(
-        http_response,
+        RestRequestsTransportResponse,
         req_request,
         req_response,
         block_size,

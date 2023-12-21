@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b2 (Unreleased)
+## 1.0.0b2 (2023-11-14)
 
 ### Features Added
 
@@ -14,6 +14,8 @@
 ### Bugs Fixed
 
 - Fixed an issue with `multipart/form-data` in the async transport where `data` was not getting encoded into the request body. [#32473](https://github.com/Azure/azure-sdk-for-python/pull/32473)
+- Fixed an issue with `connection_verify`, `connection_cert`, and `connection_timeout` not being propagated to underlying transports.  [#33057](https://github.com/Azure/azure-sdk-for-python/pull/33057)
+- Fixed an issue with the `aiohttp` transport not using SSL by default. [#33057](https://github.com/Azure/azure-sdk-for-python/pull/33057)
 
 ### Other Changes
 

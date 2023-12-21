@@ -11,8 +11,7 @@ import inspect
 import json
 import requests
 
-from devtools_testutils import EnvironmentVariableLoader
-from azure_devtools.scenario_tests.exceptions import AzureTestError
+from devtools_testutils import AzureTestError, EnvironmentVariableLoader
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
@@ -58,6 +57,10 @@ def _clean_up_indexes(endpoint, api_key):
     # wipe the synonym maps which seem to survive the index
     for map in client.get_synonym_maps():
         client.delete_synonym_map(map.name)
+
+    # wipe out any existing aliases
+    for alias in client.list_aliases():
+        client.delete_alias(alias)
 
     # wipe any existing indexes
     for index in client.list_indexes():

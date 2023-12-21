@@ -74,21 +74,27 @@ In this example all configuration with empty label and the dev label are loaded.
 
 ## Dynamic Refresh
 
-The provider can be configured to refresh configurations from the store on a set interval. This is done by providing a `refresh_on` to the provider, which is a list of key(s) that will be watched for changes, and when they do change a refresh can happen. `refresh_interval` is the period of time in seconds between refreshes. `on_refresh_error` is a callback that will be called when a refresh fails.
+The provider can be configured to refresh configurations from the store on a set interval. This is done by providing a `refresh_on` to the provider, which is a list of key(s) that will be watched for changes, and when they do change a refresh can happen. `refresh_interval` is the period of time in seconds between refreshes. `on_refresh_success` is a callback that will be called only if a change is detected and no error happens. `on_refresh_error` is a callback that will be called when a refresh fails.
 
 ```python
-from azure.appconfiguration.provider import load, SentinelKey
+from azure.appconfiguration.provider import load, WatchKey
 import os
 
 connection_string = os.environ.get("APPCONFIGURATION_CONNECTION_STRING")
 
+def my_callback_on_success():
+    # Do something on success
+    ...
+
 def my_callback_on_fail(error):
-    print("Refresh failed!")
+    # Do something on fail
+    ...
 
 config = load(
     connection_string=connection_string,
-    refresh_on=[SentinelKey("Sentinel")],
+    refresh_on=[WatchKey("Sentinel")],
     refresh_interval=60,
+    on_refresh_success=my_callback_on_success,
     on_refresh_error=my_callback_on_fail,
     **kwargs,
 )

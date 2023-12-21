@@ -24,6 +24,7 @@ from ..._version import SDK_MONIKER
 from ..models import (
     SearchIndex,
     SynonymMap,
+    SearchAlias,
     AnalyzeResult,
     AnalyzeTextOptions,
 )
@@ -38,8 +39,8 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials_async.AsyncTokenCredential
     :keyword str api_version: The Search API version to use for requests.
     :keyword str audience: sets the Audience to use for authentication with Azure Active Directory (AAD). The
-     audience is not considered when using a shared key. If audience is not provided, the public cloud audience
-     will be assumed.
+        audience is not considered when using a shared key. If audience is not provided, the public cloud audience
+        will be assumed.
     """
 
     _ODATA_ACCEPT: str = "application/json;odata.metadata=minimal"
@@ -74,8 +75,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         return await self._client.__aexit__(*args)
 
     async def close(self) -> None:
-        """Close the :class:`~azure.search.documents.indexes.aio.SearchIndexClient` session.
-
+        """Close the session.
         :return: None
         :rtype: None
         """
@@ -96,11 +96,11 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """List the indexes in an Azure Search service.
 
         :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
-         list of JSON property names, or '*' for all properties. The default is all
-         properties.
+            list of JSON property names, or '*' for all properties. The default is all
+            properties.
         :paramtype select: list[str]
         :return: List of indexes
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[:class:`~azure.search.documents.indexes.models.SearchIndex`]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.SearchIndex]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
@@ -130,7 +130,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :param name: The name of the index to retrieve.
         :type name: str
         :return: SearchIndex object
-        :rtype: :class:`~azure.search.documents.indexes.models.SearchIndex`
+        :rtype: ~azure.search.documents.indexes.models.SearchIndex
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -167,7 +167,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         provided instead of the name to use the access conditions
 
         :param index: The index name or object to delete.
-        :type index: str or :class:`~azure.search.documents.indexes.models.SearchIndex`
+        :type index: str or ~azure.search.documents.indexes.models.SearchIndex
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -197,9 +197,9 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """Creates a new search index.
 
         :param index: The index object.
-        :type index: :class:`~azure.search.documents.indexes.models.SearchIndex`
+        :type index: ~azure.search.documents.indexes.models.SearchIndex
         :return: The index created
-        :rtype: :class:`~azure.search.documents.indexes.models.SearchIndex`
+        :rtype: ~azure.search.documents.indexes.models.SearchIndex
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -228,22 +228,22 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """Creates a new search index or updates an index if it already exists.
 
         :param index: The index object.
-        :type index: :class:`~azure.search.documents.indexes.models.SearchIndex`
+        :type index: ~azure.search.documents.indexes.models.SearchIndex
         :param allow_index_downtime: Allows new analyzers, tokenizers, token filters, or char filters
-         to be added to an index by taking the index offline for at least a few seconds. This
-         temporarily causes indexing and query requests to fail. Performance and write availability of
-         the index can be impaired for several minutes after the index is updated, or longer for very
-         large indexes.
+            to be added to an index by taking the index offline for at least a few seconds. This
+            temporarily causes indexing and query requests to fail. Performance and write availability of
+            the index can be impaired for several minutes after the index is updated, or longer for very
+            large indexes.
         :type allow_index_downtime: bool
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: The index created or updated
-        :rtype: :class:`~azure.search.documents.indexes.models.SearchIndex`
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`, \
-        :class:`~azure.core.exceptions.ResourceModifiedError`, \
-        :class:`~azure.core.exceptions.ResourceNotModifiedError`, \
-        :class:`~azure.core.exceptions.ResourceNotFoundError`, \
-        :class:`~azure.core.exceptions.ResourceExistsError`
+        :rtype: ~azure.search.documents.indexes.models.SearchIndex
+        :raises: ~azure.core.exceptions.ResourceNotFoundError or
+            ~azure.core.exceptions.ResourceModifiedError or
+            ~azure.core.exceptions.ResourceNotModifiedError or
+            ~azure.core.exceptions.ResourceNotFoundError or
+            ~azure.core.exceptions.ResourceExistsError
 
         .. admonition:: Example:
 
@@ -302,8 +302,8 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """List the Synonym Maps in an Azure Search service.
 
         :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
-         list of JSON property names, or '*' for all properties. The default is all
-         properties.
+            list of JSON property names, or '*' for all properties. The default is all
+            properties.
         :paramtype select: List[str]
         :return: List of synonym maps
         :rtype: List[~azure.search.documents.indexes.models.SynonymMap]
@@ -348,8 +348,8 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :param name: The name of the Synonym Map to get
         :type name: str
         :return: The retrieved Synonym Map
-        :rtype: :class:`~azure.search.documents.indexes.models.SynonymMap`
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        :rtype: ~azure.search.documents.indexes.models.SynonymMap
+        :raises: ~azure.core.exceptions.ResourceNotFoundError
 
         .. admonition:: Example:
 
@@ -381,9 +381,6 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :type name: str or ~azure.search.documents.indexes.models.SynonymMap
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
-
 
         .. admonition:: Example:
 
@@ -409,9 +406,9 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """Create a new Synonym Map in an Azure Search service
 
         :param synonym_map: The Synonym Map object
-        :type synonym_map: :class:`~azure.search.documents.indexes.models.SynonymMap`
+        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap
         :return: The created Synonym Map
-        :rtype: :class:`~azure.search.documents.indexes.models.SynonymMap`
+        :rtype: ~azure.search.documents.indexes.models.SynonymMap
 
         .. admonition:: Example:
 
@@ -440,11 +437,11 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         existing one.
 
         :param synonym_map: The Synonym Map object
-        :type synonym_map: :class:`~azure.search.documents.indexes.models.SynonymMap`
+        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: The created or updated Synonym Map
-        :rtype: :class:`~azure.search.documents.indexes.models.SynonymMap`
+        :rtype: ~azure.search.documents.indexes.models.SynonymMap
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(synonym_map, match_condition)
@@ -469,3 +466,140 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.get_service_statistics(**kwargs)
         return result.as_dict()
+
+    @distributed_trace
+    def list_aliases(self, *, select: Optional[List[str]] = None, **kwargs) -> AsyncItemPaged[SearchAlias]:
+        """List the aliases in an Azure Search service.
+
+        :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
+            list of JSON property names, or '*' for all properties. The default is all
+            properties.
+        :paramtype select: list[str]
+        :return: List of Aliases
+        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.search.documents.indexes.models.SearchAlias]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        if select:
+            kwargs["select"] = ",".join(select)
+        # pylint:disable=protected-access
+        return cast(AsyncItemPaged[SearchAlias], self._client.aliases.list(**kwargs))
+
+    @distributed_trace
+    def list_alias_names(self, **kwargs) -> AsyncItemPaged[str]:
+        """List the alias names in an Azure Search service.
+
+        :return: List of alias names
+        :rtype: ~azure.core.paging.AsyncItemPaged[str]
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+
+        names = self._client.aliases.list(cls=lambda objs: [x.name for x in objs], **kwargs)
+        return cast(AsyncItemPaged[str], names)
+
+    @distributed_trace_async
+    async def get_alias(self, name: str, **kwargs) -> SearchAlias:
+        """
+
+        :param name: The name of the alias to retrieve.
+        :type name: str
+        :return: SearchAlias object
+        :rtype: ~azure.search.documents.indexes.models.SearchAlias
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = await self._client.aliases.get(name, **kwargs)
+        return result
+
+    @distributed_trace_async
+    async def delete_alias(
+        self,
+        alias: Union[str, SearchAlias],
+        *,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs: Any
+    ) -> None:
+        """Deletes a search alias and its associated mapping to an index.
+        This operation is permanent, with no recovery option. The mapped index is untouched by this operation
+        :param alias: The alias name or object to delete.
+        :type alias: str or ~azure.search.documents.indexes.models.SearchAlias
+        :keyword match_condition: The match condition to use upon the etag
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_index_alias_crud_operations_async.py
+                :start-after: [START delete_alias_async]
+                :end-before: [END delete_alias_async]
+                :language: python
+                :dedent: 4
+                :caption: Delete an alias.
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        error_map, access_condition = get_access_conditions(alias, match_condition)
+        kwargs.update(access_condition)
+        try:
+            alias_name = alias.name  # type: ignore
+        except AttributeError:
+            alias_name = alias
+        await self._client.aliases.delete(alias_name=alias_name, error_map=error_map, **kwargs)
+
+    @distributed_trace_async
+    async def create_alias(self, alias: SearchAlias, **kwargs: Any) -> SearchAlias:
+        """Creates a new search alias.
+        :param alias: The alias object.
+        :type alias: ~azure.search.documents.indexes.models.SearchAlias
+        :return: The alias created
+        :rtype: ~azure.search.documents.indexes.models.SearchAlias
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_index_alias_crud_operations_async.py
+                :start-after: [START create_alias_async]
+                :end-before: [END create_alias_async]
+                :language: python
+                :dedent: 4
+                :caption: Create an alias.
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = await self._client.aliases.create(alias, **kwargs)
+        return result  # pylint:disable=protected-access
+
+    @distributed_trace_async
+    async def create_or_update_alias(
+        self, alias: SearchAlias, *, match_condition: MatchConditions = MatchConditions.Unconditionally, **kwargs: Any
+    ) -> SearchAlias:
+        """Creates a new search alias or updates an alias if it already exists.
+
+        :param alias: The definition of the alias to create or update.
+        :type alias: ~azure.search.documents.indexes.models.SearchAlias
+        :keyword match_condition: The match condition to use upon the etag
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: The index created or updated
+        :rtype: ~azure.search.documents.indexes.models.SearchAlias
+        :raises: ~azure.core.exceptions.ResourceNotFoundError
+            ~azure.core.exceptions.ResourceModifiedError or
+            ~azure.core.exceptions.ResourceNotModifiedError or
+            ~azure.core.exceptions.ResourceNotFoundError or
+            ~azure.core.exceptions.ResourceExistsError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_index_alias_crud_operations_async.py
+                :start-after: [START update_alias_async]
+                :end-before: [END update_alias_async]
+                :language: python
+                :dedent: 4
+                :caption: Update an alias.
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        error_map, access_condition = get_access_conditions(alias, match_condition)
+        kwargs.update(access_condition)
+        result = await self._client.aliases.create_or_update(
+            alias_name=alias.name, alias=alias, prefer="return=representation", error_map=error_map, **kwargs
+        )
+        return result  # pylint:disable=protected-access

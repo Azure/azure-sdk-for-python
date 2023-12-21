@@ -34,6 +34,7 @@ from typing import (
     cast,
     Union,
     Type,
+    MutableMapping,
 )
 from types import TracebackType
 from collections.abc import AsyncIterator
@@ -152,7 +153,7 @@ class AioHttpTransport(AsyncHttpTransport):
 
         :param tuple cert: Cert information
         :param bool verify: SSL verification or path to CA file or directory
-        :rtype: bool or str or :class:`ssl.SSLContext`
+        :rtype: bool or str or ssl.SSLContext
         :return: SSL Configuration
         """
         ssl_ctx = None
@@ -189,7 +190,14 @@ class AioHttpTransport(AsyncHttpTransport):
         return request.data
 
     @overload
-    async def send(self, request: HttpRequest, **config: Any) -> AsyncHttpResponse:
+    async def send(
+        self,
+        request: HttpRequest,
+        *,
+        stream: bool = False,
+        proxies: Optional[MutableMapping[str, str]] = None,
+        **config: Any,
+    ) -> AsyncHttpResponse:
         """Send the request using this HTTP sender.
 
         Will pre-load the body into memory to be available with a sync method.
@@ -197,17 +205,22 @@ class AioHttpTransport(AsyncHttpTransport):
 
         :param request: The HttpRequest object
         :type request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword any config: Any keyword arguments
         :return: The AsyncHttpResponse
         :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
 
         :keyword bool stream: Defaults to False.
-        :keyword dict proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
-        :keyword str proxy: will define the proxy to use all the time
+        :keyword MutableMapping proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
         """
 
     @overload
-    async def send(self, request: RestHttpRequest, **config: Any) -> RestAsyncHttpResponse:
+    async def send(
+        self,
+        request: RestHttpRequest,
+        *,
+        stream: bool = False,
+        proxies: Optional[MutableMapping[str, str]] = None,
+        **config: Any,
+    ) -> RestAsyncHttpResponse:
         """Send the `azure.core.rest` request using this HTTP sender.
 
         Will pre-load the body into memory to be available with a sync method.
@@ -215,17 +228,20 @@ class AioHttpTransport(AsyncHttpTransport):
 
         :param request: The HttpRequest object
         :type request: ~azure.core.rest.HttpRequest
-        :keyword any config: Any keyword arguments
         :return: The AsyncHttpResponse
         :rtype: ~azure.core.rest.AsyncHttpResponse
 
         :keyword bool stream: Defaults to False.
-        :keyword dict proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
-        :keyword str proxy: will define the proxy to use all the time
+        :keyword MutableMapping proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
         """
 
     async def send(
-        self, request: Union[HttpRequest, RestHttpRequest], **config
+        self,
+        request: Union[HttpRequest, RestHttpRequest],
+        *,
+        stream: bool = False,
+        proxies: Optional[MutableMapping[str, str]] = None,
+        **config,
     ) -> Union[AsyncHttpResponse, RestAsyncHttpResponse]:
         """Send the request using this HTTP sender.
 
@@ -234,13 +250,11 @@ class AioHttpTransport(AsyncHttpTransport):
 
         :param request: The HttpRequest object
         :type request: ~azure.core.rest.HttpRequest
-        :keyword any config: Any keyword arguments
         :return: The AsyncHttpResponse
         :rtype: ~azure.core.rest.AsyncHttpResponse
 
         :keyword bool stream: Defaults to False.
-        :keyword dict proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
-        :keyword str proxy: will define the proxy to use all the time
+        :keyword MutableMapping proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
         """
         await self.open()
         try:
@@ -249,14 +263,14 @@ class AioHttpTransport(AsyncHttpTransport):
             # auto_decompress is introduced in aiohttp 3.7. We need this to handle aiohttp 3.6-.
             auto_decompress = False
 
-        proxies = config.pop("proxies", None)
-        if proxies and "proxy" not in config:
+        proxy = config.pop("proxy", None)
+        if proxies and not proxy:
             # aiohttp needs a single proxy, so iterating until we found the right protocol
 
             # Sort by longest string first, so "http" is not used for "https" ;-)
             for protocol in sorted(proxies.keys(), reverse=True):
                 if request.url.startswith(protocol):
-                    config["proxy"] = proxies[protocol]
+                    proxy = proxies[protocol]
                     break
 
         response: Optional[Union[AsyncHttpResponse, RestAsyncHttpResponse]] = None
@@ -273,7 +287,7 @@ class AioHttpTransport(AsyncHttpTransport):
         if not request.data and not request.files:
             config["skip_auto_headers"] = ["Content-Type"]
         try:
-            stream_response = config.pop("stream", False)
+            stream_response = stream
             timeout = config.pop("connection_timeout", self.connection_config.timeout)
             read_timeout = config.pop("read_timeout", self.connection_config.read_timeout)
             socket_timeout = aiohttp.ClientTimeout(sock_connect=timeout, sock_read=read_timeout)
@@ -284,6 +298,7 @@ class AioHttpTransport(AsyncHttpTransport):
                 data=self._get_request_data(request),
                 timeout=socket_timeout,
                 allow_redirects=False,
+                proxy=proxy,
                 **config,
             )
             if _is_rest(request):
@@ -511,7 +526,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
             raise ServiceRequestError(err, error=err) from err
 
     def stream_download(
-        self, pipeline: AsyncPipeline[HttpRequest, AsyncHttpResponse], **kwargs
+        self, pipeline: AsyncPipeline[HttpRequest, AsyncHttpResponse], *, decompress: bool = True, **kwargs
     ) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.
 
@@ -522,7 +537,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         :rtype: AsyncIterator[bytes]
         :return: An iterator of bytes chunks.
         """
-        return AioHttpStreamDownloadGenerator(pipeline, self, **kwargs)
+        return AioHttpStreamDownloadGenerator(pipeline, self, decompress=decompress, **kwargs)
 
     def __getstate__(self):
         # Be sure body is loaded in memory, otherwise not pickable and let it throw

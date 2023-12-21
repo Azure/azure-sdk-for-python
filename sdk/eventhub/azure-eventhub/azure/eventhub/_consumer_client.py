@@ -4,7 +4,8 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import threading
-from typing import TYPE_CHECKING
+import datetime
+from typing import TYPE_CHECKING, List, Union, Any, Callable, Optional, Dict, Tuple, overload
 
 from ._client_base import ClientBase
 from ._consumer import EventHubConsumer
@@ -14,16 +15,6 @@ from ._eventprocessor.common import LoadBalancingStrategy
 
 
 if TYPE_CHECKING:
-    import datetime
-    from typing import (  # pylint: disable=ungrouped-imports
-        Any,
-        Union,
-        Dict,
-        Tuple,
-        Callable,
-        List,
-        Optional,
-    )
     from ._eventprocessor.partition_context import PartitionContext
     from ._common import EventData
     from ._client_base import CredentialTypes
@@ -152,13 +143,12 @@ class EventHubConsumerClient(
 
     def __init__(
         self,
-        fully_qualified_namespace,  # type: str
-        eventhub_name,  # type: str
-        consumer_group,  # type: str
-        credential,  # type: CredentialTypes
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        fully_qualified_namespace: str,
+        eventhub_name: str,
+        consumer_group: str,
+        credential: "CredentialTypes",
+        **kwargs: Any
+    ) -> None:
 
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)
         self._load_balancing_interval = kwargs.pop("load_balancing_interval", None)
@@ -187,23 +177,22 @@ class EventHubConsumerClient(
             **kwargs
         )
         self._lock = threading.Lock()
-        self._event_processors = {}  # type: Dict[Tuple[str, str], EventProcessor]
+        self._event_processors: Dict[Tuple[str, str], EventProcessor] = {}
 
-    def __enter__(self):
+    def __enter__(self) -> "EventHubConsumerClient":
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self.close()
 
     def _create_consumer(
         self,
-        consumer_group,  # type: str
-        partition_id,  # type: str
-        event_position,  # type: Union[str, int, datetime.datetime]
-        on_event_received,  # type: Callable[[PartitionContext, EventData], None]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> EventHubConsumer
+        consumer_group: str,
+        partition_id: str,
+        event_position: Union[str, int, datetime.datetime],
+        on_event_received: Callable[["PartitionContext", "EventData"], None],
+        **kwargs: Any
+    ) -> EventHubConsumer:
         owner_level = kwargs.get("owner_level")
         prefetch = kwargs.get("prefetch") or self._config.prefetch
         track_last_enqueued_event_properties = kwargs.get(
@@ -229,8 +218,7 @@ class EventHubConsumerClient(
         return handler
 
     @classmethod
-    def from_connection_string(cls, conn_str, consumer_group, **kwargs):
-        # type: (str, str, Any) -> EventHubConsumerClient
+    def from_connection_string(cls, conn_str: str, consumer_group: str, **kwargs: Any) -> "EventHubConsumerClient":
         """Create an EventHubConsumerClient from a connection string.
 
         :param str conn_str: The connection string of an Event Hub.
@@ -324,10 +312,30 @@ class EventHubConsumerClient(
         )
         return cls(**constructor_args)
 
-    def _receive(self, on_event, **kwargs):
+    @overload
+    def _receive(
+        self,
+        on_event: Callable[["PartitionContext", Optional["EventData"]], None],
+        **kwargs: Any
+    ) -> None:
+        ...
+
+    @overload
+    def _receive(
+        self,
+        on_event: Callable[["PartitionContext", List["EventData"]], None],
+        **kwargs: Any
+    ) -> None:
+        ...
+
+    def _receive(
+        self,
+        on_event,
+        **kwargs: Any
+    ) -> None:
         partition_id = kwargs.get("partition_id")
         with self._lock:
-            error = None  # type: Optional[str]
+            error: Optional[str] = None
             if (self._consumer_group, ALL_PARTITIONS) in self._event_processors:
                 error = (
                     "This consumer client is already receiving events "
@@ -384,8 +392,7 @@ class EventHubConsumerClient(
                 except KeyError:
                     pass
 
-    def receive(self, on_event, **kwargs):
-        # type: (Callable[["PartitionContext", Optional["EventData"]], None], Any) -> None
+    def receive(self, on_event: Callable[["PartitionContext", Optional["EventData"]], None], **kwargs: Any) -> None:
         """Receive events from partition(s), with optional load-balancing and checkpointing.
 
         :param on_event: The callback function for handling a received event. The callback takes two
@@ -457,11 +464,13 @@ class EventHubConsumerClient(
                 :dedent: 4
                 :caption: Receive events from the EventHub.
         """
-
         self._receive(on_event, batch=False, max_batch_size=1, **kwargs)
 
-    def receive_batch(self, on_event_batch, **kwargs):
-        # type: (Callable[["PartitionContext", List["EventData"]], None], Any) -> None
+    def receive_batch(
+            self,
+            on_event_batch: Callable[["PartitionContext", List["EventData"]], None],
+            **kwargs: Any
+        ) -> None:
         """Receive events from partition(s), with optional load-balancing and checkpointing.
 
         :param on_event_batch: The callback function for handling a batch of received events. The callback takes two
@@ -540,8 +549,7 @@ class EventHubConsumerClient(
         """
         self._receive(on_event_batch, batch=True, **kwargs)
 
-    def get_eventhub_properties(self):
-        # type:() -> Dict[str, Any]
+    def get_eventhub_properties(self) -> Dict[str, Any]:
         """Get properties of the Event Hub.
 
         Keys in the returned dictionary include:
@@ -556,8 +564,7 @@ class EventHubConsumerClient(
         """
         return super(EventHubConsumerClient, self)._get_eventhub_properties()
 
-    def get_partition_ids(self):
-        # type:() -> List[str]
+    def get_partition_ids(self) -> List[str]:
         """Get partition IDs of the Event Hub.
 
         :return: A list of partition IDs.
@@ -566,8 +573,7 @@ class EventHubConsumerClient(
         """
         return super(EventHubConsumerClient, self)._get_partition_ids()
 
-    def get_partition_properties(self, partition_id):
-        # type:(str) -> Dict[str, Any]
+    def get_partition_properties(self, partition_id: str) -> Dict[str, Any]:
         """Get properties of the specified partition.
 
         Keys in the properties dictionary include:
@@ -590,8 +596,7 @@ class EventHubConsumerClient(
             partition_id
         )
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Stop retrieving events from the Event Hub and close the underlying AMQP connection and links.
 
         :rtype: None

@@ -1,10 +1,12 @@
 from ci_tools.parsing import parse_require, ParsedSetup
 from packaging.specifiers import SpecifierSet
 import os
-import pdb
 from unittest.mock import patch
 
+import pytest
+
 package_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+test_folder = os.path.join(os.path.dirname(__file__), )
 
 def test_parse_require():
     test_scenarios = [

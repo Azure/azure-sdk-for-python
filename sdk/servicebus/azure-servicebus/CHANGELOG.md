@@ -1,6 +1,6 @@
 # Release History
 
-## 7.11.4 (Unreleased)
+## 7.11.5 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,14 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+- Updated minimum `azure-core` version to 1.28.0.
+
+## 7.11.4 (2023-11-13)
+
+### Bugs Fixed
+
+- Fixed a bug where a two character count session id was being incorrectly parsed by azure amqp.
 
 ## 7.11.3 (2023-10-11)
 

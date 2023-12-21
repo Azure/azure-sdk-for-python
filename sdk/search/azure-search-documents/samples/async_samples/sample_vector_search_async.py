@@ -45,9 +45,7 @@ def get_embeddings(text: str):
         api_key=open_ai_key,
         api_version="2023-09-01-preview",
     )
-    embedding = client.embeddings.create(
-        input=[text], model="text-embedding-ada-002"
-    )
+    embedding = client.embeddings.create(input=[text], model="text-embedding-ada-002")
     return embedding.data[0].embedding
 
 
@@ -79,7 +77,7 @@ def get_hotel_index(name: str):
         ),
     ]
     vector_search = VectorSearch(
-        profiles=[VectorSearchProfile(name="my-vector-config", algorithm="my-algorithms-config")],
+        profiles=[VectorSearchProfile(name="my-vector-config", algorithm_configuration_name="my-algorithms-config")],
         algorithms=[HnswAlgorithmConfiguration(name="my-vector-config")],
     )
     return SearchIndex(name=name, fields=fields, vector_search=vector_search)

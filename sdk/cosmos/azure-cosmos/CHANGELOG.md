@@ -1,15 +1,19 @@
 ## Release History
 
-### 4.5.2b3 (Unreleased)
+### 4.5.2b4 (Unreleased)
 
 #### Features Added
-* Added support for capturing Index Metrics in query operations. See [PR 33034](https://github.com/Azure/azure-sdk-for-python/pull/33034)
 
 #### Breaking Changes
 
 #### Bugs Fixed
 
 #### Other Changes
+
+### 4.5.2b3 (2023-11-10)
+
+#### Features Added
+* Added support for capturing Index Metrics in query operations. See [PR 33034](https://github.com/Azure/azure-sdk-for-python/pull/33034)
 
 ### 4.5.2b2 (2023-10-31)
 

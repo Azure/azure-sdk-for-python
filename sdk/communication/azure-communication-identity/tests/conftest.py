@@ -47,8 +47,9 @@ def add_sanitizers(test_proxy):
     connection_str = os.environ.get("COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING")
     if connection_str is not None:
         endpoint, _ = parse_connection_str(connection_str)
-        resource_name = endpoint.split(".")[0]
-        add_general_string_sanitizer(target=resource_name, value="sanitized")
+        add_general_string_sanitizer(
+            target=endpoint, value="sanitized.communication.azure.com"
+        )
 
     msal_username = os.environ.get("COMMUNICATION_MSAL_USERNAME", "sanitized")
     add_general_regex_sanitizer(regex=msal_username, value="sanitized")

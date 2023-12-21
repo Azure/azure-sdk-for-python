@@ -1,5 +1,21 @@
 # Release History
 
+## 11.5.0b1 (Unreleased)
+
+### Features Added
+
+- Added `semantic_query` for `Search` method.
+- Added back alias operations to `SearchIndexClient`
+- Added back `query_language`, `query_speller`, `semantic_fields` and `debug` for `Search` method.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed the issue that we added unexpected `retrievable` property for `SearchField`.
+
+### Other Changes
+
 ## 11.4.0 (2023-10-13)
 
 ### Features Added

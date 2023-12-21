@@ -24,6 +24,9 @@ from .._generated.models import (
     SynonymMap as _SynonymMap,
     DataSourceCredentials,
     AzureActiveDirectoryApplicationCredentials,
+    CognitiveServicesAccount,
+    SearchIndexerKnowledgeStore,
+    SearchIndexerIndexProjections,
 )
 
 
@@ -35,30 +38,30 @@ class SearchIndexerSkillset(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the skillset.
+    :ivar name: The name of the skillset. Required.
     :vartype name: str
     :ivar description: The description of the skillset.
     :vartype description: str
-    :ivar skills: Required. A list of skills in the skillset.
+    :ivar skills: A list of skills in the skillset. Required.
     :vartype skills: list[~azure.search.documents.indexes.models.SearchIndexerSkill]
-    :ivar cognitive_services_account: Details about cognitive services to be used when running
+    :ivar cognitive_services_account: Details about the Azure AI service to be used when running
      skills.
-    :vartype cognitive_services_account:
-     ~azure.search.documents.indexes.models.CognitiveServicesAccount
-    :ivar knowledge_store: Definition of additional projections to azure blob, table, or files, of
+    :vartype cognitive_services_account: ~azure.search.documents.indexes.models.CognitiveServicesAccount
+    :ivar knowledge_store: Definition of additional projections to Azure blob, table, or files, of
      enriched data.
     :vartype knowledge_store: ~azure.search.documents.indexes.models.SearchIndexerKnowledgeStore
+    :ivar index_projections: Definition of additional projections to secondary search index(es).
+    :vartype index_projections: ~azure.search.documents.indexes.models.SearchIndexerIndexProjections
     :ivar e_tag: The ETag of the skillset.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your skillset
      definition when you want full assurance that no one, not even Microsoft, can decrypt your
-     skillset definition in Azure Cognitive Search. Once you have encrypted your skillset
-     definition, it will always remain encrypted. Azure Cognitive Search will ignore attempts to set
-     this property to null. You can change this property as needed if you want to rotate your
-     encryption key; Your skillset definition will be unaffected. Encryption with customer-managed
-     keys is not available for free search services, and is only available for paid services created
-     on or after January 1, 2019.
+     skillset definition. Once you have encrypted your skillset definition, it will always remain
+     encrypted. The search service will ignore attempts to set this property to null. You can change
+     this property as needed if you want to rotate your encryption key; Your skillset definition
+     will be unaffected. Encryption with customer-managed keys is not available for free search
+     services, and is only available for paid services created on or after January 1, 2019.
     :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
     """
 
@@ -71,10 +74,23 @@ class SearchIndexerSkillset(_serialization.Model):
         "name": {"key": "name", "type": "str"},
         "description": {"key": "description", "type": "str"},
         "skills": {"key": "skills", "type": "[SearchIndexerSkill]"},
-        "cognitive_services_account": {"key": "cognitiveServices", "type": "CognitiveServicesAccount"},
-        "knowledge_store": {"key": "knowledgeStore", "type": "SearchIndexerKnowledgeStore"},
+        "cognitive_services_account": {
+            "key": "cognitiveServices",
+            "type": "CognitiveServicesAccount",
+        },
+        "knowledge_store": {
+            "key": "knowledgeStore",
+            "type": "SearchIndexerKnowledgeStore",
+        },
+        "index_projections": {
+            "key": "indexProjections",
+            "type": "SearchIndexerIndexProjections",
+        },
         "e_tag": {"key": "@odata\\.etag", "type": "str"},
-        "encryption_key": {"key": "encryptionKey", "type": "SearchResourceEncryptionKey"},
+        "encryption_key": {
+            "key": "encryptionKey",
+            "type": "SearchResourceEncryptionKey",
+        },
     }
 
     def __init__(
@@ -85,6 +101,7 @@ class SearchIndexerSkillset(_serialization.Model):
         description: Optional[str] = None,
         cognitive_services_account: Optional["CognitiveServicesAccount"] = None,
         knowledge_store: Optional["SearchIndexerKnowledgeStore"] = None,
+        index_projections: Optional["SearchIndexerIndexProjections"] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["SearchResourceEncryptionKey"] = None,
         **kwargs: Any
@@ -95,6 +112,7 @@ class SearchIndexerSkillset(_serialization.Model):
         self.skills = skills
         self.cognitive_services_account = cognitive_services_account
         self.knowledge_store = knowledge_store
+        self.index_projections = index_projections
         self.e_tag = e_tag
         self.encryption_key = encryption_key
 
@@ -112,6 +130,7 @@ class SearchIndexerSkillset(_serialization.Model):
             skills=generated_skills,
             cognitive_services_account=getattr(self, "cognitive_services_account", None),
             knowledge_store=getattr(self, "knowledge_store", None),
+            index_projections=getattr(self, "index_projections", None),
             e_tag=getattr(self, "e_tag", None),
             encryption_key=getattr(self, "encryption_key", None),
         )
@@ -415,6 +434,7 @@ class AnalyzeTextOptions(_serialization.Model):
         "text": {"key": "text", "type": "str"},
         "analyzer_name": {"key": "analyzerName", "type": "str"},
         "tokenizer_name": {"key": "tokenizerName", "type": "str"},
+        "normalizer_name": {"key": "normalizerName", "type": "str"},
         "token_filters": {"key": "tokenFilters", "type": "[str]"},
         "char_filters": {"key": "charFilters", "type": "[str]"},
     }
@@ -424,6 +444,7 @@ class AnalyzeTextOptions(_serialization.Model):
         self.text = kwargs["text"]
         self.analyzer_name = kwargs.get("analyzer_name", None)
         self.tokenizer_name = kwargs.get("tokenizer_name", None)
+        self.normalizer_name = kwargs.get("normalizer_name", None)
         self.token_filters = kwargs.get("token_filters", None)
         self.char_filters = kwargs.get("char_filters", None)
 
@@ -432,6 +453,7 @@ class AnalyzeTextOptions(_serialization.Model):
             text=self.text,
             analyzer=self.analyzer_name,
             tokenizer=self.tokenizer_name,
+            normalizer=self.normalizer_name,
             token_filters=self.token_filters,
             char_filters=self.char_filters,
         )
@@ -529,7 +551,7 @@ class PatternAnalyzer(LexicalAnalyzer):
     :vartype pattern: str
     :ivar flags: List of regular expression flags. Possible values of each flag include: 'CANON_EQ',
      'CASE_INSENSITIVE', 'COMMENTS', 'DOTALL', 'LITERAL', 'MULTILINE', 'UNICODE_CASE', 'UNIX_LINES'.
-    :vartype flags: list[str] or list[~search_service_client.models.RegexFlags]
+    :vartype flags: list[str] or list[~azure.search.documents.indexes.models.RegexFlags]
     :ivar stopwords: A list of stopwords.
     :vartype stopwords: list[str]
     """
@@ -598,7 +620,7 @@ class PatternTokenizer(LexicalTokenizer):
     :vartype pattern: str
     :ivar flags: List of regular expression flags. Possible values of each flag include: 'CANON_EQ',
      'CASE_INSENSITIVE', 'COMMENTS', 'DOTALL', 'LITERAL', 'MULTILINE', 'UNICODE_CASE', 'UNIX_LINES'.
-    :vartype flags: list[str] or list[~search_service_client.models.RegexFlags]
+    :vartype flags: list[str] or list[~azure.search.documents.indexes.models.RegexFlags]
     :ivar group: The zero-based ordinal of the matching group in the regular expression to
      extract into tokens. Use -1 if you want to use the entire pattern to split the input into
      tokens, irrespective of matching groups. Default is -1.
@@ -866,6 +888,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
             "type": "SearchResourceEncryptionKey",
         },
         "e_tag": {"key": "@odata\\.etag", "type": "str"},
+        "identity": {"key": "identity", "type": "SearchIndexerDataIdentity"},
     }
 
     def __init__(self, **kwargs):
@@ -879,6 +902,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
         self.data_deletion_detection_policy = kwargs.get("data_deletion_detection_policy", None)
         self.e_tag = kwargs.get("e_tag", None)
         self.encryption_key = kwargs.get("encryption_key", None)
+        self.identity = kwargs.get("identity", None)
 
     def _to_generated(self):
         if self.connection_string is None or self.connection_string == "":
@@ -896,6 +920,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
             data_deletion_detection_policy=self.data_deletion_detection_policy,
             e_tag=self.e_tag,
             encryption_key=self.encryption_key,
+            identity=self.identity,
         )
 
     @classmethod
@@ -913,6 +938,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
             data_deletion_detection_policy=search_indexer_data_source.data_deletion_detection_policy,
             e_tag=search_indexer_data_source.e_tag,
             encryption_key=search_indexer_data_source.encryption_key,
+            identity=search_indexer_data_source.identity,
         )
 
 
