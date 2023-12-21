@@ -24,10 +24,10 @@ def parse_model_uri(uri: str, **kwargs) -> dict:
 
     def split_details(details):
         details = details.split("/")
-        dets = {}
+        details_dict = {}
         for i in range(0, len(details), 2):
-            dets[details[i]] = details[i + 1]
-        return dets
+            details_dict[details[i]] = details[i + 1]
+        return details_dict
 
     config = {**kwargs}
     if scheme == "azure_open_ai":
@@ -120,7 +120,7 @@ def init_open_ai_from_config(config: dict, credential: Optional[TokenCredential]
             logger.warning(f"Failed to get credential for ACS with {e}, falling back to env vars.")
             config["api_key"] = os.environ["OPENAI_API_KEY"]
             config["api_type"] = os.environ.get("OPENAI_API_TYPE", "azure")
-            config["api_base"] = os.environ.get("OPENAI_API_BASE", openai.api_base)
+            config["api_base"] = os.environ.get("OPENAI_API_BASE", openai.api_base if hasattr(openai, "api_base") else openai.base_url)
             config["api_version"] = os.environ.get("OPENAI_API_VERSION", openai.api_version)
         else:
             raise e

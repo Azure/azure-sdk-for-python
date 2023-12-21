@@ -359,7 +359,7 @@ def data_index_faiss(
     input_data_override: Optional[Input] = None,
 ):
     from azure.ai.resources._index._dataindex.data_index.models import build_model_protocol
-    from azure.ai.resources._indexx._dataindex.dsl._pipeline_decorator import pipeline
+    from azure.ai.resources._index._dataindex.dsl._pipeline_decorator import pipeline
 
     crack_and_chunk_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_CRACK_AND_CHUNK)
     generate_embeddings_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_GENERATE_EMBEDDINGS)
