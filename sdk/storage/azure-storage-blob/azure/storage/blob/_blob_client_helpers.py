@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines
 
+from enum import Enum
 from io import BytesIO
 from typing import (
     Any, AnyStr, AsyncGenerator, AsyncIterable, cast,
@@ -338,6 +339,8 @@ def _download_blob_options(
     :rtype: Dict[str, Any]
     """
     if length is not None:
+        if offset is None:
+            raise ValueError("Offset must be provided if length is provided.")
         length = offset + length - 1  # Service actually uses an end-range inclusive index
 
     validate_content = kwargs.pop('validate_content', False)
@@ -845,7 +848,7 @@ def _abort_copy_options(copy_id: Union[str, Dict[str, Any], BlobProperties], **k
     :rtype: Dict[str, Any]
     """
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
-    if isinstance(copy_id, BlobProperties):
+    if isinstance(copy_id, BlobProperties) and copy_id.copy.id is not None:
         copy_id = copy_id.copy.id
     elif isinstance(copy_id, dict):
         copy_id = copy_id['copy_id']
@@ -1000,7 +1003,7 @@ def _commit_block_list_options(
     """
     block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
     for block in block_list:
-        if isinstance(block, BlobBlock):
+        if isinstance(block, BlobBlock) and isinstance(block.state, Enum):
             if block.state.value == 'committed' and block_lookup.committed is not None:
                 block_lookup.committed.append(encode_base64(str(block.id)))
             elif block.state.value == 'uncommitted' and block_lookup.uncommitted is not None:
@@ -1008,6 +1011,8 @@ def _commit_block_list_options(
             elif block_lookup.latest is not None:
                 block_lookup.latest.append(encode_base64(str(block.id)))
         else:
+            if block_lookup.latest is None:
+                raise ValueError("block_lookup.latest was None or malformed.")
             block_lookup.latest.append(encode_base64(str(block)))
     headers = kwargs.pop('headers', {})
     headers.update(add_metadata_headers(metadata))

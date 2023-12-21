@@ -50,7 +50,6 @@ from ._blob_client_helpers import (
     _upload_page_options,
     _upload_pages_from_url_options
 )
-from ._container_client import ContainerClient
 from ._deserialize import (
     deserialize_blob_properties,
     deserialize_pipeline_response_into_cls,
@@ -80,6 +79,7 @@ from ._upload_helpers import (
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.storage.blob import ContainerClient
     from datetime import datetime
     from ._models import (
         ContentSettings,
@@ -3234,7 +3234,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     @distributed_trace
-    def _get_container_client(self) -> ContainerClient:
+    def _get_container_client(self) -> "ContainerClient":
         """Get a client to interact with the blob's parent container.
 
         The container need not already exist. Defaults to current blob's credentials.
@@ -3251,6 +3251,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 :dedent: 8
                 :caption: Get container client from blob object.
         """
+        from ._container_client import ContainerClient
         if not isinstance(self._pipeline._transport, TransportWrapper): # pylint: disable = protected-access
             _pipeline = Pipeline(
                 transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
