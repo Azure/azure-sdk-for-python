@@ -20,7 +20,7 @@ Use the Image Analysis client library to:
 
 ### Prerequisites
 
-* [Python 3.7](https://www.python.org/) or later installed, including [pip](https://pip.pypa.io/en/stable/).
+* [Python 3.8](https://www.python.org/) or later installed, including [pip](https://pip.pypa.io/en/stable/).
 * An [Azure subscription](https://azure.microsoft.com/free).
 * A [Computer Vision resource](https://portal.azure.com/#create/Microsoft.CognitiveServicesComputerVision) in your Azure subscription.
   * You will need the key and endpoint from this resource to authenticate against the service.

@@ -8,18 +8,23 @@ See [Prerequisites](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/
 
 ### Setup
 
-1. Clone or download this sample repository.
-1. Open a command prompt window in the folder `sdk\vision\azure-ai-vision-imageanalysis`.
-1. build the Image Analysis client library for Python:
-    ```bash
-    pip install wheel 
-    pip install -r dev_requirements.txt
-    python setup.py bdist_wheel
-    ```
-1. Install the resulting local Image Analysis client library package (updated the version number `1.0.0b1` to the current one):
-    ```bash
-    pip install dist\azure_ai_vision_imageanalysis-1.0.0b1-py3-none-any.whl --user --force-reinstall
-    ```
+* Clone or download this sample repository.
+* Open a command prompt window in the folder `sdk\vision\azure-ai-vision-imageanalysis`.
+* If you want to run tests against the latest public Image Analysis client library, install it by running:
+   ```bash
+   pip install azure-ai-vision-imageanalysis
+   ```
+* If you want to run tests against a locally built Image Analysis client library:
+    * First build the wheel:
+        ```bash
+        pip install wheel
+        pip install -r dev_requirements.txt
+        python setup.py bdist_wheel
+        ```
+    * Then install the resulting local wheel (update version `1.0.0b1` to the current one):
+        ```bash
+        pip install dist\azure_ai_vision_imageanalysis-1.0.0b1-py3-none-any.whl --user --force-reinstall
+        ```
 
 
 ### Set environment variables
