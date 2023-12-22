@@ -26,7 +26,7 @@ from ..constants import (
 from ..cbs import check_put_timeout_status, check_expiration_and_refresh_status
 
 from ._session_async import Session
-from ._authentication_async import JWTTokenAuth, SASTokenAuth
+from ._authentication_async import JWTTokenAuthAsync, SASTokenAuthAsync
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -35,7 +35,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
     def __init__(
             self,
             session: Session,
-            auth: Union[JWTTokenAuth, SASTokenAuth],
+            auth: Union[JWTTokenAuthAsync, SASTokenAuthAsync],
             *,
             auth_timeout: float,
             **kwargs: Any
@@ -213,7 +213,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
 
     async def update_token(self) -> None:
         self.auth_state = CbsAuthState.IN_PROGRESS
-        access_token = await self._auth.get_token() #type: ignore
+        access_token = await self._auth.get_token()
         if not access_token:
             _LOGGER.info(
                 "Token refresh function received an empty token object.",
