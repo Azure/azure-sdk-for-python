@@ -5,7 +5,7 @@
 import copy
 import json
 import os
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 
 from azure.core.credentials import TokenCredential
 from azure.ai.generative.index._utils.connections import (
@@ -58,7 +58,7 @@ def parse_model_uri(uri: str, **kwargs) -> dict:
     return config
 
 
-def init_open_ai_from_config(config: dict, credential: Optional[TokenCredential]) -> Dict[str, str]:
+def init_open_ai_from_config(config: dict, credential: Optional[TokenCredential]) -> Dict:
     """Initialize an OpenAI model from a configuration dictionary."""
     import openai
 

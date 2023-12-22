@@ -16,7 +16,7 @@ from azure.ai.generative.index._utils.tokens import token_length_function
 class DocumentSource:
     """Document Source."""
 
-    path: Path
+    path: Optional[Path]
     filename: str
     url: str
     mtime: float

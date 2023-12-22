@@ -79,7 +79,7 @@ def _args_to_openai_embedder(arguments: dict):
     return embedder
 
 
-def get_langchain_embeddings(embedding_kind: str, arguments: dict, credential: Optional[TokenCredential] = None) -> Embedder:
+def get_langchain_embeddings(embedding_kind: str, arguments: dict, credential: Optional[TokenCredential] = None) -> Union[OpenAIEmbedder, Embedder]:
     """Get an instance of Embedder from the given arguments."""
     if "open_ai" in embedding_kind:
         # return _args_to_openai_embedder(arguments)
@@ -90,7 +90,7 @@ def get_langchain_embeddings(embedding_kind: str, arguments: dict, credential: O
 
         # In openai v1.0.0 and above, openai.api_base is replaced by openai.base_url
         embedder = OpenAIEmbedder(
-            model=arguments.get("model"),
+            model=arguments.get("model", ""),
             api_base=arguments.get("api_base", openai.api_base if hasattr(openai, "api_base") else openai.base_url),
             api_type=arguments.get("api_type", openai.api_type),
             api_version=arguments.get("api_version", openai.api_version),
@@ -147,6 +147,7 @@ def get_langchain_embeddings(embedding_kind: str, arguments: dict, credential: O
 
 def get_embed_fn(embedding_kind: str, arguments: dict, credential: Optional[TokenCredential] = None) -> Callable[[List[str]], List[List[float]]]:
     """Get an embedding function from the given arguments."""
+
     if "open_ai" in embedding_kind:
         # from azure.ai.generative.index._langchain.openai import patch_openai_embedding_retries
 
@@ -155,7 +156,7 @@ def get_embed_fn(embedding_kind: str, arguments: dict, credential: Optional[Toke
         # def embed(texts: List[str], activity_logger=None) -> List[List[float]]:
         #     # AOAI doesn't allow batch_size > 1 so we serialize embedding here to improve error handling
         #     patch_openai_embedding_retries(logger, activity_logger)
-        #     embeddings = []
+        #     embeddings: List = []
         #     pre_batch = None
         #     for i in range(0, len(texts), int(arguments.get("batch_size", embedder.chunk_size))):
         #         texts_chunk = texts[i:i + embedder.chunk_size]
@@ -176,8 +177,8 @@ def get_embed_fn(embedding_kind: str, arguments: dict, credential: Optional[Toke
         arguments = init_open_ai_from_config(arguments, credential=credential)
 
         # In openai v1.0.0 and above, openai.api_base is replaced by openai.base_url
-        embedder = OpenAIEmbedder(
-            model=arguments.get("model"),
+        embedder: OpenAIEmbedder = OpenAIEmbedder(
+            model=arguments.get("model", ""),
             api_base=arguments.get("api_base", openai.api_base if hasattr(openai, "api_base") else openai.base_url),
             api_type=arguments.get("api_type", openai.api_type),
             api_version=arguments.get("api_version", openai.api_version),
@@ -206,7 +207,7 @@ def get_embed_fn(embedding_kind: str, arguments: dict, credential: Optional[Toke
 
         return embed
     elif embedding_kind == "hugging_face":
-        embedder = get_langchain_embeddings(embedding_kind, arguments, credential=credential)
+        embedder: Union[OpenAIEmbedder, Embedder] = get_langchain_embeddings(embedding_kind, arguments, credential=credential)  # type: ignore[no-redef]
 
         return embedder.embed_documents
     elif embedding_kind == "custom":
@@ -232,7 +233,7 @@ def get_query_embed_fn(embedding_kind: str, arguments: dict, credential: Optiona
         arguments = init_open_ai_from_config(arguments, credential)
 
         embedder = OpenAIEmbedder(
-            model=arguments.get("model"),
+            model=arguments.get("model", ""),
             api_base=arguments.get("api_base", openai.api_base if hasattr(openai, "api_base") else openai.base_url),
             api_type=arguments.get("api_type", openai.api_type),
             api_version=arguments.get("api_version", openai.api_version),
@@ -244,7 +245,7 @@ def get_query_embed_fn(embedding_kind: str, arguments: dict, credential: Optiona
 
         return embedder.embed_query
     elif embedding_kind == "hugging_face":
-        embedder = get_langchain_embeddings(embedding_kind, arguments, credential=credential)
+        embedder: Union[OpenAIEmbedder, Embedder] = get_langchain_embeddings(embedding_kind, arguments, credential=credential)  # type: ignore[no-redef]
 
         return embedder.embed_query
     elif embedding_kind == "custom":
@@ -550,14 +551,14 @@ class EmbeddingsContainer:
                 path_to_data = None
                 # when loading from previous location convert all its local data references to remote ones
                 if table.column("is_local")[i].as_py():
-                    path_to_data = os.path.join(
+                    path_to_data  = os.path.join(
                         dir_name, table.column("path_to_data")[i].as_py())
                 else:
                     path_to_data = table.column("path_to_data")[i].as_py()
                 index_of_data = table.column("index")[i].as_py()
                 self._document_embeddings[doc_id] = \
                     ReferenceEmbeddedDocument(
-                        doc_id, mtime, document_hash, path_to_data, index_of_data, embeddings_container_path, metadata)
+                        doc_id, mtime, document_hash, str(path_to_data), index_of_data, embeddings_container_path, metadata)
 
             logger.info(f"Loaded {table.num_rows} documents from {partition}")
 
@@ -644,7 +645,7 @@ class EmbeddingsContainer:
                 index_of_data = table.column("index")[i].as_py()
                 self._document_embeddings[doc_id] = \
                     ReferenceEmbeddedDocument(
-                        doc_id, mtime, document_hash, path_to_data, index_of_data, embeddings_container_path, metadata)
+                        doc_id, mtime, document_hash, str(path_to_data), index_of_data, embeddings_container_path, metadata)
 
         # Load Deleted Documents
         deleted_documents_partitions_files = list(Path(path).glob("deleted_documents*.parquet"))
@@ -681,7 +682,7 @@ class EmbeddingsContainer:
         else:
             raise ValueError(f"Schema version {file_format_version} is not supported")
 
-    def save_v2(self, path: str, with_metadata=True, suffix: Optional[str] = None):
+    def save_v2(self, path: Union[Path, str], with_metadata=True, suffix: Optional[str] = None):
         """Save the embeddings to a directory using file format version 2."""
         path = Path(path)
         path.mkdir(parents=True, exist_ok=True)
@@ -690,11 +691,11 @@ class EmbeddingsContainer:
         if len(self._document_sources) > 0:
             sources_file_name = f"sources_{suffix}.parquet" if suffix is not None else "sources.parquet"
 
-            source_ids = []
-            source_mtimes = []
-            source_filename = []
-            source_url = []
-            source_document_ids = []
+            source_ids: List = []
+            source_mtimes: List = []
+            source_filename: List = []
+            source_url: List = []
+            source_document_ids: List = []
             for (source_id, source) in self._document_sources.items():
                 source_ids.append(str(source_id))
                 source_mtimes.append(source.source.mtime)
@@ -715,11 +716,11 @@ class EmbeddingsContainer:
         if len(self._deleted_sources) > 0:
             deleted_sources_file_name = f"deleted_sources_{suffix}.parquet" if suffix is not None else "deleted_sources.parquet"
 
-            deleted_source_ids = []
-            deleted_source_mtimes = []
-            deleted_source_filename = []
-            deleted_source_url = []
-            deleted_document_ids = []
+            deleted_source_ids: List = []
+            deleted_source_mtimes: List = []
+            deleted_source_filename: List = []
+            deleted_source_url: List = []
+            deleted_document_ids: List = []
             for (source_id, source) in self._deleted_sources.items():
                 deleted_source_ids.append(str(source_id))
                 deleted_source_mtimes.append(source.source.mtime)
@@ -741,15 +742,15 @@ class EmbeddingsContainer:
             local_data_file_name = f"data_{suffix}.parquet" if suffix is not None else "data.parquet"
             embeddings_file_name = f"embeddings_{suffix}.parquet" if suffix is not None else "embeddings.parquet"
 
-            doc_ids = []
-            mtimes = []
-            hashes = []
-            paths = []
-            indexes = []
-            embeddings = []
-            local_data = []
-            is_local = []
-            metadata = []
+            doc_ids: List = []
+            mtimes: List = []
+            hashes: List = []
+            paths: List = []
+            indexes: List = []
+            embeddings: List = []
+            local_data: List = []
+            is_local: List = []
+            metadata: List = []
             for (doc_id, document) in self._document_embeddings.items():
                 doc_ids.append(str(doc_id))
                 mtimes.append(document.mtime)
@@ -791,10 +792,10 @@ class EmbeddingsContainer:
         if len(self._deleted_documents) > 0:
             deleted_documents_file_name = f"deleted_documents_{suffix}.parquet" if suffix is not None else "deleted_documents.parquet"
 
-            deleted_doc_ids = []
-            deleted_mtimes = []
-            deleted_hashes = []
-            deleted_metdata = []
+            deleted_doc_ids: List = []
+            deleted_mtimes: List = []
+            deleted_hashes: List = []
+            deleted_metdata: List = []
             for (doc_id, document) in self._deleted_documents.items():
                 deleted_doc_ids.append(str(doc_id))
                 deleted_mtimes.append(document.mtime)
@@ -816,15 +817,15 @@ class EmbeddingsContainer:
 
     def save_v1(self, path: str, with_metadata=True, suffix: Optional[str] = None):
         """Save the embeddings to a directory using file format version 1."""
-        doc_ids = []
-        mtimes = []
-        hashes = []
-        paths = []
-        indexes = []
-        embeddings = []
-        local_data = []
-        is_local = []
-        metadata = []
+        doc_ids: List = []
+        mtimes: List = []
+        hashes: List = []
+        paths: List = []
+        indexes: List = []
+        embeddings: List = []
+        local_data: List = []
+        is_local: List = []
+        metadata: List = []
 
         local_data_file_name = f"data_{suffix}.parquet" if suffix is not None else "data.parquet"
         embeddings_file_name = f"embeddings_{suffix}.parquet" if suffix is not None else "embeddings.parquet"
@@ -945,13 +946,14 @@ class EmbeddingsContainer:
             input_documents = iter([WrappedLangChainDocument(d)
                                    for d in input_documents.load()])
         elif isinstance(input_documents, DocumentChunksIterator):
-            flattened_docs = []
+            flattened_docs: List = []
             for chunked_doc in input_documents:
                 flattened_docs.extend(chunked_doc.flatten())
             input_documents = iter(flattened_docs)
 
-        documents_to_embed = []
+        documents_to_embed: List = []
         documents_embedded = OrderedDict()
+        document: Document
         for document in input_documents:
             if hasattr(document, "__module__") and "langchain" in document.__module__ and ".Document" in str(document.__class__):
                 document = WrappedLangChainDocument(document)
@@ -996,7 +998,7 @@ class EmbeddingsContainer:
 
         data_to_embed = [truncate_func(t) for (_, _, t, _, _) in documents_to_embed]
 
-        embeddings = []
+        embeddings: List = []
         try:
             with track_activity(
                 logger,
@@ -1073,8 +1075,8 @@ class EmbeddingsContainer:
         logger.info("Building faiss index")
         t1 = time.time()
         num_source_docs = 0
-        documents = []
-        embeddings = []
+        documents: List = []
+        embeddings: List = []
         index_to_id = {}
         for i, (doc_id, emb_doc) in enumerate(self._document_embeddings.items()):
             logger.info(f"Adding document: {doc_id}")
@@ -1124,7 +1126,7 @@ class EmbeddingsContainer:
         return MLIndex(output_path)
 
     @staticmethod
-    def load_latest_snapshot(local_embeddings_cache: str, activity_logger=None) -> "EmbeddingsContainer":
+    def load_latest_snapshot(local_embeddings_cache: Union[str, Path], activity_logger=None) -> "EmbeddingsContainer":
         """Loads the latest snapshot from the embeddings container."""
         embeddings_container_dir_name = None
         embeddings_container = None
