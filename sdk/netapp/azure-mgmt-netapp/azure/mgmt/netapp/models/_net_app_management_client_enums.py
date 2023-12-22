@@ -41,6 +41,15 @@ class AvsDataStore(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """avsDataStore is disabled"""
 
 
+class BackupType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of backup Manual or Scheduled."""
+
+    MANUAL = "Manual"
+    """Manual backup"""
+    SCHEDULED = "Scheduled"
+    """Scheduled backup"""
+
+
 class CheckNameResourceTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Resource type used for verification."""
 
