@@ -19,7 +19,7 @@ class Deployment:
     endpoint_name: Optional[str] = None
     environment_variables: Optional[Dict[str, str]] = None
     instance_type: Optional[str] = None
-    instance_count: str = 1
+    instance_count: str = "1"
     scoring_uri: Optional[str] = None
     properties: Optional[Dict[str, str]] = None
     tags: Optional[Dict[str, str]] = None
