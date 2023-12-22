@@ -22,14 +22,14 @@ def get_registry_model(
     if id:
         if "versions" in id:
             match = re.match(REGISTRY_VERSIONED_ID_REGEX, id)
-            registry_name = match.group(1)
-            model_name = match.group(3)
-            version = match.group(4)
+            registry_name = match.group(1)  # type: ignore[union-attr]
+            model_name = match.group(3)  # type: ignore[union-attr]
+            version = match.group(4)  # type: ignore[union-attr]
         elif "labels" in id:
             match = re.match(REGISTRY_LABEL_ID_REGEX, id)
-            registry_name = match.group(1)
-            model_name = match.group(3)
-            label = match.group(4)
+            registry_name = match.group(1)  # type: ignore[union-attr]
+            model_name = match.group(3)  # type: ignore[union-attr]
+            label = match.group(4)  # type: ignore[union-attr]
 
     registry_client = MLClient(credential, registry_name=registry_name)
     return registry_client.models.get(name=model_name, label=label, version=version)
