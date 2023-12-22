@@ -8,7 +8,7 @@ from azure.ai.resources._index._docstore import FileBasedDocstore
 from azure.ai.resources._index._embeddings import WrappedLangChainDocument
 from langchain.docstore.base import AddableMixin, Docstore
 from langchain.docstore.document import Document as LangChainDocument
-
+from azure.ai.resources._index._documents import Document
 
 class FileBasedDocStore(Docstore, AddableMixin):
     """Simple docstore which serializes to file and loads into memory."""
@@ -48,7 +48,11 @@ class FileBasedDocStore(Docstore, AddableMixin):
             Document if found, else error message.
         """
         doc = self.docstore.search(search)
-        return LangChainDocument(page_content=doc.page_content, metadata=doc.metadata) if doc else doc
+        if isinstance(doc, Document):
+            return LangChainDocument(page_content=doc.page_content, metadata=doc.metadata)
+        else:
+            return doc
+
 
     def save(self, output_path: str):
         """
