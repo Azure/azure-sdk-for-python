@@ -52,18 +52,18 @@ class AzureOpenAIConnection(BaseConnection):
 
 
     @property
-    def api_version(self) -> str:
+    def api_version(self) -> Optional[str]:
         """The API version of the connection.
 
         :return: the API version of the connection.
-        :rtype: str
+        :rtype: Optional[str]
         """
         if self._workspace_connection.tags is not None and CONNECTION_API_VERSION_KEY in self._workspace_connection.tags:
             return self._workspace_connection.tags[CONNECTION_API_VERSION_KEY]
         return None
 
     @api_version.setter
-    def api_version(self, value: str) -> str:
+    def api_version(self, value: str) -> None:
         """Set the API version of the connection.
 
         :return: the API version of the connection.
@@ -72,18 +72,18 @@ class AzureOpenAIConnection(BaseConnection):
         self._workspace_connection.tags[CONNECTION_API_VERSION_KEY] = value
 
     @property
-    def api_type(self) -> str:
+    def api_type(self) -> Optional[str]:
         """The API type of the connection.
 
-        :return: the API type of the connection.
-        :rtype: str
+        :return: The API type of the connection.
+        :rtype: Optional[str]
         """
         if self._workspace_connection.tags is not None and CONNECTION_API_TYPE_KEY in self._workspace_connection.tags:
             return self._workspace_connection.tags[CONNECTION_API_TYPE_KEY]
         return None
 
     @api_type.setter
-    def api_type(self, value: str) -> str:
+    def api_type(self, value: str) -> None:
         """Set the API type of the connection.
 
         :return: the API type of the connection.
@@ -163,18 +163,18 @@ class AzureAISearchConnection(BaseConnection):
 
 
     @property
-    def api_version(self) -> str:
+    def api_version(self) -> Optional[str]:
         """The API version of the connection.
 
         :return: the API version of the connection.
-        :rtype: str
+        :rtype: Optional[str]
         """
         if self._workspace_connection.tags is not None and CONNECTION_API_VERSION_KEY in self._workspace_connection.tags:
             return self._workspace_connection.tags[CONNECTION_API_VERSION_KEY]
         return None
 
     @api_version.setter
-    def api_version(self, value: str) -> str:
+    def api_version(self, value: str) -> None:
         """Set the API version of the connection.
 
         :return: the API version of the connection.
@@ -237,18 +237,18 @@ class AzureAIServiceConnection(BaseConnection):
         super().__init__(target=target, type="cognitive_service", credentials=credentials, api_version=api_version, kind=kind, **kwargs)
 
     @property
-    def api_version(self) -> str:
+    def api_version(self) -> Optional[str]:
         """The API version of the connection.
 
-        :return: the API version of the connection.
-        :rtype: str
+        :return: The API version of the connection.
+        :rtype: Optional[str]
         """
         if self._workspace_connection.tags is not None and CONNECTION_API_VERSION_KEY in self._workspace_connection.tags:
             return self._workspace_connection.tags[CONNECTION_API_VERSION_KEY]
         return None
 
     @api_version.setter
-    def api_version(self, value: str) -> str:
+    def api_version(self, value: str) -> None:
         """Set the API version of the connection.
 
         :return: the API version of the connection.
@@ -257,18 +257,18 @@ class AzureAIServiceConnection(BaseConnection):
         self._workspace_connection.tags[CONNECTION_API_VERSION_KEY] = value
 
     @property
-    def kind(self) -> str:
+    def kind(self) -> Optional[str]:
         """The kind of the connection.
 
         :return: the kind of the connection.
-        :rtype: str
+        :rtype: Optional[str]
         """
         if self._workspace_connection.tags is not None and CONNECTION_KIND_KEY in self._workspace_connection.tags:
             return self._workspace_connection.tags[CONNECTION_KIND_KEY]
         return None
 
     @kind.setter
-    def kind(self, value: str) -> str:
+    def kind(self, value: str) -> None:
         """Set the kind of the connection.
 
         :return: the kind of the connection.
