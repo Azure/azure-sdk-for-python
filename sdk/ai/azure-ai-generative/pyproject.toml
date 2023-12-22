@@ -9,3 +9,10 @@ bandit = false
 sphinx=true
 breaking = false
 whl_no_aio = false
+
+[tool.mypy] 
+python_version = "3.10"
+exclude = ["azure/ai/generative/_restclient", "tests"]   
+warn_unused_configs = true 
+ignore_missing_imports = true
+follow_imports = "skip"
