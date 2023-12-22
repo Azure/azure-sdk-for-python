@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 import shutil
 import tempfile
-from typing import Any, List, Union, Iterable
+from typing import Any, List, Union, Iterable, Optional
 import uuid
 
 
@@ -270,7 +270,7 @@ class DeploymentOperations:
 
     @distributed_trace
     @monitor_with_activity(logger, "Deployment.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, endpoint_name: str = None) -> Deployment:
+    def get(self, name: str, endpoint_name: Optional[str] = None) -> Deployment:
         endpoint_name = endpoint_name if endpoint_name else name
         deployment = self._ml_client.online_deployments.get(
             name=name,
@@ -292,13 +292,13 @@ class DeploymentOperations:
 
     @distributed_trace
     @monitor_with_activity(logger, "Deployment.GetKeys", ActivityType.PUBLICAPI)
-    def get_keys(self, name: str, endpoint_name: str = None) -> DeploymentKeys:
+    def get_keys(self, name: str, endpoint_name: Optional[str] = None) -> DeploymentKeys:
         endpoint_name = endpoint_name if endpoint_name else name
         return DeploymentKeys._from_v2_endpoint_keys(self._ml_client.online_endpoints.get_keys(endpoint_name))
 
     @distributed_trace
     @monitor_with_activity(logger, "Deployment.Delete", ActivityType.PUBLICAPI)
-    def delete(self, name: str, endpoint_name: str = None) -> None:
+    def delete(self, name: str, endpoint_name: Optional[str] = None) -> None:
         self._ml_client.online_deployments.delete(
             name=name,
             endpoint_name=endpoint_name if endpoint_name else name,
@@ -306,7 +306,7 @@ class DeploymentOperations:
 
     @distributed_trace
     @monitor_with_activity(logger, "Deployment.Invoke", ActivityType.PUBLICAPI)
-    def invoke(self, name: str, request_file: Union[str, os.PathLike], endpoint_name: str = None) -> Any:
+    def invoke(self, name: str, request_file: Union[str, os.PathLike], endpoint_name: Optional[str] = None) -> Any:
         return self._ml_client.online_endpoints.invoke(
             endpoint_name=endpoint_name if endpoint_name else name,
             request_file=request_file,
@@ -317,8 +317,8 @@ class DeploymentOperations:
         self,
         instance_type: str,
         deployment: Deployment,
-        allowed_instance_types: List[str] = None,
-        min_sku_spec: str = None,
+        allowed_instance_types: Optional[List[str]] = None,
+        min_sku_spec: Optional[str] = None,
     ) -> bool:
         vm_sizes = self._ml_client.compute.list_sizes()
         inference_sku_vm_info = [vm for vm in vm_sizes if vm.name == instance_type][0]
