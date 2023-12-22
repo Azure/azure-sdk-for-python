@@ -1072,7 +1072,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         return blob_props # type: ignore
 
     @distributed_trace
-    def set_http_headers(self, content_settings: Optional[ContentSettings] = None, **kwargs: Any) -> None:
+    def set_http_headers(self, content_settings: Optional["ContentSettings"] = None, **kwargs: Any) -> None:
         """Sets system properties on the blob.
 
         If one property is set for the content_settings, all properties will be overridden.
@@ -1263,7 +1263,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
     @distributed_trace
     def create_page_blob(
         self, size: int,
-        content_settings: Optional[ContentSettings] = None,
+        content_settings: Optional["ContentSettings"] = None,
         metadata: Optional[Dict[str, str]] = None,
         premium_page_blob_tier: Optional[Union[str, PremiumPageBlobTier]] = None,
         **kwargs: Any
@@ -1369,7 +1369,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     @distributed_trace
     def create_append_blob(
-        self, content_settings: Optional[ContentSettings] = None,
+        self, content_settings: Optional["ContentSettings"] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime]]:
@@ -2068,7 +2068,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
     @distributed_trace
     def commit_block_list(
         self, block_list: List[BlobBlock],
-        content_settings: Optional[ContentSettings] = None,
+        content_settings: Optional["ContentSettings"] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime]]:
