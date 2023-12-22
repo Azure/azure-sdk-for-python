@@ -153,7 +153,7 @@ class OpenAIEmbedder:
                     logger.error("Failed to parse max number of inputs from error message, falling back to batch_size=1.")
                     self.batch_size = 1
                 logger.warning(f"Reducing batch_size to {self.batch_size} and retrying.")
-                embedding_response = {"data": []}
+                embedding_response: Dict[str, List] = {"data": []}
                 for i in range(0, len(tokenized_texts), self.batch_size):
                     embedding_response["data"].extend(self._embed_request(tokenized_texts=tokenized_texts[i : i + self.batch_size], **kwargs)["data"])
             else:
