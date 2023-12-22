@@ -57,7 +57,9 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
-        self.dataplane_workspace_operations = kwargs.pop("dataplane_client").workspaces if kwargs.get("dataplane_client") else None
+        self.dataplane_workspace_operations = (
+            kwargs.pop("dataplane_client").workspaces if kwargs.get("dataplane_client") else None
+        )
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline", None)
         ops_logger.update_info(kwargs)
         self._provision_network_operation = service_client.managed_network_provisions
