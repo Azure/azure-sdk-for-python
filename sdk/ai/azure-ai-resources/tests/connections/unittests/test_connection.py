@@ -9,7 +9,7 @@ from azure.ai.ml.entities._credentials import ApiKeyConfiguration
 @pytest.mark.unittest
 class TestConnection:
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_credentials(self):
         mock_credentials = Mock()
         mock_token = Mock()
@@ -17,10 +17,10 @@ class TestConnection:
         mock_token.token = "my-aad-token"
         return mock_credentials
 
-    @patch("pkg_resources.get_distribution")
+    @patch("importlib.metadata.version")
     @patch("os.environ")
-    def test_set_environment(self, mock_os_environ, mock_get_distribution, mock_credentials):
-        mock_get_distribution.return_value.version = "0.28.1"
+    def test_set_environment(self, mock_os_environ, mock_get_version, mock_credentials):
+        mock_get_version.return_value = "0.28.1"
         connection = AzureOpenAIConnection(name="my-connection", target="https://test.com", credentials=ApiKeyConfiguration(key="abc"), api_version="2021-01-01")
 
         connection.set_current_environment()
@@ -38,10 +38,10 @@ class TestConnection:
         assert mock_os_environ.__setitem__.call_args_list[7][0] == ("OPENAI_API_VERSION", "2021-01-01")
 
 
-    @patch("pkg_resources.get_distribution")
+    @patch("importlib.metadata.version")
     @patch("os.environ")
-    def test_set_environment_100(self, mock_os_environ, mock_get_distribution, mock_credentials):
-        mock_get_distribution.return_value.version = "1.0.0"
+    def test_set_environment_100(self, mock_os_environ, mock_get_version, mock_credentials):
+        mock_get_version.return_value = "1.0.0"
         connection = AzureOpenAIConnection(name="my-connection", target="https://test.com", credentials=ApiKeyConfiguration(key="abc"), api_version="2021-01-01")
 
         connection.set_current_environment()

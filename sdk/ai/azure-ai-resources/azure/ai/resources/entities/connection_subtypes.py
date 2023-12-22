@@ -100,10 +100,12 @@ class AzureOpenAIConnection(BaseConnection):
         :type credential: :class:`~azure.core.credentials.TokenCredential`
         """
 
-        import pkg_resources
-        openai_version_str = pkg_resources.get_distribution("openai").version
-        openai_version = pkg_resources.parse_version(openai_version_str)
-        if openai_version >= pkg_resources.parse_version("1.0.0"):
+        from importlib.metadata import version as get_version
+        from packaging.version import Version
+
+        openai_version_str = get_version("openai")
+        openai_version = Version(openai_version_str)
+        if openai_version >= Version("1.0.0"):
             self._set_current_environment_new(credential)
         else:
             self._set_current_environment_old(credential)
