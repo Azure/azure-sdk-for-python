@@ -94,8 +94,6 @@ def sample_analyze_all_image_file():
         model_version = "latest" # Optional. Analysis model version to use. Defaults to "latest".
     )
 
-    client.close()
-
     # Print all analysis results to the console
     print(f"Image analysis results:")
 

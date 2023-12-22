@@ -144,8 +144,6 @@ result = client.analyze(
     gender_neutral_caption = True # Optional (default is False)
 )
 
-client.close()
-
 # Print caption results to the console
 print(f"Image analysis results:")
 print(f" Caption:")
@@ -170,8 +168,6 @@ result = client.analyze(
     visual_features = [ VisualFeatures.CAPTION ],
     gender_neutral_caption = True # Optional (default is False)
 )
-
-client.close()
 
 # Print caption results to the console
 print(f"Image analysis results:")
@@ -198,8 +194,6 @@ result = client.analyze(
     image_content = image_buffer,
     visual_features = [ VisualFeatures.READ ]
 )
-
-client.close()
 
 # Print text (OCR) analysis results to the console
 print(f"Image analysis results:")
@@ -229,8 +223,6 @@ result = client.analyze(
     image_content = "https://aka.ms/azai/vision/image-analysis-sample.jpg",
     visual_features = [ VisualFeatures.READ ]
 )
-
-client.close()
 
 # Print text (OCR) analysis results to the console
 print(f"Image analysis results:")
@@ -342,3 +334,8 @@ This project has adopted the
 [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct). For more information,
 see the Code of Conduct FAQ or contact opencode@microsoft.com with any
 additional questions or comments.
+
+
+<!-- Note: I did not use LINKS section here with a list of `[link-label](link-url)` because these
+links don't work in the Sphinx generated documentation. The index.html page of these docs
+include this README, but with broken links.-->

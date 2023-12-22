@@ -10,7 +10,7 @@ urlFragment: image-analysis-python-samples
 
 # Samples for Image Analysis client library for Python
 
-These are runnable console Python programs that show how to use the Image Analysis client library. They cover all the supported visual features. Most use the a synchronous client to analyze an image file or image URL. One sample uses the asynchronous client. The concepts are similar, you can easily modify any of the samples to your needs.
+These are runnable console Python programs that show how to use the Image Analysis client library. They cover all the supported visual features. Most use the a synchronous client to analyze an image file or image URL. Two sample uses the asynchronous client. The concepts are similar, you can easily modify any of the samples to your needs.
 
 ## Synchronous client samples
 
@@ -30,7 +30,7 @@ These are runnable console Python programs that show how to use the Image Analys
 |**File Name**|**Description**|
 |----------------|-------------|
 |[sample_caption_image_file_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/samples/async_samples/sample_caption_image_file_async.py) | Generate a human-readable sentence that describes the content of an image file, using an asynchronous client. |
-
+|[sample_ocr_image_url_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/samples/async_samples/sample_ocr_image_url_async.py) | Extract printed or handwritten text from an image URL, using an asynchronous client. |
 ## Prerequisites
 
 See [Prerequisites](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/README.md#prerequisites) here.

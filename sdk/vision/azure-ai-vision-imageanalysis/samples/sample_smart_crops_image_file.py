@@ -64,8 +64,6 @@ def sample_smart_crops_image_file():
         smart_crops_aspect_ratios = [0.9, 1.33] # Optional. Specify one more desired aspect ratios
     )
 
-    client.close()
-
     # Print smart crop analysis results to the console
     print(f"Image analysis results:")
     print(f" Smart Cropping:")

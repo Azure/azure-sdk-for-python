@@ -55,8 +55,6 @@ def sample_objects_image_file():
         visual_features = [ VisualFeatures.OBJECTS ]
     )
 
-    client.close()
-
     # Print Objects analysis results to the console
     print(f"Image analysis results:")
     print(f" Objects:")

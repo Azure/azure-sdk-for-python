@@ -54,8 +54,6 @@ def sample_people_image_file():
         visual_features = [ VisualFeatures.PEOPLE ]
     )
 
-    client.close()
-
     # Print People analysis results to the console
     print(f"Image analysis results:")
     print(f" People:")

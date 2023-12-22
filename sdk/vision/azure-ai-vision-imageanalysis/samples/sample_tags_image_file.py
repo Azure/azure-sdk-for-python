@@ -57,8 +57,6 @@ def sample_tags_image_file():
         language = "en" # Optional. See https://aka.ms/cv-languages for supported languages.
     )
 
-    client.close()
-
     # Print Tags analysis results to the console
     print(f"Image analysis results:")
     print(f" Tags:")

@@ -62,8 +62,6 @@ def sample_caption_image_file():
         gender_neutral_caption = True # Optional (default is False)
     )
 
-    client.close()
-
     # Print caption results to the console
     print(f"Image analysis results:")
     print(f" Caption:")

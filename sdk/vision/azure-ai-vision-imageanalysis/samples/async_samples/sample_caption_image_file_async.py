@@ -53,7 +53,7 @@ async def sample_caption_image_file_async():
         credential = AzureKeyCredential(key)
     )
 
-    # Analyze a visual feature (Tags) from an image URL, asynchronously.
+    # Get a caption for the image, asynchronously.
     result = await client.analyze(
         image_content = image_buffer,
         visual_features = [ VisualFeatures.CAPTION ]

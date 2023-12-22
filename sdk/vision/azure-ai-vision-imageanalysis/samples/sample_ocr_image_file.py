@@ -62,8 +62,6 @@ def sample_ocr_image_file():
         visual_features = [ VisualFeatures.READ ]
     )
 
-    client.close()
-
     # Print text (OCR) analysis results to the console
     print(f"Image analysis results:")
     print(f" Read:")

@@ -5,7 +5,7 @@
 # mypy: disable-error-code="attr-defined"
 """
 DESCRIPTION:
-    This sample demonstrates how to extract printed or hand-written text for a 
+    This sample demonstrates how to extract printed or hand-written text from a 
     publicly accessible image URL, using a synchronous client.
 
     The synchronous (blocking) `analyze` method call returns an `ImageAnalysisResult` object.
@@ -57,8 +57,6 @@ def sample_ocr_image_url():
         image_content = "https://aka.ms/azai/vision/image-analysis-sample.jpg",
         visual_features = [ VisualFeatures.READ ]
     )
-
-    client.close()
 
     # Print text (OCR) analysis results to the console
     print(f"Image analysis results:")

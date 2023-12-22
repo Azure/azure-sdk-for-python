@@ -64,8 +64,6 @@ def sample_dense_captions_image_file():
         gender_neutral_caption = True # Optional (default is False)
     )
 
-    client.close()
-
     # Print dense caption results to the console. The first caption always
     # corresponds to the entire image. The rest correspond to sub regions.
     print(f"Image analysis results:")
