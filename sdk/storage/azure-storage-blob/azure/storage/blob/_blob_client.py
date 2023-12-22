@@ -1192,7 +1192,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     @distributed_trace
     def set_immutability_policy(
-        self, immutability_policy: ImmutabilityPolicy,
+        self, immutability_policy: "ImmutabilityPolicy",
         **kwargs: Any
     ) -> Dict[str, str]:
         """The Set Immutability Policy operation sets the immutability policy on the blob.
@@ -1265,7 +1265,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         self, size: int,
         content_settings: Optional["ContentSettings"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        premium_page_blob_tier: Optional[Union[str, PremiumPageBlobTier]] = None,
+        premium_page_blob_tier: Optional[Union[str, "PremiumPageBlobTier"]] = None,
         **kwargs: Any
     ) -> Dict[str, Union[str, "datetime"]]:
         """Creates a new Page Blob of the specified size.
@@ -1832,7 +1832,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         return lease
 
     @distributed_trace
-    def set_standard_blob_tier(self, standard_blob_tier: Union[str, StandardBlobTier], **kwargs: Any) -> None:
+    def set_standard_blob_tier(self, standard_blob_tier: Union[str, "StandardBlobTier"], **kwargs: Any) -> None:
         """This operation sets the tier on a block blob.
 
         A block blob's tier determines Hot/Cool/Archive storage type.
@@ -2178,7 +2178,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     @distributed_trace
-    def set_premium_page_blob_tier(self, premium_page_blob_tier: PremiumPageBlobTier, **kwargs: Any) -> None:
+    def set_premium_page_blob_tier(self, premium_page_blob_tier: "PremiumPageBlobTier", **kwargs: Any) -> None:
         """Sets the page blob tiers on the blob. This API is only supported for page blobs on premium accounts.
 
         :param premium_page_blob_tier:
@@ -2557,7 +2557,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     @distributed_trace
     def set_sequence_number(
-        self, sequence_number_action: Union[str, SequenceNumberAction],
+        self, sequence_number_action: Union[str, "SequenceNumberAction"],
         sequence_number: Optional[str] = None,
         **kwargs: Any
     ) -> Dict[str, Union[str, "datetime"]]:
