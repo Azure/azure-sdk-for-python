@@ -1126,7 +1126,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
     def set_blob_metadata(
         self, metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> Dict[str, Union[str, datetime]]:
+    ) -> Dict[str, Union[str, "datetime"]]:
         """Sets user-defined metadata for the blob as one or more name-value pairs.
 
         :param metadata:
@@ -1240,7 +1240,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         self._client.blob.delete_immutability_policy(**kwargs)
 
     @distributed_trace
-    def set_legal_hold(self, legal_hold: bool, **kwargs: Any) -> Dict[str, Union[str, datetime, bool]]:
+    def set_legal_hold(self, legal_hold: bool, **kwargs: Any) -> Dict[str, Union[str, "datetime", bool]]:
         """The Set Legal Hold operation sets a legal hold on the blob.
 
         .. versionadded:: 12.10.0
@@ -1267,7 +1267,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         metadata: Optional[Dict[str, str]] = None,
         premium_page_blob_tier: Optional[Union[str, PremiumPageBlobTier]] = None,
         **kwargs: Any
-    ) -> Dict[str, Union[str, datetime]]:
+    ) -> Dict[str, Union[str, "datetime"]]:
         """Creates a new Page Blob of the specified size.
 
         :param int size:
@@ -1372,7 +1372,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         self, content_settings: Optional["ContentSettings"] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> Dict[str, Union[str, datetime]]:
+    ) -> Dict[str, Union[str, "datetime"]]:
         """Creates a new Append Blob. This operation creates a new 0-length append blob. The content
         of any existing blob is overwritten with the newly initialized append blob. To add content to
         the append blob, call the :func:`append_block` or :func:`append_block_from_url` method.
@@ -1465,7 +1465,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
     def create_snapshot(
         self, metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> Dict[str, Union[str, datetime]]:
+    ) -> Dict[str, Union[str, "datetime"]]:
         """Creates a snapshot of the blob.
 
         A snapshot is a read-only version of a blob that's taken at a point in time.
@@ -1550,7 +1550,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         metadata: Optional[Dict[str, str]] = None,
         incremental_copy: bool = False,
         **kwargs: Any
-    ) -> Dict[str, Union[str, datetime]]:
+    ) -> Dict[str, Union[str, "datetime"]]:
         """Copies a blob from the given URL.
 
         This operation returns a dictionary containing `copy_status` and `copy_id`,
@@ -2071,7 +2071,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         content_settings: Optional["ContentSettings"] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> Dict[str, Union[str, datetime]]:
+    ) -> Dict[str, Union[str, "datetime"]]:
         """The Commit Block List operation writes a blob by specifying the list of
         block IDs that make up the blob.
 
@@ -2560,7 +2560,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         self, sequence_number_action: Union[str, SequenceNumberAction],
         sequence_number: Optional[str] = None,
         **kwargs: Any
-    ) -> Dict[str, Union[str, datetime]]:
+    ) -> Dict[str, Union[str, "datetime"]]:
         """Sets the blob sequence number.
 
         :param str sequence_number_action:
@@ -2613,7 +2613,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     @distributed_trace
-    def resize_blob(self, size: int, **kwargs: Any) -> Dict[str, Union[str, datetime]]:
+    def resize_blob(self, size: int, **kwargs: Any) -> Dict[str, Union[str, "datetime"]]:
         """Resizes a page blob to the specified size.
 
         If the specified value is less than the current size of the blob,
@@ -2676,7 +2676,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         offset: int,
         length: int,
         **kwargs: Any
-    ) -> Dict[str, Union[str, datetime]]:
+    ) -> Dict[str, Union[str, "datetime"]]:
         """The Upload Pages operation writes a range of pages to a page blob.
 
         :param bytes page:
@@ -2895,7 +2895,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     @distributed_trace
-    def clear_page(self, offset: int, length: int, **kwargs: Any) -> Dict[str, Union[str, datetime]]:
+    def clear_page(self, offset: int, length: int, **kwargs: Any) -> Dict[str, Union[str, "datetime"]]:
         """Clears a range of pages.
 
         :param int offset:
@@ -2977,7 +2977,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
         length: Optional[int] = None,
         **kwargs: Any
-    ) -> Dict[str, Union[str, datetime, int]]:
+    ) -> Dict[str, Union[str, "datetime", int]]:
         """Commits a new block of data to the end of the existing append blob.
 
         :param data:
@@ -3075,7 +3075,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         source_offset: Optional[int] = None,
         source_length: Optional[int] = None,
         **kwargs: Any
-    ) -> Dict[str, Union[str, datetime, int]]:
+    ) -> Dict[str, Union[str, "datetime", int]]:
         """
         Creates a new block to be committed as part of a blob, where the contents are read from a source url.
 
@@ -3184,7 +3184,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     @distributed_trace
-    def seal_append_blob(self, **kwargs: Any) -> Dict[str, Union[str, datetime, int]]:
+    def seal_append_blob(self, **kwargs: Any) -> Dict[str, Union[str, "datetime", int]]:
         """The Seal operation seals the Append Blob to make it read-only.
 
             .. versionadded:: 12.4.0
