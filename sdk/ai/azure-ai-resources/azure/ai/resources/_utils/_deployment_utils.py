@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import json
-from typing import Any, Tuple
+from typing import Any, Tuple, Optional, List
 
 from azure.ai.ml.entities import Model
 
@@ -99,7 +99,7 @@ def get_empty_deployment_arm_template():
 
 def get_default_allowed_instance_type_for_hugging_face(
     model_details: Model, credential: Any
-) -> Tuple[str, str]:
+) -> Tuple[Optional[Any], List[Any]]:
     hf_engines = model_details.properties.get("skuBasedEngineIds", None)
     deployment_config = model_details.properties.get("modelDeploymentConfig", None)
     default_instance_type = None
