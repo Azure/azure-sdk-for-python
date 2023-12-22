@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import os
 import json
-from typing import Optional
+from typing import Optional, Union
 
 from azure.ai.ml import Input, load_component
 
@@ -26,10 +26,10 @@ class IndexDataSource:
 
     :param input_type: A type enum describing the source of the index. Used to avoid
         direct type checking.
-    :type input_type: ~azure.ai.resources.constants.IndexInputType
+    :type input_type: Union[str, ~azure.ai.resources.constants.IndexInputType]
     """
 
-    def __init__(self, *, input_type: IndexInputType):
+    def __init__(self, *, input_type: Union[str, IndexInputType]):
         self.input_type = input_type
 
     def _createComponent(self, index_config: IndexConfig, acs_config: Optional[ACSOutputConfig] = None) -> Pipeline:
@@ -95,7 +95,7 @@ class GitSource(IndexDataSource):
             data_to_faiss_component: PipelineComponent = load_component(
                 os.path.join(curr_file_path, "component-configs", "git_to_faiss.yml")
             )
-            rag_job_component: Pipeline = data_to_faiss_component(
+            rag_job_component: Pipeline = data_to_faiss_component(  # type: ignore[no-redef]
                 embeddings_dataset_name=index_config.output_index_name,
                 git_connection=self.git_connection_id,
                 git_repository=self.git_url,
@@ -140,7 +140,7 @@ class ACSSource(IndexDataSource):
         self.num_docs_to_import = num_docs_to_import
         super().__init__(input_type=IndexInputType.AOAI)
 
-    def _createComponent(self, index_config: IndexConfig, acs_config: ACSOutputConfig = None) -> Pipeline:
+    def _createComponent(self, index_config: IndexConfig, acs_config: Optional[ACSOutputConfig] = None) -> Pipeline:
         curr_file_path = os.path.dirname(__file__)
         acs_import_config = json.dumps({"index_name": self.acs_index_name,
                                         "content_key": self.acs_content_key,
@@ -201,7 +201,7 @@ class LocalSource(IndexDataSource):
             data_to_faiss_component: PipelineComponent = load_component(
                 os.path.join(curr_file_path, "component-configs", "data_to_faiss.yml")
             )
-            rag_job_component: Pipeline = data_to_faiss_component(
+            rag_job_component: Pipeline = data_to_faiss_component(  # type: ignore[no-redef]
                 embeddings_dataset_name=index_config.output_index_name,
                 data_source_url=index_config.data_source_url,
                 input_data=self.input_data,
