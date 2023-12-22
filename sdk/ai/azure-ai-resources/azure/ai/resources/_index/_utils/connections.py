@@ -143,7 +143,7 @@ def connection_to_credential(connection: Union[dict, BaseConnection, WorkspaceCo
             raise ValueError(f"Unknown auth type '{connection.credentials.type}' for connection '{connection.name}'")
 
 
-def get_connection_by_id_v2(connection_id: str, credential: TokenCredential = None, client: str = "sdk") -> Union[dict, WorkspaceConnection, BaseConnection]:
+def get_connection_by_id_v2(connection_id: Optional[str], credential: Optional[TokenCredential] = None, client: str = "sdk") -> Union[dict, WorkspaceConnection, BaseConnection]:
     """
     Get a connection by id using azure.ai.ml or azure.ai.resources.
 
@@ -255,7 +255,7 @@ def get_connection_by_name_v2(workspace, name: str) -> dict:
     return resp.json()
 
 
-def get_connection_by_id_v1(connection_id: str, credential: Optional[TokenCredential] = None) -> dict:
+def get_connection_by_id_v1(connection_id: Optional[str], credential: Optional[TokenCredential] = None) -> dict:
     """Get a connection from a workspace."""
     uri_match = re.match(r"/subscriptions/(.*)/resourceGroups/(.*)/providers/Microsoft.MachineLearningServices/workspaces/(.*)/connections/(.*)", connection_id)
 

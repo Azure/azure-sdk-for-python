@@ -56,7 +56,7 @@ def find_config_file_path(
     
     return config_file_path  # type: ignore[return-value]
 
-def get_config_info(config_file_path: os.PathLike) -> Dict[str, str]:
+def get_config_info(config_file_path: Union[str, os.PathLike]) -> Dict[str, str]:
     with open(config_file_path, encoding="utf-8-sig") as config_file:
         config = json.load(config_file)
 
