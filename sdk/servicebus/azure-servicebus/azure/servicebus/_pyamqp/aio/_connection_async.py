@@ -142,6 +142,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
                 host=endpoint,
                 credential=kwargs["sasl_credential"],
                 custom_endpoint=custom_endpoint,
+                socket_timeout=self._socket_timeout,
                 network_trace_params=self._network_trace_params,
                 **kwargs,
             )
@@ -841,7 +842,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         :rtype: ~pyamqp._session.Session
         """
         assigned_channel = self._get_next_outgoing_channel()
-        kwargs['offered_capabilities'] = offered_capabilities or self._offered_capabilities
+        kwargs['offered_capabilities'] = offered_capabilities
         session = Session(
             self,
             assigned_channel,

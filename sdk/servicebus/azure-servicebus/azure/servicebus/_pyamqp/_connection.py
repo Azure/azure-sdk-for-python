@@ -115,7 +115,6 @@ class Connection:  # pylint:disable=too-many-instance-attributes
 
         if parsed_url.hostname is None:
             raise ValueError(f"Invalid endpoint: {endpoint}")
-
         self._hostname = parsed_url.hostname
         kwargs["http_proxy"] = http_proxy
         endpoint = self._hostname
@@ -134,7 +133,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             custom_parsed_url = urlparse(custom_endpoint_address)
             custom_port = custom_parsed_url.port or WEBSOCKET_PORT
             custom_endpoint = f"{custom_parsed_url.hostname}:{custom_port}{custom_parsed_url.path}"
-        self._container_id: str = container_id or str(uuid.uuid4())
+        self._container_id = container_id or str(uuid.uuid4())
         self._network_trace = network_trace
         self._network_trace_params = {"amqpConnection": self._container_id, "amqpSession": None, "amqpLink": None}
 
@@ -152,17 +151,16 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             self._transport = transport
         elif "sasl_credential" in kwargs:
             sasl_transport: Union[Type[SASLTransport], Type[SASLWithWebSocket]] = SASLTransport
-            if self._transport_type.name == "AmqpOverWebsocket" or kwargs.get(
-                "http_proxy"
-            ):
+            if self._transport_type.name == "AmqpOverWebsocket" or kwargs.get("http_proxy"):
                 sasl_transport = SASLWithWebSocket
                 endpoint = parsed_url.hostname + parsed_url.path
             self._transport = sasl_transport(
                 host=endpoint,
                 credential=kwargs["sasl_credential"],
                 custom_endpoint=custom_endpoint,
+                socket_timeout=self._socket_timeout,
                 network_trace_params=self._network_trace_params,
-                **kwargs,
+                **kwargs
             )
         else:
             self._transport = Transport(
@@ -199,7 +197,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         self.open()
         return self
 
-    def __exit__(self, *args) -> None:
+    def __exit__(self, *args: Any) -> None:
         self.close()
 
     def _set_state(self, new_state: ConnectionState) -> None:
@@ -341,7 +339,6 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         """Send an empty frame to prevent the connection from reaching an idle timeout."""
         if self._network_trace:
             _LOGGER.debug("-> EmptyFrame()", extra=self._network_trace_params)
-
         if self._error:
             raise self._error
 
@@ -744,7 +741,6 @@ class Connection:  # pylint:disable=too-many-instance-attributes
          and is processing incoming Transfer frames.
         :rtype: None
         """
-
         if self._error:
             raise self._error
 
@@ -833,7 +829,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         :rtype: ~pyamqp._session.Session
         """
         assigned_channel = self._get_next_outgoing_channel()
-        kwargs['offered_capabilities'] = offered_capabilities or self._offered_capabilities
+        kwargs['offered_capabilities'] = offered_capabilities
         session = Session(
             self,
             assigned_channel,
