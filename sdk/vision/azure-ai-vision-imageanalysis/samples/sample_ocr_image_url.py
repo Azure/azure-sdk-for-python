@@ -48,13 +48,15 @@ def sample_ocr_image_url():
     # Create an Image Analysis client
     client = ImageAnalysisClient(
         endpoint = endpoint,
-        credential = AzureKeyCredential(key))
+        credential = AzureKeyCredential(key)
+    )
 
     # [START read]
     # Extract text (OCR) from an image stream. This will be a synchronously (blocking) call.
     result = client.analyze(
         image_content = "https://aka.ms/azai/vision/image-analysis-sample.jpg",
-        visual_features = [ VisualFeatures.READ ])
+        visual_features = [ VisualFeatures.READ ]
+    )
 
     client.close()
 

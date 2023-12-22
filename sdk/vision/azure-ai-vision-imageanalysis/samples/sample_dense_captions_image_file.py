@@ -49,7 +49,8 @@ def sample_dense_captions_image_file():
     # Create an Image Analysis client.
     client = ImageAnalysisClient(
         endpoint = endpoint,
-        credential = AzureKeyCredential(key))
+        credential = AzureKeyCredential(key)
+    )
 
     # Load image to analyze into a 'bytes' object.
     with open("sample.jpg", 'rb') as f:
@@ -60,7 +61,8 @@ def sample_dense_captions_image_file():
     result = client.analyze(
         image_content = image_buffer,
         visual_features = [ VisualFeatures.DENSE_CAPTIONS ],
-        gender_neutral_caption = True) # Optional (default is False)
+        gender_neutral_caption = True # Optional (default is False)
+    )
 
     client.close()
 

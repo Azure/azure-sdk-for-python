@@ -50,12 +50,14 @@ async def sample_caption_image_file_async():
     # Create an asynchronous Image Analysis client
     client = ImageAnalysisClient(
         endpoint = endpoint,
-        credential = AzureKeyCredential(key))
+        credential = AzureKeyCredential(key)
+    )
 
     # Analyze a visual feature (Tags) from an image URL, asynchronously.
     result = await client.analyze(
         image_content = image_buffer,
-        visual_features = [ VisualFeatures.CAPTION ])
+        visual_features = [ VisualFeatures.CAPTION ]
+    )
 
     await client.close()
 

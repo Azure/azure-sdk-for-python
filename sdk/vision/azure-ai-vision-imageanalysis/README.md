@@ -65,7 +65,8 @@ except KeyError:
 # Create an Image Analysis client for synchronous operations
 client = ImageAnalysisClient(
     endpoint = endpoint,
-    credential = AzureKeyCredential(key))
+    credential = AzureKeyCredential(key)
+)
 ```
 
 <!-- END SNIPPET -->
@@ -140,7 +141,8 @@ with open("sample.jpg", 'rb') as f:
 result = client.analyze(
     image_content = image_buffer,
     visual_features = [ VisualFeatures.CAPTION ],
-    gender_neutral_caption = True) # Optional (default is False)
+    gender_neutral_caption = True # Optional (default is False)
+)
 
 client.close()
 
@@ -166,7 +168,8 @@ This example is similar to the above, expect it calls the `analyze` method and p
 result = client.analyze(
     image_content = "https://aka.ms/azai/vision/image-analysis-sample.jpg",
     visual_features = [ VisualFeatures.CAPTION ],
-    gender_neutral_caption = True) # Optional (default is False)
+    gender_neutral_caption = True # Optional (default is False)
+)
 
 client.close()
 
@@ -193,7 +196,8 @@ with open("sample.jpg", 'rb') as f:
 # Extract text (OCR) from an image stream. This will be a synchronously (blocking) call.
 result = client.analyze(
     image_content = image_buffer,
-    visual_features = [ VisualFeatures.READ ])
+    visual_features = [ VisualFeatures.READ ]
+)
 
 client.close()
 
@@ -223,7 +227,8 @@ This example is similar to the above, expect it calls the `analyze` method and p
 # Extract text (OCR) from an image stream. This will be a synchronously (blocking) call.
 result = client.analyze(
     image_content = "https://aka.ms/azai/vision/image-analysis-sample.jpg",
-    visual_features = [ VisualFeatures.READ ])
+    visual_features = [ VisualFeatures.READ ]
+)
 
 client.close()
 
@@ -308,7 +313,8 @@ By default logs redact the values of URL query strings, the values of some HTTP 
 client = ImageAnalysisClient(
     endpoint = endpoint,
     credential = AzureKeyCredential(key),
-    logging_enable = True)
+    logging_enable = True
+)
 ```
 
 <!-- END SNIPPET -->

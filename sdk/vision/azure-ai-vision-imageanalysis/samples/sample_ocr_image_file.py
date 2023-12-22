@@ -48,7 +48,8 @@ def sample_ocr_image_file():
     # Create an Image Analysis client
     client = ImageAnalysisClient(
         endpoint = endpoint,
-        credential = AzureKeyCredential(key))
+        credential = AzureKeyCredential(key)
+    )
 
     # [START read]
     # Load image to analyze into a 'bytes' object
@@ -58,7 +59,8 @@ def sample_ocr_image_file():
     # Extract text (OCR) from an image stream. This will be a synchronously (blocking) call.
     result = client.analyze(
         image_content = image_buffer,
-        visual_features = [ VisualFeatures.READ ])
+        visual_features = [ VisualFeatures.READ ]
+    )
 
     client.close()
 

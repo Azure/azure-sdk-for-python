@@ -43,7 +43,8 @@ def sample_tags_image_file():
     # Create an Image Analysis client
     client = ImageAnalysisClient(
         endpoint = endpoint,
-        credential = AzureKeyCredential(key))
+        credential = AzureKeyCredential(key)
+    )
 
     # Load image to analyze into a 'bytes' object
     with open("sample.jpg", 'rb') as f:
@@ -53,7 +54,8 @@ def sample_tags_image_file():
     result = client.analyze(
         image_content = image_buffer,
         visual_features = [ VisualFeatures.TAGS ],
-        language = "en") # Optional. See https://aka.ms/cv-languages for supported languages.
+        language = "en" # Optional. See https://aka.ms/cv-languages for supported languages.
+    )
 
     client.close()
 

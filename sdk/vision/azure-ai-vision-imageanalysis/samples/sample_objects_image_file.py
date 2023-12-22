@@ -42,7 +42,8 @@ def sample_objects_image_file():
     # Create an Image Analysis client
     client = ImageAnalysisClient(
         endpoint = endpoint,
-        credential = AzureKeyCredential(key))
+        credential = AzureKeyCredential(key)
+    )
 
     # Load image to analyze into a 'bytes' object
     with open("sample.jpg", 'rb') as f:
@@ -51,7 +52,8 @@ def sample_objects_image_file():
     # Detect objects in an image stream. This will be a synchronously (blocking) call.
     result = client.analyze(
         image_content = image_buffer,
-        visual_features = [ VisualFeatures.OBJECTS ])
+        visual_features = [ VisualFeatures.OBJECTS ]
+    )
 
     client.close()
 

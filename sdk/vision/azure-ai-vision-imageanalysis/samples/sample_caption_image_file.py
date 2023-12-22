@@ -46,7 +46,8 @@ def sample_caption_image_file():
     # Create an Image Analysis client for synchronous operations
     client = ImageAnalysisClient(
         endpoint = endpoint,
-        credential = AzureKeyCredential(key))
+        credential = AzureKeyCredential(key)
+    )
     # [END create_client]
 
     # [START caption]
@@ -58,7 +59,8 @@ def sample_caption_image_file():
     result = client.analyze(
         image_content = image_buffer,
         visual_features = [ VisualFeatures.CAPTION ],
-        gender_neutral_caption = True) # Optional (default is False)
+        gender_neutral_caption = True # Optional (default is False)
+    )
 
     client.close()
 

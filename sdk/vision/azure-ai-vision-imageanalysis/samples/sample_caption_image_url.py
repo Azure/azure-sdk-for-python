@@ -45,14 +45,16 @@ def sample_caption_image_url():
     # Create an Image Analysis client
     client = ImageAnalysisClient(
         endpoint = endpoint,
-        credential = AzureKeyCredential(key))
+        credential = AzureKeyCredential(key)
+    )
 
     # [START caption]
     # Get a caption for the image. This will be a synchronously (blocking) call.
     result = client.analyze(
         image_content = "https://aka.ms/azai/vision/image-analysis-sample.jpg",
         visual_features = [ VisualFeatures.CAPTION ],
-        gender_neutral_caption = True) # Optional (default is False)
+        gender_neutral_caption = True # Optional (default is False)
+    )
 
     client.close()
 

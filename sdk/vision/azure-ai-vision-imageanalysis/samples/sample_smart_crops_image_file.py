@@ -50,7 +50,8 @@ def sample_smart_crops_image_file():
     # Create an Image Analysis client
     client = ImageAnalysisClient(
         endpoint = endpoint,
-        credential = AzureKeyCredential(key))
+        credential = AzureKeyCredential(key)
+    )
 
     # Load image to analyze into a 'bytes' object
     with open("sample.jpg", 'rb') as f:
@@ -60,7 +61,8 @@ def sample_smart_crops_image_file():
     result = client.analyze(
         image_content = image_buffer,
         visual_features = [ VisualFeatures.SMART_CROPS ],
-        smart_crops_aspect_ratios = [0.9, 1.33]) # Optional. Specify one more desired aspect ratios
+        smart_crops_aspect_ratios = [0.9, 1.33] # Optional. Specify one more desired aspect ratios
+    )
 
     client.close()
 
