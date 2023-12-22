@@ -10,7 +10,7 @@ urlFragment: image-analysis-python-samples
 
 # Samples for Image Analysis client library for Python
 
-These are runnable console Python programs that show how to use the Image Analysis client library. They cover all the supported visual features. Most use the a synchronous client to analyze an image file or image URL. Two sample uses the asynchronous client. The concepts are similar, you can easily modify any of the samples to your needs.
+These are runnable console Python programs that show how to use the Image Analysis client library. They cover all the supported visual features. Most use the a synchronous client to analyze an image file or image URL. Two samples use the asynchronous client. The concepts are similar, you can easily modify any of the samples to your needs.
 
 ## Synchronous client samples
 
