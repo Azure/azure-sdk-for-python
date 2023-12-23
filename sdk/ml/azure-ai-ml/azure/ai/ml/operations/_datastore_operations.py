@@ -264,7 +264,6 @@ class DatastoreOperations(_ScopeDependentOperations):
             persistent and ci_name is not None
         ), "persistent mount is only supported on Compute Instance"
 
-        # cspell:ignore rslex
         from azureml.dataprep import rslex_fuse_subprocess_wrapper
 
         uri = rslex_fuse_subprocess_wrapper.build_datastore_uri(
