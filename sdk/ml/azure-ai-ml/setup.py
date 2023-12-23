@@ -87,7 +87,7 @@ setup(
         "typing-extensions<5.0.0",
         "opencensus-ext-azure<2.0.0",
         # cspell:ignore rslex
-        "azureml-dataprep-rslex",  # TODO: >=
+        "azureml-dataprep-rslex>=2.22.0",
     ],
     extras_require={
         # user can run `pip install azure-ai-ml[designer]` to install mldesigner alone with this package
