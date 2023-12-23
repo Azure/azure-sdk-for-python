@@ -260,7 +260,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
     @distributed_trace
     def create_container(
         self, metadata: Optional[Dict[str, str]] = None,
-        public_access: Optional[Union[PublicAccess, str]] = None,
+        public_access: Optional[Union["PublicAccess", str]] = None,
         **kwargs: Any
     ) -> Dict[str, Union[str, "datetime"]]:
         """
@@ -693,8 +693,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     @distributed_trace
     def set_container_access_policy(
-        self, signed_identifiers: Dict[str, AccessPolicy],
-        public_access: Optional[Union[str, PublicAccess]] = None,
+        self, signed_identifiers: Dict[str, "AccessPolicy"],
+        public_access: Optional[Union[str, "PublicAccess"]] = None,
         **kwargs: Any
     ) -> Any:
         """Sets the permissions for the specified container or stored access
@@ -1400,7 +1400,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     @distributed_trace
     def set_standard_blob_tier_blobs(
-        self, standard_blob_tier: Optional[Union[str, 'StandardBlobTier']],
+        self, standard_blob_tier: Optional[Union[str, "StandardBlobTier"]],
         *blobs: Union[str, Dict[str, Any], BlobProperties],
         **kwargs: Any
     ) -> Iterator["HttpResponse"]:
@@ -1481,7 +1481,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     @distributed_trace
     def set_premium_page_blob_tier_blobs(
-        self, premium_page_blob_tier: Optional[Union[str, 'PremiumPageBlobTier']],
+        self, premium_page_blob_tier: Optional[Union[str, "PremiumPageBlobTier"]],
         *blobs: Union[str, Dict[str, Any], BlobProperties],
         **kwargs: Any
     ) -> Iterator["HttpResponse"]:
