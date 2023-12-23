@@ -21,6 +21,8 @@ from .operations import (
     EmailServicesOperations,
     Operations,
     SenderUsernamesOperations,
+    SuppressionListAddressesOperations,
+    SuppressionListsOperations,
 )
 
 if TYPE_CHECKING:
@@ -28,7 +30,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class CommunicationServiceManagementClient:  # pylint: disable=client-accepts-api-version-keyword
+class CommunicationServiceManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """REST API for Azure Communication Services.
 
     :ivar operations: Operations operations
@@ -42,13 +44,18 @@ class CommunicationServiceManagementClient:  # pylint: disable=client-accepts-ap
     :vartype email_services: azure.mgmt.communication.aio.operations.EmailServicesOperations
     :ivar sender_usernames: SenderUsernamesOperations operations
     :vartype sender_usernames: azure.mgmt.communication.aio.operations.SenderUsernamesOperations
+    :ivar suppression_lists: SuppressionListsOperations operations
+    :vartype suppression_lists: azure.mgmt.communication.aio.operations.SuppressionListsOperations
+    :ivar suppression_list_addresses: SuppressionListAddressesOperations operations
+    :vartype suppression_list_addresses:
+     azure.mgmt.communication.aio.operations.SuppressionListAddressesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-04-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2023-06-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -78,6 +85,12 @@ class CommunicationServiceManagementClient:  # pylint: disable=client-accepts-ap
         self.domains = DomainsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.email_services = EmailServicesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.sender_usernames = SenderUsernamesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.suppression_lists = SuppressionListsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.suppression_list_addresses = SuppressionListAddressesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

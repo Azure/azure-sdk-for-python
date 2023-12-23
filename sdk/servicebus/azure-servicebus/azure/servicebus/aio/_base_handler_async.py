@@ -136,7 +136,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self._amqp_transport = kwargs.pop("amqp_transport", PyamqpTransportAsync)
 
         # If the user provided http:// or sb://, let's be polite and strip that.
-        self.fully_qualified_namespace = strip_protocol_from_uri(
+        self.fully_qualified_namespace: str = strip_protocol_from_uri(
             fully_qualified_namespace.strip()
         )
         self._entity_name = entity_name
@@ -177,16 +177,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             **kwargs
         )
 
-    async def __aenter__(self):
-        if self._shutdown.is_set():
-            raise ValueError(
-                "The handler has already been shutdown. Please use ServiceBusClient to "
-                "create a new instance."
-            )
-        await self._open_with_retry()
-        return self
-
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *args: Any) -> None:
         await self.close()
 
     async def _handle_exception(self, exception):

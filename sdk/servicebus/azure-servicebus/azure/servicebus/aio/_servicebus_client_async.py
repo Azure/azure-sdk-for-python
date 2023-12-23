@@ -115,7 +115,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
                 raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.3,<2.0.0`.") from None
         self._amqp_transport = UamqpTransportAsync if uamqp_transport else PyamqpTransportAsync
         # If the user provided http:// or sb://, let's be polite and strip that.
-        self.fully_qualified_namespace = strip_protocol_from_uri(
+        self.fully_qualified_namespace: str = strip_protocol_from_uri(
             fully_qualified_namespace.strip()
         )
         self._credential = credential
@@ -140,12 +140,12 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         self._custom_endpoint_address = kwargs.get('custom_endpoint_address')
         self._connection_verify = kwargs.get("connection_verify")
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "ServiceBusClient":
         if self._connection_sharing:
             await self._create_connection()
         return self
 
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *args: Any) -> None:
         await self.close()
 
     async def _create_connection(self):

@@ -86,6 +86,7 @@ setup(
         "azure-common<2.0.0,>=1.1",
         "typing-extensions<5.0.0",
         "opencensus-ext-azure<2.0.0",
+        "opencensus-ext-logging<=0.1.1",
         "azureml-dataprep-rslex>=2.22.0",
     ],
     extras_require={

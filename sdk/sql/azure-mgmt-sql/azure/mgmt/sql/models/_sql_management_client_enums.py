@@ -157,8 +157,15 @@ class AvailabilityZoneType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     THREE = "3"
 
 
+class BackupStorageAccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The BackupStorageAccessTier for the LTR backup."""
+
+    HOT = "Hot"
+    ARCHIVE = "Archive"
+
+
 class BackupStorageRedundancy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The storage redundancy type of the copied backup."""
+    """The storage redundancy type of the backup."""
 
     GEO = "Geo"
     LOCAL = "Local"
@@ -807,6 +814,16 @@ class MetricType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LOG_IO = "logIo"
     DURATION = "duration"
     DTU = "dtu"
+
+
+class MinimalTlsVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Minimal TLS version. Allowed values: 'None', 1.0', '1.1', '1.2', '1.3'."""
+
+    NONE = "None"
+    ONE0 = "1.0"
+    ONE1 = "1.1"
+    ONE2 = "1.2"
+    ONE3 = "1.3"
 
 
 class MoveOperationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):

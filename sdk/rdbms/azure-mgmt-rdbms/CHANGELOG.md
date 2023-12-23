@@ -1,5 +1,11 @@
 # Release History
 
+## 10.2.0b13 (2023-12-18)
+
+### Other Changes
+
+  - Fix for ServerThreatProtectionSettingsOperations.begin_create_or_update
+
 ## 10.2.0b12 (2023-11-20)
 
 ### Features Added
