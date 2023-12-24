@@ -16,3 +16,4 @@ exclude = ["azure/ai/generative/_restclient", "tests", "setup.py"]
 warn_unused_configs = true 
 ignore_missing_imports = true
 follow_imports = "skip"
+follow_imports_for_stubs = "skip"
