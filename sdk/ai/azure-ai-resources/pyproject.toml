@@ -15,3 +15,4 @@ exclude = ["azure/ai/resources/_restclient", "setup.py", "azure/ai/resources/_in
 warn_unused_configs = true 
 ignore_missing_imports = true
 follow_imports = "skip"
+follow_imports_for_stubs = false
