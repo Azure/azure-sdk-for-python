@@ -54,7 +54,9 @@ class Resource(abc.ABC):
         self.tags = dict(tags) if tags else {}
         self.properties = dict(properties) if properties else {}
         # Conditional assignment to prevent entity bloat when unused.
-        self._print_as_yaml = kwargs.pop("print_as_yaml", False)
+        print_as_yaml = kwargs.pop("print_as_yaml", in_jupyter_notebook())
+        if print_as_yaml:
+            self.print_as_yaml = True
 
         # Hide read only properties in kwargs
         self._id = kwargs.pop("id", None)
@@ -192,7 +194,7 @@ class Resource(abc.ABC):
         return f"{self.__class__.__name__}({var_dict})"
 
     def __str__(self) -> str:
-        if self._print_as_yaml or in_jupyter_notebook():
+        if hasattr(self, "print_as_yaml") and self.print_as_yaml:
             # pylint: disable=no-member
             yaml_serialized = self._to_dict()
             return dump_yaml(yaml_serialized, default_flow_style=False)

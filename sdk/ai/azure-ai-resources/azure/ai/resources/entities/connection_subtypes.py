@@ -3,7 +3,6 @@
 # ---------------------------------------------------------
 
 
-import os
 from typing import Optional
 
 from azure.ai.ml.entities._credentials import ApiKeyConfiguration
@@ -100,33 +99,16 @@ class AzureOpenAIConnection(BaseConnection):
         :type credential: :class:`~azure.core.credentials.TokenCredential`
         """
 
-        from importlib.metadata import version as get_version
-        from packaging.version import Version
+        import os
+        def get_api_version_case_insensitive(connection):
+            if connection.api_version == None:
+                raise ValueError(f"Connection {connection.name} is being used to set environment variables, but lacks required api_version")
+            return connection.api_version.lower()
 
-        openai_version_str = get_version("openai")
-        openai_version = Version(openai_version_str)
-        if openai_version >= Version("1.0.0"):
-            self._set_current_environment_new(credential)
-        else:
-            self._set_current_environment_old(credential)
-
-    def _get_api_version_case_insensitive(self, connection):
-        if connection.api_version == None:
-            raise ValueError(f"Connection {connection.name} is being used to set environment variables, but lacks required api_version")
-        return connection.api_version.lower()
-
-    def _set_current_environment_new(self, credential: Optional[TokenCredential] = None):
-        if not credential:
-            os.environ["AZURE_OPENAI_API_KEY"] = self._workspace_connection.credentials.key
-        else:
-            token = credential.get_token("https://cognitiveservices.azure.com/.default")
-            os.environ["AZURE_OPENAI_AD_TOKEN"] = token.token
-
-        os.environ["OPENAI_API_VERSION"] = self._get_api_version_case_insensitive(self._workspace_connection)
-        os.environ["AZURE_OPENAI_ENDPOINT"] = self._workspace_connection.target
-
-    def _set_current_environment_old(self, credential: Optional[TokenCredential] = None):
-        import openai
+        try:
+            import openai
+        except ImportError:
+            raise Exception("OpenAI SDK not installed. Please install it using `pip install openai`")
 
         if not credential:
             openai.api_type = "azure"
@@ -141,12 +123,13 @@ class AzureOpenAIConnection(BaseConnection):
             openai.api_key = token.token
             os.environ["OPENAI_API_KEY"] = token.token
 
-        openai.api_version = self._get_api_version_case_insensitive(self._workspace_connection)
+        openai.api_version = get_api_version_case_insensitive(self._workspace_connection)
 
         openai.api_base = self._workspace_connection.target
 
         os.environ["OPENAI_API_BASE"] = self._workspace_connection.target
-        os.environ["OPENAI_API_VERSION"] = self._get_api_version_case_insensitive(self._workspace_connection)
+        os.environ["OPENAI_API_VERSION"] = get_api_version_case_insensitive(self._workspace_connection)
+
 
 class AzureAISearchConnection(BaseConnection):
     """A Connection for Azure AI Search
