@@ -76,7 +76,7 @@ class AzureCognitiveSearchVectorStore(VectorStore):
     def _similarity_search_by_vector_with_relevance_scores(self, query: Optional[str], embedded_query: List[float], k: int = 4, **kwargs) -> List[Tuple[Document, float]]:
         post_url = f"{self.endpoint}/indexes/{self.index_name}/docs/search?api-version=2023-07-01-Preview"
         headers = get_acs_headers(self.credential)
-        post_payload: List[Dict[str, Any]] = {}
+        post_payload: Dict[str, Any] = {}
 
         if query is not None:
             logger.info(f"Query: {query}")
