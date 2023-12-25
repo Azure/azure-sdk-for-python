@@ -8,7 +8,7 @@ import os
 import tempfile
 from typing import Any, Optional, Union, Optional
 
-import yaml
+import yaml  # type: ignore[import]
 
 from azure.ai.resources._utils._ai_client_utils import find_config_file_path, get_config_info
 from azure.ai.resources._utils._open_ai_utils import build_open_ai_protocol

@@ -7,7 +7,7 @@ import tempfile
 from pathlib import Path
 from typing import Any, Dict, Iterator, Optional, Union
 
-import yaml
+import yaml  # type: ignore[import]
 from azure.ai.ml.entities import Data
 from azure.core.credentials import TokenCredential
 from azure.ai.resources._index._documents import Document

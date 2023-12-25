@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import yaml
+import yaml  # type: ignore[import]
 from typing import Dict, Optional, Union
 from pathlib import Path
 from dataclasses import dataclass
