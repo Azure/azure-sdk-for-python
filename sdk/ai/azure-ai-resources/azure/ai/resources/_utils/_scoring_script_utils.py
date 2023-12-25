@@ -7,7 +7,7 @@ import os
 from typing import Union, Optional
 import uuid
 
-import yaml
+import yaml  # type: ignore[import]
 
 from azure.ai.resources.entities.models import Model
 
