@@ -183,7 +183,7 @@ class OpenAIEmbedder:
                     last_exception = e
                     retrying = False
                     for retryable_error in self._retryable_openai_errors:
-                        if isinstance(e, retryable_error):
+                        if isinstance(e, type(retryable_error)):
                             retrying = True
                             import openai
 
@@ -277,7 +277,8 @@ class OpenAIEmbedder:
         for i in range(len(texts)):
             _result = embedding_results[i]
             if len(_result) == 0:
-                average = self._embed_request(tokenized_texts="", **self._openai_client_params)["data"][0]["embedding"]
+                # TODO: Bug 2875482
+                average = self._embed_request(tokenized_texts="", **self._openai_client_params)["data"][0]["embedding"]  # type: ignore[arg-type]
             else:
                 average = np.average(_result, axis=0, weights=num_tokens_in_batch[i])
             embeddings[i] = (average / np.linalg.norm(average)).tolist()
