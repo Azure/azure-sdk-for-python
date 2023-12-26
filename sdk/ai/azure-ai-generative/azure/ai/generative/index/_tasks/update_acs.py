@@ -10,7 +10,7 @@ import traceback
 from pathlib import Path
 from typing import List, Optional, Union
 
-import yaml
+import yaml  # type: ignore[import]
 from packaging import version as pkg_version
 
 from azure.ai.generative.index._embeddings import EmbeddingsContainer, ReferenceEmbeddedDocument

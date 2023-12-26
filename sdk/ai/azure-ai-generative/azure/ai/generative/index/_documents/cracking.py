@@ -252,7 +252,7 @@ def extract_text_document_title(text: str, file_name: str) -> Tuple[str, str]:
             title = heading_0.group(0).strip()
             return title, title[2:]
 
-        import markdown
+        import markdown  # type: ignore[import]
         from bs4 import BeautifulSoup
         html_content = markdown.markdown(text)
         soup = BeautifulSoup(html_content, "html.parser")

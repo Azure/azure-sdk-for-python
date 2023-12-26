@@ -19,7 +19,7 @@ from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
 import cloudpickle
 import pyarrow as pa
 import pyarrow.parquet as pq
-import yaml
+import yaml  # type: ignore[import]
 from azure.core.credentials import TokenCredential
 from azure.ai.generative.index._documents import Document, DocumentChunksIterator, DocumentSource, StaticDocument
 from azure.ai.generative.index._embeddings.openai import OpenAIEmbedder

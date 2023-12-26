@@ -22,7 +22,7 @@ except ImportError as e:
     raise e
 
 try:
-    import pkg_resources
+    import pkg_resources  # type: ignore[import]
     openai_version_str = pkg_resources.get_distribution("openai").version
     openai_version = pkg_resources.parse_version(openai_version_str)
     import openai
