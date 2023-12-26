@@ -102,7 +102,7 @@ def _compile_prompt_images_pattern() -> None:
     global IMAGES_PATTERN
     if isinstance(IMAGES_PATTERN, str):
         images_pattern_text: str = IMAGES_PATTERN
-        IMAGES_PATTERN: Pattern = re.compile(images_pattern_text)  # type: ignore[no-redef]
+        IMAGES_PATTERN = re.compile(images_pattern_text)  # type: ignore[assignment]
 
 
 def _format_image_captions(image_name, captions):
