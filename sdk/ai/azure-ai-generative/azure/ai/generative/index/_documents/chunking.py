@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 """Document parsing and chunking utilities."""
 import copy
+from pathlib import Path
 import re
 import time
 from dataclasses import dataclass
@@ -157,7 +158,7 @@ file_extension_splitters = {
 
 def split_documents(documents: Iterable[ChunkedDocument], splitter_args: dict, file_extension_splitters=file_extension_splitters) -> Iterator[ChunkedDocument]:
     """Split documents into chunks."""
-    total_time = 0
+    total_time: float = 0.0
     total_documents = 0
     total_splits = 0
     log_batch_size = 100
@@ -205,32 +206,37 @@ def split_documents(documents: Iterable[ChunkedDocument], splitter_args: dict, f
                 chunk.metadata = merge_dicts(chunk.metadata, document_metadata)
             return chunked_document
 
-        splitter = file_extension_splitters.get(document.source.path.suffix.lower())(**local_splitter_args)
-        split_docs = splitter.split_documents(list(filter_short_docs(merge_metadata(document))))
+        if document.source.path:
+            document_source_path: Path = Path(document.source.path)
+            splitter = file_extension_splitters.get(document_source_path.suffix.lower())(**local_splitter_args)
+            split_docs = splitter.split_documents(list(filter_short_docs(merge_metadata(document))))
 
-        i = -1
-        file_chunks = []
-        for chunk in split_docs:
-            i += 1
-            if "chunk_prefix" in chunk.metadata:
-                del chunk.metadata["chunk_prefix"]
-            # Normalize line endings to just '\n'
-            file_chunks.append(StaticDocument(
-                chunk_prefix.replace("\r", "") + chunk.page_content.replace("\r", ""),
-                merge_dicts(chunk.metadata, document_metadata),
-                document_id=document.source.filename + str(i),
-                mtime=document.source.mtime
-            ))
+            i = -1
+            file_chunks = []
+            for chunk in split_docs:
+                i += 1
+                if "chunk_prefix" in chunk.metadata:
+                    del chunk.metadata["chunk_prefix"]
+                # Normalize line endings to just '\n'
+                file_chunks.append(StaticDocument(
+                    chunk_prefix.replace("\r", "") + chunk.page_content.replace("\r", ""),
+                    merge_dicts(chunk.metadata, document_metadata),
+                    document_id=document.source.filename + str(i),
+                    mtime=document.source.mtime
+                ))
 
-        file_pre_yield_time = time.time()
-        total_time += file_pre_yield_time - file_start_time
-        if len(file_chunks) < 1:
-            logger.info("No file_chunks to yield, continuing")
-            continue
-        total_splits += len(file_chunks)
-        if i % log_batch_size == 0:
-            safe_mlflow_log_metric("total_chunked_documents", total_splits, logger=logger, step=int(time.time() * 1000))
-        document.chunks = file_chunks
+            file_pre_yield_time = time.time()
+            total_time += file_pre_yield_time - file_start_time
+            if len(file_chunks) < 1:
+                logger.info("No file_chunks to yield, continuing")
+                continue
+            total_splits += len(file_chunks)
+            if i % log_batch_size == 0:
+                safe_mlflow_log_metric("total_chunked_documents", total_splits, logger=logger, step=int(time.time() * 1000))
+            document.chunks = file_chunks
+        else:
+            total_time = 0
+            total_splits = 0
         yield document
 
     safe_mlflow_log_metric("total_source_documents", total_documents, logger=logger, step=int(time.time() * 1000))
@@ -322,7 +328,7 @@ class MarkdownHeaderSplitter(TextSplitter):
         blocks = [b for b in blocks if b.strip()]
 
         markdown_blocks = []
-        header_stack = []
+        header_stack: List = []
 
         if not blocks[0].startswith("#"):
             markdown_blocks.append(MarkdownBlock(header=None, content=blocks[0]))
