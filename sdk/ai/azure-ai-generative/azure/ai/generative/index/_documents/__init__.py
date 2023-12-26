@@ -28,7 +28,7 @@ class DocumentChunksIterator(Iterator):
             self,
             files_source: Union[str, Path],
             glob: str,
-            base_url: str = None,
+            base_url: str,
             document_path_replacement_regex: Optional[str] = None,
             file_filter: Optional[Callable[[Iterable[DocumentSource]], Iterator[DocumentSource]]]=None,
             source_loader: Callable[[Iterable[DocumentSource]], Iterator[ChunkedDocument]]=crack_documents,

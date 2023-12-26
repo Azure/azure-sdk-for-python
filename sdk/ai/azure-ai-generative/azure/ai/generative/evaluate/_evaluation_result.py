@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Optional
 
 from azure.ai.generative.evaluate._utils import _get_ai_studio_url
 
@@ -8,8 +8,8 @@ class EvaluationResult(object):
     def __init__(self, metrics_summary: Dict[str, float], artifacts: Dict[str, str], **kwargs):
         self._metrics_summary = metrics_summary
         self._artifacts = artifacts
-        self._tracking_uri: str = kwargs.get("tracking_uri")
-        self._evaluation_id: str = kwargs.get("evaluation_id")
+        self._tracking_uri: Optional[str] = kwargs.get("tracking_uri")
+        self._evaluation_id: Optional[str] = kwargs.get("evaluation_id")
         if self._tracking_uri:
             self._studio_url = _get_ai_studio_url(self._tracking_uri, self._evaluation_id)
 

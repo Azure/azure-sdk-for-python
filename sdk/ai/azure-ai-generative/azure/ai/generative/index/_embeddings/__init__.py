@@ -1167,12 +1167,12 @@ class EmbeddingsContainer:
 
     @staticmethod
     @contextlib.contextmanager
-    def mount_and_load(embeddings_cache_path: Optional[Union[str, Path]], activity_logger=None) -> Iterator["EmbeddingsContainer"]:
+    def mount_and_load(embeddings_cache_path: Optional[Union[str, Path]], activity_logger=None) -> Iterator[Optional["EmbeddingsContainer"]]:
         """
         Mounts the embeddings container and loads it.
 
         Acts as a ContextManager, so it can be used in a `with` statement, keeping the embeddings_cache mounted if it is a remote path.
-        This ensures that Referenced Embeddings accessed while interacting with the EmbeddingsContainer remain accessable.
+        This ensures that Referenced Embeddings accessed while interacting with the EmbeddingsContainer remain accessible.
         """
         local_embeddings_cache = None
         if embeddings_cache_path is not None:

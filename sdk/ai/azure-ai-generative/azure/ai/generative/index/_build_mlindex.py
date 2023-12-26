@@ -5,7 +5,7 @@
 from pathlib import Path
 from typing import Dict, Optional, Union
 
-import yaml
+import yaml  # type: ignore[import]
 
 from azure.ai.resources.entities.mlindex import Index
 from azure.ai.resources.operations._index_data_source import ACSSource, LocalSource
@@ -18,7 +18,8 @@ def build_index(
     output_index_name: str,
     vector_store: str,
     index_input_config: Union[ACSSource, LocalSource],
-    embeddings_model: Optional[str] = None,
+    acs_config: ACSOutputConfig,  # todo better name?
+    embeddings_model: str,
     aoai_connection_id: Optional[str] = None,
     data_source_url: Optional[str] = None,
     chunk_size: int = 1024,
@@ -28,7 +29,6 @@ def build_index(
     chunk_prepend_summary: Optional[bool] = None,
     document_path_replacement_regex: Optional[str] = None,
     embeddings_cache_path: Optional[str] = None,
-    acs_config: Optional[ACSOutputConfig] = None,  # todo better name?
 ) -> Index:
 
     """Generates embeddings locally and stores Index reference in memory
@@ -94,10 +94,10 @@ def build_index(
                 "connection": {"key": "OPENAI_API_KEY"},
                 "endpoint": os.getenv("OPENAI_API_BASE"),
             }
-    embedder = EmbeddingsContainer.from_uri(  # type: ignore[arg-type]
-        uri=embeddings_model,  # TODO: Fix Bug 2818331
+    embedder = EmbeddingsContainer.from_uri(
+        uri=embeddings_model,
         **connection_args,
-    )  # type: ignore[arg-type]
+    )
 
     embeddings = embedder.embed(chunked_docs)
 
