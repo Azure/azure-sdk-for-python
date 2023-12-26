@@ -128,8 +128,8 @@ class ACSSource(IndexDataSource):
         acs_embedding_key: str,
         acs_title_key: str,
         acs_metadata_key: str,
-        acs_connection_id: Optional[str] = None,
-        num_docs_to_import=50,
+        acs_connection_id: str,
+        num_docs_to_import: int = 50,
     ):
         self.acs_index_name = acs_index_name
         self.acs_connection_id = acs_connection_id
