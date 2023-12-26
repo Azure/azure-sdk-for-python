@@ -57,7 +57,8 @@ P = ParamSpec("P")
 
 # Overload the returns a decorator when func is None
 @overload
-def pipeline(
+def pipeline(  # type: ignore[misc]
+    # TODO: Bug 2876412
     func: None = None,
     *,
     name: Optional[str] = None,
@@ -137,7 +138,8 @@ def pipeline(
     get_component = kwargs.get("get_component", False)
 
     def pipeline_decorator(func: Callable[P, T]) -> Callable[P, PipelineJob]:
-        if not isinstance(func, Callable):  # pylint: disable=isinstance-second-argument-not-valid-type
+        # pylint: disable=isinstance-second-argument-not-valid-type
+        if not isinstance(func, Callable):  # type: ignore
             raise UserErrorException(f"Dsl pipeline decorator accept only function type, got {type(func)}.")
 
         non_pipeline_inputs = kwargs.get("non_pipeline_inputs", []) or kwargs.get("non_pipeline_parameters", [])

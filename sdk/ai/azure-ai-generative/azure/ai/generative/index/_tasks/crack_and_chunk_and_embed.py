@@ -10,10 +10,11 @@ import time
 import traceback
 from collections import OrderedDict
 from pathlib import Path
-from typing import Dict, Iterator, Optional, List, Union
+from typing import Any, Dict, Iterator, Optional, List, Union, Iterator
 
 from azure.ai.generative.index._documents import (
     DocumentChunksIterator,
+    DocumentSource,
 )
 from azure.ai.generative.index._documents.chunking import file_extension_splitters, split_documents
 from azure.ai.generative.index._documents.cracking import crack_documents, file_extension_loaders, files_to_document_source
@@ -47,7 +48,7 @@ def crack_and_chunk_and_embed(
     use_rcts: bool = True,
     custom_loader: Optional[Union[str, Path]] = None,
     citation_url: Optional[str] = None,
-    citation_replacement_regex: Optional[Dict[str, str]] = None,
+    citation_replacement_regex: Optional[Union[str, bytes, bytearray]] = None,
     embeddings_model: str = "hugging_face://model/sentence-transformers/all-mpnet-base-v2",
     embeddings_connection: Optional[str] = None,
     embeddings_container: Optional[EmbeddingsContainer] = None,
@@ -55,7 +56,7 @@ def crack_and_chunk_and_embed(
 ) -> EmbeddingsContainer:
     """Crack and chunk and embed and index documents."""
     if embeddings_container is None:
-        connection_args: Dict[str, Dict] = {}
+        connection_args: Dict[str, Any] = {}
         if embeddings_connection is not None:
             connection_args["connection_type"] = "workspace_connection"
             if isinstance(embeddings_connection, str):
@@ -87,7 +88,7 @@ def crack_and_chunk_and_embed(
 
     # Below is destructive to EmbeddingsContainer in-memory tables
     # TODO: log metrics for reused_sources, deleted_sources, and sources_to_embed
-    sources_to_embed = OrderedDict()
+    sources_to_embed: Iterator[DocumentSource] = OrderedDict()
     reused_sources = OrderedDict()
     for source_doc in filter_and_log_extensions(source_documents):  # type: ignore[operator]
         mtime = source_doc.mtime

@@ -9,7 +9,7 @@ from contextlib import contextmanager, suppress
 from functools import lru_cache
 from typing import Optional
 
-import pkg_resources
+import pkg_resources  # type:ignore[import]
 
 COMPONENT_NAME = "azure.ai.generative.index"
 instrumentation_key = ""
