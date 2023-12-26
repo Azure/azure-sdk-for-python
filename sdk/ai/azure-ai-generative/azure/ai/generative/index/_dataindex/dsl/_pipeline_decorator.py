@@ -248,9 +248,9 @@ def pipeline(
 
             return built_pipeline
 
-        wrapper._is_dsl_func = True
-        wrapper._job_settings = job_settings
-        wrapper._pipeline_builder = pipeline_builder
+        wrapper._is_dsl_func = True  # type: ignore[attr-defined]
+        wrapper._job_settings = job_settings  # type: ignore[attr-defined]
+        wrapper._pipeline_builder = pipeline_builder  # type: ignore[attr-defined]
         return wrapper
 
     # enable use decorator without "()" if all arguments are default values
