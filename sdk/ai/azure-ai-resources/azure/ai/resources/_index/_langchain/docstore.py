@@ -5,7 +5,8 @@
 from typing import Dict, Union
 
 from azure.ai.resources._index._docstore import FileBasedDocstore
-from azure.ai.resources._index._embeddings import WrappedLangChainDocument
+from azure.ai.resources._index._embeddings import WrappedLangChainDocument  # type: ignore[attr-defined]
+# TODO: Bug 2875662
 from langchain.docstore.base import AddableMixin, Docstore
 from langchain.docstore.document import Document as LangChainDocument
 from azure.ai.resources._index._documents import Document
