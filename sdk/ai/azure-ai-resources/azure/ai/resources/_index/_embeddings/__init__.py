@@ -112,7 +112,7 @@ def get_embed_fn(embedding_kind: str, arguments: dict, credential: Optional[Toke
         arguments = init_open_ai_from_config(arguments, credential=credential)
 
         embedder = OpenAIEmbedder(
-            model=arguments.get("model"),
+            model=arguments.get("model", ""),
             api_base=arguments.get("api_base", openai.api_base if hasattr(openai, "api_base") else openai.base_url),
             api_type=arguments.get("api_type", openai.api_type),
             api_version=arguments.get("api_version", openai.api_version),
@@ -141,7 +141,7 @@ def get_embed_fn(embedding_kind: str, arguments: dict, credential: Optional[Toke
 
         return embed
     elif embedding_kind == "hugging_face":
-        embedder: Union[OpenAIEmbedder, Embedder] = get_langchain_embeddings(embedding_kind, arguments, credential=credential)
+        embedder: Union[OpenAIEmbedder, Embedder] = get_langchain_embeddings(embedding_kind, arguments, credential=credential)  # type: ignore[no-redef]
 
         return embedder.embed_documents
     elif embedding_kind == "custom":
@@ -200,7 +200,7 @@ class EmbeddingsContainer:
         self._document_sources = OrderedDict()
         self._deleted_sources = OrderedDict()
         self._document_embeddings = OrderedDict()
-        self._deleted_documents = OrderedDict()
+        self._deleted_documents = OrderedDict()  # type: ignore[assignment]
         self._embeddings_container_path = None
         self.dimension = kwargs.get("dimension", None)
         self.statistics = {
