@@ -326,7 +326,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         cors: Optional[List["CorsRule"]] = None,
         target_version: Optional[str] = None,
         delete_retention_policy: Optional["RetentionPolicy"] = None,
-        static_website: Optional[StaticWebsite] = None,
+        static_website: Optional["StaticWebsite"] = None,
         **kwargs: Any
     ) -> None:
         """Sets the properties of a storage account's Blob service, including
