@@ -1,5 +1,37 @@
 # Release History
 
+## 5.0.0 (2024-01-22)
+
+### Features Added
+
+  - Model AzureBlobFSWriteSettings has a new parameter metadata
+  - Model AzureBlobStorageWriteSettings has a new parameter metadata
+  - Model AzureDataLakeStoreWriteSettings has a new parameter metadata
+  - Model AzureFileStorageWriteSettings has a new parameter metadata
+  - Model FileServerWriteSettings has a new parameter metadata
+  - Model LakeHouseWriteSettings has a new parameter metadata
+  - Model MariaDBLinkedService has a new parameter database
+  - Model MariaDBLinkedService has a new parameter driver_version
+  - Model MariaDBLinkedService has a new parameter password
+  - Model MariaDBLinkedService has a new parameter port
+  - Model MariaDBLinkedService has a new parameter server
+  - Model MariaDBLinkedService has a new parameter username
+  - Model MySqlLinkedService has a new parameter database
+  - Model MySqlLinkedService has a new parameter driver_version
+  - Model MySqlLinkedService has a new parameter port
+  - Model MySqlLinkedService has a new parameter server
+  - Model MySqlLinkedService has a new parameter ssl_mode
+  - Model MySqlLinkedService has a new parameter use_system_trust_store
+  - Model MySqlLinkedService has a new parameter username
+  - Model SftpWriteSettings has a new parameter metadata
+  - Model StoreWriteSettings has a new parameter metadata
+  - Model WebActivity has a new parameter http_request_timeout
+  - Model WebActivity has a new parameter turn_off_async
+
+### Breaking Changes
+
+  - Model MariaDBLinkedService no longer has parameter pwd
+
 ## 4.0.0 (2023-11-20)
 
 ### Features Added
