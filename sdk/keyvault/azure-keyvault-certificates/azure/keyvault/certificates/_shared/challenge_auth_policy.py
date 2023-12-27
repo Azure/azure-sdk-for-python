@@ -15,20 +15,16 @@ protocol again.
 """
 
 import time
-from typing import TYPE_CHECKING
+from typing import Any, Optional
 from urllib.parse import urlparse
 
+from azure.core.credentials import AccessToken, TokenCredential
 from azure.core.exceptions import ServiceRequestError
-from azure.core.pipeline import PipelineRequest
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 
 from .http_challenge import HttpChallenge
 from . import http_challenge_cache as ChallengeCache
-
-if TYPE_CHECKING:
-    from typing import Optional
-    from azure.core.credentials import AccessToken, TokenCredential
-    from azure.core.pipeline import PipelineResponse
 
 
 def _enforce_tls(request: PipelineRequest) -> None:
@@ -38,13 +34,13 @@ def _enforce_tls(request: PipelineRequest) -> None:
         )
 
 
-def _update_challenge(request: PipelineRequest, challenger: "PipelineResponse") -> HttpChallenge:
+def _update_challenge(request: PipelineRequest, challenger: PipelineResponse) -> HttpChallenge:
     """Parse challenge from a challenge response, cache it, and return it.
 
     :param request: The pipeline request that prompted the challenge response.
-    :type request: :class:`~azure.core.pipeline.PipelineRequest`
+    :type request: ~azure.core.pipeline.PipelineRequest
     :param challenger: The pipeline response containing the authentication challenge.
-    :type challenger: :class:`~azure.core.pipeline.PipelineResponse`
+    :type challenger: ~azure.core.pipeline.PipelineResponse
 
     :returns: An HttpChallenge object representing the authentication challenge.
     :rtype: HttpChallenge
@@ -64,13 +60,13 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
 
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
-    :type credential: :class:`~azure.core.credentials.TokenCredential`
+    :type credential: ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, credential: "TokenCredential", *scopes: str, **kwargs) -> None:
+    def __init__(self, credential: TokenCredential, *scopes: str, **kwargs: Any) -> None:
         super(ChallengeAuthPolicy, self).__init__(credential, *scopes, **kwargs)
         self._credential = credential
-        self._token: "Optional[AccessToken]" = None
+        self._token: Optional[AccessToken] = None
         self._verify_challenge_resource = kwargs.pop("verify_challenge_resource", True)
 
     def on_request(self, request: PipelineRequest) -> None:
@@ -96,7 +92,7 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
             request.http_request.set_json_body(None)
             request.http_request.headers["Content-Length"] = "0"
 
-    def on_challenge(self, request: PipelineRequest, response: "PipelineResponse") -> bool:
+    def on_challenge(self, request: PipelineRequest, response: PipelineResponse) -> bool:
         try:
             challenge = _update_challenge(request, response)
             # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource

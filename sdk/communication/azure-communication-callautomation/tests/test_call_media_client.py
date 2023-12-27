@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-import sys
 import pytest
 
 from azure.communication.callautomation import (
@@ -15,7 +14,7 @@ from azure.communication.callautomation._models import (
     TextSource,
     SsmlSource,
     PhoneNumberIdentifier,
-    Choice
+    RecognitionChoice
 )
 from azure.communication.callautomation._generated.models import (
     PlayRequest,
@@ -24,7 +23,7 @@ from azure.communication.callautomation._generated.models import (
     RecognizeOptions,
     DtmfOptions,
     ContinuousDtmfRecognitionRequest,
-    SendDtmfRequest,
+    SendDtmfTonesRequest,
     StartHoldMusicRequest,
     StopHoldMusicRequest,
     StartTranscriptionRequest,
@@ -65,16 +64,16 @@ class TestCallMediaClient(unittest.TestCase):
         self.call_connection_client.play_media(play_source=play_source, play_to=[self.target_user])
 
         expected_play_request = PlayRequest(
-            play_source_info=play_source._to_generated(),
+            play_sources=[play_source._to_generated()],
             play_to=[serialize_identifier(self.target_user)],
             play_options=PlayOptions(loop=False)
         )
         mock_play.assert_called_once()
         actual_play_request = mock_play.call_args[0][1]
 
-        self.assertEqual(expected_play_request.play_source_info.source_type, actual_play_request.play_source_info.source_type)
-        self.assertEqual(expected_play_request.play_source_info.file_source.uri, actual_play_request.play_source_info.file_source.uri)
-        self.assertEqual(expected_play_request.play_source_info.play_source_id, actual_play_request.play_source_info.play_source_id)
+        self.assertEqual(expected_play_request.play_sources[0].kind, actual_play_request.play_sources[0].kind)
+        self.assertEqual(expected_play_request.play_sources[0].file.uri, actual_play_request.play_sources[0].file.uri)
+        self.assertEqual(expected_play_request.play_sources[0].play_source_cache_id, actual_play_request.play_sources[0].play_source_cache_id)
         self.assertEqual(expected_play_request.play_to[0]['raw_id'], actual_play_request.play_to[0]['raw_id'])
         self.assertEqual(expected_play_request.play_options, actual_play_request.play_options)
 
@@ -86,19 +85,19 @@ class TestCallMediaClient(unittest.TestCase):
         self.call_connection_client.play_media_to_all(play_source=play_source)
 
         expected_play_request = PlayRequest(
-            play_source_info=play_source._to_generated(),
+            play_sources=[play_source._to_generated()],
             play_to=[],
             play_options=PlayOptions(loop=False)
         )
         mock_play.assert_called_once()
         actual_play_request = mock_play.call_args[0][1]
 
-        self.assertEqual(expected_play_request.play_source_info.source_type, actual_play_request.play_source_info.source_type)
-        self.assertEqual(expected_play_request.play_source_info.file_source.uri, actual_play_request.play_source_info.file_source.uri)
-        self.assertEqual(expected_play_request.play_source_info.play_source_id, actual_play_request.play_source_info.play_source_id)
+        self.assertEqual(expected_play_request.play_sources[0].kind, actual_play_request.play_sources[0].kind)
+        self.assertEqual(expected_play_request.play_sources[0].file.uri, actual_play_request.play_sources[0].file.uri)
+        self.assertEqual(expected_play_request.play_sources[0].play_source_cache_id, actual_play_request.play_sources[0].play_source_cache_id)
         self.assertEqual(expected_play_request.play_to, actual_play_request.play_to)
         self.assertEqual(expected_play_request.play_options, actual_play_request.play_options)
-    
+
     def test_play_file_to_all(self):
         mock_play = Mock()
         self.call_media_operations.play = mock_play
@@ -107,19 +106,19 @@ class TestCallMediaClient(unittest.TestCase):
         self.call_connection_client.play_media(play_source=play_source)
 
         expected_play_request = PlayRequest(
-            play_source_info=play_source._to_generated(),
+            play_sources=[play_source._to_generated()],
             play_to=[],
             play_options=PlayOptions(loop=False)
         )
         mock_play.assert_called_once()
         actual_play_request = mock_play.call_args[0][1]
 
-        self.assertEqual(expected_play_request.play_source_info.source_type, actual_play_request.play_source_info.source_type)
-        self.assertEqual(expected_play_request.play_source_info.file_source.uri, actual_play_request.play_source_info.file_source.uri)
-        self.assertEqual(expected_play_request.play_source_info.play_source_id, actual_play_request.play_source_info.play_source_id)
+        self.assertEqual(expected_play_request.play_sources[0].kind, actual_play_request.play_sources[0].kind)
+        self.assertEqual(expected_play_request.play_sources[0].file.uri, actual_play_request.play_sources[0].file.uri)
+        self.assertEqual(expected_play_request.play_sources[0].play_source_cache_id, actual_play_request.play_sources[0].play_source_cache_id)
         self.assertEqual(expected_play_request.play_to, actual_play_request.play_to)
         self.assertEqual(expected_play_request.play_options, actual_play_request.play_options)
-    
+
     def test_play_text_to_all(self):
         mock_play = Mock()
         self.call_media_operations.play = mock_play
@@ -128,16 +127,16 @@ class TestCallMediaClient(unittest.TestCase):
         self.call_connection_client.play_media(play_source=play_source)
 
         expected_play_request = PlayRequest(
-            play_source_info=play_source._to_generated(),
+            play_sources=[play_source._to_generated()],
             play_to=[],
             play_options=PlayOptions(loop=False)
         )
         mock_play.assert_called_once()
         actual_play_request = mock_play.call_args[0][1]
 
-        self.assertEqual(expected_play_request.play_source_info.source_type, actual_play_request.play_source_info.source_type)
-        self.assertEqual(expected_play_request.play_source_info.text_source.text, actual_play_request.play_source_info.text_source.text)
-        self.assertEqual(expected_play_request.play_source_info.play_source_id, actual_play_request.play_source_info.play_source_id)
+        self.assertEqual(expected_play_request.play_sources[0].kind, actual_play_request.play_sources[0].kind)
+        self.assertEqual(expected_play_request.play_sources[0].text.text, actual_play_request.play_sources[0].text.text)
+        self.assertEqual(expected_play_request.play_sources[0].play_source_cache_id, actual_play_request.play_sources[0].play_source_cache_id)
         self.assertEqual(expected_play_request.play_to, actual_play_request.play_to)
         self.assertEqual(expected_play_request.play_options, actual_play_request.play_options)
 
@@ -151,16 +150,16 @@ class TestCallMediaClient(unittest.TestCase):
         self.call_connection_client.play_media(play_source=play_source)
 
         expected_play_request = PlayRequest(
-            play_source_info=play_source._to_generated(),
+            play_sources=[play_source._to_generated()],
             play_to=[],
             play_options=PlayOptions(loop=False)
         )
         mock_play.assert_called_once()
         actual_play_request = mock_play.call_args[0][1]
 
-        self.assertEqual(expected_play_request.play_source_info.source_type, actual_play_request.play_source_info.source_type)
-        self.assertEqual(expected_play_request.play_source_info.ssml_source.ssml_text, actual_play_request.play_source_info.ssml_source.ssml_text)
-        self.assertEqual(expected_play_request.play_source_info.play_source_id, actual_play_request.play_source_info.play_source_id)
+        self.assertEqual(expected_play_request.play_sources[0].kind, actual_play_request.play_sources[0].kind)
+        self.assertEqual(expected_play_request.play_sources[0].ssml.ssml_text, actual_play_request.play_sources[0].ssml.ssml_text)
+        self.assertEqual(expected_play_request.play_sources[0].play_source_cache_id, actual_play_request.play_sources[0].play_source_cache_id)
         self.assertEqual(expected_play_request.play_to, actual_play_request.play_to)
         self.assertEqual(expected_play_request.play_options, actual_play_request.play_options)
 
@@ -210,8 +209,8 @@ class TestCallMediaClient(unittest.TestCase):
         )
 
         self.assertEqual(expected_recognize_request.recognize_input_type, actual_recognize_request.recognize_input_type)
-        self.assertEqual(expected_recognize_request.play_prompt.source_type, actual_recognize_request.play_prompt.source_type)
-        self.assertEqual(expected_recognize_request.play_prompt.file_source.uri, actual_recognize_request.play_prompt.file_source.uri)
+        self.assertEqual(expected_recognize_request.play_prompt.kind, actual_recognize_request.play_prompt.kind)
+        self.assertEqual(expected_recognize_request.play_prompt.file.uri, actual_recognize_request.play_prompt.file.uri)
         self.assertEqual(expected_recognize_request.interrupt_call_media_operation, actual_recognize_request.interrupt_call_media_operation)
         self.assertEqual(expected_recognize_request.operation_context, actual_recognize_request.operation_context)
         self.assertEqual(expected_recognize_request.recognize_options.target_participant, actual_recognize_request.recognize_options.target_participant)
@@ -231,7 +230,7 @@ class TestCallMediaClient(unittest.TestCase):
     def test_recognize_choices(self):
         mock_recognize = Mock()
         self.call_media_operations.recognize = mock_recognize
-        test_choice = Choice("choice1", ["pass", "fail"])
+        test_choice = RecognitionChoice(label="choice1", phrases=["pass", "fail"])
         test_input_type = RecognizeInputType.CHOICES
         test_choices = [test_choice]
         test_interrupt_prompt = True
@@ -266,8 +265,8 @@ class TestCallMediaClient(unittest.TestCase):
         )
 
         self.assertEqual(expected_recognize_request.recognize_input_type, actual_recognize_request.recognize_input_type)
-        self.assertEqual(expected_recognize_request.play_prompt.source_type, actual_recognize_request.play_prompt.source_type)
-        self.assertEqual(expected_recognize_request.play_prompt.file_source.uri, actual_recognize_request.play_prompt.file_source.uri)
+        self.assertEqual(expected_recognize_request.play_prompt.kind, actual_recognize_request.play_prompt.kind)
+        self.assertEqual(expected_recognize_request.play_prompt.file.uri, actual_recognize_request.play_prompt.file.uri)
         self.assertEqual(expected_recognize_request.interrupt_call_media_operation, actual_recognize_request.interrupt_call_media_operation)
         self.assertEqual(expected_recognize_request.operation_context, actual_recognize_request.operation_context)
         self.assertEqual(expected_recognize_request.recognize_options.target_participant, actual_recognize_request.recognize_options.target_participant)
@@ -322,30 +321,30 @@ class TestCallMediaClient(unittest.TestCase):
         self.assertEqual(expected_continuous_dtmf_recognition_request.operation_context,
                          actual_stop_continuous_dtmf_recognition.operation_context)
 
-    def test_send_dtmf(self):
-        mock_send_dtmf = Mock()
-        self.call_media_operations.send_dtmf = mock_send_dtmf
-        self.call_connection_client.send_dtmf(tones=self.tones,
-                                              target_participant=self.target_user,
-                                              operation_context=self.operation_context)
+    def test_send_dtmf_tones(self):
+        mock_send_dtmf_tones = Mock()
+        self.call_media_operations.send_dtmf_tones = mock_send_dtmf_tones
+        self.call_connection_client.send_dtmf_tones(tones=self.tones,
+                                                    target_participant=self.target_user,
+                                                    operation_context=self.operation_context)
 
-        expected_send_dtmf_request = SendDtmfRequest(
+        expected_send_dtmf_tones_request = SendDtmfTonesRequest(
             tones=self.tones,
             target_participant=serialize_identifier(self.target_user),
             operation_context=self.operation_context)
 
-        mock_send_dtmf.assert_called_once()
-        actual_call_connection_id = mock_send_dtmf.call_args[0][0]
-        actual_send_dtmf_request = mock_send_dtmf.call_args[0][1]
+        mock_send_dtmf_tones.assert_called_once()
+        actual_call_connection_id = mock_send_dtmf_tones.call_args[0][0]
+        actual_send_dtmf_tones_request = mock_send_dtmf_tones.call_args[0][1]
 
         self.assertEqual(self.call_connection_id, actual_call_connection_id)
-        self.assertEqual(expected_send_dtmf_request.target_participant,
-                         actual_send_dtmf_request.target_participant)
-        self.assertEqual(expected_send_dtmf_request.tones,
-                         actual_send_dtmf_request.tones)
-        self.assertEqual(expected_send_dtmf_request.operation_context,
-                         actual_send_dtmf_request.operation_context)
-        
+        self.assertEqual(expected_send_dtmf_tones_request.target_participant,
+                         actual_send_dtmf_tones_request.target_participant)
+        self.assertEqual(expected_send_dtmf_tones_request.tones,
+                         actual_send_dtmf_tones_request.tones)
+        self.assertEqual(expected_send_dtmf_tones_request.operation_context,
+                         actual_send_dtmf_tones_request.operation_context)
+
     def test_start_hold_music(self):
         mock_hold = Mock()
         self.call_media_operations.start_hold_music = mock_hold
@@ -361,12 +360,12 @@ class TestCallMediaClient(unittest.TestCase):
         mock_hold.assert_called_once()
         actual_hold_request = mock_hold.call_args[0][1]
 
-        self.assertEqual(expected_hold_request.play_source_info.source_type, actual_hold_request.play_source_info.source_type)
-        self.assertEqual(expected_hold_request.play_source_info.file_source.uri, actual_hold_request.play_source_info.file_source.uri)
-        self.assertEqual(expected_hold_request.play_source_info.play_source_id, actual_hold_request.play_source_info.play_source_id)
+        self.assertEqual(expected_hold_request.play_source_info.kind, actual_hold_request.play_source_info.kind)
+        self.assertEqual(expected_hold_request.play_source_info.file.uri, actual_hold_request.play_source_info.file.uri)
+        self.assertEqual(expected_hold_request.play_source_info.play_source_cache_id, actual_hold_request.play_source_info.play_source_cache_id)
         self.assertEqual(expected_hold_request.target_participant['raw_id'], actual_hold_request.target_participant['raw_id'])
         self.assertEqual(expected_hold_request.loop, actual_hold_request.loop)
-        
+
     def test_stop_hold_music(self):
         mock_hold = Mock()
         self.call_media_operations.stop_hold_music = mock_hold

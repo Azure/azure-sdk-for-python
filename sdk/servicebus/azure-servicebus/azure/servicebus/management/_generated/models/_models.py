@@ -163,7 +163,7 @@ class RuleFilter(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     CorrelationFilter, SqlFilter
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Required.
     :vartype type: str
@@ -193,7 +193,7 @@ class RuleFilter(_serialization.Model):
 class CorrelationFilter(RuleFilter):
     """CorrelationFilter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Required.
     :vartype type: str
@@ -214,7 +214,7 @@ class CorrelationFilter(RuleFilter):
     :ivar content_type:
     :vartype content_type: str
     :ivar properties:
-    :vartype properties: ~azure.servicebus.management._generated.models.KeyValue
+    :vartype properties: ~azure.servicebus.management._generated.models.KeyObjectValue
     """
 
     _validation = {
@@ -275,12 +275,12 @@ class CorrelationFilter(RuleFilter):
         },
         "properties": {
             "key": "properties",
-            "type": "[KeyValue]",
+            "type": "[KeyObjectValue]",
             "xml": {
                 "name": "Properties",
                 "ns": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect",
                 "wrapped": True,
-                "itemsName": "KeyValueOfstringanyType",
+                "itemsName": "KeyValueOfObjectType",
                 "itemsNs": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect",
             },
         },
@@ -297,7 +297,7 @@ class CorrelationFilter(RuleFilter):
         session_id: Optional[str] = None,
         reply_to_session_id: Optional[str] = None,
         content_type: Optional[str] = None,
-        properties: Optional[List["_models.KeyValue"]] = None,
+        properties: Optional[List["_models.KeyObjectValue"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -318,7 +318,7 @@ class CorrelationFilter(RuleFilter):
         :keyword content_type:
         :paramtype content_type: str
         :keyword properties:
-        :paramtype properties: ~azure.servicebus.management._generated.models.KeyValue
+        :paramtype properties: ~azure.servicebus.management._generated.models.KeyObjectValue
         """
         super().__init__(**kwargs)
         self.type: str = "CorrelationFilter"
@@ -558,7 +558,7 @@ class RuleAction(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     EmptyRuleAction, SqlRuleAction
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Required.
     :vartype type: str
@@ -588,7 +588,7 @@ class RuleAction(_serialization.Model):
 class EmptyRuleAction(RuleAction):
     """EmptyRuleAction.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Required.
     :vartype type: str
@@ -618,7 +618,7 @@ class SqlFilter(RuleFilter):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     FalseFilter, TrueFilter
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Required.
     :vartype type: str
@@ -711,7 +711,7 @@ class SqlFilter(RuleFilter):
 class FalseFilter(SqlFilter):
     """FalseFilter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Required.
     :vartype type: str
@@ -799,6 +799,40 @@ class FalseFilter(SqlFilter):
             **kwargs
         )
         self.type: str = "FalseFilter"
+
+
+class KeyObjectValue(_serialization.Model):
+    """Key Values of custom properties.
+
+    :ivar key:
+    :vartype key: str
+    :ivar value: Any object.
+    :vartype value: JSON
+    """
+
+    _attribute_map = {
+        "key": {
+            "key": "key",
+            "type": "str",
+            "xml": {"name": "Key", "ns": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"},
+        },
+        "value": {"key": "value", "type": "object"},
+    }
+    _xml_map = {
+        "name": "KeyValueOfObjectType",
+        "ns": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect",
+    }
+
+    def __init__(self, *, key: Optional[str] = None, value: Optional[JSON] = None, **kwargs: Any) -> None:
+        """
+        :keyword key:
+        :paramtype key: str
+        :keyword value: Any object.
+        :paramtype value: JSON
+        """
+        super().__init__(**kwargs)
+        self.key = key
+        self.value = value
 
 
 class KeyValue(_serialization.Model):
@@ -1050,7 +1084,7 @@ class NamespaceProperties(_serialization.Model):
 class NamespacePropertiesEntry(_serialization.Model):
     """Represents an entry in the feed when querying namespace info.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The URL of the GET request.
     :vartype id: str
@@ -1119,7 +1153,7 @@ class NamespacePropertiesEntry(_serialization.Model):
 class NamespacePropertiesEntryContent(_serialization.Model):
     """Information about the namespace.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of content in namespace info response. Required.
     :vartype type: str
@@ -1226,12 +1260,12 @@ class QueueDescription(_serialization.Model):  # pylint: disable=too-many-instan
      "Available", "Limited", "Renaming", "Restoring", and "Unknown".
     :vartype entity_availability_status: str or
      ~azure.servicebus.management._generated.models.EntityAvailabilityStatus
-    :ivar enable_express: A value that indicates whether Express Entities are enabled. An express
-     queue holds a message in memory temporarily before writing it to persistent storage.
-    :vartype enable_express: bool
     :ivar forward_dead_lettered_messages_to: The name of the recipient entity to which all the
      dead-lettered messages of this subscription are forwarded to.
     :vartype forward_dead_lettered_messages_to: str
+    :ivar enable_express: A value that indicates whether Express Entities are enabled. An express
+     queue holds a message in memory temporarily before writing it to persistent storage.
+    :vartype enable_express: bool
     :ivar max_message_size_in_kilobytes: The maximum size in kilobytes of message payload that can
      be accepted by the queue.
     :vartype max_message_size_in_kilobytes: int
@@ -1408,19 +1442,19 @@ class QueueDescription(_serialization.Model):  # pylint: disable=too-many-instan
                 "ns": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect",
             },
         },
-        "enable_express": {
-            "key": "enableExpress",
-            "type": "bool",
-            "xml": {
-                "name": "EnableExpress",
-                "ns": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect",
-            },
-        },
         "forward_dead_lettered_messages_to": {
             "key": "forwardDeadLetteredMessagesTo",
             "type": "str",
             "xml": {
                 "name": "ForwardDeadLetteredMessagesTo",
+                "ns": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect",
+            },
+        },
+        "enable_express": {
+            "key": "enableExpress",
+            "type": "bool",
+            "xml": {
+                "name": "EnableExpress",
                 "ns": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect",
             },
         },
@@ -1462,8 +1496,8 @@ class QueueDescription(_serialization.Model):  # pylint: disable=too-many-instan
         auto_delete_on_idle: Optional[datetime.timedelta] = None,
         enable_partitioning: Optional[bool] = None,
         entity_availability_status: Optional[Union[str, "_models.EntityAvailabilityStatus"]] = None,
-        enable_express: Optional[bool] = None,
         forward_dead_lettered_messages_to: Optional[str] = None,
+        enable_express: Optional[bool] = None,
         max_message_size_in_kilobytes: Optional[int] = None,
         **kwargs: Any
     ) -> None:
@@ -1540,12 +1574,12 @@ class QueueDescription(_serialization.Model):  # pylint: disable=too-many-instan
          "Available", "Limited", "Renaming", "Restoring", and "Unknown".
         :paramtype entity_availability_status: str or
          ~azure.servicebus.management._generated.models.EntityAvailabilityStatus
-        :keyword enable_express: A value that indicates whether Express Entities are enabled. An
-         express queue holds a message in memory temporarily before writing it to persistent storage.
-        :paramtype enable_express: bool
         :keyword forward_dead_lettered_messages_to: The name of the recipient entity to which all the
          dead-lettered messages of this subscription are forwarded to.
         :paramtype forward_dead_lettered_messages_to: str
+        :keyword enable_express: A value that indicates whether Express Entities are enabled. An
+         express queue holds a message in memory temporarily before writing it to persistent storage.
+        :paramtype enable_express: bool
         :keyword max_message_size_in_kilobytes: The maximum size in kilobytes of message payload that
          can be accepted by the queue.
         :paramtype max_message_size_in_kilobytes: int
@@ -1575,8 +1609,8 @@ class QueueDescription(_serialization.Model):  # pylint: disable=too-many-instan
         self.auto_delete_on_idle = auto_delete_on_idle
         self.enable_partitioning = enable_partitioning
         self.entity_availability_status = entity_availability_status
-        self.enable_express = enable_express
         self.forward_dead_lettered_messages_to = forward_dead_lettered_messages_to
+        self.enable_express = enable_express
         self.max_message_size_in_kilobytes = max_message_size_in_kilobytes
 
 
@@ -1658,7 +1692,7 @@ class QueueDescriptionEntry(_serialization.Model):
 class QueueDescriptionEntryContent(_serialization.Model):
     """The QueueDescription.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of content in queue response. Required.
     :vartype type: str
@@ -1918,7 +1952,7 @@ class RuleDescriptionEntry(_serialization.Model):
 class RuleDescriptionEntryContent(_serialization.Model):
     """The RuleDescription.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of content in rule response. Required.
     :vartype type: str
@@ -2040,7 +2074,7 @@ class ServiceBusManagementError(_serialization.Model):
 class SqlRuleAction(RuleAction):
     """SqlRuleAction.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Required.
     :vartype type: str
@@ -2493,7 +2527,7 @@ class SubscriptionDescriptionEntry(_serialization.Model):
 class SubscriptionDescriptionEntryContent(_serialization.Model):
     """The SubscriptionDescription.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of content in subscription response. Required.
     :vartype type: str
@@ -3034,7 +3068,7 @@ class TopicDescriptionEntry(_serialization.Model):
 class TopicDescriptionEntryContent(_serialization.Model):
     """The TopicDescription.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of content in topic response. Required.
     :vartype type: str
@@ -3130,7 +3164,7 @@ class TopicDescriptionFeed(_serialization.Model):
 class TrueFilter(SqlFilter):
     """TrueFilter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Required.
     :vartype type: str

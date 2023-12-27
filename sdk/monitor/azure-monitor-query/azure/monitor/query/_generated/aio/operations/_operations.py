@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -66,6 +66,7 @@ class QueryOperations:
     async def get(
         self, workspace_id: str, *, query: str, timespan: Optional[datetime.timedelta] = None, **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
@@ -190,6 +191,7 @@ class QueryOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Execute an Analytics query.
 
         Executes an Analytics query for data. `Here
@@ -280,12 +282,13 @@ class QueryOperations:
     async def execute(
         self,
         workspace_id: str,
-        body: IO,
+        body: IO[bytes],
         *,
         prefer: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Execute an Analytics query.
 
         Executes an Analytics query for data. `Here
@@ -298,7 +301,7 @@ class QueryOperations:
         :param body: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
          Required.
-        :type body: IO
+        :type body: IO[bytes]
         :keyword prefer: Optional. The prefer header to set server timeout, query statistics and
          visualization information. Default value is None.
         :paramtype prefer: str
@@ -362,8 +365,9 @@ class QueryOperations:
 
     @distributed_trace_async
     async def execute(
-        self, workspace_id: str, body: Union[JSON, IO], *, prefer: Optional[str] = None, **kwargs: Any
+        self, workspace_id: str, body: Union[JSON, IO[bytes]], *, prefer: Optional[str] = None, **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Execute an Analytics query.
 
         Executes an Analytics query for data. `Here
@@ -375,8 +379,8 @@ class QueryOperations:
         :type workspace_id: str
         :param body: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_. Is
-         either a JSON type or a IO type. Required.
-        :type body: JSON or IO
+         either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
         :keyword prefer: Optional. The prefer header to set server timeout, query statistics and
          visualization information. Default value is None.
         :paramtype prefer: str
@@ -509,6 +513,7 @@ class QueryOperations:
     async def resource_get(
         self, resource_id: str, *, query: str, timespan: Optional[datetime.timedelta] = None, **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Execute an Analytics query using resource URI.
 
         Executes an Analytics query for data in the context of a resource. `Here
@@ -634,6 +639,7 @@ class QueryOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Execute an Analytics query using resource ID.
 
         Executes an Analytics query for data in the context of a resource. `Here
@@ -723,12 +729,13 @@ class QueryOperations:
     async def resource_execute(
         self,
         resource_id: str,
-        body: IO,
+        body: IO[bytes],
         *,
         prefer: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Execute an Analytics query using resource ID.
 
         Executes an Analytics query for data in the context of a resource. `Here
@@ -740,7 +747,7 @@ class QueryOperations:
         :param body: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
          Required.
-        :type body: IO
+        :type body: IO[bytes]
         :keyword prefer: Optional. The prefer header to set server timeout, query statistics and
          visualization information. Default value is None.
         :paramtype prefer: str
@@ -804,8 +811,9 @@ class QueryOperations:
 
     @distributed_trace_async
     async def resource_execute(
-        self, resource_id: str, body: Union[JSON, IO], *, prefer: Optional[str] = None, **kwargs: Any
+        self, resource_id: str, body: Union[JSON, IO[bytes]], *, prefer: Optional[str] = None, **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Execute an Analytics query using resource ID.
 
         Executes an Analytics query for data in the context of a resource. `Here
@@ -816,8 +824,8 @@ class QueryOperations:
         :type resource_id: str
         :param body: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_. Is
-         either a JSON type or a IO type. Required.
-        :type body: JSON or IO
+         either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
         :keyword prefer: Optional. The prefer header to set server timeout, query statistics and
          visualization information. Default value is None.
         :paramtype prefer: str
@@ -948,6 +956,7 @@ class QueryOperations:
 
     @overload
     async def batch(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Execute a batch of Analytics queries.
 
         Executes a batch of Analytics queries for data. `Here
@@ -1071,7 +1080,8 @@ class QueryOperations:
         """
 
     @overload
-    async def batch(self, body: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    async def batch(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Execute a batch of Analytics queries.
 
         Executes a batch of Analytics queries for data. `Here
@@ -1079,7 +1089,7 @@ class QueryOperations:
         using POST with an Analytics query.
 
         :param body: The batch request body. Required.
-        :type body: IO
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1162,15 +1172,16 @@ class QueryOperations:
         """
 
     @distributed_trace_async
-    async def batch(self, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+    async def batch(self, body: Union[JSON, IO[bytes]], **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Execute a batch of Analytics queries.
 
         Executes a batch of Analytics queries for data. `Here
         <https://learn.microsoft.com/azure/azure-monitor/logs/api/batch-queries>`_ is an example for
         using POST with an Analytics query.
 
-        :param body: The batch request body. Is either a JSON type or a IO type. Required.
-        :type body: JSON or IO
+        :param body: The batch request body. Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -1342,6 +1353,7 @@ class QueryOperations:
     async def resource_get_xms(
         self, resource_id: str, *, query: str, timespan: Optional[datetime.timedelta] = None, **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Execute an Analytics query using resource URI.
 
         Executes an Analytics query for data in the context of a resource. `Here
@@ -1467,6 +1479,7 @@ class QueryOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Execute an Analytics query using resource ID.
 
         Executes an Analytics query for data in the context of a resource. `Here
@@ -1556,12 +1569,13 @@ class QueryOperations:
     async def resource_execute_xms(
         self,
         resource_id: str,
-        body: IO,
+        body: IO[bytes],
         *,
         prefer: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Execute an Analytics query using resource ID.
 
         Executes an Analytics query for data in the context of a resource. `Here
@@ -1573,7 +1587,7 @@ class QueryOperations:
         :param body: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
          Required.
-        :type body: IO
+        :type body: IO[bytes]
         :keyword prefer: Optional. The prefer header to set server timeout, query statistics and
          visualization information. Default value is None.
         :paramtype prefer: str
@@ -1637,8 +1651,9 @@ class QueryOperations:
 
     @distributed_trace_async
     async def resource_execute_xms(
-        self, resource_id: str, body: Union[JSON, IO], *, prefer: Optional[str] = None, **kwargs: Any
+        self, resource_id: str, body: Union[JSON, IO[bytes]], *, prefer: Optional[str] = None, **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Execute an Analytics query using resource ID.
 
         Executes an Analytics query for data in the context of a resource. `Here
@@ -1649,8 +1664,8 @@ class QueryOperations:
         :type resource_id: str
         :param body: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_. Is
-         either a JSON type or a IO type. Required.
-        :type body: JSON or IO
+         either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
         :keyword prefer: Optional. The prefer header to set server timeout, query statistics and
          visualization information. Default value is None.
         :paramtype prefer: str
@@ -1799,6 +1814,7 @@ class MetadataOperations:
 
     @distributed_trace_async
     async def get(self, workspace_id: str, **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Gets metadata information.
 
         Retrieve the metadata information for the workspace, including its schema, functions, workspace
@@ -2200,6 +2216,7 @@ class MetadataOperations:
 
     @distributed_trace_async
     async def post(self, workspace_id: str, **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Gets metadata information.
 
         Retrieve the metadata information for the workspace, including its schema, functions, workspace

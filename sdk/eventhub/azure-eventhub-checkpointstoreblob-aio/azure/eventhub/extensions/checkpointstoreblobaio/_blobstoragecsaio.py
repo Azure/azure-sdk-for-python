@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from typing import Iterable, Dict, Any, Optional
+from typing import Iterable, Dict, Any, Optional, Union, TYPE_CHECKING
 import logging
 import copy
 from collections import defaultdict
@@ -13,6 +13,9 @@ from azure.core.exceptions import ResourceModifiedError, ResourceExistsError, Re
 from ._vendor.storage.blob.aio import ContainerClient, BlobClient
 from ._vendor.storage.blob._shared.base_client import parse_connection_str
 
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
 logger = logging.getLogger(__name__)
 UPLOAD_DATA = ""
@@ -41,11 +44,17 @@ class BlobCheckpointStore(CheckpointStore):
      The hostname of the secondary endpoint.
     """
 
-    def __init__(self, blob_account_url, container_name, *, credential=None, **kwargs):
-        # type(str, str, Optional[Any], Any) -> None
+    def __init__(
+        self,
+        blob_account_url: str,
+        container_name: str,
+        *,
+        credential: Optional[Union["AsyncTokenCredential", "AzureNamedKeyCredential", "AzureSasCredential"]] = None,
+        api_version: str = '2019-07-07',
+        **kwargs: Any
+    ) -> None:
         self._container_client = kwargs.pop("container_client", None)
         if not self._container_client:
-            api_version = kwargs.pop("api_version", None)
             if api_version:
                 headers = kwargs.get("headers")
                 if headers:
@@ -59,7 +68,12 @@ class BlobCheckpointStore(CheckpointStore):
 
     @classmethod
     def from_connection_string(
-        cls, conn_str: str, container_name: str, *, credential: Optional[Any] = None, **kwargs: Any
+        cls,
+        conn_str: str,
+        container_name: str,
+        *,
+        credential: Optional[Union["AsyncTokenCredential", "AzureNamedKeyCredential", "AzureSasCredential"]] = None,
+        **kwargs: Any
     ) -> "BlobCheckpointStore":
         """Create BlobCheckpointStore from a storage connection string.
 
@@ -88,11 +102,11 @@ class BlobCheckpointStore(CheckpointStore):
 
         return cls(account_url, container_name, credential=credential, **kwargs)
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "BlobCheckpointStore":
         await self._container_client.__aenter__()
         return self
 
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *args: Any) -> None:
         await self._container_client.__aexit__(*args)
 
     def _get_blob_client(self, blob_name: str) -> BlobClient:
@@ -291,8 +305,8 @@ class BlobCheckpointStore(CheckpointStore):
             )
 
     async def list_checkpoints(
-        self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs
-    ):
+        self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str, **kwargs: Any
+    ) -> Iterable[Dict[str, Any]]:
         """List the updated checkpoints from the storage blob.
 
         :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.

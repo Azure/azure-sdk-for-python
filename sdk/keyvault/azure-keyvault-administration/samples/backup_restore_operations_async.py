@@ -49,7 +49,7 @@ async def run_sample():
     # a KeyVaultBackupResult that contains the URL of the backup after the operation completes. Calling wait() on
     # the poller will wait until the operation is complete.
     print("\n.. Back up the vault")
-    backup_poller = await client.begin_backup(CONTAINER_URL, SAS_TOKEN)
+    backup_poller = await client.begin_backup(CONTAINER_URL, sas_token=SAS_TOKEN)
     backup_result = await backup_poller.result()
     print("Vault backed up successfully.")
     assert backup_result.folder_url
@@ -58,7 +58,7 @@ async def run_sample():
     # return None after the operation completes. Calling wait() on the poller will wait until the operation is
     # complete. To restore a single key from the backed up vault instead, pass the key_name keyword argument.
     print("\n.. Restore the full vault")
-    restore_poller = await client.begin_restore(backup_result.folder_url, SAS_TOKEN)
+    restore_poller = await client.begin_restore(backup_result.folder_url, sas_token=SAS_TOKEN)
     await restore_poller.wait()
     print("Vault restored successfully.")
 
