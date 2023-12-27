@@ -325,7 +325,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         minute_metrics: Optional["Metrics"] = None,
         cors: Optional[List["CorsRule"]] = None,
         target_version: Optional[str] = None,
-        delete_retention_policy: Optional[RetentionPolicy] = None,
+        delete_retention_policy: Optional["RetentionPolicy"] = None,
         static_website: Optional[StaticWebsite] = None,
         **kwargs: Any
     ) -> None:
