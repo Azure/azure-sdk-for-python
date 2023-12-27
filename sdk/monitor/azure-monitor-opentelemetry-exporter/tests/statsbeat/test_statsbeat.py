@@ -59,6 +59,7 @@ def throw(exc_type, *args, **kwargs):
 class TestStatsbeat(unittest.TestCase):
     def setUp(self):
         _statsbeat._STATSBEAT_METRICS = None
+        _STATSBEAT_STATE["SHUTDOWN"] = False
 
     @mock.patch.object(MeterProvider, 'shutdown')
     @mock.patch.object(MeterProvider, 'force_flush')
@@ -217,11 +218,11 @@ class TestStatsbeat(unittest.TestCase):
         )
 
     def test_shutdown_statsbeat_metrics(self):
-        _STATSBEAT_STATE["SHUTDOWN"] = False
         metric_mock = mock.Mock()
         mp_mock = mock.Mock()
         metric_mock._meter_provider = mp_mock
         _statsbeat._STATSBEAT_METRICS = metric_mock
+        self.assertFalse(_STATSBEAT_STATE["SHUTDOWN"])
         _statsbeat.shutdown_statsbeat_metrics()
         mp_mock.shutdown.assert_called_once()
         self.assertIsNone(_statsbeat._STATSBEAT_METRICS)
@@ -274,6 +275,11 @@ class TestStatsbeatMetrics(unittest.TestCase):
             _StatsbeatMetrics_INSTRUMENTATION_ATTRIBUTES
         )
         _REQUESTS_MAP.clear()
+        _STATSBEAT_STATE["INITIAL_FAILURE_COUNT"] = 0
+        _STATSBEAT_STATE["INITIAL_SUCCESS"] = False
+        _STATSBEAT_STATE["SHUTDOWN"] = False
+        _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = False
+
 
     def test_statsbeat_metric_init(self):
         mp = MeterProvider()
@@ -684,6 +690,55 @@ class TestStatsbeatMetrics(unittest.TestCase):
         observations = metric._get_feature_metric(options=None)
         self.assertEqual(len(observations), 1)
         self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], _StatsbeatFeature.AAD)
+
+    # pylint: disable=protected-access
+    def test_get_feature_metric_custom_events_init(self):
+        mp = MeterProvider()
+        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = True
+        metric = _StatsbeatMetrics(
+            mp,
+            ikey,
+            endpoint,
+            True,
+            0,
+            False,
+        )
+        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+        attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
+        self.assertEqual(attributes["feature"], 4)
+        self.assertEqual(attributes["type"], _FEATURE_TYPES.FEATURE)
+        observations = metric._get_feature_metric(options=None)
+        for obs in observations:
+            self.assertEqual(obs.value, 1)
+            self.assertEqual(obs.attributes, attributes)
+
+    # pylint: disable=protected-access
+    def test_get_feature_metric_custom_events_runtime(self):
+        mp = MeterProvider()
+        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        metric = _StatsbeatMetrics(
+            mp,
+            ikey,
+            endpoint,
+            True,
+            0,
+            False,
+        )
+        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+        attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
+        self.assertEqual(attributes["feature"], 0)
+        self.assertEqual(attributes["type"], _FEATURE_TYPES.FEATURE)
+        _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = True
+        observations = metric._get_feature_metric(options=None)
+        attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
+        self.assertEqual(attributes["feature"], 4)
+        self.assertEqual(metric._feature, 4)
+        for obs in observations:
+            self.assertEqual(obs.value, 1)
+            self.assertEqual(obs.attributes, attributes)
 
     # pylint: disable=protected-access
     def test_get_feature_metric_instrumentation(self):
