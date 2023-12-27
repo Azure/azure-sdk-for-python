@@ -51,7 +51,11 @@ def main():
                 "scaleInPolicy": {"forceDeletion": True, "rules": ["OldestVM"]},
                 "singlePlacementGroup": True,
                 "upgradePolicy": {
-                    "automaticOSUpgradePolicy": {"disableAutomaticRollback": True, "enableAutomaticOSUpgrade": True},
+                    "automaticOSUpgradePolicy": {
+                        "disableAutomaticRollback": True,
+                        "enableAutomaticOSUpgrade": True,
+                        "osRollingUpgradeDeferral": True,
+                    },
                     "mode": "Manual",
                     "rollingUpgradePolicy": {
                         "enableCrossZoneUpgrade": True,
@@ -258,6 +262,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2023-07-01/examples/virtualMachineScaleSetExamples/VirtualMachineScaleSet_Update_MaximumSet_Gen.json
+# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2023-09-01/examples/virtualMachineScaleSetExamples/VirtualMachineScaleSet_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

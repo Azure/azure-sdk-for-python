@@ -3,10 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import copy
 import os
 import json
 import random
 import time
+import datetime
 from threading import Lock
 import logging
 from typing import (
@@ -50,6 +52,8 @@ if TYPE_CHECKING:
 JSON = Union[str, Mapping[str, Any]]  # pylint: disable=unsubscriptable-object
 
 logger = logging.getLogger(__name__)
+
+min_uptime = 5
 
 
 @overload
@@ -173,6 +177,7 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     credential: Optional["TokenCredential"] = kwargs.pop("credential", None)
     connection_string: Optional[str] = kwargs.pop("connection_string", None)
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = kwargs.pop("key_vault_options", None)
+    start_time = datetime.datetime.now()
 
     # Update endpoint and credential if specified positionally.
     if len(args) > 2:
@@ -208,7 +213,11 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     provider = _buildprovider(
         connection_string, endpoint, credential, uses_key_vault="UsesKeyVault" in headers, **kwargs
     )
-    provider._load_all(headers=headers)
+    try:
+        provider._load_all(headers=headers)
+    except Exception as e:
+        _delay_failure(start_time)
+        raise e
 
     # Refresh-All sentinels are not updated on load_all, as they are not necessarily included in the provider.
     for (key, label), etag in provider._refresh_on.items():
@@ -225,8 +234,21 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
                         label,
                     )
                 else:
+                    _delay_failure(start_time)
                     raise e
+            except Exception as e:
+                _delay_failure(start_time)
+                raise e
     return provider
+
+
+def _delay_failure(start_time: datetime.datetime) -> None:
+    # We want to make sure we are up a minimum amount of time before we kill the process. Otherwise, we could get stuck
+    # in a quick restart loop.
+    min_time = datetime.timedelta(seconds=min_uptime)
+    current_time = datetime.datetime.now()
+    if current_time - start_time < min_time:
+        time.sleep((min_time - (current_time - start_time)).total_seconds())
 
 
 def _get_headers(request_type, **kwargs) -> str:
@@ -447,50 +469,68 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         feature_flag_trim_prefixes = kwargs.pop("feature_flag_trim_prefixes", [])
         self._feature_flag_trim_prefixes = sorted(feature_flag_trim_prefixes, key=len, reverse=True)
         self._update_lock = Lock()
+        self._refresh_lock = Lock()
 
     def refresh(self, **kwargs) -> None:
         if not self._refresh_on and not self._feature_flag_refresh_enabled:
             logging.debug("Refresh called but no refresh enabled.")
             return
+        if not self._refresh_timer.needs_refresh():
+            logging.debug("Refresh called but refresh interval not elapsed.")
+            return
+        if not self._refresh_lock.acquire(blocking=False):  # pylint: disable= consider-using-with
+            logging.debug("Refresh called but refresh already in progress.")
+            return
+        success = False
+        need_refresh = False
+        try:
+            updated_sentinel_keys = dict(self._refresh_on)
+            headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
+            for (key, label), etag in updated_sentinel_keys.items():
+                try:
+                    updated_sentinel = self._client.get_configuration_setting(
+                        key=key,
+                        label=label,
+                        etag=etag,
+                        match_condition=MatchConditions.IfModified,
+                        headers=headers,
+                        **kwargs
+                    )
+                    if updated_sentinel is not None:
+                        logging.debug(
+                            "Refresh all triggered by key: %s label %s.",
+                            key,
+                            label,
+                        )
+                        need_refresh = True
 
-        did_update = False
-        with self._update_lock:
-            need_refresh = self._refresh_timer.needs_refresh()
-            feature_flags_need_refresh = self._feature_flag_refresh_timer.needs_refresh()
-            configuration_settings, sentinel_keys = {}, dict(self._refresh_on)
-            feature_flags = dict(self._dict.get(FEATURE_MANAGEMENT_KEY, {}))
-            feature_flag_sentinel_keys = (
-                dict(self._refresh_on_feature_flags) if self._refresh_on_feature_flags is not None else {}
-            )
-            had_refresh = False
-            had_refresh_feature_flags = False
+                        updated_sentinel_keys[(key, label)] = updated_sentinel.etag
+                except HttpResponseError as e:
+                    if e.status_code == 404:
+                        if etag is not None:
+                            # If the sentinel is not found, it means the key/label was deleted, so we should refresh
+                            logging.debug("Refresh all triggered by key: %s label %s.", key, label)
+                            need_refresh = True
+                            updated_sentinel_keys[(key, label)] = None
+                    else:
+                        raise e
+            # Need to only update once, no matter how many sentinels are updated
             if need_refresh:
-                configuration_settings, sentinel_keys, had_refresh = self.refresh_configuration_settings(
-                    configuration_settings, sentinel_keys, self._refresh_timer, **kwargs
-                )
-                if not had_refresh:
-                    configuration_settings = self._dict
-            if self._feature_flag_refresh_enabled and feature_flags_need_refresh and len(feature_flags) > 0:
-                (
-                    feature_flags,
-                    feature_flag_sentinel_keys,
-                    had_refresh_feature_flags,
-                ) = self.refresh_configuration_settings(
-                    feature_flags, feature_flag_sentinel_keys, self._feature_flag_refresh_timer, **kwargs
-                )
-
-            if had_refresh or had_refresh_feature_flags:
-                did_update = True
-                if len(feature_flags) > 0:
-                    configuration_settings[FEATURE_MANAGEMENT_KEY] = feature_flags
-                    self._refresh_on_feature_flags = feature_flag_sentinel_keys
-                self._refresh_on = sentinel_keys
-                self._dict = configuration_settings
-            if not need_refresh and not feature_flags_need_refresh:
-                logging.debug("Refresh called but refresh interval not elapsed.")
+                self._load_all(headers=headers, sentinel_keys=updated_sentinel_keys, **kwargs)
+            # Even if we don't need to refresh, we should reset the timer
+            self._refresh_timer.reset()
+            success = True
+        except (ServiceRequestError, ServiceResponseError, HttpResponseError) as e:
+            # If we get an error we should retry sooner than the next refresh interval
+            if self._on_refresh_error:
+                self._on_refresh_error(e)
                 return
-        if did_update:
-            if self._on_refresh_success:
+            raise
+        finally:
+            self._refresh_lock.release()
+            if not success:
+                self._refresh_timer.backoff()
+            elif need_refresh and self._on_refresh_success:
                 self._on_refresh_success()
 
     def refresh_configuration_settings(self, configuration_settings, sentinel_keys, timer, **kwargs) -> None:
@@ -580,7 +620,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 # Sentinel keys will have unprocessed key names, so we need to use the original key.
                 if (config.key, config.label) in self._refresh_on:
                     sentinel_keys[(config.key, config.label)] = config.etag
-        return configuration_settings, sentinel_keys
+        self._refresh_on = sentinel_keys
+        with self._update_lock:
+            self._dict = configuration_settings
 
     def _load_feature_flags(self, **kwargs):
         feature_flag_sentinel_keys = {}
@@ -656,31 +698,32 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         :rtype: Iterable[str]
         """
         with self._update_lock:
-            return self._dict.keys()
+            return list(self._dict.keys())
 
-    def items(self) -> Iterable[Tuple[str, str]]:
+    def items(self) -> Iterable[Tuple[str, Union[str, JSON]]]:
         """
-        Returns a list of key-value pairs loaded from Azure App Configuration. Any values that are Key Vault references
-        will be resolved.
+        Returns a set-like object of key-value pairs loaded from Azure App Configuration. Any values that are Key Vault
+         references will be resolved.
 
-        :return: A list of key-value pairs loaded from Azure App Configuration.
-        :rtype: Iterable[Tuple[str, str]]
+        :return: A set-like object of key-value pairs loaded from Azure App Configuration.
+        :rtype: Iterable[Tuple[str, Union[str, JSON]]]
         """
         with self._update_lock:
-            return self._dict.items()
+            return copy.deepcopy(self._dict.items())
 
-    def values(self) -> Iterable[str]:
+    def values(self) -> Iterable[Union[str, JSON]]:
         """
         Returns a list of values loaded from Azure App Configuration. Any values that are Key Vault references will be
         resolved.
 
-        :return: A list of values loaded from Azure App Configuration.
-        :rtype: Iterable[str]
+        :return: A list of values loaded from Azure App Configuration. The values are either Strings or JSON objects,
+        based on there content type.
+        :rtype: Iterable[[str], [JSON]]
         """
         with self._update_lock:
-            return self._dict.values()
+            return copy.deepcopy(list((self._dict.values())))
 
-    def get(self, key: str, default: Optional[str] = None) -> str:
+    def get(self, key: str, default: Optional[str] = None) -> Union[str, JSON]:
         """
         Returns the value of the specified key. If the key does not exist, returns the default value.
 
@@ -688,10 +731,10 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         :param default: The default value to return.
         :type: str or None
         :return: The value of the specified key.
-        :rtype: str
+        :rtype: Union[str, JSON]
         """
         with self._update_lock:
-            return self._dict.get(key, default)
+            return copy.deepcopy(self._dict.get(key, default))
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, AzureAppConfigurationProvider):

@@ -8,7 +8,7 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union, List, Type, Any
 
-from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     AccessKeyAuthTypeWorkspaceConnectionProperties,
     ApiKeyAuthWorkspaceConnectionProperties,
     ConnectionAuthType,
@@ -19,7 +19,7 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     ServicePrincipalAuthTypeWorkspaceConnectionProperties,
     UsernamePasswordAuthTypeWorkspaceConnectionProperties,
 )
-from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     WorkspaceConnectionPropertiesV2BasicResource as RestWorkspaceConnection,
     ConnectionCategory,
 )
@@ -37,6 +37,7 @@ from azure.ai.ml.constants._common import (
     CONNECTION_API_TYPE_KEY,
     CONNECTION_API_VERSION_KEY,
     CONNECTION_KIND_KEY,
+    WorkspaceConnectionTypes,
 )
 from azure.ai.ml.entities._credentials import (
     AccessKeyConfiguration,
@@ -52,8 +53,9 @@ from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 
 
-# Dev note: The acceptables strings for the type field are all snake_cased versions of the string constants defined
-# In the rest client ConnectionCategory. We avoid directly referencing it in the docs to avoid restclient references.
+# Dev note: The acceptable strings for the type field are all snake_cased versions of the string constants defined
+# In the rest client enum defined at _azure_machine_learning_services_enums.ConnectionCategory.
+# We avoid directly referencing it in the docs to avoid restclient references.
 @experimental
 class WorkspaceConnection(Resource):
     """Azure ML workspace connection provides a secure way to store authentication and configuration information needed
@@ -71,14 +73,18 @@ class WorkspaceConnection(Resource):
     :param type: The category of external resource for this connection.
     :type type: The type of workspace connection, possible values are: "git", "python_feed", "container_registry",
         "feature_store", "s3", "snowflake", "azure_sql_db", "azure_synapse_analytics", "azure_my_sql_db",
-        "azure_postgres_db"
-    :param credentials: The credentials for authenticating to the external resource.
+        "azure_postgres_db", "custom".
+    :param credentials: The credentials for authenticating to the external resource. Note that certain connection
+        types (as defined by the type input) only accept certain types of credentials.
     :type credentials: Union[
         ~azure.ai.ml.entities.PatTokenConfiguration, ~azure.ai.ml.entities.SasTokenConfiguration,
         ~azure.ai.ml.entities.UsernamePasswordConfiguration, ~azure.ai.ml.entities.ManagedIdentityConfiguration
         ~azure.ai.ml.entities.ServicePrincipalConfiguration, ~azure.ai.ml.entities.AccessKeyConfiguration,
         ~azure.ai.ml.entities.ApiKeyConfiguration
         ]
+    :param is_shared: For connections in lean workspaces, this controls whether or not this connection
+        is shared amongst other lean workspaces that are shared by the parent hub. Defaults to true.
+    :type is_shared: bool
     """
 
     def __init__(
@@ -96,6 +102,7 @@ class WorkspaceConnection(Resource):
             AccessKeyConfiguration,
             ApiKeyConfiguration,
         ],
+        is_shared: bool = True,
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -103,6 +110,7 @@ class WorkspaceConnection(Resource):
         self.type = type
         self._target = target
         self._credentials = credentials
+        self._is_shared = is_shared
 
     @property
     def type(self) -> str:
@@ -176,6 +184,27 @@ class WorkspaceConnection(Resource):
             return
         self.tags = value
 
+    @property
+    def is_shared(self) -> bool:
+        """Get the Boolean describing if this connection is shared
+            amongst its cohort within a workspace hub. Only applicable for connections created
+            within a lean workspace.
+        :rtype: bool
+        """
+        return self._is_shared
+
+    @is_shared.setter
+    def is_shared(self, value: bool):
+        """Assign the is_shared property of the connection, determining if it is shared amongst other
+            lean workspaces within its parent workspace hub. Only applicable for connections created
+            within a lean workspace workspace.
+        :param value: The new is_shared value.
+        :type value: bool
+        """
+        if not value:
+            return
+        self._is_shared = value
+
     def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the workspace connection spec into a file in yaml format.
 
@@ -245,6 +274,9 @@ class WorkspaceConnection(Resource):
             popped_tags = [CONNECTION_API_VERSION_KEY, CONNECTION_KIND_KEY]
 
         rest_kwargs = cls._extract_kwargs_from_rest_obj(rest_obj=rest_obj, popped_tags=popped_tags)
+        # Renaming for client clarity
+        if rest_kwargs["type"] == camel_to_snake(ConnectionCategory.CUSTOM_KEYS):
+            rest_kwargs["type"] = WorkspaceConnectionTypes.CUSTOM
         workspace_connection = conn_class(**rest_kwargs)
         return workspace_connection
 
@@ -272,11 +304,17 @@ class WorkspaceConnection(Resource):
         elif auth_type is None:
             workspace_connection_properties_class = NoneAuthTypeWorkspaceConnectionProperties
 
+        # Convert from human readable to api enums if needed.
+        conn_type = self.type
+        if conn_type == WorkspaceConnectionTypes.CUSTOM:
+            conn_type = ConnectionCategory.CUSTOM_KEYS
+
         properties = workspace_connection_properties_class(
             target=self.target,
             credentials=self.credentials._to_workspace_connection_rest_object(),
             metadata=self.tags,
-            category=_snake_to_camel(self.type),
+            category=_snake_to_camel(conn_type),
+            is_shared_to_all=self.is_shared,
         )
 
         return RestWorkspaceConnection(properties=properties)
@@ -322,6 +360,7 @@ class WorkspaceConnection(Resource):
             "type": camel_to_snake(properties.category),
             "credentials": credentials,
             "tags": tags,
+            "is_shared": properties.is_shared_to_all if hasattr(properties, "is_shared_to_all") else True,
         }
 
         for name in popped_tags:

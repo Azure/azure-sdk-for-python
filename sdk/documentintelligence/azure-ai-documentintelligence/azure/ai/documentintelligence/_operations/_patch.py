@@ -30,7 +30,6 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dic
 
 
 class DocumentIntelligenceAdministrationClientOperationsMixin(GeneratedDIAdminClientOps):  # pylint: disable=name-too-long
-    __doc__ = GeneratedDIAdminClientOps.__doc__
 
     @distributed_trace
     def begin_build_classifier(

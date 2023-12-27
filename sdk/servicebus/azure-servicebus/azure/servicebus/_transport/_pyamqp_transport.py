@@ -96,6 +96,7 @@ if TYPE_CHECKING:
     from .._common._configuration import Configuration
     from .._pyamqp.performatives import AttachFrame, TransferFrame
     from .._pyamqp.client import AMQPClient
+    from .._pyamqp.message import MessageDict
 
 
 class _ServiceBusErrorPolicy(RetryPolicy):
@@ -210,26 +211,26 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     @staticmethod
     def get_message_delivery_tag(
         _, frame: "TransferFrame"
-    ) -> str:  # pylint: disable=unused-argument
+    ) -> Optional[bytes]:
         """
         Gets delivery tag of a Message.
         :param any _: Ignored.
         :param ~pyamqp.performatives.TransferFrame frame: Frame to get delivery_tag from for pyamqp.Message.
         :return: Delivery tag of the message.
-        :rtype: str
+        :rtype: bytes or None
         """
         return frame[2] if frame else None
 
     @staticmethod
     def get_message_delivery_id(
         _, frame: "TransferFrame"
-    ) -> str:  # pylint: disable=unused-argument
+    ) -> Optional[int]:
         """
         Gets delivery id of a Message.
         :param any _: Ignored.
         :param ~pyamqp.performatives.TransferFrame frame: Message to get delivery_id from for pyamqp.Message.
         :return: Delivery id of the message.
-        :rtype: str
+        :rtype: int or None
         """
         return frame[1] if frame else None
 
@@ -356,6 +357,12 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         if not message.application_properties:
             message = message._replace(application_properties={})
+        # TODO: fix error when typing pyamqp: `Property "application_properties" defined in "Message" is read-only `
+        # may be able to add @property.setter to app props in pyamqp.Message to fix this
+        message.application_properties = cast(  # type: ignore[misc]
+            Dict[Union[str, bytes], Any], message.application_properties
+        )
+        # casting from Optional to Dict above for use with setdefault
         message.application_properties.setdefault(key, value)
         return message
 
@@ -367,7 +374,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :return: Batch message encoded size.
         :rtype: int
         """
-        return utils.get_message_encoded_size(BatchMessage(*message))
+        # casting to TypedDict with named fields to allow for unpacking with *
+        message_list = cast("MessageDict", message)
+        return utils.get_message_encoded_size(BatchMessage(*message_list))
 
     @staticmethod
     def get_message_encoded_size(message: "Message") -> int:
@@ -695,13 +704,13 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def build_received_message(
         receiver: "ServiceBusReceiver",
         message_type: Type["ServiceBusReceivedMessage"],
-        received: "Message"
+        received: Tuple["TransferFrame", "Message"],
     ) -> "ServiceBusReceivedMessage":
         """
         Build ServiceBusReceivedMessage.
         :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver object.
         :param type message_type: The type of message to build.
-        :param ~pyamqp.message.Message received: The received message.
+        :param tuple[~pyamqp.performatives.TransferFrame, ~pyamqp.message.Message] received: The received message.
         :return: The built ServiceBusReceivedMessage.
         :rtype: ~azure.servicebus.ServiceBusReceivedMessage
         """
@@ -807,13 +816,14 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: list[~azure.servicebus.ServiceBusReceivedMessage]
         """
         parsed = []
-        for m in message.value[b"messages"]:
-            wrapped = decode_payload(memoryview(m[b"message"]))
-            parsed.append(
-                message_type(
-                    wrapped, **kwargs
+        if message.value:
+            for m in message.value[b"messages"]:
+                wrapped = decode_payload(memoryview(m[b"message"]))
+                parsed.append(
+                    message_type(
+                        wrapped, **kwargs
+                    )
                 )
-            )
         return parsed
 
     @staticmethod
@@ -866,7 +876,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     @staticmethod
     def create_mgmt_msg(
         message: "Message",
-        application_properties: Dict[str, Any],
+        application_properties: Optional[Dict[Union[str, bytes], Any]],
         config: "Configuration",
         reply_to: str,
         **kwargs: Any
@@ -879,7 +889,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param str reply_to: Reply to.
         :rtype: ~pyamqp.message.Message
         """
-        return Message( # type: ignore # TODO: fix mypy error
+        return Message(
             value=message,
             properties=Properties(
                 reply_to=reply_to,
@@ -923,8 +933,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     @staticmethod
     def _handle_amqp_exception_with_condition(
         logger: "Logger",
-        condition: Optional["ErrorCondition"],
-        description: str,
+        condition: Optional[Union[bytes, "ErrorCondition"]],
+        description: Optional[Union[str, bytes]] = None,
         exception: Optional["AMQPException"] = None,
         status_code: Optional[str] = None,
         *,

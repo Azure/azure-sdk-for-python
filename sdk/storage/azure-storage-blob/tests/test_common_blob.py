@@ -3335,4 +3335,26 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         response = blob.exists()
         assert response is not None
 
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_oauth_error_handling(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        # Arrange
+        from azure.identity import ClientSecretCredential
+
+        # Generate an invalid credential
+        creds = ClientSecretCredential(
+            self.get_settings_value("TENANT_ID"),
+            self.get_settings_value("CLIENT_ID"),
+            self.get_settings_value("CLIENT_SECRET") + 'a'
+        )
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=creds, retry_total=0)
+        container = bsc.get_container_client('testing')
+
+        # Act
+        with pytest.raises(ClientAuthenticationError):
+            container.exists()
+
     # ------------------------------------------------------------------------------

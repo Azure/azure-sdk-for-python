@@ -37,11 +37,13 @@ def main():
             "properties": {
                 "orchestrationMode": "Flexible",
                 "priorityMixPolicy": {"baseRegularPriorityCount": 4, "regularPriorityPercentageAboveBase": 50},
+                "platformFaultDomainCount": 1,
                 "singlePlacementGroup": False,
                 "virtualMachineProfile": {
                     "billingProfile": {"maxPrice": -1},
                     "evictionPolicy": "Deallocate",
                     "networkProfile": {
+                        "networkApiVersion": "2020-11-01",
                         "networkInterfaceConfigurations": [
                             {
                                 "name": "{vmss-name}",
@@ -89,6 +91,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2023-07-01/examples/virtualMachineScaleSetExamples/VirtualMachineScaleSet_Create_WithPriorityMixPolicy.json
+# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2023-09-01/examples/virtualMachineScaleSetExamples/VirtualMachineScaleSet_Create_WithPriorityMixPolicy.json
 if __name__ == "__main__":
     main()
