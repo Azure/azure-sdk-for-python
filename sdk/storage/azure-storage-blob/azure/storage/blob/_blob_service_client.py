@@ -24,7 +24,7 @@ from ._encryption import StorageEncryptionMixin
 from ._generated import AzureBlobStorage
 from ._generated.models import KeyInfo, StorageServiceProperties
 from ._list_blobs_helper import FilteredBlobPaged
-from ._models import BlobProperties, ContainerPropertiesPaged
+from ._models import BlobProperties, ContainerProperties, ContainerPropertiesPaged
 from ._serialize import get_api_version
 from ._shared.base_client import parse_connection_str, parse_query, StorageAccountHostsMixin, TransportWrapper
 from ._shared.models import LocationMode
@@ -42,7 +42,6 @@ if TYPE_CHECKING:
     from ._lease import BlobLeaseClient
     from ._models import (
         BlobAnalyticsLogging,
-        ContainerProperties,
         FilteredBlob,
         Metrics,
         PublicAccess,
@@ -404,7 +403,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         self, name_starts_with: Optional[str] = None,
         include_metadata: Optional[bool] = False,
         **kwargs: Any
-    ) -> ItemPaged["ContainerProperties"]:
+    ) -> ItemPaged[ContainerProperties]:
         """Returns a generator to list the containers under the specified account.
 
         The generator will lazily follow the continuation tokens returned by
@@ -555,7 +554,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def delete_container(
-        self, container: Union["ContainerProperties", str],
+        self, container: Union[ContainerProperties, str],
         lease: Optional[Union["BlobLeaseClient", str]] = None,
         **kwargs: Any
     ) -> None:
@@ -722,7 +721,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)
 
     def get_blob_client(
-        self, container: Union["ContainerProperties", str],
+        self, container: Union[ContainerProperties, str],
         blob: str,
         snapshot: Optional[Union[Dict[str, Any], str]] = None,
         *,
