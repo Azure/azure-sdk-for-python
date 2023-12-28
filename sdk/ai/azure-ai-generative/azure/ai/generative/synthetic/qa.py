@@ -27,13 +27,13 @@ try:
     openai_version = pkg_resources.parse_version(openai_version_str)
     import openai
     if openai_version >= pkg_resources.parse_version("1.0.0"):
-        _RETRY_ERRORS = (
+        _RETRY_ERRORS: Tuple = (
             openai.APIConnectionError ,
             openai.APIError,
             openai.APIStatusError
         )
     else:
-        _RETRY_ERRORS = (
+        _RETRY_ERRORS: Tuple = (  # type: ignore[no-redef]
             openai.error.ServiceUnavailableError,
             openai.error.APIError,
             openai.error.RateLimitError,
@@ -166,10 +166,10 @@ class QADataGenerator:
 
         activity_logger.update_info()
 
-    def _validate(self, qa_type: QAType, num_questions: int):
+    def _validate(self, qa_type: QAType, num_questions: Optional[int]):
         if qa_type == QAType.SUMMARY and num_questions is not None:
             raise ValueError("num_questions unsupported for Summary QAType")
-        if qa_type != QAType.SUMMARY and num_questions <= 0:
+        if qa_type != QAType.SUMMARY and num_questions <= 0:  # type: ignore[operator]
             raise ValueError("num_questions must be an integer greater than zero")
 
     def _get_messages_for_qa_type(self, qa_type: QAType, text: str, num_questions: int) -> List:
@@ -183,7 +183,7 @@ class QADataGenerator:
         }
         filename = template_filename[qa_type]
         messages = self._get_messages_from_file(filename)
-        input_variables = {"text": text}
+        input_variables: Dict[str, Any] = {"text": text}
         if qa_type == QAType.SUMMARY:
             input_variables["num_words"] = 100
         else:
@@ -277,7 +277,7 @@ class QADataGenerator:
             answer_key = "ground_truth"
             chat_history_key = field_mapping.get("chat_history_key", "chat_history")
             for qs_and_as in results:
-                chat_history = []
+                chat_history: List = []
                 for question, answer in qs_and_as: 
                     data_dict[chat_history_key].append(list(chat_history))
                     if qa_type == QAType.CONVERSATION:
@@ -316,9 +316,10 @@ class QADataGenerator:
     @distributed_trace
     @monitor_with_activity(logger, "QADataGenerator.Generate", ActivityType.INTERNALCALL)
     def generate(self, text: str, qa_type: QAType, num_questions: Optional[int] = None) -> Dict:
-        self._validate(qa_type, num_questions)
+        self._validate(qa_type, num_questions)  
+        validated_num_questions: int = num_questions  # type: ignore[assignment]
         content, token_usage = _completion_with_retries(
-            messages=self._get_messages_for_qa_type(qa_type, text, num_questions),
+            messages=self._get_messages_for_qa_type(qa_type, text, validated_num_questions),
             **self._chat_completion_params,
         )
         questions, answers = self._parse_qa_from_response(content)
@@ -347,8 +348,9 @@ class QADataGenerator:
     @monitor_with_activity(logger, "QADataGenerator.GenerateAsync", ActivityType.INTERNALCALL)
     async def generate_async(self, text: str, qa_type: QAType, num_questions: Optional[int] = None) -> Dict:
         self._validate(qa_type, num_questions)
+        validated_num_questions: int = num_questions  # type: ignore[assignment]
         content, token_usage = await _completion_with_retries_async(
-            messages=self._get_messages_for_qa_type(qa_type, text, num_questions),
+            messages=self._get_messages_for_qa_type(qa_type, text, validated_num_questions),
             **self._chat_completion_params,
         )
         questions, answers = self._parse_qa_from_response(content)
