@@ -15,7 +15,7 @@
 - Shutdown statsbeat on customer getting 400 error code
     ([#33489](https://github.com/Azure/azure-sdk-for-python/pull/33489))
 - Track custom events extension in feature statsbeat
-    ([#33489](https://github.com/Azure/azure-sdk-for-python/pull/33489))
+    ([#33667](https://github.com/Azure/azure-sdk-for-python/pull/33667))
 
 ## 1.0.0b19 (2023-11-20)
 

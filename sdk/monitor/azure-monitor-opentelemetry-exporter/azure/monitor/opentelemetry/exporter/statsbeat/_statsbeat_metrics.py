@@ -28,7 +28,6 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP_LOCK,
     _REQUESTS_MAP,
     get_statsbeat_custom_events_feature_set,
-    set_statsbeat_custom_events_feature_set,
 )
 from azure.monitor.opentelemetry.exporter import _utils
 
