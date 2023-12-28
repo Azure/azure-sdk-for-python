@@ -8,7 +8,7 @@ import os
 import time
 import traceback
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Dict, Iterator, List, Optional, Union
 
 import yaml  # type: ignore[import]
 from packaging import version as pkg_version
@@ -94,13 +94,14 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
             elif field_type == "metadata":
                 fields.append(SimpleField(name=field_name, type=SearchFieldDataType.String))
             elif field_type == "embedding":
+                # TODO: Bug 2878424 to address type: ignore in this section
                 if current_version >= pkg_version.parse("11.4.0b11"):
                     fields.append(
                         SearchField(
                             name=field_name,
                             type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
                             searchable=True,
-                            vector_search_dimensions=embeddings.get_embedding_dimensions(),
+                            vector_search_dimensions=embeddings.get_embedding_dimensions(),  # type: ignore[union-attr]
                             vector_search_profile=f"{field_name}_config",
                         )
                     )
@@ -110,7 +111,7 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
                             name=field_name,
                             type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
                             searchable=True,
-                            vector_search_dimensions=embeddings.get_embedding_dimensions(),
+                            vector_search_dimensions=embeddings.get_embedding_dimensions(),  # type: ignore[union-attr]
                             vector_search_configuration=f"{field_name}_config",
                         )
                     )
@@ -280,7 +281,7 @@ def create_index_from_raw_embeddings(
             return []
 
         # Delete removed documents
-        def batched_docs_to_delete(embeddings_container) -> List[str]:
+        def batched_docs_to_delete(embeddings_container) -> Iterator[List[Dict[str, str]]]:
             num_deleted_ids = 0
             deleted_ids = []
             for source_id, source in emb._deleted_sources.items():
@@ -320,7 +321,7 @@ def create_index_from_raw_embeddings(
             if len(failed) > 0:
                 logger.info(f"Retrying {len(failed)} documents")
                 failed_ids = [fail["key"] for fail in failed]
-                results = search_client.delete_documents([doc for doc in delete_batch if doc["id"] in failed_ids])
+                results = search_client.delete_documents([doc for doc in delete_batch if doc["id"] in failed_ids])  # type: ignore[index]
                 failed = process_upload_results(results, start_time)
                 if len(failed) > 0:
                     raise RuntimeError(f"Failed to delete {len(failed)} documents.")
@@ -366,7 +367,9 @@ def create_index_from_raw_embeddings(
             # is_local=False when the EmbeddedDocuments data/embeddings are referenced from a remote source,
             # which is the case when the data was reused from a previous snapshot. is_local=True means the data
             # was generated for this snapshot and needs to pushed to the index.
-            if syncing_index and isinstance(emb_doc, ReferenceEmbeddedDocument) and not emb_doc.is_local:
+            
+            # TODO: Bug 2878426
+            if syncing_index and isinstance(emb_doc, ReferenceEmbeddedDocument) and not emb_doc.is_local:  # type: ignore[attr-defined]
                 skipped_prefix_documents += 1
                 num_source_docs += 1
                 if verbosity > 2:
