@@ -36,7 +36,7 @@ def crack_and_chunk_and_embed_and_index(
     use_rcts: bool = True,
     custom_loader: Optional[str] = None,
     citation_url: Optional[str] = None,
-    citation_replacement_regex: Optional[Dict[str, str]] = None,
+    citation_replacement_regex: Optional[Union[str, bytes, bytearray]] = None,
     embeddings_model: str = "hugging_face://model/sentence-transformers/all-mpnet-base-v2",
     embeddings_connection: Optional[str] = None,
     embeddings_cache: Optional[Union[str, Path]] = None,
