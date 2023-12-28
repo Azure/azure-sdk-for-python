@@ -88,7 +88,7 @@ def crack_and_chunk_and_embed(
 
     # Below is destructive to EmbeddingsContainer in-memory tables
     # TODO: log metrics for reused_sources, deleted_sources, and sources_to_embed
-    sources_to_embed: Iterator[DocumentSource] = OrderedDict()
+    sources_to_embed: Dict[str, DocumentSource] = OrderedDict() 
     reused_sources = OrderedDict()
     for source_doc in filter_and_log_extensions(source_documents):  # type: ignore[operator]
         mtime = source_doc.mtime
@@ -145,7 +145,8 @@ def crack_and_chunk_and_embed(
             custom_loading(python_file_path, extension_loaders, extension_splitters)
 
     splitter_args = {"chunk_size": chunk_size, "chunk_overlap": chunk_overlap, "use_rcts": use_rcts}
-    cracked_sources = crack_documents(sources_to_embed.values(), file_extension_loaders=extension_loaders)
+    sources_to_embed_values: Iterator[DocumentSource] = iter(sources_to_embed.values())
+    cracked_sources = crack_documents(sources_to_embed_values, file_extension_loaders=extension_loaders)
     chunked_docs = split_documents(cracked_sources, splitter_args=splitter_args, file_extension_splitters=extension_splitters)
 
     documents_to_embed: List[Document] = []
