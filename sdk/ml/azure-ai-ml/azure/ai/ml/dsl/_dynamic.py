@@ -4,7 +4,7 @@
 import logging
 import types
 from inspect import Parameter, Signature
-from typing import Callable, Dict, Sequence
+from typing import Any, Callable, Dict, Sequence
 
 from azure.ai.ml.entities import Component
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, UnexpectedKeywordError, ValidationException
@@ -26,7 +26,9 @@ class KwParameter(Parameter):
     :type _optional: bool
     """
 
-    def __init__(self, name, default, annotation=Parameter.empty, _type="str", _optional=False) -> None:
+    def __init__(
+        self, name: str, default: Any, annotation: Any = Parameter.empty, _type: str = "str", _optional: bool = False
+    ) -> None:
         super().__init__(name, Parameter.KEYWORD_ONLY, default=default, annotation=annotation)
         self._type = _type
         self._optional = _optional
@@ -56,6 +58,7 @@ def _replace_function_name(func: types.FunctionType, new_name: str) -> types.Fun
             # https://github.com/python/cpython/blob/v3.7.8/Objects/codeobject.c#L97
             code = types.CodeType(
                 code_template.co_argcount,
+                code_template.co_posonlyargcount,
                 code_template.co_kwonlyargcount,
                 code_template.co_nlocals,
                 code_template.co_stacksize,
@@ -89,7 +92,7 @@ def _replace_function_name(func: types.FunctionType, new_name: str) -> types.Fun
 
 
 # pylint: disable-next=docstring-missing-param
-def _assert_arg_valid(kwargs: dict, keys: list, func_name: str):
+def _assert_arg_valid(kwargs: dict, keys: list, func_name: str) -> None:
     """Assert the arg keys are all in keys."""
     # pylint: disable=protected-access
     # validate component input names
@@ -114,7 +117,7 @@ def _assert_arg_valid(kwargs: dict, keys: list, func_name: str):
         kwargs[lower2original_parameter_names[key.lower()]] = kwargs.pop(key)
 
 
-def _update_dct_if_not_exist(dst: Dict, src: Dict):
+def _update_dct_if_not_exist(dst: Dict, src: Dict) -> None:
     """Computes the union of `src` and `dst`, in-place within `dst`
 
     If a key exists in `dst` and `src` the value in `dst` is preserved
@@ -162,7 +165,7 @@ def create_kw_function_from_parameters(
         )
     default_kwargs = {p.name: p.default for p in parameters}
 
-    def f(**kwargs):
+    def f(**kwargs: Any) -> Any:
         # We need to make sure all keys of kwargs are valid.
         # Merge valid group keys with original keys.
         _assert_arg_valid(kwargs, [*list(default_kwargs.keys()), *flattened_group_keys], func_name=func_name)
@@ -183,5 +186,5 @@ def create_kw_function_from_parameters(
     f.__doc__ = documentation  # Set documentation to update FUNC_DOC in help.
     # Set module = None to avoid showing the sentence `in module 'azure.ai.ml.component._dynamic' in help.`
     # See https://github.com/python/cpython/blob/2145c8c9724287a310bc77a2760d4f1c0ca9eb0c/Lib/pydoc.py#L1757
-    f.__module__ = None
+    f.__module__ = None  # type: ignore
     return f

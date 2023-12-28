@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Callable, Mapping
+from typing import Any, Callable, List, Mapping
 
 from azure.ai.ml.dsl._dynamic import KwParameter, create_kw_function_from_parameters
 from azure.ai.ml.entities import Component as ComponentEntity
@@ -12,7 +12,7 @@ from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._component.datatransfer_component import DataTransferImportComponent
 
 
-def get_dynamic_input_parameter(inputs: Mapping):
+def get_dynamic_input_parameter(inputs: Mapping) -> List:
     """Return the dynamic parameter of the definition's input ports.
 
     :param inputs: The mapping of input names to input objects.
@@ -31,7 +31,7 @@ def get_dynamic_input_parameter(inputs: Mapping):
     ]
 
 
-def get_dynamic_source_parameter(source):
+def get_dynamic_source_parameter(source: Any) -> List:
     """Return the dynamic parameter of the definition's source port.
 
     :param source: The source object.
@@ -49,7 +49,7 @@ def get_dynamic_source_parameter(source):
     ]
 
 
-def to_component_func(entity: ComponentEntity, component_creation_func) -> Callable[..., Command]:
+def to_component_func(entity: ComponentEntity, component_creation_func: Callable) -> Callable[..., Command]:
     """Convert a ComponentEntity to a callable component function.
 
     :param entity: The ComponentEntity to convert.
