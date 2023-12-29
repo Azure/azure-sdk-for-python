@@ -465,9 +465,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         self._refresh_on_feature_flags = None
         self._feature_flag_refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._feature_flag_refresh_enabled = kwargs.pop("feature_flag_refresh_enabled", False)
-        self._feature_flag_trim_prefixes: List[str] = []
         feature_flag_trim_prefixes = kwargs.pop("feature_flag_trim_prefixes", [])
-        self._feature_flag_trim_prefixes = sorted(feature_flag_trim_prefixes, key=len, reverse=True)
+        self._feature_flag_trim_prefixes: List[str] = sorted(feature_flag_trim_prefixes, key=len, reverse=True)
         self._update_lock = Lock()
         self._refresh_lock = Lock()
 
