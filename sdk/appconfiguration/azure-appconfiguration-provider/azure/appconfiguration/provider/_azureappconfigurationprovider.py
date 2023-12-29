@@ -109,8 +109,8 @@ def load(
     :keyword feature_flag_refresh_enabled: Optional flag to enable or disable the refresh of feature flags. Default is
      False.
     :paramtype feature_flag_trim_prefixes: List[str]
-    :keyword feature_flag_trim_prefixes: Optional list of prefixes to trim from feature flag keys. By default will trim
-     the FEATURE_FLAG_PREFIX.
+    :keyword feature_flag_trim_prefixes: After the FEATURE_FLAG_PREFIX is trimmed, the first match in
+    feature_flag_trim_prefixes will be trimmed, if there is one.
     """
 
 
@@ -164,8 +164,8 @@ def load(
     :keyword feature_flag_refresh_enabled: Optional flag to enable or disable the refresh of feature flags. Default is
      False.
     :paramtype feature_flag_trim_prefixes: List[str]
-    :keyword feature_flag_trim_prefixes: Optional list of prefixes to trim from feature flag keys. By default will trim
-     the FEATURE_FLAG_PREFIX.
+    :keyword feature_flag_trim_prefixes: OAfter the FEATURE_FLAG_PREFIX is trimmed, the first match in
+    feature_flag_trim_prefixes will be trimmed, if there is one.
     """
 
 
@@ -558,11 +558,12 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             # Even if we don't need to refresh, we should reset the timer
             timer.reset()
         except (ServiceRequestError, ServiceResponseError, HttpResponseError) as e:
-            # If we get an error we should retry sooner than the next refresh interval
+            # If a call back is provided, we should call it, otherwise raise the error
             if not self._on_refresh_error:
                 raise
             self._on_refresh_error(e)
         finally:
+            # If we get an error we should retry sooner than the next refresh interval
             if not success:
                 timer.backoff()
         return configuration_settings, sentinel_keys, need_refresh or updated_feature_flags
@@ -643,8 +644,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         # Trim the key if it starts with one of the prefixes provided
 
         # Feature Flags have there own prefix, so we need to trim that first
-        if isinstance(config, FeatureFlagConfigurationSetting) and trimmed_key.startswith(FEATURE_FLAG_PREFIX):
-            trimmed_key = trimmed_key[len(FEATURE_FLAG_PREFIX) :]
+        if isinstance(config, FeatureFlagConfigurationSetting):
+            if trimmed_key.startswith(FEATURE_FLAG_PREFIX):
+                trimmed_key = trimmed_key[len(FEATURE_FLAG_PREFIX) :]
             for trim in self._feature_flag_trim_prefixes:
                 if trimmed_key.startswith(trim):
                     trimmed_key = trimmed_key[len(trim) :]
