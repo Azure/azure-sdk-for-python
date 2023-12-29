@@ -597,8 +597,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         if self._feature_flag_enabled:
             configuration_settings[FEATURE_MANAGEMENT_KEY] = feature_flags
             self._refresh_on_feature_flags = feature_flag_sentinel_keys
-        self._refresh_on = sentinel_keys
-        self._dict = configuration_settings
+        with self._update_lock:
+            self._refresh_on = sentinel_keys
+            self._dict = configuration_settings
 
     def _load_configuration_settings(self, **kwargs):
         configuration_settings = {}
@@ -620,9 +621,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 # Sentinel keys will have unprocessed key names, so we need to use the original key.
                 if (config.key, config.label) in self._refresh_on:
                     sentinel_keys[(config.key, config.label)] = config.etag
-        self._refresh_on = sentinel_keys
-        with self._update_lock:
-            self._dict = configuration_settings
+        return configuration_settings, sentinel_keys
 
     def _load_feature_flags(self, **kwargs):
         feature_flag_sentinel_keys = {}
