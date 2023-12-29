@@ -164,7 +164,7 @@ def load(
     :keyword feature_flag_refresh_enabled: Optional flag to enable or disable the refresh of feature flags. Default is
      False.
     :paramtype feature_flag_trim_prefixes: List[str]
-    :keyword feature_flag_trim_prefixes: OAfter the FEATURE_FLAG_PREFIX is trimmed, the first match in
+    :keyword feature_flag_trim_prefixes: After the FEATURE_FLAG_PREFIX is trimmed, the first match in
     feature_flag_trim_prefixes will be trimmed, if there is one.
     """
 
