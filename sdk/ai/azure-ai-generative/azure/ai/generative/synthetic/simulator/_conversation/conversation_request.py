@@ -24,5 +24,5 @@ class ConversationRequest:
         return self._instantiation
 
     @property
-    def writer(self) -> ConversationWriter:
+    def writer(self) -> Optional[ConversationWriter]:
         return self._writer

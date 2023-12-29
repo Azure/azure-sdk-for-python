@@ -15,6 +15,15 @@ from azure.ai.generative.index._utils.connections import (
 )
 from azure.ai.generative.index._utils.logging import get_logger
 
+try:
+    from azure.ai.resources.entities import BaseConnection
+except Exception:
+    BaseConnection = None
+try:
+    from azure.ai.ml.entities import WorkspaceConnection
+except Exception:
+    WorkspaceConnection = None
+
 logger = get_logger(__name__)
 
 
@@ -83,11 +92,12 @@ def init_open_ai_from_config(config: dict, credential: Optional[TokenCredential]
                 connection = get_connection_by_id_v2(connection_id, credential=credential)
                 # Only change base, version, and type in AOAI case
                 if hasattr(connection, "type"):
-                    if connection.type == "azure_open_ai":
-                        config["api_base"] = connection.target
-                        connection_metadata = connection.metadata
-                        config["api_version"] = connection.metadata.get("apiVersion", connection_metadata.get("ApiVersion", "2023-07-01-preview"))
-                        config["api_type"] = connection.metadata.get("apiType", connection_metadata.get("ApiType", "azure")).lower()
+                    connection_obj: Union[WorkspaceConnection, BaseConnection] = connection
+                    if connection_obj.type == "azure_open_ai":
+                        config["api_base"] = connection_obj.target
+                        connection_metadata = connection_obj.metadata
+                        config["api_version"] = connection_obj.metadata.get("apiVersion", connection_metadata.get("ApiVersion", "2023-07-01-preview"))
+                        config["api_type"] = connection_obj.metadata.get("apiType", connection_metadata.get("ApiType", "azure")).lower()
                 elif isinstance(connection, dict) and connection.get("properties", {}).get("category", None) == "AzureOpenAI":
                     config["api_base"] = connection.get("properties", {}).get("target")
                     connection_metadata = connection.get("properties", {}).get("metadata", {})
