@@ -53,7 +53,7 @@ def get_model_config(llm_config: Dict[str, Union[str, int]], openai_api_type: st
         connection = get_connection_by_id_v2(connection_id)
         # Only change base, version, and type in AOAI case, otherwise trust input
         if connection.get('properties', {}).get("category", None) == "AzureOpenAI":
-            model_config["api_base"] = connection['properties'].get('target', {})
+            model_config["api_base"] = connection['properties'].get('target', {})  # type: ignore[assignment]
             model_config["api_type"] = connection['properties'].get('metadata', {}).get('apiType', "azure")
             model_config["api_version"] = connection['properties'].get('metadata', {}).get('apiVersion', "2023-03-15-preview")
         credential = connection_to_credential(connection)
