@@ -641,7 +641,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         trimmed_key = config.key
         # Trim the key if it starts with one of the prefixes provided
 
-        # Feature Flags have there own prefix, so we need to trim that first
+        # Feature Flags have their own prefix, so we need to trim that first
         if isinstance(config, FeatureFlagConfigurationSetting) and trimmed_key.startswith(FEATURE_FLAG_PREFIX):
             trimmed_key = trimmed_key[len(FEATURE_FLAG_PREFIX) :]
             for trim in self._feature_flag_trim_prefixes:
