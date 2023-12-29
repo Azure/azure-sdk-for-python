@@ -9,7 +9,7 @@ class EvaluationResult(object):
         self._metrics_summary = metrics_summary
         self._artifacts = artifacts
         self._tracking_uri: Optional[str] = kwargs.get("tracking_uri")
-        self._evaluation_id: Optional[str] = kwargs.get("evaluation_id")
+        self._evaluation_id: str = kwargs.get("evaluation_id", "")
         if self._tracking_uri:
             self._studio_url = _get_ai_studio_url(self._tracking_uri, self._evaluation_id)
 
