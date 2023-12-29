@@ -329,7 +329,7 @@ class ReferenceEmbeddedDocument(EmbeddedDocument):
         table = self.open_embedding_file(os.path.join(self.embeddings_container_path, self.path_to_data))
         return table.column("data")[self.index].as_py()
 
-    def get_embeddings(self) -> str:
+    def get_embeddings(self) -> str:  # type: ignore[override]
         """Get the embeddings of the document."""
         table = self.open_embedding_file(os.path.join(self.embeddings_container_path, self.path_to_data))
         return table.column("embeddings")[self.index].as_py()
@@ -665,7 +665,8 @@ class EmbeddingsContainer:
                     doc_id,
                     mtime,
                     document_hash,
-                    path_to_data=None,
+                    path_to_data=None,  # type: ignore[arg-type]
+                    #TODO: Bug 2879181
                     index=None,
                     embeddings_container_path=embeddings_container_path,
                     metadata=metadata
@@ -944,7 +945,8 @@ class EmbeddingsContainer:
 
         if hasattr(input_documents, "__module__") and "langchain" in input_documents.__module__ and "document_loaders" in input_documents.__module__:
             input_documents = iter([WrappedLangChainDocument(d)
-                                   for d in input_documents.load()])
+                                   for d in input_documents.load()])  # type: ignore[union-attr]
+            # TODO: Bug 2879186
         elif isinstance(input_documents, DocumentChunksIterator):
             flattened_docs: List = []
             for chunked_doc in input_documents:
@@ -1010,7 +1012,7 @@ class EmbeddingsContainer:
                     "model": self.arguments.get("model", ""),
                 }
             ) as activity_logger:
-                embeddings = self._embed_fn(texts=data_to_embed, activity_logger=activity_logger)
+                embeddings = self._embed_fn(texts=data_to_embed, activity_logger=activity_logger)  # type: ignore[call-arg]
         except Exception as e:
             logger.error(f"Failed to get embeddings with error: {e}")
             raise
@@ -1126,10 +1128,10 @@ class EmbeddingsContainer:
         return MLIndex(output_path)
 
     @staticmethod
-    def load_latest_snapshot(local_embeddings_cache: Union[str, Path], activity_logger=None) -> "EmbeddingsContainer":
+    def load_latest_snapshot(local_embeddings_cache: Union[str, Path], activity_logger=None) -> Optional["EmbeddingsContainer"]:
         """Loads the latest snapshot from the embeddings container."""
         embeddings_container_dir_name = None
-        embeddings_container = None
+        embeddings_container: Optional[EmbeddingsContainer] = None
         # list all folders in embeddings_container and find the latest one
         try:
             snapshot_files = list(Path(local_embeddings_cache).glob("*/*"))
