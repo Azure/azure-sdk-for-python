@@ -27,7 +27,7 @@ def build_index(
     input_glob: str = "**/*",
     max_sample_files: Optional[int] = None,
     chunk_prepend_summary: Optional[bool] = None,
-    document_path_replacement_regex: Optional[str] = None,
+    document_path_replacement_regex: Optional[Dict[str, str]] = None,
     embeddings_cache_path: Optional[str] = None,
 ) -> Index:
 

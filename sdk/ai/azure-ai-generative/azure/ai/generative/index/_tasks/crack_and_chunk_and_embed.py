@@ -90,7 +90,8 @@ def crack_and_chunk_and_embed(
     # TODO: log metrics for reused_sources, deleted_sources, and sources_to_embed
     sources_to_embed: Dict[str, DocumentSource] = OrderedDict() 
     reused_sources = OrderedDict()
-    for source_doc in filter_and_log_extensions(source_documents):  # type: ignore[operator]
+    for source_doc in filter_and_log_extensions(source_documents):  # type: ignore
+        # TODO: Bug 2879646
         mtime = source_doc.mtime
         # Currently there's no lookup at filename level, only document_ids (post chunking)
         # TODO: Save document_source table along side embedded documents table
@@ -142,7 +143,7 @@ def crack_and_chunk_and_embed(
     if custom_loader:
         logger.info(f"Loading custom loader(s) from {custom_loader}", extra={"print": True})
         for python_file_path in Path(custom_loader).glob("**/*.py"):
-            custom_loading(python_file_path, extension_loaders, extension_splitters)
+            custom_loading(str(python_file_path), extension_loaders, extension_splitters)
 
     splitter_args = {"chunk_size": chunk_size, "chunk_overlap": chunk_overlap, "use_rcts": use_rcts}
     sources_to_embed_values: Iterator[DocumentSource] = iter(sources_to_embed.values())
