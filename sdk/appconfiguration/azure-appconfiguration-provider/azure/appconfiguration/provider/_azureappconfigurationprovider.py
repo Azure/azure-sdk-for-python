@@ -612,7 +612,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 key = self._process_key_name(config)
                 value = self._process_key_value(config)
                 if isinstance(config, FeatureFlagConfigurationSetting):
-                    # Feature flags are ignored when loaded by Selects, as they are selected from 
+                    # Feature flags are ignored when loaded by Selects, as they are selected from
                     # `feature_flag_selectors`
                     pass
                 else:
