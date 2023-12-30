@@ -4,7 +4,7 @@
 import logging
 import types
 from inspect import Parameter, Signature
-from typing import Any, Callable, Dict, Sequence
+from typing import Any, Callable, Dict, Sequence, cast
 
 from azure.ai.ml.entities import Component
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, UnexpectedKeywordError, ValidationException
@@ -56,24 +56,23 @@ def _replace_function_name(func: types.FunctionType, new_name: str) -> types.Fun
         else:
             # Before python<3.8, replace is not available, we can only initialize the code as following.
             # https://github.com/python/cpython/blob/v3.7.8/Objects/codeobject.c#L97
-            code = types.CodeType(
+            code = types.CodeType(  # type: ignore
                 code_template.co_argcount,
-                code_template.co_posonlyargcount,
                 code_template.co_kwonlyargcount,
                 code_template.co_nlocals,
                 code_template.co_stacksize,
                 code_template.co_flags,
-                code_template.co_code,
-                code_template.co_consts,
+                code_template.co_code,  # type: ignore
+                code_template.co_consts,  # type: ignore
                 code_template.co_names,
                 code_template.co_varnames,
-                code_template.co_filename,
+                code_template.co_filename,  # type: ignore
                 new_name,  # Use the new name for the new code object.
-                code_template.co_firstlineno,
-                code_template.co_lnotab,
+                code_template.co_firstlineno,  # type: ignore
+                code_template.co_lnotab,  # type: ignore
                 # The following two values are required for closures.
-                code_template.co_freevars,
-                code_template.co_cellvars,
+                code_template.co_freevars,  # type: ignore
+                code_template.co_cellvars,  # type: ignore
             )
         # Initialize a new function with the code object and the new name, see the following ref for more details.
         # https://github.com/python/cpython/blob/4901fe274bc82b95dc89bcb3de8802a3dfedab32/Objects/clinic/funcobject.c.h#L30
@@ -173,7 +172,7 @@ def create_kw_function_from_parameters(
         _update_dct_if_not_exist(kwargs, default_kwargs)
         return func(**kwargs)
 
-    f = _replace_function_name(f, func_name)
+    f = _replace_function_name(cast(types.FunctionType, f), func_name)
     # Set the signature so jupyter notebook could have param hint by calling inspect.signature()
     f.__signature__ = Signature(parameters)
     # Set doc/name/module to make sure help(f) shows following expected result.
