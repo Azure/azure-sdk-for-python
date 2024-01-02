@@ -1,5 +1,16 @@
 # Release History
 
+## 1.14.0 (unreleased)
+
+### Features Added
+- Remove `experimental` tag for  `ml_client.jobs.validate`.
+
+### Bugs Fixed
+
+### Breaking Changes
+
+### Other Changes
+
 ## 1.13.0 (unreleased)
 
 ### Features Added
