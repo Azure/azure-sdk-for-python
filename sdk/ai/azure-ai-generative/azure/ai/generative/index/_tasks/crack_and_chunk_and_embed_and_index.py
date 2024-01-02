@@ -4,6 +4,7 @@
 import copy
 import datetime
 import json
+from logging import Logger
 import os
 import time
 import traceback
@@ -26,8 +27,8 @@ logger = get_logger("crack_and_chunk_and_embed_and_index")
 
 
 def crack_and_chunk_and_embed_and_index(
-    logger,
-    activity_logger,
+    logger: Logger,
+    activity_logger: Logger,
     source_uri: str,
     source_glob: str = "**/*",
     chunk_size: int = 1000,
@@ -35,14 +36,14 @@ def crack_and_chunk_and_embed_and_index(
     use_rcts: bool = True,
     custom_loader: Optional[str] = None,
     citation_url: Optional[str] = None,
-    citation_replacement_regex: Optional[Dict[str, str]] = None,
+    citation_replacement_regex: Optional[Union[str, bytes, bytearray]] = None,
     embeddings_model: str = "hugging_face://model/sentence-transformers/all-mpnet-base-v2",
     embeddings_connection: Optional[str] = None,
     embeddings_cache: Optional[Union[str, Path]] = None,
     index_type: str = "acs",
     index_connection: Optional[str] = None,
     index_config: Optional[Dict[str, str]] = None,
-    output_path: Optional[Union[str, Path]] = None,
+    output_path: Union[str, Path] = ".",
 ) -> MLIndex:
     """Crack and chunk and embed and index documents."""
     with EmbeddingsContainer.mount_and_load(embeddings_cache, activity_logger) as embeddings_container:
@@ -76,7 +77,7 @@ def crack_and_chunk_and_embed_and_index(
             logger.info(f"Creating ACS index from embeddings_container with config {index_config}")
             from azure.ai.generative.index._tasks.update_acs import create_index_from_raw_embeddings
 
-            connection_args = {}
+            connection_args: Dict[str, Union[Dict, str]] = {}
             if index_connection is not None:
                 connection_args["connection_type"] = "workspace_connection"
                 if isinstance(embeddings_connection, str):
@@ -95,8 +96,8 @@ def crack_and_chunk_and_embed_and_index(
                     get_target_from_connection,
                 )
 
-                index_config["endpoint"] = get_target_from_connection(connection)
-                index_config["api_version"] = get_metadata_from_connection(connection).get("apiVersion", "2023-07-01-preview")
+                index_config["endpoint"] = get_target_from_connection(connection)  # type: ignore[index]
+                index_config["api_version"] = get_metadata_from_connection(connection).get("apiVersion", "2023-07-01-preview")  # type: ignore[index]
 
             mlindex = create_index_from_raw_embeddings(
                 embeddings_container,
@@ -113,7 +114,7 @@ def crack_and_chunk_and_embed_and_index(
         return mlindex
 
 
-def main(args, logger, activity_logger):
+def main(args, logger: Logger, activity_logger: Logger):
     """Main function for crack_and_chunk_and_embed."""
     mlindex = crack_and_chunk_and_embed_and_index(
         logger,

@@ -68,10 +68,10 @@ class FileBasedDocstore:
         ----
             output_path: folder to save doctore contents in.
         """
-        output_path = Path(output_path)
-        output_path.mkdir(parents=True, exist_ok=True)
+        output_path_obj = Path(output_path)
+        output_path_obj.mkdir(parents=True, exist_ok=True)
 
-        with (output_path / "docs.jsonl").open("w", encoding="utf-8") as f:
+        with (output_path_obj / "docs.jsonl").open("w", encoding="utf-8") as f:
             for doc in self._dict.values():
                 json_line = doc.dumps()
                 f.write(json_line + "\n")
@@ -83,9 +83,9 @@ class FileBasedDocstore:
 
         fs, uri = url_to_fs(input_path)
 
-        documents = {}
+        documents: Optional[Dict[str, Document]] = {}
         with fs.open(f"{input_path.rstrip('/')}/docs.jsonl") as f:
             for line in f:
                 document = StaticDocument.loads(line.strip())
-                documents[document.document_id] = document
+                documents[document.document_id] = document  # type: ignore[index]
         return cls(documents)

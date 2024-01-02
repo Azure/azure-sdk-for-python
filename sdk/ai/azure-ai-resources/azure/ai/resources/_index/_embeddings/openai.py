@@ -19,7 +19,7 @@ class OpenAIEmbedder:
         self,
         api_base: str,
         api_type: str,
-        api_version: str = None,
+        api_version: Optional[str] = None,
         api_key: Optional[str] = None,
         azure_credential: Optional[Any] = None,
         model: str = "text-embedding-ada-002",
@@ -153,7 +153,7 @@ class OpenAIEmbedder:
                     logger.error("Failed to parse max number of inputs from error message, falling back to batch_size=1.")
                     self.batch_size = 1
                 logger.warning(f"Reducing batch_size to {self.batch_size} and retrying.")
-                embedding_response = {"data": []}
+                embedding_response: Dict[str, List] = {"data": []}
                 for i in range(0, len(tokenized_texts), self.batch_size):
                     embedding_response["data"].extend(self._embed_request(tokenized_texts=tokenized_texts[i : i + self.batch_size], **kwargs)["data"])
             else:
@@ -183,7 +183,7 @@ class OpenAIEmbedder:
                     last_exception = e
                     retrying = False
                     for retryable_error in self._retryable_openai_errors:
-                        if isinstance(e, retryable_error):
+                        if isinstance(e, type(retryable_error)):
                             retrying = True
                             import openai
 
@@ -277,7 +277,8 @@ class OpenAIEmbedder:
         for i in range(len(texts)):
             _result = embedding_results[i]
             if len(_result) == 0:
-                average = self._embed_request(tokenized_texts="", **self._openai_client_params)["data"][0]["embedding"]
+                # TODO: Bug 2875482
+                average = self._embed_request(tokenized_texts="", **self._openai_client_params)["data"][0]["embedding"]  # type: ignore[arg-type]
             else:
                 average = np.average(_result, axis=0, weights=num_tokens_in_batch[i])
             embeddings[i] = (average / np.linalg.norm(average)).tolist()

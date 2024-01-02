@@ -5,7 +5,7 @@
 import json
 import os
 import re
-from typing import Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.generative.index._utils.logging import get_logger
 from azure.ai.generative.index._utils.requests import create_session_with_retry, send_post_request
@@ -153,7 +153,7 @@ def connection_to_credential(connection: Union[dict, BaseConnection, WorkspaceCo
             raise ValueError(f"Unknown auth type '{connection.credentials.type}' for connection '{connection.name}'")
 
 
-def get_connection_by_id_v2(connection_id: str, credential: TokenCredential = None, client: str = "sdk") -> Union[dict, WorkspaceConnection, BaseConnection]:
+def get_connection_by_id_v2(connection_id: str, credential: Optional[TokenCredential] = None, client: str = "sdk") -> Union[Dict[str, Dict[str, Dict[str, Any]]], WorkspaceConnection, BaseConnection]:
     """
     Get a connection by id using azure.ai.ml or azure.ai.generative.
 

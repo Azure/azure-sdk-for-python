@@ -445,18 +445,28 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         ]
         while running_futures:
             # Wait for some download to finish before adding a new one
-            _done, running_futures = await asyncio.wait(
+            done, running_futures = await asyncio.wait(
                 running_futures, return_when=asyncio.FIRST_COMPLETED)
             try:
-                next_chunk = next(dl_tasks)
+                for task in done:
+                    task.result()
+            except HttpResponseError as error:
+                process_storage_error(error)
+            try:
+                for _ in range(0, len(done)):
+                    next_chunk = next(dl_tasks)
+                    running_futures.add(asyncio.ensure_future(downloader.process_chunk(next_chunk)))
             except StopIteration:
                 break
-            else:
-                running_futures.add(asyncio.ensure_future(downloader.process_chunk(next_chunk)))
 
         if running_futures:
             # Wait for the remaining downloads to finish
-            await asyncio.wait(running_futures)
+            done, _running_futures = await asyncio.wait(running_futures)
+            try:
+                for task in done:
+                    task.result()
+            except HttpResponseError as error:
+                process_storage_error(error)
         return self.size
 
     async def download_to_stream(self, stream, max_concurrency=1):
