@@ -40,7 +40,15 @@ class ClientAssertionCredential(GetTokenMixin):
 
     def __init__(self, tenant_id: str, client_id: str, func: Callable[[], str], **kwargs: Any) -> None:
         self._func = func
-        self._client = AadClient(tenant_id, client_id, **kwargs)
+        authority = kwargs.pop("authority", None)
+        additionally_allowed_tenants = kwargs.pop("additionally_allowed_tenants", None)
+        self._client = AadClient(
+            tenant_id,
+            client_id,
+            authority=authority,
+            additionally_allowed_tenants=additionally_allowed_tenants,
+            **kwargs
+        )
         super(ClientAssertionCredential, self).__init__(**kwargs)
 
     def __enter__(self):

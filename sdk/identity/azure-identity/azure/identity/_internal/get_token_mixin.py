@@ -18,6 +18,9 @@ class GetTokenMixin(abc.ABC):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         self._last_request_time = 0
 
+        # https://github.com/python/mypy/issues/5887
+        super(GetTokenMixin, self).__init__(*args, **kwargs)  # type: ignore
+
     @abc.abstractmethod
     def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         """Attempt to acquire an access token from a cache or by redeeming a refresh token.
