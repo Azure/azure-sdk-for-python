@@ -260,14 +260,14 @@ def data_index_incremental_update_acs(
         input_data: Input,
         embeddings_model: str,
         acs_config: str,
-        acs_connection_id: str,
-        chunk_size: int = 768,
-        chunk_overlap: int = 0,
-        input_glob: str = "**/*",
-        citation_url: str = None,
-        citation_replacement_regex: str = None,
-        aoai_connection_id: str = None,
-        embeddings_container: Input = None,
+        acs_connection_id: Optional[str],
+        aoai_connection_id: Optional[str],
+        embeddings_container: Input,
+        chunk_size: Optional[int] = 768,
+        chunk_overlap: Optional[int] = 0,
+        input_glob: Optional[str] = "**/*",
+        citation_url: Optional[str] = None,
+        citation_replacement_regex: Optional[str] = None,
     ):
         """
         Generate embeddings for a `input_data` source and push them into an Azure Cognitive Search index.
@@ -279,24 +279,31 @@ def data_index_incremental_update_acs(
         :param acs_config: The configuration for the Azure Cognitive Search index.
         :type acs_config: str
         :param acs_connection_id: The connection ID for the Azure Cognitive Search index.
-        :type acs_connection_id: str
+        :type acs_connection_id: Optional[str]
         :param chunk_size: The size of the chunks to break the input data into.
-        :type chunk_size: int
+        :type chunk_size: Optional[int]
         :param chunk_overlap: The number of tokens to overlap between chunks.
-        :type chunk_overlap: int
+        :type chunk_overlap: Optional[int]
         :param input_glob: The glob pattern to use when searching for input data.
-        :type input_glob: str
+        :type input_glob: Optional[str]s
         :param citation_url: The URL to use when generating citations for the input data.
         :type citation_url: str
         :param citation_replacement_regex: The regex to use when generating citations for the input data.
         :type citation_replacement_regex: str
         :param aoai_connection_id: The connection ID for the Azure Open AI service.
-        :type aoai_connection_id: str
+        :type aoai_connection_id: Optional[str]
         :param embeddings_container: The container to use when caching embeddings.
         :type embeddings_container: Input
         :return: The URI of the generated Azure Cognitive Search index.
         :rtype: str.
         """
+        if input_glob is None:
+            input_glob = "**/*"
+        if chunk_size is None:
+            chunk_size = 768
+        if chunk_overlap is None:
+            chunk_overlap = 0
+
         crack_and_chunk_and_embed = crack_and_chunk_and_embed_component(
             input_data=input_data,
             input_glob=input_glob,
@@ -414,12 +421,12 @@ def data_index_faiss(
     def data_index_faiss_pipeline(
         input_data: Input,
         embeddings_model: str,
-        chunk_size: int = 1024,
-        data_source_glob: str = None,
-        data_source_url: str = None,
-        document_path_replacement_regex: str = None,
-        aoai_connection_id: str = None,
-        embeddings_container: Input = None,
+        embeddings_container: Input,
+        chunk_size: Optional[int] = 1024,
+        data_source_glob: Optional[str] = None,
+        data_source_url: Optional[str] = None,
+        document_path_replacement_regex: Optional[str] = None,
+        aoai_connection_id: Optional[str] = None,
     ):
         """
         Generate embeddings for a `input_data` source and create a Faiss index from them.
@@ -429,7 +436,7 @@ def data_index_faiss(
         :param embeddings_model: The embedding model to use when processing source data chunks.
         :type embeddings_model: str
         :param chunk_size: The size of the chunks to break the input data into.
-        :type chunk_size: int
+        :type chunk_size: Optional[int]
         :param data_source_glob: The glob pattern to use when searching for input data.
         :type data_source_glob: str
         :param data_source_url: The URL to use when generating citations for the input data.
@@ -443,6 +450,9 @@ def data_index_faiss(
         :return: The URI of the generated Faiss index.
         :rtype: str.
         """
+        if chunk_size is None:
+            chunk_size = 1024
+
         crack_and_chunk = crack_and_chunk_component(
             input_data=input_data,
             input_glob=data_source_glob,
@@ -553,13 +563,13 @@ def data_index_acs(
         input_data: Input,
         embeddings_model: str,
         acs_config: str,
-        acs_connection_id: str,
-        chunk_size: int = 1024,
-        data_source_glob: str = None,
-        data_source_url: str = None,
-        document_path_replacement_regex: str = None,
-        aoai_connection_id: str = None,
-        embeddings_container: Input = None,
+        acs_connection_id: Optional[str],
+        embeddings_container: Input,
+        chunk_size: Optional[int] = 1024,
+        data_source_glob: Optional[str] = None,
+        data_source_url: Optional[str] = None,
+        document_path_replacement_regex: Optional[str] = None,
+        aoai_connection_id: Optional[str] = None,
     ):
         """
         Generate embeddings for a `input_data` source and push them into an Azure Cognitive Search index.
@@ -573,7 +583,7 @@ def data_index_acs(
         :param acs_connection_id: The connection ID for the Azure Cognitive Search index.
         :type acs_connection_id: str
         :param chunk_size: The size of the chunks to break the input data into.
-        :type chunk_size: int
+        :type chunk_size: Optional[int]
         :param data_source_glob: The glob pattern to use when searching for input data.
         :type data_source_glob: str
         :param data_source_url: The URL to use when generating citations for the input data.
@@ -587,6 +597,9 @@ def data_index_acs(
         :return: The URI of the generated Azure Cognitive Search index.
         :rtype: str.
         """
+        if chunk_size is None:
+            chunk_size = 1024
+
         crack_and_chunk = crack_and_chunk_component(
             input_data=input_data,
             input_glob=data_source_glob,
