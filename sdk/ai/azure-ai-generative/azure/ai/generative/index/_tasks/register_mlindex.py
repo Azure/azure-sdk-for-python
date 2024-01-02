@@ -8,7 +8,7 @@ import time
 import traceback
 
 import fsspec
-import yaml
+import yaml  # type: ignore[import]
 from azureml.core import Run
 from azure.ai.generative.index._asset_client.client import get_rest_client, register_new_data_asset_version
 from azure.ai.generative.index._utils.logging import (
