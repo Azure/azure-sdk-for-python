@@ -43,7 +43,7 @@ async def analyze_documents_output_in_markdown():
         )
         result = await poller.result()
 
-    print(f"Here's the full content in format{result.content_format}:\n")
+    print(f"Here's the full content in format {result.content_format}:\n")
     print(result.content)
     # [END analyze_documents_output_in_markdown]
 

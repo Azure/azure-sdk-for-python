@@ -46,6 +46,14 @@ stages:
                           PackageName: ${{artifact.name}}
                           ServiceName: ${{parameters.ServiceDirectory}}
                           ForRelease: true
+
+                    - task: PythonScript@0
+                      displayName: Verify CI enabled
+                      condition: succeeded()
+                      inputs:
+                        scriptPath: 'scripts/devops_tasks/verify_ci_enabled.py'
+                        arguments: '--package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}'
+
                     - pwsh: |
                         Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}
                       workingDirectory: $(Pipeline.Workspace)

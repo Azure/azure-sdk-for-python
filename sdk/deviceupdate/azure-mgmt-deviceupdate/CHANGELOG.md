@@ -1,5 +1,11 @@
 # Release History
 
+## 1.1.0 (2023-12-18)
+
+### Features Added
+
+  - Model Account has a new parameter encryption
+
 ## 1.1.0b1 (2022-12-26)
 
 ### Other Changes

@@ -34,7 +34,7 @@ from typing import (
     cast,
     Union,
     Type,
-    Mapping,
+    MutableMapping,
 )
 from types import TracebackType
 from collections.abc import AsyncIterator
@@ -195,8 +195,7 @@ class AioHttpTransport(AsyncHttpTransport):
         request: HttpRequest,
         *,
         stream: bool = False,
-        proxies: Optional[Mapping[str, str]] = None,
-        proxy: Optional[str] = None,
+        proxies: Optional[MutableMapping[str, str]] = None,
         **config: Any,
     ) -> AsyncHttpResponse:
         """Send the request using this HTTP sender.
@@ -210,8 +209,7 @@ class AioHttpTransport(AsyncHttpTransport):
         :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
 
         :keyword bool stream: Defaults to False.
-        :keyword dict proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
-        :keyword str proxy: will define the proxy to use all the time
+        :keyword MutableMapping proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
         """
 
     @overload
@@ -220,8 +218,7 @@ class AioHttpTransport(AsyncHttpTransport):
         request: RestHttpRequest,
         *,
         stream: bool = False,
-        proxies: Optional[Mapping[str, str]] = None,
-        proxy: Optional[str] = None,
+        proxies: Optional[MutableMapping[str, str]] = None,
         **config: Any,
     ) -> RestAsyncHttpResponse:
         """Send the `azure.core.rest` request using this HTTP sender.
@@ -235,8 +232,7 @@ class AioHttpTransport(AsyncHttpTransport):
         :rtype: ~azure.core.rest.AsyncHttpResponse
 
         :keyword bool stream: Defaults to False.
-        :keyword dict proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
-        :keyword str proxy: will define the proxy to use all the time
+        :keyword MutableMapping proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
         """
 
     async def send(
@@ -244,8 +240,7 @@ class AioHttpTransport(AsyncHttpTransport):
         request: Union[HttpRequest, RestHttpRequest],
         *,
         stream: bool = False,
-        proxies: Optional[Mapping[str, str]] = None,
-        proxy: Optional[str] = None,
+        proxies: Optional[MutableMapping[str, str]] = None,
         **config,
     ) -> Union[AsyncHttpResponse, RestAsyncHttpResponse]:
         """Send the request using this HTTP sender.
@@ -259,8 +254,7 @@ class AioHttpTransport(AsyncHttpTransport):
         :rtype: ~azure.core.rest.AsyncHttpResponse
 
         :keyword bool stream: Defaults to False.
-        :keyword dict proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
-        :keyword str proxy: will define the proxy to use all the time
+        :keyword MutableMapping proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
         """
         await self.open()
         try:
@@ -269,6 +263,7 @@ class AioHttpTransport(AsyncHttpTransport):
             # auto_decompress is introduced in aiohttp 3.7. We need this to handle aiohttp 3.6-.
             auto_decompress = False
 
+        proxy = config.pop("proxy", None)
         if proxies and not proxy:
             # aiohttp needs a single proxy, so iterating until we found the right protocol
 

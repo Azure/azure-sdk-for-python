@@ -27,9 +27,9 @@ class RetrySettings(RestTranslatableMixin, DictMixin):
     def __init__(
         self,  # pylint: disable=unused-argument
         *,
-        timeout: Optional[int] = None,
-        max_retries: Optional[int] = None,
-        **kwargs: Any,
+        timeout: Optional[Union[int, str]] = None,
+        max_retries: Optional[Union[int, str]] = None,
+        **kwargs: Any,  # pylint: disable=unused-argument
     ):
         self.timeout = timeout
         self.max_retries = max_retries

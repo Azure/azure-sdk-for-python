@@ -10,20 +10,14 @@ import logging
 import platform
 import traceback
 
-from opencensus.ext.azure.log_exporter import AzureLogHandler
 from opencensus.ext.azure.common import utils
-from opencensus.ext.azure.common.protocol import (
-    Data,
-    ExceptionData,
-    Message,
-    Envelope,
-)
+from opencensus.ext.azure.common.protocol import Data, Envelope, ExceptionData, Message
+from opencensus.ext.azure.log_exporter import AzureLogHandler
+from opencensus.trace import config_integration
+
 from azure.ai.ml._user_agent import USER_AGENT
 
-
 AML_INTERNAL_LOGGER_NAMESPACE = "azure.ai.ml._telemetry"
-
-# vienna-sdk-unitedstates
 INSTRUMENTATION_KEY = "71b954a8-6b7d-43f5-986c-3d3a6605d803"
 
 test_subscriptions = [
@@ -35,6 +29,10 @@ test_subscriptions = [
     "4faaaf21-663f-4391-96fd-47197c630979",
     "00000000-0000-0000-0000-000000000",
 ]
+
+
+# activate operation id tracking
+config_integration.trace_integrations(["logging"])
 
 
 class CustomDimensionsFilter(logging.Filter):
@@ -181,7 +179,10 @@ class AzureMLSDKLogHandler(AzureLogHandler):
             "process": record.processName,
             "module": record.module,
             "level": record.levelname,
+            "operation_id": envelope.tags.get("ai.ml.operation.id"),
+            "operation_parent_id": envelope.tags.get("ai.ml.operation.parentId"),
         }
+
         if hasattr(record, "custom_dimensions") and isinstance(record.custom_dimensions, dict):
             properties.update(record.custom_dimensions)
 
@@ -244,14 +245,13 @@ def create_envelope(instrumentation_key, record):
         tags=dict(utils.azure_monitor_context),
         time=utils.timestamp_to_iso_str(record.created),
     )
-    envelope.tags["ai.operation.id"] = getattr(
+    envelope.tags["ai.ml.operation.id"] = getattr(
         record,
         "traceId",
         "00000000000000000000000000000000",
     )
-    envelope.tags["ai.operation.parentId"] = "|{}.{}.".format(
-        envelope.tags["ai.operation.id"],
-        getattr(record, "spanId", "0000000000000000"),
-    )
+    envelope.tags[
+        "ai.ml.operation.parentId"
+    ] = f"|{envelope.tags.get('ai.ml.operation.id')}.{getattr(record, 'spanId', '0000000000000000')}"
 
     return envelope

@@ -165,6 +165,15 @@ class RecoveryOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAIL_IF_EXISTS = "FailIfExists"
 
 
+class RecoveryPointCompletionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies recovery point completeness. Partial (i.e., only some of the intended items were
+    backed up), or Completed (i.e., ALL intended items were backed up).
+    """
+
+    COMPLETED = "Completed"
+    PARTIAL = "Partial"
+
+
 class RehydrationPriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Priority to be used for rehydration. Values High or Standard."""
 
@@ -196,6 +205,12 @@ class ResourceMoveState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CRITICAL_FAILURE = "CriticalFailure"
     PARTIAL_SUCCESS = "PartialSuccess"
     MOVE_SUCCEEDED = "MoveSucceeded"
+
+
+class ResourcePropertiesObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the specific object - used for deserializing."""
+
+    DEFAULT_RESOURCE_PROPERTIES = "DefaultResourceProperties"
 
 
 class RestoreSourceDataStoreType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
