@@ -6,9 +6,10 @@
 import logging
 import os
 
-from . import AzureMgmtPreparer
-from azure_devtools.scenario_tests.exceptions import AzureTestError
 from dotenv import load_dotenv, find_dotenv
+
+from . import AzureMgmtPreparer
+from .exceptions import AzureTestError
 from .sanitizers import add_general_string_sanitizer
 
 

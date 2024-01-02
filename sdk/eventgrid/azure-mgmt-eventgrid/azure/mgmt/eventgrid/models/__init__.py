@@ -17,11 +17,8 @@ from ._models_py3 import Channel
 from ._models_py3 import ChannelUpdateParameters
 from ._models_py3 import ChannelsListResult
 from ._models_py3 import Client
-from ._models_py3 import ClientAuthentication
 from ._models_py3 import ClientAuthenticationSettings
 from ._models_py3 import ClientCertificateAuthentication
-from ._models_py3 import ClientCertificateSubjectDistinguishedName
-from ._models_py3 import ClientCertificateThumbprint
 from ._models_py3 import ClientGroup
 from ._models_py3 import ClientGroupsListResult
 from ._models_py3 import ClientsListResult
@@ -71,15 +68,23 @@ from ._models_py3 import IsNullOrUndefinedFilter
 from ._models_py3 import JsonField
 from ._models_py3 import JsonFieldWithDefault
 from ._models_py3 import JsonInputSchemaMapping
+from ._models_py3 import MonitorAlertEventSubscriptionDestination
 from ._models_py3 import Namespace
 from ._models_py3 import NamespaceRegenerateKeyRequest
 from ._models_py3 import NamespaceSharedAccessKeys
 from ._models_py3 import NamespaceSku
 from ._models_py3 import NamespaceTopic
+from ._models_py3 import NamespaceTopicEventSubscriptionDestination
 from ._models_py3 import NamespaceTopicUpdateParameters
 from ._models_py3 import NamespaceTopicsListResult
 from ._models_py3 import NamespaceUpdateParameters
 from ._models_py3 import NamespacesListResult
+from ._models_py3 import NetworkSecurityPerimeterConfiguration
+from ._models_py3 import NetworkSecurityPerimeterConfigurationIssues
+from ._models_py3 import NetworkSecurityPerimeterConfigurationList
+from ._models_py3 import NetworkSecurityPerimeterConfigurationProfile
+from ._models_py3 import NetworkSecurityPerimeterInfo
+from ._models_py3 import NetworkSecurityPerimeterProfileAccessRule
 from ._models_py3 import NumberGreaterThanAdvancedFilter
 from ._models_py3 import NumberGreaterThanFilter
 from ._models_py3 import NumberGreaterThanOrEqualsAdvancedFilter
@@ -132,8 +137,10 @@ from ._models_py3 import PrivateEndpointConnection
 from ._models_py3 import PrivateEndpointConnectionListResult
 from ._models_py3 import PrivateLinkResource
 from ._models_py3 import PrivateLinkResourcesListResult
+from ._models_py3 import PushInfo
 from ._models_py3 import QueueInfo
 from ._models_py3 import Resource
+from ._models_py3 import ResourceAssociation
 from ._models_py3 import ResourceMoveChangeHistory
 from ._models_py3 import ResourceSku
 from ._models_py3 import RetryPolicy
@@ -143,6 +150,7 @@ from ._models_py3 import ServiceBusQueueEventSubscriptionDestination
 from ._models_py3 import ServiceBusTopicEventSubscriptionDestination
 from ._models_py3 import StaticDeliveryAttributeMapping
 from ._models_py3 import StaticRoutingEnrichment
+from ._models_py3 import StaticStringRoutingEnrichment
 from ._models_py3 import StorageBlobDeadLetterDestination
 from ._models_py3 import StorageQueueEventSubscriptionDestination
 from ._models_py3 import StringBeginsWithAdvancedFilter
@@ -174,6 +182,7 @@ from ._models_py3 import TopicSharedAccessKeys
 from ._models_py3 import TopicSpace
 from ._models_py3 import TopicSpacesConfiguration
 from ._models_py3 import TopicSpacesListResult
+from ._models_py3 import TopicTypeAdditionalEnforcedPermission
 from ._models_py3 import TopicTypeInfo
 from ._models_py3 import TopicTypesListResult
 from ._models_py3 import TopicUpdateParameters
@@ -216,8 +225,15 @@ from ._event_grid_management_client_enums import IdentityType
 from ._event_grid_management_client_enums import InputSchema
 from ._event_grid_management_client_enums import InputSchemaMappingType
 from ._event_grid_management_client_enums import IpActionType
+from ._event_grid_management_client_enums import MonitorAlertSeverity
 from ._event_grid_management_client_enums import NamespaceProvisioningState
 from ._event_grid_management_client_enums import NamespaceTopicProvisioningState
+from ._event_grid_management_client_enums import NetworkSecurityPerimeterAssociationAccessMode
+from ._event_grid_management_client_enums import NetworkSecurityPerimeterConfigProvisioningState
+from ._event_grid_management_client_enums import NetworkSecurityPerimeterConfigurationIssueSeverity
+from ._event_grid_management_client_enums import NetworkSecurityPerimeterConfigurationIssueType
+from ._event_grid_management_client_enums import NetworkSecurityPerimeterProfileAccessRuleDirection
+from ._event_grid_management_client_enums import NetworkSecurityPerimeterResourceType
 from ._event_grid_management_client_enums import PartnerClientAuthenticationType
 from ._event_grid_management_client_enums import PartnerConfigurationProvisioningState
 from ._event_grid_management_client_enums import PartnerDestinationActivationState
@@ -266,11 +282,8 @@ __all__ = [
     "ChannelUpdateParameters",
     "ChannelsListResult",
     "Client",
-    "ClientAuthentication",
     "ClientAuthenticationSettings",
     "ClientCertificateAuthentication",
-    "ClientCertificateSubjectDistinguishedName",
-    "ClientCertificateThumbprint",
     "ClientGroup",
     "ClientGroupsListResult",
     "ClientsListResult",
@@ -320,15 +333,23 @@ __all__ = [
     "JsonField",
     "JsonFieldWithDefault",
     "JsonInputSchemaMapping",
+    "MonitorAlertEventSubscriptionDestination",
     "Namespace",
     "NamespaceRegenerateKeyRequest",
     "NamespaceSharedAccessKeys",
     "NamespaceSku",
     "NamespaceTopic",
+    "NamespaceTopicEventSubscriptionDestination",
     "NamespaceTopicUpdateParameters",
     "NamespaceTopicsListResult",
     "NamespaceUpdateParameters",
     "NamespacesListResult",
+    "NetworkSecurityPerimeterConfiguration",
+    "NetworkSecurityPerimeterConfigurationIssues",
+    "NetworkSecurityPerimeterConfigurationList",
+    "NetworkSecurityPerimeterConfigurationProfile",
+    "NetworkSecurityPerimeterInfo",
+    "NetworkSecurityPerimeterProfileAccessRule",
     "NumberGreaterThanAdvancedFilter",
     "NumberGreaterThanFilter",
     "NumberGreaterThanOrEqualsAdvancedFilter",
@@ -381,8 +402,10 @@ __all__ = [
     "PrivateEndpointConnectionListResult",
     "PrivateLinkResource",
     "PrivateLinkResourcesListResult",
+    "PushInfo",
     "QueueInfo",
     "Resource",
+    "ResourceAssociation",
     "ResourceMoveChangeHistory",
     "ResourceSku",
     "RetryPolicy",
@@ -392,6 +415,7 @@ __all__ = [
     "ServiceBusTopicEventSubscriptionDestination",
     "StaticDeliveryAttributeMapping",
     "StaticRoutingEnrichment",
+    "StaticStringRoutingEnrichment",
     "StorageBlobDeadLetterDestination",
     "StorageQueueEventSubscriptionDestination",
     "StringBeginsWithAdvancedFilter",
@@ -423,6 +447,7 @@ __all__ = [
     "TopicSpace",
     "TopicSpacesConfiguration",
     "TopicSpacesListResult",
+    "TopicTypeAdditionalEnforcedPermission",
     "TopicTypeInfo",
     "TopicTypesListResult",
     "TopicUpdateParameters",
@@ -464,8 +489,15 @@ __all__ = [
     "InputSchema",
     "InputSchemaMappingType",
     "IpActionType",
+    "MonitorAlertSeverity",
     "NamespaceProvisioningState",
     "NamespaceTopicProvisioningState",
+    "NetworkSecurityPerimeterAssociationAccessMode",
+    "NetworkSecurityPerimeterConfigProvisioningState",
+    "NetworkSecurityPerimeterConfigurationIssueSeverity",
+    "NetworkSecurityPerimeterConfigurationIssueType",
+    "NetworkSecurityPerimeterProfileAccessRuleDirection",
+    "NetworkSecurityPerimeterResourceType",
     "PartnerClientAuthenticationType",
     "PartnerConfigurationProvisioningState",
     "PartnerDestinationActivationState",

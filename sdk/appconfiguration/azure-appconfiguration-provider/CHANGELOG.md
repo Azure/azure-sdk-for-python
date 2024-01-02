@@ -1,18 +1,29 @@
 # Release History
 
-## 1.1.0b3 (Unreleased)
+## 1.1.0b4 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.1.0b3 (2023-12-19)
 
 ### Features Added
 
 - Added on_refresh_success callback to load method. This callback is called when the refresh method successfully refreshes the configuration.
-
-### Breaking Changes
+- Added minimum up time. This is the minimum amount of time the provider will try to be up before throwing an error. This is to prevent quick restart loops.
 
 ### Bugs Fixed
 
 - Fixes issue where the refresh timer only reset after a change was found.
 
 ### Other Changes
+
+- Renamed the type `SentinelKey` to be `WatchKey`.
 
 ## 1.1.0b2 (2023-09-29)
 

@@ -71,42 +71,6 @@ def _parse_input(input_value):
     return component_input, job_input
 
 
-def _parse_output(output_value):
-    component_output, job_output = None, None
-    if isinstance(output_value, Output):
-        component_output = Output(**output_value._to_dict())
-        job_output = Output(**output_value._to_dict())
-    elif not output_value:
-        # output value can be None or empty dictionary
-        # None output value will be packed into a JobOutput object with mode = ReadWriteMount & type = UriFolder
-        component_output = ComponentTranslatableMixin._to_output(output_value)
-        job_output = output_value
-    elif isinstance(output_value, dict):  # When output value is a non-empty dictionary
-        job_output = Output(**output_value)
-        component_output = Output(**output_value)
-    elif isinstance(output_value, str):  # When output is passed in from pipeline job yaml
-        job_output = output_value
-    else:
-        msg = f"Unsupported output type: {type(output_value)}, only Output and dict are supported."
-        raise ValidationException(
-            message=msg,
-            no_personal_data_message=msg,
-            target=ErrorTarget.JOB,
-            error_type=ValidationErrorType.INVALID_VALUE,
-        )
-    return component_output, job_output
-
-
-def _parse_inputs_outputs(io_dict: Dict, parse_func: Callable) -> Tuple[Dict, Dict]:
-    component_io_dict, job_io_dict = {}, {}
-    if io_dict:
-        for key, val in io_dict.items():
-            component_io, job_io = parse_func(val)
-            component_io_dict[key] = component_io
-            job_io_dict[key] = job_io
-    return component_io_dict, job_io_dict
-
-
 def _build_data_index(io_dict: Union[Dict, DataIndex]):
     if io_dict is None:
         return io_dict
@@ -395,7 +359,7 @@ def data_index_faiss(
     input_data_override: Optional[Input] = None,
 ):
     from azure.ai.resources._index._dataindex.data_index.models import build_model_protocol
-    from azure.ai.resources._indexx._dataindex.dsl._pipeline_decorator import pipeline
+    from azure.ai.resources._index._dataindex.dsl._pipeline_decorator import pipeline
 
     crack_and_chunk_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_CRACK_AND_CHUNK)
     generate_embeddings_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_GENERATE_EMBEDDINGS)

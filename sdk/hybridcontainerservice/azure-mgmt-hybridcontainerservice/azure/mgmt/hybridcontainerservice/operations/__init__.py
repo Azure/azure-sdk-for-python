@@ -6,12 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._provisioned_clusters_operations import ProvisionedClustersOperations
+from ._provisioned_cluster_instances_operations import ProvisionedClusterInstancesOperations
 from ._hybrid_identity_metadata_operations import HybridIdentityMetadataOperations
 from ._agent_pool_operations import AgentPoolOperations
-from ._hybrid_container_service_operations import HybridContainerServiceOperations
+from ._hybrid_container_service_mgmt_client_operations import HybridContainerServiceMgmtClientOperationsMixin
+from ._kubernetes_versions_operations import KubernetesVersionsOperations
+from ._vm_skus_operations import VMSkusOperations
 from ._operations import Operations
-from ._storage_spaces_operations import StorageSpacesOperations
 from ._virtual_networks_operations import VirtualNetworksOperations
 
 from ._patch import __all__ as _patch_all
@@ -19,12 +20,13 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "ProvisionedClustersOperations",
+    "ProvisionedClusterInstancesOperations",
     "HybridIdentityMetadataOperations",
     "AgentPoolOperations",
-    "HybridContainerServiceOperations",
+    "HybridContainerServiceMgmtClientOperationsMixin",
+    "KubernetesVersionsOperations",
+    "VMSkusOperations",
     "Operations",
-    "StorageSpacesOperations",
     "VirtualNetworksOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

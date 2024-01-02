@@ -54,7 +54,7 @@ class ScriptsProxy(object):
     def _get_resource_link(self, script_or_id, typ):
         # type: (Union[Dict[str, Any], str], str) -> str
         if isinstance(script_or_id, str):
-            return u"{}/{}/{}".format(self.container_link, typ, script_or_id)
+            return "{}/{}/{}".format(self.container_link, typ, script_or_id)
         return script_or_id["_self"]
 
     def list_stored_procedures(self, max_item_count=None, **kwargs):

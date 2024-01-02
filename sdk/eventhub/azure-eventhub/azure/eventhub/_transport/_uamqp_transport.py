@@ -5,7 +5,7 @@
 
 import time
 import logging
-from typing import Optional, Union, Any, Tuple
+from typing import Optional, Union, Any, Tuple, TYPE_CHECKING
 
 try:
     from uamqp import (
@@ -52,6 +52,14 @@ from ..exceptions import (
     EventDataSendError,
 )
 
+if TYPE_CHECKING:
+    try:
+        from uamqp.constants import ConnectionState as uamqp_ConnectionState
+    except ImportError:
+        pass
+
+    from .._pyamqp.constants import ConnectionState as pyamqp_ConnectionState
+
 _LOGGER = logging.getLogger(__name__)
 
 if uamqp_installed:
@@ -92,11 +100,17 @@ if uamqp_installed:
         MAX_FRAME_SIZE_BYTES = constants.MAX_FRAME_SIZE_BYTES
         MAX_MESSAGE_LENGTH_BYTES = constants.MAX_MESSAGE_LENGTH_BYTES
         TIMEOUT_FACTOR = 1000
-        CONNECTION_CLOSING_STATES: Tuple = (  # pylint:disable=protected-access
+        CONNECTION_CLOSING_STATES: Tuple[
+        Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
+        Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
+        Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
+        Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
+        Optional[Union["uamqp_ConnectionState", "pyamqp_ConnectionState"]]] = (  # pylint:disable=protected-access
                 c_uamqp.ConnectionState.CLOSE_RCVD,  # pylint:disable=c-extension-no-member
                 c_uamqp.ConnectionState.CLOSE_SENT,  # pylint:disable=c-extension-no-member
                 c_uamqp.ConnectionState.DISCARDING,  # pylint:disable=c-extension-no-member
                 c_uamqp.ConnectionState.END,  # pylint:disable=c-extension-no-member
+                None
             )
         TRANSPORT_IDENTIFIER = f"{UAMQP_LIBRARY}/{__version__}"
 
@@ -384,12 +398,15 @@ if uamqp_installed:
                     raise producer._condition
 
         @staticmethod
-        def set_message_partition_key(message, partition_key, **kwargs):  # pylint:disable=unused-argument
-            # type: (Message, Optional[Union[bytes, str]], Any) -> Message
+        def set_message_partition_key(
+            message: Message,
+            partition_key: Optional[Union[bytes, str]] = None,
+            **kwargs: Any
+        ) -> Message:  # pylint:disable=unused-argument
             """Set the partition key as an annotation on a uamqp message.
 
             :param uamqp.Message message: The message to update.
-            :param str partition_key: The partition key value.
+            :param str or bytes or None partition_key: The partition key value.
             :returns: Message with partition key annotation set.
             :rtype: uamqp.Message
             """
@@ -597,7 +614,7 @@ if uamqp_installed:
             return mgmt_auth.token
 
         @staticmethod
-        def mgmt_client_request(mgmt_client, mgmt_msg, **kwargs):
+        def mgmt_client_request(mgmt_client: AMQPClient, mgmt_msg: str, **kwargs: Any):
             """
             Send mgmt request.
             :param uamqp.AMQPClient mgmt_client: Client to send request with.
@@ -618,9 +635,9 @@ if uamqp_installed:
                 **kwargs
             )
             status_code = response.application_properties[kwargs.get("status_code_field")]
-            description = response.application_properties.get(
+            description: Optional[Union[str, bytes]] = response.application_properties.get(
                 kwargs.get("description_fields")
-            )  # type: Optional[Union[str, bytes]]
+            )
             return status_code, description, response
 
         @staticmethod

@@ -5,7 +5,7 @@ stages:
     parameters:
       BuildTargetingString: azure-ai-translation-document
       ServiceDirectory: translation
-      Clouds: Public,Int
+      Clouds: Public # Skipping INT, re-enable when environment fixed
       CloudConfig:
         Public:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)

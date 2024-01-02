@@ -30,13 +30,11 @@ import json
 from azure.schemaregistry import SchemaRegistryClient
 from azure.schemaregistry.encoder.avroencoder import AvroEncoder
 from azure.schemaregistry.encoder.avroencoder import InvalidContentError, InvalidSchemaError
-from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy, AzureTestCase
+from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 
 import avro
 from avro.errors import AvroTypeException
 from azure.schemaregistry.encoder.avroencoder._apache_avro_encoder import ApacheAvroObjectEncoder as AvroObjectEncoder
-
-from devtools_testutils import AzureTestCase
 
 SchemaRegistryEnvironmentVariableLoader = functools.partial(
     EnvironmentVariableLoader,

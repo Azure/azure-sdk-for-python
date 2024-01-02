@@ -12,6 +12,8 @@
 
 ### Bugs Fixed
 
+- Fixed the issue that we added unexpected `retrievable` property for `SearchField`.
+
 ### Other Changes
 
 ## 11.4.0 (2023-10-13)

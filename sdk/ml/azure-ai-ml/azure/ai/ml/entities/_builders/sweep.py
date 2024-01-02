@@ -93,6 +93,8 @@ class Sweep(ParameterizedSweep, BaseNode):
         ~azure.ai.ml.UserIdentityConfiguration]
     :param queue_settings: The queue settings for the job.
     :type queue_settings: ~azure.ai.ml.entities.QueueSettings
+    :param resources: Compute Resource configuration for the job.
+    :type resources: Optional[Union[dict, ~azure.ai.ml.entities.ResourceConfiguration]]
     """
 
     def __init__(
