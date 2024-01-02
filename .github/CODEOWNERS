@@ -104,7 +104,7 @@
 /sdk/communication/**/_shared/                                       @Azure/acs-identity-sdk @AikoBB @maximrytych-ms @mjafferi-msft
 
 # PRLabel: %Confidential Ledger
-/sdk/confidentialledger/azure-confidentialledger/                    @pallabpaul
+/sdk/confidentialledger/azure-confidentialledger/                    @PallabPaul
 
 # PRLabel: %Content Safety
 /sdk/contentsafety/                                                  @mengaims @JieZhou000
@@ -516,7 +516,7 @@
 #/<NotInRepo>/          @Drewm3 @avirishuv
 
 # ServiceLabel: %Confidential Ledger
-#/<NotInRepo>/          @pallabpaul
+#/<NotInRepo>/          @PallabPaul
 
 # ServiceLabel: %Connected Kubernetes %Service Attention
 #/<NotInRepo>/          @akashkeshari
