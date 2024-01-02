@@ -329,6 +329,8 @@ class AzureAppConfigurationClient:
         self,
         configuration_setting: ConfigurationSetting,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
+        *,
+        etag: Optional[str] = None,
         **kwargs,
     ) -> ConfigurationSetting:
 
@@ -366,8 +368,6 @@ class AzureAppConfigurationClient:
             )
             returned_config_setting = await async_client.set_configuration_setting(config_setting)
         """
-        etag = kwargs.get("etag", configuration_setting.etag)
-
         key_value = configuration_setting._to_generated()
         custom_headers: Mapping[str, Any] = CaseInsensitiveDict(kwargs.get("headers"))
         error_map: Dict[int, Any] = {409: ResourceReadOnlyError}
@@ -386,7 +386,7 @@ class AzureAppConfigurationClient:
                 key=key_value.key,  # type: ignore
                 label=key_value.label,
                 if_match=prep_if_match(configuration_setting.etag, match_condition),
-                if_none_match=prep_if_none_match(etag, match_condition),
+                if_none_match=prep_if_none_match(etag or configuration_setting.etag, match_condition),
                 headers=custom_headers,
                 error_map=error_map,
             )
