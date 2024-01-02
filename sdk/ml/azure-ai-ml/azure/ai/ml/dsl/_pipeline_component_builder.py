@@ -113,7 +113,7 @@ class PipelineComponentBuilder:
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         default_datastore: Any = None,
-        tags: Optional[str] = None,
+        tags: Optional[Union[Dict[str, str], str]] = None,
         source_path: Optional[str] = None,
         non_pipeline_inputs: Optional[List] = None,
     ):

@@ -94,7 +94,7 @@ def pipeline(
     display_name: Optional[str] = None,
     description: Optional[str] = None,
     experiment_name: Optional[str] = None,
-    tags: Optional[Dict[str, str]] = None,
+    tags: Optional[Union[Dict[str, str], str]] = None,
     **kwargs: Any,
 ) -> Union[Callable[[Callable[P, T]], Callable[P, PipelineJob]], Callable[P, PipelineJob]]:
     """Build a pipeline which contains all component nodes defined in this function.
