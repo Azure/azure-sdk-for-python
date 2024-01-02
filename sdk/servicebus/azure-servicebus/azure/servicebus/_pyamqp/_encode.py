@@ -518,11 +518,11 @@ def encode_map(
     count = len(cast(Sized, value)) * 2
     encoded_size = 0
     encoded_values = bytearray()
-    try:
-        value = cast(Dict, value)
-        items = cast(Iterable, value.items())
-    except AttributeError:
-        items = cast(Iterable, value)
+    if isinstance(value, dict):
+        items: Iterable[Any] = value.items()
+    elif isinstance(value, Iterable):
+        items = value
+
     for key, data in items:
         encode_value(encoded_values, key, with_constructor=True)
         encode_value(encoded_values, data, with_constructor=True)
