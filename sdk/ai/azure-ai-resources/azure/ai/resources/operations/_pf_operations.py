@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import uuid
-from typing import Any
+from typing import Any, Optional
 
 from azure.core.tracing.decorator import distributed_trace
 
@@ -38,7 +38,7 @@ class PFOperations():
 
     @distributed_trace
     @monitor_with_activity(logger, "PF.BatchRun", ActivityType.PUBLICAPI)
-    def batch_run(self, flow: str, data: str, inputs_mapping: dict, runtime: str, connections: dict = None):
+    def batch_run(self, flow: str, data: str, inputs_mapping: dict, runtime: str, connections: Optional[dict] = None):
         from promptflow.sdk.entities import Run
 
         run_data = {

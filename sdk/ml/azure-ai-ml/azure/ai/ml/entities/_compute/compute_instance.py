@@ -10,10 +10,10 @@ import warnings
 from typing import Dict, List, Optional
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import AssignedUser
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstance as CIRest
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstanceProperties
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstanceSshSettings as CiSShSettings
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ComputeInstance as CIRest
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ComputeInstanceProperties
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ComputeInstanceSshSettings as CiSShSettings
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     ComputeResource,
     PersonalComputeInstanceSettings,
     ResourceId,
@@ -160,6 +160,10 @@ class ComputeInstance(Compute):
     :type setup_scripts: Optional[~azure.ai.ml.entities.SetupScripts]
     :param custom_applications: List of custom applications and their endpoints for the compute instance.
     :type custom_applications: Optional[List[~azure.ai.ml.entities.CustomApplications]]
+    :param enable_sso: Enable or disable single sign-on. Defaults to True.
+    :type enable_sso: bool
+    :param enable_root_access: Enable or disable root access. Defaults to True.
+    :type enable_root_access: bool
 
     .. admonition:: Example:
 
@@ -189,6 +193,8 @@ class ComputeInstance(Compute):
         setup_scripts: Optional[SetupScripts] = None,
         enable_node_public_ip: bool = True,
         custom_applications: Optional[List[CustomApplications]] = None,
+        enable_sso: bool = True,
+        enable_root_access: bool = True,
         **kwargs,
     ) -> None:
         kwargs[TYPE] = ComputeType.COMPUTEINSTANCE
@@ -215,6 +221,8 @@ class ComputeInstance(Compute):
         self.idle_time_before_shutdown_minutes = idle_time_before_shutdown_minutes
         self.setup_scripts = setup_scripts
         self.enable_node_public_ip = enable_node_public_ip
+        self.enable_sso = enable_sso
+        self.enable_root_access = enable_root_access
         self.custom_applications = custom_applications
         self.subnet = None
 
@@ -295,6 +303,8 @@ class ComputeInstance(Compute):
             personal_compute_instance_settings=personal_compute_instance_settings,
             idle_time_before_shutdown=idle_time_before_shutdown,
             enable_node_public_ip=self.enable_node_public_ip,
+            enable_sso=self.enable_sso,
+            enable_root_access=self.enable_root_access,
         )
         compute_instance_prop.schedules = self.schedules._to_rest_object() if self.schedules else None
         compute_instance_prop.setup_scripts = self.setup_scripts._to_rest_object() if self.setup_scripts else None
@@ -432,6 +442,12 @@ class ComputeInstance(Compute):
             if (prop.properties and prop.properties.enable_node_public_ip is not None)
             else True,
             custom_applications=custom_applications,
+            enable_sso=prop.properties.enable_sso
+            if (prop.properties and prop.properties.enable_sso is not None)
+            else True,
+            enable_root_access=prop.properties.enable_root_access
+            if (prop.properties and prop.properties.enable_root_access is not None)
+            else True,
         )
         return response
 

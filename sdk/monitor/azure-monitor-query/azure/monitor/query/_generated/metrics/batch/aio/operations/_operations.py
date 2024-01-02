@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -70,6 +70,7 @@ class MetricsBatchOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Lists the metric values for multiple resources.
 
         :param subscription_id: The subscription identifier for the resources in this batch. Required.
@@ -221,7 +222,7 @@ class MetricsBatchOperations:
     async def batch(
         self,
         subscription_id: str,
-        resource_ids: IO,
+        resource_ids: IO[bytes],
         *,
         metricnamespace: str,
         metricnames: List[str],
@@ -235,12 +236,13 @@ class MetricsBatchOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Lists the metric values for multiple resources.
 
         :param subscription_id: The subscription identifier for the resources in this batch. Required.
         :type subscription_id: str
         :param resource_ids: The comma separated list of resource IDs to query metrics for. Required.
-        :type resource_ids: IO
+        :type resource_ids: IO[bytes]
         :keyword metricnamespace: Metric namespace that contains the requested metric names. Required.
         :paramtype metricnamespace: str
         :keyword metricnames: The names of the metrics (comma separated) to retrieve. Required.
@@ -379,7 +381,7 @@ class MetricsBatchOperations:
     async def batch(
         self,
         subscription_id: str,
-        resource_ids: Union[JSON, IO],
+        resource_ids: Union[JSON, IO[bytes]],
         *,
         metricnamespace: str,
         metricnames: List[str],
@@ -392,13 +394,14 @@ class MetricsBatchOperations:
         filter: Optional[str] = None,
         **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Lists the metric values for multiple resources.
 
         :param subscription_id: The subscription identifier for the resources in this batch. Required.
         :type subscription_id: str
         :param resource_ids: The comma separated list of resource IDs to query metrics for. Is either a
-         JSON type or a IO type. Required.
-        :type resource_ids: JSON or IO
+         JSON type or a IO[bytes] type. Required.
+        :type resource_ids: JSON or IO[bytes]
         :keyword metricnamespace: Metric namespace that contains the requested metric names. Required.
         :paramtype metricnamespace: str
         :keyword metricnames: The names of the metrics (comma separated) to retrieve. Required.

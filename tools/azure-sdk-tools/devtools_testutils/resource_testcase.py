@@ -9,14 +9,13 @@ import os
 import datetime
 import logging
 
-from azure_devtools.scenario_tests import AzureTestError, ReservedResourceNameError
-
 try:
     from azure.mgmt.resource import ResourceManagementClient
 except ImportError:
     pass
 
 from . import AzureMgmtPreparer
+from .exceptions import AzureTestError, ReservedResourceNameError
 from .sanitizers import add_general_string_sanitizer
 
 

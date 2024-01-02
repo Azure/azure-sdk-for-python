@@ -34,11 +34,13 @@ class TestResources:
             name="test_resource_" + rand_num(),
             description="Transient test object. Delete if seen.",
             resource_group=ai_client.resource_group_name,
+            default_project_resource_group=f"/subscriptions/{ai_client.subscription_id}/resourceGroups/{ai_client.resource_group_name}",
         )
         created_poller = ai_client.ai_resources.begin_create(ai_resource=new_local_resource)
         created_resource = created_poller.result()
         assert new_local_resource.name == created_resource.name
         assert new_local_resource.description == created_resource.description
+        assert new_local_resource.default_project_resource_group == new_local_resource.default_project_resource_group
 
         delete_poller = ai_client.ai_resources.begin_delete(
             name=new_local_resource.name, delete_dependent_resources=True

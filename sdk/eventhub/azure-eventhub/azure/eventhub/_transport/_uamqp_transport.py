@@ -5,7 +5,7 @@
 
 import time
 import logging
-from typing import Optional, Union, Any, Tuple
+from typing import Optional, Union, Any, Tuple, TYPE_CHECKING
 
 try:
     from uamqp import (
@@ -52,6 +52,14 @@ from ..exceptions import (
     EventDataSendError,
 )
 
+if TYPE_CHECKING:
+    try:
+        from uamqp.constants import ConnectionState as uamqp_ConnectionState
+    except ImportError:
+        pass
+
+    from .._pyamqp.constants import ConnectionState as pyamqp_ConnectionState
+
 _LOGGER = logging.getLogger(__name__)
 
 if uamqp_installed:
@@ -92,11 +100,17 @@ if uamqp_installed:
         MAX_FRAME_SIZE_BYTES = constants.MAX_FRAME_SIZE_BYTES
         MAX_MESSAGE_LENGTH_BYTES = constants.MAX_MESSAGE_LENGTH_BYTES
         TIMEOUT_FACTOR = 1000
-        CONNECTION_CLOSING_STATES: Tuple = (  # pylint:disable=protected-access
+        CONNECTION_CLOSING_STATES: Tuple[
+        Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
+        Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
+        Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
+        Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
+        Optional[Union["uamqp_ConnectionState", "pyamqp_ConnectionState"]]] = (  # pylint:disable=protected-access
                 c_uamqp.ConnectionState.CLOSE_RCVD,  # pylint:disable=c-extension-no-member
                 c_uamqp.ConnectionState.CLOSE_SENT,  # pylint:disable=c-extension-no-member
                 c_uamqp.ConnectionState.DISCARDING,  # pylint:disable=c-extension-no-member
                 c_uamqp.ConnectionState.END,  # pylint:disable=c-extension-no-member
+                None
             )
         TRANSPORT_IDENTIFIER = f"{UAMQP_LIBRARY}/{__version__}"
 
@@ -600,7 +614,7 @@ if uamqp_installed:
             return mgmt_auth.token
 
         @staticmethod
-        def mgmt_client_request(mgmt_client, mgmt_msg, **kwargs):
+        def mgmt_client_request(mgmt_client: AMQPClient, mgmt_msg: str, **kwargs: Any):
             """
             Send mgmt request.
             :param uamqp.AMQPClient mgmt_client: Client to send request with.

@@ -23,6 +23,7 @@ import shutil
 
 from ci_tools.parsing import ParsedSetup
 from ci_tools.functions import get_config_setting
+from gh_tools.vnext_issue_creator import create_vnext_issue
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -40,7 +41,7 @@ def move_output_and_compress(target_dir, package_dir, package_name):
     individual_zip_location = os.path.join(ci_doc_dir, package_name, package_name)
     shutil.make_archive(individual_zip_location, 'gztar', target_dir)
 
-def sphinx_build(target_dir, output_dir, fail_on_warning=False):
+def sphinx_build(target_dir, output_dir, fail_on_warning=False, package_name=None):
     command_array = [
                 "sphinx-build",
                 "-b",
@@ -67,6 +68,8 @@ def sphinx_build(target_dir, output_dir, fail_on_warning=False):
                 args.working_directory, e.returncode
             )
         )
+        if args.strict and in_ci():
+            create_vnext_issue(package_name, "sphinx")
         exit(1)
 
 if __name__ == "__main__":
@@ -122,7 +125,12 @@ if __name__ == "__main__":
     if should_build_docs(pkg_details.name):
         fail_on_warning = args.strict or get_config_setting(args.package_root, "strict_sphinx", default=False)
 
-        sphinx_build(target_dir, output_dir, fail_on_warning=fail_on_warning)
+        sphinx_build(
+            target_dir,
+            output_dir,
+            fail_on_warning=fail_on_warning,
+            package_name=pkg_details.name
+        )
 
         if in_ci() or args.in_ci:
             move_output_and_compress(output_dir, package_dir, pkg_details.name)

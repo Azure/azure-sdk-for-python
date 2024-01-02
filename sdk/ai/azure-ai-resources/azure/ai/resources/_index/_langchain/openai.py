@@ -32,7 +32,7 @@ def patch_openai_embedding_retries(logger, activity_logger, max_seconds_retrying
         activity_logger.activity_info["num_retries"] += 1
         activity_logger.activity_info["time_spent_sleeping"] += retry_state.idle_for
 
-        # This is a lot of data to send to telemetry, not sending by default for now due to fears of maxxing out daily ingress cap.
+        # This is a lot of data to send to telemetry, not sending by default for now due to fears of maxing out daily ingress cap.
         # if 'retries' not in activity_logger.activity_info:
         #     activity_logger.activity_info['retries'] = []
         #     activity_logger.activity_info['first_retry'] = datetime.utcnow()
@@ -55,6 +55,25 @@ def patch_openai_embedding_retries(logger, activity_logger, max_seconds_retrying
     # Copied from https://github.com/hwchase17/langchain/blob/511c12dd3985ce682226371c12f8fa70d8c9a8e1/langchain/embeddings/openai.py#L34
     def _create_retry_decorator(embeddings):
         import openai
+        from packaging import version
+
+        if version.parse(openai.version.VERSION) >= version.parse("1.0.0"):
+            retry_exceptions = (
+                retry_if_exception_type(openai._exceptions.APITimeoutError)
+                | retry_if_exception_type(openai._exceptions.APIError)
+                | retry_if_exception_type(openai._exceptions.APIConnectionError)
+                | retry_if_exception_type(openai._exceptions.RateLimitError)
+                | retry_if_exception_type(openai._exceptions.InternalServerError)
+                | retry_if_exception_type(openai._exceptions.APIResponseValidationError)
+            )
+        else:
+            retry_exceptions = (
+                retry_if_exception_type(openai.error.Timeout)
+                | retry_if_exception_type(openai.error.APIError)
+                | retry_if_exception_type(openai.error.APIConnectionError)
+                | retry_if_exception_type(openai.error.RateLimitError)
+                | retry_if_exception_type(openai.error.ServiceUnavailableError)
+            )
 
         min_seconds = 4
         max_seconds = 10
@@ -65,13 +84,7 @@ def patch_openai_embedding_retries(logger, activity_logger, max_seconds_retrying
             # stop=stop_after_attempt(embeddings.max_retries),
             stop=stop_after_delay_that_works(max_seconds_retrying, activity_logger),
             wait=wait_exponential(multiplier=1, min=min_seconds, max=max_seconds),
-            retry=(
-                retry_if_exception_type(openai.error.Timeout)
-                | retry_if_exception_type(openai.error.APIError)
-                | retry_if_exception_type(openai.error.APIConnectionError)
-                | retry_if_exception_type(openai.error.RateLimitError)
-                | retry_if_exception_type(openai.error.ServiceUnavailableError)
-            ),
+            retry=retry_exceptions,
             before_sleep=_log_it,
         )
 
