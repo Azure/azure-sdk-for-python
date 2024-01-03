@@ -343,7 +343,8 @@ class AzureAppConfigurationClient:
         :type configuration_setting: ~azure.appconfiguration.ConfigurationSetting
         :param match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
-        :keyword str etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
+        :keyword str etag: check if the ConfigurationSetting is changed. \
+            Set None to use the value from keyword configuration_setting.
         :return: The ConfigurationSetting returned from the service
         :rtype: ~azure.appconfiguration.ConfigurationSetting
         :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
