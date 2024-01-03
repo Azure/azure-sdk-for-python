@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Updated minimum `azure-core` version to 1.28.0.
+
 ## 7.11.4 (2023-11-13)
 
 ### Bugs Fixed

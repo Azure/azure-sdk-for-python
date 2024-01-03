@@ -50,14 +50,20 @@ if TYPE_CHECKING:
         "EventHubSharedKeyCredential",
         TokenCredential,
     ]
+    from ._consumer_client import EventHubConsumerClient
+    from ._producer_client import EventHubProducerClient
+    from ._transport._base import AmqpTransport
     try:
         from uamqp import Message as uamqp_Message
         from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
+        from uamqp import ReceiveClient as uamqp_AMQPRecieveClient
+        from uamqp import SendClient as uamqp_AMQPSendClient
     except ImportError:
-        uamqp_Message = None
-        uamqp_JWTTokenAuth = None
+        pass
     from ._pyamqp.message import Message
     from ._pyamqp.authentication import JWTTokenAuth
+    from ._pyamqp import ReceiveClient as pyamqp_AMQPRecieveClient
+    from ._pyamqp import SendClient as pyamqp_AMQPSendClient
 
 _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple("_Address", "hostname path")
@@ -187,7 +193,7 @@ def _get_backoff_time(retry_mode, backoff_factor, backoff_max, retried_times):
     return min(backoff_max, backoff_value)
 
 
-class EventHubSharedKeyCredential(object):
+class EventHubSharedKeyCredential:
     """The shared access key credential used for authentication.
 
     :param str policy: The name of the shared access policy.
@@ -205,7 +211,7 @@ class EventHubSharedKeyCredential(object):
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
-class EventhubAzureNamedKeyTokenCredential(object):
+class EventhubAzureNamedKeyTokenCredential:
     """The named key credential used for authentication.
 
     :param credential: The AzureNamedKeyCredential that should be used.
@@ -223,7 +229,7 @@ class EventhubAzureNamedKeyTokenCredential(object):
         return _generate_sas_token(scopes[0], name, key)
 
 
-class EventHubSASTokenCredential(object):
+class EventHubSASTokenCredential:
     """The shared access token credential used for authentication.
 
     :param str token: The shared access token string
@@ -250,7 +256,7 @@ class EventHubSASTokenCredential(object):
         return AccessToken(self.token, self.expiry)
 
 
-class EventhubAzureSasTokenCredential(object):
+class EventhubAzureSasTokenCredential:
     """The shared access token credential used for authentication
     when AzureSasCredential is provided.
 
@@ -280,7 +286,7 @@ class EventhubAzureSasTokenCredential(object):
         return AccessToken(signature, cast(int, expiry))
 
 
-class ClientBase(object):  # pylint:disable=too-many-instance-attributes
+class ClientBase:  # pylint:disable=too-many-instance-attributes
     def __init__(
         self,
         fully_qualified_namespace: str,
@@ -333,7 +339,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             kwargs["credential"] = EventHubSharedKeyCredential(policy, key)
         return kwargs
 
-    def _create_auth(self) -> Union[uamqp_JWTTokenAuth, JWTTokenAuth]:
+    def _create_auth(self) -> Union["uamqp_JWTTokenAuth", JWTTokenAuth]:
         """
         Create an ~uamqp.authentication.SASTokenAuth instance
          to authenticate the session.
@@ -414,7 +420,8 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 mgmt_client.open(connection=conn)
                 while not mgmt_client.client_ready():
                     time.sleep(0.05)
-                mgmt_msg.application_properties[
+
+                cast(Dict[Union[str, bytes], Any], mgmt_msg.application_properties)[
                     "security_token"
                 ] = self._amqp_transport.get_updated_token(mgmt_auth)
                 status_code, description, response = self._amqp_transport.mgmt_client_request(
@@ -510,11 +517,22 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self._conn_manager.close_connection()
 
 
-class ConsumerProducerMixin(object):
-    def __enter__(self):
+class ConsumerProducerMixin():
+
+    def __init__(self) -> None:
+        self._handler: Union[
+            uamqp_AMQPRecieveClient,
+            pyamqp_AMQPRecieveClient,
+            uamqp_AMQPSendClient,
+            pyamqp_AMQPSendClient]
+        self._client: Union[EventHubConsumerClient, EventHubProducerClient]
+        self._amqp_transport: "AmqpTransport"
+        self._max_message_size_on_link: Optional[int] = None
+
+    def __enter__(self) -> ConsumerProducerMixin:
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
         self.close()
 
     def _create_handler(self, auth):
@@ -526,8 +544,12 @@ class ConsumerProducerMixin(object):
                 f"{self._name} has been closed. Please create a new one to handle event data."
             )
 
-    def _open(self):
-        """Open the EventHubConsumer/EventHubProducer using the supplied connection."""
+    def _open(self) -> bool:
+        """Open the EventHubConsumer/EventHubProducer using the supplied connection.
+
+        :return: Whether the EventHubConsumer/EventHubProducer is ready to use.
+        :rtype: bool
+        """
         # pylint: disable=protected-access
         if not self.running:
             if self._handler:
@@ -544,9 +566,11 @@ class ConsumerProducerMixin(object):
                 self._amqp_transport.get_remote_max_message_size(self._handler)
                 or self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
             )
-            self.running = True
+            self.running: bool = True
+            return True
+        return False
 
-    def _close_handler(self):
+    def _close_handler(self) -> None:
         if self._handler:
             self._handler.close()  # close the link (sharing connection) or connection (not sharing)
         self.running = False

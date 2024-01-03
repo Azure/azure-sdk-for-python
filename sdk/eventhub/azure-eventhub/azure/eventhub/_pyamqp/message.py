@@ -5,31 +5,46 @@
 #--------------------------------------------------------------------------
 
 # TODO: fix mypy errors for _code/_definition/__defaults__ (issue #26500)
-from collections import namedtuple
+from typing import NamedTuple, Optional, Union, TYPE_CHECKING, Dict, Any, List
+from typing_extensions import TypedDict
 
 from .types import AMQPTypes, FieldDefinition
 from .constants import FIELD, MessageDeliveryState
 from .performatives import _CAN_ADD_DOCSTRING
 
+if TYPE_CHECKING:
+    from uuid import UUID
+    class MessageDict(TypedDict):  # needed for use with spread operator
+        """
+        Typing for Message, used with the spread operator.
+        """
+        header: Optional["Header"]
+        delivery_annotations: Optional[Dict[Union[str, bytes], Any]]
+        message_annotations: Optional[Dict[Union[str, bytes], Any]]
+        properties: Optional["Properties"]
+        application_properties: Optional[Dict[Union[str, bytes], Any]]
+        data: Optional[bytes]
+        sequence: Optional[List[Any]]
+        value: Optional[Any]
+        footer: Optional[Dict[Any, Any]]
 
-Header = namedtuple(
-    'Header',
-    [
-        'durable',
-        'priority',
-        'ttl',
-        'first_acquirer',
-        'delivery_count'
-    ],
-    defaults=(None,) * 5 # type: ignore
-    )
-Header._code = 0x00000070 # type: ignore # pylint:disable=protected-access
+
+class Header(NamedTuple):
+    durable: Optional[bool] = None
+    priority: Optional[int] = None
+    ttl: Optional[int] = None
+    first_acquirer: Optional[bool] = None
+    delivery_count: Optional[int] = None
+
+Header._code = 0x00000070  # type: ignore # pylint:disable=protected-access
 Header._definition = ( # type: ignore # pylint:disable=protected-access
     FIELD("durable", AMQPTypes.boolean, False, None, False),
     FIELD("priority", AMQPTypes.ubyte, False, None, False),
     FIELD("ttl", AMQPTypes.uint, False, None, False),
     FIELD("first_acquirer", AMQPTypes.boolean, False, None, False),
-    FIELD("delivery_count", AMQPTypes.uint, False, None, False))
+    FIELD("delivery_count", AMQPTypes.uint, False, None, False)
+)
+
 if _CAN_ADD_DOCSTRING:
     Header.__doc__ = """
     Transport headers for a Message.
@@ -76,25 +91,21 @@ if _CAN_ADD_DOCSTRING:
     """
 
 
-Properties = namedtuple(
-    'Properties',
-    [
-        'message_id',
-        'user_id',
-        'to',
-        'subject',
-        'reply_to',
-        'correlation_id',
-        'content_type',
-        'content_encoding',
-        'absolute_expiry_time',
-        'creation_time',
-        'group_id',
-        'group_sequence',
-        'reply_to_group_id'
-    ],
-    defaults=(None,) * 13 # type: ignore
-    )
+class Properties(NamedTuple):
+    message_id: Optional[Union[str, bytes, "UUID"]] = None
+    user_id: Optional[Union[str, bytes]] = None
+    to: Optional[Union[str, bytes]] = None
+    subject: Optional[Union[str, bytes]] = None
+    reply_to: Optional[Union[str, bytes]] = None
+    correlation_id: Optional[Union[str, bytes]] = None
+    content_type: Optional[Union[str, bytes]] = None
+    content_encoding: Optional[Union[str, bytes]] = None
+    absolute_expiry_time: Optional[int] = None
+    creation_time: Optional[int] = None
+    group_id: Optional[Union[str, bytes]] = None
+    group_sequence: Optional[int] = None
+    reply_to_group_id: Optional[Union[str, bytes]] = None
+
 Properties._code = 0x00000073 # type: ignore # pylint:disable=protected-access
 Properties._definition = ( # type: ignore # pylint:disable=protected-access
     FIELD("message_id", FieldDefinition.message_id, False, None, False),
@@ -110,6 +121,7 @@ Properties._definition = ( # type: ignore # pylint:disable=protected-access
     FIELD("group_id", AMQPTypes.string, False, None, False),
     FIELD("group_sequence", AMQPTypes.uint, False, None, False),
     FIELD("reply_to_group_id", AMQPTypes.string, False, None, False))
+
 if _CAN_ADD_DOCSTRING:
     Properties.__doc__ = """
     Immutable properties of the Message.
@@ -167,21 +179,17 @@ if _CAN_ADD_DOCSTRING:
     """
 
 # TODO: should be a class, namedtuple or dataclass, immutability vs performance, need to collect performance data
-Message = namedtuple(
-    'Message',
-    [
-        'header',
-        'delivery_annotations',
-        'message_annotations',
-        'properties',
-        'application_properties',
-        'data',
-        'sequence',
-        'value',
-        'footer',
-    ],
-    defaults=(None,) * 9 # type: ignore
-    )
+class Message(NamedTuple):
+    header: Optional[Header] = None
+    delivery_annotations: Optional[Dict[Union[str, bytes], Any]] = None
+    message_annotations: Optional[Dict[Union[str, bytes], Any]] = None
+    properties: Optional[Properties] = None
+    application_properties: Optional[Dict[Union[str, bytes], Any]] = None   # TODO: make not read-only
+    data: Optional[bytes] = None
+    sequence: Optional[List[Any]] = None
+    value: Optional[Any] = None
+    footer: Optional[Dict[Any, Any]] = None
+
 Message._code = 0 # type: ignore # pylint:disable=protected-access
 Message._definition = ( # type: ignore # pylint:disable=protected-access
     (0x00000070, FIELD("header", Header, False, None, False)),

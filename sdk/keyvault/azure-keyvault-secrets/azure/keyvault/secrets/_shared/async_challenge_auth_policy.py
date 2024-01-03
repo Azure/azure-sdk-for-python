@@ -15,36 +15,32 @@ protocol again.
 """
 
 import time
-from typing import TYPE_CHECKING
+from typing import Any, Optional
 from urllib.parse import urlparse
 
+from azure.core.credentials import AccessToken
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 
 from . import http_challenge_cache as ChallengeCache
 from .challenge_auth_policy import _enforce_tls, _update_challenge
-
-if TYPE_CHECKING:
-    from typing import Optional
-    from azure.core.credentials import AccessToken
-    from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.pipeline import PipelineRequest, PipelineResponse
-
 
 class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
     """Policy for handling HTTP authentication challenges.
 
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity.aio`
-    :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     """
 
-    def __init__(self, credential: "AsyncTokenCredential", *scopes: str, **kwargs) -> None:
+    def __init__(self, credential: AsyncTokenCredential, *scopes: str, **kwargs: Any) -> None:
         super().__init__(credential, *scopes, **kwargs)
         self._credential = credential
-        self._token: "Optional[AccessToken]" = None
+        self._token: Optional[AccessToken] = None
         self._verify_challenge_resource = kwargs.pop("verify_challenge_resource", True)
 
-    async def on_request(self, request: "PipelineRequest") -> None:
+    async def on_request(self, request: PipelineRequest) -> None:
         _enforce_tls(request)
         challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
         if challenge:
@@ -68,7 +64,7 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
             request.http_request.headers["Content-Length"] = "0"
 
 
-    async def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
+    async def on_challenge(self, request: PipelineRequest, response: PipelineResponse) -> bool:
         try:
             challenge = _update_challenge(request, response)
             # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
