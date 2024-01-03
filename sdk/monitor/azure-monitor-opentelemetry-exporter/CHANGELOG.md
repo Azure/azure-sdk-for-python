@@ -16,6 +16,8 @@
     ([#33489](https://github.com/Azure/azure-sdk-for-python/pull/33489))
 - Track custom events extension in feature statsbeat
     ([#33667](https://github.com/Azure/azure-sdk-for-python/pull/33667))
+- Readme examples are updated with correct imports
+    ([#33691](https://github.com/Azure/azure-sdk-for-python/pull/33691))
 
 ## 1.0.0b19 (2023-11-20)
 

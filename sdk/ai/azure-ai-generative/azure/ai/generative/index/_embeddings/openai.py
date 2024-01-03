@@ -19,7 +19,7 @@ class OpenAIEmbedder:
         self,
         api_base: str,
         api_type: str,
-        api_version: str = None,
+        api_version: Optional[str] = None,
         api_key: Optional[str] = None,
         azure_credential: Optional[Any] = None,
         model: str = "text-embedding-ada-002",
@@ -42,7 +42,7 @@ class OpenAIEmbedder:
         elif batch_size is None:
             batch_size = 1000
         self.batch_size = int(batch_size)
-        self._dynamic_batch_size = None
+        self._dynamic_batch_size: Optional[int] = None
 
         if max_retries is None:
             max_retries = 10
@@ -142,7 +142,7 @@ class OpenAIEmbedder:
             if self._dynamic_batch_size is None:
                 return self._embed_request(tokenized_texts=tokenized_texts, **kwargs)
             else:
-                embedding_response = {"data": []}
+                embedding_response: Dict[str, List] = {"data": []}
                 for i in range(0, len(tokenized_texts), self._dynamic_batch_size):
                     embedding_response["data"].extend(
                         self._embed_request(
@@ -165,7 +165,7 @@ class OpenAIEmbedder:
                     )
                     self._dynamic_batch_size = 1
                 logger.warning(f"Reducing batch_size to {self._dynamic_batch_size} and retrying.")
-                embedding_response = {"data": []}
+                embedding_response: Dict[str, List] = {"data": []}  # type: ignore[no-redef]
                 for i in range(0, len(tokenized_texts), self._dynamic_batch_size):
                     embedding_response["data"].extend(
                         self._embed_request(
@@ -197,7 +197,7 @@ class OpenAIEmbedder:
                     last_exception = e
                     retrying = False
                     for retryable_error in self._retryable_openai_errors:
-                        if isinstance(e, retryable_error):
+                        if isinstance(e, type(retryable_error)):
                             retrying = True
 
                             # Retry with retry-after if found in RateLimitError
@@ -289,7 +289,7 @@ class OpenAIEmbedder:
         for i in range(len(texts)):
             _result = embedding_results[i]
             if len(_result) == 0:
-                average = self._embed_request(tokenized_texts="", **self._openai_client_params)["data"][0]["embedding"]
+                average = self._embed_request(tokenized_texts="", **self._openai_client_params)["data"][0]["embedding"]  # type: ignore[arg-type]
             else:
                 average = np.average(_result, axis=0, weights=num_tokens_in_batch[i])
             embeddings[i] = (average / np.linalg.norm(average)).tolist()
