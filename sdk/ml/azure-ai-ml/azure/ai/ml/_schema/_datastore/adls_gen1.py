@@ -35,7 +35,7 @@ class AzureDataLakeGen1Schema(PathAwareSchema):
     tags = fields.Dict(keys=fields.Str(), values=fields.Dict())
 
     @post_load
-    def make(self, data: Dict[str, Any], **kwargs) -> "AzureDataLakeGen1Datastore":  # type: ignore[name-defined]
+    def make(self, data: Dict[str, Any], **kwargs) -> "AzureDataLakeGen1Datastore":
         from azure.ai.ml.entities import AzureDataLakeGen1Datastore
 
         return AzureDataLakeGen1Datastore(**data)

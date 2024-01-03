@@ -26,7 +26,7 @@ class DefaultScaleSettingsSchema(metaclass=PatchedSchemaMeta):
     )
 
     @post_load
-    def make(self, data: Any, **kwargs: Any) -> "DefaultScaleSettings":  # type: ignore[name-defined]
+    def make(self, data: Any, **kwargs: Any) -> "DefaultScaleSettings":
         from azure.ai.ml.entities import DefaultScaleSettings
 
         return DefaultScaleSettings(**data)
@@ -45,7 +45,7 @@ class TargetUtilizationScaleSettingsSchema(metaclass=PatchedSchemaMeta):
     max_instances = fields.Int()
 
     @post_load
-    def make(self, data: Any, **kwargs: Any) -> "TargetUtilizationScaleSettings":  # type: ignore[name-defined]
+    def make(self, data: Any, **kwargs: Any) -> "TargetUtilizationScaleSettings":
         from azure.ai.ml.entities import TargetUtilizationScaleSettings
 
         return TargetUtilizationScaleSettings(**data)

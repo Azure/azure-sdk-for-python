@@ -17,7 +17,7 @@ class NlpLimitsSchema(metaclass=PatchedSchemaMeta):
     trial_timeout_minutes = fields.Int()  # type duration
 
     @post_load
-    def make(self, data, **kwargs) -> "NlpLimitSettings":  # type: ignore[name-defined]
+    def make(self, data, **kwargs) -> "NlpLimitSettings":
         from azure.ai.ml.automl import NlpLimitSettings
 
         return NlpLimitSettings(**data)

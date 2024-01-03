@@ -21,7 +21,7 @@ class KerberosPasswordSchema(BaseKerberosCredentials):
     kerberos_password = fields.Str(required=True)
 
     @post_load
-    def make(self, data: Dict[str, str], **kwargs) -> "KerberosPasswordCredentials":  # type: ignore[name-defined]
+    def make(self, data: Dict[str, str], **kwargs) -> "KerberosPasswordCredentials":
         from azure.ai.ml.entities._datastore._on_prem_credentials import KerberosPasswordCredentials
 
         return KerberosPasswordCredentials(**data)
@@ -39,7 +39,7 @@ class KerberosKeytabSchema(BaseKerberosCredentials):
     kerberos_keytab = fields.Str(required=True)
 
     @post_load
-    def make(self, data: Dict[str, str], **kwargs) -> "KerberosKeytabCredentials":  # type: ignore[name-defined]
+    def make(self, data: Dict[str, str], **kwargs) -> "KerberosKeytabCredentials":
         from azure.ai.ml.entities._datastore._on_prem_credentials import KerberosKeytabCredentials
 
         return KerberosKeytabCredentials(**data)

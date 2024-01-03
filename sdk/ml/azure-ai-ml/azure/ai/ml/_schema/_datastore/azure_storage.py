@@ -91,7 +91,7 @@ class AzureDataLakeGen2Schema(AzureStorageSchema):
     )
 
     @post_load
-    def make(self, data: Dict[str, Any], **kwargs) -> "AzureDataLakeGen2Datastore":  # type: ignore[name-defined]
+    def make(self, data: Dict[str, Any], **kwargs) -> "AzureDataLakeGen2Datastore":
         from azure.ai.ml.entities import AzureDataLakeGen2Datastore
 
         return AzureDataLakeGen2Datastore(**data)

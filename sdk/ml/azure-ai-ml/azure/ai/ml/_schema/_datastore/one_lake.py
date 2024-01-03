@@ -43,7 +43,7 @@ class OneLakeSchema(PathAwareSchema):
     tags = fields.Dict(keys=fields.Str(), values=fields.Str())
 
     @post_load
-    def make(self, data: Dict[str, Any], **kwargs) -> "OneLakeDatastore":  # type: ignore[name-defined]
+    def make(self, data: Dict[str, Any], **kwargs) -> "OneLakeDatastore":
         from azure.ai.ml.entities import OneLakeDatastore
 
         return OneLakeDatastore(**data)
