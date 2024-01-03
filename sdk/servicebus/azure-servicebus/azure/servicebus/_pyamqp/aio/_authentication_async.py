@@ -7,7 +7,7 @@ from functools import partial
 import time
 from typing import Awaitable, Callable, Optional, Tuple, Union, Any
 
-from azure.servicebus._pyamqp.sasl import SASLAnonymousCredential
+from ..sasl import SASLAnonymousCredential
 
 from ..authentication import (
     _generate_sas_access_token,
