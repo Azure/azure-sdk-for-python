@@ -223,6 +223,7 @@ class _StatsbeatMetrics:
         if get_statsbeat_custom_events_feature_set():
             self._feature |= _StatsbeatFeature.CUSTOM_EVENTS_EXTENSION
             _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = self._feature
+
         # Don't send observation if no features enabled
         if self._feature is not _StatsbeatFeature.NONE:
             attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
@@ -400,10 +401,6 @@ class _StatsbeatMetrics:
                     )
                     _REQUESTS_MAP[_REQ_EXCEPTION_NAME[1]][code] = 0 # type: ignore
         return observations
-
-    def set_custom_events_extension_feature(self):
-        self._feature |= _StatsbeatFeature.CUSTOM_EVENTS_EXTENSION
-        _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = self._feature
 
 
 def _shorten_host(host: str) -> str:
