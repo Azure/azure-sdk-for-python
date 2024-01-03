@@ -515,6 +515,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
     async def _load_feature_flags(self, **kwargs):
         feature_flag_sentinel_keys = {}
         loaded_feature_flags = {}
+        # Needs to be removed unknown keyword argument for list_configuration_settings
+        kwargs.pop("sentinel_keys", self._refresh_on)
         if self._feature_flag_enabled:
             for select in self._feature_flag_selectors:
                 feature_flags = self._client.list_configuration_settings(
