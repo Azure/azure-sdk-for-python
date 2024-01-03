@@ -26,6 +26,12 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
 )
+from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+    get_statsbeat_shutdown,
+    get_statsbeat_custom_events_feature_set,
+    is_statsbeat_enabled,
+    set_statsbeat_custom_events_feature_set,
+)
 
 _logger = logging.getLogger(__name__)
 
@@ -127,6 +133,7 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
 
     # Event telemetry
     if _log_data_is_event(log_data):
+        _set_statsbeat_custom_events_feature()
         envelope.name = 'Microsoft.ApplicationInsights.Event'
         data = TelemetryEventData(
             name=str(log_record.body)[:32768],
@@ -196,3 +203,7 @@ _IGNORED_ATTRS = frozenset(
         _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
     )
 )
+
+def _set_statsbeat_custom_events_feature():
+    if is_statsbeat_enabled() and not get_statsbeat_shutdown() and not get_statsbeat_custom_events_feature_set():
+        set_statsbeat_custom_events_feature_set()
