@@ -441,13 +441,13 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def list_revisions(
-        self, 
+        self,
         key_filter: Optional[str] = None,
         label_filter: Optional[str] = None,
         *,
         accept_datetime: Optional[Union[datetime, str]] = None,
         fields: Optional[List[str]] = None,
-        **kwargs
+        **kwargs,
     ) -> ItemPaged[ConfigurationSetting]:
         """
         Find the ConfigurationSetting revision history, optionally filtered by key, label and accept_datetime.
@@ -508,7 +508,7 @@ class AzureAppConfigurationClient:
         read_only: bool = True,
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
-        **kwargs
+        **kwargs,
     ) -> ConfigurationSetting:
         """Set a configuration setting read only
 
