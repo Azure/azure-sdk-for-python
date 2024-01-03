@@ -33,7 +33,6 @@
 # -------------------------------------------------------------------------
 
 import asyncio
-import anyio
 import errno
 import socket
 import ssl
@@ -41,7 +40,7 @@ import struct
 from ssl import SSLError
 from io import BytesIO
 import logging
-
+import anyio
 
 
 import certifi
@@ -74,10 +73,9 @@ _LOGGER = logging.getLogger(__name__)
 class AsyncTransportMixin:
     async def receive_frame(self, timeout=None, **kwargs):
         try:
-            async with anyio.create_task_group() as tg:
-                with anyio.fail_after(timeout):
-                    header, channel, payload = await self.read(**kwargs)
-            
+            with anyio.fail_after(timeout):
+                header, channel, payload = await self.read(**kwargs)
+
             if not payload:
                 decoded = decode_empty_frame(header)
             else:
@@ -88,6 +86,7 @@ class AsyncTransportMixin:
             socket.timeout,
             anyio.IncompleteRead,
             asyncio.TimeoutError,
+            anyio.EndOfStream
         ):
             return None, None
 
@@ -139,7 +138,8 @@ class AsyncTransportMixin:
                 asyncio.TimeoutError,
                 TimeoutError,
                 socket.timeout,
-                anyio.IncompleteRead
+                anyio.IncompleteRead,
+                anyio.EndOfStream
             ):
                 read_frame_buffer.write(self._read_buffer.getvalue())
                 self._read_buffer = read_frame_buffer
@@ -255,6 +255,7 @@ class AsyncTransport(
         self.sock = None
         self.reader = None
         self.writer = None
+        self.socket_stream = None
         self.raise_on_initial_eintr = raise_on_initial_eintr
         self._read_buffer = BytesIO()
         self.host, self.port = to_host_port(host, port)
@@ -279,13 +280,13 @@ class AsyncTransport(
             # For uamqp exception parity. Remove later when resolving issue #27128.
                 exc.filename = self.sslopts
                 raise exc
-            
+
             self.socket_stream = await anyio.connect_tcp(
                 remote_host=self.host,
                 remote_port=self.port,
                 ssl_context=self.sslopts,
             )
-        
+
             self.connected = True
             # sock = self.writer.transport.get_extra_info("socket")
             # if sock:
@@ -331,7 +332,7 @@ class AsyncTransport(
     async def _read(
         self,
         toread,
-        initial=False,
+        initial=False, # pylint: disable=unused-argument
         buffer=None,
         _errnos=(errno.ENOENT, errno.EAGAIN, errno.EINTR),
     ):
@@ -354,10 +355,6 @@ class AsyncTransport(
                     # This means that close() was called concurrently
                     # self.reader has been set to None.
                     raise IOError("Connection has already been closed") from None
-                except anyio.IncompleteRead as exc:
-                    pbytes = len(exc.partial)
-                    view[nbytes : nbytes + pbytes] = exc.partial
-                    nbytes = pbytes
                 except anyio.EndOfStream as exc:
                     # ssl.sock.read may cause a SSLerror without errno
                     # http://bugs.python.org/issue10272
@@ -368,14 +365,14 @@ class AsyncTransport(
                     # https://man7.org/linux/man-pages/man7/tcp.7.html.
                     # This behavior is linux specific and only on async. sync Linux & async/sync Windows & Mac raised
                     # ConnectionAborted or ConnectionReset errors which properly end up in a retry loop.
-                    if exc.errno in [110]:
-                        raise ConnectionAbortedError('The connection was closed abruptly.') from exc
+                    # if exc.errno in [110]:
+                    #     raise ConnectionAbortedError('The connection was closed abruptly.') from exc
                     # ssl.sock.read may cause ENOENT if the
                     # operation couldn't be performed (Issue celery#1414).
-                    if exc.errno in _errnos:
-                        if initial and self.raise_on_initial_eintr:
-                            raise socket.timeout()
-                        continue
+                    # if exc.errno in _errnos:
+                    #     if initial and self.raise_on_initial_eintr:
+                    #         raise socket.timeout()
+                    #     continue
                     raise
                 if not nbytes:
                     raise IOError("Server unexpectedly closed connection")
