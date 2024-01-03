@@ -5,6 +5,7 @@
 from typing import Callable
 from azure.identity import ClientAssertionCredential
 
+
 def test_init_with_kwargs():
     tenant_id: str = "TENANT_ID"
     client_id: str = "CLIENT_ID"
