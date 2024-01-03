@@ -102,6 +102,7 @@ def _default_logger_name(configurations):
 
 
 def _default_resource(configurations):
+    # TODO: change to combine passed in resource with detectors
     if RESOURCE_ARG not in configurations:
         environ.setdefault(
             OTEL_EXPERIMENTAL_RESOURCE_DETECTORS,
