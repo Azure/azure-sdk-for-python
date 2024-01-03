@@ -162,10 +162,10 @@ logging library are tracked and telemetry is exported to application insights wi
 import os
 import logging
 
+from opentelemetry._logs import set_logger_provider
 from opentelemetry.sdk._logs import (
     LoggerProvider,
     LoggingHandler,
-    set_logger_provider,
 )
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 
@@ -204,10 +204,10 @@ import os
 import logging
 
 from opentelemetry import trace
+from opentelemetry._logs import set_logger_provider
 from opentelemetry.sdk._logs import (
     LoggerProvider,
     LoggingHandler,
-    set_logger_provider,
 )
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.trace import TracerProvider
@@ -247,10 +247,10 @@ An example showing how to add custom properties to logging telemetry.
 import os
 import logging
 
+from opentelemetry._logs import set_logger_provider
 from opentelemetry.sdk._logs import (
     LoggerProvider,
     LoggingHandler,
-    set_logger_provider,
 )
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 
