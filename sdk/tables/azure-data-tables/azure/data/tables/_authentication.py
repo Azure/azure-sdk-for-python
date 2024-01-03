@@ -3,21 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse  # type: ignore
+from urllib.parse import urlparse
 from typing import Optional, Union, overload, cast
 
 from azure.core.credentials import TokenCredential, AzureSasCredential, AzureNamedKeyCredential
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline import PipelineResponse, PipelineRequest
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy, SansIOHTTPPolicy, AzureSasCredentialPolicy
-
-try:
-    from azure.core.pipeline.transport import AsyncHttpTransport
-except ImportError:
-    AsyncHttpTransport = None  # type: ignore
+from azure.core.pipeline.transport import AsyncHttpTransport
 
 try:
     from yarl import URL  # cspell:disable-line

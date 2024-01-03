@@ -13,8 +13,6 @@ from typing import Dict
 
 from dotenv import load_dotenv, find_dotenv
 
-from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
-
 from . import mgmt_settings_fake as fake_settings
 from .azure_testcase import (
     _is_autorest_v3,
@@ -22,7 +20,7 @@ from .azure_testcase import (
     get_qualified_method_name,
 )
 from .fake_credentials_async import AsyncFakeCredential
-from .helpers import is_live
+from .helpers import is_live, trim_kwargs_from_test_function
 from .sanitizers import add_general_string_sanitizer
 
 

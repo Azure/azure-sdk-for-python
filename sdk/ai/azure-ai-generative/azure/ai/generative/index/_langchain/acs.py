@@ -4,7 +4,7 @@
 """Azure Cognitive Search vector store."""
 import base64
 import json
-from typing import Any, Iterable, List, Optional, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 from azure.ai.generative.index._utils.logging import get_logger
 from azure.ai.generative.index._utils.requests import send_post_request
@@ -91,7 +91,7 @@ class AzureCognitiveSearchVectorStore(VectorStore):
     ) -> List[Tuple[Document, float]]:
         post_url = f"{self.endpoint}/indexes/{self.index_name}/docs/search?api-version=2023-07-01-Preview"
         headers = get_acs_headers(self.credential)
-        post_payload = {}
+        post_payload: Dict[str, Any] = {}
 
         if query is not None:
             logger.info(f"Query: {query}")

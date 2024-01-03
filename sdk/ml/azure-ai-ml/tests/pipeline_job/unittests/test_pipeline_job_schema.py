@@ -33,6 +33,7 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     INPUT_MOUNT_MAPPING_FROM_REST,
     validate_pipeline_input_key_characters,
 )
+from azure.ai.ml.entities._credentials import UserIdentityConfiguration
 from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_dist_dict_to_str_dict
 from azure.ai.ml.entities._job.job_service import (
     JobService,
@@ -648,6 +649,11 @@ class TestPipelineJobSchema:
         hello_world_component = job.jobs["hello_world_inline_paralleljob"]
         component_dict = load_yaml("./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/score.yml")
         self.assert_inline_component(hello_world_component, component_dict)
+
+    def test_pipeline_job_inline_component_file_parallel_with_user_identity(self):
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_inline_file_parallel.yml"
+        job = load_job(test_path)
+        assert isinstance(job.jobs["hello_world_inline_paralleljob"].identity, UserIdentityConfiguration)
 
     @classmethod
     def assert_settings_field(

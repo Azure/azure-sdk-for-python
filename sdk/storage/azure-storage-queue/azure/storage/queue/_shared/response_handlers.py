@@ -97,7 +97,8 @@ def process_storage_error(storage_error) -> NoReturn: # type: ignore [misc] # py
     try:
         error_body = ContentDecodePolicy.deserialize_from_http_generics(storage_error.response)
         try:
-            error_body = error_body or storage_error.response.reason
+            if error_body is None or len(error_body) == 0:
+                error_body = storage_error.response.reason
         except AttributeError:
             error_body = ''
         # If it is an XML response
@@ -115,7 +116,8 @@ def process_storage_error(storage_error) -> NoReturn: # type: ignore [misc] # py
             error_dict = {'message': str(error_body)}
 
         # If we extracted from a Json or XML response
-        if error_dict:
+        # There is a chance error_dict is just a string
+        if error_dict and isinstance(error_dict, dict):
             error_code = error_dict.get('code')
             error_message = error_dict.get('message')
             additional_data = {k: v for k, v in error_dict.items() if k not in {'code', 'message'}}

@@ -6,9 +6,13 @@
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, TYPE_CHECKING
 )
+from urllib.parse import parse_qs
 
 from azure.storage.blob import generate_account_sas as generate_blob_account_sas
 from azure.storage.blob import generate_container_sas, generate_blob_sas
+from ._shared.shared_access_signature import QueryStringConstants
+
+
 if TYPE_CHECKING:
     from datetime import datetime
     from ._models import (
@@ -411,3 +415,13 @@ def generate_file_sas(
         permission=permission,
         expiry=expiry,
         **kwargs)
+
+def _is_credential_sastoken(credential: Any) -> bool:
+    if not credential or not isinstance(credential, str):
+        return False
+
+    sas_values = QueryStringConstants.to_list()
+    parsed_query = parse_qs(credential.lstrip("?"))
+    if parsed_query and all(k in sas_values for k in parsed_query):
+        return True
+    return False

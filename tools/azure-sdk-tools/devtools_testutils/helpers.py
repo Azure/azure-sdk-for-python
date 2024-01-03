@@ -3,11 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import inspect
 import os
+import random
+import string
 import sys
 from urllib3 import PoolManager, Retry
 
-from azure_devtools.scenario_tests.config import TestConfig
+from .config import TestConfig
 
 
 # we store recording IDs in a module-level variable so that sanitizers can access them
@@ -79,6 +82,38 @@ def is_live():
 
 def is_live_and_not_recording():
     return is_live() and os.environ.get("AZURE_SKIP_LIVE_RECORDING", "").lower() == "true"
+
+
+def is_preparer_func(fn):
+    return getattr(fn, "__is_preparer", False)
+
+
+def create_random_name(prefix: str = "aztest", length: int = 24) -> str:
+    if len(prefix) > length:
+        raise ValueError("The length of the prefix must not be longer than random name length")
+
+    padding_size = length - len(prefix)
+    if padding_size < 4:
+        raise ValueError(
+            "The randomized part of the name is shorter than 4, which may not be able to offer enough randomness"
+        )
+
+    # return name composed of the prefix plus random letters to meet the length
+    return prefix + "".join(random.choice(string.ascii_lowercase) for _ in range(padding_size))
+
+
+def trim_kwargs_from_test_function(fn, kwargs):
+    # the next function is the actual test function. the kwargs need to be trimmed so
+    # that parameters which are not required will not be passed to it.
+    if not is_preparer_func(fn):
+        try:
+            args, _, kw, _, _, _, _ = inspect.getfullargspec(fn)
+        except AttributeError:
+            args, _, kw, _ = inspect.getargspec(fn)  # pylint: disable=deprecated-method
+        if kw is None:
+            args = set(args)
+            for key in [k for k in kwargs if k not in args]:
+                del kwargs[key]
 
 
 class RetryCounter(object):

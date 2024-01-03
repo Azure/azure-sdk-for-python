@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import uuid
-from typing import Any
+from typing import Any, Optional
 
 from azure.core.tracing.decorator import distributed_trace
 
@@ -11,9 +11,9 @@ from azure.ai.resources._project_scope import OperationScope
 
 from azure.ai.ml import MLClient
 
-from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, OpsLogger
+from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, ActivityLogger
 
-ops_logger = OpsLogger(__name__)
+ops_logger = ActivityLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
@@ -38,7 +38,7 @@ class PFOperations():
 
     @distributed_trace
     @monitor_with_activity(logger, "PF.BatchRun", ActivityType.PUBLICAPI)
-    def batch_run(self, flow: str, data: str, inputs_mapping: dict, runtime: str, connections: dict = None):
+    def batch_run(self, flow: str, data: str, inputs_mapping: dict, runtime: str, connections: Optional[dict] = None):
         from promptflow.sdk.entities import Run
 
         run_data = {

@@ -24,7 +24,7 @@ class TestNetAppResourceOperations(AzureMgmtRecordedTestCase):
         
         print("Starting test_begin_update_network_sibling_set")
         try:
-           self.client.net_app_resource.begin_update_network_sibling_set(setup.LOCATION, "9760acf5-4638-11e7-9bdb-020073ca3333", "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.Network/virtualNetworks/testVnet/subnets/sdk-python-tests-subnet", "herpiderp", "Basic")
+           self.client.net_app_resource.begin_update_network_sibling_set(setup.LOCATION, "9760acf5-4638-11e7-9bdb-020073ca3333", "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.Network/virtualNetworks/testVnet/subnets/sdk-python-tests-subnet", "herpiderp", "Standard")
         except Exception as e:
             assert str(e).startswith("(NetworkSiblingSetChanged)")
         print("Finished with test_begin_update_network_sibling_set")

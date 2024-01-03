@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b19 (Unreleased)
+## 1.0.0b20 (Unreleased)
 
 ### Features Added
 
@@ -8,10 +8,21 @@
 
 ### Bugs Fixed
 
+### Other Changes
+
+- Store global instance of `StatsbeatMetric`
+    ([#33432](https://github.com/Azure/azure-sdk-for-python/pull/33432))
+- Shutdown statsbeat on customer getting 400 error code
+    ([#33489](https://github.com/Azure/azure-sdk-for-python/pull/33489))
+- Readme examples are updated with correct imports
+    ([#33691](https://github.com/Azure/azure-sdk-for-python/pull/33691))
+
+## 1.0.0b19 (2023-11-20)
+
+### Bugs Fixed
+
 - Fix deserialization of `TelemetryItem` from local storage
     ([#33163](https://github.com/Azure/azure-sdk-for-python/pull/33163))
-
-### Other Changes
 
 ## 1.0.0b18 (2023-11-06)
 

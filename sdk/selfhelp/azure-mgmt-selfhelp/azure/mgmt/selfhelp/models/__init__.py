@@ -37,7 +37,6 @@ from ._models_py3 import SolutionMetadataProperties
 from ._models_py3 import SolutionMetadataResource
 from ._models_py3 import SolutionPatchRequestBody
 from ._models_py3 import SolutionResource
-from ._models_py3 import SolutionResourceProperties
 from ._models_py3 import SolutionsDiagnostic
 from ._models_py3 import SolutionsTroubleshooters
 from ._models_py3 import Step
@@ -105,7 +104,6 @@ __all__ = [
     "SolutionMetadataResource",
     "SolutionPatchRequestBody",
     "SolutionResource",
-    "SolutionResourceProperties",
     "SolutionsDiagnostic",
     "SolutionsTroubleshooters",
     "Step",

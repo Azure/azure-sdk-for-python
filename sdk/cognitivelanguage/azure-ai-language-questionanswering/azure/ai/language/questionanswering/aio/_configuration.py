@@ -8,14 +8,13 @@
 
 from typing import Any
 
-from azure.core.configuration import Configuration
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 
 from .._version import VERSION
 
 
-class QuestionAnsweringClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes,name-too-long
+class QuestionAnsweringClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
     """Configuration for QuestionAnsweringClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -32,7 +31,6 @@ class QuestionAnsweringClientConfiguration(Configuration):  # pylint: disable=to
     """
 
     def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
-        super(QuestionAnsweringClientConfiguration, self).__init__(**kwargs)
         api_version: str = kwargs.pop("api_version", "2021-10-01")
 
         if endpoint is None:
@@ -44,6 +42,7 @@ class QuestionAnsweringClientConfiguration(Configuration):  # pylint: disable=to
         self.credential = credential
         self.api_version = api_version
         kwargs.setdefault("sdk_moniker", "ai-language-questionanswering/{}".format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:
@@ -52,9 +51,9 @@ class QuestionAnsweringClientConfiguration(Configuration):  # pylint: disable=to
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
         self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
         self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
         self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
             self.authentication_policy = policies.AzureKeyCredentialPolicy(

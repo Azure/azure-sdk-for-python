@@ -8,12 +8,12 @@ import tempfile
 import time
 import logging
 from pathlib import Path
-from typing import Callable, Optional, Dict, List
+from typing import Callable, Optional, Dict, List, Mapping
 
 import mlflow
 import pandas as pd
 from azure.core.tracing.decorator import distributed_trace
-from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, OpsLogger
+from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, ActivityLogger
 
 from mlflow.entities import Metric
 from mlflow.exceptions import MlflowException
@@ -28,6 +28,10 @@ from azure.ai.generative.evaluate._evaluation_result import EvaluationResult
 from ._utils import _write_properties_to_run_history
 
 LOGGER = logging.getLogger(__name__)
+
+activity_logger = ActivityLogger(__name__)
+activity_logger.update_info()
+package_logger, module_logger = activity_logger.package_logger, activity_logger.module_logger
 
 
 def _get_handler_class(
@@ -80,16 +84,16 @@ def _log_metrics(run_id, metrics):
 
 
 @distributed_trace
-@monitor_with_activity(LOGGER, "Evaluate", ActivityType.PUBLICAPI)
+@monitor_with_activity(package_logger, "Evaluate", ActivityType.PUBLICAPI)
 def evaluate(
         *,
-        evaluation_name: str = None,
+        evaluation_name: Optional[str] = None,
         target: Optional[Callable] = None,
         data: Optional[str] = None,
-        task_type: str = None,
+        task_type: Optional[str] = None,
         metrics_list: Optional[List[str]] = None,
-        model_config: Dict[str, str] = None,
-        data_mapping: Dict[str, str] = None,
+        model_config: Optional[Dict[str, str]] = None,
+        data_mapping: Optional[Mapping] = None,
         output_path: Optional[str] = None,
         **kwargs
 ):
@@ -110,7 +114,7 @@ def evaluate(
     :keyword model_config: GPT configuration details needed for AI-assisted metrics.
     :paramtype model_config: Dict[str, str]
     :keyword data_mapping: GPT configuration details needed for AI-assisted metrics.
-    :paramtype data_mapping: Dict[str, str]
+    :paramtype data_mapping: typing.Mapping
     :keyword output_path: The local folder path to save evaluation artifacts to if set
     :paramtype output_path: Optional[str]
     :keyword tracking_uri: Tracking uri to log evaluation results to AI Studio
@@ -335,6 +339,8 @@ def _evaluate(
     return evaluation_result
 
 
+@distributed_trace
+@monitor_with_activity(package_logger, "LogInput", ActivityType.PUBLICAPI)
 def log_input(data, data_is_file):
     try:
         # Mlflow service supports only uri_folder, hence this is need to create a dir to log input data.
@@ -360,16 +366,22 @@ def log_input(data, data_is_file):
         LOGGER.exception(ex, stack_info=True)
 
 
+@distributed_trace
+@monitor_with_activity(package_logger, "LogParamAndTag", ActivityType.PUBLICAPI)
 def log_param_and_tag(key, value):
     mlflow.log_param(key, value)
     mlflow.set_tag(key, value)
 
 
+@distributed_trace
+@monitor_with_activity(package_logger, "LogPropertyAndTag", ActivityType.PUBLICAPI)
 def log_property_and_tag(key, value, logger=LOGGER):
     _write_properties_to_run_history({key: value}, logger)
     mlflow.set_tag(key, value)
 
 
+@distributed_trace
+@monitor_with_activity(package_logger, "LogProperty", ActivityType.PUBLICAPI)
 def log_property(key, value, logger=LOGGER):
     _write_properties_to_run_history({key: value}, logger)
 

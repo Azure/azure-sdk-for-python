@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Any, Iterable
+from typing import Any, Iterable, Optional
 
 from azure.core.tracing.decorator import distributed_trace
 
@@ -12,10 +12,10 @@ from azure.ai.ml.constants._common import Scope
 from azure.ai.ml.entities._workspace_hub._constants import ENDPOINT_AI_SERVICE_KIND
 from azure.core.polling import LROPoller
 
-from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, OpsLogger
+from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, ActivityLogger
 
-ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+activity_logger = ActivityLogger(__name__)
+logger, module_logger = activity_logger.package_logger, activity_logger.module_logger
 
 
 class AIResourceOperations:
@@ -29,7 +29,7 @@ class AIResourceOperations:
     # TODO add operation scope at init level?
     def __init__(self, ml_client: MLClient, **kwargs: Any):
         self._ml_client = ml_client
-        ops_logger.update_info(kwargs)
+        activity_logger.update_info(kwargs)
 
     @distributed_trace
     @monitor_with_activity(logger, "AIResource.Get", ActivityType.PUBLICAPI)
@@ -66,7 +66,7 @@ class AIResourceOperations:
         *,
         ai_resource: AIResource,
         update_dependent_resources: bool = False,
-        endpoint_resource_id: str = None,
+        endpoint_resource_id: Optional[str] = None,
         endpoint_kind: str = ENDPOINT_AI_SERVICE_KIND,
         **kwargs,
     ) -> LROPoller[AIResource]:

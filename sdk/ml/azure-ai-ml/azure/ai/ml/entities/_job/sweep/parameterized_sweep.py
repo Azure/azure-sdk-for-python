@@ -162,7 +162,6 @@ class ParameterizedSweep:
         properties: Optional[Dict] = None,
         docker_args: Optional[str] = None,
         shm_size: Optional[str] = None,
-        **kwargs,  # pylint: disable=unused-argument
     ):
         """Set resources for Sweep."""
         if self.resources is None:

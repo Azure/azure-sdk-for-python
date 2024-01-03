@@ -4,9 +4,13 @@
 import os
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import AmlToken, ManagedIdentity
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
+from azure.ai.ml.entities._credentials import (
+    AmlTokenConfiguration,
+    ManagedIdentityConfiguration,
+    UserIdentityConfiguration,
+)
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
 from azure.ai.ml.entities._job.parallel.run_function import RunFunction
 
@@ -39,7 +43,7 @@ def parallel_run_function(
     instance_type: Optional[str] = None,
     docker_args: Optional[str] = None,
     shm_size: Optional[str] = None,
-    identity: Optional[Union[ManagedIdentity, AmlToken]] = None,
+    identity: Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]] = None,
     is_deterministic: bool = True,
     **kwargs,
 ) -> Parallel:
@@ -174,10 +178,11 @@ def parallel_run_function(
                      This should be in the format of (number)(unit) where number as to be greater than 0
                      and the unit can be one of b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
     :paramtype shm_size: str
-    :keyword identity: Identity that training job will use while running on compute.
-    :paramtype identity: Union[
-                    ~azure.ai.ml._restclient.v2022_02_01_preview.models.ManagedIdentity,
-                    ~azure.ai.ml._restclient.v2022_02_01_preview.models.AmlToken]
+    :keyword identity: Identity that PRS job will use while running on compute.
+    :paramtype identity: Optional[Union[
+        ~azure.ai.ml.entities.ManagedIdentityConfiguration,
+        ~azure.ai.ml.entities.AmlTokenConfiguration,
+        ~azure.ai.ml.entities.UserIdentityConfiguration]]
     :keyword is_deterministic: Specify whether the parallel will return same output given same input.
                              If a parallel (component) is deterministic, when use it as a node/step in a pipeline,
                              it will reuse results from a previous submitted job in current workspace
