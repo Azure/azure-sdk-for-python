@@ -117,8 +117,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         """Gets the properties of an account's Table service,
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TableServiceProperties, or the result of cls(response)
+        :return: Dictionary of service properties
         :rtype: dict[str, object]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
@@ -243,7 +242,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         await table.delete_table(**kwargs)
 
     @distributed_trace
-    def list_tables(self, **kwargs) -> AsyncItemPaged[TableItem]:
+    def list_tables(self, *, results_per_page: Optional[int] = None, **kwargs) -> AsyncItemPaged[TableItem]:
         """Queries tables under the given account.
 
         :keyword int results_per_page: Number of tables per page in returned ItemPaged
@@ -260,12 +259,10 @@ class TableServiceClient(AsyncTablesBaseClient):
                 :dedent: 16
                 :caption: Listing all tables in an account
         """
-        top = kwargs.pop("results_per_page", None)
-
         command = functools.partial(self._client.table.query, **kwargs)
         return AsyncItemPaged(
             command,
-            results_per_page=top,
+            results_per_page=results_per_page,
             page_iterator_class=TablePropertiesPaged,
         )
 

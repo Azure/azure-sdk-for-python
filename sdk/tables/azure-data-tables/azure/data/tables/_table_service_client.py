@@ -273,7 +273,7 @@ class TableServiceClient(TablesBaseClient):
         )
 
     @distributed_trace
-    def list_tables(self, **kwargs) -> ItemPaged[TableItem]:
+    def list_tables(self, *, results_per_page: Optional[int] = None, **kwargs) -> ItemPaged[TableItem]:
         """Queries tables under the given account.
 
         :keyword int results_per_page: Number of tables per page in returned ItemPaged
@@ -290,12 +290,10 @@ class TableServiceClient(TablesBaseClient):
                 :dedent: 16
                 :caption: Listing all tables in a storage account
         """
-        top = kwargs.pop("results_per_page", None)
-
         command = functools.partial(self._client.table.query, **kwargs)
         return ItemPaged(
             command,
-            results_per_page=top,
+            results_per_page=results_per_page,
             page_iterator_class=TablePropertiesPaged,
         )
 
