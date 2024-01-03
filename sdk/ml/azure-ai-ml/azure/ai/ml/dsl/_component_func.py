@@ -97,6 +97,7 @@ def to_component_func(entity: ComponentEntity, component_creation_func: Callable
         flattened_group_keys=flattened_group_keys,
     )
 
-    dynamic_func._func_calling_example = example
-    dynamic_func._has_parameters = bool(all_params)
+    # Bug Item number: 2883188
+    dynamic_func._func_calling_example = example  # type: ignore
+    dynamic_func._has_parameters = bool(all_params)  # type: ignore
     return dynamic_func

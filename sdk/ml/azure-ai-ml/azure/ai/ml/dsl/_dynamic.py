@@ -56,6 +56,8 @@ def _replace_function_name(func: types.FunctionType, new_name: str) -> types.Fun
         else:
             # Before python<3.8, replace is not available, we can only initialize the code as following.
             # https://github.com/python/cpython/blob/v3.7.8/Objects/codeobject.c#L97
+
+            # Bug Item number: 2881688
             code = types.CodeType(  # type: ignore
                 code_template.co_argcount,
                 code_template.co_kwonlyargcount,
@@ -174,7 +176,8 @@ def create_kw_function_from_parameters(
 
     f = _replace_function_name(cast(types.FunctionType, f), func_name)
     # Set the signature so jupyter notebook could have param hint by calling inspect.signature()
-    f.__signature__ = Signature(parameters)
+    # Bug Item number: 2883223
+    f.__signature__ = Signature(parameters)  # type: ignore
     # Set doc/name/module to make sure help(f) shows following expected result.
     # Expected help(f):
     #

@@ -245,9 +245,10 @@ def pipeline(
 
             return built_pipeline
 
-        wrapper._is_dsl_func = True
-        wrapper._job_settings = job_settings
-        wrapper._pipeline_builder = pipeline_builder
+        # Bug Item number: 2883169
+        wrapper._is_dsl_func = True  # type: ignore
+        wrapper._job_settings = job_settings  # type: ignore
+        wrapper._pipeline_builder = pipeline_builder  # type: ignore
         return wrapper
 
     # enable use decorator without "()" if all arguments are default values
