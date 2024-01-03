@@ -21,7 +21,10 @@ from opentelemetry.sdk.environment_variables import (
     OTEL_TRACES_SAMPLER_ARG,
 )
 from opentelemetry.sdk.resources import Resource
+<<<<<<< HEAD
 
+=======
+>>>>>>> dee8b30ec3 (Tests pass)
 from azure.monitor.opentelemetry._constants import (
     _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME,
     _AZURE_VM_RESOURCE_DETECTOR_NAME,
@@ -102,11 +105,12 @@ def _default_logger_name(configurations):
 
 
 def _default_resource(configurations):
-    environ.setdefault(
-        OTEL_EXPERIMENTAL_RESOURCE_DETECTORS,
-        ",".join(_SUPPORTED_RESOURCE_DETECTORS)
-    )
-    configurations[RESOURCE_ARG] = Resource.create()
+    if RESOURCE_ARG not in configurations:
+        environ.setdefault(
+            OTEL_EXPERIMENTAL_RESOURCE_DETECTORS,
+            ",".join(_SUPPORTED_RESOURCE_DETECTORS)
+        )
+        configurations[RESOURCE_ARG] = Resource.create()
 
 
 # TODO: remove when sampler uses env var instead
