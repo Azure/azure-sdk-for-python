@@ -4,7 +4,7 @@
 
 # pylint: disable=unused-argument
 
-from marshmallow import fields, post_load
+from marshmallow import post_load
 
 from azure.ai.ml._schema.core.fields import NumberVersionField, StringTransformedEnum
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
@@ -13,7 +13,7 @@ from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 class SparkResourceConfigurationSchema(metaclass=PatchedSchemaMeta):
     """Schema for SparkResourceConfiguration."""
 
-    instance_type = fields.Str(metadata={"description": "Optional type of VM used as supported by the compute target."})
+    instance_type = StringTransformedEnum
     runtime_version = NumberVersionField(
         upper_bound="3.4",
         lower_bound="3.2",

@@ -5,7 +5,7 @@
 import copy
 from typing import Optional
 
-import yaml
+import yaml  # type: ignore[import]
 from marshmallow import INCLUDE, ValidationError, fields, post_load, pre_load
 
 from azure.ai.ml._schema import CommandJobSchema
@@ -42,7 +42,7 @@ class CreateJobFileRefField(FileRefField):
             value = value._to_job()
         return value._to_dict()
 
-    def _deserialize(self, value, attr, data, **kwargs) -> "Job":
+    def _deserialize(self, value, attr, data, **kwargs) -> "Job":  # type: ignore[name-defined]
         # Get component info from component yaml file.
         data = super()._deserialize(value, attr, data, **kwargs)
         job_dict = yaml.safe_load(data)

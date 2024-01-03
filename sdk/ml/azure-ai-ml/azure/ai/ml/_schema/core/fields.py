@@ -372,7 +372,7 @@ class FileRefField(Field):
             return data
         raise ValidationError(f"Not supporting non file for {attr}")
 
-    def _serialize(self, value: typing.Any, attr: str, obj: typing.Any, **kwargs):
+    def _serialize(self, value: typing.Any, attr: Optional[str], obj: typing.Any, **kwargs):
         raise ValidationError("Serialize on FileRefField is not supported.")
 
 
@@ -409,7 +409,7 @@ class RefField(Field):
             return data
         raise ValidationError(f"Not supporting non file for {attr}")
 
-    def _serialize(self, value: typing.Any, attr: str, obj: typing.Any, **kwargs):
+    def _serialize(self, value: typing.Any, attr: Optional[str], obj: typing.Any, **kwargs):
         raise ValidationError("Serialize on RefField is not supported.")
 
 
@@ -637,7 +637,7 @@ class TypeSensitiveUnionField(UnionField):
         if target_path.startswith(FILE_PREFIX):
             target_path = target_path[len(FILE_PREFIX) :]
         try:
-            import yaml
+            import yaml  # type: ignore[import]
 
             base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
             target_path = Path(target_path)
@@ -702,7 +702,7 @@ def CodeField(**kwargs) -> Field:
     )
 
 
-def EnvironmentField(*, extra_fields: List[Field] = None, **kwargs):
+def EnvironmentField(*, extra_fields: Optional[List[Field]] = None, **kwargs):
     """Function to return a union field for environment.
 
     :param extra_fields: extra fields to be added to the union field

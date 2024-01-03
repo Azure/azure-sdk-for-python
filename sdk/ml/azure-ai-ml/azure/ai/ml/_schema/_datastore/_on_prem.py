@@ -34,7 +34,7 @@ class HdfsSchema(PathAwareSchema):
     tags = fields.Dict(keys=fields.Str(), values=fields.Dict())
 
     @post_load
-    def make(self, data: Dict[str, Any], **kwargs) -> "HdfsDatastore":
+    def make(self, data: Dict[str, Any], **kwargs) -> "HdfsDatastore":  # type: ignore[name-defined]
         from azure.ai.ml.entities._datastore._on_prem import HdfsDatastore
 
         return HdfsDatastore(**data)

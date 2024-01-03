@@ -2,11 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=protected-access
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from marshmallow import INCLUDE, Schema
 
-from ... import MpiDistribution, PyTorchDistribution, TensorFlowDistribution, RayDistribution
+from ... import MpiDistribution, PyTorchDistribution, RayDistribution, TensorFlowDistribution
 from ..._schema import PathAwareSchema
 from ..._schema.core.fields import DistributionField
 from ...entities import CommandJobLimits, JobResourceConfiguration
@@ -34,11 +34,11 @@ class Command(InternalBaseNode):
         self._init = False
 
     @property
-    def compute(self) -> str:
+    def compute(self) -> Optional[str]:
         """Get the compute definition for the command.
 
         :return: The compute definition
-        :rtype: str
+        :rtype: Optional[str]
         """
         return self._compute
 

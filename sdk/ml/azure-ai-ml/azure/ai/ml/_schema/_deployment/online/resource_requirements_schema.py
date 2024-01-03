@@ -22,7 +22,7 @@ class ResourceRequirementsSchema(metaclass=PatchedSchemaMeta):
     limits = NestedField(ResourceSettingsSchema)
 
     @post_load
-    def make(self, data: Any, **kwargs: Any) -> "ResourceRequirementsSettings":
+    def make(self, data: Any, **kwargs: Any) -> "ResourceRequirementsSettings":  # type: ignore[name-defined]
         from azure.ai.ml.entities import ResourceRequirementsSettings
 
         return ResourceRequirementsSettings(**data)

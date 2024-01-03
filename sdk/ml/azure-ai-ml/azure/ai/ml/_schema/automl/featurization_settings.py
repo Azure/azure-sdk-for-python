@@ -36,7 +36,7 @@ class NlpFeaturizationSettingsSchema(FeaturizationSettingsSchema):
     dataset_language = flds.Str()
 
     @post_load
-    def make(self, data, **kwargs) -> "NlpFeaturizationSettings":
+    def make(self, data, **kwargs) -> "NlpFeaturizationSettings":  # type: ignore[name-defined]
         from azure.ai.ml.automl import NlpFeaturizationSettings
 
         return NlpFeaturizationSettings(**data)
@@ -68,7 +68,7 @@ class TableFeaturizationSettingsSchema(FeaturizationSettingsSchema):
     enable_dnn_featurization = flds.Bool()
 
     @post_load
-    def make(self, data, **kwargs) -> "TabularFeaturizationSettings":
+    def make(self, data, **kwargs) -> "TabularFeaturizationSettings":  # type: ignore[name-defined]
         from azure.ai.ml.automl import TabularFeaturizationSettings
 
         return TabularFeaturizationSettings(**data)
