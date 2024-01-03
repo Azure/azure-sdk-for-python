@@ -17,6 +17,7 @@
 - Bumped minimum dependency on `azure-core` to `>=1.28.0`.
 - Updated the default `api_version` to "2023-10-01".
 - Removed `etag` keyword documentation in `set_read_only()` as it's not in use.
+- Added support for Python 3.12.
 
 ## 1.5.0b3 (2023-10-10)
 

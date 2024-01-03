@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Added support for Python 3.12.
 
 ## 3.3.2 (2023-11-07)
 
