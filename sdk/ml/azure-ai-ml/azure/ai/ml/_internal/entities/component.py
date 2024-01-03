@@ -83,7 +83,7 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         type: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
-        is_deterministic: bool = True,
+        is_deterministic: Optional[bool] = None,
         successful_return_code: Optional[str] = None,
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
@@ -279,7 +279,7 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         return init_kwargs
 
     def _to_rest_object(self) -> ComponentVersion:
-        component: Dict[str, Any] = convert_ordered_dict_to_dict(self._to_dict())
+        component: Union[Dict[Any, Any], List[Any]] = convert_ordered_dict_to_dict(self._to_dict())
         component["_source"] = self._source
 
         properties = ComponentVersionProperties(
@@ -313,8 +313,8 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         snapshot_id = str(UUID(curr_root.hexdigest_hash[::4]))
         return snapshot_id
 
-    @contextmanager
-    def _try_build_local_code(self) -> Iterable[Code]:  # type: ignore[arg-type]
+    @contextmanager  # type: ignore[arg-type]
+    def _try_build_local_code(self) -> Iterable[Code]:
         """Build final code when origin code is a local code.
         Will merge code path with additional includes into a temp folder if additional includes is specified.
         For internal components, file dependencies in environment will be resolved based on the final code.
@@ -323,10 +323,10 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         :rtype: Iterable[Code]
         """
         # origin code value of internal component will never be None. check _get_origin_code_value for details
-        tmp_code_dir: Path
         with self._generate_additional_includes_obj().merge_local_code_and_additional_includes() as tmp_code_dir:
             # use absolute path in case temp folder & work dir are in different drive
-            tmp_code_dir = tmp_code_dir.absolute()
+            tmp_code_dir_path: Path = tmp_code_dir
+            tmp_code_dir_path = tmp_code_dir_path.absolute()
 
             # file dependency in code will be read during internal environment resolution
             # for example, docker file of the environment may be in additional includes;
@@ -338,10 +338,10 @@ class InternalComponent(Component, AdditionalIncludesMixin):
             # additional includes config file itself should be ignored
             rebased_ignore_file = ComponentIgnoreFile(
                 tmp_code_dir,
-                additional_includes_file_name=Path(self._source_path)
-                .with_suffix(_ADDITIONAL_INCLUDES_SUFFIX)
-                .name,  # type: ignore[arg-type]
-            )  # TODO: Bug 2881943
+                additional_includes_file_name=Path(self._source_path)  # type: ignore[arg-type]
+                # TODO: Bug 2881943
+                .with_suffix(_ADDITIONAL_INCLUDES_SUFFIX).name,
+            )
 
             # Use the snapshot id in ml-components as code name to enable anonymous
             # component reuse from ml-component runs.

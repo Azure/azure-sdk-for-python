@@ -171,11 +171,11 @@ class Environment(Asset, LocalizableMixin):
                 )
 
     @property
-    def conda_file(self) -> Union[str, os.PathLike, Dict]:
+    def conda_file(self) -> Optional[Union[str, os.PathLike]]:
         """Conda environment specification.
 
         :return: Conda dependencies loaded from `conda_file` param.
-        :rtype: Union[str, os.PathLike, Dict]
+        :rtype: Optional[Union[str, os.PathLike]]
         """
         return self._conda_file
 

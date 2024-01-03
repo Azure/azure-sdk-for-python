@@ -90,7 +90,7 @@ class InternalSparkComponent(
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return InternalSparkComponentSchema(context=context)
 
-    @property
+    @property  # type: ignore[override]
     def environment(self) -> Optional[Union[Environment, str]]:
         """Get the environment of the component.
 
