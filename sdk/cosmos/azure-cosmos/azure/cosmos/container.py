@@ -23,7 +23,7 @@
 """
 
 
-from typing import Any, Dict, List, Optional, Sequence, Union, Tuple, Mapping
+from typing import Any, Dict, List, Optional, Sequence, Union, Tuple, Mapping, Type, cast
 import warnings
 
 from azure.core.tracing.decorator import distributed_trace
@@ -54,6 +54,8 @@ __all__ = ("ContainerProxy",)
 
 # pylint: disable=too-many-lines
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+
+PartitionKeyType = Union[str, int, float, bool, List[Union[str, int, float, bool]], Type[NonePartitionKeyValue]]
 
 
 class ContainerProxy:  # pylint: disable=too-many-public-methods
@@ -120,11 +122,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     def _set_partition_key(
         self,
-        partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
+        partition_key: PartitionKeyType
     ) -> Union[str, int, float, bool, List[Union[str, int, float, bool]], _Empty, _Undefined]:
         if partition_key == NonePartitionKeyValue:
             return _return_undefined_or_empty_partition_key(self.is_system_key)
-        return partition_key
+        return cast(Union[str, int, float, bool, List[Union[str, int, float, bool]]], partition_key)
 
     @distributed_trace
     def read(  # pylint:disable=docstring-missing-param
@@ -153,7 +155,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        if populate_query_metrics is not None:
+        if populate_query_metrics:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
@@ -174,7 +176,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def read_item(  # pylint:disable=docstring-missing-param
         self,
         item: Union[str, Mapping[str, Any]],
-        partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]],
+        partition_key: Optional[PartitionKeyType],
         populate_query_metrics: Optional[bool] = None,
         post_trigger_include: Optional[str] = None,
         **kwargs: Any
@@ -219,6 +221,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
+            request_options["populateQueryMetrics"] = populate_query_metrics
 
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
@@ -263,6 +266,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
+            feed_options["populateQueryMetrics"] = populate_query_metrics
         max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
         if max_integrated_cache_staleness_in_ms:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
@@ -298,7 +302,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param str continuation: e_tag value to be used as continuation for reading change feed.
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword partition_key: partition key at which ChangeFeed requests are targeted.
-        :paramtype partition_key: Union[str, int, float, bool]
+        :paramtype partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :keyword Literal["High", "Low"] priority_level: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
@@ -312,7 +316,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             feed_options["partitionKeyRangeId"] = partition_key_range_id
         partition_key = kwargs.pop("partitionKey", kwargs.pop("partition_key", None))
         if partition_key is not None:
-            feed_options["partitionKey"] = partition_key
+            feed_options["partitionKey"] = self._set_partition_key(partition_key)
         if is_start_from_beginning is not None:
             feed_options["isStartFromBeginning"] = is_start_from_beginning
         if max_item_count is not None:
@@ -335,7 +339,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self,
         query: str,
         parameters: Optional[List[Dict[str, object]]] = None,
-        partition_key: Optional[Union[str, int, float, bool, List[Union[str, int, float, bool]]]] = None,
+        partition_key: Optional[PartitionKeyType] = None,
         enable_cross_partition_query: Optional[bool] = None,
         max_item_count: Optional[int] = None,
         enable_scan_in_query: Optional[bool] = None,
@@ -444,7 +448,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             response_hook(self.client_connection.last_response_headers, items)
         return items
 
-    def __is_prefix_partitionkey(self, partition_key: Union[str, int, bool, float, List[Any]]):
+    def __is_prefix_partitionkey(
+        self, partition_key: PartitionKeyType
+    ) -> bool:
         properties = self._get_properties()
         pk_properties = properties["partitionKey"]
         partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
@@ -497,6 +503,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
+            request_options["populateQueryMetrics"] = populate_query_metrics
         if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:
@@ -548,6 +555,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
+            request_options["populateQueryMetrics"] = populate_query_metrics
         if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:
@@ -603,11 +611,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         response_hook = kwargs.pop('response_hook', None)
 
         request_options["disableAutomaticIdGeneration"] = not kwargs.pop('enable_automatic_id_generation', False)
-        if populate_query_metrics is not None:
+        if populate_query_metrics:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
+            request_options["populateQueryMetrics"] = populate_query_metrics
         if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:
@@ -626,7 +635,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def patch_item(
         self,
         item: Union[str, Dict[str, Any]],
-        partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]],
+        partition_key: PartitionKeyType,
         patch_operations: List[Dict[str, Any]],
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -657,7 +666,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         request_options["disableAutomaticIdGeneration"] = True
-        request_options["partitionKey"] = partition_key
+        request_options["partitionKey"] = self._set_partition_key(partition_key)
         filter_predicate = kwargs.pop("filter_predicate", None)
         if filter_predicate is not None:
             request_options["filterPredicate"] = filter_predicate
@@ -673,7 +682,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def execute_item_batch(
         self,
         batch_operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], Dict[str, Any]]]],
-        partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]],
+        partition_key: PartitionKeyType,
         **kwargs: Any
     ) -> List[Dict[str, Any]]:
         """ Executes the transactional batch for the specified partition key.
@@ -709,7 +718,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def delete_item(  # pylint:disable=docstring-missing-param
         self,
         item: Union[Mapping[str, Any], str],
-        partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]],
+        partition_key: Optional[PartitionKeyType],
         populate_query_metrics: Optional[bool] = None,
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
@@ -744,6 +753,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
+            request_options["populateQueryMetrics"] = populate_query_metrics
         if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:
@@ -871,7 +881,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         query: str,
         parameters: Optional[List[Dict[str, object]]] = None,
         enable_cross_partition_query: Optional[bool] = None,
-        partition_key: Optional[Union[str, int, float, bool]] = None,
+        partition_key: Optional[PartitionKeyType] = None,
         max_item_count: Optional[int] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
@@ -884,7 +894,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             the query in the Azure Cosmos DB service.
             More than one request is necessary if the query is not scoped to single partition key value.
         :param partition_key: Specifies the partition key value for the item.
-        :type partition_key: Union[str, int, float, bool]
+        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of conflicts (dicts).
@@ -913,7 +923,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def get_conflict(
         self,
         conflict: Union[str, Mapping[str, Any]],
-        partition_key: Union[str, int, float, bool],
+        partition_key: Optional[PartitionKeyType],
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Get the conflict identified by `conflict`.
@@ -943,7 +953,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def delete_conflict(
         self,
         conflict: Union[str, Mapping[str, Any]],
-        partition_key: Union[str, int, float, bool],
+        partition_key: PartitionKeyType,
         **kwargs: Any
     ) -> None:
         """Delete a specified conflict from the container.
@@ -953,7 +963,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param conflict: The ID (name) or dict representing the conflict to be deleted.
         :type conflict: Union[str, Dict[str, Any]]
         :param partition_key: Partition key for the conflict to delete.
-        :type partition_key: Union[str, int, float, bool]
+        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The conflict wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The conflict does not exist in the container.
@@ -973,7 +983,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def delete_all_items_by_partition_key(
         self,
-        partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]],
+        partition_key: PartitionKeyType,
         **kwargs: Any
     ) -> None:
         """The delete by partition key feature is an asynchronous, background operation that allows you to delete all
@@ -983,7 +993,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         this background task.
 
         :param partition_key: Partition key for the items to be deleted.
-        :type partition_key: Union[str, int, float, bool]
+        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
@@ -998,7 +1008,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         # regardless if partition key is valid we set it as invalid partition keys are set to a default empty value
         request_options["partitionKey"] = self._set_partition_key(partition_key)
 
-        response = self.client_connection.DeleteAllItemsByPartitionKey(collection_link=self.container_link,
+        self.client_connection.DeleteAllItemsByPartitionKey(collection_link=self.container_link,
                                                             options=request_options, **kwargs)
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, response)
+            response_hook(self.client_connection.last_response_headers, None)

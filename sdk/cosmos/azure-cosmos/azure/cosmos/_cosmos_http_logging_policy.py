@@ -26,21 +26,23 @@
 import json
 import logging
 import time
-from typing import Optional, Union
+from typing import Optional, Union, TYPE_CHECKING
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import HttpLoggingPolicy
-from azure.core.rest import HttpRequest, HttpResponse, AsyncHttpResponse
-from azure.core.pipeline.transport import (
-    HttpRequest as LegacyHttpRequest,
-    HttpResponse as LegacyHttpResponse,
-    AsyncHttpResponse as LegacyAsyncHttpResponse
-)
 
 from .http_constants import HttpHeaders
 
-HTTPRequestType = Union[LegacyHttpRequest, HttpRequest]
-HTTPResponseType = Union[LegacyHttpResponse, HttpResponse, LegacyAsyncHttpResponse, AsyncHttpResponse]
+if TYPE_CHECKING:
+    from azure.core.rest import HttpRequest, HttpResponse, AsyncHttpResponse
+    from azure.core.pipeline.transport import (  # pylint: disable=no-legacy-azure-core-http-response-import
+        HttpRequest as LegacyHttpRequest,
+        HttpResponse as LegacyHttpResponse,
+        AsyncHttpResponse as LegacyAsyncHttpResponse
+    )
+
+HTTPRequestType = Union["LegacyHttpRequest", "HttpRequest"]
+HTTPResponseType = Union["LegacyHttpResponse", "HttpResponse", "LegacyAsyncHttpResponse", "AsyncHttpResponse"]
 
 
 def _format_error(payload: str) -> str:

@@ -23,7 +23,7 @@
 from io import BytesIO
 import binascii
 import struct
-from typing import IO, Sequence, Union, overload, List
+from typing import IO, Sequence, Type, Union, overload, List
 from typing_extensions import Literal
 
 from ._cosmos_integers import UInt64, UInt128
@@ -149,7 +149,7 @@ class PartitionKey(dict):
 
     def _get_epk_range_for_prefix_partition_key(
         self,
-        pk_value: Sequence[Union[bool, int, float, str, _Undefined]]
+        pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]]
     ) -> Range:
         if self.kind != "MultiHash":
             raise ValueError(
@@ -179,7 +179,7 @@ class PartitionKey(dict):
 
     def _get_effective_partition_key_string(
         self,
-        pk_value: Sequence[Union[bool, int, float, str, _Undefined]]
+        pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]]
     ) -> Union[int, str]:
         if not pk_value:
             return _MinimumInclusiveEffectivePartitionKey
@@ -200,14 +200,14 @@ class PartitionKey(dict):
 
     def _write_for_hashing_v2(
         self,
-        value: Union[bool, int, float, str, _Undefined],
+        value: Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]],
         writer: IO[bytes]
     ) -> None:
         if value is True:
             writer.write(bytes([PartitionKeyComponentType.PTrue]))
         elif value is False:
             writer.write(bytes([PartitionKeyComponentType.PFalse]))
-        elif value is None or value == {} or isinstance(value, NonePartitionKeyValue):
+        elif value is None or value == {} or value == NonePartitionKeyValue:
             writer.write(bytes([PartitionKeyComponentType.Null]))
         elif isinstance(value, int):
             writer.write(bytes([PartitionKeyComponentType.Number]))
@@ -224,7 +224,7 @@ class PartitionKey(dict):
 
     def _get_effective_partition_key_for_hash_partitioning_v2(
         self,
-        pk_value: Sequence[Union[bool, int, float, str, _Undefined]]
+        pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]]
     ) -> str:
         with BytesIO() as ms:
             for component in pk_value:
@@ -243,7 +243,7 @@ class PartitionKey(dict):
 
     def _get_effective_partition_key_for_multi_hash_partitioning_v2(
         self,
-        pk_value: Sequence[Union[bool, int, float, str, _Undefined]]
+        pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]]
     ) -> str:
         sb = []
         for value in pk_value:
@@ -276,12 +276,15 @@ def _to_hex(bytes_object: bytearray, start: int, length: int) -> str:
     return binascii.hexlify(bytes_object[start:start + length]).decode()
 
 
-def _to_hex_encoded_binary_string(components: Sequence[Union[bool, int, float, str, _Infinity, _Undefined]]) -> str:
+def _to_hex_encoded_binary_string(components: Sequence[object]) -> str:
     buffer_bytes = bytearray(_MaxPartitionKeyBinarySize)
     ms = BytesIO(buffer_bytes)
 
     for component in components:
-        _write_for_binary_encoding(component, ms)
+        if isinstance(component, (bool, int, float, str, _Infinity, _Undefined)):
+            _write_for_binary_encoding(component, ms)
+        else:
+            raise TypeError(f"Unexpected type for PK component: {type(component)}")
 
     return _to_hex(buffer_bytes[:ms.tell()], 0, ms.tell())
 

@@ -24,7 +24,7 @@
 """Document client class for the Azure Cosmos database service.
 """
 import urllib.parse
-from typing import Callable, Dict, Any, Iterable, List, Mapping, Optional, Sequence, Tuple, Union, cast
+from typing import Callable, Dict, Any, Iterable, List, Mapping, Optional, Sequence, Tuple, Union, cast, Type
 from typing_extensions import TypedDict
 
 from urllib3.util.retry import Retry
@@ -56,12 +56,18 @@ from ._routing import routing_map_provider, routing_range
 from ._retry_utility import ConnectionRetryPolicy
 from . import _session
 from . import _utils
-from .partition_key import _Undefined, _Empty, PartitionKey, _return_undefined_or_empty_partition_key
+from .partition_key import (
+    _Undefined,
+    _Empty,
+    PartitionKey,
+    _return_undefined_or_empty_partition_key,
+    NonePartitionKeyValue
+)
 from ._auth_policy import CosmosBearerTokenCredentialPolicy
 from ._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from ._range_partition_resolver import RangePartitionResolver
 
-
+PartitionKeyType = Union[str, int, float, bool, List[Union[str, int, float, bool]], Type[NonePartitionKeyValue]]
 class CredentialDict(TypedDict, total=False):
     masterKey: str
     resourceTokens: Mapping[str, Any]
@@ -1024,7 +1030,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         database_or_container_link: str,
         query: Optional[Union[str, Dict[str, Any]]],
         options: Optional[Mapping[str, Any]] = None,
-        partition_key: Optional[Union[str, float, bool, List[Union[str, float, bool]]]] = None,
+        partition_key: Optional[PartitionKeyType] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
@@ -1035,7 +1041,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param (str or dict) query: the query to be used
         :param dict options: The request options for the request.
         :param partition_key: Partition key for the query(default value None)
-        :type: partition_key: str or float or bool or None or list[str] or list[float] or list[bool]
+        :type: partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
         :param response_hook: A callable invoked with the response metadata.
         :type response_hook: Callable[[Dict[str, str], Dict[str, Any]]
 
