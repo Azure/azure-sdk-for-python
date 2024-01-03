@@ -36,26 +36,35 @@ TEST_DEFAULT_RESOURCE = Resource({
     "test.attributes.1": "test_value_1",
     "test.attributes.2": "test_value_2"
 })
+TEST_CUSTOM_RESOURCE = Resource({
+    "test.attributes.2": "test_value_4",
+    "test.attributes.3": "test_value_3"
+})
+TEST_MERGED_RESOURCE = Resource({
+    "test.attributes.1": "test_value_1",
+    "test.attributes.2": "test_value_4",
+    "test.attributes.3": "test_value_3"
+})
 
 
 class TestConfigurations(TestCase):
     @patch.dict("os.environ", {}, clear=True)
     @patch("azure.monitor.opentelemetry._utils.configurations._PREVIEW_INSTRUMENTED_LIBRARIES", ("previewlib1", "previewlib2"))
-    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_MERGED_RESOURCE)
     def test_get_configurations(self, resource_create_mock):
         configurations = _get_configurations(
             connection_string="test_cs",
             credential="test_credential",
-            resource="test_custom_resource"
+            resource=TEST_CUSTOM_RESOURCE
         )
 
         self.assertEqual(configurations["connection_string"], "test_cs")
         self.assertEqual(configurations["disable_logging"], False)
         self.assertEqual(configurations["disable_metrics"], False)
         self.assertEqual(configurations["disable_tracing"], False)
-        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
+        self.assertEqual(configurations["resource"].attributes, TEST_MERGED_RESOURCE.attributes)
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "azure_app_service,azure_vm")
-        resource_create_mock.assert_called_once_with()
+        resource_create_mock.assert_called_once_with(TEST_CUSTOM_RESOURCE.attributes)
         self.assertEqual(configurations["sampling_ratio"], 1.0)
         self.assertEqual(configurations["credential"], ("test_credential"))
         self.assertEqual(configurations["instrumentation_options"], {
