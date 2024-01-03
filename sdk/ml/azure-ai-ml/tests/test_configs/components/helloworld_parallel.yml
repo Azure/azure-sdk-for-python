@@ -33,6 +33,3 @@ task:
 
 mini_batch_size: "10mb"
 input_data: ${{inputs.component_in_path}}
-retry_settings:
-  timeout: 12345
-  max_retries: 9
