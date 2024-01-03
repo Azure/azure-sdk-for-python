@@ -213,11 +213,12 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
                 self._token_put_time,
                 extra=self._network_trace_params
             )
-            put_timeout = check_put_timeout_status(
-                self._auth_timeout, self._token_put_time
-            )
-            if put_timeout:
-                self.auth_state = CbsAuthState.TIMEOUT
+            if self._token_put_time is not None:
+                put_timeout = check_put_timeout_status(
+                    self._auth_timeout, self._token_put_time
+                )
+                if put_timeout:
+                    self.auth_state = CbsAuthState.TIMEOUT
 
     def _cbs_link_ready(self) -> Optional[bool]:
         if self.state == CbsState.OPEN:
