@@ -58,7 +58,7 @@ class _CBSAuth:
         token_type: Union[str, bytes],
         get_token: Callable[[], AccessToken],
         *,
-        expires_in: float = AUTH_DEFAULT_EXPIRATION_SECONDS,
+        expires_in: Optional[float] = AUTH_DEFAULT_EXPIRATION_SECONDS,
         expires_on: Optional[float] = None,
         **kwargs: Any
     ):
@@ -92,8 +92,8 @@ class _CBSAuth:
         if not expires_on and not expires_in:
             raise ValueError("Must specify either 'expires_on' or 'expires_in'.")
 
-        expires_in_interval: float = 0
-        expires_on_time: float = 0
+        expires_in_interval: float = 0 if expires_in is None else expires_in
+        expires_on_time: float = 0 if expires_on is None else expires_on
 
         if not expires_on and expires_in:
             expires_on_time = time.time() + expires_in
@@ -148,7 +148,7 @@ class SASTokenAuth(_CBSAuth):
         username: str,
         password: str,
         *,
-        expires_in: float = AUTH_DEFAULT_EXPIRATION_SECONDS,
+        expires_in: Optional[float] = AUTH_DEFAULT_EXPIRATION_SECONDS,
         expires_on: Optional[float] = None,
         token_type: Union[str, bytes] = TOKEN_TYPE_SASTOKEN,
         **kwargs: Any

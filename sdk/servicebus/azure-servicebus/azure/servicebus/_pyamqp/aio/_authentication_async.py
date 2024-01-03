@@ -35,7 +35,7 @@ class _CBSAuthAsync:
         token_type: Union[str, bytes],
         get_token: Callable[[], Awaitable[AccessToken]],
         *,
-        expires_in: float = AUTH_DEFAULT_EXPIRATION_SECONDS,
+        expires_in: Optional[float] = AUTH_DEFAULT_EXPIRATION_SECONDS,
         expires_on: Optional[float] = None,
         **kwargs: Any
     ):
@@ -125,7 +125,7 @@ class SASTokenAuthAsync(_CBSAuthAsync):
         username: str,
         password: str,
         *,
-        expires_in: float = AUTH_DEFAULT_EXPIRATION_SECONDS,
+        expires_in: Optional[float] = AUTH_DEFAULT_EXPIRATION_SECONDS,
         expires_on: Optional[float] = None,
         token_type: Union[str, bytes] = TOKEN_TYPE_SASTOKEN,
         **kwargs: Any

@@ -6,7 +6,7 @@
 
 import logging
 from datetime import datetime
-from typing import Any, Optional, Tuple, Union, cast
+from typing import Any, Optional, Tuple, Union
 
 from .utils import utc_now, utc_from_timestamp
 from .management_link import ManagementLink
@@ -192,20 +192,21 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
         if (
             self.auth_state in (CbsAuthState.OK, CbsAuthState.REFRESH_REQUIRED)
         ):
-            is_expired, is_refresh_required = check_expiration_and_refresh_status(
-                cast(int, self._expires_on), cast(int,self._refresh_window)
-            )
-            _LOGGER.debug(
-                "CBS status check: state == %r, expired == %r, refresh required == %r",
-                self.auth_state,
-                is_expired,
-                is_refresh_required,
-                extra=self._network_trace_params
-            )
-            if is_expired:
-                self.auth_state = CbsAuthState.EXPIRED
-            elif is_refresh_required:
-                self.auth_state = CbsAuthState.REFRESH_REQUIRED
+            if self._expires_on is not None and self._refresh_window is not None:
+                is_expired, is_refresh_required = check_expiration_and_refresh_status(
+                    self._expires_on, self._refresh_window
+                )
+                _LOGGER.debug(
+                    "CBS status check: state == %r, expired == %r, refresh required == %r",
+                    self.auth_state,
+                    is_expired,
+                    is_refresh_required,
+                    extra=self._network_trace_params
+                )
+                if is_expired:
+                    self.auth_state = CbsAuthState.EXPIRED
+                elif is_refresh_required:
+                    self.auth_state = CbsAuthState.REFRESH_REQUIRED
         elif self.auth_state == CbsAuthState.IN_PROGRESS:
             _LOGGER.debug(
                 "CBS update in progress. Token put time: %r",
@@ -213,7 +214,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
                 extra=self._network_trace_params
             )
             put_timeout = check_put_timeout_status(
-                self._auth_timeout, cast(int, self._token_put_time)
+                self._auth_timeout, self._token_put_time
             )
             if put_timeout:
                 self.auth_state = CbsAuthState.TIMEOUT
@@ -252,24 +253,27 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
                 extra=self._network_trace_params
             )
         self._expires_on = access_token.expires_on
-        expires_in = cast(int, self._expires_on) - int(utc_now().timestamp())
+        expires_in = self._expires_on - int(utc_now().timestamp())
         self._refresh_window = int(float(expires_in) * 0.1)
+        token_type: Optional[str] = None
+
         if isinstance(access_token.token, bytes):
             self._token = access_token.token.decode()
-        else:
+        elif isinstance(access_token.token, str):
             self._token = access_token.token
         if isinstance(self._auth.token_type, bytes):
             token_type = self._auth.token_type.decode()
-        else:
+        elif isinstance(self._auth.token_type, str):
             token_type = self._auth.token_type
 
         self._token_put_time = int(utc_now().timestamp())
-        self._put_token(
-            cast(str, self._token),
-            token_type,
-            self._auth.audience, # type: ignore
-            utc_from_timestamp(self._expires_on),
-        )
+        if self._token and token_type:
+            self._put_token(
+                self._token,
+                token_type,
+                self._auth.audience, # type: ignore
+                utc_from_timestamp(self._expires_on),
+            )
 
     def handle_token(self) -> Optional[bool]: # pylint: disable=inconsistent-return-statements
         if not self._cbs_link_ready():
