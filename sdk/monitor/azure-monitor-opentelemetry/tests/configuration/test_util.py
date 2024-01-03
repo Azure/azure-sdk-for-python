@@ -74,7 +74,16 @@ class TestUtil(TestCase):
         self.assertEqual(configurations["disable_logging"], False)
         self.assertEqual(configurations["disable_metrics"], False)
         self.assertEqual(configurations["disable_tracing"], False)
-        # TODO: Add instrumentation options
+        self.assertEqual(configurations["instrumentation_options"], {
+            "azure_sdk" : {"enabled": True},
+            "django" : {"enabled": True},
+            "fastapi" : {"enabled": True},
+            "flask" : {"enabled": True},
+            "psycopg2" : {"enabled": True},
+            "requests": {"enabled": True},
+            "urllib": {"enabled": True},
+            "urllib3": {"enabled": True},
+        })
         self.assertEqual(configurations["resource"], "test_default_resource")
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "azure_app_service,azure_vm")
         resource_create_mock.assert_called_once_with()
