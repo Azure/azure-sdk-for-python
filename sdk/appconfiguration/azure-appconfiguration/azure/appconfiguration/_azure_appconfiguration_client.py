@@ -210,6 +210,8 @@ class AzureAppConfigurationClient:
         label: Optional[str] = None,
         etag: Optional[str] = "*",
         match_condition: MatchConditions = MatchConditions.Unconditionally,
+        *,
+        accept_datetime: Optional[Union[datetime, str]] = None,
         **kwargs,
     ) -> Union[None, ConfigurationSetting]:
         """Get the matched ConfigurationSetting from Azure App Configuration service
@@ -240,7 +242,6 @@ class AzureAppConfigurationClient:
                 key="MyKey", label="MyLabel"
             )
         """
-        accept_datetime = kwargs.pop("accept_datetime", None)
         if isinstance(accept_datetime, datetime):
             accept_datetime = str(accept_datetime)
 
@@ -380,7 +381,13 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def delete_configuration_setting(  # pylint:disable=delete-operation-wrong-return-type
-        self, key: str, label: Optional[str] = None, **kwargs
+        self,
+        key: str,
+        label: Optional[str] = None,
+        *,
+        etag: Optional[str] = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs,
     ) -> ConfigurationSetting:
         """Delete a ConfigurationSetting if it exists
 
@@ -409,8 +416,6 @@ class AzureAppConfigurationClient:
                 key="MyKey", label="MyLabel"
             )
         """
-        etag = kwargs.pop("etag", None)
-        match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         custom_headers: Mapping[str, Any] = CaseInsensitiveDict(kwargs.get("headers"))
         error_map: Dict[int, Any] = {409: ResourceReadOnlyError}
         if match_condition == MatchConditions.IfNotModified:
@@ -436,7 +441,13 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def list_revisions(
-        self, key_filter: Optional[str] = None, label_filter: Optional[str] = None, **kwargs
+        self, 
+        key_filter: Optional[str] = None,
+        label_filter: Optional[str] = None,
+        *,
+        accept_datetime: Optional[Union[datetime, str]] = None,
+        fields: Optional[List[str]] = None,
+        **kwargs
     ) -> ItemPaged[ConfigurationSetting]:
         """
         Find the ConfigurationSetting revision history, optionally filtered by key, label and accept_datetime.
@@ -473,19 +484,17 @@ class AzureAppConfigurationClient:
             for item in filtered_revisions:
                 pass  # do something
         """
-        accept_datetime = kwargs.pop("accept_datetime", None)
         if isinstance(accept_datetime, datetime):
             accept_datetime = str(accept_datetime)
-        select = kwargs.pop("fields", None)
-        if select:
-            select = ["locked" if x == "read_only" else x for x in select]
+        if fields:
+            fields = ["locked" if x == "read_only" else x for x in fields]
 
         try:
             return self._impl.get_revisions(  # type: ignore
                 label=label_filter,
                 key=key_filter,
                 accept_datetime=accept_datetime,
-                select=select,
+                select=fields,
                 cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
                 **kwargs,
             )
@@ -494,7 +503,12 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def set_read_only(
-        self, configuration_setting: ConfigurationSetting, read_only: bool = True, **kwargs
+        self,
+        configuration_setting: ConfigurationSetting,
+        read_only: bool = True,
+        *,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs
     ) -> ConfigurationSetting:
         """Set a configuration setting read only
 
@@ -522,7 +536,6 @@ class AzureAppConfigurationClient:
             read_only_config_setting = client.set_read_only(config_setting, read_only=False)
         """
         error_map: Dict[int, Any] = {}
-        match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if match_condition == MatchConditions.IfNotModified:
             error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfModified:
