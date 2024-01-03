@@ -38,9 +38,7 @@ class ClientAssertionCredential(AsyncContextManager, GetTokenMixin):
             :caption: Create a ClientAssertionCredential.
     """
 
-    def __init__(
-        self, tenant_id: str, client_id: str, func: Callable[[], str], **kwargs: Any
-    ) -> None:
+    def __init__(self, tenant_id: str, client_id: str, func: Callable[[], str], **kwargs: Any) -> None:
         self._func = func
         authority = kwargs.pop("authority", None)
         cache = kwargs.pop("cache", None)
@@ -65,14 +63,10 @@ class ClientAssertionCredential(AsyncContextManager, GetTokenMixin):
         """Close the credential's transport session."""
         await self._client.close()
 
-    async def _acquire_token_silently(
-        self, *scopes: str, **kwargs: Any
-    ) -> Optional[AccessToken]:
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         assertion = self._func()
-        token = await self._client.obtain_token_by_jwt_assertion(
-            scopes, assertion, **kwargs
-        )
+        token = await self._client.obtain_token_by_jwt_assertion(scopes, assertion, **kwargs)
         return token

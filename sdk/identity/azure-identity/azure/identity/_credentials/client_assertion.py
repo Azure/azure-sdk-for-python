@@ -38,9 +38,7 @@ class ClientAssertionCredential(GetTokenMixin):
             :caption: Create a ClientAssertionCredential.
     """
 
-    def __init__(
-        self, tenant_id: str, client_id: str, func: Callable[[], str], **kwargs: Any
-    ) -> None:
+    def __init__(self, tenant_id: str, client_id: str, func: Callable[[], str], **kwargs: Any) -> None:
         self._func = func
         authority = kwargs.pop("authority", None)
         cache = kwargs.pop("cache", None)
@@ -67,9 +65,7 @@ class ClientAssertionCredential(GetTokenMixin):
     def close(self) -> None:
         self.__exit__()
 
-    def _acquire_token_silently(
-        self, *scopes: str, **kwargs: Any
-    ) -> Optional[AccessToken]:
+    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)
 
     def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
