@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from __future__ import annotations
 import logging
 from typing import Iterator, Optional, Union, overload, cast, Tuple, TYPE_CHECKING, MutableMapping
 from urllib3.util.retry import Retry
@@ -45,7 +46,7 @@ from azure.core.exceptions import (
 )
 from . import HttpRequest  # pylint: disable=unused-import
 
-from ._base import HttpTransport, HttpResponse, _HttpResponseBase, Pipeline
+from ._base import HttpTransport, HttpResponse, _HttpResponseBase
 from ._bigger_block_size_http_adapters import BiggerBlockSizeHTTPAdapter
 from .._tools import (
     is_rest as _is_rest,
@@ -54,6 +55,9 @@ from .._tools import (
 
 if TYPE_CHECKING:
     from ...rest import HttpRequest as RestHttpRequest, HttpResponse as RestHttpResponse
+    # We need a transport to define a pipeline, this "if" avoid a circular import
+    from azure.core.pipeline import Pipeline
+
 
 AzureErrorUnion = Union[
     ServiceRequestError,
