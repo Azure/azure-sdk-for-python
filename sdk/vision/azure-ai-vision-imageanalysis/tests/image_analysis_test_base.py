@@ -43,6 +43,9 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
     async_client: async_sdk.ImageAnalysisClient
     connection_url: str
 
+    # Set to True to print out all analysis results
+    PRINT_ANALYSIS_RESULTS = True
+
     # We use a single image (the same one) for all error-free tests, one hosted on the web and one local
     IMAGE_URL = "https://aka.ms/azai/vision/image-analysis-sample.jpg"
     IMAGE_FILE = path.abspath(path.join(path.abspath(__file__), "..", "./sample.jpg"))
@@ -112,7 +115,8 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
             params = query_params)
 
         # Optional: console printout of all results
-        ImageAnalysisTestBase._print_analysis_results(result)
+        if ImageAnalysisTestBase.PRINT_ANALYSIS_RESULTS:
+            ImageAnalysisTestBase._print_analysis_results(result)
 
         # Validate all results
         ImageAnalysisTestBase._validate_result(result, visual_features, gender_neutral_caption, smart_crops_aspect_ratios)
@@ -152,7 +156,8 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
             params = query_params)
 
         # Optional: console printout of all results
-        ImageAnalysisTestBase._print_analysis_results(result)
+        if ImageAnalysisTestBase.PRINT_ANALYSIS_RESULTS:
+            ImageAnalysisTestBase._print_analysis_results(result)
 
         # Validate all results
         ImageAnalysisTestBase._validate_result(result, visual_features, gender_neutral_caption, smart_crops_aspect_ratios)

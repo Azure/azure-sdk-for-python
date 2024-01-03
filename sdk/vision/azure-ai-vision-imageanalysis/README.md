@@ -24,8 +24,7 @@ Use the Image Analysis client library to:
 * An [Azure subscription](https://azure.microsoft.com/free).
 * A [Computer Vision resource](https://portal.azure.com/#create/Microsoft.CognitiveServicesComputerVision) in your Azure subscription.
   * You will need the key and endpoint from this resource to authenticate against the service.
-  * You can use the free pricing tier (`F0`) to try the service, and upgrade later to a paid tier for production.
-  * Note that in order to run Image Analysis with the `Caption` or `Dense Captions` features, the Azure resource needs to be from one of the following GPU-supported regions: `East US`, `France Central`, `Korea Central`, `North Europe`, `Southeast Asia`, `West Europe`, or `West US`.
+  * Note that in order to run Image Analysis with the `CAPTION` or `DENSE_CAPTIONS` features, the Azure resource needs to be from a GPU-supported region. See the note [here](https://learn.microsoft.com/azure/ai-services/computer-vision/concept-describe-images-40) for a list of supported regions.
 
 ### Install the Image Analysis package
 
@@ -39,6 +38,8 @@ To authenticate the `ImageAnalysisClient`, you will need the endpoint and key fr
 * Set the environment variable `VISION_ENDPOINT` to the endpoint URL. It has the form `https://your-resource-name.cognitiveservices.azure.com`, where `your-resource-name` is your unique Azure Computer Vision resource name.
 
 * Set the environment variable `VISION_KEY` to the key. The key is a 32-character Hexadecimal number.
+
+Note that the client library does not directly read these environment variable at run time. The endpoint and key must be provided to the constructor of `ImageAnalysisClient` in your code. The code snippet below reads environment variables to promote the practice of not hard-coding secrets in your source code.
 
 ### Create and authenticate the client
 

@@ -1,7 +1,6 @@
 REM
-REM A Windows script to run all Python samples
+REM A Windows script to run all Python samples in the folder, one after the other.
 REM
-cls
 echo on
 python sample_analyze_all_image_file.py
 python sample_caption_image_file.py
