@@ -188,11 +188,7 @@ class TestUtil(TestCase):
 
     @patch.dict("os.environ", {}, clear=True)
     @patch("azure.monitor.opentelemetry._util.configurations._PREVIEW_INSTRUMENTED_LIBRARIES", ("previewlib1", "previewlib2"))
-<<<<<<< HEAD
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-=======
-    @patch("opentelemetry.sdk.resources.Resource.create", return_value="test_default_resource")
->>>>>>> dee8b30ec3 (Tests pass)
     def test_merge_instrumentation_options_extra_args(self, resource_create_mock):
         configurations = _get_configurations(
             instrumentation_options = {
