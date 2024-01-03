@@ -33,6 +33,7 @@
 # -------------------------------------------------------------------------
 
 import asyncio
+import anyio
 import errno
 import socket
 import ssl
@@ -73,9 +74,10 @@ _LOGGER = logging.getLogger(__name__)
 class AsyncTransportMixin:
     async def receive_frame(self, timeout=None, **kwargs):
         try:
-            header, channel, payload = await asyncio.wait_for(
-                self.read(**kwargs), timeout=timeout
-            )
+            async with anyio.create_task_group() as tg:
+                with anyio.fail_after(timeout):
+                    header, channel, payload = await self.read(**kwargs)
+            
             if not payload:
                 decoded = decode_empty_frame(header)
             else:
@@ -84,7 +86,7 @@ class AsyncTransportMixin:
         except (
             TimeoutError,
             socket.timeout,
-            asyncio.IncompleteReadError,
+            anyio.IncompleteRead,
             asyncio.TimeoutError,
         ):
             return None, None
@@ -137,7 +139,7 @@ class AsyncTransportMixin:
                 asyncio.TimeoutError,
                 TimeoutError,
                 socket.timeout,
-                asyncio.IncompleteReadError
+                anyio.IncompleteRead
             ):
                 read_frame_buffer.write(self._read_buffer.getvalue())
                 self._read_buffer = read_frame_buffer
@@ -257,7 +259,7 @@ class AsyncTransport(
         self._read_buffer = BytesIO()
         self.host, self.port = to_host_port(host, port)
         self.socket_settings = socket_settings
-        self.socket_lock = asyncio.Lock()
+        self.socket_lock = anyio.Lock()
         self.sslopts = ssl_opts
         self.network_trace_params = kwargs.get('network_trace_params')
 
@@ -277,27 +279,25 @@ class AsyncTransport(
             # For uamqp exception parity. Remove later when resolving issue #27128.
                 exc.filename = self.sslopts
                 raise exc
-            self.reader, self.writer = await asyncio.open_connection(
-                host=self.host,
-                port=self.port,
-                ssl=self.sslopts,
-                family=socket.AF_UNSPEC,
-                proto=SOL_TCP,
-                server_hostname=self.host if self.sslopts else None,
+            
+            self.socket_stream = await anyio.connect_tcp(
+                remote_host=self.host,
+                remote_port=self.port,
+                ssl_context=self.sslopts,
             )
+        
             self.connected = True
-            sock = self.writer.transport.get_extra_info("socket")
-            if sock:
-                sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
-                self._set_socket_options(sock, self.socket_settings)
+            # sock = self.writer.transport.get_extra_info("socket")
+            # if sock:
+            #     sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
+            #     self._set_socket_options(sock, self.socket_settings)
 
 
         except (OSError, IOError, SSLError) as e:
             _LOGGER.info("Transport connect failed: %r", e, extra=self.network_trace_params)
             # if not fully connected, close socket, and reraise error
-            if self.writer and not self.connected:
-                self.writer.close()
-                await self.writer.wait_closed()
+            if self.socket_stream and not self.connected:
+                await self.socket_stream.aclose()
                 self.connected = False
             raise
 
@@ -346,7 +346,7 @@ class AsyncTransport(
         try:
             while toread:
                 try:
-                    view[nbytes : nbytes + toread] = await self.reader.readexactly(
+                    view[nbytes : nbytes + toread] = await self.socket_stream.receive(
                         toread
                     )
                     nbytes = toread
@@ -354,11 +354,11 @@ class AsyncTransport(
                     # This means that close() was called concurrently
                     # self.reader has been set to None.
                     raise IOError("Connection has already been closed") from None
-                except asyncio.IncompleteReadError as exc:
+                except anyio.IncompleteRead as exc:
                     pbytes = len(exc.partial)
                     view[nbytes : nbytes + pbytes] = exc.partial
                     nbytes = pbytes
-                except socket.error as exc:
+                except anyio.EndOfStream as exc:
                     # ssl.sock.read may cause a SSLerror without errno
                     # http://bugs.python.org/issue10272
                     if isinstance(exc, SSLError) and "timed out" in str(exc):
@@ -392,26 +392,19 @@ class AsyncTransport(
         :param str s: The string to write.
         """
         try:
-            self.writer.write(s)
-            await self.writer.drain()
+            self.socket_stream.send(s)
         except AttributeError:
             raise IOError("Connection has already been closed") from None
 
     async def close(self):
         async with self.socket_lock:
             try:
-                if self.writer is not None:
-                    # Closing the writer closes the underlying socket.
-                    self.writer.close()
-                    if self.sslopts:
-                        # see issue: https://github.com/encode/httpx/issues/914
-                        await asyncio.sleep(0)
-                        self.writer.transport.abort()
-                    await self.writer.wait_closed()
+                if self.socket_stream is not None:
+                    await self.socket_stream.aclose()
             except Exception as e:  # pylint: disable=broad-except
                 # Sometimes SSL raises APPLICATION_DATA_AFTER_CLOSE_NOTIFY here on close.
                 _LOGGER.debug("Error shutting down socket: %r", e, extra=self.network_trace_params)
-            self.writer, self.reader = None, None
+            self.socket_stream = None
         self.connected = False
 
     async def negotiate(self):
@@ -439,7 +432,7 @@ class WebSocketTransportAsync(
         **kwargs
     ):
         self._read_buffer = BytesIO()
-        self.socket_lock = asyncio.Lock()
+        self.socket_lock = anyio.Lock()
         self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else None
         self.socket_timeout = socket_timeout
         self._custom_endpoint = kwargs.get("custom_endpoint")
