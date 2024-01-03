@@ -102,11 +102,12 @@ def _default_logger_name(configurations):
 
 
 def _default_resource(configurations):
-    environ.setdefault(
-        OTEL_EXPERIMENTAL_RESOURCE_DETECTORS,
-        ",".join(_SUPPORTED_RESOURCE_DETECTORS)
-    )
-    configurations[RESOURCE_ARG] = Resource.create()
+    if RESOURCE_ARG not in configurations:
+        environ.setdefault(
+            OTEL_EXPERIMENTAL_RESOURCE_DETECTORS,
+            ",".join(_SUPPORTED_RESOURCE_DETECTORS)
+        )
+        configurations[RESOURCE_ARG] = Resource.create()
 
 
 # TODO: remove when sampler uses env var instead

@@ -46,6 +46,7 @@ class TestConfigurations(TestCase):
         configurations = _get_configurations(
             connection_string="test_cs",
             credential="test_credential",
+            resource="test_custom_resource"
         )
 
         self.assertEqual(configurations["connection_string"], "test_cs")
