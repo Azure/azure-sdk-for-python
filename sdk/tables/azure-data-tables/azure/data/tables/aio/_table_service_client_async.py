@@ -267,7 +267,14 @@ class TableServiceClient(AsyncTablesBaseClient):
         )
 
     @distributed_trace
-    def query_tables(self, query_filter: str, **kwargs) -> AsyncItemPaged[TableItem]:
+    def query_tables(
+        self,
+        query_filter: str,
+        *,
+        results_per_page: Optional[int] = None,
+        parameters: Optional[Dict[str, Any]] = None,
+        **kwargs,
+    ) -> AsyncItemPaged[TableItem]:
         """Queries tables under the given account.
 
         :param str query_filter: Specify a filter to return certain tables.
@@ -287,13 +294,11 @@ class TableServiceClient(AsyncTablesBaseClient):
                 :dedent: 16
                 :caption: Querying tables in an account given specific parameters
         """
-        parameters = kwargs.pop("parameters", None)
         query_filter = _parameter_filter_substitution(parameters, query_filter)
-        top = kwargs.pop("results_per_page", None)
         command = functools.partial(self._client.table.query, **kwargs)
         return AsyncItemPaged(
             command,
-            results_per_page=top,
+            results_per_page=results_per_page,
             filter=query_filter,
             page_iterator_class=TablePropertiesPaged,
         )
