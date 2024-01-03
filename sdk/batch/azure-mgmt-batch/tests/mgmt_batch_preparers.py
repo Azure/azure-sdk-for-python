@@ -1,6 +1,7 @@
 from collections import namedtuple
 import os
 
+import azure.mgmt.keyvault
 import azure.mgmt.batch
 
 from devtools_testutils import AzureMgmtPreparer, AzureTestError, ResourceGroupPreparer, FakeResource
