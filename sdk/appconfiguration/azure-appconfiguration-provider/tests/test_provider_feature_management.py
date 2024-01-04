@@ -12,6 +12,7 @@ from unittest.mock import patch
 
 from azure.appconfiguration.provider._azureappconfigurationprovider import _delay_failure
 
+
 class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
     # method: load
     @recorded_by_proxy
@@ -37,7 +38,7 @@ class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
             connection_string=appconfiguration_connection_string,
             selects=[],
             feature_flag_enabled=True,
-            feature_flag_selectors = [SettingSelector(key_filter="B*")],
+            feature_flag_selectors=[SettingSelector(key_filter="B*")],
             user_agent="SDK/Integration",
         )
         assert len(client.keys()) == 1
