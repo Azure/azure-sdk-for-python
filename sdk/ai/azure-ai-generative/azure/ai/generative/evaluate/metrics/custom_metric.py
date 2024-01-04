@@ -67,7 +67,7 @@ class LLMMetric(Metric):
         from azureml.metrics import AzureMLCustomPromptMetric
 
         openai_params.update({
-            "max_tokens": 100
+            "max_tokens": 1000
         })
 
         custom_prompt_config = {

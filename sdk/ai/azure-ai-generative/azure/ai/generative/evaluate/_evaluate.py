@@ -306,7 +306,11 @@ def _evaluate(
             custom_metric["artifacts"].update({metric._name: score_list})
             custom_metric["artifacts"].update({"reason_" + metric._name: reason_list})
             custom_metric.pop("metrics")
-            custom_metric.update({"metrics": {f"mean_{metric._name}": np.mean(score_list)}})
+            try:
+                custom_metric.update({"metrics": {f"mean_{metric._name}": np.nanmean(score_list)}})
+            except Exception as ex:
+                print(ex)
+
 
             if custom_metrics_results is None:
                 custom_metrics_results = custom_metric
@@ -319,8 +323,6 @@ def _evaluate(
         if custom_metrics_results is not None:
             for k, v in metrics.items():
                 v.update(custom_metrics_results[k])
-
-        print(metrics)
 
         def _get_instance_table():
             metrics.get("artifacts").pop("bertscore", None)
