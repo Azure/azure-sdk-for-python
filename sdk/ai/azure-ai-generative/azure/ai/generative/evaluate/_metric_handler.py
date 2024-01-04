@@ -93,8 +93,8 @@ class MetricHandler(object):
             **metrics_calculation_data,
         )
 
-        if self.task_type == "custom-prompt-metric":
-            for metric_value in metrics_value:
-                print(metric_value)
+        # if self.task_type == "custom-prompt-metric":
+        #     for metric_value in metrics_value:
+        #         print(metric_value)
 
         return metrics_value

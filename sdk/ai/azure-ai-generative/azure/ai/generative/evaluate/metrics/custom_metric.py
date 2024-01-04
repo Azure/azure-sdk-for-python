@@ -67,13 +67,15 @@ class LLMMetric(Metric):
         from azureml.metrics import AzureMLCustomPromptMetric
 
         openai_params.update({
-            "max_tokens": 1000
+            "max_tokens": 1000,
+            # "use_chat_completion_api": True
         })
 
         custom_prompt_config = {
             "input_vars": self.parameters,
             "metric_name": self._name,
             "user_prompt_template": self._prompt,
+            "use_chat_completion_api": True,
             "openai_params": openai_params,
         }
 
