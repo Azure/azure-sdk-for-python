@@ -10,7 +10,11 @@ from testcase import AppConfigTestCase
 import datetime
 from unittest.mock import patch
 
-from azure.appconfiguration.provider._azureappconfigurationprovider import _prekill
+from azure.appconfiguration.provider._azureappconfigurationprovider import _delay_failure
+
+
+def sleep(seconds):
+    assert isinstance(seconds, float)
 
 
 class TestAppConfigurationProvider(AppConfigTestCase):
@@ -19,12 +23,14 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     @app_config_decorator
     def test_provider_creation(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
         client = self.create_client(
-            appconfiguration_connection_string, keyvault_secret_url=appconfiguration_keyvault_secret_url
+            appconfiguration_connection_string,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
+            feature_flag_enabled=True,
         )
         assert client["message"] == "hi"
         assert client["my_json"]["key"] == "value"
-        assert "FeatureManagementFeatureFlags" in client
-        assert "Alpha" in client["FeatureManagementFeatureFlags"]
+        assert "FeatureManagement" in client
+        assert "Alpha" in client["FeatureManagement"]
 
     # method: provider_trim_prefixes
     @recorded_by_proxy
@@ -35,13 +41,14 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             appconfiguration_connection_string,
             trim_prefixes=trimmed,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
+            feature_flag_enabled=True,
         )
         assert client["message"] == "hi"
         assert client["my_json"]["key"] == "value"
         assert client["trimmed"] == "key"
         assert "test.trimmed" not in client
-        assert "FeatureManagementFeatureFlags" in client
-        assert "Alpha" in client["FeatureManagementFeatureFlags"]
+        assert "FeatureManagement" in client
+        assert "Alpha" in client["FeatureManagement"]
 
     # method: provider_selectors
     @recorded_by_proxy
@@ -55,7 +62,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         )
         assert client["message"] == "test"
         assert "test.trimmed" not in client
-        assert "FeatureManagementFeatureFlags" not in client
+        assert "FeatureManagement" not in client
 
     # method: provider_selectors
     @recorded_by_proxy
@@ -108,16 +115,16 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         )
         assert client["secret"] == "Reslover Value"
 
-    # method: _prekill
-    @patch("time.sleep")
-    def test_prekill(self, mock_sleep, **kwargs):
+    # method: _delay_failure
+    @patch("time.sleep", side_effect=sleep)
+    def test_delay_failure(self, mock_sleep, **kwargs):
         start_time = datetime.datetime.now()
-        _prekill(start_time)
+        _delay_failure(start_time)
         assert mock_sleep.call_count == 1
 
         mock_sleep.reset_mock()
         start_time = datetime.datetime.now() - datetime.timedelta(seconds=10)
-        _prekill(start_time)
+        _delay_failure(start_time)
         mock_sleep.assert_not_called()
 
 

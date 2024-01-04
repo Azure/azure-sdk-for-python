@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from typing import Dict, Optional, Any, Iterable, Union
+from typing import Dict, Optional, Any, Iterable, Union, TYPE_CHECKING
 import logging
 import time
 import calendar
@@ -15,6 +15,9 @@ from azure.eventhub.exceptions import OwnershipLostError  # type: ignore
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError, ResourceNotFoundError  # type: ignore
 from ._vendor.storage.blob import BlobClient, ContainerClient
 from ._vendor.storage.blob._shared.base_client import parse_connection_str
+
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential, AzureSasCredential, AzureNamedKeyCredential
 
 logger = logging.getLogger(__name__)
 UPLOAD_DATA = ""
@@ -63,8 +66,14 @@ class BlobCheckpointStore(CheckpointStore):
 
     """
 
-    def __init__(self, blob_account_url, container_name, credential=None, **kwargs):
-        # type(str, str, Optional[Any], Any) -> None
+    def __init__(
+            self,
+            blob_account_url: str,
+            container_name: str,
+            credential: Optional[Union["AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,
+            api_version: str = '2019-07-07',
+            **kwargs: Any
+    ) -> None:
         self._container_client = kwargs.pop("container_client", None)
         if not self._container_client:
             api_version = kwargs.pop("api_version", None)
@@ -81,9 +90,12 @@ class BlobCheckpointStore(CheckpointStore):
 
     @classmethod
     def from_connection_string(
-        cls, conn_str, container_name, credential=None, **kwargs
-    ):
-        # type: (str, str, Optional[Any], Any) -> BlobCheckpointStore
+        cls,
+        conn_str: str,
+        container_name: str,
+        credential: Optional[Union["AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,
+        **kwargs: Any
+    ) -> "BlobCheckpointStore":
         """Create BlobCheckpointStore from a storage connection string.
 
         :param str conn_str:
@@ -111,11 +123,11 @@ class BlobCheckpointStore(CheckpointStore):
 
         return cls(account_url, container_name, credential=credential, **kwargs)
 
-    def __enter__(self):
+    def __enter__(self) -> "BlobCheckpointStore":
         self._container_client.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self._container_client.__exit__(*args)
 
     def _get_blob_client(self, blob_name):
@@ -183,8 +195,13 @@ class BlobCheckpointStore(CheckpointStore):
             )
             return updated_ownership  # Keep the ownership if an unexpected error happens
 
-    def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs):
-        # type: (str, str, str, Any) -> Iterable[Dict[str, Any]]
+    def list_ownership(
+        self,
+        fully_qualified_namespace: str,
+        eventhub_name: str,
+        consumer_group: str,
+        **kwargs: Any
+    ) -> Iterable[Dict[str, Any]]:
         """Retrieves a complete ownership list from the storage blob.
 
         :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.
@@ -238,8 +255,11 @@ class BlobCheckpointStore(CheckpointStore):
             )
             raise
 
-    def claim_ownership(self, ownership_list, **kwargs):
-        # type: (Iterable[Dict[str, Any]], Any) -> Iterable[Dict[str, Any]]
+    def claim_ownership(
+        self,
+        ownership_list: Iterable[Dict[str, Any]],
+        **kwargs: Any
+    ) -> Iterable[Dict[str, Any]]:
         """Tries to claim ownership for a list of specified partitions.
 
         :param iterable[dict[str, any]] ownership_list: Iterable of dictionaries containing all the ownerships to claim.
@@ -265,8 +285,7 @@ class BlobCheckpointStore(CheckpointStore):
                 pass
         return gathered_results
 
-    def update_checkpoint(self, checkpoint, **kwargs):
-        # type: (Dict[str, Optional[Union[str, int]]], Any) -> None
+    def update_checkpoint(self, checkpoint: Dict[str, Union[str, int]], **kwargs: Any) -> None:
         """Updates the checkpoint using the given information for the offset, associated partition and
         consumer group in the storage blob.
 
@@ -309,9 +328,8 @@ class BlobCheckpointStore(CheckpointStore):
             )
 
     def list_checkpoints(
-        self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs
-    ):
-        # type: (str, str, str, Any) -> Iterable[Dict[str, Any]]
+        self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str, **kwargs: Any
+    ) -> Iterable[Dict[str, Any]]:
         """List the updated checkpoints from the storage blob.
 
         :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.
@@ -351,5 +369,5 @@ class BlobCheckpointStore(CheckpointStore):
             result.append(checkpoint)
         return result
 
-    def close(self):
+    def close(self) -> None:
         self._container_client.__exit__()

@@ -23,7 +23,7 @@ class Tokenizer:
         # Count tokens, including special tokens like <|endofprompt|>
         return len(self.encoding.encode(input, allowed_special="all"))
 
-    def set_encoding(self, model_name: str) -> tiktoken.Encoding:
+    def set_encoding(self, model_name: str) -> None:
         # See: tiktoken mapping of model names here:
         #  https://github.com/openai/tiktoken/blob/main/tiktoken/model.py#L12
 

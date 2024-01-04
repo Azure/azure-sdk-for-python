@@ -2,6 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+from typing import Union, List, Optional, cast, TYPE_CHECKING
+from ._pyamqp.error import AMQPException
+
+if TYPE_CHECKING:
+    from ._pyamqp.error import ErrorCondition
+
 
 class EventHubError(Exception):
     """Represents an error occurred in the client.
@@ -12,33 +18,39 @@ class EventHubError(Exception):
     :vartype error: str
     :ivar details: The error details, if included in the
      service response.
-    :vartype details: dict[str, str]
+    :vartype details: list[str] or AMQPException
     """
 
-    def __init__(self, message, details=None):
-        self.error = None
-        self.message = message
-        self.details = details
+    def __init__(self, message: str, details: Optional[Union[List[str], "AMQPException"]] = None) -> None:
+        self.error: Optional[str] = None
+        self.message: str = message
+        self.details: Union[List[str], "AMQPException"]
         if details and isinstance(details, Exception):
-            try:
-                condition = details.condition.value.decode("UTF-8")
-            except AttributeError:
+            self.details = details
+            if isinstance(self.details, AMQPException):
                 try:
-                    condition = details.condition.decode("UTF-8")
+                    details.condition = cast("ErrorCondition", details.condition)
+                    condition = details.condition.value.decode("UTF-8")
                 except AttributeError:
-                    condition = None
-            if condition:
-                _, _, self.error = condition.partition(":")
-                self.message += "\nError: {}".format(self.error)
-            try:
-                self._parse_error(details.description)
-                for detail in self.details:
-                    self.message += "\n{}".format(detail)
-            except:  # pylint: disable=bare-except
-                self.message += "\n{}".format(details)
+                    try:
+                        details.condition = cast(bytes, details.condition)
+                        condition = details.condition.decode("UTF-8")
+                    except AttributeError:
+                        condition = None
+                if condition:
+                    _, _, self.error = condition.partition(":")
+                    self.message += "\nError: {}".format(self.error)
+            elif isinstance(self.details, list):
+                try:
+                    details.description = cast(str, details.description)
+                    self._parse_error(details.description)
+                    for detail in self.details:
+                        self.message += "\n{}".format(detail)
+                except:  # pylint: disable=bare-except
+                    self.message += "\n{}".format(details)
         super(EventHubError, self).__init__(self.message)
 
-    def _parse_error(self, error_list):
+    def _parse_error(self, error_list: Union[str, bytes]) -> None:
         details = []
         self.message = (
             error_list
