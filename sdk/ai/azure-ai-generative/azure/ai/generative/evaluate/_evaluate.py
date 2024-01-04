@@ -272,6 +272,8 @@ def _evaluate(
         custom_prompt_metrics = [metric for metric in metrics if isinstance(metric, LLMMetric)]
         code_metrics = [metric for metric in metrics if isinstance(metric, CodeMetric)]
 
+        # TODO : Once PF is used for inbuilt metrics parallelize submission of metrics calculation of different kind
+
         if code_metrics:
             code_metric_handler = CodeMetricHandler(
                 task_type="custom-code-metric",
