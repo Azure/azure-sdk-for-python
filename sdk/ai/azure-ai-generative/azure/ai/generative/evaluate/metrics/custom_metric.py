@@ -63,6 +63,7 @@ class CodeMetric(Metric):
         self.aggregator = aggregator
 
 
+# WIP: This implementation will change
 class LLMMetric(Metric):
     def __init__(self, name, parameters, description=None, examples=None, model_config=None):
         super(LLMMetric, self).__init__(name=name)
