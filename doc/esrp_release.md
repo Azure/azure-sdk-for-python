@@ -10,6 +10,6 @@ Further details on ESRP release methods is available at [docs.opensource.microso
 
 ## Break Glass - Yanking/Deleting
 
-The quickest way to get a package yanked is to file an ICM. The process is documented [here](https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/1035/ESRP-Release-Task?anchor=escalating-to-esrp).
+For low priority yank requests, directly contact the `python` team via email @ `python@microsoft.com`. Ensure that the name of the `package name`, the `version`, and the `yank reason` are readily available in the yank request email.
 
-If the ICM doesn't have a reaction in an hour or so, directly contact the `python` team via email @ `python@microsoft.com`.
+If there is no response on the email, and the request is urgent. escalate to filing a sev 2 ICM. The process is documented [here](https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/1035/ESRP-Release-Task?anchor=escalating-to-esrp).
