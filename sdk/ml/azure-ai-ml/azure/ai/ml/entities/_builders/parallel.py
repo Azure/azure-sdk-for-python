@@ -33,6 +33,7 @@ from .._job.parallel.parallel_task import ParallelTask
 from .._job.parallel.retry_settings import RetrySettings
 from .._job.pipeline._io import NodeOutput, NodeWithGroupInputMixin
 from .._util import convert_ordered_dict_to_dict, get_rest_dict_for_node_attrs, validate_attribute_type
+from ..._utils.utils import is_data_binding_expression
 from .base_node import BaseNode
 
 module_logger = logging.getLogger(__name__)
@@ -166,7 +167,11 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
 
         self._task = task
 
-        if mini_batch_size is not None and not isinstance(mini_batch_size, int):
+        if (
+            mini_batch_size is not None
+            and not isinstance(mini_batch_size, int)
+            and not is_data_binding_expression(mini_batch_size)
+        ):
             """Convert str to int."""  # pylint: disable=pointless-string-statement
             pattern = re.compile(r"^\d+([kKmMgG][bB])*$")
             if not pattern.match(mini_batch_size):

@@ -162,10 +162,10 @@ logging library are tracked and telemetry is exported to application insights wi
 import os
 import logging
 
+from opentelemetry._logs import set_logger_provider
 from opentelemetry.sdk._logs import (
     LoggerProvider,
     LoggingHandler,
-    set_logger_provider,
 )
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 
@@ -204,10 +204,10 @@ import os
 import logging
 
 from opentelemetry import trace
+from opentelemetry._logs import set_logger_provider
 from opentelemetry.sdk._logs import (
     LoggerProvider,
     LoggingHandler,
-    set_logger_provider,
 )
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.trace import TracerProvider
@@ -247,10 +247,10 @@ An example showing how to add custom properties to logging telemetry.
 import os
 import logging
 
+from opentelemetry._logs import set_logger_provider
 from opentelemetry.sdk._logs import (
     LoggerProvider,
     LoggingHandler,
-    set_logger_provider,
 )
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 
@@ -646,7 +646,7 @@ For detailed overview of OpenTelemetry, visit their [overview](https://github.co
 
 For the official OpenTelemetry Python documentation and how to enable other telemetry scenarios, visit the official OpenTelemetry [website](https://opentelemetry.io/docs/instrumentation/python/).
 
-For more information on the Azure Monitor OpenTelemetry Distro, which is a bundle of useful, pre-assembled components (one of them being this current package) that enable telemetry scenarios with Azure Monitor, visit the [README](https://github.com/microsoft/ApplicationInsights-Python/tree/main/azure-monitor-opentelemetry).
+For more information on the Azure Monitor OpenTelemetry Distro, which is a bundle of useful, pre-assembled components (one of them being this current package) that enable telemetry scenarios with Azure Monitor, visit the [README](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry).
 
 ## Contributing
 

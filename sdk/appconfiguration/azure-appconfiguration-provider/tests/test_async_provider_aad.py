@@ -17,12 +17,14 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     @recorded_by_proxy_async
     async def test_provider_creation_aad(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         async with await self.create_aad_client(
-            appconfiguration_endpoint_string, keyvault_secret_url=appconfiguration_keyvault_secret_url
+            appconfiguration_endpoint_string,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
+            feature_flag_enabled=True,
         ) as client:
             assert client.get("message") == "hi"
             assert client["my_json"]["key"] == "value"
-            assert "FeatureManagementFeatureFlags" in client
-            assert "Alpha" in client["FeatureManagementFeatureFlags"]
+            assert "FeatureManagement" in client
+            assert "Alpha" in client["FeatureManagement"]
 
     # method: provider_trim_prefixes
     @app_config_decorator_async
@@ -33,12 +35,13 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             appconfiguration_endpoint_string,
             trim_prefixes=trimmed,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
+            feature_flag_enabled=True,
         ) as client:
             assert client["message"] == "hi"
             assert client["my_json"]["key"] == "value"
             assert client["trimmed"] == "key"
-            assert "FeatureManagementFeatureFlags" in client
-            assert "Alpha" in client["FeatureManagementFeatureFlags"]
+            assert "FeatureManagement" in client
+            assert "Alpha" in client["FeatureManagement"]
 
     # method: provider_selectors
     @app_config_decorator_async
@@ -50,7 +53,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         ) as client:
             assert client["message"] == "test"
             assert "test.trimmed" not in client
-            assert "FeatureManagementFeatureFlags" not in client
+            assert "FeatureManagement" not in client
 
     # method: provider_selectors
     @app_config_decorator_async

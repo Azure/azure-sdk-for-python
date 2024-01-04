@@ -278,7 +278,7 @@ to the library's [credential documentation][sas_docs]. Alternatively, it is poss
 CONTAINER_URL = os.environ["CONTAINER_URL"]
 SAS_TOKEN = os.environ["SAS_TOKEN"]
 
-backup_result: KeyVaultBackupResult = client.begin_backup(CONTAINER_URL, SAS_TOKEN).result()
+backup_result: KeyVaultBackupResult = client.begin_backup(CONTAINER_URL, sas_token=SAS_TOKEN).result()
 print(f"Azure Storage Blob URL of the backup: {backup_result.folder_url}")
 ```
 
@@ -297,14 +297,14 @@ For more details on creating a SAS token using a `BlobServiceClient` from [`azur
 to the library's [credential documentation][sas_docs]. Alternatively, it is possible to
 [generate a SAS token in Storage Explorer][storage_explorer].
 
-<!-- SNIPPET:backup_restore_operations.begin_backup -->
+<!-- SNIPPET:backup_restore_operations.begin_restore -->
 
 ```python
-CONTAINER_URL = os.environ["CONTAINER_URL"]
 SAS_TOKEN = os.environ["SAS_TOKEN"]
 
-backup_result: KeyVaultBackupResult = client.begin_backup(CONTAINER_URL, SAS_TOKEN).result()
-print(f"Azure Storage Blob URL of the backup: {backup_result.folder_url}")
+# `backup_result` is the KeyVaultBackupResult returned by `begin_backup`
+client.begin_restore(backup_result.folder_url, sas_token=SAS_TOKEN).wait()
+print("Vault restored successfully.")
 ```
 
 <!-- END SNIPPET -->

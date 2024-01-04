@@ -12,6 +12,7 @@ def analyze_text():
 
     import os
     from azure.ai.contentsafety import ContentSafetyClient
+    from azure.ai.contentsafety.models import TextCategory
     from azure.core.credentials import AzureKeyCredential
     from azure.core.exceptions import HttpResponseError
     from azure.ai.contentsafety.models import AnalyzeTextOptions
@@ -19,7 +20,7 @@ def analyze_text():
     key = os.environ["CONTENT_SAFETY_KEY"]
     endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
 
-    # Create an Content Safety client
+    # Create a Content Safety client
     client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
 
     # Construct a request
@@ -37,16 +38,22 @@ def analyze_text():
         print(e)
         raise
 
-    if response.hate_result:
-        print(f"Hate severity: {response.hate_result.severity}")
-    if response.self_harm_result:
-        print(f"SelfHarm severity: {response.self_harm_result.severity}")
-    if response.sexual_result:
-        print(f"Sexual severity: {response.sexual_result.severity}")
-    if response.violence_result:
-        print(f"Violence severity: {response.violence_result.severity}")
+    hate_result = next(item for item in response.categories_analysis if item.category == TextCategory.HATE)
+    self_harm_result = next(item for item in response.categories_analysis if item.category == TextCategory.SELF_HARM)
+    sexual_result = next(item for item in response.categories_analysis if item.category == TextCategory.SEXUAL)
+    violence_result = next(item for item in response.categories_analysis if item.category == TextCategory.VIOLENCE)
+
+    if hate_result:
+        print(f"Hate severity: {hate_result.severity}")
+    if self_harm_result:
+        print(f"SelfHarm severity: {self_harm_result.severity}")
+    if sexual_result:
+        print(f"Sexual severity: {sexual_result.severity}")
+    if violence_result:
+        print(f"Violence severity: {violence_result.severity}")
 
     # [END analyze_text]
+
 
 if __name__ == "__main__":
     analyze_text()

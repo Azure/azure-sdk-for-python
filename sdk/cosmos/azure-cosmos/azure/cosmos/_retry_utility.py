@@ -23,8 +23,10 @@
 """
 
 import time
+from typing import Optional
 
 from azure.core.exceptions import AzureError, ClientAuthenticationError
+from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import RetryPolicy
 
 from . import exceptions
@@ -146,8 +148,8 @@ def ExecuteFunction(function, *args, **kwargs):
     """
     return function(*args, **kwargs)
 
-def _configure_timeout(request, absolute, per_request):
-    # type: (azure.core.pipeline.PipelineRequest, Optional[int], int) -> Optional[AzureError]
+
+def _configure_timeout(request: PipelineRequest, absolute: Optional[int], per_request: int) -> None:
     if absolute is not None:
         if absolute <= 0:
             raise exceptions.CosmosClientTimeoutError()

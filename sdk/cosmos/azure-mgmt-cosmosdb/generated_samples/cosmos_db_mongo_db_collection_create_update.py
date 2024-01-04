@@ -53,6 +53,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2023-09-15/examples/CosmosDBMongoDBCollectionCreateUpdate.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2023-11-15/examples/CosmosDBMongoDBCollectionCreateUpdate.json
 if __name__ == "__main__":
     main()

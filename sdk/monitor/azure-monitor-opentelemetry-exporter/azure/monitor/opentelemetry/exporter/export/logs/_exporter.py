@@ -14,6 +14,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _MESSAGE_ENVELOPE_NAME,
 )
 from azure.monitor.opentelemetry.exporter._generated.models import (
+    ContextTagKeys,
     MessageData,
     MonitorBase,
     TelemetryEventData,
@@ -24,6 +25,12 @@ from azure.monitor.opentelemetry.exporter._generated.models import (
 from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
+)
+from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+    get_statsbeat_shutdown,
+    get_statsbeat_custom_events_feature_set,
+    is_statsbeat_enabled,
+    set_statsbeat_custom_events_feature_set,
 )
 
 _logger = logging.getLogger(__name__)
@@ -103,10 +110,10 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
     time_stamp = log_record.timestamp if log_record.timestamp is not None else log_record.observed_timestamp
     envelope = _utils._create_telemetry_item(time_stamp)
     envelope.tags.update(_utils._populate_part_a_fields(log_record.resource)) # type: ignore
-    envelope.tags["ai.operation.id"] = "{:032x}".format( # type: ignore
+    envelope.tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format( # type: ignore
         log_record.trace_id or _DEFAULT_TRACE_ID
     )
-    envelope.tags["ai.operation.parentId"] = "{:016x}".format( # type: ignore
+    envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format( # type: ignore
         log_record.span_id or _DEFAULT_SPAN_ID
     )
     properties = _utils._filter_custom_properties(
@@ -126,6 +133,7 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
 
     # Event telemetry
     if _log_data_is_event(log_data):
+        _set_statsbeat_custom_events_feature()
         envelope.name = 'Microsoft.ApplicationInsights.Event'
         data = TelemetryEventData(
             name=str(log_record.body)[:32768],
@@ -195,3 +203,7 @@ _IGNORED_ATTRS = frozenset(
         _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
     )
 )
+
+def _set_statsbeat_custom_events_feature():
+    if is_statsbeat_enabled() and not get_statsbeat_shutdown() and not get_statsbeat_custom_events_feature_set():
+        set_statsbeat_custom_events_feature_set()

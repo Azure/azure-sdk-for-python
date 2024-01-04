@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+from typing import Optional
+
 
 class IndexConfig:  # pylint: disable=too-many-instance-attributes
     """Convenience class that contains all config values that for index creation that are
@@ -18,14 +20,14 @@ class IndexConfig:  # pylint: disable=too-many-instance-attributes
         *,
         output_index_name: str,
         vector_store: str,
-        data_source_url: str = None,
-        chunk_size: int = None,
-        chunk_overlap: int = None,
-        input_glob: str = None,
-        max_sample_files: int = None,
-        chunk_prepend_summary: bool = None,
-        document_path_replacement_regex: str = None,
-        embeddings_container: str = None,
+        data_source_url: Optional[str] = None,
+        chunk_size: Optional[int] = None,
+        chunk_overlap: Optional[int] = None,
+        input_glob: Optional[str] = None,
+        max_sample_files: Optional[int] = None,
+        chunk_prepend_summary: Optional[bool] = None,
+        document_path_replacement_regex: Optional[str] = None,
+        embeddings_container: Optional[str] = None,
         embeddings_model: str,
         aoai_connection_id: str,
         _dry_run: bool = False

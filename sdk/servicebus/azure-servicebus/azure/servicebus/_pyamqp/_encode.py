@@ -30,6 +30,8 @@ try:
 except ImportError:
     from typing_extensions import TypeAlias
 
+from typing_extensions import Buffer
+
 
 from .types import (
     TYPE,
@@ -619,7 +621,7 @@ def encode_fields(value):
 
 
 def encode_annotations(value):
-    # type: (Optional[Dict[str, Any]]) -> Dict[str, Any]
+    # type: (Optional[Dict[Union[str, bytes] , Any]]) -> Dict[str, Any]
     """The annotations type is a map where the keys are restricted to be of type symbol or of type ulong.
 
     All ulong keys, and all symbolic keys except those beginning with "x-" are reserved.
@@ -650,8 +652,7 @@ def encode_annotations(value):
     return fields
 
 
-def encode_application_properties(value):
-    # type: (Optional[Dict[str, Any]]) -> Dict[str, Any]
+def encode_application_properties(value: Optional[Dict[Union[str, bytes], Any]]) -> Dict[Union[str, bytes], Any]:
     """The application-properties section is a part of the bare message used for structured application data.
 
     <type name="application-properties" class="restricted" source="map" provides="section">
@@ -668,7 +669,7 @@ def encode_application_properties(value):
     """
     if not value:
         return {TYPE: AMQPTypes.null, VALUE: None}
-    fields = {TYPE: AMQPTypes.map, VALUE: cast(List, [])}
+    fields: Dict[Union[str, bytes], Any] = {TYPE: AMQPTypes.map, VALUE: cast(List, [])}
     for key, data in value.items():
         cast(List, fields[VALUE]).append(({TYPE: AMQPTypes.string, VALUE: key}, data))
     return fields
@@ -876,11 +877,11 @@ def describe_performative(performative):
                 body.append(
                     {
                         TYPE: AMQPTypes.array,
-                        VALUE: [_FIELD_DEFINITIONS[field.type](v) for v in value],
+                        VALUE: [_FIELD_DEFINITIONS[field.type](v) for v in value],  # type: ignore
                     }
                 )
             else:
-                body.append(_FIELD_DEFINITIONS[field.type](value))
+                body.append(_FIELD_DEFINITIONS[field.type](value))  # type: ignore
         elif isinstance(field.type, ObjDefinition):
             body.append(describe_performative(value))
         else:
@@ -1033,7 +1034,8 @@ def encode_frame(frame, frame_type=_FRAME_TYPE):
     frame_data = bytearray()
     encode_value(frame_data, frame_description)
     if isinstance(frame, performatives.TransferFrame):
-        frame_data += frame.payload
+        # casting from Optional[Buffer] since payload will not be None at this point
+        frame_data += cast(Buffer, frame.payload)
 
     size = len(frame_data) + 8
     header = size.to_bytes(4, "big") + _FRAME_OFFSET + frame_type

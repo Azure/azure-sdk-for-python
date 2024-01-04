@@ -3,6 +3,8 @@ type: computeinstance
 description: some_desc_ci
 
 size: Standard_DS2_v2
+enable_sso: false
+enable_root_access: false
 
 network_settings:
    vnet_name: myvnet-wus2

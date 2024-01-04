@@ -10,7 +10,7 @@ import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 import queue
-from typing import TYPE_CHECKING, Union, Optional
+from typing import TYPE_CHECKING, Union, Optional, Any
 
 from .._servicebus_receiver import ServiceBusReceiver
 from .._servicebus_session import ServiceBusSession
@@ -106,7 +106,7 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
         self._renew_tasks = queue.Queue()  # type: ignore
         self._infer_max_workers_time = 1
 
-    def __enter__(self):
+    def __enter__(self) -> "AutoLockRenewer":
         if self._shutdown.is_set():
             raise ServiceBusError(
                 "The AutoLockRenewer has already been shutdown. Please create a new instance for"
@@ -116,7 +116,7 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
         self._init_workers()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self.close()
 
     def _init_workers(self):
@@ -309,7 +309,7 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
             )
         )
 
-    def close(self, wait=True):
+    def close(self, wait: bool = True) -> None:
         """Cease autorenewal by shutting down the thread pool to clean up any remaining lock renewal threads.
 
         :param wait: Whether to block until thread pool has shutdown. Default is `True`.
