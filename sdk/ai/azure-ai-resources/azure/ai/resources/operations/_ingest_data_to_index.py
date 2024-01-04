@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+from typing import Optional
+
 from azure.ai.ml import MLClient
 
 from azure.ai.resources.operations import IndexDataSource, ACSOutputConfig
@@ -13,7 +15,7 @@ def ingest_data_to_index(
     client: MLClient,
     index_config: IndexConfig,
     source_config: IndexDataSource,
-    acs_config: ACSOutputConfig = None,  # todo better name?
+    acs_config: Optional[ACSOutputConfig] = None,  # todo better name?
 ):  # pylint: disable=too-many-function-args
     # create index creation pipeline from loaded yml component
     # presumably relying heavily upon code from here:

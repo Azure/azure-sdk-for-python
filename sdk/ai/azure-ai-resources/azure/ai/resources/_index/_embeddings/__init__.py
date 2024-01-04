@@ -6,7 +6,7 @@ import copy
 import gzip
 import time
 from collections import OrderedDict
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, Union
 
 from azure.core.credentials import TokenCredential
 from azure.ai.resources._index._embeddings.openai import OpenAIEmbedder
@@ -16,7 +16,7 @@ from azure.ai.resources._index._utils.logging import get_logger
 
 logger = get_logger(__name__)
 
-def get_langchain_embeddings(embedding_kind: str, arguments: dict, credential: Optional[TokenCredential] = None) -> Embedder:
+def get_langchain_embeddings(embedding_kind: str, arguments: dict, credential: Optional[TokenCredential] = None) -> Union[OpenAIEmbedder, Embedder]:
     """Get an instance of Embedder from the given arguments."""
     if "open_ai" in embedding_kind:
         # return _args_to_openai_embedder(arguments)
@@ -26,7 +26,7 @@ def get_langchain_embeddings(embedding_kind: str, arguments: dict, credential: O
         arguments = init_open_ai_from_config(arguments, credential=credential)
 
         embedder = OpenAIEmbedder(
-            model=arguments.get("model"),
+            model=arguments.get("model", ""),
             api_base=arguments.get("api_base", openai.api_base if hasattr(openai, "api_base") else openai.base_url),
             api_type=arguments.get("api_type", openai.api_type),
             api_version=arguments.get("api_version", openai.api_version),
@@ -112,7 +112,7 @@ def get_embed_fn(embedding_kind: str, arguments: dict, credential: Optional[Toke
         arguments = init_open_ai_from_config(arguments, credential=credential)
 
         embedder = OpenAIEmbedder(
-            model=arguments.get("model"),
+            model=arguments.get("model", ""),
             api_base=arguments.get("api_base", openai.api_base if hasattr(openai, "api_base") else openai.base_url),
             api_type=arguments.get("api_type", openai.api_type),
             api_version=arguments.get("api_version", openai.api_version),
@@ -141,7 +141,7 @@ def get_embed_fn(embedding_kind: str, arguments: dict, credential: Optional[Toke
 
         return embed
     elif embedding_kind == "hugging_face":
-        embedder = get_langchain_embeddings(embedding_kind, arguments, credential=credential)
+        embedder: Union[OpenAIEmbedder, Embedder] = get_langchain_embeddings(embedding_kind, arguments, credential=credential)  # type: ignore[no-redef]
 
         return embedder.embed_documents
     elif embedding_kind == "custom":
@@ -200,7 +200,7 @@ class EmbeddingsContainer:
         self._document_sources = OrderedDict()
         self._deleted_sources = OrderedDict()
         self._document_embeddings = OrderedDict()
-        self._deleted_documents = OrderedDict()
+        self._deleted_documents = OrderedDict()  # type: ignore[assignment]
         self._embeddings_container_path = None
         self.dimension = kwargs.get("dimension", None)
         self.statistics = {

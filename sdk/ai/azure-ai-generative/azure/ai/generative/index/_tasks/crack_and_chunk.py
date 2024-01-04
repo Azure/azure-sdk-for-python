@@ -10,7 +10,7 @@ import re
 import time
 import traceback
 from pathlib import Path
-from typing import Iterator, List
+from typing import IO, Any, Callable, Dict, Iterator, List, Optional, Union
 
 import pandas as pd
 from azure.ai.generative.index._documents import (
@@ -64,7 +64,7 @@ def write_chunks_to_jsonl(chunks: List[Document], output_path):
             f.write("\n")
 
 
-def generate_file_name(output_chunks: str, chunked_document: ChunkedDocument, file_extension: str) -> str:
+def generate_file_name(output_chunks: str, chunked_document: ChunkedDocument, file_extension: str) -> Path:
     file_name = chunked_document.source.filename.replace("\\", "_").replace("/", "_")
     return Path(output_chunks) / f"Chunks_{file_name}.{file_extension}"
 
@@ -82,12 +82,12 @@ def custom_loading(python_file_path: str, ext_loaders, ext_splitters):
     """Load custom loader from python file."""
     module_name = os.path.basename(python_file_path).replace(".py", "")
     spec = importlib.util.spec_from_file_location(module_name, python_file_path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    module = importlib.util.module_from_spec(spec)  # type: ignore[arg-type]
+    spec.loader.exec_module(module)  # type: ignore
     for _, obj in inspect.getmembers(module):
         logger.debug(f"Found {obj} in {module_name}")
         if inspect.isclass(obj) and obj != BaseDocumentLoader and (issubclass(obj, BaseDocumentLoader) or (hasattr(obj, "file_extensions") and hasattr(obj, "load"))):
-            loader = obj(None, None, None)
+            loader = obj(None, None, None)  # type: ignore[arg-type]
             file_extensions = loader.file_extensions()
             logger.info(f"Registering custom loader for {file_extensions}")
             for file_extension in file_extensions:
@@ -96,25 +96,26 @@ def custom_loading(python_file_path: str, ext_loaders, ext_splitters):
                 ext_splitters[file_extension] = file_extension_splitters[".txt"]
 
 
-def get_activity_logging_filter(activity_logger, source_glob):
+def get_activity_logging_filter(activity_logger, source_glob) -> Callable[[Iterator[DocumentSource], Any], Iterator[DocumentSource]]:
     """Get a filter function with activity logging."""
     def filter_and_log_extensions(sources: Iterator[DocumentSource], allowed_extensions=SUPPORTED_EXTENSIONS) -> Iterator[DocumentSource]:
         """Filter out sources with extensions not in allowed_extensions."""
         total_files = 0
         skipped_files = 0
-        skipped_extensions = {}
-        kept_extension = {}
+        skipped_extensions: Dict[str, Any] = {}
+        kept_extension: Dict[str, Any] = {}
         for source in sources:
+            source_path = Path(source.path)  # type: ignore[arg-type]
             total_files += 1
             if allowed_extensions is not None:
-                if source.path.suffix not in allowed_extensions:
+                if source_path.suffix not in allowed_extensions:
                     skipped_files += 1
-                    ext_skipped = skipped_extensions.get(source.path.suffix, 0)
-                    skipped_extensions[source.path.suffix] = ext_skipped + 1
-                    logger.debug(f'Filtering out extension "{source.path.suffix}" source: {source.filename}')
+                    ext_skipped = skipped_extensions.get(source_path.suffix, 0)
+                    skipped_extensions[source_path.suffix] = ext_skipped + 1
+                    logger.debug(f'Filtering out extension "{source_path.suffix}" source: {source.filename}')
                     continue
-            ext_kept = kept_extension.get(source.path.suffix, 0)
-            kept_extension[source.path.suffix] = ext_kept + 1
+            ext_kept = kept_extension.get(source_path.suffix, 0)
+            kept_extension[source_path.suffix] = ext_kept + 1
             logger.info(f"Processing file: {source.filename}")
             yield source
         logger.info(f"[DocumentChunksIterator::filter_extensions] Filtered {skipped_files} files out of {total_files}")
