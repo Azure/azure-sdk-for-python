@@ -1549,7 +1549,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         error_status = 0
         error_index = 0
         for i, result in enumerate(results):
-            final_responses.append(result[i])
+            final_responses.append(result)
             status_code = result.get("statusCode")
             if status_code >= 400:
                 is_error = True
