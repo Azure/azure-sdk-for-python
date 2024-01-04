@@ -529,7 +529,7 @@ class TableClient(AsyncTablesBaseClient):
         )
 
     @distributed_trace
-    def query_entities(  # pylint: disable=line-too-long
+    def query_entities(
         self,
         query_filter: str,
         *,

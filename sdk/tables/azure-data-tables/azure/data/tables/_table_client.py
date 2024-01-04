@@ -531,7 +531,6 @@ class TableClient(TablesBaseClient):
         parameters: Optional[Dict[str, Any]] = None,
         **kwargs,
     ) -> ItemPaged[TableEntity]:
-        # pylint: disable=line-too-long
         """Lists entities in a table.
 
         :param str query_filter: Specify a filter to return certain entities. For more information
