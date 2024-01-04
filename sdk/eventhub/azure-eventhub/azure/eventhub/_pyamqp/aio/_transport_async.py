@@ -389,7 +389,7 @@ class AsyncTransport(
         :param str s: The string to write.
         """
         try:
-            self.socket_stream.send(s)
+            await self.socket_stream.send(s)
         except AttributeError:
             raise IOError("Connection has already been closed") from None
 
