@@ -20,4 +20,4 @@ follow_imports_for_stubs = false
 
 [tool.pylint]
 disable = ["all"]
-enable = ["docstring-missing-param", "docstring-missing-return", "docstring-missing-rtype", "missing-docstring"]
+enable = ["docstring-missing-param", "docstring-missing-return", "docstring-missing-rtype", "missing-docstring", "missing-module-docstring", "missing-class-docstring", "missing-function-docstring"]
