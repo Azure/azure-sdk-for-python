@@ -3,8 +3,6 @@
 # Licensed under the MIT License. See License in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import os
-
 from logging import getLogger
 from typing import Dict, cast
 
