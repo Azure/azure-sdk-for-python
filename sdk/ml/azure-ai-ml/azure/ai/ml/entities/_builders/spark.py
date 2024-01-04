@@ -76,6 +76,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
         ~azure.ai.ml.entities.UserIdentityConfiguration
 
     ]
+
     :param driver_cores: The number of cores to use for the driver process, only in cluster mode.
     :type driver_cores: int
     :param driver_memory: The amount of memory to use for the driver process, formatted as strings with a size unit
@@ -101,15 +102,16 @@ class Spark(BaseNode, SparkJobEntryMixin):
     :type conf: Dict[str, str]
     :param inputs: A mapping of input names to input data sources used in the job.
     :type inputs: Dict[str, Union[
-            str,
-            bool,
-            int,
-            float,
-            Enum,
-            ~azure.ai.ml.entities._job.pipeline._io.NodeOutput,
-            ~azure.ai.ml.Input
+        str,
+        bool,
+        int,
+        float,
+        Enum,
+        ~azure.ai.ml.entities._job.pipeline._io.NodeOutput,
+        ~azure.ai.ml.Input
 
     ]]
+
     :param outputs: A mapping of output names to output data sources used in the job.
     :type outputs: Dict[str, Union[str, ~azure.ai.ml.Output]]
     :param args: The arguments for the job.

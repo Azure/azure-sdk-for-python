@@ -345,6 +345,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :paramtype feature_name: str
         :keyword tags: String representation of a comma-separated list of tag names (and optionally values).
             (e.g. "tag1,tag2=value2")
+
         :paramtype tags: str
         :return: Feature object
         :rtype: ~azure.ai.ml.entities.Feature

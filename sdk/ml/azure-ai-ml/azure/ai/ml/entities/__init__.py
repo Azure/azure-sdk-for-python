@@ -138,18 +138,6 @@ from ._job.service_instance import ServiceInstance
 from ._job.spark_job import SparkJob
 from ._job.spark_job_entry import SparkJobEntry, SparkJobEntryType
 from ._job.spark_resource_configuration import SparkResourceConfiguration
-from ._job.sweep.search_space import (
-    Choice,
-    LogNormal,
-    LogUniform,
-    Normal,
-    QLogNormal,
-    QLogUniform,
-    QNormal,
-    QUniform,
-    Randint,
-    Uniform,
-)
 from ._monitoring.alert_notification import AlertNotification
 from ._monitoring.compute import ServerlessSparkCompute
 from ._monitoring.definition import MonitorDefinition
@@ -319,16 +307,6 @@ __all__ = [
     "ParallelComponent",
     "CommandComponent",
     "SparkComponent",
-    "Choice",
-    "Normal",
-    "LogNormal",
-    "QNormal",
-    "QLogNormal",
-    "Randint",
-    "Uniform",
-    "QUniform",
-    "LogUniform",
-    "QLogUniform",
     "ResourceRequirementsSettings",
     "ResourceSettings",
     "AssignedUserConfiguration",

@@ -194,18 +194,18 @@ class WorkspaceConnection(Resource):
 
     @property
     def is_shared(self) -> bool:
-        """Get the Boolean describing if this connection is shared
-            amongst its cohort within a workspace hub. Only applicable for connections created
-            within a lean workspace.
+        """Get the Boolean describing if this connection is shared amongst its cohort within a workspace hub.
+        Only applicable for connections created within a lean workspace.
+
         :rtype: bool
         """
         return self._is_shared
 
     @is_shared.setter
     def is_shared(self, value: bool):
-        """Assign the is_shared property of the connection, determining if it is shared amongst other
-            lean workspaces within its parent workspace hub. Only applicable for connections created
-            within a lean workspace workspace.
+        """Assign the is_shared property of the connection, determining if it is shared amongst other lean workspaces
+        within its parent workspace hub. Only applicable for connections created within a lean workspace workspace.
+
         :param value: The new is_shared value.
         :type value: bool
         """
