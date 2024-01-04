@@ -211,7 +211,8 @@ class CommonRuntimeHelper:
             os.path.join(self.common_runtime_temp_folder, "stderr"), "w+", encoding=DefaultOpenEncoding.WRITE
         )
 
-    def get_docker_client(self, registry: Dict) -> "docker.DockerClient":
+    # Bug Item number: 2885723
+    def get_docker_client(self, registry: Dict) -> "docker.DockerClient":  # type: ignore
         """Retrieves the Docker client for performing docker operations.
 
         :param registry: Registry information
@@ -243,7 +244,8 @@ class CommonRuntimeHelper:
 
         return client
 
-    def copy_bootstrapper_from_container(self, container: "docker.models.containers.Container") -> None:
+    # Bug Item number: 2885719
+    def copy_bootstrapper_from_container(self, container: "docker.models.containers.Container") -> None:  # type: ignore
         """Copy file/folder from container to local machine.
 
         :param container: Docker container

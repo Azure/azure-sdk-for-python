@@ -307,7 +307,10 @@ class _LocalDeploymentHelper(object):
         )
 
 
-def _convert_container_to_deployment(container: "docker.models.containers.Container") -> OnlineDeployment:
+# Bug Item number: 2885719
+def _convert_container_to_deployment(
+    container: "docker.models.containers.Container",
+) -> OnlineDeployment:  # type: ignore
     """Converts provided Container for local deployment to OnlineDeployment entity.
 
     :param container: Container for a local deployment.
