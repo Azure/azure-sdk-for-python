@@ -413,7 +413,7 @@ class TableClient(TablesBaseClient):
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
-        **kwargs
+        **kwargs,
     ) -> Dict[str, Any]:
         """Update entity in a table.
 
@@ -531,6 +531,7 @@ class TableClient(TablesBaseClient):
         parameters: Optional[Dict[str, Any]] = None,
         **kwargs,
     ) -> ItemPaged[TableEntity]:
+        # pylint: disable=line-too-long
         """Lists entities in a table.
 
         :param str query_filter: Specify a filter to return certain entities. For more information
@@ -597,14 +598,17 @@ class TableClient(TablesBaseClient):
                 :dedent: 16
                 :caption: Get a single entity from a table
         """
+        user_select = None
         if select and not isinstance(select, str):
-            select = ",".join(select)
+            user_select = ",".join(select)
+        elif isinstance(select, str):
+            user_select = select
         try:
             entity = self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,
                 partition_key=_prepare_key(partition_key),
                 row_key=_prepare_key(row_key),
-                select=select,
+                select=user_select,
                 **kwargs,
             )
         except HttpResponseError as error:

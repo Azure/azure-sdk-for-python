@@ -43,7 +43,7 @@ def _prepare_key(keyvalue: str) -> str:
         raise TypeError("PartitionKey or RowKey must be of type string.") from exc
 
 
-def _parameter_filter_substitution(parameters: Dict[str, str], query_filter: str) -> str:
+def _parameter_filter_substitution(parameters: Optional[Dict[str, str]], query_filter: str) -> str:
     """Replace user defined parameters in filter.
 
     :param parameters: User defined parameters

@@ -538,6 +538,7 @@ class TableClient(AsyncTablesBaseClient):
         parameters: Optional[Dict[str, Any]] = None,
         **kwargs,
     ) -> AsyncItemPaged[TableEntity]:
+        # pylint: disable=line-too-long
         """Lists entities in a table.
 
         :param str query_filter: Specify a filter to return certain entities.  For more information
@@ -604,14 +605,17 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 16
                 :caption: Getting an entity from PartitionKey and RowKey
         """
+        user_select = None
         if select and not isinstance(select, str):
-            select = ",".join(select)
+            user_select = ",".join(select)
+        elif isinstance(select, str):
+            user_select = select
         try:
             entity = await self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,
                 partition_key=_prepare_key(partition_key),
                 row_key=_prepare_key(row_key),
-                select=select,
+                select=user_select,
                 **kwargs,
             )
             properties = _convert_to_entity(entity)

@@ -7,7 +7,7 @@
 import os
 from uuid import uuid4
 from urllib.parse import parse_qs, quote, urlparse
-from typing import Any, Dict, List, Optional, Mapping, Union
+from typing import Any, List, Optional, Mapping, Union
 from typing_extensions import Self
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential, TokenCredential
@@ -135,7 +135,9 @@ class TablesBaseClient:  # pylint: disable=too-many-instance-attributes
 
         self._client = AzureTable(self.url, policies=kwargs.pop("policies", self._policies), **kwargs)
         # Incompatible assignment when assigning a str value to a Literal type variable
-        self._client._config.version = get_api_version(api_version, self._client._config.version)  # type: ignore[assignment]
+        self._client._config.version = get_api_version(
+            api_version, self._client._config.version
+        )  # type: ignore[assignment]
 
     @property
     def url(self) -> str:
