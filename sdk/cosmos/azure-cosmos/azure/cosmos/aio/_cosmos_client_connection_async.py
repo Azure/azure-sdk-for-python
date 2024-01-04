@@ -21,7 +21,7 @@
 
 """Document client class for the Azure Cosmos database service.
 """
-from typing import Dict, Any, Optional, Sequence, TypeVar
+from typing import Dict, Any, Optional, List, TypeVar
 from urllib.parse import urlparse
 
 from urllib3.util.retry import Retry
@@ -62,7 +62,7 @@ ClassType = TypeVar("ClassType")
 # pylint: disable=protected-access,too-many-lines
 
 
-class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
+class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-many-instance-attributes
     """Represents a document client.
 
     Provides a client-side logical representation of the Azure Cosmos
@@ -2333,7 +2333,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             pk_properties = cont_prop["partitionKey"]
             partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
             if partition_key_definition.kind == "MultiHash" and \
-                    (isinstance(partition_key, Sequence) and \
+                    (isinstance(partition_key, List) and \
                      len(partition_key_definition['paths']) != len(partition_key)):
                 isPrefixPartitionQuery = True
 
