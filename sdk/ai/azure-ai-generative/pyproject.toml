@@ -3,7 +3,7 @@ mypy = true
 type_check_samples = false
 verifytypes = false
 pyright = false
-pylint = false
+pylint = true
 black = false
 bandit = false
 sphinx=true
@@ -18,3 +18,7 @@ warn_unused_configs = true
 follow_imports = "skip"
 ignore_missing_imports = true
 follow_imports_for_stubs = false
+
+[tool.pylint]
+disable = ["all"]
+enable = ["docstring-missing-param", "docstring-missing-return", "docstring-missing-rtype", "missing-docstring", "missing-module-docstring", "missing-class-docstring", "missing-function-docstring"]
