@@ -92,7 +92,7 @@ class TestConfigure(unittest.TestCase):
                 "requests": {
                     "enabled": False
                 },
-            },
+            }
         }
         config_mock.return_value = configurations
         configure_azure_monitor()
