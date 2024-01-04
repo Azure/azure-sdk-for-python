@@ -17,3 +17,7 @@ warn_unused_configs = true
 follow_imports = "skip"
 ignore_missing_imports = true
 follow_imports_for_stubs = false
+
+[tool.pylint]
+disable = ["all"]
+enable = ["docstring-missing-param", "docstring-missing-return", "docstring-missing-rtype", "missing-docstring"]
