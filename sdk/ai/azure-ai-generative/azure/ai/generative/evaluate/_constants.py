@@ -77,3 +77,8 @@ TASK_TYPE_TO_METRICS_MAPPING = {
     constants.QUESTION_ANSWERING: QaMetrics,
     constants.RAG_EVALUATION: ChatMetrics
 }
+
+SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING = {
+    QA: QaMetrics,
+    CHAT: ChatMetrics
+}
