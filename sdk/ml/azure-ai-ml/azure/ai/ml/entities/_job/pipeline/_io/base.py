@@ -288,7 +288,8 @@ class NodeInput(InputOutputBase):
         meta: Optional[Input],
         *,
         data: Optional[Union[int, bool, float, str, Output, "PipelineInput", Input]] = None,
-        owner: Optional[Union["BaseComponent", "PipelineJob"]] = None,
+        # Bug Item number: 2883405
+        owner: Optional[Union["BaseComponent", "PipelineJob"]] = None,  # type: ignore
         **kwargs: Any,
     ):
         """Initialize an input of a component.
@@ -471,7 +472,8 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         meta: Optional[Union[Input, Output]],
         *,
         data: Optional[Union[Output, str]] = None,
-        owner: Optional[Union["BaseComponent", "PipelineJob"]] = None,
+        # Bug Item number: 2883405
+        owner: Optional[Union["BaseComponent", "PipelineJob"]] = None,  # type: ignore
         binding_output: Optional["NodeOutput"] = None,
         **kwargs: Any,
     ):

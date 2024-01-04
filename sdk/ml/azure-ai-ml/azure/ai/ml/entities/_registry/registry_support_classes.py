@@ -219,7 +219,8 @@ class RegistryRegionDetails:
         if num_configs == 0:
             return None
         system_created_count = reduce(
-            lambda x, y: int(x) + int(y),
+            # Bug Item number: 2883323
+            lambda x, y: int(x) + int(y),  # type: ignore
             [
                 hasattr(config, "system_created_storage_account") and config.system_created_storage_account is not None
                 for config in rest_configs

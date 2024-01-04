@@ -406,7 +406,8 @@ class Component(
         init_kwargs[BASE_PATH_CONTEXT_KEY] = base_path.absolute()
         if yaml_path:
             init_kwargs[SOURCE_PATH_CONTEXT_KEY] = Path(yaml_path).absolute().as_posix()
-        new_instance.__init__(
+        # Bug Item number: 2883415
+        new_instance.__init__(  # type: ignore
             **init_kwargs,
         )
         return new_instance
@@ -445,7 +446,8 @@ class Component(
         create_instance_func, _ = component_factory.get_create_funcs(obj.properties.component_spec, for_load=True)
 
         instance: Component = create_instance_func()
-        instance.__init__(**instance._from_rest_object_to_init_params(obj))
+        # Bug Item number: 2883415
+        instance.__init__(**instance._from_rest_object_to_init_params(obj))  # type: ignore
         return instance
 
     @classmethod

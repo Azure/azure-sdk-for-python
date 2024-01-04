@@ -234,8 +234,8 @@ class _PipelineNodeFactory:
                     data=data[component_key],
                     yaml_path=data[component_key].pop(SOURCE_PATH_CONTEXT_KEY, None),
                 )
-
-        new_instance.__init__(**data)
+        # Bug Item number: 2883415
+        new_instance.__init__(**data)  # type: ignore
         return new_instance
 
     def load_from_rest_object(
@@ -295,8 +295,10 @@ def _generate_component_function(
         # todo: refine Hard code for now to support different task type for DataTransfer node
         _type = component_entity.type
         if _type == NodeType.DATA_TRANSFER:
-            _type = "_".join([NodeType.DATA_TRANSFER, component_entity.task])
-            if component_entity.task == DataTransferTaskType.IMPORT_DATA:
+            # Bug Item number: 2883431
+            _type = "_".join([NodeType.DATA_TRANSFER, component_entity.task])  # type: ignore
+            # Bug Item number: 2883431
+            if component_entity.task == DataTransferTaskType.IMPORT_DATA:  # type: ignore
                 return pipeline_node_factory.load_from_dict(
                     data=dict(component=component_entity, **kwargs, _from_component_func=True),
                     _type=_type,
