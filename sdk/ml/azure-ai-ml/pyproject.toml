@@ -29,5 +29,4 @@ follow_imports = "skip"
 follow_imports_for_stubs = "skip"
 
 [tool.pylint.'MESSAGES CONTROL']
-disable = "all"
-enable = "docstring-missing-param, docstring-missing-return, docstring-missing-rtype, missing-docstring, missing-module-docstring, missing-class-docstring, missing-function-docstring"
+disable = "line-too-long, trailing-whitespace"
