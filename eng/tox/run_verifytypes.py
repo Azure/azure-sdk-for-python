@@ -140,21 +140,22 @@ if __name__ == "__main__":
     except subprocess.CalledProcessError:
         pass  # we don't fail on verifytypes, only if type completeness score worsens from main
 
-    # get type completeness score from main
-    logging.info(
-        "Getting the type completeness score from the code in main..."
-    )
-    install_from_main(setup_path)
-    score_from_main = get_type_complete_score(commands)
-
-    score_from_main_rounded = round(score_from_main * 100, 1)
-    score_from_current_rounded = round(score_from_current * 100, 1)
-    print("\n-----Type completeness score comparison-----\n")
-    print(f"Score in main: {score_from_main_rounded}%")
-    # Give a 5% buffer for type completeness score to decrease
-    if score_from_current_rounded < score_from_main_rounded - 5:
-        print(
-            f"\nERROR: The type completeness score of {package_name} has significantly decreased compared to the score in main. "
-            f"See the above output for areas to improve. See https://aka.ms/python/typing-guide for information."
+    if in_ci():
+        # get type completeness score from main
+        logging.info(
+            "Getting the type completeness score from the code in main..."
         )
-        exit(1)
+        install_from_main(setup_path)
+        score_from_main = get_type_complete_score(commands)
+
+        score_from_main_rounded = round(score_from_main * 100, 1)
+        score_from_current_rounded = round(score_from_current * 100, 1)
+        print("\n-----Type completeness score comparison-----\n")
+        print(f"Score in main: {score_from_main_rounded}%")
+        # Give a 5% buffer for type completeness score to decrease
+        if score_from_current_rounded < score_from_main_rounded - 5:
+            print(
+                f"\nERROR: The type completeness score of {package_name} has significantly decreased compared to the score in main. "
+                f"See the above output for areas to improve. See https://aka.ms/python/typing-guide for information."
+            )
+            exit(1)
