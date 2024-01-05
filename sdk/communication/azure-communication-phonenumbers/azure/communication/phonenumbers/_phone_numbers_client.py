@@ -117,7 +117,8 @@ class PhoneNumbersClient(object):
             for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.LROPoller[None]
         """
-        purchase_request = PhoneNumberPurchaseRequest(search_id=search_id, consent_to_not_resell_numbers=consent_to_not_resell_numbers)
+        purchase_request = PhoneNumberPurchaseRequest(search_id=search_id, 
+                                                      consent_to_not_resell_numbers=consent_to_not_resell_numbers)
 
         polling_interval = kwargs.pop(
             'polling_interval', _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
