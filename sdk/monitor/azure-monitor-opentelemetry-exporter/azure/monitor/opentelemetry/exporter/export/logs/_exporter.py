@@ -77,7 +77,6 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
         envelope.instrumentation_key = self._instrumentation_key
         return envelope
 
-
     # pylint: disable=docstring-keyword-should-match-keyword-only
     @classmethod
     def from_connection_string(
