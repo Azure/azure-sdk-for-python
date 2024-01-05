@@ -46,7 +46,7 @@ def build_phone_numbers_list_area_codes_request(  # pylint: disable=name-too-lon
     locality: Optional[str] = None,
     administrative_division: Optional[str] = None,
     accept_language: Optional[str] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -118,7 +118,7 @@ def build_phone_numbers_list_available_localities_request(  # pylint: disable=na
     max_page_size: int = 100,
     administrative_division: Optional[str] = None,
     accept_language: Optional[str] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -159,7 +159,7 @@ def build_phone_numbers_list_offerings_request(  # pylint: disable=name-too-long
     phone_number_type: Optional[Union[str, _models.PhoneNumberType]] = None,
     assignment_type: Optional[Union[str, _models.PhoneNumberAssignmentType]] = None,
     accept_language: Optional[str] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -354,6 +354,35 @@ def build_phone_numbers_create_reservation_request(  # pylint: disable=name-too-
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_phone_numbers_update_reservation_request(  # pylint: disable=name-too-long
+    reservation_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/availablePhoneNumbers/reservations/{reservationId}"
+    path_format_arguments = {
+        "reservationId": _SERIALIZER.url("reservation_id", reservation_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_phone_numbers_get_reservation_request(  # pylint: disable=name-too-long
     reservation_id: str, **kwargs: Any
 ) -> HttpRequest:
@@ -406,64 +435,7 @@ def build_phone_numbers_delete_reservation_request(  # pylint: disable=name-too-
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_phone_numbers_add_to_reservation_request(  # pylint: disable=name-too-long
-    reservation_id: str, phone_number: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/availablePhoneNumbers/reservations/{reservationId}/phoneNumbers/{phoneNumber}"
-    path_format_arguments = {
-        "reservationId": _SERIALIZER.url("reservation_id", reservation_id, "str"),
-        "phoneNumber": _SERIALIZER.url("phone_number", phone_number, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_phone_numbers_remove_from_reservation_request(  # pylint: disable=name-too-long
-    reservation_id: str, phone_number: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/availablePhoneNumbers/reservations/{reservationId}/phoneNumbers/{phoneNumber}"
-    path_format_arguments = {
-        "reservationId": _SERIALIZER.url("reservation_id", reservation_id, "str"),
-        "phoneNumber": _SERIALIZER.url("phone_number", phone_number, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_phone_numbers_start_purchase_request(  # pylint: disable=name-too-long
+def build_phone_numbers_start_reservation_purchase_request(  # pylint: disable=name-too-long
     reservation_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -650,6 +622,30 @@ def build_phone_numbers_list_phone_numbers_request(  # pylint: disable=name-too-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_phone_numbers_operator_information_search_request(  # pylint: disable=name-too-long
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/operatorInformation/:search"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
     """
     .. warning::
@@ -681,7 +677,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         locality: Optional[str] = None,
         administrative_division: Optional[str] = None,
         accept_language: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterable["_models.PhoneNumberAreaCode"]:
         """Gets the list of available area codes.
 
@@ -916,7 +912,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         max_page_size: int = 100,
         administrative_division: Optional[str] = None,
         accept_language: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterable["_models.PhoneNumberLocality"]:
         """Gets the list of cities or towns with available phone numbers.
 
@@ -1037,7 +1033,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         phone_number_type: Optional[Union[str, _models.PhoneNumberType]] = None,
         assignment_type: Optional[Union[str, _models.PhoneNumberAssignmentType]] = None,
         accept_language: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterable["_models.PhoneNumberOffering"]:
         """List available offerings of capabilities with rates for the given country.
 
@@ -1224,7 +1220,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         body: _models.PhoneNumberSearchRequest,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[_models.PhoneNumberSearchResult]:
         """Search for available phone numbers to purchase.
 
@@ -1322,7 +1318,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
         kwargs.pop("error_map", None)
 
@@ -1352,7 +1348,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
                     lro_delay,
                     lro_options={"final-state-via": "location"},
                     path_format_arguments=path_format_arguments,
-                    **kwargs
+                    **kwargs,
                 ),
             )
         elif polling is False:
@@ -1377,7 +1373,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         phone_numbers_browse_request: Optional[_models.PhoneNumbersBrowseRequest] = None,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.PhoneNumbersBrowseResult:
         """Searches for available phone numbers to purchase. Note that this does not reserves the numbers
         in the response.
@@ -1405,7 +1401,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         phone_numbers_browse_request: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.PhoneNumbersBrowseResult:
         """Searches for available phone numbers to purchase. Note that this does not reserves the numbers
         in the response.
@@ -1430,7 +1426,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         self,
         country_code: str,
         phone_numbers_browse_request: Optional[Union[_models.PhoneNumbersBrowseRequest, IO[bytes]]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.PhoneNumbersBrowseResult:
         """Searches for available phone numbers to purchase. Note that this does not reserves the numbers
         in the response.
@@ -1746,9 +1742,9 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
     def get_reservations(
         self, *, skip: int = 0, top: int = 100, **kwargs: Any
     ) -> Iterable["_models.PhoneNumbersReservation"]:
-        """Get all active reservations.
+        """Get all reservations.
 
-        Get all active reservations.
+        Get all reservations.
 
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0. Default value is 0.
@@ -1848,13 +1844,11 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
     def create_reservation(
         self,
         reservation_id: str,
-        add_to_reservation_request: Optional[
-            _models.Paths16Yq815AvailablephonenumbersReservationsReservationidPutRequestbodyContentApplicationJsonSchema
-        ] = None,
+        reservation: Optional[_models.PhoneNumbersReservation] = None,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PhoneNumbersReservation:
+        **kwargs: Any,
+    ) -> Union[_models.PhoneNumbersReservation, _models.CommunicationErrorResponse]:
         """Initializes a new reservation with a given ID. By default the new reservation is empty, but it
         can optionally be created with an initial list of phone numbers.
 
@@ -1863,14 +1857,14 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
 
         :param reservation_id: The id of the reservation. Required.
         :type reservation_id: str
-        :param add_to_reservation_request: Default value is None.
-        :type add_to_reservation_request:
-         ~azure.communication.phonenumbers.models.Paths16Yq815AvailablephonenumbersReservationsReservationidPutRequestbodyContentApplicationJsonSchema
+        :param reservation: Default value is None.
+        :type reservation: ~azure.communication.phonenumbers.models.PhoneNumbersReservation
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: PhoneNumbersReservation
-        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersReservation
+        :return: PhoneNumbersReservation or CommunicationErrorResponse
+        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersReservation or
+         ~azure.communication.phonenumbers.models.CommunicationErrorResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1878,11 +1872,11 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
     def create_reservation(
         self,
         reservation_id: str,
-        add_to_reservation_request: Optional[IO[bytes]] = None,
+        reservation: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PhoneNumbersReservation:
+        **kwargs: Any,
+    ) -> Union[_models.PhoneNumbersReservation, _models.CommunicationErrorResponse]:
         """Initializes a new reservation with a given ID. By default the new reservation is empty, but it
         can optionally be created with an initial list of phone numbers.
 
@@ -1891,13 +1885,14 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
 
         :param reservation_id: The id of the reservation. Required.
         :type reservation_id: str
-        :param add_to_reservation_request: Default value is None.
-        :type add_to_reservation_request: IO[bytes]
+        :param reservation: Default value is None.
+        :type reservation: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: PhoneNumbersReservation
-        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersReservation
+        :return: PhoneNumbersReservation or CommunicationErrorResponse
+        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersReservation or
+         ~azure.communication.phonenumbers.models.CommunicationErrorResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1905,14 +1900,9 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
     def create_reservation(
         self,
         reservation_id: str,
-        add_to_reservation_request: Optional[
-            Union[
-                _models.Paths16Yq815AvailablephonenumbersReservationsReservationidPutRequestbodyContentApplicationJsonSchema,
-                IO[bytes],
-            ]
-        ] = None,
-        **kwargs: Any
-    ) -> _models.PhoneNumbersReservation:
+        reservation: Optional[Union[_models.PhoneNumbersReservation, IO[bytes]]] = None,
+        **kwargs: Any,
+    ) -> Union[_models.PhoneNumbersReservation, _models.CommunicationErrorResponse]:
         """Initializes a new reservation with a given ID. By default the new reservation is empty, but it
         can optionally be created with an initial list of phone numbers.
 
@@ -1921,17 +1911,16 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
 
         :param reservation_id: The id of the reservation. Required.
         :type reservation_id: str
-        :param add_to_reservation_request: Is either a
-         Paths16Yq815AvailablephonenumbersReservationsReservationidPutRequestbodyContentApplicationJsonSchema
-         type or a IO[bytes] type. Default value is None.
-        :type add_to_reservation_request:
-         ~azure.communication.phonenumbers.models.Paths16Yq815AvailablephonenumbersReservationsReservationidPutRequestbodyContentApplicationJsonSchema
-         or IO[bytes]
+        :param reservation: Is either a PhoneNumbersReservation type or a IO[bytes] type. Default value
+         is None.
+        :type reservation: ~azure.communication.phonenumbers.models.PhoneNumbersReservation or
+         IO[bytes]
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
-        :return: PhoneNumbersReservation
-        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersReservation
+        :return: PhoneNumbersReservation or CommunicationErrorResponse
+        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersReservation or
+         ~azure.communication.phonenumbers.models.CommunicationErrorResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1946,19 +1935,18 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PhoneNumbersReservation] = kwargs.pop("cls", None)
+        cls: ClsType[Union[_models.PhoneNumbersReservation, _models.CommunicationErrorResponse]] = kwargs.pop(
+            "cls", None
+        )
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(add_to_reservation_request, (IOBase, bytes)):
-            _content = add_to_reservation_request
+        if isinstance(reservation, (IOBase, bytes)):
+            _content = reservation
         else:
-            if add_to_reservation_request is not None:
-                _json = self._serialize.body(
-                    add_to_reservation_request,
-                    "Paths16Yq815AvailablephonenumbersReservationsReservationidPutRequestbodyContentApplicationJsonSchema",
-                )
+            if reservation is not None:
+                _json = self._serialize.body(reservation, "PhoneNumbersReservation")
             else:
                 _json = None
 
@@ -1983,14 +1971,167 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [201]:
+        if response.status_code not in [201, 409]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("PhoneNumbersReservation", pipeline_response)
+        if response.status_code == 201:
+            deserialized = self._deserialize("PhoneNumbersReservation", pipeline_response)
+
+        if response.status_code == 409:
+            deserialized = self._deserialize("CommunicationErrorResponse", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def update_reservation(
+        self,
+        reservation_id: str,
+        reservation: Optional[_models.PhoneNumbersReservation] = None,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any,
+    ) -> Union[_models.PhoneNumbersReservation, _models.CommunicationErrorResponse]:
+        """Updates a reservation by its ID. This only supports adding or removing phone numbers from the
+        reservation. Note that this does not support bulk operations.
+
+        Updates a reservation by its ID. This only supports adding or removing phone numbers from the
+        reservation. Note that this does not support bulk operations.
+
+        :param reservation_id: The id of the reservation. Required.
+        :type reservation_id: str
+        :param reservation: Default value is None.
+        :type reservation: ~azure.communication.phonenumbers.models.PhoneNumbersReservation
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: PhoneNumbersReservation or CommunicationErrorResponse
+        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersReservation or
+         ~azure.communication.phonenumbers.models.CommunicationErrorResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_reservation(
+        self,
+        reservation_id: str,
+        reservation: Optional[IO[bytes]] = None,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any,
+    ) -> Union[_models.PhoneNumbersReservation, _models.CommunicationErrorResponse]:
+        """Updates a reservation by its ID. This only supports adding or removing phone numbers from the
+        reservation. Note that this does not support bulk operations.
+
+        Updates a reservation by its ID. This only supports adding or removing phone numbers from the
+        reservation. Note that this does not support bulk operations.
+
+        :param reservation_id: The id of the reservation. Required.
+        :type reservation_id: str
+        :param reservation: Default value is None.
+        :type reservation: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: PhoneNumbersReservation or CommunicationErrorResponse
+        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersReservation or
+         ~azure.communication.phonenumbers.models.CommunicationErrorResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def update_reservation(
+        self,
+        reservation_id: str,
+        reservation: Optional[Union[_models.PhoneNumbersReservation, IO[bytes]]] = None,
+        **kwargs: Any,
+    ) -> Union[_models.PhoneNumbersReservation, _models.CommunicationErrorResponse]:
+        """Updates a reservation by its ID. This only supports adding or removing phone numbers from the
+        reservation. Note that this does not support bulk operations.
+
+        Updates a reservation by its ID. This only supports adding or removing phone numbers from the
+        reservation. Note that this does not support bulk operations.
+
+        :param reservation_id: The id of the reservation. Required.
+        :type reservation_id: str
+        :param reservation: Is either a PhoneNumbersReservation type or a IO[bytes] type. Default value
+         is None.
+        :type reservation: ~azure.communication.phonenumbers.models.PhoneNumbersReservation or
+         IO[bytes]
+        :keyword content_type: Body Parameter content-type. Known values are:
+         'application/merge-patch+json'. Default value is None.
+        :paramtype content_type: str
+        :return: PhoneNumbersReservation or CommunicationErrorResponse
+        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersReservation or
+         ~azure.communication.phonenumbers.models.CommunicationErrorResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Union[_models.PhoneNumbersReservation, _models.CommunicationErrorResponse]] = kwargs.pop(
+            "cls", None
+        )
+
+        content_type = content_type or "application/merge-patch+json"
+        _json = None
+        _content = None
+        if isinstance(reservation, (IOBase, bytes)):
+            _content = reservation
+        else:
+            if reservation is not None:
+                _json = self._serialize.body(reservation, "PhoneNumbersReservation")
+            else:
+                _json = None
+
+        _request = build_phone_numbers_update_reservation_request(
+            reservation_id=reservation_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 409]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        if response.status_code == 200:
+            deserialized = self._deserialize("PhoneNumbersReservation", pipeline_response)
+
+        if response.status_code == 409:
+            deserialized = self._deserialize("CommunicationErrorResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1999,9 +2140,9 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def get_reservation(self, reservation_id: str, **kwargs: Any) -> _models.PhoneNumbersReservation:
-        """Gets a reservation by id.
+        """Gets a reservation by its ID.
 
-        Gets a reservation by id.
+        Gets a reservation by its ID.
 
         :param reservation_id: The id of the reservation. Required.
         :type reservation_id: str
@@ -2058,9 +2199,11 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
     def delete_reservation(  # pylint: disable=inconsistent-return-statements
         self, reservation_id: str, **kwargs: Any
     ) -> None:
-        """Deletes a reservation by id.
+        """Deletes a reservation by its ID. Any phone number in the reservation will be released and made
+        available for others to purchase.
 
-        Deletes a reservation by id.
+        Deletes a reservation by its ID. Any phone number in the reservation will be released and made
+        available for others to purchase.
 
         :param reservation_id: The id of the reservation. Required.
         :type reservation_id: str
@@ -2109,229 +2252,11 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    @overload
-    def add_to_reservation(
-        self,
-        reservation_id: str,
-        phone_number: str,
-        available_phone_number: Optional[_models.AvailablePhoneNumber] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PhoneNumbersReservation:
-        """Reserves an available phone number. This will lock the number and make it unavailable for
-        others to purchase. If the reservation is cancelled or expires, it will be released and made
-        available for others to purchase.
-
-        Reserves an available phone number. This will lock the number and make it unavailable for
-        others to purchase. If the reservation is cancelled or expires, it will be released and made
-        available for others to purchase.
-
-        :param reservation_id: The id of the reservation. Required.
-        :type reservation_id: str
-        :param phone_number: The phone number to remove from the reservation. Required.
-        :type phone_number: str
-        :param available_phone_number: Default value is None.
-        :type available_phone_number: ~azure.communication.phonenumbers.models.AvailablePhoneNumber
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PhoneNumbersReservation
-        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersReservation
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def add_to_reservation(
-        self,
-        reservation_id: str,
-        phone_number: str,
-        available_phone_number: Optional[IO[bytes]] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PhoneNumbersReservation:
-        """Reserves an available phone number. This will lock the number and make it unavailable for
-        others to purchase. If the reservation is cancelled or expires, it will be released and made
-        available for others to purchase.
-
-        Reserves an available phone number. This will lock the number and make it unavailable for
-        others to purchase. If the reservation is cancelled or expires, it will be released and made
-        available for others to purchase.
-
-        :param reservation_id: The id of the reservation. Required.
-        :type reservation_id: str
-        :param phone_number: The phone number to remove from the reservation. Required.
-        :type phone_number: str
-        :param available_phone_number: Default value is None.
-        :type available_phone_number: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PhoneNumbersReservation
-        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersReservation
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def add_to_reservation(
-        self,
-        reservation_id: str,
-        phone_number: str,
-        available_phone_number: Optional[Union[_models.AvailablePhoneNumber, IO[bytes]]] = None,
-        **kwargs: Any
-    ) -> _models.PhoneNumbersReservation:
-        """Reserves an available phone number. This will lock the number and make it unavailable for
-        others to purchase. If the reservation is cancelled or expires, it will be released and made
-        available for others to purchase.
-
-        Reserves an available phone number. This will lock the number and make it unavailable for
-        others to purchase. If the reservation is cancelled or expires, it will be released and made
-        available for others to purchase.
-
-        :param reservation_id: The id of the reservation. Required.
-        :type reservation_id: str
-        :param phone_number: The phone number to remove from the reservation. Required.
-        :type phone_number: str
-        :param available_phone_number: Is either a AvailablePhoneNumber type or a IO[bytes] type.
-         Default value is None.
-        :type available_phone_number: ~azure.communication.phonenumbers.models.AvailablePhoneNumber or
-         IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :return: PhoneNumbersReservation
-        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersReservation
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PhoneNumbersReservation] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(available_phone_number, (IOBase, bytes)):
-            _content = available_phone_number
-        else:
-            if available_phone_number is not None:
-                _json = self._serialize.body(available_phone_number, "AvailablePhoneNumber")
-            else:
-                _json = None
-
-        _request = build_phone_numbers_add_to_reservation_request(
-            reservation_id=reservation_id,
-            phone_number=phone_number,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize("PhoneNumbersReservation", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def remove_from_reservation(
-        self, reservation_id: str, phone_number: str, **kwargs: Any
-    ) -> _models.PhoneNumbersReservation:
-        """Removes a phone number from a reservation, making it available for others to purchase.
-
-        Removes a phone number from a reservation, making it available for others to purchase.
-
-        :param reservation_id: The id of the reservation. Required.
-        :type reservation_id: str
-        :param phone_number: The phone number to remove from the reservation. Required.
-        :type phone_number: str
-        :return: PhoneNumbersReservation
-        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersReservation
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.PhoneNumbersReservation] = kwargs.pop("cls", None)
-
-        _request = build_phone_numbers_remove_from_reservation_request(
-            reservation_id=reservation_id,
-            phone_number=phone_number,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize("PhoneNumbersReservation", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    def _start_purchase_initial(  # pylint: disable=inconsistent-return-statements
+    def _start_reservation_purchase_initial(  # pylint: disable=inconsistent-return-statements
         self,
         reservation_id: str,
         reservation_purchase_request: Optional[Union[_models.PhoneNumbersReservationPurchaseRequest, IO[bytes]]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         error_map = {
             401: ClientAuthenticationError,
@@ -2358,7 +2283,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
             else:
                 _json = None
 
-        _request = build_phone_numbers_start_purchase_request(
+        _request = build_phone_numbers_start_reservation_purchase_request(
             reservation_id=reservation_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2397,13 +2322,13 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @overload
-    def begin_start_purchase(
+    def begin_start_reservation_purchase(
         self,
         reservation_id: str,
         reservation_purchase_request: Optional[_models.PhoneNumbersReservationPurchaseRequest] = None,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[None]:
         """Starts the purchase of all phone numbers in the reservation. This is a long running operation.
 
@@ -2430,13 +2355,13 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def begin_start_purchase(
+    def begin_start_reservation_purchase(
         self,
         reservation_id: str,
         reservation_purchase_request: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[None]:
         """Starts the purchase of all phone numbers in the reservation. This is a long running operation.
 
@@ -2462,11 +2387,11 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace
-    def begin_start_purchase(
+    def begin_start_reservation_purchase(
         self,
         reservation_id: str,
         reservation_purchase_request: Optional[Union[_models.PhoneNumbersReservationPurchaseRequest, IO[bytes]]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[None]:
         """Starts the purchase of all phone numbers in the reservation. This is a long running operation.
 
@@ -2501,14 +2426,14 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._start_purchase_initial(  # type: ignore
+            raw_result = self._start_reservation_purchase_initial(  # type: ignore
                 reservation_id=reservation_id,
                 reservation_purchase_request=reservation_purchase_request,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
         kwargs.pop("error_map", None)
 
@@ -2656,7 +2581,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         self,
         phone_number: str,
         body: Optional[Union[_models.PhoneNumberCapabilitiesRequest, IO[bytes]]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.PurchasedPhoneNumber:
         error_map = {
             401: ClientAuthenticationError,
@@ -2731,7 +2656,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         body: Optional[_models.PhoneNumberCapabilitiesRequest] = None,
         *,
         content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[_models.PurchasedPhoneNumber]:
         """Updates the capabilities of a phone number.
 
@@ -2765,7 +2690,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         body: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[_models.PurchasedPhoneNumber]:
         """Updates the capabilities of a phone number.
 
@@ -2797,7 +2722,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         self,
         phone_number: str,
         body: Optional[Union[_models.PhoneNumberCapabilitiesRequest, IO[bytes]]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[_models.PurchasedPhoneNumber]:
         """Updates the capabilities of a phone number.
 
@@ -2841,7 +2766,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
         kwargs.pop("error_map", None)
 
@@ -2871,7 +2796,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
                     lro_delay,
                     lro_options={"final-state-via": "location"},
                     path_format_arguments=path_format_arguments,
-                    **kwargs
+                    **kwargs,
                 ),
             )
         elif polling is False:
@@ -3154,3 +3079,113 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
+
+    @overload
+    def operator_information_search(
+        self, body: _models.OperatorInformationRequest, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.OperatorInformationResult:
+        """Searches for operator information for a given list of phone numbers.
+
+        Searches for operator information for a given list of phone numbers.
+
+        :param body: The phone number(s) whose operator information should be searched. Required.
+        :type body: ~azure.communication.phonenumbers.models.OperatorInformationRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: OperatorInformationResult
+        :rtype: ~azure.communication.phonenumbers.models.OperatorInformationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def operator_information_search(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.OperatorInformationResult:
+        """Searches for operator information for a given list of phone numbers.
+
+        Searches for operator information for a given list of phone numbers.
+
+        :param body: The phone number(s) whose operator information should be searched. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: OperatorInformationResult
+        :rtype: ~azure.communication.phonenumbers.models.OperatorInformationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def operator_information_search(
+        self, body: Union[_models.OperatorInformationRequest, IO[bytes]], **kwargs: Any
+    ) -> _models.OperatorInformationResult:
+        """Searches for operator information for a given list of phone numbers.
+
+        Searches for operator information for a given list of phone numbers.
+
+        :param body: The phone number(s) whose operator information should be searched. Is either a
+         OperatorInformationRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.communication.phonenumbers.models.OperatorInformationRequest or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :return: OperatorInformationResult
+        :rtype: ~azure.communication.phonenumbers.models.OperatorInformationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.OperatorInformationResult] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _json = self._serialize.body(body, "OperatorInformationRequest")
+
+        _request = build_phone_numbers_operator_information_search_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize("OperatorInformationResult", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore

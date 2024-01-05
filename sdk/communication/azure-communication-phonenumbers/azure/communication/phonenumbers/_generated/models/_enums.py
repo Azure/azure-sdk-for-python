@@ -16,6 +16,15 @@ class BillingFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MONTHLY = "monthly"
 
 
+class OperatorNumberType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of service associated with the phone number."""
+
+    UNKNOWN = "unknown"
+    OTHER = "other"
+    GEOGRAPHIC = "geographic"
+    MOBILE = "mobile"
+
+
 class PhoneNumberAssignmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents the assignment type of the offering."""
 
@@ -51,6 +60,13 @@ class PhoneNumberOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RESERVATION_PURCHASE = "reservationPurchase"
 
 
+class PhoneNumberSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Source of the number, e.g. Cloud or OperatorConnect."""
+
+    CLOUD = "cloud"
+    OPERATOR_CONNECT = "operatorConnect"
+
+
 class PhoneNumberType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents the number type of the offering."""
 
@@ -64,6 +80,4 @@ class ReservationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ACTIVE = "active"
     SUBMITTED = "submitted"
     COMPLETED = "completed"
-    PARTIALLY_COMPLETED = "partiallyCompleted"
-    CANCELLED = "cancelled"
     EXPIRED = "expired"

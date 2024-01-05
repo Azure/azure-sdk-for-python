@@ -11,7 +11,7 @@ autorest ./PHONE_NUMBER_SWAGGER.md
 ### Settings
 ``` yaml
 tag: package-phonenumber-2023-10-01-preview
-require: https://raw.githubusercontent.com/danielortega-msft/azure-rest-api-specs/danielortega/phonenumbers-v2.1-draft/specification/communication/data-plane/PhoneNumbers/readme.md
+require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/bd44f2d98fdc14c674b542cc64ce7df33ddfaf76/specification/communication/data-plane/PhoneNumbers/readme.md
 output-folder: ../azure/communication/phonenumbers/_generated
 namespace: azure.communication.phonenumbers
 license-header: MICROSOFT_MIT_NO_VERSION
