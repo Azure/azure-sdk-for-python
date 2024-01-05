@@ -549,6 +549,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             "file_component_literal_input_e2e.yml",
         ],
     )
+    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
     def test_pipeline_job_with_parallel_component_job_bind_to_literal_input(
         self, client: MLClient, randstr: Callable[[str], str], pipeline_job_path: str
     ) -> None:
