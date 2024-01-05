@@ -42,7 +42,6 @@ from azure.core import __version__ as azcore_version
 from azure.core.exceptions import DecodeError
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
-from ._base import SansIOHTTPPolicy
 
 from azure.core.pipeline.transport import (
     HttpResponse as LegacyHttpResponse,
@@ -50,6 +49,7 @@ from azure.core.pipeline.transport import (
     AsyncHttpResponse as LegacyAsyncHttpResponse,
 )
 from azure.core.rest import HttpResponse, HttpRequest, AsyncHttpResponse
+from ._base import SansIOHTTPPolicy
 
 _LOGGER = logging.getLogger(__name__)
 
