@@ -26,6 +26,8 @@ pk = PartitionKey(path="/id")
 # Batch the creation of items for better optimization on performance.
 # Note: Error handling should be in the method being batched. As you will get
 # an error for each failed Cosmos DB Operation.
+# Note: While the Word `Batch` here is used to describe the subsets of data being created, it is not referring
+# to batch operations such as `Transactional Batching` which is a feature of Cosmos DB.
 async def create_all_the_items(prefix, c, i):
     await asyncio.wait(
         [asyncio.create_task(c.create_item({"id": prefix + str(j)})) for j in range(100)]
@@ -38,7 +40,7 @@ async def create_all_the_items(prefix, c, i):
 # It’s important to note that batching a bunch of operations can affect throughput/RUs.
 # To avoid using resources, it’s recommended to test things on the emulator of Cosmos DB first.
 # The performance improvement shown on the emulator is relative to what you will see on a live account
-async def a_main():
+async def main():
     try:
         async with CosmosClient.from_connection_string(CONN_STR) as client:
             # For emulator: default Throughput needs to be increased
@@ -102,5 +104,5 @@ async def clear_database():
 
 
 if __name__ == "__main__":
-    asyncio.run(a_main())
+    asyncio.run(main())
 
