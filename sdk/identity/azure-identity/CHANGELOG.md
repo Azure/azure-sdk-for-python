@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed the bug that `ClientAssertionCredential` constructor fails if kwargs are provided. ([#33673](https://github.com/Azure/azure-sdk-for-python/issues/33673))
+
 ### Other Changes
 
 ## 1.15.0 (2023-10-26)

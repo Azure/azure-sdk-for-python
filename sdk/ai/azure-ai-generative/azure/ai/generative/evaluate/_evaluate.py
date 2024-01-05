@@ -8,7 +8,7 @@ import tempfile
 import time
 import logging
 from pathlib import Path
-from typing import Callable, Optional, Dict, List
+from typing import Callable, Optional, Dict, List, Mapping
 
 import mlflow
 import pandas as pd
@@ -87,13 +87,13 @@ def _log_metrics(run_id, metrics):
 @monitor_with_activity(package_logger, "Evaluate", ActivityType.PUBLICAPI)
 def evaluate(
         *,
-        evaluation_name: str = None,
+        evaluation_name: Optional[str] = None,
         target: Optional[Callable] = None,
         data: Optional[str] = None,
-        task_type: str = None,
+        task_type: Optional[str] = None,
         metrics_list: Optional[List[str]] = None,
-        model_config: Dict[str, str] = None,
-        data_mapping: Dict[str, str] = None,
+        model_config: Optional[Dict[str, str]] = None,
+        data_mapping: Optional[Mapping] = None,
         output_path: Optional[str] = None,
         **kwargs
 ):
@@ -114,7 +114,7 @@ def evaluate(
     :keyword model_config: GPT configuration details needed for AI-assisted metrics.
     :paramtype model_config: Dict[str, str]
     :keyword data_mapping: GPT configuration details needed for AI-assisted metrics.
-    :paramtype data_mapping: Dict[str, str]
+    :paramtype data_mapping: typing.Mapping
     :keyword output_path: The local folder path to save evaluation artifacts to if set
     :paramtype output_path: Optional[str]
     :keyword tracking_uri: Tracking uri to log evaluation results to AI Studio
