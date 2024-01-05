@@ -368,6 +368,8 @@ class _RefreshTimer:
 
     def __init__(self, **kwargs):
         self._interval: int = kwargs.pop("refresh_interval", 30)
+        if self._interval < 1:
+            raise ValueError("Refresh interval must be greater than or equal to 1 second.")
         self._next_refresh_time: float = time.time() + self._interval
         self._attempts: int = 1
         self._min_backoff: int = (
