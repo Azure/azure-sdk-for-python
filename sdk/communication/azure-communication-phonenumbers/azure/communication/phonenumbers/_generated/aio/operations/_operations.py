@@ -46,7 +46,6 @@ from ...operations._operations import (
     build_phone_numbers_operator_information_search_request,
     build_phone_numbers_purchase_phone_numbers_request,
     build_phone_numbers_release_phone_number_request,
-    build_phone_numbers_remove_from_reservation_request,
     build_phone_numbers_search_available_phone_numbers_request,
     build_phone_numbers_start_reservation_purchase_request,
     build_phone_numbers_update_capabilities_request,
