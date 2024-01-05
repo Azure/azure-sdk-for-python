@@ -2663,6 +2663,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_cancel(pipeline_job, client)
 
     @pytest.mark.disable_mock_code_hash
+    @pytest.skip("Will renable when parallel e2e recording issue is fixed")
     def test_register_output_sdk(self, client: MLClient):
         from azure.ai.ml.sweep import (
             BanditPolicy,
