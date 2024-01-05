@@ -12,6 +12,8 @@
 
 ### Other Changes
 
+- Improved type completeness
+
 ## 1.15.0 (2023-10-26)
 
 ### Features Added
