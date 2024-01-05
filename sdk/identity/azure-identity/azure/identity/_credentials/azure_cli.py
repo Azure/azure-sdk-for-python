@@ -198,10 +198,6 @@ def _run_command(command: str, timeout: int) -> str:
             "timeout": timeout,
             "env": dict(os.environ, AZURE_CORE_NO_COLOR="true"),
         }
-        print("Working directory: {}".format(working_directory))
-        print("Timeout: {}".format(timeout))
-        print("command: {}".format(command))
-        print("args: {}".format(args))
         return subprocess.check_output(args, **kwargs)
     except subprocess.CalledProcessError as ex:
         # non-zero return from shell
