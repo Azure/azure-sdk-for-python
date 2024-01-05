@@ -55,6 +55,7 @@ from .._tools import (
 
 if TYPE_CHECKING:
     from ...rest import HttpRequest as RestHttpRequest, HttpResponse as RestHttpResponse
+
     # We need a transport to define a pipeline, this "if" avoid a circular import
     from azure.core.pipeline import Pipeline
 
@@ -319,7 +320,7 @@ class RequestsTransport(HttpTransport):
         request: Union[HttpRequest, "RestHttpRequest"],
         *,
         proxies: Optional[MutableMapping[str, str]] = None,
-        **kwargs
+        **kwargs,
     ) -> Union[HttpResponse, "RestHttpResponse"]:
         """Send request object according to configuration.
 
@@ -361,7 +362,7 @@ class RequestsTransport(HttpTransport):
                 cert=kwargs.pop("connection_cert", self.connection_config.cert),
                 allow_redirects=False,
                 proxies=proxies,
-                **kwargs
+                **kwargs,
             )
             response.raw.enforce_content_length = True
 
