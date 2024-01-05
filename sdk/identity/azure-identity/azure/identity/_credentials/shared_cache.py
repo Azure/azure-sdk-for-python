@@ -44,11 +44,11 @@ class SharedTokenCacheCredential:
             self._credential = _SharedTokenCacheCredential(username=username, **kwargs)
 
     def __enter__(self) -> "SharedTokenCacheCredential":
-        self._credential.__enter__()    # type: ignore
+        self._credential.__enter__()  # type: ignore
         return self
 
     def __exit__(self, *args: Any) -> None:
-        self._credential.__exit__(*args)    # type: ignore
+        self._credential.__exit__(*args)  # type: ignore
 
     def close(self) -> None:
         """Close the credential's transport session."""
@@ -102,7 +102,7 @@ class _SharedTokenCacheCredential(SharedTokenCacheBase):
 
     def __enter__(self: T) -> T:
         if self._client:
-            self._client.__enter__()    # type: ignore
+            self._client.__enter__()  # type: ignore
         return self
 
     def __exit__(self, *args):
