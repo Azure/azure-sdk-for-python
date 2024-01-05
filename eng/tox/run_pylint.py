@@ -58,16 +58,17 @@ if __name__ == "__main__":
             exit(0)
 
     try:
-        check_call(
-            [
+        args = [
                 sys.executable,
                 "-m",
                 "pylint",
                 "--rcfile={}".format(rcFileLocation),
                 "--output-format=parseable",
+                "--py-version=3.8",
                 os.path.join(args.target_package, top_level_module),
             ]
-        )
+        logging.info("Running pylint with args: {}".format(args))
+        check_call(args)
     except CalledProcessError as e:
         logging.error(
             "{} exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(pkg_details.name, e.returncode)
