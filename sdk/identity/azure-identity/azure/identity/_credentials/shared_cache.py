@@ -40,11 +40,11 @@ class SharedTokenCacheCredential:
         else:
             self._credential = _SharedTokenCacheCredential(username=username, **kwargs)
 
-    def __enter__(self):
+    def __enter__(self) -> "SharedTokenCacheCredential":
         self._credential.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self._credential.__exit__(*args)
 
     def close(self) -> None:
@@ -97,7 +97,7 @@ class SharedTokenCacheCredential:
 class _SharedTokenCacheCredential(SharedTokenCacheBase):
     """The original SharedTokenCacheCredential, which doesn't use msal.ClientApplication"""
 
-    def __enter__(self):
+    def __enter__(self) -> "_SharedTokenCacheCredential":
         if self._client:
             self._client.__enter__()
         return self

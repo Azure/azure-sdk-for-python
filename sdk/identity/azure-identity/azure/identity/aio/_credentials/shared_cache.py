@@ -13,7 +13,7 @@ from .._internal.aad_client import AadClient
 from .._internal.decorators import log_get_token_async
 
 
-class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
+class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager["SharedTokenCacheCredential"]):
     """Authenticates using tokens in the local cache shared between Microsoft applications.
 
     :param str username:
@@ -30,7 +30,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     """
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "SharedTokenCacheCredential":
         if self._client:
             await self._client.__aenter__()  # type: ignore
         return self

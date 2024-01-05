@@ -10,7 +10,7 @@ from .._internal import AadClient, AsyncContextManager
 from .._internal.get_token_mixin import GetTokenMixin
 
 
-class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
+class AuthorizationCodeCredential(AsyncContextManager["AuthorizationCodeCredential"], GetTokenMixin):
     """Authenticates by redeeming an authorization code previously obtained from Microsoft Entra ID.
 
     See `Microsoft Entra ID documentation
@@ -40,12 +40,12 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
             :caption: Create an AuthorizationCodeCredential.
     """
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "AuthorizationCodeCredential":
         if self._client:
             await self._client.__aenter__()
         return self
 
-    async def close(self):
+    async def close(self) -> None:
         """Close the credential's transport session."""
 
         if self._client:
@@ -59,7 +59,7 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
         redirect_uri: str,
         *,
         client_secret: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         self._authorization_code: Optional[str] = authorization_code
         self._client_id = client_id

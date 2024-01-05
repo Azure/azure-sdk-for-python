@@ -17,7 +17,7 @@ from .client_secret import ClientSecretCredential
 _LOGGER = logging.getLogger(__name__)
 
 
-class EnvironmentCredential(AsyncContextManager):
+class EnvironmentCredential(AsyncContextManager["EnvironmentCredential"]):
     """A credential configured by environment variables.
 
     This credential is capable of authenticating as a service principal using a client secret or a certificate, or as
@@ -83,7 +83,7 @@ class EnvironmentCredential(AsyncContextManager):
             else:
                 _LOGGER.info("No environment configuration found.")
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "EnvironmentCredential":
         if self._credential:
             await self._credential.__aenter__()
         return self

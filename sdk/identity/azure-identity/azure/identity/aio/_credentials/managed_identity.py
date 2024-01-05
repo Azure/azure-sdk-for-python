@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ManagedIdentityCredential(AsyncContextManager):
+class ManagedIdentityCredential(AsyncContextManager["ManagedIdentityCredential"]):
     """Authenticates with an Azure managed identity in any hosting environment which supports managed identities.
 
     This credential defaults to using a system-assigned identity. To configure a user-assigned identity, use one of
@@ -103,7 +103,7 @@ class ManagedIdentityCredential(AsyncContextManager):
             _LOGGER.info("%s will use IMDS", self.__class__.__name__)
             self._credential = ImdsCredential(**kwargs)
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "ManagedIdentityCredential":
         if self._credential:
             await self._credential.__aenter__()
         return self

@@ -60,10 +60,10 @@ class AzureCliCredential:
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._process_timeout = process_timeout
 
-    def __enter__(self):
+    def __enter__(self) -> "AzureCliCredential":
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         pass
 
     def close(self) -> None:
@@ -198,6 +198,10 @@ def _run_command(command: str, timeout: int) -> str:
             "timeout": timeout,
             "env": dict(os.environ, AZURE_CORE_NO_COLOR="true"),
         }
+        print("Working directory: {}".format(working_directory))
+        print("Timeout: {}".format(timeout))
+        print("command: {}".format(command))
+        print("args: {}".format(args))
         return subprocess.check_output(args, **kwargs)
     except subprocess.CalledProcessError as ex:
         # non-zero return from shell

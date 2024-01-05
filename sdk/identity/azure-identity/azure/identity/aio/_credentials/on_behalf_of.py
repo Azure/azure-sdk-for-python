@@ -15,7 +15,7 @@ from ..._internal import AadClientCertificate, validate_tenant_id
 _LOGGER = logging.getLogger(__name__)
 
 
-class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
+class OnBehalfOfCredential(AsyncContextManager["OnBehalfOfCredential"], GetTokenMixin):
     """Authenticates a service principal via the on-behalf-of flow.
 
     This flow is typically used by middle-tier services that authorize requests to other services with a delegated
@@ -89,7 +89,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         # note AadClient handles "authority" and any pipeline kwargs
         self._client = AadClient(tenant_id, client_id, **kwargs)
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "OnBehalfOfCredential":
         await self._client.__aenter__()
         return self
 

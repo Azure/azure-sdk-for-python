@@ -9,10 +9,9 @@ from .._internal import AadClient, AsyncContextManager
 from .._internal.get_token_mixin import GetTokenMixin
 from ..._internal import validate_tenant_id
 
-T = TypeVar("T", bound="ClientSecretCredential")
 
 
-class ClientSecretCredential(AsyncContextManager, GetTokenMixin):
+class ClientSecretCredential(AsyncContextManager["ClientSecretCredential"], GetTokenMixin):
     """Authenticates as a service principal using a client secret.
 
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
@@ -53,7 +52,7 @@ class ClientSecretCredential(AsyncContextManager, GetTokenMixin):
         self._secret = client_secret
         super().__init__()
 
-    async def __aenter__(self: T) -> T:
+    async def __aenter__(self) -> "ClientSecretCredential":
         await self._client.__aenter__()
         return self
 

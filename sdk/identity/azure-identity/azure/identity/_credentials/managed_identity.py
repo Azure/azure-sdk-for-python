@@ -96,11 +96,11 @@ class ManagedIdentityCredential:
             _LOGGER.info("%s will use IMDS", self.__class__.__name__)
             self._credential = ImdsCredential(**kwargs)
 
-    def __enter__(self):
+    def __enter__(self) -> "ManagedIdentityCredential":
         self._credential.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self._credential.__exit__(*args)
 
     def close(self) -> None:

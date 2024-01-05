@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ChainedTokenCredential(AsyncContextManager):
+class ChainedTokenCredential(AsyncContextManager["ChainedTokenCredential"]):
     """A sequence of credentials that is itself a credential.
 
     Its :func:`get_token` method calls ``get_token`` on each credential in the sequence, in order, returning the first
