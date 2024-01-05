@@ -420,6 +420,10 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     StorageLifecyclePolicyCompletedEventName = 'Microsoft.Storage.LifecyclePolicyCompleted'
 
+    StorageTaskAssignmentCompletedEventName = 'Microsoft.Storage.StorageTaskAssignmentCompleted'
+
+    StorageTaskAssignmentQueuedEventName = 'Microsoft.Storage.StorageTaskAssignmentQueued'
+
     StorageTaskCompletedEventName = 'Microsoft.Storage.StorageTaskCompleted'
 
     StorageTaskQueuedEventName = 'Microsoft.Storage.StorageTaskQueued'
