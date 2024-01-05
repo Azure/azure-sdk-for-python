@@ -320,6 +320,7 @@ class AzureAppConfigurationClient:
                 if_none_match="*",
                 headers=custom_headers,
                 error_map=error_map,
+                **kwargs,
             )
             return ConfigurationSetting._from_generated(key_value_added)
         except binascii.Error as exc:
@@ -391,12 +392,13 @@ class AzureAppConfigurationClient:
                 if_none_match=prep_if_none_match(etag or configuration_setting.etag, match_condition),
                 headers=custom_headers,
                 error_map=error_map,
+                **kwargs,
             )
             return ConfigurationSetting._from_generated(key_value_set)
         except binascii.Error as exc:
             raise binascii.Error("Connection string secret has incorrect padding") from exc
 
-    @distributed_trace_async
+    @overload
     async def delete_configuration_setting(
         self,
         key: str,
@@ -408,10 +410,8 @@ class AzureAppConfigurationClient:
     ) -> ConfigurationSetting:
         """Delete a ConfigurationSetting if it exists
 
-        :param key: key used to identify the ConfigurationSetting
-        :type key: str
-        :param label: label used to identify the ConfigurationSetting. Default is `None`.
-        :type label: str
+        :param str key: key used to identify the ConfigurationSetting
+        :param str label: label used to identify the ConfigurationSetting. Default is `None`.
         :keyword str etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
@@ -434,6 +434,60 @@ class AzureAppConfigurationClient:
                 key="MyKey", label="MyLabel"
             )
         """
+
+    @overload
+    async def delete_configuration_setting(  # pylint:disable=delete-operation-wrong-return-type
+        self,
+        configuration_setting: ConfigurationSetting,
+        *,
+        etag: Optional[str] = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs,
+    ) -> ConfigurationSetting:
+        """Delete a ConfigurationSetting if it exists
+
+        :param configuration_setting: the ConfigurationSetting to be deleted (if not exists)
+        :type configuration_setting: ~azure.appconfiguration.ConfigurationSetting
+        :keyword str etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
+        :keyword match_condition: The match condition to use upon the etag.
+            The default value is MatchConditions.Unconditionally.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: The deleted ConfigurationSetting returned from the service, or None if it doesn't exist.
+        :rtype: ~azure.appconfiguration.ConfigurationSetting
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
+            :class:`~azure.core.exceptions.ClientAuthenticationError`, \
+            :class:`~azure.core.exceptions.ResourceReadOnlyError`, \
+            :class:`~azure.core.exceptions.ResourceModifiedError`, \
+            :class:`~azure.core.exceptions.ResourceNotModifiedError`, \
+            :class:`~azure.core.exceptions.ResourceNotFoundError`, \
+            :class:`~azure.core.exceptions.ResourceExistsError`
+
+        Example
+
+        .. code-block:: python
+
+            config_setting = ConfigurationSetting(key="MyKey", label="MyLabel")
+            deleted_config_setting = await client.delete_configuration_setting(configuration_setting=config_setting)
+        """
+
+    @distributed_trace
+    async def delete_configuration_setting(self, *args, **kwargs):
+        try:
+            config_setting = kwargs.pop("configuration_setting", None)
+            if not config_setting:
+                config_setting = args[0]
+            key = config_setting.key
+            label = config_setting.label
+        except (TypeError, IndexError):
+            key = kwargs.pop("key", None)
+            if key is None:
+                key = args[0]
+            label = kwargs.pop("label", None)
+            if label is None and len(args) > 1:
+                label = args[1]
+
+        etag = kwargs.pop("etag", None)
+        match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         custom_headers: Mapping[str, Any] = CaseInsensitiveDict(kwargs.get("headers"))
         error_map: Dict[int, Any] = {409: ResourceReadOnlyError}
         if match_condition == MatchConditions.IfNotModified:
@@ -452,6 +506,7 @@ class AzureAppConfigurationClient:
                 if_match=prep_if_match(etag, match_condition),
                 headers=custom_headers,
                 error_map=error_map,
+                **kwargs,
             )
             return ConfigurationSetting._from_generated(key_value_deleted)  # type: ignore
         except binascii.Error as exc:
