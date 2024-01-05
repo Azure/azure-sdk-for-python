@@ -15,7 +15,7 @@ from ..._credentials.vscode import _VSCodeCredentialBase
 from ..._internal import within_dac
 
 
-class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager["VisualStudioCodeCredential"], GetTokenMixin):
+class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, GetTokenMixin):
     """Authenticates as the Azure user signed in to Visual Studio Code via the 'Azure Account' extension.
 
     It's a `known issue <https://github.com/Azure/azure-sdk-for-python/issues/23249>`_ that this credential doesn't

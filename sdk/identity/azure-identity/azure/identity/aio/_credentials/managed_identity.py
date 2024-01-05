@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ManagedIdentityCredential(AsyncContextManager["ManagedIdentityCredential"]):
+class ManagedIdentityCredential(AsyncContextManager):
     """Authenticates with an Azure managed identity in any hosting environment which supports managed identities.
 
     This credential defaults to using a system-assigned identity. To configure a user-assigned identity, use one of

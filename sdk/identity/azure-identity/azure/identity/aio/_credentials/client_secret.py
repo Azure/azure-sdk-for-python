@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Optional, TypeVar, Any
+from typing import Optional, Any
 
 from azure.core.credentials import AccessToken
 from .._internal import AadClient, AsyncContextManager
@@ -10,8 +10,7 @@ from .._internal.get_token_mixin import GetTokenMixin
 from ..._internal import validate_tenant_id
 
 
-
-class ClientSecretCredential(AsyncContextManager["ClientSecretCredential"], GetTokenMixin):
+class ClientSecretCredential(AsyncContextManager, GetTokenMixin):
     """Authenticates as a service principal using a client secret.
 
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.

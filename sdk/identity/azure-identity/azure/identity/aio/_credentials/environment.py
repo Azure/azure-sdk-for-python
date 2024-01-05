@@ -17,7 +17,7 @@ from .client_secret import ClientSecretCredential
 _LOGGER = logging.getLogger(__name__)
 
 
-class EnvironmentCredential(AsyncContextManager["EnvironmentCredential"]):
+class EnvironmentCredential(AsyncContextManager):
     """A credential configured by environment variables.
 
     This credential is capable of authenticating as a service principal using a client secret or a certificate, or as

@@ -13,7 +13,7 @@ from .._internal.aad_client import AadClient
 from .._internal.decorators import log_get_token_async
 
 
-class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager["SharedTokenCacheCredential"]):
+class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
     """Authenticates using tokens in the local cache shared between Microsoft applications.
 
     :param str username:

@@ -20,7 +20,7 @@ from ..._credentials.azure_powershell import (
 from ..._internal import resolve_tenant, validate_tenant_id, validate_scope
 
 
-class AzurePowerShellCredential(AsyncContextManager["AzurePowerShellCredential"]):
+class AzurePowerShellCredential(AsyncContextManager):
     """Authenticates by requesting a token from Azure PowerShell.
 
     This requires previously logging in to Azure via "Connect-AzAccount", and will use the currently logged in identity.

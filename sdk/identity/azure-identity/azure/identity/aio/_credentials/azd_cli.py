@@ -26,7 +26,7 @@ from ..._credentials.azd_cli import (
 from ..._internal import resolve_tenant, within_dac, validate_tenant_id, validate_scope
 
 
-class AzureDeveloperCliCredential(AsyncContextManager["AzureDeveloperCliCredential"]):
+class AzureDeveloperCliCredential(AsyncContextManager):
     """Authenticates by requesting a token from the Azure Developer CLI.
 
     Azure Developer CLI is a command-line interface tool that allows developers to create, manage, and deploy

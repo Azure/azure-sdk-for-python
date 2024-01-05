@@ -26,7 +26,7 @@ from ..._credentials.azure_cli import (
 from ..._internal import _scopes_to_resource, resolve_tenant, within_dac, validate_tenant_id, validate_scope
 
 
-class AzureCliCredential(AsyncContextManager["AzureCliCredential"]):
+class AzureCliCredential(AsyncContextManager):
     """Authenticates by requesting a token from the Azure CLI.
 
     This requires previously logging in to Azure via "az login", and will use the CLI's currently logged in identity.

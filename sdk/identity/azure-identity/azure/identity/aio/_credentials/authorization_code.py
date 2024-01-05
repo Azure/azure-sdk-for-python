@@ -10,7 +10,7 @@ from .._internal import AadClient, AsyncContextManager
 from .._internal.get_token_mixin import GetTokenMixin
 
 
-class AuthorizationCodeCredential(AsyncContextManager["AuthorizationCodeCredential"], GetTokenMixin):
+class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
     """Authenticates by redeeming an authorization code previously obtained from Microsoft Entra ID.
 
     See `Microsoft Entra ID documentation

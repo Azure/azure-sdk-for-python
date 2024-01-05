@@ -15,7 +15,7 @@ from ..._internal import AadClientCertificate, validate_tenant_id
 _LOGGER = logging.getLogger(__name__)
 
 
-class OnBehalfOfCredential(AsyncContextManager["OnBehalfOfCredential"], GetTokenMixin):
+class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
     """Authenticates a service principal via the on-behalf-of flow.
 
     This flow is typically used by middle-tier services that authorize requests to other services with a delegated

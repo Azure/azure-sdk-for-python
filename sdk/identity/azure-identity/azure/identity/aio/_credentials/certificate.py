@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TypeVar, Optional, Any
+from typing import Optional, Any
 
 from azure.core.credentials import AccessToken
 from .._internal import AadClient, AsyncContextManager
@@ -11,8 +11,7 @@ from ..._credentials.certificate import get_client_credential
 from ..._internal import AadClientCertificate, validate_tenant_id
 
 
-
-class CertificateCredential(AsyncContextManager["CertificateCredential"], GetTokenMixin):
+class CertificateCredential(AsyncContextManager, GetTokenMixin):
     """Authenticates as a service principal using a certificate.
 
     The certificate must have an RSA private key, because this credential signs assertions using RS256. See

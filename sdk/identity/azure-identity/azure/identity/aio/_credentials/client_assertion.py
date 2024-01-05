@@ -9,7 +9,7 @@ from .._internal import AadClient, AsyncContextManager
 from .._internal.get_token_mixin import GetTokenMixin
 
 
-class ClientAssertionCredential(AsyncContextManager["ClientAssertionCredential"], GetTokenMixin):
+class ClientAssertionCredential(AsyncContextManager, GetTokenMixin):
     """Authenticates a service principal with a JWT assertion.
 
     This credential is for advanced scenarios. :class:`~azure.identity.CertificateCredential` has a more

@@ -16,8 +16,7 @@ from ..._internal import within_credential_chain
 from ..._credentials.imds import _get_request, _check_forbidden_response, PIPELINE_SETTINGS
 
 
-
-class ImdsCredential(AsyncContextManager["ImdsCredential"], GetTokenMixin):
+class ImdsCredential(AsyncContextManager, GetTokenMixin):
     def __init__(self, **kwargs: Any) -> None:
         super().__init__()
 
