@@ -86,13 +86,13 @@ class TableAuthSamples(object):
         # [END auth_from_sas]
         properties = table_service_client.get_service_properties()
         print(f"{properties}")
-    
+
     def authentication_by_AAD(self):
         print("Instantiate a TableServiceClient using a TokenCredential")
         # [START auth_from_aad]
         from azure.data.tables import TableServiceClient
         from azure.identity import DefaultAzureCredential
-        
+
         table_service_client = TableServiceClient(endpoint=self.endpoint, credential=DefaultAzureCredential())
         # [END auth_from_aad]
         properties = table_service_client.get_service_properties()
