@@ -3,6 +3,7 @@
 ## 1.5.1 (Unreleased)
 
 ### Features Added
+- Added a `delete_configration_setting()` overload to delete a configuration setting with a `ConfigurationSetting` instance.
 
 ### Breaking Changes
 
