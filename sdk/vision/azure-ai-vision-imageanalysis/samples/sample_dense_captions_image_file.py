@@ -54,7 +54,7 @@ def sample_dense_captions_image_file():
 
     # Load image to analyze into a 'bytes' object.
     with open("sample.jpg", 'rb') as f:
-        image_buffer = bytes(f.read())
+        image_buffer = f.read()
 
     # Extract multiple captions, each for a different area of the image.
     # This will be a synchronously (blocking) call.

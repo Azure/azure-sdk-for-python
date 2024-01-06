@@ -54,7 +54,7 @@ def sample_ocr_image_file():
     # [START read]
     # Load image to analyze into a 'bytes' object
     with open("sample.jpg", 'rb') as f:
-        image_buffer = bytes(f.read())
+        image_buffer = f.read()
 
     # Extract text (OCR) from an image stream. This will be a synchronously (blocking) call.
     result = client.analyze(

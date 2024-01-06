@@ -65,7 +65,7 @@ def sample_analyze_all_image_file():
 
     # Load image to analyze into a 'bytes' object
     with open("sample.jpg", 'rb') as f:
-        image_buffer = bytes(f.read())
+        image_buffer = f.read()
 
     # [START create_client_with_logging]
     # Create an Image Analysis client with none redacted log
