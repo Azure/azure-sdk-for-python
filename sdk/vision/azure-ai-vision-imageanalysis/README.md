@@ -146,8 +146,8 @@ result = client.analyze(
 )
 
 # Print caption results to the console
-print(f"Image analysis results:")
-print(f" Caption:")
+print("Image analysis results:")
+print(" Caption:")
 if result.caption is not None:
     print(f"   '{result.caption.text}', Confidence {result.caption.confidence:.4f}")
 ```
@@ -171,8 +171,8 @@ result = client.analyze(
 )
 
 # Print caption results to the console
-print(f"Image analysis results:")
-print(f" Caption:")
+print("Image analysis results:")
+print(" Caption:")
 if result.caption is not None:
     print(f"   '{result.caption.text}', Confidence {result.caption.confidence:.4f}")
 ```
@@ -197,8 +197,8 @@ result = client.analyze(
 )
 
 # Print text (OCR) analysis results to the console
-print(f"Image analysis results:")
-print(f" Read:")
+print("Image analysis results:")
+print(" Read:")
 if result.read is not None:
     for line in result.read.blocks[0].lines:
         print(f"   Line: '{line.text}', Bounding box {line.bounding_polygon}")
@@ -226,8 +226,8 @@ result = client.analyze(
 )
 
 # Print text (OCR) analysis results to the console
-print(f"Image analysis results:")
-print(f" Read:")
+print("Image analysis results:")
+print(" Read:")
 if result.read is not None:
     for line in result.read.blocks[0].lines:
         print(f"   Line: '{line.text}', Bounding box {line.bounding_polygon}")
