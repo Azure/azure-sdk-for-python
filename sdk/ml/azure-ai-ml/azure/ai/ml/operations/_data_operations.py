@@ -750,7 +750,8 @@ class DataOperations(_ScopeDependentOperations):
         persistent: bool = False,
         **_kwargs,
     ) -> None:
-        """Mount a data asset to a local path.
+        """Mount a data asset to a local path, so that you can access data inside it
+        under a local path with any tools of your choice.
 
         :param path: The data asset path to mount, in the form of `azureml:<name>` or `azureml:<name>:<version>`.
         :type path: str

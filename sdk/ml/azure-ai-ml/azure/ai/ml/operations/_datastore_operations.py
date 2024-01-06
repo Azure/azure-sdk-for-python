@@ -239,7 +239,8 @@ class DatastoreOperations(_ScopeDependentOperations):
         persistent: bool = False,
         **_kwargs,
     ) -> None:
-        """Mount a datastore to a local path.
+        """Mount a datastore to a local path, so that you can access data inside it
+        under a local path with any tools of your choice.
 
         :param path: The data store path to mount, in the form of `<name>` or `azureml://datastores/<name>`.
         :type path: str
