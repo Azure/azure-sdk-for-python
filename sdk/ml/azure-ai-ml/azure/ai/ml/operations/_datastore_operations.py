@@ -249,7 +249,8 @@ class DatastoreOperations(_ScopeDependentOperations):
         :type mode: str
         :param debug: Whether to enable verbose logging.
         :type debug: bool
-        :param persistent: Whether to persist the mount after reboot. Applies only when running on Compute Instance.
+        :param persistent: Whether to persist the mount after reboot. Applies only when running on Compute Instance,
+                where the 'CI_NAME' environment variable is set."
         :type persistent: bool
         :return: None
         """
