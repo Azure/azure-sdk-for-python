@@ -217,6 +217,17 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             with pytest.raises(ResourceNotFoundError):
                 await client.get_configuration_setting(to_delete_kv.key)
 
+    @app_config_decorator_async
+    @recorded_by_proxy_async
+    async def test_delete_configuration_setting_with_config_setting(self, appconfiguration_connection_string):
+        async with self.create_client(appconfiguration_connection_string) as client:
+            to_delete_kv = self.create_config_setting_no_label()
+            await self.add_for_test(client, to_delete_kv)
+            deleted_kv = await client.delete_configuration_setting(to_delete_kv)
+            assert deleted_kv is not None
+            with pytest.raises(ResourceNotFoundError):
+                await client.get_configuration_setting(to_delete_kv.key, label=to_delete_kv.label)
+
     # method: list_configuration_settings
     @app_config_decorator_async
     @recorded_by_proxy_async

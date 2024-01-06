@@ -217,6 +217,18 @@ class TestAppConfigurationClient(AppConfigTestCase):
         with pytest.raises(ResourceNotFoundError):
             client.get_configuration_setting(to_delete_kv.key)
 
+    @app_config_decorator
+    @recorded_by_proxy
+    def test_delete_configuration_setting_with_config_setting(self, appconfiguration_connection_string):
+        client = self.create_client(appconfiguration_connection_string)
+        to_delete_kv = self.create_config_setting()
+
+        self.add_for_test(client, to_delete_kv)
+        deleted_kv = client.delete_configuration_setting(to_delete_kv)
+        assert deleted_kv is not None
+        with pytest.raises(ResourceNotFoundError):
+            client.get_configuration_setting(to_delete_kv.key, label=to_delete_kv.label)
+
     # method: list_configuration_settings
     @app_config_decorator
     @recorded_by_proxy
