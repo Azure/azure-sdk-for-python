@@ -11,9 +11,9 @@ Use the Image Analysis client library to:
 [Product documentation](https://learn.microsoft.com/azure/ai-services/computer-vision/overview-image-analysis?tabs=4-0) 
 | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/vision/azure-ai-vision-imageanalysis/samples)
 | [Vision Studio](https://portal.vision.cognitive.azure.com/gallery/imageanalysis)
-| [API reference documentation](https://learn.microsoft.com/python/api/azure-ai-vision) <!-- TODO: replace with https://learn.microsoft.com/python/api/azure-ai-vision-imageanalysis after ref docs are published -->
-| [Package (Pypi)](https://pypi.org/project/azure-ai-vision) <!-- TODO: replace with https://pypi.org/project/azure-ai-vision-imageanalysis/ after package ships -->
-| [Package (Conda)](https://anaconda.org/microsoft/azure-ai-vision-imageanalysis)
+| [API reference documentation](https://azsdk/image-analysis/ref-docs/python)
+| [Package (Pypi)](https://azsdk/image-analysis/package/pypi)
+| [Package (Conda)](https://azsdk/image-analysis/package/conda)
 | [SDK source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/vision/azure-ai-vision-imageanalysis/azure/ai/vision/imageanalysis)
 
 ## Getting started
@@ -158,14 +158,14 @@ To generate captions for additional images, simply call `analyze` multiple times
 
 ### Generate an image caption for an image URL
 
-This example is similar to the above, expect it calls the `analyze` method and provides a [publicly accessible image URL](https://aka.ms/azai/vision/image-analysis-sample.jpg) instead of a file name.
+This example is similar to the above, expect it calls the `analyze` method and provides a [publicly accessible image URL](https://aka.ms/azsdk/image-analysis/sample.jpg) instead of a file name.
 
 <!-- SNIPPET:sample_caption_image_url.caption -->
 
 ```python
 # Get a caption for the image. This will be a synchronously (blocking) call.
 result = client.analyze(
-    image_content = "https://aka.ms/azai/vision/image-analysis-sample.jpg",
+    image_content = "https://aka.ms/azsdk/image-analysis/sample.jpg",
     visual_features = [ VisualFeatures.CAPTION ],
     gender_neutral_caption = True # Optional (default is False)
 )
@@ -214,14 +214,14 @@ To extract text for additional images, simply call `analyze` multiple times. You
 
 ### Extract text from an image URL
 
-This example is similar to the above, expect it calls the `analyze` method and provides a [publicly accessible image URL](https://aka.ms/azai/vision/image-analysis-sample.jpg) instead of a file name.
+This example is similar to the above, expect it calls the `analyze` method and provides a [publicly accessible image URL](https://aka.ms/azsdk/image-analysis/sample.jpg) instead of a file name.
 
 <!-- SNIPPET:sample_ocr_image_url.read -->
 
 ```python
 # Extract text (OCR) from an image stream. This will be a synchronously (blocking) call.
 result = client.analyze(
-    image_content = "https://aka.ms/azai/vision/image-analysis-sample.jpg",
+    image_content = "https://aka.ms/azsdk/image-analysis/sample.jpg",
     visual_features = [ VisualFeatures.READ ]
 )
 

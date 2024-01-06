@@ -51,7 +51,7 @@ def sample_caption_image_url():
     # [START caption]
     # Get a caption for the image. This will be a synchronously (blocking) call.
     result = client.analyze(
-        image_content = "https://aka.ms/azai/vision/image-analysis-sample.jpg",
+        image_content = "https://aka.ms/azsdk/image-analysis/sample.jpg",
         visual_features = [ VisualFeatures.CAPTION ],
         gender_neutral_caption = True # Optional (default is False)
     )

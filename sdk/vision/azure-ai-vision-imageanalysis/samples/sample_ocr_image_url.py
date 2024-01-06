@@ -54,7 +54,7 @@ def sample_ocr_image_url():
     # [START read]
     # Extract text (OCR) from an image stream. This will be a synchronously (blocking) call.
     result = client.analyze(
-        image_content = "https://aka.ms/azai/vision/image-analysis-sample.jpg",
+        image_content = "https://aka.ms/azsdk/image-analysis/sample.jpg",
         visual_features = [ VisualFeatures.READ ]
     )
 

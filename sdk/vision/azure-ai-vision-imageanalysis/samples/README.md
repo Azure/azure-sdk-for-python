@@ -61,7 +61,7 @@ similarly for the other samples.
 
 The sample `sample_analyze_all_image_file.py` analyzes the image `sample.jpg` in this folder:
 
-![sample JPEG image](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/vision/azure-ai-vision-imageanalysis/samples/sample.jpg)
+![sample JPEG image](https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/vision/azure-ai-vision-imageanalysis/samples/sample.jpg)
 
 And produces an output similar to the following:
 
