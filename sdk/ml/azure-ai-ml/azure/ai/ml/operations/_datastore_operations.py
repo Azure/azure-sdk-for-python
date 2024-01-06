@@ -262,7 +262,7 @@ class DatastoreOperations(_ScopeDependentOperations):
         ci_name = os.environ.get("CI_NAME")
         assert not persistent or (
             persistent and ci_name is not None
-        ), "persistent mount is only supported on Compute Instance"
+        ), "persistent mount is only supported on Compute Instance, where the 'CI_NAME' environment variable is set."
 
         from azureml.dataprep import rslex_fuse_subprocess_wrapper
 
