@@ -57,8 +57,8 @@ def sample_caption_image_url():
     )
 
     # Print caption results to the console
-    print(f"Image analysis results:")
-    print(f" Caption:")
+    print("Image analysis results:")
+    print(" Caption:")
     if result.caption is not None:
         print(f"   '{result.caption.text}', Confidence {result.caption.confidence:.4f}")
     # [END caption]

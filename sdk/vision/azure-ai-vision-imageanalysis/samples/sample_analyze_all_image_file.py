@@ -95,41 +95,41 @@ def sample_analyze_all_image_file():
     )
 
     # Print all analysis results to the console
-    print(f"Image analysis results:")
+    print("Image analysis results:")
 
     if result.caption is not None:
-        print(f" Caption:")
+        print(" Caption:")
         print(f"   '{result.caption.text}', Confidence {result.caption.confidence:.4f}")
 
     if result.dense_captions is not None:
-        print(f" Dense Captions:")
+        print(" Dense Captions:")
         for caption in result.dense_captions.values:
             print(f"   '{caption.text}', {caption.bounding_box}, Confidence: {caption.confidence:.4f}")
 
     if result.read is not None:
-        print(f" Read:")
+        print(" Read:")
         for line in result.read.blocks[0].lines:
             print(f"   Line: '{line.text}', Bounding box {line.bounding_polygon}")
             for word in line.words:
                 print(f"     Word: '{word.text}', Bounding polygon {word.bounding_polygon}, Confidence {word.confidence:.4f}")
 
     if result.tags is not None:
-        print(f" Tags:")
+        print(" Tags:")
         for tag in result.tags.values:
             print(f"   '{tag.name}', Confidence {tag.confidence:.4f}")
 
     if result.objects is not None:
-        print(f" Objects:")
+        print(" Objects:")
         for object in result.objects.values:
             print(f"   '{object.tags[0].name}', {object.bounding_box}, Confidence: {object.tags[0].confidence:.4f}")
 
     if result.people is not None:
-        print(f" People:")
+        print(" People:")
         for person in result.people.values:
             print(f"   {person.bounding_box}, Confidence {person.confidence:.4f}")
 
     if result.smart_crops is not None:
-        print(f" Smart Cropping:")
+        print(" Smart Cropping:")
         for smart_crop in result.smart_crops.values:
             print(f"   Aspect ratio {smart_crop.aspect_ratio}: Smart crop {smart_crop.bounding_box}")
 

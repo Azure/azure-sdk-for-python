@@ -56,8 +56,8 @@ def sample_objects_image_file():
     )
 
     # Print Objects analysis results to the console
-    print(f"Image analysis results:")
-    print(f" Objects:")
+    print("Image analysis results:")
+    print(" Objects:")
     if result.objects is not None:
         for object in result.objects.values:
             print(f"   '{object.tags[0].name}', {object.bounding_box}, Confidence: {object.tags[0].confidence:.4f}")

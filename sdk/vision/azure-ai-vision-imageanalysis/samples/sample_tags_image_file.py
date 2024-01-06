@@ -58,8 +58,8 @@ def sample_tags_image_file():
     )
 
     # Print Tags analysis results to the console
-    print(f"Image analysis results:")
-    print(f" Tags:")
+    print("Image analysis results:")
+    print(" Tags:")
     if result.tags is not None:
         for tag in result.tags.values:
             print(f"   '{tag.name}', Confidence {tag.confidence:.4f}")

@@ -55,8 +55,8 @@ def sample_people_image_file():
     )
 
     # Print People analysis results to the console
-    print(f"Image analysis results:")
-    print(f" People:")
+    print("Image analysis results:")
+    print(" People:")
     if result.people is not None:
         for person in result.people.values:
             print(f"   {person.bounding_box}, Confidence {person.confidence:.4f}")

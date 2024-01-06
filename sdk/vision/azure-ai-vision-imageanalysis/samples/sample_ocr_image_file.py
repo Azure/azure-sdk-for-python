@@ -63,8 +63,8 @@ def sample_ocr_image_file():
     )
 
     # Print text (OCR) analysis results to the console
-    print(f"Image analysis results:")
-    print(f" Read:")
+    print("Image analysis results:")
+    print(" Read:")
     if result.read is not None:
         for line in result.read.blocks[0].lines:
             print(f"   Line: '{line.text}', Bounding box {line.bounding_polygon}")

@@ -559,7 +559,7 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
                 print("   Aspect ratio {}: Smart crop {}" .format(smart_crop.aspect_ratio, smart_crop.bounding_box))
 
         if result.read is not None:
-            print(f" Read:")
+            print(" Read:")
             for line in result.read.blocks[0].lines:
                 print(f"   Line: '{line.text}', Bounding box {line.bounding_polygon}")
                 for word in line.words:
