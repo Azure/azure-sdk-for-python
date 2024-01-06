@@ -760,7 +760,8 @@ class DataOperations(_ScopeDependentOperations):
         :type mode: str
         :param debug: Whether to enable verbose logging.
         :type debug: bool
-        :param persistent: Whether to persist the mount after reboot. Applies only when running on Compute Instance.
+        :param persistent: Whether to persist the mount after reboot. Applies only when running on Compute Instance,
+                where the 'CI_NAME' environment variable is set."
         :type persistent: bool
         :return: None
         """
@@ -772,7 +773,7 @@ class DataOperations(_ScopeDependentOperations):
         ci_name = os.environ.get("CI_NAME")
         assert not persistent or (
             persistent and ci_name is not None
-        ), "persistent mount is only supported on Compute Instance"
+        ), "persistent mount is only supported on Compute Instance, where the 'CI_NAME' environment variable is set."
 
         from azureml.dataprep import rslex_fuse_subprocess_wrapper
 
