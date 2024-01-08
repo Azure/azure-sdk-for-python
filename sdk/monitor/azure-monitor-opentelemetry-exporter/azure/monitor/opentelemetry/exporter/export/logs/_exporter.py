@@ -94,7 +94,7 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
         :keyword str api_version: The service API version used. Defaults to
             latest.
         :return: an instance of ~AzureMonitorLogExporter
-        :rtype ~azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter
+        :rtype: ~azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter
         """
         return cls(connection_string=conn_str, **kwargs)
 

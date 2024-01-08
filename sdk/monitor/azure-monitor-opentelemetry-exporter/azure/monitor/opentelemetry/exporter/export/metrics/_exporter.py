@@ -158,7 +158,7 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         :keyword str api_version: The service API version used. Defaults to
             latest.
         :return: An instance of ~AzureMonitorMetricExporter
-        :rtype ~azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter
+        :rtype: ~azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter
         """
         return cls(connection_string=conn_str, **kwargs)
 
