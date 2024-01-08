@@ -32,7 +32,6 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientOperationsMixinGener
         :type visual_features: list[~azure.ai.vision.imageanalysis.models.VisualFeatures]
         :keyword language: The desired language for result generation (a two-letter language code).
          Defaults to 'en' (English). See https://aka.ms/cv-languages for a list of supported languages.
-         At the moment, only tags can be generated in non-English languages.
         :paramtype language: str
         :keyword gender_neutral_caption: Boolean flag for enabling gender-neutral captioning for
          Caption and Dense Captions features. Defaults to 'false'.
