@@ -22,10 +22,10 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Optional, Union, cast, Mapping, Iterable
+from typing import Any, Dict, List, Optional, Union, cast, Mapping, Iterable
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import TokenCredential
-from azure.core.async_credentials import AsyncTokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core import MatchConditions
 
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -62,7 +62,8 @@ def _build_auth(credential: CredentialType) -> CredentialDict:
         raise TypeError(
             "Unrecognized credential type. Please supply the master key as a string "
             "or a dictionary, or resource tokens, or a list of permissions, or any instance of a class implementing"
-            " AsyncTokenCredential (see azure.identity module for specific implementations such as ClientSecretCredential).")
+            " AsyncTokenCredential (see azure.identity module for specific implementations "
+            "such as ClientSecretCredential).")
     return auth
 
 def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
@@ -289,9 +290,15 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
     @distributed_trace_async
     async def create_database_if_not_exists(  # pylint: disable=redefined-builtin
-            self,
-            id: str,
-            **kwargs: Any
+        self,
+        id: str,
+        *,
+        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
     ) -> DatabaseProxy:
         """
         Create the database if it does not exist already.
@@ -317,7 +324,14 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: A DatabaseProxy instance representing the database.
         :rtype: ~azure.cosmos.DatabaseProxy
         """
-        offer_throughput = kwargs.pop("offer_throughput", None)
+        if session_token is not None:
+            kwargs["session_token"] = session_token
+        if initial_headers is not None:
+            kwargs["initial_headers"] = initial_headers
+        if etag is not None:
+            kwargs["etag"] = etag
+        if match_condition is not None:
+            kwargs["match_condition"] = match_condition
         try:
             database_proxy = self.get_database_client(id)
             await database_proxy.read(**kwargs)
@@ -348,8 +362,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
     @distributed_trace
     def list_databases(
-            self,
-            **kwargs: Any
+        self,
+        *,
+        max_item_count: Optional[int] = None,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List the databases in a Cosmos DB SQL database account.
 
@@ -361,9 +379,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: An AsyncItemPaged of database properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, str]]
         """
-        feed_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        max_item_count = kwargs.pop('max_item_count', None)
+        if session_token is not None:
+            kwargs["session_token"] = session_token
+        if initial_headers is not None:
+            kwargs["initial_headers"] = initial_headers
+        feed_options = _build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -374,12 +395,18 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
     @distributed_trace
     def query_databases(
-            self,
-            **kwargs: Any
+        self,
+        query: str,
+        *,
+        parameters: Optional[List[Dict[str, Any]]] = None,
+        max_item_count: Optional[int] = None,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Query the databases in a Cosmos DB SQL database account.
 
-        :keyword Union[str, Dict[str, Any]] query: The Azure Cosmos DB SQL query to execute.
+        :param Union[str, Dict[str, Any]] query: The Azure Cosmos DB SQL query to execute.
         :keyword parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
         :paramtype parameters: List[Dict[str, Any]]
@@ -391,14 +418,15 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: An AsyncItemPaged of database properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, str]]
         """
-        feed_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        max_item_count = kwargs.pop('max_item_count', None)
+        if session_token is not None:
+            kwargs["session_token"] = session_token
+        if initial_headers is not None:
+            kwargs["initial_headers"] = initial_headers
+        feed_options = _build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
-        parameters = kwargs.pop('parameters', None)
-        query = kwargs.pop('query', None)
         result = self.client_connection.QueryDatabases(
             query=query if parameters is None else dict(query=query, parameters=parameters),
             options=feed_options,
@@ -411,6 +439,11 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     async def delete_database(
         self,
         database: Union[str, DatabaseProxy, Dict[str, Any]],
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Delete the database with the given ID (name).
@@ -429,8 +462,16 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
         """
-        request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
+        if session_token is not None:
+            kwargs["session_token"] = session_token
+        if initial_headers is not None:
+            kwargs["initial_headers"] = initial_headers
+        if etag is not None:
+            kwargs["etag"] = etag
+        if match_condition is not None:
+            kwargs["match_condition"] = match_condition
+        request_options = _build_options(kwargs)
 
         database_link = _get_database_link(database)
         await self.client_connection.DeleteDatabase(database_link, options=request_options, **kwargs)

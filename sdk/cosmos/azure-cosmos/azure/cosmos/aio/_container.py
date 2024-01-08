@@ -22,8 +22,7 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 
-from optparse import Option
-from typing import Any, Callable, Dict, Literal, Mapping, Optional, Sequence, Type, Union, cast, Awaitable, List, Tuple
+from typing import Any, Dict, Literal, Mapping, Optional, Sequence, Type, Union, Awaitable, List, Tuple
 
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
@@ -46,7 +45,7 @@ from ..partition_key import NonePartitionKeyValue, _return_undefined_or_empty_pa
 
 __all__ = ("ContainerProxy",)
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access, too-many-lines
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
 PartitionKeyType = Union[str, int, float, bool, List[Union[str, int, float, bool]], Type[NonePartitionKeyValue]]
@@ -227,7 +226,7 @@ class ContainerProxy:
         if priority_level is not None:
             kwargs['priority_level'] = priority_level
         if etag is not None:
-            kwargs['etag'] = etag,
+            kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
         request_options = _build_options(kwargs)
@@ -297,7 +296,7 @@ class ContainerProxy:
         if priority_level is not None:
             kwargs['priority_level'] = priority_level
         request_options = _build_options(kwargs)
-        
+
         request_options["partitionKey"] = self._set_partition_key(partition_key)
         max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
         if max_integrated_cache_staleness_in_ms is not None:
@@ -578,7 +577,7 @@ class ContainerProxy:
         if priority_level is not None:
             kwargs['priority_level'] = priority_level
         if etag is not None:
-            kwargs['etag'] = etag,
+            kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
         request_options = _build_options(kwargs)
@@ -647,7 +646,7 @@ class ContainerProxy:
         if priority_level is not None:
             kwargs['priority_level'] = priority_level
         if etag is not None:
-            kwargs['etag'] = etag,
+            kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
         request_options = _build_options(kwargs)
@@ -713,7 +712,7 @@ class ContainerProxy:
         if priority_level is not None:
             kwargs['priority_level'] = priority_level
         if etag is not None:
-            kwargs['etag'] = etag,
+            kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
         request_options = _build_options(kwargs)
@@ -775,7 +774,7 @@ class ContainerProxy:
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
         if etag is not None:
-            kwargs['etag'] = etag,
+            kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
         request_options = _build_options(kwargs)
@@ -1026,7 +1025,7 @@ class ContainerProxy:
         if session_token is not None:
             kwargs['session_token'] = session_token
         if etag is not None:
-            kwargs['etag'] = etag,
+            kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
         request_options = _build_options(kwargs)
@@ -1077,7 +1076,7 @@ class ContainerProxy:
         if session_token is not None:
             kwargs['session_token'] = session_token
         if etag is not None:
-            kwargs['etag'] = etag,
+            kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
         request_options = _build_options(kwargs)

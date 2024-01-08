@@ -23,12 +23,15 @@
 
 """Document client class for the Azure Cosmos database service.
 """
-from typing import Callable, Dict, Any, Iterable, Mapping, Optional, List, Sequence, Tuple, Type, TypeVar, TypedDict, Union, cast
+from typing import (
+    Callable, Dict, Any, Iterable, Mapping, Optional, List,
+    Sequence, Tuple, Type, TypedDict, Union, cast
+)
 from urllib.parse import urlparse
 
 from urllib3.util.retry import Retry
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.async_credentials import AsyncTokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline.policies import (
     AsyncHTTPPolicy,
@@ -735,7 +738,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         return await self.Upsert(permission, path, "permissions", user_id, None, options, **kwargs)
 
     async def UpsertItem(
-        self, 
+        self,
         database_or_container_link: str,
         document: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
@@ -844,7 +847,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             **kwargs
         )
 
-    async def ReadDatabase(self, database_link, options=None, **kwargs):
+    async def ReadDatabase(
+        self,
+        database_link: str,
+        options: Optional[Mapping[str, Any]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Reads a database.
 
         :param str database_link:
@@ -1502,7 +1510,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             **kwargs
         )
 
-    async def DeleteDatabase(self, database_link, options=None, **kwargs):
+    async def DeleteDatabase(
+        self,
+        database_link: str,
+        options: Optional[Mapping[str, Any]] = None,
+        **kwargs: Any
+    ) -> None:
         """Deletes a database.
 
         :param str database_link:
@@ -1512,15 +1525,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The deleted Database.
         :rtype:
-            dict
-
+            None
         """
         if options is None:
             options = {}
 
         path = base.GetPathFromLink(database_link)
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
-        return await self.DeleteResource(path, "dbs", database_id, None, options, **kwargs)
+        await self.DeleteResource(path, "dbs", database_id, None, options, **kwargs)
 
     async def DeleteUser(self, user_link, options=None, **kwargs):
         """Deletes a user.
@@ -1903,7 +1915,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
         )
 
-    def ReadDatabases(self, options=None, **kwargs):
+    def ReadDatabases(
+        self,
+        options: Optional[Mapping[str, Any]] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[Dict[str, Any]]:
         """Reads all databases.
 
         :param dict options:
@@ -1919,7 +1935,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         return self.QueryDatabases(None, options, **kwargs)
 
-    def QueryDatabases(self, query, options=None, **kwargs):
+    def QueryDatabases(
+        self,
+        query: Optional[Union[str, Dict[str, Any]]],
+        options: Optional[Mapping[str, Any]] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[Dict[str, Any]]:
         """Queries databases.
 
         :param (str or dict) query:
@@ -1933,7 +1954,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        async def fetch_fn(options):
+        async def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
             return (
                 await self.__QueryFeed(
                     "/dbs", "dbs", "", lambda r: r["Databases"],

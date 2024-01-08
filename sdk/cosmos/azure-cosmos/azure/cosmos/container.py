@@ -37,7 +37,6 @@ from ._base import (
     _replace_throughput,
     GenerateGuidId
 )
-from .documents import IndexingDirective
 from .exceptions import CosmosResourceNotFoundError
 from .http_constants import StatusCodes
 from .offer import Offer, ThroughputProperties

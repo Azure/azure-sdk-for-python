@@ -22,7 +22,7 @@
 """Interact with databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Mapping, Union, cast
+from typing import Any, Dict, Mapping, Optional, Union, cast
 
 import warnings
 from azure.core.async_paging import AsyncItemPaged
@@ -59,8 +59,8 @@ class DatabaseProxy(object):
     """An interface to interact with a specific database.
 
     This class should not be instantiated directly. Instead use the
-    :func:`~azure.cosmos.aio.cosmos_client.CosmosClient.get_database_client` method to get an existing
-    database, or the :func:`~azure.cosmos.aio.cosmos_client.CosmosClient.create_database` method to create
+    :func:`~azure.cosmos.aio.CosmosClient.get_database_client` method to get an existing
+    database, or the :func:`~azure.cosmos.aio.CosmosClient.create_database` method to create
     a new database.
 
     A database contains one or more containers, each of which can contain items,
@@ -84,10 +84,10 @@ class DatabaseProxy(object):
     """
 
     def __init__(
-            self,
-            client_connection: CosmosClientConnection,
-            id: str,  # pylint: disable=redefined-builtin
-            properties: Dict[str, Any] = None
+        self,
+        client_connection: CosmosClientConnection,
+        id: str,
+        properties: Optional[Dict[str, Any]] = None
     ) -> None:
         """
         :param client_connection: Client from which this database was retrieved.
@@ -102,27 +102,22 @@ class DatabaseProxy(object):
     def __repr__(self) -> str:
         return "<DatabaseProxy [{}]>".format(self.database_link)[:1024]
 
-    @staticmethod
-    def _get_container_id(container_or_id: Union[str, ContainerProxy, Dict[str, Any]]) -> str:
+    def _get_container_id(self, container_or_id: Union[str, ContainerProxy, Dict[str, Any]]) -> str:
         if isinstance(container_or_id, str):
             return container_or_id
-        try:
-            return cast("ContainerProxy", container_or_id).id
-        except AttributeError:
-            pass
-        return cast("Dict[str, str]", container_or_id)["id"]
+        elif isinstance(container_or_id, ContainerProxy):
+            return container_or_id.id
+        return str(container_or_id["id"])
 
     def _get_container_link(self, container_or_id: Union[str, ContainerProxy, Dict[str, Any]]) -> str:
         return "{}/colls/{}".format(self.database_link, self._get_container_id(container_or_id))
 
-    def _get_user_link(self, user_or_id: Union[UserProxy, str, Dict[str, Any]]) -> str:
+    def _get_user_link(self, user_or_id: Union[UserProxy, str, Mapping[str, Any]]) -> str:
         if isinstance(user_or_id, str):
             return "{}/users/{}".format(self.database_link, user_or_id)
-        try:
-            return cast("UserProxy", user_or_id).user_link
-        except AttributeError:
-            pass
-        return "{}/users/{}".format(self.database_link, cast("Dict[str, str]", user_or_id)["id"])
+        elif isinstance(user_or_id, UserProxy):
+            return user_or_id.user_link
+        return "{}/users/{}".format(self.database_link, user_or_id["id"])
 
     async def _get_properties(self) -> Dict[str, Any]:
         if self._properties is None:
@@ -141,10 +136,7 @@ class DatabaseProxy(object):
         :returns: A dict representing the database properties
         :rtype: Dict[str, Any]
         """
-        # TODO this helper function should be extracted from CosmosClient
-        from ._cosmos_client import CosmosClient
-
-        database_link = CosmosClient._get_database_link(self)
+        database_link = _get_database_link(self)
         request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
 
@@ -160,7 +152,7 @@ class DatabaseProxy(object):
     @distributed_trace_async
     async def create_container(
         self,
-        id: str,  # pylint: disable=redefined-builtin
+        id: str,
         partition_key: PartitionKey,
         **kwargs: Any
     ) -> ContainerProxy:
@@ -328,15 +320,12 @@ class DatabaseProxy(object):
                 :caption: Get an existing container, handling a failure if encountered:
                 :name: get_container
         """
-
-        try:
+        if isinstance(container, str):
+            id_value = container
+        elif isinstance(container, ContainerProxy):
             id_value = container.id
-        except AttributeError:
-            try:
-                id_value = container['id']
-            except TypeError:
-                id_value = container
-
+        else:
+            id_value = str(container['id'])
         return ContainerProxy(self.client_connection, self.database_link, id_value)
 
     @distributed_trace
@@ -572,14 +561,12 @@ class DatabaseProxy(object):
         :returns: A `UserProxy` instance representing the retrieved user.
         :rtype: ~azure.cosmos.aio.UserProxy
         """
-        try:
+        if isinstance(user, str):
+            id_value = user
+        elif isinstance(user, UserProxy):
             id_value = user.id
-        except AttributeError:
-            try:
-                id_value = user['id']
-            except TypeError:
-                id_value = user
-
+        else:
+            id_value = str(user['id'])
         return UserProxy(client_connection=self.client_connection, id=id_value, database_link=self.database_link)
 
     @distributed_trace

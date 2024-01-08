@@ -404,7 +404,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[ItemPaged[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
             return (
                 self.__QueryFeed(
                     "/dbs", "dbs", "", lambda r: r["Databases"],
