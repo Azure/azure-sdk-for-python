@@ -445,7 +445,13 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         database_id, path = self._GetDatabaseIdWithPathForUser(database_link, user)
         return await self.Create(user, path, "users", database_id, None, options, **kwargs)
 
-    async def CreateContainer(self, database_link, collection, options=None, **kwargs):
+    async def CreateContainer(
+        self,
+        database_link: str,
+        collection: Dict[str, Any],
+        options: Optional[Mapping[str, Any]] = None,
+        **kwargs: Any
+    ):
         """Creates a collection in a database.
 
         :param str database_link:
@@ -2080,7 +2086,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(database_or_container_link, "docs")
         collection_id = base.GetResourceIdOrFullNameFromLink(database_or_container_link)
 
-        async def fetch_fn(options: Mapping[str, Any]) -> Tuple[AsyncItemPaged[Dict[str, Any]], Dict[str, Any]]:
+        async def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
             return (
                 await self.__QueryFeed(
                     path,
@@ -2218,7 +2224,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        async def fetch_fn(options: Mapping[str, Any]) -> Tuple[AsyncItemPaged[Dict[str, Any]], Dict[str, Any]]:
+        async def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
             return (
                 await self.__QueryFeed(
                     "/offers", "offers", "", lambda r: r["Offers"], lambda _, b: b, query, options, **kwargs
@@ -2290,7 +2296,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         user_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged[str, Any]:
+    ) -> AsyncItemPaged[Dict[str, Any]]:
         """Reads all permissions for a user.
 
         :param str user_link:

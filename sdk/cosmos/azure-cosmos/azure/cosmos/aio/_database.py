@@ -25,6 +25,7 @@
 from typing import Any, Dict, Mapping, Optional, Union, cast
 
 import warnings
+from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
@@ -125,7 +126,13 @@ class DatabaseProxy(object):
         return self._properties
 
     @distributed_trace_async
-    async def read(self, **kwargs: Any) -> Dict[str, Any]:
+    async def read(
+        self,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Read the database properties.
 
         :keyword str session_token: Token for use with Session consistency.
@@ -136,24 +143,38 @@ class DatabaseProxy(object):
         :returns: A dict representing the database properties
         :rtype: Dict[str, Any]
         """
-        database_link = _get_database_link(self)
-        request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
+        database_link = _get_database_link(self)
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if initial_headers is not None:
+            kwargs['initial_headers'] = initial_headers
+        request_options = _build_options(kwargs)
 
         self._properties = await self.client_connection.ReadDatabase(
             database_link, options=request_options, **kwargs
         )
-
         if response_hook:
             response_hook(self.client_connection.last_response_headers, self._properties)
 
-        return cast('Dict[str, Any]', self._properties)
+        return self._properties
 
     @distributed_trace_async
     async def create_container(
         self,
         id: str,
-        partition_key: PartitionKey,
+        partition_key: Optional[PartitionKey],
+        *,
+        indexing_policy: Optional[Dict[str, str]] = None,
+        default_ttl: Optional[int] = None,
+        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+        unique_key_policy: Optional[Dict[str, str]] = None,
+        conflict_resolution_policy: Optional[Dict[str, str]] = None,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        analytical_storage_ttl: Optional[int] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Create a new container with the given ID (name).
@@ -203,10 +224,10 @@ class DatabaseProxy(object):
                 :caption: Create a container with specific settings; in this case, a custom partition key:
                 :name: create_container_with_settings
         """
+        response_hook = kwargs.pop('response_hook', None)
         definition: Dict[str, Any] = dict(id=id)
         if partition_key is not None:
             definition["partitionKey"] = partition_key
-        indexing_policy = kwargs.pop('indexing_policy', None)
         if indexing_policy is not None:
             if indexing_policy.get("indexingMode") is IndexingMode.Lazy:
                 warnings.warn(
@@ -214,31 +235,31 @@ class DatabaseProxy(object):
                     DeprecationWarning
                 )
             definition["indexingPolicy"] = indexing_policy
-        default_ttl = kwargs.pop('default_ttl', None)
         if default_ttl is not None:
             definition["defaultTtl"] = default_ttl
-        unique_key_policy = kwargs.pop('unique_key_policy', None)
         if unique_key_policy is not None:
             definition["uniqueKeyPolicy"] = unique_key_policy
-        conflict_resolution_policy = kwargs.pop('conflict_resolution_policy', None)
         if conflict_resolution_policy is not None:
             definition["conflictResolutionPolicy"] = conflict_resolution_policy
-        analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
         if analytical_storage_ttl is not None:
             definition["analyticalStorageTtl"] = analytical_storage_ttl
 
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if initial_headers is not None:
+            kwargs['initial_headers'] = initial_headers
+        if etag is not None:
+            kwargs['etag'] = etag
+        if match_condition is not None:
+            kwargs['match_condition'] = match_condition
         request_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
-        offer_throughput = kwargs.pop('offer_throughput', None)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
         data = await self.client_connection.CreateContainer(
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
         )
-
         if response_hook:
             response_hook(self.client_connection.last_response_headers, data)
-
         return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data)
 
     @distributed_trace_async
