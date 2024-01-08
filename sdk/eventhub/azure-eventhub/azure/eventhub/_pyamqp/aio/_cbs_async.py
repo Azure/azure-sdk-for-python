@@ -246,7 +246,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
                 self._token, token_type, self._auth.audience, utc_from_timestamp(self._expires_on)
             )
 
-    async def handle_token(self) -> Optional[bool]:
+    async def handle_token(self) -> bool:  # pylint: disable=inconsistent-return-statements
         if not await self._cbs_link_ready():
             return False
         await self._update_status()
