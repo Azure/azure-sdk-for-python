@@ -83,15 +83,17 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
         cls, conn_str: str, **kwargs: Any
     ) -> "AzureMonitorLogExporter":
         """
-        Create an AzureMonitorLogExporter from a connection string.
+        Create an AzureMonitorLogExporter from a connection string. This is the
+        recommended way of instantation if a connection string is passed in
+        explicitly. If a user wants to use a connection string provided by
+        environment variable, the constructor of the exporter can be called
+        directly.
 
-        This is the recommended way of instantation if a connection string is passed in explicitly.
-        If a user wants to use a connection string provided by environment variable, the constructor
-        of the exporter can be called directly.
-
-        :param str conn_str: The connection string to be used for authentication.
-        :keyword str api_version: The service API version used. Defaults to latest.
-        :returns an instance of ~AzureMonitorLogExporter
+        :param str conn_str: The connection string to be used for
+            authentication.
+        :keyword str api_version: The service API version used. Defaults to
+            latest.
+        :return: an instance of ~AzureMonitorLogExporter
         :rtype ~azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter
         """
         return cls(connection_string=conn_str, **kwargs)
