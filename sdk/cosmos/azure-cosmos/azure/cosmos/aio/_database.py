@@ -106,7 +106,7 @@ class DatabaseProxy(object):
     def _get_container_id(self, container_or_id: Union[str, ContainerProxy, Dict[str, Any]]) -> str:
         if isinstance(container_or_id, str):
             return container_or_id
-        elif isinstance(container_or_id, ContainerProxy):
+        if isinstance(container_or_id, ContainerProxy):
             return container_or_id.id
         return str(container_or_id["id"])
 
@@ -116,7 +116,7 @@ class DatabaseProxy(object):
     def _get_user_link(self, user_or_id: Union[UserProxy, str, Mapping[str, Any]]) -> str:
         if isinstance(user_or_id, str):
             return "{}/users/{}".format(self.database_link, user_or_id)
-        elif isinstance(user_or_id, UserProxy):
+        if isinstance(user_or_id, UserProxy):
             return user_or_id.user_link
         return "{}/users/{}".format(self.database_link, user_or_id["id"])
 
