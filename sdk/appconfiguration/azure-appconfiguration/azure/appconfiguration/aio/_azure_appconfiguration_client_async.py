@@ -470,15 +470,15 @@ class AzureAppConfigurationClient:
             deleted_config_setting = await client.delete_configuration_setting(configuration_setting=config_setting)
         """
 
-    @distributed_trace
-    async def delete_configuration_setting(self, *args, **kwargs):
+    @distributed_trace_async
+    async def delete_configuration_setting(self, *args, **kwargs) -> ConfigurationSetting:
         try:
             config_setting = kwargs.pop("configuration_setting", None)
             if not config_setting:
                 config_setting = args[0]
             key = config_setting.key
             label = config_setting.label
-        except (TypeError, IndexError):
+        except (AttributeError, IndexError):
             key = kwargs.pop("key", None)
             if key is None:
                 key = args[0]
