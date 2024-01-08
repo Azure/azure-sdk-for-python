@@ -60,7 +60,7 @@ class FileBasedDocstore:
         else:
             return self._dict[search]
 
-    def save(self, output_path: str):
+    def save(self, output_path: Union[str, Path]):
         """
         Save to JSONL file.
 

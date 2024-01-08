@@ -20,7 +20,6 @@ from azure.monitor.opentelemetry._configure import (
     _setup_instrumentations,
     _setup_logging,
     _setup_metrics,
-    _setup_resources,
     _setup_tracing,
     configure_azure_monitor,
 )
@@ -39,12 +38,8 @@ class TestConfigure(unittest.TestCase):
     @patch(
         "azure.monitor.opentelemetry._configure._setup_tracing",
     )
-    @patch(
-        "azure.monitor.opentelemetry._configure._setup_resources",
-    )
     def test_configure_azure_monitor(
         self,
-        resource_mock,
         tracing_mock,
         logging_mock,
         metrics_mock,
@@ -54,7 +49,6 @@ class TestConfigure(unittest.TestCase):
             "connection_string": "test_cs",
         }
         configure_azure_monitor(**kwargs)
-        resource_mock.assert_called_once()
         tracing_mock.assert_called_once()
         logging_mock.assert_called_once()
         metrics_mock.assert_called_once()
@@ -73,15 +67,11 @@ class TestConfigure(unittest.TestCase):
         "azure.monitor.opentelemetry._configure._setup_tracing",
     )
     @patch(
-        "azure.monitor.opentelemetry._configure._setup_resources",
-    )
-    @patch(
         "azure.monitor.opentelemetry._configure._get_configurations",
     )
     def test_configure_azure_monitor_disable_tracing(
         self,
         config_mock,
-        resource_mock,
         tracing_mock,
         logging_mock,
         metrics_mock,
@@ -106,7 +96,6 @@ class TestConfigure(unittest.TestCase):
         }
         config_mock.return_value = configurations
         configure_azure_monitor()
-        resource_mock.assert_called_once()
         tracing_mock.assert_not_called()
         logging_mock.assert_called_once_with(configurations)
         metrics_mock.assert_called_once_with(configurations)
@@ -125,15 +114,11 @@ class TestConfigure(unittest.TestCase):
         "azure.monitor.opentelemetry._configure._setup_tracing",
     )
     @patch(
-        "azure.monitor.opentelemetry._configure._setup_resources",
-    )
-    @patch(
         "azure.monitor.opentelemetry._configure._get_configurations",
     )
     def test_configure_azure_monitor_disable_logging(
         self,
         config_mock,
-        resource_mock,
         tracing_mock,
         logging_mock,
         metrics_mock,
@@ -147,7 +132,6 @@ class TestConfigure(unittest.TestCase):
         }
         config_mock.return_value = configurations
         configure_azure_monitor()
-        resource_mock.assert_called_once()
         tracing_mock.assert_called_once_with(configurations)
         logging_mock.assert_not_called()
         metrics_mock.assert_called_once_with(configurations)
@@ -166,15 +150,11 @@ class TestConfigure(unittest.TestCase):
         "azure.monitor.opentelemetry._configure._setup_tracing",
     )
     @patch(
-        "azure.monitor.opentelemetry._configure._setup_resources",
-    )
-    @patch(
         "azure.monitor.opentelemetry._configure._get_configurations",
     )
     def test_configure_azure_monitor_disable_metrics(
         self,
         config_mock,
-        resource_mock,
         tracing_mock,
         logging_mock,
         metrics_mock,
@@ -188,43 +168,10 @@ class TestConfigure(unittest.TestCase):
         }
         config_mock.return_value = configurations
         configure_azure_monitor()
-        resource_mock.assert_called_once()
         tracing_mock.assert_called_once_with(configurations)
         logging_mock.assert_called_once_with(configurations)
         metrics_mock.assert_not_called()
         instrumentation_mock.assert_called_once_with(configurations)
-
-    @patch.dict("os.environ", {}, clear=True)
-    def test_setup_resources(self):
-        _setup_resources()
-        self.assertEqual(
-            os.environ["OTEL_EXPERIMENTAL_RESOURCE_DETECTORS"],
-            "azure_app_service,azure_vm"
-        )
-
-    @patch.dict("os.environ", {"OTEL_EXPERIMENTAL_RESOURCE_DETECTORS": ""})
-    def test_setup_resources_empty_string(self):
-        _setup_resources()
-        self.assertEqual(
-            os.environ["OTEL_EXPERIMENTAL_RESOURCE_DETECTORS"],
-            ""
-        )
-
-    @patch.dict("os.environ", {"OTEL_EXPERIMENTAL_RESOURCE_DETECTORS": "test_detector"})
-    def test_setup_resources_existing_detectors(self):
-        _setup_resources()
-        self.assertEqual(
-            os.environ["OTEL_EXPERIMENTAL_RESOURCE_DETECTORS"],
-            "test_detector"
-        )
-
-    @patch.dict("os.environ", {"OTEL_EXPERIMENTAL_RESOURCE_DETECTORS": "azure_vm,test_detector, azure_app_service"})
-    def test_setup_resources_azure_and_existing_detectors(self):
-        _setup_resources()
-        self.assertEqual(
-            os.environ["OTEL_EXPERIMENTAL_RESOURCE_DETECTORS"],
-            "azure_vm,test_detector, azure_app_service"
-        )
 
     @patch(
         "azure.monitor.opentelemetry._configure.settings",
@@ -274,11 +221,13 @@ class TestConfigure(unittest.TestCase):
                 "azure_sdk": {"enabled": True}
             },
             "sampling_ratio": 0.5,
+            "resource": "test_resource",
         }
         _setup_tracing(configurations)
         sampler_mock.assert_called_once_with(sampling_ratio=0.5)
         tp_mock.assert_called_once_with(
             sampler=sampler_init_mock,
+            resource="test_resource"
         )
         set_tracer_provider_mock.assert_called_once_with(tp_init_mock)
         get_tracer_provider_mock.assert_called()
@@ -336,10 +285,11 @@ class TestConfigure(unittest.TestCase):
         configurations = {
             "connection_string": "test_cs",
             "logger_name": "test",
+            "resource": "test_resource",
         }
         _setup_logging(configurations)
 
-        lp_mock.assert_called_once_with()
+        lp_mock.assert_called_once_with(resource="test_resource")
         set_logger_provider_mock.assert_called_once_with(lp_init_mock)
         get_logger_provider_mock.assert_called()
         log_exporter_mock.assert_called_once_with(**configurations)
@@ -386,10 +336,12 @@ class TestConfigure(unittest.TestCase):
 
         configurations = {
             "connection_string": "test_cs",
+            "resource": "test_resource",
         }
         _setup_metrics(configurations)
         mp_mock.assert_called_once_with(
             metric_readers=[reader_init_mock],
+            resource="test_resource"
         )
         set_meter_provider_mock.assert_called_once_with(mp_init_mock)
         metric_exporter_mock.assert_called_once_with(**configurations)

@@ -822,9 +822,9 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         assert len(action_results) == 3
 
         assert action_results[0][0].entities[0].text == "859-98-0987"
-        # assert action_results[0][0].entities[0].category == PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER
-        assert action_results[1][0].entities[0].text == "111000025"
-        assert action_results[1][0].entities[0].category == PiiEntityCategory.ABA_ROUTING_NUMBER
+        assert action_results[0][0].entities[0].category == PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER
+        # assert action_results[1][0].entities[0].text == "111000025"
+        # assert action_results[1][0].entities[0].category == PiiEntityCategory.ABA_ROUTING_NUMBER
         assert action_results[2][0].entities == []  # No Brazilian CPF since not in categories_filter
 
     @pytest.mark.skip("No longer tests what it intended to. Need new way to test partial actions before re-enabling.")

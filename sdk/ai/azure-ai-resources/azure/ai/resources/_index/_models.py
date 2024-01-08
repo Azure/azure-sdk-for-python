@@ -84,10 +84,10 @@ def init_open_ai_from_config(config: dict, credential: Optional[TokenCredential]
                 # Only change base, version, and type in AOAI case
                 if hasattr(connection, "type"):
                     if connection.type == "azure_open_ai":
-                        config["api_base"] = connection.target
-                        connection_metadata = connection.metadata
-                        config["api_version"] = connection.metadata.get("apiVersion", connection_metadata.get("ApiVersion", "2023-07-01-preview"))
-                        config["api_type"] = connection.metadata.get("apiType", connection_metadata.get("ApiType", "azure")).lower()
+                        config["api_base"] = getattr(connection, "target", None)
+                        connection_metadata = getattr(connection, "metadata", {})
+                        config["api_version"] = connection_metadata.get("apiVersion", connection_metadata.get("ApiVersion", "2023-07-01-preview"))
+                        config["api_type"] = connection_metadata.get("apiType", connection_metadata.get("ApiType", "azure")).lower()
                 elif isinstance(connection, dict) and connection.get("properties", {}).get("category", None) == "AzureOpenAI":
                     config["api_base"] = connection.get("properties", {}).get("target")
                     connection_metadata = connection.get("properties", {}).get("metadata", {})

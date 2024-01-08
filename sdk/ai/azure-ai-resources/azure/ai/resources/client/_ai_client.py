@@ -6,9 +6,9 @@ import json
 import logging
 import os
 import tempfile
-from typing import Any, Optional, Union
+from typing import Any, Optional, Union, Optional
 
-import yaml
+import yaml  # type: ignore[import]
 
 from azure.ai.resources._utils._ai_client_utils import find_config_file_path, get_config_info
 from azure.ai.resources._utils._open_ai_utils import build_open_ai_protocol
@@ -42,8 +42,8 @@ class AIClient:
     def __init__(
         self,
         credential: TokenCredential,
-        subscription_id: Optional[str] = None,
-        resource_group_name: Optional[str] = None,  # Consider changing to a team name
+        subscription_id: str,
+        resource_group_name: str,  # Consider changing to a team name
         ai_resource_name: Optional[str] = None,
         project_name: Optional[str] = None,
         **kwargs: Any,
@@ -183,14 +183,14 @@ class AIClient:
         """
         return self._mlindexes
 
-    @property
-    def pf(self) -> PFOperations:
-        """A collection of PF operation-related operations.
+    # @property
+    # def pf(self) -> PFOperations:
+    #     """A collection of PF operation-related operations.
 
-        :return: PF Operation operations
-        :rtype: PFOperations
-        """
-        return self._pf
+    #     :return: PF Operation operations
+    #     :rtype: PFOperations
+    #     """
+    #     return self._pf
 
     @property
     def data(self) -> DataOperations:
@@ -269,18 +269,18 @@ class AIClient:
         output_index_name: str,
         vector_store: str,
         ######## chunking information ##########
-        data_source_url: str = None,
-        chunk_size: int = None,
-        chunk_overlap: int = None,
-        input_glob: str = None,
-        max_sample_files: int = None,
-        chunk_prepend_summary: bool = None,
+        data_source_url: Optional[str] = None,
+        chunk_size: Optional[int] = None,
+        chunk_overlap: Optional[int] = None,
+        input_glob: Optional[str] = None,
+        max_sample_files: Optional[int] = None,
+        chunk_prepend_summary: Optional[bool] = None,
         ######## other generic args ########
-        document_path_replacement_regex: str = None,
+        document_path_replacement_regex: Optional[str] = None,
         embeddings_model="text-embedding-ada-002",
         aoai_connection_id: str = DEFAULT_OPEN_AI_CONNECTION_NAME,
         ######## ACS index info ########
-        acs_config: ACSOutputConfig = None,  # todo better name?
+        acs_config: Optional[ACSOutputConfig] = None,  # todo better name?
         ######## data source info ########
         input_source: Union[IndexDataSource, str],
         identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
@@ -315,14 +315,14 @@ class AIClient:
             IndexSource,
             IndexStore,
         )
-        from azure.ai.resources._index._embeddings import EmbeddingsContainer
+        from azure.ai.resources._index._embeddings.EmbeddingsContainer import from_uri
         if isinstance(input_source, ACSSource):
             from azure.ai.resources._index._utils.connections import get_connection_by_id_v2, get_target_from_connection
 
             # Construct MLIndex object
             mlindex_config = {}
             connection_args = {"connection_type": "workspace_connection", "connection": {"id": aoai_connection_id}}
-            mlindex_config["embeddings"] = EmbeddingsContainer.from_uri(
+            mlindex_config["embeddings"] = from_uri(
                 build_open_ai_protocol(embeddings_model), **connection_args
             ).get_metadata()
             mlindex_config["index"] = {
@@ -368,8 +368,8 @@ class AIClient:
                 chunk_overlap=chunk_overlap,
                 citation_url=data_source_url,
                 citation_url_replacement_regex=CitationRegex(
-                    match_pattern=document_path_replacement_regex["match_pattern"],
-                    replacement_pattern=document_path_replacement_regex["replacement_pattern"],
+                    match_pattern=document_path_replacement_regex["match_pattern"],  # type: ignore[index]
+                    replacement_pattern=document_path_replacement_regex["replacement_pattern"], # type: ignore[index]
                 )
                 if document_path_replacement_regex
                 else None,

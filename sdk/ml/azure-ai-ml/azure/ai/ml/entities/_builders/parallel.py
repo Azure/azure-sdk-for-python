@@ -43,7 +43,7 @@ from .base_node import BaseNode
 module_logger = logging.getLogger(__name__)
 
 
-class Parallel(BaseNode, NodeWithGroupInputMixin):
+class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-instance-attributes
     """Base class for parallel node, used for parallel component version consumption.
 
     You should not instantiate this class directly. Instead, you should
@@ -102,8 +102,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
     :type outputs: dict
     """
 
-    # pylint: disable=too-many-instance-attributes
-    def __init__(
+    def __init__(  # pylint: disable=too-many-statements
         self,
         *,
         component: Union[ParallelComponent, str],
@@ -193,9 +192,8 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         self.environment_variables = {} if environment_variables is None else environment_variables
         self._identity = identity
         if isinstance(self.component, ParallelComponent):
-            self.resources = cast(JobResourceConfiguration, self.resources) or cast(
-                JobResourceConfiguration, copy.deepcopy(self.component.resources)
-            )
+            self.resources = self.resources or copy.deepcopy(self.component.resources)
+            self.retry_settings = self.retry_settings or copy.deepcopy(self.component.retry_settings)
             self.input_data = self.input_data or self.component.input_data
             self.max_concurrency_per_instance = (
                 self.max_concurrency_per_instance or self.component.max_concurrency_per_instance
