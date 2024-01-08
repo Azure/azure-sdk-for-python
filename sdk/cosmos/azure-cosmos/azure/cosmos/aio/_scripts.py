@@ -21,8 +21,10 @@
 
 """Create, read, update and delete and execute scripts in the Azure Cosmos DB SQL API service.
 """
+# pylint: disable=protected-access
+# pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
-from typing import Any, Dict, List, Mapping, Union, Optional, Type
+from typing import Any, Dict, List, Mapping, Union, Optional, Type, TYPE_CHECKING
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -31,11 +33,11 @@ from azure.core.tracing.decorator import distributed_trace
 from ._cosmos_client_connection_async import CosmosClientConnection as _CosmosClientConnection
 from .._base import build_options as _build_options
 from ..scripts import ScriptType
-from ._container import ContainerProxy
 from ..partition_key import NonePartitionKeyValue, _return_undefined_or_empty_partition_key
 
-# pylint: disable=protected-access
-# pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+if TYPE_CHECKING:
+    from ._container import ContainerProxy
+
 
 PartitionKeyType = Union[str, int, float, bool, List[Union[str, int, float, bool]], Type[NonePartitionKeyValue]]
 
@@ -49,7 +51,7 @@ class ScriptsProxy:
 
     def __init__(
             self,
-            container: ContainerProxy,
+            container: "ContainerProxy",
             client_connection: _CosmosClientConnection,
             container_link: str
     ) -> None:
