@@ -16,9 +16,15 @@ from opentelemetry.environment_variables import (
 from opentelemetry.instrumentation.environment_variables import (
     OTEL_PYTHON_DISABLED_INSTRUMENTATIONS,
 )
-from opentelemetry.sdk.environment_variables import OTEL_TRACES_SAMPLER_ARG
+from opentelemetry.sdk.environment_variables import (
+    OTEL_EXPERIMENTAL_RESOURCE_DETECTORS,
+    OTEL_TRACES_SAMPLER_ARG,
+)
+from opentelemetry.sdk.resources import Resource
 
 from azure.monitor.opentelemetry._constants import (
+    _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME,
+    _AZURE_VM_RESOURCE_DETECTOR_NAME,
     _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES,
     _PREVIEW_INSTRUMENTED_LIBRARIES,
     DISABLE_LOGGING_ARG,
@@ -26,14 +32,17 @@ from azure.monitor.opentelemetry._constants import (
     DISABLE_TRACING_ARG,
     INSTRUMENTATION_OPTIONS_ARG,
     LOGGER_NAME_ARG,
+    RESOURCE_ARG,
     SAMPLING_RATIO_ARG,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
 
 
 _INVALID_FLOAT_MESSAGE = "Value of %s must be a float. Defaulting to %s: %s"
-
-
+_SUPPORTED_RESOURCE_DETECTORS = (
+    _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME,
+    _AZURE_VM_RESOURCE_DETECTOR_NAME,
+)
 # TODO: remove when sampler uses env var instead
 SAMPLING_RATIO_ENV_VAR = OTEL_TRACES_SAMPLER_ARG
 
@@ -51,6 +60,7 @@ def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
     _default_disable_metrics(configurations)
     _default_disable_tracing(configurations)
     _default_logger_name(configurations)
+    _default_resource(configurations)
     _default_sampling_ratio(configurations)
     _default_instrumentation_options(configurations)
 
@@ -84,6 +94,14 @@ def _default_disable_tracing(configurations):
 def _default_logger_name(configurations):
     if LOGGER_NAME_ARG not in configurations:
         configurations[LOGGER_NAME_ARG] = ""
+
+
+def _default_resource(configurations):
+    environ.setdefault(
+        OTEL_EXPERIMENTAL_RESOURCE_DETECTORS,
+        ",".join(_SUPPORTED_RESOURCE_DETECTORS)
+    )
+    configurations[RESOURCE_ARG] = Resource.create()
 
 
 # TODO: remove when sampler uses env var instead
