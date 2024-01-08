@@ -22,7 +22,7 @@
 """Interact with databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Union, cast
+from typing import Any, Dict, Mapping, Union, cast
 
 import warnings
 from azure.core.async_paging import AsyncItemPaged
@@ -45,6 +45,15 @@ __all__ = ("DatabaseProxy",)
 
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+
+def _get_database_link(database_or_id: Union[str, 'DatabaseProxy', Mapping[str, Any]]) -> str:
+    if isinstance(database_or_id, str):
+        return "dbs/{}".format(database_or_id)
+    if isinstance(database_or_id, DatabaseProxy):
+        return database_or_id.database_link
+    database_id = database_or_id["id"]
+    return "dbs/{}".format(database_id)
+
 
 class DatabaseProxy(object):
     """An interface to interact with a specific database.

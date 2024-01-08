@@ -835,7 +835,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         user_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> ItemPaged[str, Any]:
         """Reads all permissions for a user.
 
         :param str user_link:
@@ -881,7 +881,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(user_link, "permissions")
         user_id = base.GetResourceIdOrFullNameFromLink(user_link)
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[ItemPaged[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
             return (
                 self.__QueryFeed(
                     path, "permissions", user_id, lambda r: r["Permissions"], lambda _, b: b, query, options, **kwargs
@@ -1438,7 +1438,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(collection_link, "triggers")
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[ItemPaged[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
             return (
                 self.__QueryFeed(
                     path, "triggers", collection_id, lambda r: r["Triggers"], lambda _, b: b, query, options, **kwargs
@@ -1597,7 +1597,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(collection_link, "udfs")
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[ItemPaged[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
             return (
                 self.__QueryFeed(
                     path, "udfs", collection_id, lambda r: r["UserDefinedFunctions"],
@@ -1757,7 +1757,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(collection_link, "sprocs")
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[ItemPaged[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
             return (
                 self.__QueryFeed(
                     path, "sprocs", collection_id, lambda r: r["StoredProcedures"],
@@ -2924,7 +2924,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         options: Mapping[str, Any],
         partition_key_range_id: Optional[str] = None,
         **kwargs: Any
-    ) -> Tuple[ItemPaged[Dict[str, Any]], Dict[str, Any]]:
+    ) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
         """Query Feed for Document Collection resource.
 
         :param str path: Path to the document collection.
@@ -2963,7 +2963,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
             is_query_plan: bool = False,
             **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]:
+    ) -> List[Dict[str, Any]]:
         """Query for more than one Azure Cosmos resources.
 
         :param str path:
