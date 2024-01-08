@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Optional, TypeVar
 from azure.core.credentials import AccessToken
 
 from .silent import SilentAuthenticationCredential
@@ -14,6 +14,9 @@ from .._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+
+
+T = TypeVar("T", bound="_SharedTokenCacheCredential")
 
 
 class SharedTokenCacheCredential:
@@ -40,12 +43,12 @@ class SharedTokenCacheCredential:
         else:
             self._credential = _SharedTokenCacheCredential(username=username, **kwargs)
 
-    def __enter__(self):
-        self._credential.__enter__()
+    def __enter__(self) -> "SharedTokenCacheCredential":
+        self._credential.__enter__()  # type: ignore
         return self
 
-    def __exit__(self, *args):
-        self._credential.__exit__(*args)
+    def __exit__(self, *args: Any) -> None:
+        self._credential.__exit__(*args)  # type: ignore
 
     def close(self) -> None:
         """Close the credential's transport session."""
@@ -97,9 +100,9 @@ class SharedTokenCacheCredential:
 class _SharedTokenCacheCredential(SharedTokenCacheBase):
     """The original SharedTokenCacheCredential, which doesn't use msal.ClientApplication"""
 
-    def __enter__(self):
+    def __enter__(self: T) -> T:
         if self._client:
-            self._client.__enter__()
+            self._client.__enter__()  # type: ignore
         return self
 
     def __exit__(self, *args):
