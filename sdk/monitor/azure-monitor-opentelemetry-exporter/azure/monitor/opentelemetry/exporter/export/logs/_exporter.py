@@ -84,7 +84,7 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
     ) -> "AzureMonitorLogExporter":
         """
         Create an AzureMonitorLogExporter from a connection string. This is the
-        recommended way of instantation if a connection string is passed in
+        recommended way of instantiation if a connection string is passed in
         explicitly. If a user wants to use a connection string provided by
         environment variable, the constructor of the exporter can be called
         directly.
