@@ -7,8 +7,8 @@ from typing import Any, Optional, List, Union
 from .. import models as _models
 from ._operations import ImageAnalysisClientOperationsMixin as ImageAnalysisClientOperationsMixinGenerated
 
-class ImageAnalysisClientOperationsMixin(ImageAnalysisClientOperationsMixinGenerated):
 
+class ImageAnalysisClientOperationsMixin(ImageAnalysisClientOperationsMixinGenerated):
     def analyze(
         self,
         image_content: Union[str, bytes],
@@ -60,26 +60,30 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientOperationsMixinGener
 
         if isinstance(image_content, str):
             return super()._analyze_from_url(
-                image_content = _models._models.ImageUrl(url = image_content), # pylint: disable=protected-access
-                visual_features = visual_features_impl,
-                language = language,
-                gender_neutral_caption = gender_neutral_caption,
-                smart_crops_aspect_ratios = smart_crops_aspect_ratios,
-                model_version = model_version,
-                **kwargs)
+                image_content=_models._models.ImageUrl(url=image_content),  # pylint: disable=protected-access
+                visual_features=visual_features_impl,
+                language=language,
+                gender_neutral_caption=gender_neutral_caption,
+                smart_crops_aspect_ratios=smart_crops_aspect_ratios,
+                model_version=model_version,
+                **kwargs
+            )
 
         return super()._analyze_from_buffer(
-            image_content = image_content,
-            visual_features = visual_features_impl,
-            language = language,
-            gender_neutral_caption = gender_neutral_caption,
-            smart_crops_aspect_ratios = smart_crops_aspect_ratios,
-            model_version = model_version,
-            **kwargs)
+            image_content=image_content,
+            visual_features=visual_features_impl,
+            language=language,
+            gender_neutral_caption=gender_neutral_caption,
+            smart_crops_aspect_ratios=smart_crops_aspect_ratios,
+            model_version=model_version,
+            **kwargs
+        )
+
 
 __all__: List[str] = [
     "ImageAnalysisClientOperationsMixin"
 ]  # Add all objects you want publicly available to users at this package level
+
 
 def patch_sdk():
     """Do not remove from this file.

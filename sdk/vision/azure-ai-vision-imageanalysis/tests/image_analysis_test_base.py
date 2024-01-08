@@ -21,7 +21,7 @@ LOGGING_ENABLED = True
 if LOGGING_ENABLED:
     # Create a logger for the 'azure' SDK
     # See https://docs.python.org/3/library/logging.html
-    logger = logging.getLogger('azure')
+    logger = logging.getLogger("azure")
     logger.setLevel(logging.INFO)  # INFO or DEBUG
 
     # Configure a console output
@@ -31,8 +31,8 @@ if LOGGING_ENABLED:
 ServicePreparer = functools.partial(
     EnvironmentVariableLoader,
     "vision",
-    vision_endpoint = "https://fake-resource-name.cognitiveservices.azure.com",
-    vision_key = "00000000000000000000000000000000",
+    vision_endpoint="https://fake-resource-name.cognitiveservices.azure.com",
+    vision_key="00000000000000000000000000000000",
 )
 
 
@@ -55,46 +55,45 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
         key = kwargs.pop("vision_key")
         self._create_client(endpoint, key, sync, get_connection_url)
 
-
     def _create_client_for_authentication_failure(self, sync: bool, **kwargs):
         endpoint = kwargs.pop("vision_endpoint")
         key = "00000000000000000000000000000000"
         self._create_client(endpoint, key, sync, False)
 
-
     def _create_client(self, endpoint: str, key: str, sync: bool, get_connection_url: bool):
         credential = AzureKeyCredential(key)
         if sync:
             self.client = sdk.ImageAnalysisClient(
-                endpoint = endpoint,
-                credential = credential,
-                logging_enable = LOGGING_ENABLED,
-                raw_request_hook = self._raw_request_check if get_connection_url else None)
+                endpoint=endpoint,
+                credential=credential,
+                logging_enable=LOGGING_ENABLED,
+                raw_request_hook=self._raw_request_check if get_connection_url else None,
+            )
             assert self.client is not None
         else:
             self.async_client = async_sdk.ImageAnalysisClient(
-                endpoint = endpoint,
-                credential = credential,
-                logging_enable = LOGGING_ENABLED,
-                raw_request_hook = self._raw_request_check if get_connection_url else None)
+                endpoint=endpoint,
+                credential=credential,
+                logging_enable=LOGGING_ENABLED,
+                raw_request_hook=self._raw_request_check if get_connection_url else None,
+            )
             assert self.async_client is not None
-
 
     def _raw_request_check(self, request: PipelineRequest):
         self.connection_url = request.http_request.url
         print(f"Connection URL: {request.http_request.url}")
 
-
     def _do_analysis(
-            self,
-            image_source: str,
-            visual_features: List[sdk.models.VisualFeatures],
-            language: Optional[str] = None,
-            gender_neutral_caption: Optional[bool] = None,
-            smart_crops_aspect_ratios: Optional[List[float]] = None,
-            model_version: Optional[str] = None,
-            query_params: Optional[dict] = None,
-            **kwargs):
+        self,
+        image_source: str,
+        visual_features: List[sdk.models.VisualFeatures],
+        language: Optional[str] = None,
+        gender_neutral_caption: Optional[bool] = None,
+        smart_crops_aspect_ratios: Optional[List[float]] = None,
+        model_version: Optional[str] = None,
+        query_params: Optional[dict] = None,
+        **kwargs,
+    ):
 
         image_content: Union[str, bytes]
 
@@ -102,40 +101,43 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
             image_content = image_source
         else:
             # Load image to analyze into a 'bytes' object
-            with open(image_source, 'rb') as f:
+            with open(image_source, "rb") as f:
                 image_content = bytes(f.read())
 
         result = self.client.analyze(
-            image_content = image_content,
-            visual_features = visual_features,
-            language = language,
-            gender_neutral_caption = gender_neutral_caption,
-            smart_crops_aspect_ratios = smart_crops_aspect_ratios,
-            model_version = model_version,
-            params = query_params)
+            image_content=image_content,
+            visual_features=visual_features,
+            language=language,
+            gender_neutral_caption=gender_neutral_caption,
+            smart_crops_aspect_ratios=smart_crops_aspect_ratios,
+            model_version=model_version,
+            params=query_params,
+        )
 
         # Optional: console printout of all results
         if ImageAnalysisTestBase.PRINT_ANALYSIS_RESULTS:
             ImageAnalysisTestBase._print_analysis_results(result)
 
         # Validate all results
-        ImageAnalysisTestBase._validate_result(result, visual_features, gender_neutral_caption, smart_crops_aspect_ratios)
+        ImageAnalysisTestBase._validate_result(
+            result, visual_features, gender_neutral_caption, smart_crops_aspect_ratios
+        )
 
         # Validate that additional query parameters exists in the connection URL, if specify
         if query_params is not None:
             ImageAnalysisTestBase._validate_query_parameters(query_params, self.connection_url)
 
-
     async def _do_async_analysis(
-            self,
-            image_source: str,
-            visual_features: List[sdk.models.VisualFeatures],
-            language: Optional[str] = None,
-            gender_neutral_caption: Optional[bool] = None,
-            smart_crops_aspect_ratios: Optional[List[float]] = None,
-            model_version: Optional[str] = None,
-            query_params: Optional[dict] = None,
-            **kwargs):
+        self,
+        image_source: str,
+        visual_features: List[sdk.models.VisualFeatures],
+        language: Optional[str] = None,
+        gender_neutral_caption: Optional[bool] = None,
+        smart_crops_aspect_ratios: Optional[List[float]] = None,
+        model_version: Optional[str] = None,
+        query_params: Optional[dict] = None,
+        **kwargs,
+    ):
 
         image_content: Union[str, bytes]
 
@@ -143,37 +145,40 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
             image_content = image_source
         else:
             # Load image to analyze into a 'bytes' object
-            with open(image_source, 'rb') as f:
+            with open(image_source, "rb") as f:
                 image_content = bytes(f.read())
 
         result = await self.async_client.analyze(
-            image_content = image_content,
-            visual_features = visual_features,
-            language = language,
-            gender_neutral_caption = gender_neutral_caption,
-            smart_crops_aspect_ratios = smart_crops_aspect_ratios,
-            model_version = model_version,
-            params = query_params)
+            image_content=image_content,
+            visual_features=visual_features,
+            language=language,
+            gender_neutral_caption=gender_neutral_caption,
+            smart_crops_aspect_ratios=smart_crops_aspect_ratios,
+            model_version=model_version,
+            params=query_params,
+        )
 
         # Optional: console printout of all results
         if ImageAnalysisTestBase.PRINT_ANALYSIS_RESULTS:
             ImageAnalysisTestBase._print_analysis_results(result)
 
         # Validate all results
-        ImageAnalysisTestBase._validate_result(result, visual_features, gender_neutral_caption, smart_crops_aspect_ratios)
+        ImageAnalysisTestBase._validate_result(
+            result, visual_features, gender_neutral_caption, smart_crops_aspect_ratios
+        )
 
         # Validate that additional query parameters exists in the connection URL, if specify
         if query_params is not None:
             ImageAnalysisTestBase._validate_query_parameters(query_params, self.connection_url)
 
-
     def _do_analysis_with_error(
-            self,
-            image_source: str,
-            visual_features: List[sdk.models.VisualFeatures],
-            expected_status_code: int,
-            expected_message_contains: str,
-            **kwargs):
+        self,
+        image_source: str,
+        visual_features: List[sdk.models.VisualFeatures],
+        expected_status_code: int,
+        expected_message_contains: str,
+        **kwargs,
+    ):
 
         image_content: Union[str, bytes]
 
@@ -181,29 +186,27 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
             image_content = image_source
         else:
             # Load image to analyze into a 'bytes' object
-            with open(image_source, 'rb') as f:
+            with open(image_source, "rb") as f:
                 image_content = bytes(f.read())
 
         try:
-            result = self.client.analyze(
-                image_content = image_content,
-                visual_features = visual_features)
+            result = self.client.analyze(image_content=image_content, visual_features=visual_features)
         except AzureError as e:
             print(e)
-            assert hasattr(e, 'status_code')
+            assert hasattr(e, "status_code")
             assert e.status_code == expected_status_code
             assert expected_message_contains in e.message
             return
-        assert False # We should not get here
-
+        assert False  # We should not get here
 
     async def _do_async_analysis_with_error(
-                self,
-                image_source: str,
-                visual_features: List[sdk.models.VisualFeatures],
-                expected_status_code: int,
-                expected_message_contains: str,
-                **kwargs):
+        self,
+        image_source: str,
+        visual_features: List[sdk.models.VisualFeatures],
+        expected_status_code: int,
+        expected_message_contains: str,
+        **kwargs,
+    ):
 
         image_content: Union[str, bytes]
 
@@ -211,38 +214,35 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
             image_content = image_source
         else:
             # Load image to analyze into a 'bytes' object
-            with open(image_source, 'rb') as f:
+            with open(image_source, "rb") as f:
                 image_content = bytes(f.read())
 
         try:
-            result = await self.async_client.analyze(
-                image_content = image_content,
-                visual_features = visual_features)
+            result = await self.async_client.analyze(image_content=image_content, visual_features=visual_features)
         except AzureError as e:
             print(e)
-            assert hasattr(e, 'status_code')
+            assert hasattr(e, "status_code")
             assert e.status_code == expected_status_code
             assert expected_message_contains in e.message
             return
-        assert False # We should not get here
-
+        assert False  # We should not get here
 
     @staticmethod
     def _validate_query_parameters(query_params: dict, connection_url: str):
         assert len(query_params) > 0
-        query_string = ''
+        query_string = ""
         for key, value in query_params.items():
-            query_string += '&' + key + '=' + value
-        query_string = '?' + query_string[1:]
+            query_string += "&" + key + "=" + value
+        query_string = "?" + query_string[1:]
         assert query_string in connection_url
-
 
     @staticmethod
     def _validate_result(
-            result: sdk.models.ImageAnalysisResult,
-            expected_features: List[sdk.models.VisualFeatures],
-            gender_neutral_caption: Optional[bool] = None,
-            smart_crops_aspect_ratios: Optional[List[float]] = None):
+        result: sdk.models.ImageAnalysisResult,
+        expected_features: List[sdk.models.VisualFeatures],
+        gender_neutral_caption: Optional[bool] = None,
+        smart_crops_aspect_ratios: Optional[List[float]] = None,
+    ):
         ImageAnalysisTestBase._validate_metadata(result)
         ImageAnalysisTestBase._validate_model_version(result)
 
@@ -281,19 +281,16 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
         else:
             assert result.read is None
 
-
     @staticmethod
     def _validate_metadata(result: sdk.models.ImageAnalysisResult):
         assert result.metadata is not None
         assert result.metadata.height == 576
         assert result.metadata.width == 864
 
-
     @staticmethod
     def _validate_model_version(result: sdk.models.ImageAnalysisResult):
         assert result.model_version is not None
         assert result.model_version == "2023-10-01"
-
 
     @staticmethod
     def _validate_caption(result: sdk.models.ImageAnalysisResult, gender_neutral_caption: Optional[bool] = None):
@@ -306,7 +303,6 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
         assert "table" in result.caption.text.lower()
         assert "laptop" in result.caption.text.lower()
         assert 0.0 < result.caption.confidence < 1.0
-
 
     @staticmethod
     def _validate_dense_captions(result: sdk.models.ImageAnalysisResult):
@@ -343,14 +339,15 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
 
         # Make sure each dense caption is unique
         for i, dense_caption in enumerate(result.dense_captions.values):
-            for other_dense_caption in result.dense_captions.values[i + 1:]:
+            for other_dense_caption in result.dense_captions.values[i + 1 :]:
                 # Do not include the check below. It's okay to have two identical dense captions since they have different bounding boxes.
-                #assert other_dense_caption.text != dense_caption.text
-                assert  not (other_dense_caption.bounding_box.x == dense_caption.bounding_box.x 
+                # assert other_dense_caption.text != dense_caption.text
+                assert not (
+                    other_dense_caption.bounding_box.x == dense_caption.bounding_box.x
                     and other_dense_caption.bounding_box.y == dense_caption.bounding_box.y
                     and other_dense_caption.bounding_box.height == dense_caption.bounding_box.height
-                    and other_dense_caption.bounding_box.width == dense_caption.bounding_box.width)
-
+                    and other_dense_caption.bounding_box.width == dense_caption.bounding_box.width
+                )
 
     @staticmethod
     def _validate_objects(result: sdk.models.ImageAnalysisResult):
@@ -377,12 +374,13 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
         for i in range(len(objects.values)):
             for j in range(i + 1, len(objects.values)):
                 box_i = objects.values[i].bounding_box
-                box_j= objects.values[j].bounding_box
-                assert not (box_i.x ==box_j.x
+                box_j = objects.values[j].bounding_box
+                assert not (
+                    box_i.x == box_j.x
                     and box_i.y == box_j.y
                     and box_i.height == box_j.height
-                    and box_i.width == box_j.width)
-
+                    and box_i.width == box_j.width
+                )
 
     @staticmethod
     def _validate_tags(result: sdk.models.ImageAnalysisResult):
@@ -409,7 +407,6 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
             for j in range(i + 1, len(tags.values)):
                 assert tags.values[j].name != tags.values[i].name
 
-
     @staticmethod
     def _validate_people(result: sdk.models.ImageAnalysisResult):
         assert result.people is not None
@@ -424,31 +421,30 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
 
         # Make sure each person is unique
         for i, person in enumerate(result.people.values):
-            for other_person in result.people.values[i + 1:]:
+            for other_person in result.people.values[i + 1 :]:
                 assert not (
                     other_person.bounding_box.x == person.bounding_box.x
                     and other_person.bounding_box.y == person.bounding_box.y
                     and other_person.bounding_box.height == person.bounding_box.height
-                    and other_person.bounding_box.width == person.bounding_box.width)
-
+                    and other_person.bounding_box.width == person.bounding_box.width
+                )
 
     @staticmethod
     def _validate_smart_crops(
-        result: sdk.models.ImageAnalysisResult,
-        smart_crops_aspect_ratios: Optional[List[float]] =  None):
+        result: sdk.models.ImageAnalysisResult, smart_crops_aspect_ratios: Optional[List[float]] = None
+    ):
 
         assert result.smart_crops is not None
         crop_regions = result.smart_crops.values
 
         if smart_crops_aspect_ratios is None:
-            assert(len(crop_regions) == 1)
-            assert(crop_regions[0].aspect_ratio >= 0.5 and crop_regions[0].aspect_ratio <= 2.0)
+            assert len(crop_regions) == 1
+            assert crop_regions[0].aspect_ratio >= 0.5 and crop_regions[0].aspect_ratio <= 2.0
         else:
             assert len(crop_regions) == len(smart_crops_aspect_ratios)
             for i, region in enumerate(crop_regions):
                 assert region.aspect_ratio == smart_crops_aspect_ratios[i]
-                assert(region.aspect_ratio >= 0.75 and region.aspect_ratio <= 1.8)
-
+                assert region.aspect_ratio >= 0.75 and region.aspect_ratio <= 1.8
 
         for region in crop_regions:
             assert region.bounding_box.x >= 0
@@ -458,13 +454,13 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
 
         # Make sure each bounding box is unique
         for i, region in enumerate(crop_regions):
-            for other_region in crop_regions[i+1:]:
+            for other_region in crop_regions[i + 1 :]:
                 assert not (
                     other_region.bounding_box.x == region.bounding_box.x
                     and other_region.bounding_box.y == region.bounding_box.y
                     and other_region.bounding_box.height == region.bounding_box.height
-                    and other_region.bounding_box.width == region.bounding_box.width)
-
+                    and other_region.bounding_box.width == region.bounding_box.width
+                )
 
     @staticmethod
     def _validate_read(result: sdk.models.ImageAnalysisResult):
@@ -521,7 +517,6 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
             assert polygon[i].x > 0.0
             assert polygon[i].y > 0.0
 
-
     @staticmethod
     def _print_analysis_results(result: sdk.models.ImageAnalysisResult):
 
@@ -541,7 +536,11 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
         if result.objects is not None:
             print(" Objects:")
             for object in result.objects.values:
-                print("   '{}', {}, Confidence: {:.4f}".format(object.tags[0].name, object.bounding_box, object.tags[0].confidence))
+                print(
+                    "   '{}', {}, Confidence: {:.4f}".format(
+                        object.tags[0].name, object.bounding_box, object.tags[0].confidence
+                    )
+                )
 
         if result.tags is not None:
             print(" Tags:")
@@ -556,12 +555,13 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
         if result.smart_crops is not None:
             print(" Smart Cropping:")
             for smart_crop in result.smart_crops.values:
-                print("   Aspect ratio {}: Smart crop {}" .format(smart_crop.aspect_ratio, smart_crop.bounding_box))
+                print("   Aspect ratio {}: Smart crop {}".format(smart_crop.aspect_ratio, smart_crop.bounding_box))
 
         if result.read is not None:
             print(" Read:")
             for line in result.read.blocks[0].lines:
                 print(f"   Line: '{line.text}', Bounding box {line.bounding_polygon}")
                 for word in line.words:
-                    print(f"     Word: '{word.text}', Bounding polygon {word.bounding_polygon}, Confidence {word.confidence:.4f}")
-
+                    print(
+                        f"     Word: '{word.text}', Bounding polygon {word.bounding_polygon}, Confidence {word.confidence:.4f}"
+                    )

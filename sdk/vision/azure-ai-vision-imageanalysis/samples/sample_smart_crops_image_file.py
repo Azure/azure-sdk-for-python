@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# mypy: disable-error-code="attr-defined"
+
 """
 DESCRIPTION:
     This sample demonstrates how to find representatives sub-regions of the image file sample.jpg,
@@ -31,13 +31,15 @@ USAGE:
                          where `your-resource-name` is your unique Azure Computer Vision resource name.
     2) VISION_KEY - Your Computer Vision key (a 32-character Hexadecimal number)
 """
+
+
 def sample_smart_crops_image_file():
     import os
     from azure.ai.vision.imageanalysis import ImageAnalysisClient
     from azure.ai.vision.imageanalysis.models import VisualFeatures
     from azure.core.credentials import AzureKeyCredential
 
-    # Set the values of your computer vision endpoint and computer vision key 
+    # Set the values of your computer vision endpoint and computer vision key
     # as environment variables:
     try:
         endpoint = os.environ["VISION_ENDPOINT"]
@@ -48,32 +50,29 @@ def sample_smart_crops_image_file():
         exit()
 
     # Create an Image Analysis client
-    client = ImageAnalysisClient(
-        endpoint = endpoint,
-        credential = AzureKeyCredential(key)
-    )
+    client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Load image to analyze into a 'bytes' object
-    with open("sample.jpg", 'rb') as f:
+    with open("sample.jpg", "rb") as f:
         image_buffer = f.read()
 
     # Do Smart Cropping analysis on an image stream. This will be a synchronously (blocking) call.
     result = client.analyze(
-        image_content = image_buffer,
-        visual_features = [ VisualFeatures.SMART_CROPS ],
-        smart_crops_aspect_ratios = [0.9, 1.33] # Optional. Specify one more desired aspect ratios
+        image_content=image_buffer,
+        visual_features=[VisualFeatures.SMART_CROPS],
+        smart_crops_aspect_ratios=[0.9, 1.33],  # Optional. Specify one more desired aspect ratios
     )
 
     # Print smart crop analysis results to the console
     print("Image analysis results:")
     print(" Smart Cropping:")
     if result.smart_crops is not None:
-        for smart_crop in result.smart_crops.values:
+        for smart_crop in result.smart_crops.values_property:
             print(f"   Aspect ratio {smart_crop.aspect_ratio}: Smart crop {smart_crop.bounding_box}")
     print(f" Image height: {result.metadata.height}")
     print(f" Image width: {result.metadata.width}")
     print(f" Model version: {result.model_version}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample_smart_crops_image_file()

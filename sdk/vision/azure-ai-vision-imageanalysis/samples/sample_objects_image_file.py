@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# mypy: disable-error-code="attr-defined"
+
 """
 DESCRIPTION:
     This sample demonstrates how to detect physical objects in an image file sample.jpg, using a synchronous client.
@@ -23,13 +23,15 @@ USAGE:
                          where `your-resource-name` is your unique Azure Computer Vision resource name.
     2) VISION_KEY - Your Computer Vision key (a 32-character Hexadecimal number)
 """
+
+
 def sample_objects_image_file():
     import os
     from azure.ai.vision.imageanalysis import ImageAnalysisClient
     from azure.ai.vision.imageanalysis.models import VisualFeatures
     from azure.core.credentials import AzureKeyCredential
 
-    # Set the values of your computer vision endpoint and computer vision key 
+    # Set the values of your computer vision endpoint and computer vision key
     # as environment variables:
     try:
         endpoint = os.environ["VISION_ENDPOINT"]
@@ -40,31 +42,25 @@ def sample_objects_image_file():
         exit()
 
     # Create an Image Analysis client
-    client = ImageAnalysisClient(
-        endpoint = endpoint,
-        credential = AzureKeyCredential(key)
-    )
+    client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Load image to analyze into a 'bytes' object
-    with open("sample.jpg", 'rb') as f:
+    with open("sample.jpg", "rb") as f:
         image_buffer = f.read()
 
     # Detect objects in an image stream. This will be a synchronously (blocking) call.
-    result = client.analyze(
-        image_content = image_buffer,
-        visual_features = [ VisualFeatures.OBJECTS ]
-    )
+    result = client.analyze(image_content=image_buffer, visual_features=[VisualFeatures.OBJECTS])
 
     # Print Objects analysis results to the console
     print("Image analysis results:")
     print(" Objects:")
     if result.objects is not None:
-        for object in result.objects.values:
+        for object in result.objects.values_property:
             print(f"   '{object.tags[0].name}', {object.bounding_box}, Confidence: {object.tags[0].confidence:.4f}")
     print(f" Image height: {result.metadata.height}")
     print(f" Image width: {result.metadata.width}")
     print(f" Model version: {result.model_version}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample_objects_image_file()

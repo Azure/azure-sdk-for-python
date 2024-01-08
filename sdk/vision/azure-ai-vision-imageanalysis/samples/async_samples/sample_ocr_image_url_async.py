@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# mypy: disable-error-code="attr-defined"
+
 """
 DESCRIPTION:
     This sample demonstrates how to extract printed or hand-written text from a
@@ -31,6 +31,7 @@ USAGE:
 """
 import asyncio
 
+
 async def sample_ocr_image_file_async():
     import os
     from azure.ai.vision.imageanalysis.aio import ImageAnalysisClient
@@ -47,15 +48,11 @@ async def sample_ocr_image_file_async():
         exit()
 
     # Create an asynchronous Image Analysis client
-    client = ImageAnalysisClient(
-        endpoint = endpoint,
-        credential = AzureKeyCredential(key)
-    )
+    client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Extract text (OCR) from an image URL, asynchronously.
     result = await client.analyze(
-        image_content = "https://aka.ms/azsdk/image-analysis/sample.jpg",
-        visual_features = [ VisualFeatures.READ ]
+        image_content="https://aka.ms/azsdk/image-analysis/sample.jpg", visual_features=[VisualFeatures.READ]
     )
 
     await client.close()
@@ -67,7 +64,9 @@ async def sample_ocr_image_file_async():
         for line in result.read.blocks[0].lines:
             print(f"   Line: '{line.text}', Bounding box {line.bounding_polygon}")
             for word in line.words:
-                print(f"     Word: '{word.text}', Bounding polygon {word.bounding_polygon}, Confidence {word.confidence:.4f}")
+                print(
+                    f"     Word: '{word.text}', Bounding polygon {word.bounding_polygon}, Confidence {word.confidence:.4f}"
+                )
     print(f" Image height: {result.metadata.height}")
     print(f" Image width: {result.metadata.width}")
     print(f" Model version: {result.model_version}")
@@ -76,5 +75,6 @@ async def sample_ocr_image_file_async():
 async def main():
     await sample_ocr_image_file_async()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

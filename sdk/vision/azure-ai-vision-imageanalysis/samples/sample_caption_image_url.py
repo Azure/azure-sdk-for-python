@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# mypy: disable-error-code="attr-defined"
+
 """
 DESCRIPTION:
     This sample demonstrates how to generate a human-readable sentence that describes the content
@@ -26,13 +26,15 @@ USAGE:
                          where `your-resource-name` is your unique Azure Computer Vision resource name.
     2) VISION_KEY - Your Computer Vision key (a 32-character Hexadecimal number)
 """
+
+
 def sample_caption_image_url():
     import os
     from azure.ai.vision.imageanalysis import ImageAnalysisClient
     from azure.ai.vision.imageanalysis.models import VisualFeatures
     from azure.core.credentials import AzureKeyCredential
 
-    # Set the values of your computer vision endpoint and computer vision key 
+    # Set the values of your computer vision endpoint and computer vision key
     # as environment variables:
     try:
         endpoint = os.environ["VISION_ENDPOINT"]
@@ -43,17 +45,14 @@ def sample_caption_image_url():
         exit()
 
     # Create an Image Analysis client
-    client = ImageAnalysisClient(
-        endpoint = endpoint,
-        credential = AzureKeyCredential(key)
-    )
+    client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # [START caption]
     # Get a caption for the image. This will be a synchronously (blocking) call.
     result = client.analyze(
-        image_content = "https://aka.ms/azsdk/image-analysis/sample.jpg",
-        visual_features = [ VisualFeatures.CAPTION ],
-        gender_neutral_caption = True # Optional (default is False)
+        image_content="https://aka.ms/azsdk/image-analysis/sample.jpg",
+        visual_features=[VisualFeatures.CAPTION],
+        gender_neutral_caption=True,  # Optional (default is False)
     )
 
     # Print caption results to the console
@@ -67,5 +66,5 @@ def sample_caption_image_url():
     print(f" Model version: {result.model_version}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample_caption_image_url()
