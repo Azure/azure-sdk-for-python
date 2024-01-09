@@ -3,8 +3,6 @@
 # Licensed under the MIT License. See License in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import os
-
 from logging import getLogger
 from typing import Dict, cast
 
@@ -16,7 +14,6 @@ from opentelemetry.instrumentation.instrumentor import ( # type: ignore
     BaseInstrumentor,
 )
 from opentelemetry.metrics import set_meter_provider
-from opentelemetry.sdk.environment_variables import OTEL_EXPERIMENTAL_RESOURCE_DETECTORS
 from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.metrics import MeterProvider
@@ -35,6 +32,7 @@ from azure.monitor.opentelemetry._constants import (
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
     LOGGER_NAME_ARG,
+    RESOURCE_ARG,
     SAMPLING_RATIO_ARG,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
@@ -47,12 +45,6 @@ from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-err
 from azure.monitor.opentelemetry._util.configurations import (
     _get_configurations,
     _is_instrumentation_enabled,
-)
-
-
-_SUPPORTED_RESOURCE_DETECTORS = (
-    "azure_app_service",
-    "azure_vm",
 )
 
 _logger = getLogger(__name__)
@@ -81,9 +73,6 @@ def configure_azure_monitor(**kwargs) -> None:
     disable_logging = configurations[DISABLE_LOGGING_ARG]
     disable_metrics = configurations[DISABLE_METRICS_ARG]
 
-    # Setup resources
-    _setup_resources()
-
     # Setup tracing pipeline
     if not disable_tracing:
         _setup_tracing(configurations)
@@ -101,18 +90,13 @@ def configure_azure_monitor(**kwargs) -> None:
     # instanstiated in the other setup steps
     _setup_instrumentations(configurations)
 
-def _setup_resources():
-    detectors = os.environ.get(OTEL_EXPERIMENTAL_RESOURCE_DETECTORS, "")
-    if detectors:
-        detectors = detectors + ","
-    detectors += ",".join(_SUPPORTED_RESOURCE_DETECTORS)
-    os.environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS] = detectors
-
 
 def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
+    resource = configurations[RESOURCE_ARG] # type: ignore
     sampling_ratio = configurations[SAMPLING_RATIO_ARG]
     tracer_provider = TracerProvider(
         sampler=ApplicationInsightsSampler(sampling_ratio=cast(float, sampling_ratio)),
+        resource=resource
     )
     set_tracer_provider(tracer_provider)
     trace_exporter = AzureMonitorTraceExporter(**configurations)
@@ -125,7 +109,8 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
 
 
 def _setup_logging(configurations: Dict[str, ConfigurationValue]):
-    logger_provider = LoggerProvider()
+    resource = configurations[RESOURCE_ARG] # type: ignore
+    logger_provider = LoggerProvider(resource=resource)
     set_logger_provider(logger_provider)
     log_exporter = AzureMonitorLogExporter(**configurations)
     log_record_processor = BatchLogRecordProcessor(
@@ -138,10 +123,12 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
 
 
 def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
+    resource = configurations[RESOURCE_ARG] # type: ignore
     metric_exporter = AzureMonitorMetricExporter(**configurations)
     reader = PeriodicExportingMetricReader(metric_exporter)
     meter_provider = MeterProvider(
         metric_readers=[reader],
+        resource=resource
     )
     set_meter_provider(meter_provider)
 

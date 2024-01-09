@@ -23,53 +23,55 @@
 
 """Create, read, update and delete users in the Azure Cosmos DB SQL API service.
 """
+from typing import Any, Dict, List, Mapping, Union, Optional
 
-from typing import Any, List, Dict, Union, cast, Iterable, Optional
-
-from azure.core.tracing.decorator import distributed_trace  # type: ignore
+from azure.core.paging import ItemPaged
+from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options
 from .permission import Permission
 
 
-class UserProxy(object):
+class UserProxy:
     """An interface to interact with a specific user.
 
     This class should not be instantiated directly. Instead, use the
     :func:`DatabaseProxy.get_user_client` method.
+
+    :ivar str id:
+    :ivar str user_link:
     """
 
-    def __init__(self, client_connection, id, database_link, properties=None):  # pylint: disable=redefined-builtin
-        # type: (CosmosClientConnection, str, str, Dict[str, Any]) -> None
+    def __init__(
+        self,
+        client_connection: CosmosClientConnection,
+        id: str,
+        database_link: str,
+        properties: Optional[Dict[str, Any]] = None
+    ) -> None:
         self.client_connection = client_connection
         self.id = id
-        self.user_link = u"{}/users/{}".format(database_link, id)
+        self.user_link = "{}/users/{}".format(database_link, id)
         self._properties = properties
 
-    def __repr__(self):
-        # type () -> str
+    def __repr__(self) -> str:
         return "<UserProxy [{}]>".format(self.user_link)[:1024]
 
-    def _get_permission_link(self, permission_or_id):
-        # type: (Union[Permission, str, Dict[str, Any]]) -> str
+    def _get_permission_link(self, permission_or_id: Union[str, Permission, Mapping[str, Any]]) -> str:
         if isinstance(permission_or_id, str):
-            return u"{}/permissions/{}".format(self.user_link, permission_or_id)
-        try:
-            return cast("Permission", permission_or_id).permission_link
-        except AttributeError:
-            pass
-        return u"{}/permissions/{}".format(self.user_link, cast("Dict[str, str]", permission_or_id)["id"])
+            return "{}/permissions/{}".format(self.user_link, permission_or_id)
+        if isinstance(permission_or_id, Permission):
+            return permission_or_id.permission_link
+        return "{}/permissions/{}".format(self.user_link, permission_or_id["id"])
 
-    def _get_properties(self):
-        # type: () -> Dict[str, Any]
+    def _get_properties(self) -> Dict[str, Any]:
         if self._properties is None:
             self._properties = self.read()
         return self._properties
 
     @distributed_trace
-    def read(self, **kwargs):
-        # type: (Any) -> Dict[str, Any]
+    def read(self, **kwargs: Any) -> Dict[str, Any]:
         """Read user properties.
 
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -79,17 +81,13 @@ class UserProxy(object):
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-
         self._properties = self.client_connection.ReadUser(user_link=self.user_link, options=request_options, **kwargs)
-
         if response_hook:
             response_hook(self.client_connection.last_response_headers, self._properties)
-
-        return cast('Dict[str, Any]', self._properties)
+        return self._properties
 
     @distributed_trace
-    def list_permissions(self, max_item_count=None, **kwargs):
-        # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
+    def list_permissions(self, max_item_count: Optional[int] = None, **kwargs: Any) -> ItemPaged[Dict[str, Any]]:
         """List all permission for the user.
 
         :param int max_item_count: Max number of permissions to be returned in the enumeration operation.
@@ -112,12 +110,11 @@ class UserProxy(object):
     @distributed_trace
     def query_permissions(
         self,
-        query,
-        parameters=None,
-        max_item_count=None,
-        **kwargs
-    ):
-        # type: (str, Optional[List[Dict[str, Any]]], Optional[int], Any) -> Iterable[Dict[str, Any]]
+        query: str,
+        parameters: Optional[List[Dict[str, Any]]] = None,
+        max_item_count: Optional[int] = None,
+        **kwargs: Any
+    ) -> ItemPaged[Dict[str, Any]]:
         """Return all permissions matching the given `query`.
 
         :param str query: The Azure Cosmos DB SQL query to execute.
@@ -146,8 +143,11 @@ class UserProxy(object):
         return result
 
     @distributed_trace
-    def get_permission(self, permission, **kwargs):
-        # type: (Union[str, Permission, Dict[str, Any]], Any) -> Permission
+    def get_permission(
+        self,
+        permission: Union[str, Permission, Mapping[str, Any]],
+        **kwargs: Any
+    ) -> Permission:
         """Get the permission identified by `id`.
 
         :param permission: The ID (name), dict representing the properties or :class:`Permission`
@@ -163,7 +163,7 @@ class UserProxy(object):
 
         permission_resp = self.client_connection.ReadPermission(
             permission_link=self._get_permission_link(permission), options=request_options, **kwargs
-        )  # type: Dict[str, str]
+        )
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, permission_resp)
@@ -177,8 +177,7 @@ class UserProxy(object):
         )
 
     @distributed_trace
-    def create_permission(self, body, **kwargs):
-        # type: (Dict[str, Any], Any) -> Permission
+    def create_permission(self, body: Dict[str, Any], **kwargs: Any) -> Permission:
         """Create a permission for the user.
 
         To update or replace an existing permision, use the :func:`UserProxy.upsert_permission` method.
@@ -208,8 +207,7 @@ class UserProxy(object):
         )
 
     @distributed_trace
-    def upsert_permission(self, body, **kwargs):
-        # type: (Dict[str, Any], Any) -> Permission
+    def upsert_permission(self, body: Dict[str, Any], **kwargs: Any) -> Permission:
         """Insert or update the specified permission.
 
         If the permission already exists in the container, it is replaced. If
@@ -240,8 +238,12 @@ class UserProxy(object):
         )
 
     @distributed_trace
-    def replace_permission(self, permission, body, **kwargs):
-        # type: (Union[str, Permission, Dict[str, Any]], Dict[str, Any], Any) -> Permission
+    def replace_permission(
+        self,
+        permission: Union[str, Permission, Mapping[str, Any]],
+        body: Dict[str, Any],
+        **kwargs
+    ) -> Permission:
         """Replaces the specified permission if it exists for the user.
 
         If the permission does not already exist, an exception is raised.
@@ -261,7 +263,7 @@ class UserProxy(object):
 
         permission_resp = self.client_connection.ReplacePermission(
             permission_link=self._get_permission_link(permission), permission=body, options=request_options, **kwargs
-        )  # type: Dict[str, str]
+        )
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, permission_resp)
@@ -275,8 +277,11 @@ class UserProxy(object):
         )
 
     @distributed_trace
-    def delete_permission(self, permission, **kwargs):
-        # type: (Union[str, Permission, Dict[str, Any]], Any) -> None
+    def delete_permission(
+        self,
+        permission: Union[str, Permission, Mapping[str, Any]],
+        **kwargs
+    ) -> None:
         """Delete the specified permission from the user.
 
         If the permission does not already exist, an exception is raised.
@@ -291,10 +296,8 @@ class UserProxy(object):
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-
-        result = self.client_connection.DeletePermission(
+        self.client_connection.DeletePermission(
             permission_link=self._get_permission_link(permission), options=request_options, **kwargs
         )
-
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
+            response_hook(self.client_connection.last_response_headers, None)

@@ -7,6 +7,7 @@ import pathlib
 import re
 import shutil
 from pathlib import Path
+from typing import Optional
 import pandas as pd
 
 _SUB_ID = "sub-id"
@@ -108,7 +109,7 @@ def _write_properties_to_run_history(properties: dict, logger) -> None:
         logger.error("Fail writing properties '%s' to run history: %s", properties, e)
 
 
-def _get_ai_studio_url(tracking_uri, evaluation_id):
+def _get_ai_studio_url(tracking_uri: str, evaluation_id: str):
     _PROJECT_INFO_REGEX = (
         r".*/subscriptions/(.+)/resourceGroups/(.+)"
         r"/providers/Microsoft.MachineLearningServices/workspaces/([^/]+)"
@@ -116,12 +117,12 @@ def _get_ai_studio_url(tracking_uri, evaluation_id):
 
     pattern = re.compile(_PROJECT_INFO_REGEX)
 
-    mo = pattern.match(tracking_uri)
+    mo: Optional[re.Match[str]] = pattern.match(tracking_uri)
 
     ret = {}
-    ret[_SUB_ID] = mo.group(1)
-    ret[_RES_GRP] = mo.group(2)
-    ret[_WS_NAME] = mo.group(3)
+    ret[_SUB_ID] = mo.group(1) if mo else mo
+    ret[_RES_GRP] = mo.group(2) if mo else mo
+    ret[_WS_NAME] = mo.group(3) if mo else mo
 
     studio_base_url = os.getenv("AI_STUDIO_BASE_URL", "https://ai.azure.com")
 

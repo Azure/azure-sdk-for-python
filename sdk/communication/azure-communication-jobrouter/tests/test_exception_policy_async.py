@@ -11,7 +11,6 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from _router_test_case_async import AsyncRouterRecordedTestCase
 from _decorators_async import RouterPreparersAsync
 from _validators import ExceptionPolicyValidator
-from _shared.asynctestcase import AsyncCommunicationTestCase
 from azure.communication.jobrouter._shared.utils import parse_connection_str  # pylint:disable=protected-access
 from azure.core.exceptions import ResourceNotFoundError
 

@@ -17,7 +17,7 @@ from azure.core.tracing.decorator import distributed_trace
 ops_logger = ActivityLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
-DataTypesMapping: Dict[AssetTypes, DataAssetTypes] = {
+DataTypesMapping: Dict[str, DataAssetTypes] = {
     AssetTypes.FILE: DataAssetTypes.URI_FILE,
     AssetTypes.FOLDER: DataAssetTypes.URI_FOLDER,
     AssetTypes.TABLE: DataAssetTypes.MLTABLE,
@@ -59,7 +59,7 @@ class DataOperations():
             path = data.path
         except:
             try:
-                path = data["path"]
+                path = data["path"]  # type: ignore[index]
             except Exception as e:
                 raise e
 
