@@ -10,6 +10,7 @@ from unittest import mock
 
 from opentelemetry.sdk.metrics import Meter, MeterProvider, ObservableGauge
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
+from opentelemetry.sdk.resources import Resource
 
 from azure.monitor.opentelemetry.exporter._constants import (
     _ATTACH_METRIC_NAME,
@@ -77,6 +78,7 @@ class TestStatsbeat(unittest.TestCase):
         _statsbeat.collect_statsbeat_metrics(exporter)
         mp = _statsbeat._STATSBEAT_METRICS._meter_provider
         self.assertTrue(isinstance(mp, MeterProvider))
+        self.assertEqual(mp._sdk_config.resource, Resource.get_empty())
         self.assertTrue(len(mp._sdk_config.metric_readers), 1)
         mr = mp._sdk_config.metric_readers[0]
         self.assertTrue(isinstance(mr, PeriodicExportingMetricReader))
