@@ -71,8 +71,6 @@ az storage account keys list -g MyResourceGroup -n MyStorageAccount
 
 Use the key as the credential parameter to authenticate the client:
 
-<!-- SNIPPET:sample_authentication.auth_from_shared_key -->
-
 ```python
 from azure.data.tables import TableServiceClient
 from azure.core.credentials import AzureNamedKeyCredential
@@ -84,8 +82,6 @@ with TableServiceClient(
     properties = table_service_client.get_service_properties()
     print(f"{properties}")
 ```
-
-<!-- END SNIPPET -->
 
 ##### Creating the client from a connection string
 Depending on your use case and authorization method, you may prefer to initialize a client instance with a connection string instead of providing the account URL and credential separately. To do this, pass the connection string to the client's `from_connection_string` class method. If the connection string does not specify a fully qualified endpoint URL (`"TableEndpoint"`), or URL suffix (`"EndpointSuffix"`), the endpoint will be assumed to be an Azure Storage account, and the URL automatically formatted accordingly. 
@@ -104,8 +100,6 @@ az cosmosdb list-connection-strings -g MyResourceGroup -n MyCosmosAccount
 
 Create a client from a connection string:
 
-<!-- SNIPPET:sample_authentication.auth_from_connection_string -->
-
 ```python
 from azure.data.tables import TableServiceClient
 
@@ -115,12 +109,8 @@ with TableServiceClient.from_connection_string(conn_str=connection_string) as ta
     print(f"{properties}")
 ```
 
-<!-- END SNIPPET -->
-
 ##### Creating the client from a SAS token
 To use a [shared access signature (SAS) token][azure_sas_token], provide the token as a string. If your account URL includes the SAS token, omit the credential parameter. You can generate a SAS token from the Azure Portal under [Shared access signature](https://docs.microsoft.com/rest/api/storageservices/create-service-sas) or use one of the `generate_*_sas()` functions to create a sas token for the account or table:
-
-<!-- SNIPPET:sample_authentication.auth_from_sas -->
 
 ```python
 from datetime import datetime, timedelta
@@ -143,16 +133,12 @@ with TableServiceClient(
     print(f"{properties}")
 ```
 
-<!-- END SNIPPET -->
-
 ##### Creating the client from a TokenCredential
 Azure Tables provides integration with Azure Active Directory(Azure AD) for identity-based authentication of requests to the Table service when targeting a Storage endpoint. With Azure AD, you can use role-based access control(RBAC) to grant access to your Azure Table resources to users, groups, or applications.
 
 To access a table resource with a TokenCredential, the authenticated identity should have either the "Storage Table Data Contributor" or "Storage Table Data Reader" role.
 
 With the `azure-identity` package, you can seamlessly authorize requests in both development and production environments. To learn more about Azure AD integration in Azure Storage, see the [azure-identity README](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md)
-
-<!-- SNIPPET:sample_authentication.auth_from_aad -->
 
 ```python
 from azure.data.tables import TableServiceClient
@@ -164,8 +150,6 @@ with TableServiceClient(
     properties = table_service_client.get_service_properties()
     print(f"{properties}")
 ```
-
-<!-- END SNIPPET -->
 
 ## Key concepts
 Common uses of the Table service included:
@@ -274,7 +258,7 @@ table_client = TableClient.from_connection_string(conn_str="<connection_string>"
 entities = table_client.query_entities(my_filter)
 for entity in entities:
     for key in entity.keys():
-        print("Key: {}, Value: {}".format(key, entity[key]))
+        print(f"Key: {key}, Value: {entity[key]}")
 ```
 
 ## Optional Configuration
@@ -334,7 +318,7 @@ tc = service_client.create_table_if_not_exists(table_name)
 try:
     service_client.create_table(table_name)
 except HttpResponseError:
-    print("Table with name {} already exists".format(table_name))
+    print(f"Table with name {table_name} already exists")
 ```
 
 ### Logging
