@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, Awaitable, Optional, TYPE_CHECKING
 
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
@@ -15,40 +15,98 @@ from azure.mgmt.core import AsyncARMPipelineClient
 from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import ApiCenterMgmtClientConfiguration
-from .operations import Operations, ServicesOperations
+from .operations import (
+    ApiDefinitionsOperations,
+    ApiVersionsOperations,
+    ApisOperations,
+    DeploymentsOperations,
+    EnvironmentsOperations,
+    MetadataSchemasOperations,
+    Operations,
+    ServicesOperations,
+    WorkspacesOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ApiCenterMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
+class ApiCenterMgmtClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Azure API Center Resource Provider.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.apicenter.aio.operations.Operations
     :ivar services: ServicesOperations operations
     :vartype services: azure.mgmt.apicenter.aio.operations.ServicesOperations
+    :ivar metadata_schemas: MetadataSchemasOperations operations
+    :vartype metadata_schemas: azure.mgmt.apicenter.aio.operations.MetadataSchemasOperations
+    :ivar workspaces: WorkspacesOperations operations
+    :vartype workspaces: azure.mgmt.apicenter.aio.operations.WorkspacesOperations
+    :ivar apis: ApisOperations operations
+    :vartype apis: azure.mgmt.apicenter.aio.operations.ApisOperations
+    :ivar api_versions: ApiVersionsOperations operations
+    :vartype api_versions: azure.mgmt.apicenter.aio.operations.ApiVersionsOperations
+    :ivar api_definitions: ApiDefinitionsOperations operations
+    :vartype api_definitions: azure.mgmt.apicenter.aio.operations.ApiDefinitionsOperations
+    :ivar deployments: DeploymentsOperations operations
+    :vartype deployments: azure.mgmt.apicenter.aio.operations.DeploymentsOperations
+    :ivar environments: EnvironmentsOperations operations
+    :vartype environments: azure.mgmt.apicenter.aio.operations.EnvironmentsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param api_name: The name of the API. Required.
+    :type api_name: str
+    :param version_name: The name of the API version. Required.
+    :type version_name: str
+    :param definition_name: The name of the API definition. Required.
+    :type definition_name: str
+    :param deployment_name: The name of the API deployment. Required.
+    :type deployment_name: str
+    :param environment_name: The name of the environment. Required.
+    :type environment_name: str
+    :param metadata_schema_name: The name of the metadata schema. Required.
+    :type metadata_schema_name: str
+    :param workspace_name: The name of the workspace. Required.
+    :type workspace_name: str
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
+    :param filter: OData filter parameter. Default value is None.
+    :type filter: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-07-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2024-03-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(
         self,
         credential: "AsyncTokenCredential",
+        api_name: str,
+        version_name: str,
+        definition_name: str,
+        deployment_name: str,
+        environment_name: str,
+        metadata_schema_name: str,
+        workspace_name: str,
         subscription_id: str,
+        filter: Optional[str] = None,
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
         self._config = ApiCenterMgmtClientConfiguration(
-            credential=credential, subscription_id=subscription_id, **kwargs
+            credential=credential,
+            api_name=api_name,
+            version_name=version_name,
+            definition_name=definition_name,
+            deployment_name=deployment_name,
+            environment_name=environment_name,
+            metadata_schema_name=metadata_schema_name,
+            workspace_name=workspace_name,
+            subscription_id=subscription_id,
+            filter=filter,
+            **kwargs
         )
         self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
@@ -58,6 +116,15 @@ class ApiCenterMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.services = ServicesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.metadata_schemas = MetadataSchemasOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.workspaces = WorkspacesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.apis = ApisOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.api_versions = ApiVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.api_definitions = ApiDefinitionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.environments = EnvironmentsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.

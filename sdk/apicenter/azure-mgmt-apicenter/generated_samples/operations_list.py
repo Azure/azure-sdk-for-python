@@ -26,6 +26,13 @@ from azure.mgmt.apicenter import ApiCenterMgmtClient
 def main():
     client = ApiCenterMgmtClient(
         credential=DefaultAzureCredential(),
+        api_name="API_NAME",
+        version_name="VERSION_NAME",
+        definition_name="DEFINITION_NAME",
+        deployment_name="DEPLOYMENT_NAME",
+        environment_name="ENVIRONMENT_NAME",
+        metadata_schema_name="METADATA_SCHEMA_NAME",
+        workspace_name="WORKSPACE_NAME",
         subscription_id="SUBSCRIPTION_ID",
     )
 
@@ -34,6 +41,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/apicenter/resource-manager/Microsoft.ApiCenter/preview/2023-07-01-preview/examples/Operations_List.json
+# x-ms-original-file: specification/apicenter/resource-manager/Microsoft.ApiCenter/stable/2024-03-01/examples/Operations_List.json
 if __name__ == "__main__":
     main()

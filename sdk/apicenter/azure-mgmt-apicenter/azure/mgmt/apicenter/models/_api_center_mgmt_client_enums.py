@@ -16,6 +16,35 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INTERNAL = "Internal"
 
 
+class ApiKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Kind of API. For example, REST or GraphQL."""
+
+    REST = "rest"
+    GRAPHQL = "graphql"
+    GRPC = "grpc"
+    SOAP = "soap"
+    WEBHOOK = "webhook"
+    WEBSOCKET = "websocket"
+
+
+class ApiSpecExportResultFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ApiSpecExportResultFormat."""
+
+    INLINE = "inline"
+    """The inlined content of a specification document."""
+    LINK = "link"
+    """The link to the result of the export operation. The URL is valid for 5 minutes."""
+
+
+class ApiSpecImportSourceFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Format of the API specification source."""
+
+    INLINE = "inline"
+    """The inlined content of a specification document."""
+    LINK = "link"
+    """The link to a specification document hosted on a publicly accessible internet address."""
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -23,6 +52,46 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
+
+
+class DeploymentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of API deployment."""
+
+    ACTIVE = "active"
+    INACTIVE = "inactive"
+
+
+class EnvironmentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Environment kind."""
+
+    DEVELOPMENT = "development"
+    TESTING = "testing"
+    STAGING = "staging"
+    PRODUCTION = "production"
+
+
+class EnvironmentServerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the server that represents the environment."""
+
+    AZURE_API_MANAGEMENT = "Azure API Management"
+    AZURE_COMPUTE_SERVICE = "Azure compute service"
+    APIGEE_API_MANAGEMENT = "Apigee API Management"
+    AWS_API_GATEWAY = "AWS API Gateway"
+    KONG_API_GATEWAY = "Kong API Gateway"
+    KUBERNETES = "Kubernetes"
+    MULE_SOFT_API_MANAGEMENT = "MuleSoft API Management"
+
+
+class LifecycleStage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current lifecycle stage of the API."""
+
+    DESIGN = "design"
+    DEVELOPMENT = "development"
+    TESTING = "testing"
+    PREVIEW = "preview"
+    PRODUCTION = "production"
+    DEPRECATED = "deprecated"
+    RETIRED = "retired"
 
 
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -34,6 +103,23 @@ class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
+
+
+class MetadataAssignmentEntity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """An entity the metadata schema is requested for."""
+
+    API = "api"
+    ENVIRONMENT = "environment"
+    DEPLOYMENT = "deployment"
+
+
+class MetadataSchemaExportFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MetadataSchemaExportFormat."""
+
+    INLINE = "inline"
+    """The inlined content of a schema document."""
+    LINK = "link"
+    """The link to a schema document. The URL is valid for 5 minutes."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):

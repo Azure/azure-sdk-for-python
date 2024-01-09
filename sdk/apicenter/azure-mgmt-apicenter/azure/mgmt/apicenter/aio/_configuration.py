@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
@@ -27,24 +27,75 @@ class ApiCenterMgmtClientConfiguration(Configuration):  # pylint: disable=too-ma
 
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param api_name: The name of the API. Required.
+    :type api_name: str
+    :param version_name: The name of the API version. Required.
+    :type version_name: str
+    :param definition_name: The name of the API definition. Required.
+    :type definition_name: str
+    :param deployment_name: The name of the API deployment. Required.
+    :type deployment_name: str
+    :param environment_name: The name of the environment. Required.
+    :type environment_name: str
+    :param metadata_schema_name: The name of the metadata schema. Required.
+    :type metadata_schema_name: str
+    :param workspace_name: The name of the workspace. Required.
+    :type workspace_name: str
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2023-07-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :param filter: OData filter parameter. Default value is None.
+    :type filter: str
+    :keyword api_version: Api Version. Default value is "2024-03-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        credential: "AsyncTokenCredential",
+        api_name: str,
+        version_name: str,
+        definition_name: str,
+        deployment_name: str,
+        environment_name: str,
+        metadata_schema_name: str,
+        workspace_name: str,
+        subscription_id: str,
+        filter: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         super(ApiCenterMgmtClientConfiguration, self).__init__(**kwargs)
-        api_version: str = kwargs.pop("api_version", "2023-07-01-preview")
+        api_version: str = kwargs.pop("api_version", "2024-03-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
+        if api_name is None:
+            raise ValueError("Parameter 'api_name' must not be None.")
+        if version_name is None:
+            raise ValueError("Parameter 'version_name' must not be None.")
+        if definition_name is None:
+            raise ValueError("Parameter 'definition_name' must not be None.")
+        if deployment_name is None:
+            raise ValueError("Parameter 'deployment_name' must not be None.")
+        if environment_name is None:
+            raise ValueError("Parameter 'environment_name' must not be None.")
+        if metadata_schema_name is None:
+            raise ValueError("Parameter 'metadata_schema_name' must not be None.")
+        if workspace_name is None:
+            raise ValueError("Parameter 'workspace_name' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
 
         self.credential = credential
+        self.api_name = api_name
+        self.version_name = version_name
+        self.definition_name = definition_name
+        self.deployment_name = deployment_name
+        self.environment_name = environment_name
+        self.metadata_schema_name = metadata_schema_name
+        self.workspace_name = workspace_name
         self.subscription_id = subscription_id
+        self.filter = filter
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "mgmt-apicenter/{}".format(VERSION))

@@ -54,7 +54,9 @@ class Operations:
 
     @distributed_trace
     def list(self, **kwargs: Any) -> AsyncIterable["_models.Operation"]:
-        """List the operations for the provider.
+        """List resource provider operations.
+
+        Returns a collection of resource provider operations.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Operation or the result of cls(response)

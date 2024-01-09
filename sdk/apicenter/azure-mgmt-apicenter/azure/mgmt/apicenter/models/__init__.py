@@ -6,10 +6,35 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models_py3 import Api
+from ._models_py3 import ApiCollection
+from ._models_py3 import ApiDefinition
+from ._models_py3 import ApiDefinitionCollection
+from ._models_py3 import ApiDefinitionPropertiesSpecification
+from ._models_py3 import ApiSpecExportResult
+from ._models_py3 import ApiSpecImportRequest
+from ._models_py3 import ApiSpecImportRequestSpecification
+from ._models_py3 import ApiVersion
+from ._models_py3 import ApiVersionCollection
+from ._models_py3 import Contact
+from ._models_py3 import Deployment
+from ._models_py3 import DeploymentCollection
+from ._models_py3 import DeploymentServer
+from ._models_py3 import Environment
+from ._models_py3 import EnvironmentCollection
+from ._models_py3 import EnvironmentServer
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
+from ._models_py3 import ExternalDocumentation
+from ._models_py3 import License
 from ._models_py3 import ManagedServiceIdentity
+from ._models_py3 import MetadataAssignment
+from ._models_py3 import MetadataSchema
+from ._models_py3 import MetadataSchemaCollection
+from ._models_py3 import MetadataSchemaExportRequest
+from ._models_py3 import MetadataSchemaExportResult
+from ._models_py3 import Onboarding
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
@@ -18,12 +43,24 @@ from ._models_py3 import Service
 from ._models_py3 import ServiceCollection
 from ._models_py3 import ServiceUpdate
 from ._models_py3 import SystemData
+from ._models_py3 import TermsOfService
 from ._models_py3 import TrackedResource
 from ._models_py3 import UserAssignedIdentity
+from ._models_py3 import Workspace
+from ._models_py3 import WorkspaceCollection
 
 from ._api_center_mgmt_client_enums import ActionType
+from ._api_center_mgmt_client_enums import ApiKind
+from ._api_center_mgmt_client_enums import ApiSpecExportResultFormat
+from ._api_center_mgmt_client_enums import ApiSpecImportSourceFormat
 from ._api_center_mgmt_client_enums import CreatedByType
+from ._api_center_mgmt_client_enums import DeploymentState
+from ._api_center_mgmt_client_enums import EnvironmentKind
+from ._api_center_mgmt_client_enums import EnvironmentServerType
+from ._api_center_mgmt_client_enums import LifecycleStage
 from ._api_center_mgmt_client_enums import ManagedServiceIdentityType
+from ._api_center_mgmt_client_enums import MetadataAssignmentEntity
+from ._api_center_mgmt_client_enums import MetadataSchemaExportFormat
 from ._api_center_mgmt_client_enums import Origin
 from ._api_center_mgmt_client_enums import ProvisioningState
 from ._patch import __all__ as _patch_all
@@ -31,10 +68,35 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "Api",
+    "ApiCollection",
+    "ApiDefinition",
+    "ApiDefinitionCollection",
+    "ApiDefinitionPropertiesSpecification",
+    "ApiSpecExportResult",
+    "ApiSpecImportRequest",
+    "ApiSpecImportRequestSpecification",
+    "ApiVersion",
+    "ApiVersionCollection",
+    "Contact",
+    "Deployment",
+    "DeploymentCollection",
+    "DeploymentServer",
+    "Environment",
+    "EnvironmentCollection",
+    "EnvironmentServer",
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
+    "ExternalDocumentation",
+    "License",
     "ManagedServiceIdentity",
+    "MetadataAssignment",
+    "MetadataSchema",
+    "MetadataSchemaCollection",
+    "MetadataSchemaExportRequest",
+    "MetadataSchemaExportResult",
+    "Onboarding",
     "Operation",
     "OperationDisplay",
     "OperationListResult",
@@ -43,11 +105,23 @@ __all__ = [
     "ServiceCollection",
     "ServiceUpdate",
     "SystemData",
+    "TermsOfService",
     "TrackedResource",
     "UserAssignedIdentity",
+    "Workspace",
+    "WorkspaceCollection",
     "ActionType",
+    "ApiKind",
+    "ApiSpecExportResultFormat",
+    "ApiSpecImportSourceFormat",
     "CreatedByType",
+    "DeploymentState",
+    "EnvironmentKind",
+    "EnvironmentServerType",
+    "LifecycleStage",
     "ManagedServiceIdentityType",
+    "MetadataAssignmentEntity",
+    "MetadataSchemaExportFormat",
     "Origin",
     "ProvisioningState",
 ]
