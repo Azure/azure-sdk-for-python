@@ -7,7 +7,7 @@
 
 from functools import partial
 from typing import (
-    Any, AnyStr, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
+    Any, AnyStr, cast, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
     TYPE_CHECKING
 )
 import warnings
@@ -408,6 +408,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :keyword str source_authorization:
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string.
+        :returns: Blob-updated property Dict (Etag and last modified)
+        :rtype: Dict[str, Any]
         """
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
@@ -415,7 +417,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             source_url=source_url,
             **kwargs)
         try:
-            return self._client.block_blob.put_blob_from_url(**options)  # type: ignore
+            return cast(Dict[str, Any], self._client.block_blob.put_blob_from_url(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -551,8 +553,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_. This method may make multiple calls to the service and
             the timeout will apply to each call individually.
-        :returns: Blob-updated property dict (Etag and last modified)
-        :rtype: dict[str, Any]
+        :returns: Blob-updated property Dict (Etag and last modified)
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 
@@ -583,10 +585,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             client=self._client,
             **kwargs)
         if blob_type == BlobType.BlockBlob:
-            return upload_block_blob(**options)  # type: ignore
+            return upload_block_blob(**options)
         if blob_type == BlobType.PageBlob:
-            return upload_page_blob(**options)  # type: ignore
-        return upload_append_blob(**options)  # type: ignore
+            return upload_page_blob(**options)
+        return upload_append_blob(**options)
 
     @overload
     def download_blob(
@@ -1963,7 +1965,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         source_length: Optional[int] = None,
         source_content_md5: Optional[Union[bytes, bytearray]] = None,
         **kwargs: Any
-        ) -> Dict[str, Any]:
+    ) -> Dict[str, Any]:
         """Creates a new block to be committed as part of a blob where
         the contents are read from a URL.
 
