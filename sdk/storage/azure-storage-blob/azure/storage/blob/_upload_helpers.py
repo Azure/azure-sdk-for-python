@@ -72,7 +72,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
     encryption_options: Dict[str, Any],
     blob_settings: "StorageConfiguration",
     headers: Dict[str, Any],
-    stream = None,
+    stream: Optional[IO] = None,
     length: Optional[int] = None,
     validate_content: Optional[bool] = None,
     max_concurrency: Optional[int] = None,
@@ -97,7 +97,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
         # Do single put if the size is smaller than or equal config.max_single_put_size
         if adjusted_count is not None and (adjusted_count <= blob_settings.max_single_put_size):
             try:
-                data = data.read(length)  #type: ignore
+                data = data.read(length)  # type: ignore
                 if not isinstance(data, bytes):
                     raise TypeError('Blob data should be of type bytes.')
             except AttributeError:
@@ -109,7 +109,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
                 headers['x-ms-meta-encryptiondata'] = encryption_data
 
             response = client.upload(
-                body=data,  #type: ignore
+                body=data,  # type: ignore
                 content_length=adjusted_count,
                 blob_http_headers=blob_headers,
                 headers=headers,
@@ -247,7 +247,7 @@ def upload_page_blob(
         response = client.create(
             content_length=0,
             blob_content_length=length,
-            blob_sequence_number=None,  #type: ignore
+            blob_sequence_number=None,  # type: ignore [arg-type]
             blob_http_headers=kwargs.pop('blob_headers', None),
             blob_tags_string=blob_tags_string,
             tier=tier,
@@ -263,7 +263,7 @@ def upload_page_blob(
                 kwargs['encryptor'] = encryptor
                 kwargs['padder'] = padder
 
-        kwargs['modified_access_conditions'] = ModifiedAccessConditions(if_match=response['etag'])  #type: ignore
+        kwargs['modified_access_conditions'] = ModifiedAccessConditions(if_match=response['etag'])
         return upload_data_chunks(
             service=client,
             uploader_class=PageBlobChunkUploader,
@@ -291,7 +291,7 @@ def upload_append_blob(  # pylint: disable=unused-argument
     encryption_options: Dict[str, Any],
     blob_settings: "StorageConfiguration",
     headers: Dict[str, Any],
-    stream = None,
+    stream: Optional[IO] = None,
     length: Optional[int] = None,
     validate_content: Optional[bool] = None,
     max_concurrency: Optional[int] = None,
@@ -328,7 +328,7 @@ def upload_append_blob(  # pylint: disable=unused-argument
                 headers=headers,
                 **kwargs)
         except HttpResponseError as error:
-            if error.response.status_code != 404:  #type: ignore
+            if error.response.status_code != 404:  # type: ignore [union-attr]
                 raise
             # rewind the request body if it is a stream
             if hasattr(stream, 'read'):

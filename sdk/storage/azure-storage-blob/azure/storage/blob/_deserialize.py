@@ -204,19 +204,15 @@ def parse_tags(generated_tags: Optional["BlobTags"]) -> Union[Dict[str, str], No
     return None
 
 
-def load_single_xml_node(element: Element, name: str) -> Element:
-    found_element = element.find(name)
-    if found_element is not None:
-        return found_element
-    else:
-        raise ValueError("No element found.")
+def load_single_xml_node(element: Element, name: str) -> Optional[Element]:
+    return element.find(name)
 
 
 def load_many_xml_nodes(
     element: Element,
     name: str,
-    wrapper: Optional[str] = None
-) -> Any:
+    wrapper: Element = None
+) -> List[Optional[Element]]:
     if wrapper:
         element = load_single_xml_node(element, wrapper)
     return list(element.findall(name))
