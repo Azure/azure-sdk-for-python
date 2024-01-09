@@ -776,7 +776,12 @@ class DataOperations(_ScopeDependentOperations):
             persistent and ci_name is not None
         ), "persistent mount is only supported on Compute Instance, where the 'CI_NAME' environment variable is set."
 
-        from azureml.dataprep import rslex_fuse_subprocess_wrapper
+        try:
+            from azureml.dataprep import rslex_fuse_subprocess_wrapper
+        except ImportError:
+            raise Exception(
+                "Mount operations requires package azureml-dataprep-rslex installed. You can install it with Azure ML SDK with `pip install azure-ai-ml[mount]`."
+            )
 
         uri = rslex_fuse_subprocess_wrapper.build_data_asset_uri(
             self._operation_scope._subscription_id, self._resource_group_name, self._workspace_name, path

@@ -67,4 +67,3 @@ yarl
 azure-identity
 openai
 wrapt
-azureml-dataprep-rslex

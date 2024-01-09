@@ -87,7 +87,6 @@ setup(
         "typing-extensions<5.0.0",
         "opencensus-ext-azure<2.0.0",
         "opencensus-ext-logging<=0.1.1",
-        "azureml-dataprep-rslex>=2.22.0",
     ],
     extras_require={
         # user can run `pip install azure-ai-ml[designer]` to install mldesigner alone with this package
@@ -95,6 +94,11 @@ setup(
         "designer": [
             "mldesigner",
         ],
+        # user can run `pip install azure-ai-ml[mount]` to install azureml-dataprep-rslex alone with this package
+        # so user can call data.mount() and datastore.mount() operations supported by it.
+        "mount": [
+            "azureml-dataprep-rslex>=2.22.0",
+        ]
     },
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
