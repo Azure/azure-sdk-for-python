@@ -119,7 +119,9 @@ class PhoneNumbersClient(object):
         """
         purchase_request = PhoneNumberPurchaseRequest(
             search_id=search_id,
-            consent_to_not_resell_numbers=consent_to_not_resell_numbers)
+            consent_to_not_resell_numbers=
+            consent_to_not_resell_numbers
+            )
 
         polling_interval = kwargs.pop(
             'polling_interval', _DEFAULT_POLLING_INTERVAL_IN_SECONDS)

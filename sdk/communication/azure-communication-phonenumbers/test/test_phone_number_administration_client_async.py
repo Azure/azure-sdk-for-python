@@ -17,7 +17,7 @@ from azure.communication.phonenumbers._generated.models import PhoneNumberOperat
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
 from phone_numbers_testcase import PhoneNumbersTestCase
 
-SKIP_PURCHASE_PHONE_NUMBER_TESTS = True
+SKIP_PURCHASE_PHONE_NUMBER_TESTS = False
 PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON = "Phone numbers shouldn't be purchased in live tests"
 
 SKIP_INT_PHONE_NUMBER_TESTS = os.getenv(
@@ -146,7 +146,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
         async with self.phone_number_client:
             current_phone_number = await self.phone_number_client.get_purchased_phone_number(self.phone_number)
             calling_capabilities = PhoneNumberCapabilityType.INBOUND if current_phone_number.capabilities.calling == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
-            sms_capabilities = PhoneNumberCapabilityType.INBOUND_OUTBOUND if current_phone_number.capabilities.sms == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
+            sms_capabilities = PhoneNumberCapabilityType.INBOUND if current_phone_number.capabilities.sms == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.NONE
             poller = await self.phone_number_client.begin_update_phone_number_capabilities(
                 self.phone_number,
                 sms_capabilities,
@@ -164,7 +164,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
         async with phone_number_client:
             current_phone_number = await phone_number_client.get_purchased_phone_number(self.phone_number)
             calling_capabilities = PhoneNumberCapabilityType.INBOUND if current_phone_number.capabilities.calling == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
-            sms_capabilities = PhoneNumberCapabilityType.INBOUND_OUTBOUND if current_phone_number.capabilities.sms == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
+            sms_capabilities = PhoneNumberCapabilityType.INBOUND_OUTBOUND if current_phone_number.capabilities.sms == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.NONE
             poller = await phone_number_client.begin_update_phone_number_capabilities(
                 self.phone_number,
                 sms_capabilities,
@@ -180,11 +180,11 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
         phone_number_client = self._get_managed_identity_phone_number_client()
         capabilities = PhoneNumberCapabilities(
             calling=PhoneNumberCapabilityType.INBOUND,
-            sms=PhoneNumberCapabilityType.INBOUND_OUTBOUND
+            sms=PhoneNumberCapabilityType.NONE
         )
         async with phone_number_client:
             search_poller = await phone_number_client.begin_search_available_phone_numbers(
-                self.country_code,
+                "CA",
                 PhoneNumberType.TOLL_FREE,
                 PhoneNumberAssignmentType.APPLICATION,
                 capabilities,
@@ -209,11 +209,11 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
         phone_number_client = self._get_managed_identity_phone_number_client()
         capabilities = PhoneNumberCapabilities(
             calling=PhoneNumberCapabilityType.INBOUND,
-            sms=PhoneNumberCapabilityType.INBOUND_OUTBOUND
+            sms=PhoneNumberCapabilityType.NONE
         )
         async with phone_number_client:
             search_poller = await phone_number_client.begin_search_available_phone_numbers(
-                "IT",
+                "US",
                 PhoneNumberType.TOLL_FREE,
                 PhoneNumberAssignmentType.APPLICATION,
                 capabilities,
@@ -236,11 +236,11 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
     async def test_purchase_phone_numbers(self):
         capabilities = PhoneNumberCapabilities(
             calling=PhoneNumberCapabilityType.INBOUND,
-            sms=PhoneNumberCapabilityType.INBOUND_OUTBOUND
+            sms=PhoneNumberCapabilityType.NONE
         )
         async with self.phone_number_client:
             search_poller = await self.phone_number_client.begin_search_available_phone_numbers(
-                self.country_code,
+                "CA",
                 PhoneNumberType.TOLL_FREE,
                 PhoneNumberAssignmentType.APPLICATION,
                 capabilities,
@@ -263,11 +263,11 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
     async def test_purchase_phone_numbers_dnr(self):
         capabilities = PhoneNumberCapabilities(
             calling=PhoneNumberCapabilityType.INBOUND,
-            sms=PhoneNumberCapabilityType.INBOUND_OUTBOUND
+            sms=PhoneNumberCapabilityType.NONE
         )
         async with self.phone_number_client:
             search_poller = await self.phone_number_client.begin_search_available_phone_numbers(
-                "IT",
+                "US",
                 PhoneNumberType.TOLL_FREE,
                 PhoneNumberAssignmentType.APPLICATION,
                 capabilities,
