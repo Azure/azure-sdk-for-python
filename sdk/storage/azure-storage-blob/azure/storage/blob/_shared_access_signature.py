@@ -39,7 +39,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
             The storage account name used to generate the shared access signatures.
         :param Optional[str] account_key:
             The access key to generate the shares access signatures.
-        :param Optional[UserDelegationKey] user_delegation_key:
+        :param Optional[~azure.storage.blob.models.UserDelegationKey] user_delegation_key:
             Instead of an account key, the user could pass in a user delegation key.
             A user delegation key can be obtained from the service by authenticating with an AAD identity;
             this can be accomplished by calling get_user_delegation_key on any Blob service object.
@@ -251,7 +251,7 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
     def add_timestamp(self, timestamp):
         self._add_query(BlobQueryStringConstants.SIGNED_TIMESTAMP, timestamp)
 
-    def add_info_for_hns_account(self, **kwargs: Any) -> None:
+    def add_info_for_hns_account(self, **kwargs):
         self._add_query(QueryStringConstants.SIGNED_DIRECTORY_DEPTH, kwargs.pop('sdd', None))
         self._add_query(QueryStringConstants.SIGNED_AUTHORIZED_OID, kwargs.pop('preauthorized_agent_object_id', None))
         self._add_query(QueryStringConstants.SIGNED_UNAUTHORIZED_OID, kwargs.pop('agent_object_id', None))
@@ -318,7 +318,7 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
                         sign_string(account_key if user_delegation_key is None else user_delegation_key.value,
                                     string_to_sign))
 
-    def get_token(self) -> str:
+    def get_token(self):
         # a conscious decision was made to exclude the timestamp in the generated token
         # this is to avoid having two snapshot ids in the query parameters when the user appends the snapshot timestamp
         exclude = [BlobQueryStringConstants.SIGNED_TIMESTAMP]
@@ -387,7 +387,7 @@ def generate_account_sas(
             :caption: Generating a shared access signature.
     """
     sas = SharedAccessSignature(account_name, account_key)
-    return sas.generate_account(  # type: ignore
+    return sas.generate_account(
         services=Services(blob=True),
         resource_types=resource_types,
         permission=permission,
