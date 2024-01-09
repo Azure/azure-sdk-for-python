@@ -60,7 +60,7 @@ class Resource(abc.ABC):
         self._id = kwargs.pop("id", None)
         self.__source_path: Optional[str] = kwargs.pop("source_path", None)
         self._base_path = kwargs.pop(BASE_PATH_CONTEXT_KEY, None) or os.getcwd()  # base path should never be None
-        self._creation_context = kwargs.pop("creation_context", None)
+        self._creation_context: Optional[SystemData] = kwargs.pop("creation_context", None)
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._serialize.client_side_validation = False
