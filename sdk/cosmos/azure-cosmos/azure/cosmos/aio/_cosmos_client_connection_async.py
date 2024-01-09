@@ -25,8 +25,9 @@
 """
 from typing import (
     Callable, Dict, Any, Iterable, Mapping, Optional, List,
-    Sequence, Tuple, Type, TypedDict, Union, cast
+    Sequence, Tuple, Type, Union, cast
 )
+from typing_extensions import TypedDict
 from urllib.parse import urlparse
 
 from urllib3.util.retry import Retry
