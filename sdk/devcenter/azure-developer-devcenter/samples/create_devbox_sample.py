@@ -47,6 +47,7 @@ USAGE:
     1) DEVCENTER_ENDPOINT - the endpoint for your devcenter
 """
 
+
 def get_project_name(LOG, client):
     projects = list(client.projects.list_by_dev_center(top=1))
     return projects[0].name

@@ -65,13 +65,15 @@ class DevBox(_model_base.Model):  # pylint: disable=too-many-instance-attributes
     :ivar hibernate_support: Indicates whether hibernate is enabled/disabled or unknown. Known
      values are: "Enabled", "Disabled", and "OsUnsupported".
     :vartype hibernate_support: str or ~azure.developer.devcenter.models.HibernateSupport
-    :ivar provisioning_state: The current provisioning state of the Dev Box.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The current provisioning state of the Dev Box. Known values are:
+     "Succeeded", "Failed", "Canceled", "Creating", "Deleting", "Updating", "Starting", "Stopping",
+     "Provisioning", "ProvisionedWithWarning", "InGracePeriod", and "NotProvisioned".
+    :vartype provisioning_state: str or ~azure.developer.devcenter.models.DevBoxProvisioningState
     :ivar action_state: The current action state of the Dev Box. This is state is based on previous
      action performed by user.
     :vartype action_state: str
-    :ivar power_state: The current power state of the Dev Box. Known values are: "Unknown",
-     "Running", "Deallocated", "PoweredOff", and "Hibernated".
+    :ivar power_state: The current power state of the Dev Box. Required. Known values are:
+     "Unknown", "Running", "Deallocated", "PoweredOff", and "Hibernated".
     :vartype power_state: str or ~azure.developer.devcenter.models.PowerState
     :ivar unique_id: A unique identifier for the Dev Box. This is a GUID-formatted string (e.g.
      00000000-0000-0000-0000-000000000000).
@@ -109,13 +111,17 @@ class DevBox(_model_base.Model):  # pylint: disable=too-many-instance-attributes
     )
     """Indicates whether hibernate is enabled/disabled or unknown. Known values are: \"Enabled\",
      \"Disabled\", and \"OsUnsupported\"."""
-    provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
-    """The current provisioning state of the Dev Box."""
+    provisioning_state: Optional[Union[str, "_models.DevBoxProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The current provisioning state of the Dev Box. Known values are: \"Succeeded\", \"Failed\",
+     \"Canceled\", \"Creating\", \"Deleting\", \"Updating\", \"Starting\", \"Stopping\",
+     \"Provisioning\", \"ProvisionedWithWarning\", \"InGracePeriod\", and \"NotProvisioned\"."""
     action_state: Optional[str] = rest_field(name="actionState", visibility=["read"])
     """The current action state of the Dev Box. This is state is based on previous
      action performed by user."""
-    power_state: Optional[Union[str, "_models.PowerState"]] = rest_field(name="powerState", visibility=["read"])
-    """The current power state of the Dev Box. Known values are: \"Unknown\", \"Running\",
+    power_state: Union[str, "_models.PowerState"] = rest_field(name="powerState", visibility=["read"])
+    """The current power state of the Dev Box. Required. Known values are: \"Unknown\", \"Running\",
      \"Deallocated\", \"PoweredOff\", and \"Hibernated\"."""
     unique_id: Optional[str] = rest_field(name="uniqueId", visibility=["read"])
     """A unique identifier for the Dev Box. This is a GUID-formatted string (e.g.
@@ -307,8 +313,11 @@ class Environment(_model_base.Model):
     :vartype environment_type: str
     :ivar user: The AAD object id of the owner of this Environment.
     :vartype user: str
-    :ivar provisioning_state: The provisioning state of the environment.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the environment. Known values are:
+     "Succeeded", "Failed", "Canceled", "Creating", "Accepted", "Deleting", "Updating", "Preparing",
+     "Running", "Syncing", "MovingResources", "TransientFailure", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or
+     ~azure.developer.devcenter.models.EnvironmentProvisioningState
     :ivar resource_group_id: The identifier of the resource group containing the environment's
      resources.
     :vartype resource_group_id: str
@@ -328,8 +337,13 @@ class Environment(_model_base.Model):
     """Environment type. Required."""
     user: Optional[str] = rest_field(visibility=["read"])
     """The AAD object id of the owner of this Environment."""
-    provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
-    """The provisioning state of the environment."""
+    provisioning_state: Optional[Union[str, "_models.EnvironmentProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the environment. Known values are: \"Succeeded\", \"Failed\",
+     \"Canceled\", \"Creating\", \"Accepted\", \"Deleting\", \"Updating\", \"Preparing\",
+     \"Running\", \"Syncing\", \"MovingResources\", \"TransientFailure\", and
+     \"StorageProvisioningFailed\"."""
     resource_group_id: Optional[str] = rest_field(name="resourceGroupId", visibility=["read"])
     """The identifier of the resource group containing the environment's resources."""
     catalog_name: str = rest_field(name="catalogName", visibility=["read", "create"])
@@ -377,7 +391,7 @@ class EnvironmentDefinition(_model_base.Model):
     :ivar parameters: Input parameters passed to an environment.
     :vartype parameters: list[~azure.developer.devcenter.models.EnvironmentDefinitionParameter]
     :ivar parameters_schema: JSON schema defining the parameters object passed to an environment.
-    :vartype parameters_schema: str
+    :vartype parameters_schema: bytes
     :ivar template_path: Path to the Environment Definition entrypoint file.
     :vartype template_path: str
     """
@@ -392,7 +406,7 @@ class EnvironmentDefinition(_model_base.Model):
     """A short description of the environment definition."""
     parameters: Optional[List["_models.EnvironmentDefinitionParameter"]] = rest_field()
     """Input parameters passed to an environment."""
-    parameters_schema: Optional[str] = rest_field(name="parametersSchema")
+    parameters_schema: Optional[bytes] = rest_field(name="parametersSchema", format="base64")
     """JSON schema defining the parameters object passed to an environment."""
     template_path: Optional[str] = rest_field(name="templatePath")
     """Path to the Environment Definition entrypoint file."""
@@ -406,7 +420,7 @@ class EnvironmentDefinition(_model_base.Model):
         catalog_name: str,
         description: Optional[str] = None,
         parameters: Optional[List["_models.EnvironmentDefinitionParameter"]] = None,
-        parameters_schema: Optional[str] = None,
+        parameters_schema: Optional[bytes] = None,
         template_path: Optional[str] = None,
     ):
         ...
@@ -434,7 +448,7 @@ class EnvironmentDefinitionParameter(_model_base.Model):
     :ivar description: Description of the parameter.
     :vartype description: str
     :ivar default: Default value of the parameter.
-    :vartype default: str
+    :vartype default: any
     :ivar type: A string of one of the basic JSON types (number, integer, array, object,
      boolean, string). Required. Known values are: "array", "boolean", "integer", "number",
      "object", and "string".
@@ -454,7 +468,7 @@ class EnvironmentDefinitionParameter(_model_base.Model):
     """Display name of the parameter."""
     description: Optional[str] = rest_field()
     """Description of the parameter."""
-    default: Optional[str] = rest_field()
+    default: Optional[Any] = rest_field()
     """Default value of the parameter."""
     type: Union[str, "_models.ParameterType"] = rest_field()
     """A string of one of the basic JSON types (number, integer, array, object,
@@ -477,7 +491,7 @@ class EnvironmentDefinitionParameter(_model_base.Model):
         required: bool,
         name: Optional[str] = None,
         description: Optional[str] = None,
-        default: Optional[str] = None,
+        default: Optional[Any] = None,
         read_only: Optional[bool] = None,
         allowed: Optional[List[str]] = None,
     ):
@@ -599,19 +613,36 @@ class HardwareProfile(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar sku_name: The name of the SKU.
-    :vartype sku_name: str
-    :ivar v_c_p_us: The number of vCPUs available for the Dev Box.
-    :vartype v_c_p_us: int
-    :ivar memory_g_b: The amount of memory available for the Dev Box.
-    :vartype memory_g_b: int
+    :ivar sku_name: The name of the SKU. Known values are: "general_i_8c32gb256ssd_v2",
+     "general_i_8c32gb512ssd_v2", "general_i_8c32gb1024ssd_v2", "general_i_8c32gb2048ssd_v2",
+     "general_i_16c64gb256ssd_v2", "general_i_16c64gb512ssd_v2", "general_i_16c64gb1024ssd_v2",
+     "general_i_16c64gb2048ssd_v2", "general_i_32c128gb512ssd_v2", "general_i_32c128gb1024ssd_v2",
+     "general_i_32c128gb2048ssd_v2", "general_a_8c32gb256ssd_v2", "general_a_8c32gb512ssd_v2",
+     "general_a_8c32gb1024ssd_v2", "general_a_8c32gb2048ssd_v2", "general_a_16c64gb256ssd_v2",
+     "general_a_16c64gb512ssd_v2", "general_a_16c64gb1024ssd_v2", "general_a_16c64gb2048ssd_v2",
+     "general_a_32c128gb512ssd_v2", "general_a_32c128gb1024ssd_v2", and
+     "general_a_32c128gb2048ssd_v2".
+    :vartype sku_name: str or ~azure.developer.devcenter.models.SkuName
+    :ivar vcpus: The number of vCPUs available for the Dev Box.
+    :vartype vcpus: int
+    :ivar memory_gb: The amount of memory available for the Dev Box.
+    :vartype memory_gb: int
     """
 
-    sku_name: Optional[str] = rest_field(name="skuName", visibility=["read"])
-    """The name of the SKU."""
-    v_c_p_us: Optional[int] = rest_field(name="vCPUs", visibility=["read"])
+    sku_name: Optional[Union[str, "_models.SkuName"]] = rest_field(name="skuName", visibility=["read"])
+    """The name of the SKU. Known values are: \"general_i_8c32gb256ssd_v2\",
+     \"general_i_8c32gb512ssd_v2\", \"general_i_8c32gb1024ssd_v2\", \"general_i_8c32gb2048ssd_v2\",
+     \"general_i_16c64gb256ssd_v2\", \"general_i_16c64gb512ssd_v2\",
+     \"general_i_16c64gb1024ssd_v2\", \"general_i_16c64gb2048ssd_v2\",
+     \"general_i_32c128gb512ssd_v2\", \"general_i_32c128gb1024ssd_v2\",
+     \"general_i_32c128gb2048ssd_v2\", \"general_a_8c32gb256ssd_v2\", \"general_a_8c32gb512ssd_v2\",
+     \"general_a_8c32gb1024ssd_v2\", \"general_a_8c32gb2048ssd_v2\", \"general_a_16c64gb256ssd_v2\",
+     \"general_a_16c64gb512ssd_v2\", \"general_a_16c64gb1024ssd_v2\",
+     \"general_a_16c64gb2048ssd_v2\", \"general_a_32c128gb512ssd_v2\",
+     \"general_a_32c128gb1024ssd_v2\", and \"general_a_32c128gb2048ssd_v2\"."""
+    vcpus: Optional[int] = rest_field(name="vCPUs", visibility=["read"])
     """The number of vCPUs available for the Dev Box."""
-    memory_g_b: Optional[int] = rest_field(name="memoryGB", visibility=["read"])
+    memory_gb: Optional[int] = rest_field(name="memoryGB", visibility=["read"])
     """The amount of memory available for the Dev Box."""
 
 
@@ -682,7 +713,7 @@ class InnerError(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationStatus(_model_base.Model):
+class OperationDetails(_model_base.Model):
     """The current status of an async operation.
 
     All required parameters must be populated in order to send to server.
@@ -705,7 +736,7 @@ class OperationStatus(_model_base.Model):
     :ivar properties: Custom operation properties, populated only for a successful operation.
     :vartype properties: any
     :ivar error: Operation Error message.
-    :vartype error: ~azure.developer.devcenter.models.OperationStatusError
+    :vartype error: ~azure.developer.devcenter.models.Error
     """
 
     id: Optional[str] = rest_field()
@@ -725,7 +756,7 @@ class OperationStatus(_model_base.Model):
     """Percent of the operation that is complete."""
     properties: Optional[Any] = rest_field()
     """Custom operation properties, populated only for a successful operation."""
-    error: Optional["_models.OperationStatusError"] = rest_field()
+    error: Optional["_models.Error"] = rest_field()
     """Operation Error message."""
 
     @overload
@@ -740,41 +771,7 @@ class OperationStatus(_model_base.Model):
         end_time: Optional[datetime.datetime] = None,
         percent_complete: Optional[float] = None,
         properties: Optional[Any] = None,
-        error: Optional["_models.OperationStatusError"] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class OperationStatusError(_model_base.Model):
-    """Operation Error message.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    """
-
-    code: Optional[str] = rest_field()
-    """The error code."""
-    message: Optional[str] = rest_field()
-    """The error message."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
+        error: Optional["_models.Error"] = None,
     ):
         ...
 
@@ -794,11 +791,11 @@ class OSDisk(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar disk_size_g_b: The size of the OS Disk in gigabytes.
-    :vartype disk_size_g_b: int
+    :ivar disk_size_gb: The size of the OS Disk in gigabytes.
+    :vartype disk_size_gb: int
     """
 
-    disk_size_g_b: Optional[int] = rest_field(name="diskSizeGB", visibility=["read"])
+    disk_size_gb: Optional[int] = rest_field(name="diskSizeGB", visibility=["read"])
     """The size of the OS Disk in gigabytes."""
 
 
@@ -982,7 +979,7 @@ class Schedule(_model_base.Model):
     :ivar frequency: The frequency of this scheduled task. Required. "Daily"
     :vartype frequency: str or ~azure.developer.devcenter.models.ScheduledFrequency
     :ivar time: The target time to trigger the action. The format is HH:MM. Required.
-    :vartype time: str
+    :vartype time: ~datetime.time
     :ivar time_zone: The IANA timezone id at which the schedule should execute. Required.
     :vartype time_zone: str
     """
@@ -993,7 +990,7 @@ class Schedule(_model_base.Model):
     """Supported type this scheduled task represents. Required. \"StopDevBox\""""
     frequency: Union[str, "_models.ScheduledFrequency"] = rest_field()
     """The frequency of this scheduled task. Required. \"Daily\""""
-    time: str = rest_field()
+    time: datetime.time = rest_field()
     """The target time to trigger the action. The format is HH:MM. Required."""
     time_zone: str = rest_field(name="timeZone")
     """The IANA timezone id at which the schedule should execute. Required."""
@@ -1004,7 +1001,7 @@ class Schedule(_model_base.Model):
         *,
         type: Union[str, "_models.ScheduledType"],
         frequency: Union[str, "_models.ScheduledFrequency"],
-        time: str,
+        time: datetime.time,
         time_zone: str,
     ):
         ...

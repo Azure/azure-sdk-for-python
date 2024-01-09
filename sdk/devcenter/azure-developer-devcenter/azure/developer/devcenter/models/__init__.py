@@ -20,8 +20,7 @@ from ._models import HardwareProfile
 from ._models import ImageReference
 from ._models import InnerError
 from ._models import OSDisk
-from ._models import OperationStatus
-from ._models import OperationStatusError
+from ._models import OperationDetails
 from ._models import Pool
 from ._models import Project
 from ._models import RemoteConnection
@@ -31,6 +30,8 @@ from ._models import StorageProfile
 
 from ._enums import DevBoxActionDelayResultStatus
 from ._enums import DevBoxActionType
+from ._enums import DevBoxProvisioningState
+from ._enums import EnvironmentProvisioningState
 from ._enums import EnvironmentTypeEnableStatus
 from ._enums import HibernateSupport
 from ._enums import LocalAdminStatus
@@ -41,6 +42,7 @@ from ._enums import PoolHealthStatus
 from ._enums import PowerState
 from ._enums import ScheduledFrequency
 from ._enums import ScheduledType
+from ._enums import SkuName
 from ._enums import StopOnDisconnectEnableStatus
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -61,8 +63,7 @@ __all__ = [
     "ImageReference",
     "InnerError",
     "OSDisk",
-    "OperationStatus",
-    "OperationStatusError",
+    "OperationDetails",
     "Pool",
     "Project",
     "RemoteConnection",
@@ -71,6 +72,8 @@ __all__ = [
     "StorageProfile",
     "DevBoxActionDelayResultStatus",
     "DevBoxActionType",
+    "DevBoxProvisioningState",
+    "EnvironmentProvisioningState",
     "EnvironmentTypeEnableStatus",
     "HibernateSupport",
     "LocalAdminStatus",
@@ -81,6 +84,7 @@ __all__ = [
     "PowerState",
     "ScheduledFrequency",
     "ScheduledType",
+    "SkuName",
     "StopOnDisconnectEnableStatus",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
