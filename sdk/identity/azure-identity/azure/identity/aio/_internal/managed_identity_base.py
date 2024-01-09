@@ -3,13 +3,15 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import abc
-from typing import Any, cast, Optional
+from typing import Any, cast, Optional, TypeVar
 
 from azure.core.credentials import AccessToken
 from . import AsyncContextManager
 from .get_token_mixin import GetTokenMixin
 from .managed_identity_client import AsyncManagedIdentityClient
 from ... import CredentialUnavailableError
+
+T = TypeVar("T", bound="AsyncManagedIdentityBase")
 
 
 class AsyncManagedIdentityBase(AsyncContextManager, GetTokenMixin):
@@ -27,7 +29,7 @@ class AsyncManagedIdentityBase(AsyncContextManager, GetTokenMixin):
     def get_unavailable_message(self) -> str:
         pass
 
-    async def __aenter__(self):
+    async def __aenter__(self: T) -> T:
         if self._client:
             await self._client.__aenter__()
         return self

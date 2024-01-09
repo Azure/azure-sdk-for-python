@@ -26,6 +26,12 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
 )
+from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+    get_statsbeat_shutdown,
+    get_statsbeat_custom_events_feature_set,
+    is_statsbeat_enabled,
+    set_statsbeat_custom_events_feature_set,
+)
 
 _logger = logging.getLogger(__name__)
 
@@ -77,16 +83,18 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
         cls, conn_str: str, **kwargs: Any
     ) -> "AzureMonitorLogExporter":
         """
-        Create an AzureMonitorLogExporter from a connection string.
+        Create an AzureMonitorLogExporter from a connection string. This is the
+        recommended way of instantiation if a connection string is passed in
+        explicitly. If a user wants to use a connection string provided by
+        environment variable, the constructor of the exporter can be called
+        directly.
 
-        This is the recommended way of instantation if a connection string is passed in explicitly.
-        If a user wants to use a connection string provided by environment variable, the constructor
-        of the exporter can be called directly.
-
-        :param str conn_str: The connection string to be used for authentication.
-        :keyword str api_version: The service API version used. Defaults to latest.
-        :returns an instance of ~AzureMonitorLogExporter
-        :rtype ~azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter
+        :param str conn_str: The connection string to be used for
+            authentication.
+        :keyword str api_version: The service API version used. Defaults to
+            latest.
+        :return: an instance of ~AzureMonitorLogExporter
+        :rtype: ~azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter
         """
         return cls(connection_string=conn_str, **kwargs)
 
@@ -127,6 +135,7 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
 
     # Event telemetry
     if _log_data_is_event(log_data):
+        _set_statsbeat_custom_events_feature()
         envelope.name = 'Microsoft.ApplicationInsights.Event'
         data = TelemetryEventData(
             name=str(log_record.body)[:32768],
@@ -196,3 +205,7 @@ _IGNORED_ATTRS = frozenset(
         _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
     )
 )
+
+def _set_statsbeat_custom_events_feature():
+    if is_statsbeat_enabled() and not get_statsbeat_shutdown() and not get_statsbeat_custom_events_feature_set():
+        set_statsbeat_custom_events_feature_set()

@@ -205,6 +205,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         self._identity = identity
         if isinstance(self.component, ParallelComponent):
             self.resources = self.resources or copy.deepcopy(self.component.resources)
+            self.retry_settings = self.retry_settings or copy.deepcopy(self.component.retry_settings)
             self.input_data = self.input_data or self.component.input_data
             self.max_concurrency_per_instance = (
                 self.max_concurrency_per_instance or self.component.max_concurrency_per_instance
