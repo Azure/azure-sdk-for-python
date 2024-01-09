@@ -29,7 +29,8 @@ extend_skip_glob = [
 
 [tool.mypy] 
 python_version = "3.10"
-exclude = ["azure/ai/ml/_restclient", "azure/ai/ml/_vendor/", "azure/ai/ml/_schema/", "azure/ai/ml/_internal/_schema", "tests", "setup.py", "samples"]   
+exclude = ["*"]
+include = ["azure/ai/ml/_internal/"]
 warn_unused_configs = true 
 follow_imports = "skip"
 ignore_missing_imports = true
