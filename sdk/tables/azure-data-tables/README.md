@@ -60,7 +60,7 @@ The `credential` parameter may be provided in a number of different forms, depen
 * Shared Key
 * Connection String
 * Shared Access Signature Token
-* TokenCredential(AAD)
+* TokenCredential(AAD)(Supported on Storage)
 
 ##### Creating the client from a shared key
 To use an account [shared key][azure_shared_key] (aka account key or access key), provide the key as a string. This can be found in your storage account in the [Azure Portal][azure_portal_account_url] under the "Access Keys" section or by running the following Azure CLI command:
@@ -77,8 +77,12 @@ Use the key as the credential parameter to authenticate the client:
 from azure.data.tables import TableServiceClient
 from azure.core.credentials import AzureNamedKeyCredential
 
-credential = AzureNamedKeyCredential(self.account_name, self.access_key)
-table_service_client = TableServiceClient(endpoint=self.endpoint, credential=credential)
+credential = AzureNamedKeyCredential("my_account_name", "my_access_key")
+with TableServiceClient(
+    endpoint="https://<my_account_name>.table.core.windows.net", credential=credential
+) as table_service_client:
+    properties = table_service_client.get_service_properties()
+    print(f"{properties}")
 ```
 
 <!-- END SNIPPET -->
@@ -105,7 +109,10 @@ Create a client from a connection string:
 ```python
 from azure.data.tables import TableServiceClient
 
-table_service_client = TableServiceClient.from_connection_string(conn_str=self.connection_string)
+connection_string = "AccountName=<my_account_name>;AccountKey=<my_account_key>;EndpointSuffix=<endpoint_suffix>"
+with TableServiceClient.from_connection_string(conn_str=connection_string) as table_service_client:
+    properties = table_service_client.get_service_properties()
+    print(f"{properties}")
 ```
 
 <!-- END SNIPPET -->
@@ -120,7 +127,7 @@ from datetime import datetime, timedelta
 from azure.data.tables import TableServiceClient, generate_account_sas, ResourceTypes, AccountSasPermissions
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 
-credential = AzureNamedKeyCredential(self.account_name, self.access_key)
+credential = AzureNamedKeyCredential("my_account_name", "my_access_key")
 # Create a SAS token to use for authentication of a client
 sas_token = generate_account_sas(
     credential,
@@ -129,7 +136,11 @@ sas_token = generate_account_sas(
     expiry=datetime.utcnow() + timedelta(hours=1),
 )
 
-table_service_client = TableServiceClient(endpoint=self.endpoint, credential=AzureSasCredential(sas_token))
+with TableServiceClient(
+    endpoint="https://<my_account_name>.table.core.windows.net", credential=AzureSasCredential(sas_token)
+) as table_service_client:
+    properties = table_service_client.get_service_properties()
+    print(f"{properties}")
 ```
 
 <!-- END SNIPPET -->
@@ -147,7 +158,11 @@ With the `azure-identity` package, you can seamlessly authorize requests in both
 from azure.data.tables import TableServiceClient
 from azure.identity import DefaultAzureCredential
 
-table_service_client = TableServiceClient(endpoint=self.endpoint, credential=DefaultAzureCredential())
+with TableServiceClient(
+    endpoint="https://<my_account_name>.table.core.windows.net", credential=DefaultAzureCredential()
+) as table_service_client:
+    properties = table_service_client.get_service_properties()
+    print(f"{properties}")
 ```
 
 <!-- END SNIPPET -->
