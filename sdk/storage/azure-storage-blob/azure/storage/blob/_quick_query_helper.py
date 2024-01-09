@@ -26,12 +26,12 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
 
     def __init__(
         self,
-        name: str,
-        container: str,
-        headers: Dict[str, Any],
+        name: str = None,
+        container: str = None,
         errors: Any = None,
         record_delimiter: str = '\n',
         encoding: Any = None,
+        headers: Dict[str, Any] = None,
         response: Any = None,
         error_cls = None,
     ) -> None:
@@ -91,7 +91,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
             return data.decode(self._encoding)
         return data
 
-    def readinto(self, stream) -> None:
+    def readinto(self, stream: IO) -> None:
         """Download the query result to a stream.
 
         :param IO stream:
@@ -126,14 +126,14 @@ class QuickQueryStreamer(object):
     File-like streaming iterator.
     """
 
-    def __init__(self, generator: Any) -> None:
+    def __init__(self, generator) -> None:
         self.generator = generator
         self.iterator = iter(generator)
         self._buf = b""
         self._point = 0
         self._download_offset = 0
         self._buf_start = 0
-        self.file_length: Optional[int] = None
+        self.file_length = None
 
     def __len__(self):
         return self.file_length
@@ -163,7 +163,7 @@ class QuickQueryStreamer(object):
         if self._point < 0:    # pylint: disable=consider-using-max-builtin
             self._point = 0  # XXX is this right?
 
-    def read(self, size: int) -> Any:
+    def read(self, size):
         try:
             # keep reading from the generator until the buffer of this stream has enough data to read
             while self._point + size > self._download_offset:

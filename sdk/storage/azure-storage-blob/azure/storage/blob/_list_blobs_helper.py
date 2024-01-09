@@ -232,7 +232,7 @@ class BlobPrefix(ItemPaged, DictMixin):
     """A blob name prefix being used to filter the list."""
     marker: Optional[str]
     """The continuation token of the current page of results."""
-    results_per_page: Optional[str]
+    results_per_page: Optional[int]
     """The maximum number of results retrieved per API call."""
     next_marker: Optional[str]
     """The continuation token to retrieve the next page of results."""
@@ -250,7 +250,7 @@ class BlobPrefix(ItemPaged, DictMixin):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super(BlobPrefix, self).__init__(*args, page_iterator_class=BlobPrefixPaged, **kwargs)
-        self.name = kwargs.get('prefix')
+        self.name = kwargs.get('name')
         self.prefix = kwargs.get('prefix')
         self.results_per_page = kwargs.get('results_per_page')
         self.container = kwargs.get('container')
