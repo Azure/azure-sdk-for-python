@@ -7,7 +7,7 @@
 
 import functools
 from typing import (
-    Any, AnyStr, Dict, List, IO, Iterable, Iterator, Optional, overload, Union,
+    Any, AnyStr, cast, Dict, List, IO, Iterable, Iterator, Optional, overload, Union,
     TYPE_CHECKING
 )
 from urllib.parse import urlparse, unquote
@@ -361,13 +361,13 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             container's lease is active and matches this ID.
             Required if the container has an active lease.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
-        :keyword datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :keyword datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -427,13 +427,13 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :param str lease_id:
             Proposed lease ID, in a GUID string format. The Blob service returns
             400 (Invalid request) if the proposed lease ID is not in the correct format.
-        :keyword datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :keyword datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -565,13 +565,13 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             If specified, set_container_metadata only succeeds if the
             container's lease is active and matches this ID.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
-        :keyword datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :keyword datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -696,7 +696,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         self, signed_identifiers: Dict[str, "AccessPolicy"],
         public_access: Optional[Union[str, "PublicAccess"]] = None,
         **kwargs: Any
-    ) -> Any:
+    ) -> Dict[str, Union[str, datetime]]:
         """Sets the permissions for the specified container or stored access
         policies that may be used with Shared Access Signatures. The permissions
         indicate whether blobs in a container may be accessed publicly.
@@ -712,13 +712,13 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             Required if the container has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
-        :keyword datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A datetime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified date/time.
-        :keyword datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A datetime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -758,14 +758,14 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         access_conditions = get_access_conditions(lease)
         timeout = kwargs.pop('timeout', None)
         try:
-            return self._client.container.set_access_policy(  #type: ignore
+            return cast(Dict[str, Union[str, datetime]], self._client.container.set_access_policy(
                 container_acl=signed_identifiers or None,
                 timeout=timeout,
                 access=public_access,
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -989,13 +989,13 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             Required if the container has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
-        :keyword datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :keyword datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -1123,13 +1123,13 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
-        :keyword datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :keyword datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -1231,13 +1231,13 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             succeeds if the blob's lease is active and matches this ID. Value can be a
             BlobLeaseClient object or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
-        :keyword datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :keyword datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -1346,13 +1346,13 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             Required if a blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
              - "include": Deletes the blob along with all snapshots.
-        :keyword datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :keyword datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.

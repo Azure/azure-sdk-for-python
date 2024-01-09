@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Dict, Optional, Tuple, Union, TYPE_CHECKING
+from typing import Any, cast, Dict, Optional, Tuple, Union, TYPE_CHECKING
 
 try:
     from urllib.parse import quote
@@ -61,7 +61,7 @@ def _get_match_headers(
     kwargs: Dict[str, Any],
     match_param: str,
     etag_param: str
-) -> Tuple[Optional[Any], Optional[Any]]:
+) -> Tuple[Optional[Any], Optional[str]]:
     if_match = None
     if_none_match = None
     match_condition = kwargs.pop(match_param, None)
@@ -85,7 +85,7 @@ def _get_match_headers(
     return if_match, if_none_match
 
 
-def get_access_conditions(lease: Optional[Union["BlobLeaseClient", str]]) -> Union[LeaseAccessConditions, None]:
+def get_access_conditions(lease: Optional[Union["BlobLeaseClient", str]]) -> Optional[LeaseAccessConditions]:
     try:
         lease_id = lease.id # type: ignore
     except AttributeError:
@@ -146,10 +146,8 @@ def get_api_version(kwargs: Dict[str, Any]) -> str:
     return api_version or _SUPPORTED_API_VERSIONS[-1]
 
 def get_version_id(self_vid: Optional[str], kwargs: Dict[str, Any]) -> Optional[str]:
-    if kwargs.get('version_id') is not None:
-        version_id = kwargs.pop('version_id')
-        if isinstance(version_id, str):
-            return version_id
+    if 'version_id' in kwargs:
+        return cast(str, kwargs.pop('version_id'))
     return self_vid
 
 def serialize_blob_tags_header(tags: Optional[Dict[str, str]] = None) -> Optional[str]:
@@ -170,7 +168,7 @@ def serialize_blob_tags_header(tags: Optional[Dict[str, str]] = None) -> Optiona
     return ''.join(components)
 
 
-def serialize_blob_tags(tags: Optional[Dict[str, str]] = None) -> Union[BlobTags, None]:
+def serialize_blob_tags(tags: Optional[Dict[str, str]] = None) -> BlobTags:
     tag_list = []
     if tags:
         tag_list = [BlobTag(key=k, value=v) for k, v in tags.items()]
@@ -179,7 +177,7 @@ def serialize_blob_tags(tags: Optional[Dict[str, str]] = None) -> Union[BlobTags
 
 def serialize_query_format(formater: Union[str, DelimitedJsonDialect]) -> Optional[QuerySerialization]:
     if formater == "ParquetDialect":
-        qq_format = QueryFormat(type=QueryFormatType.PARQUET, parquet_text_configuration=None)
+        qq_format = QueryFormat(type=QueryFormatType.PARQUET, parquet_text_configuration=' ')  #type: ignore [arg-type]
     elif isinstance(formater, DelimitedJsonDialect):
         json_serialization_settings = JsonTextConfiguration(record_separator=formater.delimiter)
         qq_format = QueryFormat(type=QueryFormatType.JSON, json_text_configuration=json_serialization_settings)
