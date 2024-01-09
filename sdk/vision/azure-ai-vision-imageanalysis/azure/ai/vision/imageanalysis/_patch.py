@@ -22,6 +22,17 @@ from ._operations._operations import ImageAnalysisClientOperationsMixin
 from ._client import ImageAnalysisClient as ImageAnalysisClientGenerated
 
 class ImageAnalysisClient(ImageAnalysisClientGenerated):
+    """ImageAnalysisClient.
+
+    :param endpoint: Azure AI Computer Vision endpoint (protocol and hostname, for example:
+     https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.
+    :type endpoint: str
+    :param credential: Credential needed for the client to connect to Azure. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :keyword api_version: The API version to use for this operation. Default value is "2023-10-01".
+     Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
+    """
 
     @overload
     def analyze(
