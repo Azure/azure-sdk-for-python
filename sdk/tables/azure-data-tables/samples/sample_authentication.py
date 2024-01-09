@@ -82,7 +82,9 @@ class TableAuthSamples(object):
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
-        with TableServiceClient(endpoint=self.endpoint, credential=AzureSasCredential(sas_token)) as table_service_client:
+        with TableServiceClient(
+            endpoint=self.endpoint, credential=AzureSasCredential(sas_token)
+        ) as table_service_client:
             properties = table_service_client.get_service_properties()
             print(f"{properties}")
         # [END auth_from_sas]
