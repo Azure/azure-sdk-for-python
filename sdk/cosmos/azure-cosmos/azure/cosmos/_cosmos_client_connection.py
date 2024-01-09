@@ -31,6 +31,7 @@ from urllib3.util.retry import Retry
 from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
 from azure.core import PipelineClient
+from azure.core.pipeline.transport import HttpRequest, HttpResponse  # pylint: disable=no-legacy-azure-core-http-response-import
 from azure.core.pipeline.policies import (
     HTTPPolicy,
     ContentDecodePolicy,
@@ -205,7 +206,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         ]
 
         transport = kwargs.pop("transport", None)
-        self.pipeline_client = PipelineClient(base_url=url_connection, transport=transport, policies=policies)
+        self.pipeline_client: PipelineClient[HttpRequest, HttpResponse] = PipelineClient(
+            base_url=url_connection,
+            transport=transport,
+            policies=policies
+        )
 
         # Query compatibility mode.
         # Allows to specify compatibility mode used by client when making query requests. Should be removed when

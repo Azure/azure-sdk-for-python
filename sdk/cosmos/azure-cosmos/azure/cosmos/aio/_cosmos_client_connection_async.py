@@ -23,17 +23,19 @@
 
 """Document client class for the Azure Cosmos database service.
 """
+from urllib.parse import urlparse
 from typing import (
     Callable, Dict, Any, Iterable, Mapping, Optional, List,
     Sequence, Tuple, Type, Union, cast
 )
-from typing_extensions import TypedDict
-from urllib.parse import urlparse
 
+from typing_extensions import TypedDict
 from urllib3.util.retry import Retry
+
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core import AsyncPipelineClient
+from azure.core.pipeline.transport import HttpRequest, AsyncHttpResponse  # pylint: disable=no-legacy-azure-core-http-response-import
 from azure.core.pipeline.policies import (
     AsyncHTTPPolicy,
     ContentDecodePolicy,
@@ -208,7 +210,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         ]
 
         transport = kwargs.pop("transport", None)
-        self.pipeline_client = AsyncPipelineClient(base_url=url_connection, transport=transport, policies=policies)
+        self.pipeline_client: AsyncPipelineClient[HttpRequest, AsyncHttpResponse] = AsyncPipelineClient(
+            base_url=url_connection,
+            transport=transport,
+            policies=policies
+        )
         self._setup_kwargs: Dict[str, Any] = kwargs
         self.session: Optional[_session.Session] = None
 
