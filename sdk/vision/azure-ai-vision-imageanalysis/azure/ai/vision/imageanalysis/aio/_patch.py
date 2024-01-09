@@ -13,7 +13,7 @@ To overcome this, the overloads are defined here. Consider moving them to the ri
 above issue is fixed.
 """
 from typing import List, overload, Any, Optional, Union
-from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 from .. import models as _models
 from ._operations._operations import ImageAnalysisClientOperationsMixin
 from ._client import ImageAnalysisClient as ImageAnalysisClientGenerated
@@ -112,7 +112,8 @@ class ImageAnalysisClient(ImageAnalysisClientGenerated):
         :rtype: ~azure.ai.vision.imageanalysis.models.ImageAnalysisResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-    @distributed_trace
+
+    @distributed_trace_async
     async def analyze(
         self,
         *,
