@@ -22,7 +22,7 @@ from azure.storage.blob._generated.operations._block_blob_operations import (
 from ._test_base import _ServiceTest
 
 
-class PipelineDownloadTest(_ServiceTest):
+class DownloadXMLDataTest(_ServiceTest):
     def __init__(self, arguments):
         super().__init__(arguments)
         blob_name = "downloadtest"
@@ -48,10 +48,10 @@ class PipelineDownloadTest(_ServiceTest):
                 'x-ms-date': current_time,
             },
         )
-        response = self.pipeline_client._pipeline.run(
+        response = (await self.async_pipeline_client._pipeline.run(
             request,
             stream=False
-        ).http_response
+        )).http_response
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
@@ -82,8 +82,28 @@ class PipelineDownloadTest(_ServiceTest):
             raise HttpResponseError(response=response)
 
     async def run_async(self):
-        raise NotImplementedError()
+        current_time = format_date_time(time())
+        response = (await self.async_pipeline_client._pipeline.run(
+            HttpRequest(
+                'GET',
+                self.blob_endpoint,
+                params={'comp': 'blocklist', 'blocklisttype': 'committed'},
+                headers={
+                    'x-ms-version': '2023-11-03',
+                    'Accept': 'application/xml',
+                    'x-ms-date': current_time,
+                }
+            )
+        )).http_response
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
 
     async def close(self):
-        await self.async_blob_client.close()
         await super().close()

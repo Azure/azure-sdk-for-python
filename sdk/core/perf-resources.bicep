@@ -1,5 +1,6 @@
 param baseName string = resourceGroup().name
 param location string = resourceGroup().location
+param storageEndpointSuffix string = 'core.windows.net'
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   name: '${baseName}blob'
@@ -18,7 +19,6 @@ resource storageAccountBlobServices 'Microsoft.Storage/storageAccounts/blobServi
 resource testContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2021-09-01' = {
   name: 'testcontainer'
   parent: storageAccountBlobServices
-  publicAccess: 'Container'
 
 }
 
@@ -30,11 +30,12 @@ resource testContainer 'Microsoft.Storage/storageAccounts/blobServices/container
 //  signedExpiry: expiryDate
 //  signedResourceTypes: 'sco'
 //}
-//
+
 //var sasToken = storageAccount.listAccountSas('2021-09-01', accountSasProperties).accountSasToken
+var storageAccountKey = storageAccount.listKeys('2021-09-01').keys[0].value
 
 output AZURE_STORAGE_ACCOUNT_NAME string = storageAccount.name
 output AZURE_STORAGE_ACCOUNT_ENDPOINT string = storageAccount.properties.primaryEndpoints.blob
-output AZURE_STORAGE_ACCOUNT_KEY string = storageAccount.listKeys('2021-09-01').keys[0].value
-//output AZURE_STORAGE_CONTAINER_URL string = containerUrl
+output AZURE_STORAGE_ACCOUNT_KEY string = storageAccountKey
+output AZURE_STORAGE_CONN_STR string = 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccountKey};EndpointSuffix=${storageEndpointSuffix}'
 output AZURE_STORAGE_CONTAINER_NAME string = testContainer.name
