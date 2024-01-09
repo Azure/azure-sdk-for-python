@@ -71,7 +71,7 @@ class _StatsbeatMetrics:
         "cikey": None,
         "runtimeVersion": platform.python_version(),
         "os": platform.system(),
-        "language": "Python",
+        "language": "python",
         "version": VERSION
     }
 

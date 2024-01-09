@@ -24,6 +24,8 @@
     ([#33691](https://github.com/Azure/azure-sdk-for-python/pull/33691))
 - Implement distro detection for statsbeat feature
     ([#33761](https://github.com/Azure/azure-sdk-for-python/pull/33761))
+- Use empty resource for statsbeat `MeterProvider`
+    ([#33761](https://github.com/Azure/azure-sdk-for-python/pull/33761))
 
 ## 1.0.0b19 (2023-11-20)
 
