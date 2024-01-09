@@ -30,7 +30,7 @@ from azure.monitor.opentelemetry._constants import (
     DISABLE_LOGGING_ARG,
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
-    DISTRO_VERSION,
+    DISTRO_VERSION_ARG,
     INSTRUMENTATION_OPTIONS_ARG,
     LOGGER_NAME_ARG,
     RESOURCE_ARG,
@@ -57,7 +57,7 @@ def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
 
     for key, val in kwargs.items():
         configurations[key] = val
-    configurations[DISTRO_VERSION] = VERSION
+    configurations[DISTRO_VERSION_ARG] = VERSION
 
     _default_disable_logging(configurations)
     _default_disable_metrics(configurations)

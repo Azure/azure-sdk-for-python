@@ -46,6 +46,10 @@ _MESSAGE_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Message"
 _REQUEST_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Request"
 _REMOTE_DEPENDENCY_ENVELOPE_NAME = "Microsoft.ApplicationInsights.RemoteDependency"
 
+# Feature constants
+_APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE = "APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE"
+_AZURE_MONITOR_DISTRO_VERSION_ARG = "distro_version"
+
 # Statsbeat
 
 # (OpenTelemetry metric name, Statsbeat metric name)
