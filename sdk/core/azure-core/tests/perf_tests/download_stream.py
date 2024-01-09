@@ -5,7 +5,7 @@
 
 from time import time
 from wsgiref.handlers import format_date_time
-from devtools_testutils.perfstress_tests import get_random_bytes, WriteStream
+from devtools_testutils.perfstress_tests import get_random_bytes
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -27,7 +27,6 @@ class DownloadBinaryDataTest(_ServiceTest):
         super().__init__(arguments)
         blob_name = "streamdownloadtest"
         self.blob_endpoint = f"{self.account_endpoint}{self.container_name}/{blob_name}"
-        self.download_stream = WriteStream()
         self.error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -79,7 +78,7 @@ class DownloadBinaryDataTest(_ServiceTest):
 
     async def run_async(self):
         current_time = format_date_time(time())
-        response = await self.async_pipeline_client._pipeline.run(
+        response = (await self.async_pipeline_client._pipeline.run(
             HttpRequest(
                 'GET',
                 self.blob_endpoint,
@@ -89,11 +88,10 @@ class DownloadBinaryDataTest(_ServiceTest):
                     'x-ms-date': current_time,
                 }
             )
-        ).http_response
+        )).http_response
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
             raise HttpResponseError(response=response)
 
     async def close(self):
-        await self.async_blob_client.close()
         await super().close()

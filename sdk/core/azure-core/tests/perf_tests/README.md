@@ -7,12 +7,17 @@ The following environment variables will need to be set for the tests to access 
 
 ```
 AZURE_STORAGE_CONTAINER_SAS_URL=<the URI of the Storage container>
+AZURE_STORAGE_CONN_STR=<the connection string to the Storage account>
+AZURE_STORAGE_ACCOUNT_NAME=<the Storage account name>
+AZURE_STORAGE_CONTAINER_NAME=<the container name>
+AZURE_STORAGE_ACCOUNT_KEY=<the Storage account key>
 ```
 
 ### Setup for perf test runs
 
 ```cmd
 (env) ~/azure-core> pip install -r dev_requirements.txt
+(env) ~/azure-core> pip install -r test_requirements.txt
 (env) ~/azure-core> pip install .
 ```
 
@@ -31,48 +36,39 @@ Using the `perfstress` command alone will list the available perf tests found.
 
 The tests currently available:
 
-- `ReceiveQueueMessageBatchTest` - Receive batches of messages from a queue.
-- `ReceiveQueueMessageStreamTest` - Receive messages from a queue using an iterator.
-- `ReceiveSubscriptionMessageBatchTest` - Receive batches of messages from a subscription.
-- `ReceiveSubscriptionMessageStreamTest` - Receive messages from a subscription using an iterator.
-- `SendQueueMessageTest` - Send individual messages (or a list of messages if `batch-size` is more than 1) to a queue.
-- `SendQueueMessageBatchTest` - Send batches of messages (`ServiceBusMessageBatch`) to a queue.
-- `SendTopicMessageTest` - Send individual messages (or a list of messages if `batch-size` is more than 1) to a topic.
-- `SendTopicMessageBatchTest` - Send batches of messages (`ServiceBusMessageBatch`) to a topic.
+- `UploadBinaryDataTest` - Puts binary data of `size` in a Storage Blob (corresponds to the upload_blob Blob operation).
+- `DownloadXMLDataTest` - Gets XML data from a Storage Blob (corresponds to the get_block_list Blob operation).
+- `DownloadPageableTest` - Gets pageable data from a Storage Blob (corresponds to the list_blobs Blob operation).
+- `DownloadBinaryDataTest` - Gets binary data of `size` from a Storage Blob (corresponds to the download_blob Blob operation).
 
 ### Common perf command line options
 
 The `perfstress` framework has a series of common command line options built in. View them [here](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/perfstress_tests.md#default-command-options).
 
-### Core perf test command line options
-
-The options that are available for all `SendRequest` perf tests:
-
-- `--transport-type` - By default, uses AiohttpTransport (0) for async. By default, uses RequestsTransport (0) for sync. All options:
-  - For async:
-    - 0: AiohttpTransport (default)
-    - 1: AsyncioRequestsTransport
-    - 2: AsyncHttpXTransport
-  - For sync:
-    - 0: RequestsTransport (default)
-    - 1: HttpXTransport
-- `--size=10240` - Size of request content (in bytes). Defaults to 10240.
 - `--sync` Whether to run the tests in sync or async. Default is False (async).
+- `-d --duration=10` Number of seconds to run as many operations (the "run" function) as possible. Default is 10.
+- `-i --iterations=1` Number of test iterations to run. Default is 1.
+- `-p --parallel=1` Number of tests to run in parallel. Default is 1.
+- `-w --warm-up=5` Number of seconds to spend warming up the connection before measuring begins. Default is 5.
 
-The options that are available for all `Receive` perf tests:
+#### Core perf test common command line options
 
-- `--transport-type` - By default, uses AiohttpTransport (0) for async. By default, uses RequestsTransport (0) for sync. All options:
+The options that are available for all Core perf tests:
+
+- `--transport` - By default, uses AiohttpTransport ("aiohttp") for async. By default, uses RequestsTransport ("requests") for sync. All options:
   - For async:
-    - 0: AiohttpTransport (default)
-    - 1: AsyncioRequestsTransport
-    - 2: AsyncHttpXTransport
+    - "aiohttp": AiohttpTransport (default)
+    - "requests": AsyncioRequestsTransport
   - For sync:
-    - 0: RequestsTransport (default)
-    - 1: HttpXTransport
-- `--size=10240` - Size of request content (in bytes). Defaults to 10240.
-- `--sync` Whether to run the tests in sync or async. Default is False (async).
+    - "requests": RequestsTransport (default)
+- `--size=10240` - Size of request content (in bytes). Defaults to 10240. (Not used by `DownloadPageableTest`.)
+
+#### Additional DownloadPageableTest command line options
+The options that are additionally available for `DownloadPageableTest`:
+
+- `--count=100` - Number of blobs to list. Defaults to 100.
 
 ## Example command
 ```cmd
-(env) ~/azure-core> perfstress StreamDownloadTest
+(env) ~/azure-core> perfstress DownloadBinaryDataTest --transport requests --size=20480 --parallel=2
 ```
