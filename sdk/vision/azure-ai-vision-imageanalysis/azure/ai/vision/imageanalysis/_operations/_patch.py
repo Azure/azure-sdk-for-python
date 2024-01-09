@@ -126,7 +126,8 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientOperationsMixinGener
                 smart_crops_aspect_ratios = smart_crops_aspect_ratios,
                 model_version = model_version,
                 **kwargs)
-        elif image_data is not None:
+
+        if image_data is not None:
             return super()._analyze_from_buffer(
                 image_content = image_data,
                 visual_features = visual_features_impl,
@@ -135,8 +136,8 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientOperationsMixinGener
                 smart_crops_aspect_ratios = smart_crops_aspect_ratios,
                 model_version = model_version,
                 **kwargs)
-        else:
-            raise ValueError("Either image_data or image_url must be specified.")
+
+        raise ValueError("Either image_data or image_url must be specified.")
 
 __all__: List[str] = [
     "ImageAnalysisClientOperationsMixin"
