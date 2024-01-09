@@ -62,6 +62,7 @@ def collect_statsbeat_metrics(exporter) -> None:
                 exporter._disable_offline_storage,
                 long_interval_threshold,
                 exporter._credential is not None,
+                exporter._distro_version,
             )
         # Export some initial stats on program start
         mp.force_flush()

@@ -119,6 +119,8 @@ _INSTRUMENTATIONS_LIST = [
     "urllib",
     "urllib3",
     _AZURE_SDK_OPENTELEMETRY_NAME,
+    "cassandra",
+    "tortoiseorm",
 ]
 
 _INSTRUMENTATIONS_BIT_MAP = {_INSTRUMENTATIONS_LIST[i]: _BASE**i for i in range(len(_INSTRUMENTATIONS_LIST))}
