@@ -26,12 +26,12 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
 
     def __init__(
         self,
-        name: str = None,
-        container: str = None,
+        name: str = None,  # type: ignore [assignment]
+        container: str = None,  # type: ignore [assignment]
         errors: Any = None,
         record_delimiter: str = '\n',
         encoding: Any = None,
-        headers: Dict[str, Any] = None,
+        headers: Dict[str, Any] = None,  # type: ignore [assignment]
         response: Any = None,
         error_cls = None,
     ) -> None:
