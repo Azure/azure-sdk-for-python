@@ -57,7 +57,7 @@ from .. import _runtime_constants as runtime_constants
 from .. import _request_object
 from . import _asynchronous_request as asynchronous_request
 from . import _global_endpoint_manager_async as global_endpoint_manager_async
-from .._routing.aio import routing_map_provider
+from .._routing.aio.routing_map_provider import SmartRoutingMapProvider
 from ._retry_utility_async import _ConnectionRetryPolicy
 from .. import _session
 from .. import _utils
@@ -221,10 +221,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Query compatibility mode.
         # Allows to specify compatibility mode used by client when making query requests. Should be removed when
         # application/sql is no longer supported.
-        self._query_compatibility_mode = CosmosClientConnection._QueryCompatibilityMode.Default
+        self._query_compatibility_mode: int = CosmosClientConnection._QueryCompatibilityMode.Default
 
         # Routing map provider
-        self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
+        self._routing_map_provider: SmartRoutingMapProvider = SmartRoutingMapProvider(self)
 
     @property
     def _Session(self) -> Optional[_session.Session]:
@@ -849,7 +849,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path: str,
         request_params: _request_object.RequestObject,
         body: Optional[Union[str, List[Dict[str, Any]], Dict[str, Any]]],
-        req_headers: Mapping[str, Any],
+        req_headers: Dict[str, Any],
         **kwargs: Any
     ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Azure Cosmos 'POST' async http request.
@@ -1141,7 +1141,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self,
         path: str,
         request_params: _request_object.RequestObject,
-        req_headers: Mapping[str, Any],
+        req_headers: Dict[str, Any],
         **kwargs: Any
     ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Azure Cosmos 'GET' async http request.
@@ -1495,7 +1495,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path: str,
         request_params: _request_object.RequestObject,
         body: Dict[str, Any],
-        req_headers: Mapping[str, Any],
+        req_headers: Dict[str, Any],
         **kwargs: Any
     ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Azure Cosmos 'PUT' async http request.
@@ -1524,7 +1524,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path: str,
         request_params: _request_object.RequestObject,
         request_data: Dict[str, Any],
-        req_headers: Mapping[str, Any],
+        req_headers: Dict[str, Any],
         **kwargs: Any
     ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Azure Cosmos 'PATCH' http request.
@@ -1810,7 +1810,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self,
         path: str,
         request_params: _request_object.RequestObject,
-        req_headers: Mapping[str, Any],
+        req_headers: Dict[str, Any],
         **kwargs: Any
     ) -> Tuple[None, Dict[str, Any]]:
         """Azure Cosmos 'DELETE' async http request.
@@ -3075,7 +3075,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
     def refresh_routing_map_provider(self) -> None:
         # re-initializes the routing map provider, effectively refreshing the current partition key range cache
-        self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
+        self._routing_map_provider = SmartRoutingMapProvider(self)
 
     async def _GetQueryPlanThroughGateway(self, query: str, resource_link: str, **kwargs) -> List[Dict[str, Any]]:
         supported_query_features = (documents._QueryFeature.Aggregate + "," +
