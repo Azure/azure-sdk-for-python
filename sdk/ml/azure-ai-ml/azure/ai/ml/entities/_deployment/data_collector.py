@@ -18,13 +18,13 @@ class DataCollector:
     """Data Capture deployment entity.
 
     :param collections: Mapping dictionary of strings mapped to DeploymentCollection entities.
-    :type collections: Mapping[str, DeploymentCollection]
-    :param rolling_rate: The rolling rate of mdc files, possible values: ["minute", "hour", "day"].
-    :type rolling_rate: str
-    :param sampling_rate: The sampling rate of mdc files, possible values: [0.0, 1.0].
-    :type sampling_rate: float
-    :param request_logging: Logging of request payload parameters.
-    :type request_logging: RequestLogging
+    :type collections: Dict[str, DeploymentCollection]
+    :param rolling_rate: The rolling rate of mdc files, possible values: ["minute", "hour", "day"]. If not set, rolling_rate defaults to None.
+    :type rolling_rate: typing.Optional[str]
+    :param sampling_rate: The sampling rate of mdc files, possible values: [0.0, 1.0]. If not set, sampling_rate defaults to None.
+    :type sampling_rate: typing.Optional[float]
+    :param request_logging: Logging of request payload parameters. If not set, request_logging defaults to None.
+    :type request_logging: typing.Optional[RequestLogging]
     """
 
     def __init__(

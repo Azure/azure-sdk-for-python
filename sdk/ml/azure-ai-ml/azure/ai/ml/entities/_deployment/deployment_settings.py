@@ -24,10 +24,10 @@ module_logger = logging.getLogger(__name__)
 class BatchRetrySettings(RestTranslatableMixin):
     """Retry settings for batch deployment.
 
-    :param max_retries: Number of retries in failure, defaults to 3
-    :type max_retries: int
-    :param timeout: Timeout in seconds, defaults to 30
-    :type timeout: int
+    :param max_retries: Number of retries in failure. If not set, max_retries defaults to 3.
+    :type max_retries: typing.Optional[int]
+    :param timeout: Timeout in seconds. If not set, timeout defaults to 30
+    :type timeout: typing.Optional[int]
     """
 
     def __init__(self, *, max_retries: Optional[int] = None, timeout: Optional[int] = None):
@@ -60,12 +60,13 @@ class BatchRetrySettings(RestTranslatableMixin):
 class OnlineRequestSettings(RestTranslatableMixin):
     """Request Settings entity.
 
-    :param request_timeout_ms: defaults to 5000
-    :type request_timeout_ms: int
-    :param max_concurrent_requests_per_instance: defaults to 1
-    :type max_concurrent_requests_per_instance: int
-    :param max_queue_wait_ms: defaults to 500
-    :type max_queue_wait_ms: int
+    :param request_timeout_ms: The scoring timeout. If not set, request_timeout_ms defaults to 5000.
+    :type request_timeout_ms: typing.Optional[int]
+    :param max_concurrent_requests_per_instance:  The number of maximum concurrent requests per node
+     allowed per deployment. If not set, max_concurrent_requests_per_instance defaults to 1.
+    :type max_concurrent_requests_per_instance: typing.Optional[int]
+    :param max_queue_wait_ms: The maximum amount of time a request will stay in the queue. If not set, max_queue_wait_ms defaults to 500.
+    :type max_queue_wait_ms: typing.Optional[int]
     """
 
     def __init__(
@@ -122,6 +123,21 @@ class OnlineRequestSettings(RestTranslatableMixin):
 
 
 class ProbeSettings(RestTranslatableMixin):
+    """Settings entity
+
+    :param failure_threshold: The number of failures to allow before returning an unhealthy status. If not set, failure_threshold defaults to 30.
+    :type failure_threshold: typing.Optional[int]
+    :param success_threshold: The number of successful probes before returning a healthy status. If not set, success_threshold defaults to 1.
+    :type success_threshold: typing.Optional[int]
+    :param timeout: Probe timeout in seconds. If not set, timeout defaults to 2.
+    :type timeout: typing.Optional[int]
+    :param period: The length of time between probes. If not set, period defaults to 10.
+    :type period: typing.Optional[int]
+    :param initial_delay: The delay before the first probe. If not set, initial_delay defaults to 10.
+    :type initial_delay: typing.Optional[int]
+
+    """
+
     def __init__(
         self,
         *,
@@ -133,16 +149,16 @@ class ProbeSettings(RestTranslatableMixin):
     ):
         """Settings on how to probe an endpoint.
 
-        :param failure_threshold: Threshold for probe failures, defaults to 30
-        :type failure_threshold: int
-        :param success_threshold: Threshold for probe success, defaults to 1
-        :type success_threshold: int
-        :param timeout: timeout in seconds, defaults to 2
-        :type timeout: int
-        :param period: [description], defaults to 10
-        :type period: int
-        :param initial_delay: How to to wait for the first probe, defaults to 10
-        :type initial_delay: int
+        :param failure_threshold: The number of failures to allow before returning an unhealthy status. If not set, failure_threshold defaults to 30.
+        :type failure_threshold: typing.Optional[int]
+        :param success_threshold: The number of successful probes before returning a healthy status. If not set, success_threshold defaults to 1.
+        :type success_threshold: typing.Optional[int]
+        :param timeout: Probe timeout in seconds. If not set, timeout defaults to 2.
+        :type timeout: typing.Optional[int]
+        :param period: The length of time between probes. If not set, period defaults to 10.
+        :type period: typing.Optional[int]
+        :param initial_delay: The delay before the first probe. If not set, initial_delay defaults to 10.
+        :type initial_delay: typing.Optional[int]
         """
 
         self.failure_threshold = failure_threshold

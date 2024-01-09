@@ -12,10 +12,10 @@ from azure.ai.ml.entities._deployment.oversize_data_config import OversizeDataCo
 class EventHub:
     """Event Hub deployment entity
 
-    :param namespace: Name space of eventhub, provided in format of "{namespace}.{name}".
-    :type namespace: str
-    :param oversize_data_config: Oversized payload body configurations.
-    :type oversize_data_config: OversizeDataConfig
+    :param namespace: Name space of eventhub, provided in format of "{namespace}.{name}". If not set, namespace defaults to None.
+    :type namespace: typing.Optional[str]
+    :param oversize_data_config: Oversized payload body configurations. If not set, oversize_data_config defaults to None.
+    :type oversize_data_config: typing.Optional[OversizeDataConfig]
 
     """
 

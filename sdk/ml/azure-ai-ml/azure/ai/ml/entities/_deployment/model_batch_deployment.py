@@ -30,22 +30,22 @@ from .model_batch_deployment_settings import ModelBatchDeploymentSettings
 class ModelBatchDeployment(Deployment):
     """Job Definition entity.
 
-    :param type: Job definition type. Allowed value is: pipeline
+    :param type: Job definition type. Allowed value is: pipeline.
     :type type: str
-    :param name: Job name
-    :type name: str
+    :param name: The name of the job.
+    :type name: typing.Optional[str]
     :param job: Job definition
-    :type job: Union[Job, str]
+    :type job: typing.Optional[Union[Job, str]]
     :param component: Component definition
-    :type component: Union[Component, str]
+    :type component: typing.Optional[Union[Component, str]]
     :param settings: Job settings
-    :type settings: Dict[str, Any]
+    :type settings: typing.Optional[Dict[str, Any]]
     :param description: Job description.
-    :type description: str
+    :type description: typing.Optional[str]
     :param tags: Job tags
-    :type tags: Dict[str, Any]
+    :type tags: typing.Optional[Dict[str, Any]]
     :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
+    :type properties: typing.Optional[Dict[str, str]]
     """
 
     def __init__(

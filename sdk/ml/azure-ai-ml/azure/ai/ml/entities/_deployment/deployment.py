@@ -151,6 +151,12 @@ class Deployment(Resource, RestTranslatableMixin):
 
     @code_path.setter
     def code_path(self, value: Union[str, PathLike]) -> None:
+        """
+        Sets the code path for the deployment containing the scoring script.
+
+        :param value: The code directory containing the scoring script.
+        :type value: Union[str, PathLike]
+        """
         if not self.code_configuration:
             self.code_configuration = ResourceConfiguration()
 
@@ -167,6 +173,12 @@ class Deployment(Resource, RestTranslatableMixin):
 
     @scoring_script.setter
     def scoring_script(self, value: Union[str, PathLike]) -> None:
+        """
+        Sets the scoring script file path relative to the code directory.
+
+        :param value: The scoring script file path relative to the code directory.
+        :type value: Union[str, PathLike]
+        """
         if not self.code_configuration:
             self.code_configuration = ResourceConfiguration()
 

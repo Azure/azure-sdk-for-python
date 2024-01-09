@@ -16,19 +16,19 @@ module_logger = logging.getLogger(__name__)
 class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
     """Endpoint base class.
 
-    :param auth_mode: The authentication mode, defaults to None
-    :type auth_mode: str
-    :param location: The location of the endpoint, defaults to None
-    :type location: str
-    :param name: Name of the resource.
-    :type name: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
+    :param auth_mode: The authentication mode. If not set, defaults to None
+    :type auth_mode: typing.Optional[str]
+    :param location: The geo-location of where the resource lives. If not set, location defaults to None.
+    :type location: typing.Optional[str]
+    :param name: The name of the resource. If not set, name defaults to None.
+    :type name: typing.Optional[str]
+    :param tags: A set of tags. Resource tags. Tags can be added, removed, and updated. If not set, tags defaults to None.
     :type tags: typing.Optional[typing.Dict[str, str]]
-    :param properties: The asset property dictionary.
+    :param properties: The asset property dictionary. If not set, properties defaults to None.
     :type properties: typing.Optional[typing.Dict[str, str]]
-    :param description: Description of the resource.
+    :param description: Description of the resource. If not set, description defaults to None
     :type description: typing.Optional[str]
-    :keyword traffic: Traffic rules on how the traffic will be routed across deployments, defaults to {}
+    :keyword traffic: Traffic rules on how the traffic will be routed across deployments. If not set, traffic defaults to {}
     :paramtype traffic: typing.Optional[typing.Dict[str, int]]
     :keyword scoring_uri: str, Endpoint URI, readonly
     :paramtype scoring_uri: typing.Optional[str]
@@ -52,19 +52,19 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
 
         Constructor for Endpoint base class.
 
-        :param auth_mode: The authentication mode, defaults to None
-        :type auth_mode: str
-        :param location: The location of the endpoint, defaults to None
-        :type location: str
-        :param name: Name of the resource.
-        :type name: str
-        :param tags: Tag dictionary. Tags can be added, removed, and updated.
+        :param auth_mode: The authentication mode. If not set, defaults to None
+        :type auth_mode: typing.Optional[str]
+        :param location: The geo-location of where the resource lives. If not set, location defaults to None.
+        :type location: typing.Optional[str]
+        :param name: The name of the resource. If not set, name defaults to None.
+        :type name: typing.Optional[str]
+        :param tags: A set of tags. Resource tags. Tags can be added, removed, and updated. If not set, tags defaults to None.
         :type tags: typing.Optional[typing.Dict[str, str]]
-        :param properties: The asset property dictionary.
+        :param properties: The asset property dictionary. If not set, properties defaults to None.
         :type properties: typing.Optional[typing.Dict[str, str]]
-        :param description: Description of the resource.
+        :param description: Description of the resource. If not set, description defaults to None
         :type description: typing.Optional[str]
-        :keyword traffic: Traffic rules on how the traffic will be routed across deployments, defaults to {}
+        :keyword traffic: Traffic rules on how the traffic will be routed across deployments. If not set, traffic defaults to {}
         :paramtype traffic: typing.Optional[typing.Dict[str, int]]
         :keyword scoring_uri: str, Endpoint URI, readonly
         :paramtype scoring_uri: typing.Optional[str]

@@ -15,30 +15,30 @@ from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySetti
 class ModelBatchDeploymentSettings:
     """Model Batch Deployment Settings entity.
 
-    :param mini_batch_size: Size of the mini-batch passed to each batch invocation, defaults to 10
-    :type mini_batch_size: int
+    :param mini_batch_size: Size of the mini-batch passed to each batch invocation. If not set, mini_batch_size defaults to 10.
+    :type mini_batch_size: typing.Optional[int]
     :param instance_count: Number of instances the interfering will run on. Equivalent to resources.instance_count.
-    :type instance_count: int
+    :type instance_count: typing.Optional[int]
     :param output_action: Indicates how the output will be organized. Possible values include:
      "summary_only", "append_row". Defaults to "append_row"
     :type output_action: str or ~azure.ai.ml.constants._deployment.BatchDeploymentOutputAction
-    :param output_file_name: Customized output file name for append_row output action, defaults to "predictions.csv"
-    :type output_file_name: str
-    :param max_concurrency_per_instance: Indicates maximum number of parallelism per instance, defaults to 1
-    :type max_concurrency_per_instance: int
-    :param retry_settings: Retry settings for a batch inference operation, defaults to None
-    :type retry_settings: BatchRetrySettings
+    :param output_file_name: Customized output file name for append_row output action. If not set, output_file_name defaults to "predictions.csv".
+    :type output_file_name: typing.Optional[str]
+    :param max_concurrency_per_instance: Indicates maximum number of parallelism per instance. If not set, max_concurrency_per_instance defaults to 1.
+    :type max_concurrency_per_instance: typing.Optional[int]
+    :param retry_settings: Retry settings for a batch inference operation. If not set, retry_settings defaults to None.
+    :type retry_settings: typing.Optional[BatchRetrySettings]
     :param environment_variables: Environment variables that will be set in deployment.
-    :type environment_variables: dict
+    :type environment_variables: typing.Optional[Dict[str, str]]
     :param error_threshold: Error threshold, if the error count for the entire input goes above
         this value,
         the batch inference will be aborted. Range is [-1, int.MaxValue]
         -1 value indicates, ignore all failures during batch inference
         For FileDataset count of file failures
         For TabularDataset, this is the count of record failures, defaults to -1
-    :type error_threshold: int
-    :param logging_level: Logging level for batch inference operation, defaults to "info"
-    :type logging_level: str
+    :type error_threshold: typing.Optional[int]
+    :param logging_level: Logging level for batch inference operation. If not set, logging_level defaults to "info".
+    :type logging_level: typing.Optional[str]
 
     .. admonition:: Example:
 

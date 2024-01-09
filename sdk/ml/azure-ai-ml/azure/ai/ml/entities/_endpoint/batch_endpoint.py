@@ -23,26 +23,26 @@ module_logger = logging.getLogger(__name__)
 class BatchEndpoint(Endpoint):
     """Batch endpoint entity.
 
-    :param name: Name of the resource.
-    :type name: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param auth_mode: Possible values include: "AMLToken", "Key", "AADToken", defaults to None
+    :param name: The name of the resource. If not set, name defaults to None.
+    :type name: typing.Optional[str]
+    :param tags: A set of tags. Resource tags. Tags can be added, removed, and updated. If not set, tags defaults to None.
+    :type tags: typing.Optional[Dict[str, str]]
+    :param properties: The asset property dictionary. If not set, properties defaults to None.
+    :type properties: typing.Optional[dict[str, str]]
+    :param auth_mode: Possible values include: "AMLToken", "Key", "AADToken". If not set, auth_mode defaults to AADToken.
     :type auth_mode: str
-    :param description: Description of the inference endpoint, defaults to None
-    :type description: str
-    :param location: defaults to None
-    :type location: str
-    :param defaults:  Traffic rules on how the traffic will be routed across deployments, defaults to {}
-    :type defaults: Dict[str, str]
+    :param description: Description of the inference endpoint. If not set, description defaults to None
+    :type description: typing.Optional[str]
+    :param location: The geo-location of where the resource lives. If not set, location defaults to None.
+    :type location: typing.Optional[str]
+    :param defaults:  Traffic rules on how the traffic will be routed across deployments. If not set, defaults to {}
+    :type defaults: typing.Optional[Dict[str, str]]
     :param default_deployment_name:  Equivalent to defaults.default_deployment, will be ignored if defaults is present.
-    :type default_deployment_name: str
+    :type default_deployment_name: typing.Optional[str]
     :param scoring_uri: URI to use to perform a prediction, readonly.
-    :type scoring_uri: str
+    :type scoring_uri: typing.Optional[str]
     :param openapi_uri: URI to check the open API definition of the endpoint.
-    :type openapi_uri: str
+    :type openapi_uri: typing.Optional[str]
     """
 
     def __init__(
