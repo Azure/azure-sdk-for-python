@@ -389,7 +389,7 @@ class AzureAppConfigurationClient:
         *,
         etag: Optional[str] = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
-        **kwargs,
+        **kwargs: Any,
     ) -> ConfigurationSetting:
         """Delete a ConfigurationSetting if it exists
 
@@ -424,7 +424,7 @@ class AzureAppConfigurationClient:
         *,
         etag: Optional[str] = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
-        **kwargs,
+        **kwargs: Any,
     ) -> ConfigurationSetting:
         """Delete a ConfigurationSetting if it exists
 
