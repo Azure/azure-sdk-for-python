@@ -4,11 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from azure.storage.extensions.crc64 import compute_crc64
+from azure.storage.extensions import crc64
 
 class TestCrc64:
 
-    def test_compute_crc64():
+    def test_compute_crc64(self):
         data = b''
-        crc64 = compute_crc64(data, 0)
-        print(crc64)
+        result = crc64.compute_crc64(data, 0)
+        assert result == 0
