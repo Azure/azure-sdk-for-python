@@ -26,7 +26,7 @@ class ManagedIdentityClientBase(abc.ABC):
         identity_config: Optional[Dict] = None,
         **kwargs: Any
     ) -> None:
-        self._cache = kwargs.pop("_cache", None) or TokenCache()
+        self._cache: TokenCache = kwargs.pop("_cache", None) or TokenCache()
         self._content_callback = kwargs.pop("_content_callback", None)
         self._identity_config = identity_config or {}
         if client_id:
