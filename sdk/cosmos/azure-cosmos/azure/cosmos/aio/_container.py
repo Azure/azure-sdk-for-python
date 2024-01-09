@@ -35,7 +35,7 @@ from ..exceptions import CosmosResourceNotFoundError
 from ..http_constants import StatusCodes
 from ..offer import ThroughputProperties
 from ._scripts import ScriptsProxy
-from ..partition_key import NonePartitionKeyValue
+from ..partition_key import NonePartitionKeyValue, _return_undefined_or_empty_partition_key
 
 __all__ = ("ContainerProxy",)
 
@@ -108,7 +108,7 @@ class ContainerProxy(object):
 
     def _set_partition_key(self, partition_key) -> Union[str, Awaitable]:
         if partition_key == NonePartitionKeyValue:
-            return CosmosClientConnection._return_undefined_or_empty_partition_key(self.is_system_key)
+            return _return_undefined_or_empty_partition_key(self.is_system_key)
         return partition_key
 
 

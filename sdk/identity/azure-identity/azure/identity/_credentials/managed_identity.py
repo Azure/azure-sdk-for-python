@@ -96,12 +96,14 @@ class ManagedIdentityCredential:
             _LOGGER.info("%s will use IMDS", self.__class__.__name__)
             self._credential = ImdsCredential(**kwargs)
 
-    def __enter__(self):
-        self._credential.__enter__()
+    def __enter__(self) -> "ManagedIdentityCredential":
+        if self._credential:
+            self._credential.__enter__()  # type: ignore
         return self
 
-    def __exit__(self, *args):
-        self._credential.__exit__(*args)
+    def __exit__(self, *args: Any) -> None:
+        if self._credential:
+            self._credential.__exit__(*args)  # type: ignore
 
     def close(self) -> None:
         """Close the credential's transport session."""

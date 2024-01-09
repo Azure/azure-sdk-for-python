@@ -114,3 +114,13 @@ class TestParallelComponentEntity:
         rest_yaml_component = yaml_component._to_rest_object()
 
         assert rest_yaml_component == expected_rest_component
+
+    def test_parallel_component_run_settings_picked_up(self):
+        yaml_path = "./tests/test_configs/components/parallel_component_with_run_settings.yml"
+        parallel_component = load_component(source=yaml_path)
+        parallel_node = parallel_component()
+        # Normally, during initiation of nodes, the settings from the yaml file shouldn't be changed
+        assert parallel_component.resources.instance_count == parallel_node.resources.instance_count == 1
+        assert parallel_component.max_concurrency_per_instance == parallel_node.max_concurrency_per_instance == 16
+        assert parallel_component.retry_settings == parallel_node.retry_settings
+        assert parallel_component.retry_settings.timeout == 12345

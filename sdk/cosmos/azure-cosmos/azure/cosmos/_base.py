@@ -26,6 +26,7 @@ import base64
 from email.utils import formatdate
 import json
 import uuid
+import re
 import binascii
 from typing import Dict, Any, List, Mapping, Optional, Sequence, Union, Tuple, TYPE_CHECKING
 
@@ -60,6 +61,13 @@ _COMMON_OPTIONS = {
     'query_version': 'queryVersion',
     'priority_level': 'priorityLevel'
 }
+
+# Cosmos resource ID validation regex breakdown:
+# ^ Match start of string.
+# [^/\#?]{0,255} Match any character that is not /\#? for between 0-255 characters.
+# $ End of string
+_VALID_COSMOS_RESOURCE = re.compile(r"^[^/\\#?\t\r\n]{0,255}$")
+
 
 def _get_match_headers(kwargs: Dict[str, Any]) -> Tuple[Optional[str], Optional[str]]:
     if_match = kwargs.pop('if_match', None)
@@ -684,8 +692,20 @@ def validate_cache_staleness_value(max_integrated_cache_staleness: Any) -> None:
                          "integer greater than or equal to zero")
 
 
+def _validate_resource(resource: Mapping[str, Any]) -> None:
+    id_: Optional[str] = resource.get("id")
+    if id_:
+        try:
+            if _VALID_COSMOS_RESOURCE.match(id_) is None:
+                raise ValueError("Id contains illegal chars.")
+            if id_[-1] in [" ", "\n"]:
+                raise ValueError("Id ends with a space or newline.")
+        except TypeError as e:
+            raise TypeError("Id type must be a string.") from e
+
+
 def _stringify_auto_scale(offer: ThroughputProperties) -> str:
-    auto_scale_params = None
+    auto_scale_params: Optional[Dict[str, Union[None, int, Dict[str, Any]]]] = None
     max_throughput = offer.auto_scale_max_throughput
     increment_percent = offer.auto_scale_increment_percent
     auto_scale_params = {"maxThroughput": max_throughput}
