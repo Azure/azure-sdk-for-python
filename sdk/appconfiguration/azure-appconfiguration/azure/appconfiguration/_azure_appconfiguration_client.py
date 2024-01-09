@@ -453,7 +453,9 @@ class AzureAppConfigurationClient:
         """
 
     @distributed_trace
-    def delete_configuration_setting(self, *args, **kwargs) -> ConfigurationSetting:  # pylint:disable=delete-operation-wrong-return-type
+    def delete_configuration_setting(
+        self, *args, **kwargs
+    ) -> ConfigurationSetting:  # pylint:disable=delete-operation-wrong-return-type
         try:
             config_setting = kwargs.pop("configuration_setting", None)
             if not config_setting:
