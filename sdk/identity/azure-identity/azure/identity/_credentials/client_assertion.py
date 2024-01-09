@@ -55,11 +55,11 @@ class ClientAssertionCredential(GetTokenMixin):
         )
         super(ClientAssertionCredential, self).__init__(**kwargs)
 
-    def __enter__(self):
+    def __enter__(self) -> "ClientAssertionCredential":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self._client.__exit__(*args)
 
     def close(self) -> None:
