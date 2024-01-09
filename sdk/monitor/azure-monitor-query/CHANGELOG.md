@@ -1,10 +1,14 @@
 # Release History
 
-## 1.3.0b3 (Unreleased)
+## 1.4.0 (Unreleased)
 
 ### Features Added
 
+- Added `roll_up_by` keyword argument to `MetricsBatchQueryClient.query_batch` to support rolling up metrics by dimension. ([#33752](https://github.com/Azure/azure-sdk-for-python/pull/33752))
+
 ### Breaking Changes
+
+- Reordered the `metric_names` and `metric_namespaces` positional arguments in `MetricsBatchQueryClient.query_batch`. Note this is only a breaking change against the previous preview release. ([#33752](https://github.com/Azure/azure-sdk-for-python/pull/33752))
 
 ### Bugs Fixed
 

@@ -50,8 +50,8 @@ class MetricsBatchQueryClient:  # pylint: disable=client-accepts-api-version-key
     def query_batch(
         self,
         resource_uris: Sequence[str],
-        metric_namespace: str,
         metric_names: Sequence[str],
+        metric_namespace: str,
         *,
         timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]] = None,
         granularity: Optional[timedelta] = None,
@@ -59,16 +59,17 @@ class MetricsBatchQueryClient:  # pylint: disable=client-accepts-api-version-key
         max_results: Optional[int] = None,
         order_by: Optional[str] = None,
         filter: Optional[str] = None,
+        roll_up_by: Optional[str] = None,
         **kwargs: Any
     ) -> List[MetricsQueryResult]:
         """Lists the metric values for multiple resources.
 
         :param resource_uris: A list of resource URIs to query metrics for. Required.
         :type resource_uris: list[str]
-        :param metric_namespace: Metric namespace that contains the requested metric names. Required.
-        :type metric_namespace: str
         :param metric_names: The names of the metrics (comma separated) to retrieve. Required.
         :type metric_names: list[str]
+        :param metric_namespace: Metric namespace that contains the requested metric names. Required.
+        :type metric_namespace: str
         :keyword timespan: The timespan for which to query the data. This can be a timedelta,
             a timedelta and a start datetime, or a start datetime/end datetime.
         :paramtype timespan: Optional[Union[~datetime.timedelta, tuple[~datetime.datetime, ~datetime.timedelta],
@@ -97,6 +98,11 @@ class MetricsBatchQueryClient:  # pylint: disable=client-accepts-api-version-key
             **$filter= "dim (test) 3 eq 'dim3 (test) val'"** use **$filter= "dim
             %2528test%2529 3 eq 'dim3 %2528test%2529 val'"**. Default value is None.
         :paramtype filter: str
+        :keyword roll_up_by: Dimension name(s) to rollup results by. For example if you only want to see
+            metric values with a filter like 'City eq Seattle or City eq Tacoma' but don't want to see
+            separate values for each city, you can specify 'RollUpBy=City' to see the results for Seattle
+            and Tacoma rolled up into one timeseries. Default value is None.
+        :paramtype roll_up_by: str
         :return: A list of MetricsQueryResult objects.
         :rtype: list[~azure.monitor.query.MetricsQueryResult]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -132,6 +138,7 @@ class MetricsBatchQueryClient:  # pylint: disable=client-accepts-api-version-key
             top=max_results,
             orderby=order_by,
             filter=filter,
+            rollupby=roll_up_by,
             **kwargs
         )
 
