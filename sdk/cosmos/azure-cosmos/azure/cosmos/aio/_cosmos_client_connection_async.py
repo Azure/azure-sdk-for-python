@@ -68,6 +68,7 @@ from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
 from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from .._range_partition_resolver import RangePartitionResolver
 
+
 PartitionKeyType = Union[str, int, float, bool, List[Union[str, int, float, bool]], Type[NonePartitionKeyValue]]
 class CredentialDict(TypedDict, total=False):
     masterKey: str
@@ -424,7 +425,13 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = "/dbs"
         return await self.Create(database, path, "dbs", None, None, options, **kwargs)
 
-    async def CreateUser(self, database_link, user, options=None, **kwargs):
+    async def CreateUser(
+        self,
+        database_link: str,
+        user: Dict[str, Any],
+        options: Optional[Mapping[str, Any]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Creates a user.
 
         :param str database_link:
@@ -697,7 +704,13 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         return result
 
-    async def UpsertUser(self, database_link, user, options=None, **kwargs):
+    async def UpsertUser(
+        self,
+        database_link: str,
+        user: Dict[str, Any],
+        options: Optional[Mapping[str, Any]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Upserts a user.
 
         :param str database_link:
@@ -1144,7 +1157,13 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             **kwargs
         )
 
-    async def ReplaceUser(self, user_link, user, options=None, **kwargs):
+    async def ReplaceUser(
+        self,
+        user_link: str,
+        user: Dict[str, Any],
+        options: Optional[Mapping[str, Any]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Replaces a user and return it.
 
         :param str user_link:
@@ -1194,7 +1213,13 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         permission_id = base.GetResourceIdOrFullNameFromLink(permission_link)
         return await self.Replace(permission, path, "permissions", permission_id, None, options, **kwargs)
 
-    async def ReplaceContainer(self, collection_link, collection, options=None, **kwargs):
+    async def ReplaceContainer(
+        self,
+        collection_link: str,
+        collection: Dict[str, Any],
+        options: Optional[Mapping[str, Any]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Replaces a collection and return it.
 
         :param str collection_link:
@@ -1540,7 +1565,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
         await self.DeleteResource(path, "dbs", database_id, None, options, **kwargs)
 
-    async def DeleteUser(self, user_link, options=None, **kwargs):
+    async def DeleteUser(
+        self,
+        user_link: str,
+        options: Optional[Mapping[str, Any]] = None,
+        **kwargs: Any
+    ) -> None:
         """Deletes a user.
 
         :param str user_link:
@@ -1558,7 +1588,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         path = base.GetPathFromLink(user_link)
         user_id = base.GetResourceIdOrFullNameFromLink(user_link)
-        return await self.DeleteResource(path, "users", user_id, None, options, **kwargs)
+        await self.DeleteResource(path, "users", user_id, None, options, **kwargs)
 
     async def DeletePermission(
         self,
@@ -1585,7 +1615,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         permission_id = base.GetResourceIdOrFullNameFromLink(permission_link)
         await self.DeleteResource(path, "permissions", permission_id, None, options, **kwargs)
 
-    async def DeleteContainer(self, collection_link, options=None, **kwargs):
+    async def DeleteContainer(
+        self,
+        collection_link: str,
+        options: Optional[Mapping[str, Any]] = None,
+        **kwargs: Any
+    ) -> None:
         """Deletes a collection.
 
         :param str collection_link:
@@ -1603,7 +1638,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         path = base.GetPathFromLink(collection_link)
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
-        return await self.DeleteResource(path, "colls", collection_id, None, options, **kwargs)
+        await self.DeleteResource(path, "colls", collection_id, None, options, **kwargs)
 
     async def DeleteItem(
         self,
@@ -1888,7 +1923,13 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         return self._QueryPartitionKeyRanges(collection_link, None, feed_options, **kwargs)
 
-    def _QueryPartitionKeyRanges(self, collection_link, query, options=None, **kwargs):
+    def _QueryPartitionKeyRanges(
+        self,
+        collection_link: str,
+        query: Optional[Union[str, Dict[str, Any]]],
+        options: Optional[Mapping[str, Any]] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[Dict[str, Any]]:
         """Queries Partition Key Ranges in a collection.
 
         :param str collection_link:
@@ -1908,7 +1949,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(collection_link, "pkranges")
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
 
-        async def fetch_fn(options):
+        async def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
             return (
                 await self.__QueryFeed(
                     path, "pkranges", collection_id, lambda r: r["PartitionKeyRanges"],
@@ -1973,7 +2014,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
         )
 
-    def ReadContainers(self, database_link, options=None, **kwargs):
+    def ReadContainers(
+        self,
+        database_link: str,
+        options: Optional[Mapping[str, Any]] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[Dict[str, Any]]:
         """Reads all collections in a database.
 
         :param str database_link:
@@ -1990,7 +2036,13 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         return self.QueryContainers(database_link, None, options, **kwargs)
 
-    def QueryContainers(self, database_link, query, options=None, **kwargs):
+    def QueryContainers(
+        self,
+        database_link: str,
+        query: Optional[Union[str, Dict[str, Any]]],
+        options: Optional[Mapping[str, Any]] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[Dict[str, Any]]:
         """Queries collections in a database.
 
         :param str database_link:
@@ -2009,7 +2061,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(database_link, "colls")
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
 
-        async def fetch_fn(options):
+        async def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
             return (
                 await self.__QueryFeed(
                     path, "colls", database_id, lambda r: r["DocumentCollections"],
@@ -2240,7 +2292,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             page_iterator_class=query_iterable.QueryIterable
         )
 
-    def ReadUsers(self, database_link, options=None, **kwargs):
+    def ReadUsers(
+        self,
+        database_link: str,
+        options: Optional[Mapping[str, Any]] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[Dict[str, Any]]:
         """Reads all users in a database.
 
         :params str database_link:
@@ -2258,7 +2315,13 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         return self.QueryUsers(database_link, None, options, **kwargs)
 
-    def QueryUsers(self, database_link, query, options=None, **kwargs):
+    def QueryUsers(
+        self,
+        database_link: str,
+        query: Optional[Union[str, Dict[str, Any]]],
+        options: Optional[Mapping[str, Any]] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[Dict[str, Any]]:
         """Queries users in a database.
 
         :param str database_link:
@@ -2278,7 +2341,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(database_link, "users")
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
 
-        async def fetch_fn(options):
+        async def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
             return (
                 await self.__QueryFeed(
                     path, "users", database_id, lambda r: r["Users"],
@@ -2892,7 +2955,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         user_id = base.GetResourceIdOrFullNameFromLink(user_link)
         return path, user_id
 
-    def RegisterPartitionResolver(self, database_link, partition_resolver):
+    def RegisterPartitionResolver(
+        self,
+        database_link: str,
+        partition_resolver: RangePartitionResolver
+    ) -> None:
         """Registers the partition resolver associated with the database link
 
         :param str database_link:
@@ -2909,7 +2976,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         self.partition_resolvers = {base.TrimBeginningAndEndingSlashes(database_link): partition_resolver}
 
-    def GetPartitionResolver(self, database_link):
+    def GetPartitionResolver(self, database_link: str) -> Optional[RangePartitionResolver]:
         """Gets the partition resolver associated with the database link
 
         :param str database_link:
@@ -2999,11 +3066,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         return partitionKey
 
-    def refresh_routing_map_provider(self):
+    def refresh_routing_map_provider(self) -> None:
         # re-initializes the routing map provider, effectively refreshing the current partition key range cache
         self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
 
-    async def _GetQueryPlanThroughGateway(self, query, resource_link, **kwargs):
+    async def _GetQueryPlanThroughGateway(self, query: str, resource_link: str, **kwargs) -> List[Dict[str, Any]]:
         supported_query_features = (documents._QueryFeature.Aggregate + "," +
                                     documents._QueryFeature.CompositeAggregate + "," +
                                     documents._QueryFeature.Distinct + "," +
@@ -3027,7 +3094,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             path,
             "docs",
             resource_id,
-            lambda r: r,
+            lambda r: cast(List[Dict[str, Any]], r),
             None,
             query,
             options,

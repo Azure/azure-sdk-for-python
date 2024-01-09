@@ -22,7 +22,8 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Literal, Mapping, Optional, Sequence, Type, Union, Awaitable, List, Tuple
+from typing import Any, Dict, Mapping, Optional, Sequence, Type, Union, List, Tuple, cast
+from typing_extensions import Literal
 
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
@@ -41,7 +42,12 @@ from ..exceptions import CosmosResourceNotFoundError
 from ..http_constants import StatusCodes
 from ..offer import ThroughputProperties
 from ._scripts import ScriptsProxy
-from ..partition_key import NonePartitionKeyValue, _return_undefined_or_empty_partition_key
+from ..partition_key import (
+    NonePartitionKeyValue,
+    _return_undefined_or_empty_partition_key,
+    _Empty,
+    _Undefined
+)
 
 __all__ = ("ContainerProxy",)
 
@@ -114,13 +120,13 @@ class ContainerProxy:
             return "{}/conflicts/{}".format(self.container_link, conflict_or_link)
         return conflict_or_link["_self"]
 
-    def _set_partition_key(
+    async def _set_partition_key(
         self,
         partition_key: PartitionKeyType
-    ) -> Union[str, int, float, bool, List[Union[str, int, float, bool]], Awaitable]:
+    ) -> Union[str, int, float, bool, List[Union[str, int, float, bool]], _Empty, _Undefined]:
         if partition_key == NonePartitionKeyValue:
-            return _return_undefined_or_empty_partition_key(self.is_system_key)
-        return partition_key
+            return _return_undefined_or_empty_partition_key(await self.is_system_key)
+        return cast(Union[str, int, float, bool, List[Union[str, int, float, bool]]], partition_key)
 
     @distributed_trace_async
     async def read(
@@ -297,7 +303,7 @@ class ContainerProxy:
             kwargs['priority_level'] = priority_level
         request_options = _build_options(kwargs)
 
-        request_options["partitionKey"] = self._set_partition_key(partition_key)
+        request_options["partitionKey"] = await self._set_partition_key(partition_key)
         max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
@@ -717,7 +723,7 @@ class ContainerProxy:
             kwargs['match_condition'] = match_condition
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
-        request_options["partitionKey"] = self._set_partition_key(partition_key)
+        request_options["partitionKey"] = await self._set_partition_key(partition_key)
         if filter_predicate is not None:
             request_options["filterPredicate"] = filter_predicate
 
@@ -778,7 +784,7 @@ class ContainerProxy:
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
         request_options = _build_options(kwargs)
-        request_options["partitionKey"] = self._set_partition_key(partition_key)
+        request_options["partitionKey"] = await self._set_partition_key(partition_key)
 
         document_link = self._get_document_link(item)
         await self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
@@ -950,7 +956,7 @@ class ContainerProxy:
         """
         request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        request_options["partitionKey"] = self._set_partition_key(partition_key)
+        request_options["partitionKey"] = await self._set_partition_key(partition_key)
         result = await self.client_connection.ReadConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
         )
@@ -981,7 +987,7 @@ class ContainerProxy:
         """
         request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        request_options["partitionKey"] = self._set_partition_key(partition_key)
+        request_options["partitionKey"] = await self._set_partition_key(partition_key)
         await self.client_connection.DeleteConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
         )
@@ -1030,7 +1036,7 @@ class ContainerProxy:
             kwargs['match_condition'] = match_condition
         request_options = _build_options(kwargs)
         # regardless if partition key is valid we set it as invalid partition keys are set to a default empty value
-        request_options["partitionKey"] = self._set_partition_key(partition_key)
+        request_options["partitionKey"] = await self._set_partition_key(partition_key)
 
         await self.client_connection.DeleteAllItemsByPartitionKey(collection_link=self.container_link,
                                                                   options=request_options, **kwargs)
@@ -1080,7 +1086,7 @@ class ContainerProxy:
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
         request_options = _build_options(kwargs)
-        request_options["partitionKey"] = self._set_partition_key(partition_key)
+        request_options["partitionKey"] = await self._set_partition_key(partition_key)
         request_options["disableAutomaticIdGeneration"] = True
 
         result = await self.client_connection.Batch(
