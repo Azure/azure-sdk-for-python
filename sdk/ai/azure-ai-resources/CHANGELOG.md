@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- AzureOpenAIConnection.set_current_environment supports openai 1.0 and above.
+
 ### Breaking Changes
 
 ### Bugs Fixed

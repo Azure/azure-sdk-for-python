@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 
+import os
 from typing import Optional
 
 from azure.ai.ml.entities._credentials import ApiKeyConfiguration
@@ -46,24 +47,24 @@ class AzureOpenAIConnection(BaseConnection):
         api_version: Optional[str] = None,
         api_type: str = "Azure",
         **kwargs,
-    ):
+    ) -> None:
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="azure_open_ai", credentials=credentials, api_version=api_version, api_type=api_type, **kwargs)
 
 
     @property
-    def api_version(self) -> str:
+    def api_version(self) -> Optional[str]:
         """The API version of the connection.
 
         :return: the API version of the connection.
-        :rtype: str
+        :rtype: Optional[str]
         """
         if self._workspace_connection.tags is not None and CONNECTION_API_VERSION_KEY in self._workspace_connection.tags:
             return self._workspace_connection.tags[CONNECTION_API_VERSION_KEY]
         return None
 
     @api_version.setter
-    def api_version(self, value: str) -> str:
+    def api_version(self, value: str) -> None:
         """Set the API version of the connection.
 
         :return: the API version of the connection.
@@ -72,18 +73,18 @@ class AzureOpenAIConnection(BaseConnection):
         self._workspace_connection.tags[CONNECTION_API_VERSION_KEY] = value
 
     @property
-    def api_type(self) -> str:
+    def api_type(self) -> Optional[str]:
         """The API type of the connection.
 
-        :return: the API type of the connection.
-        :rtype: str
+        :return: The API type of the connection.
+        :rtype: Optional[str]
         """
         if self._workspace_connection.tags is not None and CONNECTION_API_TYPE_KEY in self._workspace_connection.tags:
             return self._workspace_connection.tags[CONNECTION_API_TYPE_KEY]
         return None
 
     @api_type.setter
-    def api_type(self, value: str) -> str:
+    def api_type(self, value: str) -> None:
         """Set the API type of the connection.
 
         :return: the API type of the connection.
@@ -99,16 +100,33 @@ class AzureOpenAIConnection(BaseConnection):
         :type credential: :class:`~azure.core.credentials.TokenCredential`
         """
 
-        import os
-        def get_api_version_case_insensitive(connection):
-            if connection.api_version == None:
-                raise ValueError(f"Connection {connection.name} is being used to set environment variables, but lacks required api_version")
-            return connection.api_version.lower()
+        from importlib.metadata import version as get_version
+        from packaging.version import Version
 
-        try:
-            import openai
-        except ImportError:
-            raise Exception("OpenAI SDK not installed. Please install it using `pip install openai`")
+        openai_version_str = get_version("openai")
+        openai_version = Version(openai_version_str)
+        if openai_version >= Version("1.0.0"):
+            self._set_current_environment_new(credential)
+        else:
+            self._set_current_environment_old(credential)
+
+    def _get_api_version_case_insensitive(self, connection):
+        if connection.api_version == None:
+            raise ValueError(f"Connection {connection.name} is being used to set environment variables, but lacks required api_version")
+        return connection.api_version.lower()
+
+    def _set_current_environment_new(self, credential: Optional[TokenCredential] = None):
+        if not credential:
+            os.environ["AZURE_OPENAI_API_KEY"] = self._workspace_connection.credentials.key
+        else:
+            token = credential.get_token("https://cognitiveservices.azure.com/.default")
+            os.environ["AZURE_OPENAI_AD_TOKEN"] = token.token
+
+        os.environ["OPENAI_API_VERSION"] = self._get_api_version_case_insensitive(self._workspace_connection)
+        os.environ["AZURE_OPENAI_ENDPOINT"] = self._workspace_connection.target
+
+    def _set_current_environment_old(self, credential: Optional[TokenCredential] = None):
+        import openai
 
         if not credential:
             openai.api_type = "azure"
@@ -123,13 +141,12 @@ class AzureOpenAIConnection(BaseConnection):
             openai.api_key = token.token
             os.environ["OPENAI_API_KEY"] = token.token
 
-        openai.api_version = get_api_version_case_insensitive(self._workspace_connection)
+        openai.api_version = self._get_api_version_case_insensitive(self._workspace_connection)
 
         openai.api_base = self._workspace_connection.target
 
         os.environ["OPENAI_API_BASE"] = self._workspace_connection.target
-        os.environ["OPENAI_API_VERSION"] = get_api_version_case_insensitive(self._workspace_connection)
-
+        os.environ["OPENAI_API_VERSION"] = self._get_api_version_case_insensitive(self._workspace_connection)
 
 class AzureAISearchConnection(BaseConnection):
     """A Connection for Azure AI Search
@@ -157,24 +174,24 @@ class AzureAISearchConnection(BaseConnection):
         credentials: ApiKeyConfiguration,
         api_version: Optional[str] = None,
         **kwargs,
-    ):
+    ) -> None:
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="cognitive_search", credentials=credentials, api_version=api_version, **kwargs)
 
 
     @property
-    def api_version(self) -> str:
+    def api_version(self) -> Optional[str]:
         """The API version of the connection.
 
         :return: the API version of the connection.
-        :rtype: str
+        :rtype: Optional[str]
         """
         if self._workspace_connection.tags is not None and CONNECTION_API_VERSION_KEY in self._workspace_connection.tags:
             return self._workspace_connection.tags[CONNECTION_API_VERSION_KEY]
         return None
 
     @api_version.setter
-    def api_version(self, value: str) -> str:
+    def api_version(self, value: str) -> None:
         """Set the API version of the connection.
 
         :return: the API version of the connection.
@@ -232,23 +249,23 @@ class AzureAIServiceConnection(BaseConnection):
         api_version: Optional[str] = None,
         kind: str,
         **kwargs,
-    ):
+    ) -> None:
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="cognitive_service", credentials=credentials, api_version=api_version, kind=kind, **kwargs)
 
     @property
-    def api_version(self) -> str:
+    def api_version(self) -> Optional[str]:
         """The API version of the connection.
 
-        :return: the API version of the connection.
-        :rtype: str
+        :return: The API version of the connection.
+        :rtype: Optional[str]
         """
         if self._workspace_connection.tags is not None and CONNECTION_API_VERSION_KEY in self._workspace_connection.tags:
             return self._workspace_connection.tags[CONNECTION_API_VERSION_KEY]
         return None
 
     @api_version.setter
-    def api_version(self, value: str) -> str:
+    def api_version(self, value: str) -> None:
         """Set the API version of the connection.
 
         :return: the API version of the connection.
@@ -257,18 +274,18 @@ class AzureAIServiceConnection(BaseConnection):
         self._workspace_connection.tags[CONNECTION_API_VERSION_KEY] = value
 
     @property
-    def kind(self) -> str:
+    def kind(self) -> Optional[str]:
         """The kind of the connection.
 
         :return: the kind of the connection.
-        :rtype: str
+        :rtype: Optional[str]
         """
         if self._workspace_connection.tags is not None and CONNECTION_KIND_KEY in self._workspace_connection.tags:
             return self._workspace_connection.tags[CONNECTION_KIND_KEY]
         return None
 
     @kind.setter
-    def kind(self, value: str) -> str:
+    def kind(self, value: str) -> None:
         """Set the kind of the connection.
 
         :return: the kind of the connection.
@@ -299,7 +316,7 @@ class GitHubConnection(BaseConnection):
         target: str,
         credentials: ApiKeyConfiguration,
         **kwargs,
-    ):
+    ) -> None:
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="git", credentials=credentials, **kwargs)
 
@@ -325,6 +342,6 @@ class CustomConnection(BaseConnection):
         target: str,
         credentials: ApiKeyConfiguration,
         **kwargs,
-    ):
+    )  -> None:
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="custom", credentials=credentials, **kwargs)
