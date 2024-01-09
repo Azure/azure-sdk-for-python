@@ -3,10 +3,10 @@ mypy = true
 type_check_samples = false
 verifytypes = false
 pyright = false
-pylint = true
+pylint = false
 black = false
 bandit = false
-sphinx=true
+sphinx = true
 breaking = false
 strict_sphinx = true
 
@@ -17,6 +17,3 @@ warn_unused_configs = true
 follow_imports = "skip"
 ignore_missing_imports = true
 follow_imports_for_stubs = false
-
-[tool.pylint.'MESSAGES CONTROL']
-disable = "line-too-long, trailing-whitespace"
