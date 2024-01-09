@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed a bug in consuming "etag" value in sync operation `set_configuration_setting()`.
 
 ### Other Changes
 

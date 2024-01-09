@@ -23,6 +23,7 @@ DISABLE_METRICS_ARG = "disable_metrics"
 DISABLE_TRACING_ARG = "disable_tracing"
 LOGGER_NAME_ARG = "logger_name"
 INSTRUMENTATION_OPTIONS_ARG = "instrumentation_options"
+RESOURCE_ARG = "resource"
 SAMPLING_RATIO_ARG = "sampling_ratio"
 
 

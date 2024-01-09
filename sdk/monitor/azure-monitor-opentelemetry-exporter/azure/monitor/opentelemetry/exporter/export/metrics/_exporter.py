@@ -147,16 +147,18 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         cls, conn_str: str, **kwargs: Any
     ) -> "AzureMonitorMetricExporter":
         """
-        Create an AzureMonitorMetricExporter from a connection string.
+        Create an AzureMonitorMetricExporter from a connection string. This is
+        the recommended way of instantiation if a connection string is passed in
+        explicitly. If a user wants to use a connection string provided by
+        environment variable, the constructor of the exporter can be called
+        directly.
 
-        This is the recommended way of instantation if a connection string is passed in explicitly.
-        If a user wants to use a connection string provided by environment variable, the constructor
-        of the exporter can be called directly.
-
-        :param str conn_str: The connection string to be used for authentication.
-        :keyword str api_version: The service API version used. Defaults to latest.
+        :param str conn_str: The connection string to be used for
+            authentication.
+        :keyword str api_version: The service API version used. Defaults to
+            latest.
         :return: An instance of ~AzureMonitorMetricExporter
-        :rtype ~azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter
+        :rtype: ~azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter
         """
         return cls(connection_string=conn_str, **kwargs)
 
