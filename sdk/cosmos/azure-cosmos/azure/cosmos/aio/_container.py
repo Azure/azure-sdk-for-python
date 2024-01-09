@@ -257,7 +257,7 @@ class ContainerProxy:
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
-        priority_level: Optional[Literal["High", "Low"]],
+        priority_level: Optional[Literal["High", "Low"]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Get the item identified by `item`.
