@@ -80,7 +80,7 @@ class AckMessage:
     :ivar success: Whether the message is successfully processed. Required.
     :vartype success: bool
     :ivar error: The error details of the message.
-    :vartype error: ~azure.messaging.webpubsubclient.AckMessageError
+    :vartype error: ~azure.messaging.webpubsubclient.models.AckMessageError
     """
 
     def __init__(
@@ -99,7 +99,7 @@ class SendEventMessage:
     """Message to send an event
 
     :ivar data_type: The data type of the message. Required.
-    :vartype data_type: ~azure.messaging.webpubsubclient.WebPubSubDataType or str
+    :vartype data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType or str
     :ivar data: The data of the message. Required.
     :vartype data: Any
     :ivar event: The event name. Required.
@@ -194,7 +194,7 @@ class SendEventData(_model_base.Model):
     :ivar type: The type of the message. Required. Default value is "event".
     :vartype type: str
     :ivar data_type: The data type of the message. Required.
-    :vartype data_type: ~azure.messaging.webpubsubclient.WebPubSubDataType or str
+    :vartype data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType or str
     :ivar data: The data of the message. Required.
     :vartype data: Any
     :ivar event: The event name. Required.
@@ -237,7 +237,7 @@ class SendToGroupData(_model_base.Model):
     :ivar group: The group name to send. Required.
     :vartype group: str
     :ivar data_type: The data type of the message. Required.
-    :vartype data_type: ~azure.messaging.webpubsubclient.WebPubSubDataType or str
+    :vartype data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType or str
     :ivar data: The data of the message. Required.
     :vartype data: Any
     :ivar no_echo: Whether to send message to the sender. Required.
@@ -257,9 +257,7 @@ class SendToGroupData(_model_base.Model):
     def __init__(
         self,
         *,
-        type: Literal[
-            "sendToGroup"
-        ] = "sendToGroup",  # pylint: disable=redefined-builtin
+        type: Literal["sendToGroup"] = "sendToGroup",  # pylint: disable=redefined-builtin
         group: str,
         data_type: Union[WebPubSubDataType, str],
         data: Any,
@@ -292,9 +290,7 @@ class SequenceAckData(_model_base.Model):
     def __init__(
         self,
         *,
-        type: Literal[
-            "sequenceAck"
-        ] = "sequenceAck",  # pylint: disable=redefined-builtin
+        type: Literal["sequenceAck"] = "sequenceAck",  # pylint: disable=redefined-builtin
         sequence_id: int,
     ) -> None:
         ...
@@ -361,7 +357,7 @@ class GroupDataMessage:
     """Message for group data
 
     :ivar data_type: The data type of the message. Required.
-    :vartype data_type: ~azure.messaging.webpubsubclient.WebPubSubDataType or str
+    :vartype data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType or str
     :ivar data: The data of the message. Required.
     :vartype data: Any
     :ivar group: The group name. Required.
@@ -393,7 +389,7 @@ class ServerDataMessage:
     """Message for server data
 
     :ivar data_type: The data type of the message. Required.
-    :vartype data_type: ~azure.messaging.webpubsubclient.WebPubSubDataType or str
+    :vartype data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType or str
     :ivar data: The data of the message. Required.
     :vartype data: Any
     :ivar sequence_id: The sequence id.
@@ -416,7 +412,7 @@ class SendToGroupMessage:
     """Message for send to group
 
     :ivar data_type: The data type of the message. Required.
-    :vartype data_type: ~azure.messaging.webpubsubclient.WebPubSubDataType or str
+    :vartype data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType or str
     :ivar data: The data of the message. Required.
     :vartype data: Any
     :ivar group: The group name. Required.
@@ -464,7 +460,7 @@ def get_pay_load(data: Any, data_type: Union[WebPubSubDataType, str]) -> Any:
     :param data: The data of pay load. Required.
     :type data: Any
     :param data_type: The data type of the data. Required.
-    :type data_type: ~azure.messaging.webpubsubclient.WebPubSubDataType or str
+    :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType or str
     :return: The payload.
     :rtype: Any
     :raises TypeError: If data_type is not supported.
@@ -489,7 +485,7 @@ def parse_payload(data: Any, data_type: Union[WebPubSubDataType, str]) -> Any:
     :param data: The data of pay load. Required.
     :type data: Any
     :param data_type: The data type of the data. Required.
-    :type data_type: ~azure.messaging.webpubsubclient.WebPubSubDataType or str
+    :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType or str
     :return: The payload.
     :rtype: Any
     """
@@ -520,14 +516,7 @@ class WebPubSubClientProtocol:
     @staticmethod
     def parse_messages(
         raw_message: str,
-    ) -> Union[
-        ConnectedMessage,
-        DisconnectedMessage,
-        GroupDataMessage,
-        ServerDataMessage,
-        AckMessage,
-        None,
-    ]:
+    ) -> Union[ConnectedMessage, DisconnectedMessage, GroupDataMessage, ServerDataMessage, AckMessage, None,]:
         """Parse messages from raw message
 
         :param raw_message: The raw message. Required.
@@ -648,7 +637,7 @@ class SendMessageErrorOptions:
     :ivar ack_id: The ack id of the message.
     :vartype ack_id: int
     :ivar error_detail: The error details of the message.
-    :vartype error_detail: ~azure.messaging.webpubsubclient.AckMessageError
+    :vartype error_detail: ~azure.messaging.webpubsubclient.models.AckMessageError
     """
 
     def __init__(
@@ -669,7 +658,7 @@ class SendMessageError(AzureError):
     :ivar ack_id: The ack id of the message.
     :vartype ack_id: int
     :ivar error_detail: The error details of the message.
-    :vartype error_detail: ~azure.messaging.webpubsubclient.AckMessageError
+    :vartype error_detail: ~azure.messaging.webpubsubclient.models.AckMessageError
     """
 
     def __init__(
@@ -746,9 +735,7 @@ class OnDisconnectedArgs:
     :vartype message: str
     """
 
-    def __init__(
-        self, connection_id: Optional[str] = None, message: Optional[str] = None
-    ) -> None:
+    def __init__(self, connection_id: Optional[str] = None, message: Optional[str] = None) -> None:
         self.connection_id = connection_id
         self.message = message
 
@@ -926,7 +913,7 @@ class AckMap:
         :rtype: SendMessageErrorOptions or None
         """
         with self.lock:
-            self.ack_map.pop(ack_id, None)
+            return self.ack_map.pop(ack_id, None)
 
     def get(self, ack_id: int) -> Optional[SendMessageErrorOptions]:
         """Get ack id from ack map
