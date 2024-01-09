@@ -53,11 +53,11 @@ def sample_caption_image_file():
     # [START caption]
     # Load image to analyze into a 'bytes' object
     with open("sample.jpg", 'rb') as f:
-        image_buffer = f.read()
+        image_data = f.read()
 
     # Get a caption for the image. This will be a synchronously (blocking) call.
     result = client.analyze(
-        image_content = image_buffer,
+        image_data = image_data,
         visual_features = [ VisualFeatures.CAPTION ],
         gender_neutral_caption = True # Optional (default is False)
     )

@@ -46,11 +46,11 @@ def sample_people_image_file():
 
     # Load image to analyze into a 'bytes' object
     with open("sample.jpg", 'rb') as f:
-        image_buffer = f.read()
+        image_data = f.read()
 
     # Find people in an image stream. This will be a synchronously (blocking) call.
     result = client.analyze(
-        image_content = image_buffer,
+        image_data = image_data,
         visual_features = [ VisualFeatures.PEOPLE ]
     )
 

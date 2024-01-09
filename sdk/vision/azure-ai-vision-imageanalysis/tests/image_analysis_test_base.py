@@ -99,20 +99,27 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
         image_content: Union[str, bytes]
 
         if "http" in image_source:
-            image_content = image_source
+            result = self.client.analyze(
+                image_url = image_source,
+                visual_features = visual_features,
+                language = language,
+                gender_neutral_caption = gender_neutral_caption,
+                smart_crops_aspect_ratios = smart_crops_aspect_ratios,
+                model_version = model_version,
+                params = query_params)
         else:
             # Load image to analyze into a 'bytes' object
             with open(image_source, 'rb') as f:
-                image_content = bytes(f.read())
+                image_data = bytes(f.read())
 
-        result = self.client.analyze(
-            image_content = image_content,
-            visual_features = visual_features,
-            language = language,
-            gender_neutral_caption = gender_neutral_caption,
-            smart_crops_aspect_ratios = smart_crops_aspect_ratios,
-            model_version = model_version,
-            params = query_params)
+            result = self.client.analyze(
+                image_data = image_data,
+                visual_features = visual_features,
+                language = language,
+                gender_neutral_caption = gender_neutral_caption,
+                smart_crops_aspect_ratios = smart_crops_aspect_ratios,
+                model_version = model_version,
+                params = query_params)
 
         # Optional: console printout of all results
         if ImageAnalysisTestBase.PRINT_ANALYSIS_RESULTS:
@@ -140,20 +147,28 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
         image_content: Union[str, bytes]
 
         if "http" in image_source:
-            image_content = image_source
+            result = await self.async_client.analyze(
+                image_url = image_source,
+                visual_features = visual_features,
+                language = language,
+                gender_neutral_caption = gender_neutral_caption,
+                smart_crops_aspect_ratios = smart_crops_aspect_ratios,
+                model_version = model_version,
+                params = query_params)
+
         else:
             # Load image to analyze into a 'bytes' object
             with open(image_source, 'rb') as f:
-                image_content = bytes(f.read())
+                image_data = bytes(f.read())
 
-        result = await self.async_client.analyze(
-            image_content = image_content,
-            visual_features = visual_features,
-            language = language,
-            gender_neutral_caption = gender_neutral_caption,
-            smart_crops_aspect_ratios = smart_crops_aspect_ratios,
-            model_version = model_version,
-            params = query_params)
+            result = await self.async_client.analyze(
+                image_data = image_data,
+                visual_features = visual_features,
+                language = language,
+                gender_neutral_caption = gender_neutral_caption,
+                smart_crops_aspect_ratios = smart_crops_aspect_ratios,
+                model_version = model_version,
+                params = query_params)
 
         # Optional: console printout of all results
         if ImageAnalysisTestBase.PRINT_ANALYSIS_RESULTS:
@@ -176,18 +191,20 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
             **kwargs):
 
         image_content: Union[str, bytes]
-
-        if "http" in image_source:
-            image_content = image_source
-        else:
-            # Load image to analyze into a 'bytes' object
-            with open(image_source, 'rb') as f:
-                image_content = bytes(f.read())
-
         try:
-            result = self.client.analyze(
-                image_content = image_content,
-                visual_features = visual_features)
+            if "http" in image_source:
+                result = self.client.analyze(
+                    image_url = image_source,
+                    visual_features = visual_features)
+            else:
+                # Load image to analyze into a 'bytes' object
+                with open(image_source, 'rb') as f:
+                    image_data = bytes(f.read())
+
+                result = self.client.analyze(
+                    image_data = image_data,
+                    visual_features = visual_features)
+
         except AzureError as e:
             print(e)
             assert hasattr(e, 'status_code')
@@ -207,17 +224,20 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
 
         image_content: Union[str, bytes]
 
-        if "http" in image_source:
-            image_content = image_source
-        else:
-            # Load image to analyze into a 'bytes' object
-            with open(image_source, 'rb') as f:
-                image_content = bytes(f.read())
-
         try:
-            result = await self.async_client.analyze(
-                image_content = image_content,
-                visual_features = visual_features)
+            if "http" in image_source:
+                result = await self.async_client.analyze(
+                    image_url = image_source,
+                    visual_features = visual_features)
+            else:
+                # Load image to analyze into a 'bytes' object
+                with open(image_source, 'rb') as f:
+                    image_data = bytes(f.read())
+
+                result = await self.async_client.analyze(
+                    image_data = image_data,
+                    visual_features = visual_features)
+
         except AzureError as e:
             print(e)
             assert hasattr(e, 'status_code')

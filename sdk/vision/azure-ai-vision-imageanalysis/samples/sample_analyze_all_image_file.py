@@ -65,7 +65,7 @@ def sample_analyze_all_image_file():
 
     # Load image to analyze into a 'bytes' object
     with open("sample.jpg", 'rb') as f:
-        image_buffer = f.read()
+        image_data = f.read()
 
     # [START create_client_with_logging]
     # Create an Image Analysis client with none redacted log
@@ -78,7 +78,7 @@ def sample_analyze_all_image_file():
 
     # Analyze all visual features from an image stream. This will be a synchronously (blocking) call.
     result = client.analyze(
-        image_content = image_buffer,
+        image_data = image_data,
         visual_features = [
             VisualFeatures.TAGS,
             VisualFeatures.OBJECTS,

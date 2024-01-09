@@ -136,11 +136,11 @@ Notes:
 ```python
 # Load image to analyze into a 'bytes' object
 with open("sample.jpg", 'rb') as f:
-    image_buffer = f.read()
+    image_data = f.read()
 
 # Get a caption for the image. This will be a synchronously (blocking) call.
 result = client.analyze(
-    image_content = image_buffer,
+    image_data = image_data,
     visual_features = [ VisualFeatures.CAPTION ],
     gender_neutral_caption = True # Optional (default is False)
 )
@@ -165,7 +165,7 @@ This example is similar to the above, expect it calls the `analyze` method and p
 ```python
 # Get a caption for the image. This will be a synchronously (blocking) call.
 result = client.analyze(
-    image_content = "https://aka.ms/azsdk/image-analysis/sample.jpg",
+    image_url = "https://aka.ms/azsdk/image-analysis/sample.jpg",
     visual_features = [ VisualFeatures.CAPTION ],
     gender_neutral_caption = True # Optional (default is False)
 )
@@ -188,11 +188,11 @@ This example demonstrates how to extract printed or hand-written text for the im
 ```python
 # Load image to analyze into a 'bytes' object
 with open("sample.jpg", 'rb') as f:
-    image_buffer = f.read()
+    image_data = f.read()
 
 # Extract text (OCR) from an image stream. This will be a synchronously (blocking) call.
 result = client.analyze(
-    image_content = image_buffer,
+    image_data = image_data,
     visual_features = [ VisualFeatures.READ ]
 )
 
@@ -221,7 +221,7 @@ This example is similar to the above, expect it calls the `analyze` method and p
 ```python
 # Extract text (OCR) from an image stream. This will be a synchronously (blocking) call.
 result = client.analyze(
-    image_content = "https://aka.ms/azsdk/image-analysis/sample.jpg",
+    image_url = "https://aka.ms/azsdk/image-analysis/sample.jpg",
     visual_features = [ VisualFeatures.READ ]
 )
 

@@ -45,7 +45,7 @@ async def sample_caption_image_file_async():
 
     # Load image to analyze into a 'bytes' object
     with open("sample.jpg", 'rb') as f:
-        image_buffer = f.read()
+        image_data = f.read()
 
     # Create an asynchronous Image Analysis client
     client = ImageAnalysisClient(
@@ -55,7 +55,7 @@ async def sample_caption_image_file_async():
 
     # Get a caption for the image, asynchronously.
     result = await client.analyze(
-        image_content = image_buffer,
+        image_data = image_data,
         visual_features = [ VisualFeatures.CAPTION ]
     )
 

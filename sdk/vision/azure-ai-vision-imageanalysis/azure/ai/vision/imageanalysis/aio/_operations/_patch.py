@@ -3,17 +3,18 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
-from typing import Any, Optional, List, Union
+from typing import Any, Optional, List, Union, overload
 from ... import models as _models
 from ._operations import ImageAnalysisClientOperationsMixin as ImageAnalysisClientOperationsMixinGenerated
 
 class ImageAnalysisClientOperationsMixin(ImageAnalysisClientOperationsMixinGenerated):
 
+    @overload
     async def analyze(
         self,
-        image_content: Union[str, bytes],
-        visual_features: List[_models.VisualFeatures],
         *,
+        image_url: str,
+        visual_features: List[_models.VisualFeatures],
         language: Optional[str] = None,
         gender_neutral_caption: Optional[bool] = None,
         smart_crops_aspect_ratios: Optional[List[float]] = None,
@@ -22,14 +23,12 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientOperationsMixinGener
     ) -> _models.ImageAnalysisResult:
         """Performs a single Image Analysis operation.
 
-        :param image_content: The image to be analyzed. Required. One of the following two types: 'str' or 'bytes'.
-         Use 'str' to provide a publicly accessible URL of the image to analyze. Use
-         'bytes' to provide the image content directly.
-        :type image_content: str or bytes
-        :param visual_features: A list of visual features to analyze. Required. Seven visual features
+        :keyword image_url: The publicly accessible URL of the image to analyze.
+        :paramtype image_url: str
+        :keyword visual_features: A list of visual features to analyze. Required. Seven visual features
          are supported: Caption, DenseCaptions, Read (OCR), Tags, Objects, SmartCrops, and People. At
          least one visual feature must be specified.
-        :type visual_features: list[~azure.ai.vision.imageanalysis.models.VisualFeatures]
+        :paramtype visual_features: list[~azure.ai.vision.imageanalysis.models.VisualFeatures]
         :keyword language: The desired language for result generation (a two-letter language code).
          Defaults to 'en' (English). See https://aka.ms/cv-languages for a list of supported languages.
         :paramtype language: str
@@ -56,11 +55,71 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientOperationsMixinGener
         :rtype: ~azure.ai.vision.imageanalysis.models.ImageAnalysisResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+
+    @overload
+    async def analyze(
+        self,
+        *,
+        image_data: bytes,
+        visual_features: List[_models.VisualFeatures],
+        language: Optional[str] = None,
+        gender_neutral_caption: Optional[bool] = None,
+        smart_crops_aspect_ratios: Optional[List[float]] = None,
+        model_version: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.ImageAnalysisResult:
+        """Performs a single Image Analysis operation.
+
+        :keyword image_data: A buffer containing the whole image to be analyzed.
+        :paramtype image_data: bytes
+        :keyword visual_features: A list of visual features to analyze. Required. Seven visual features
+         are supported: Caption, DenseCaptions, Read (OCR), Tags, Objects, SmartCrops, and People. At
+         least one visual feature must be specified.
+        :paramtype visual_features: list[~azure.ai.vision.imageanalysis.models.VisualFeatures]
+        :keyword language: The desired language for result generation (a two-letter language code).
+         Defaults to 'en' (English). See https://aka.ms/cv-languages for a list of supported languages.
+        :paramtype language: str
+        :keyword gender_neutral_caption: Boolean flag for enabling gender-neutral captioning for
+         Caption and Dense Captions features. Defaults to 'false'.
+         Captions may contain gender terms (for example: 'man', 'woman', or 'boy', 'girl').
+         If you set this to 'true', those will be replaced with gender-neutral terms (for example:
+         'person' or 'child').
+        :paramtype gender_neutral_caption: bool
+        :keyword smart_crops_aspect_ratios: A list of aspect ratios to use for smart cropping.
+         Defaults to one crop region with an aspect ratio the service sees fit between
+         0.5 and 2.0 (inclusive). Aspect ratios are calculated by dividing the target crop
+         width in pixels by the height in pixels. When set, supported values are
+         between 0.75 and 1.8 (inclusive).
+        :paramtype smart_crops_aspect_ratios: list[float]
+        :keyword model_version: The version of cloud AI-model used for analysis. Defaults to 'latest',
+         for the latest AI model with recent improvements.
+         The format is the following: 'latest' or 'YYYY-MM-DD' or 'YYYY-MM-DD-preview',
+         where 'YYYY', 'MM', 'DD' are the year, month and day associated with the model.
+         If you would like to make sure analysis results do not change over time, set this
+         value to a specific model version.
+        :paramtype model_version: str
+        :return: ImageAnalysisResult. The ImageAnalysisResult is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.imageanalysis.models.ImageAnalysisResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+
+    async def analyze(
+        self,
+        *,
+        visual_features: List[_models.VisualFeatures],
+        image_data: Optional[bytes] = None,
+        image_url: Optional[str] = None,
+        language: Optional[str] = None,
+        gender_neutral_caption: Optional[bool] = None,
+        smart_crops_aspect_ratios: Optional[List[float]] = None,
+        model_version: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.ImageAnalysisResult:
         visual_features_impl: List[Union[str, _models.VisualFeatures]] = list(visual_features)
 
-        if isinstance(image_content, str):
+        if image_url is not None:
             return await super()._analyze_from_url(
-                image_content = _models._models.ImageUrl(url = image_content), # pylint: disable=protected-access
+                image_content = _models._models.ImageUrl(url = image_url), # pylint: disable=protected-access
                 visual_features = visual_features_impl,
                 language = language,
                 gender_neutral_caption = gender_neutral_caption,
@@ -69,7 +128,7 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientOperationsMixinGener
                 **kwargs)
 
         return await super()._analyze_from_buffer(
-            image_content = image_content,
+            image_content = image_data,
             visual_features = visual_features_impl,
             language = language,
             gender_neutral_caption = gender_neutral_caption,

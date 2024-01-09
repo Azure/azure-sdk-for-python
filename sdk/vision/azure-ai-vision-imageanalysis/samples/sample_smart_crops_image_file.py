@@ -55,11 +55,11 @@ def sample_smart_crops_image_file():
 
     # Load image to analyze into a 'bytes' object
     with open("sample.jpg", 'rb') as f:
-        image_buffer = f.read()
+        image_data = f.read()
 
     # Do Smart Cropping analysis on an image stream. This will be a synchronously (blocking) call.
     result = client.analyze(
-        image_content = image_buffer,
+        image_data = image_data,
         visual_features = [ VisualFeatures.SMART_CROPS ],
         smart_crops_aspect_ratios = [0.9, 1.33] # Optional. Specify one more desired aspect ratios
     )
