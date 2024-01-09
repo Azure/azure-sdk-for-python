@@ -5,8 +5,8 @@
 
 from ._test_base import _FileTest
 
-from azure_devtools.perfstress_tests import RandomStream
-from azure_devtools.perfstress_tests import AsyncRandomStream
+from devtools_testutils.perfstress_tests import RandomStream
+from devtools_testutils.perfstress_tests import AsyncRandomStream
 
 
 class UploadTest(_FileTest):

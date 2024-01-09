@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import logging
-from typing import Dict, List, Callable
+from typing import Any, Dict, List, Callable, Optional, Sequence, Union
 
 import asyncio
 
@@ -36,9 +36,9 @@ async def simulate_conversation(
     history_limit: int = 5,
     api_call_delay_sec: float = 0,
     logger: logging.Logger = logging.getLogger(__name__),
-    mlflow_logger=None,
-    template_paramaters: dict = None,
-    simulate_callback: Callable[[str, List[Dict], dict], str]=None,
+    mlflow_logger: Optional[Any] = None,
+    template_paramaters: Optional[dict] = None,
+    simulate_callback: Optional[Callable[[str, Sequence[Union[Dict, ConversationTurn]], Optional[dict]], str]] = None,
 ):
     """
     Simulate a conversation between the given bots.
@@ -87,7 +87,8 @@ async def simulate_conversation(
             # in the customer bot turn, instead of using the customer bot, need to invoke the simulate callback
             if len(bots) < 2 and current_character_idx == 1:
                 question = conversation_history[-1].message
-                response = await simulate_callback(question, conversation_history, template_paramaters) 
+                # TODO: Fix Bug 2816997
+                response = await simulate_callback(question, conversation_history, template_paramaters)  # type: ignore[misc]
                 # add the generated response to the list of generated responses
                 conversation_history.append(
                     ConversationTurn(

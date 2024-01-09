@@ -23,6 +23,7 @@ DISABLE_METRICS_ARG = "disable_metrics"
 DISABLE_TRACING_ARG = "disable_tracing"
 LOGGER_NAME_ARG = "logger_name"
 INSTRUMENTATION_OPTIONS_ARG = "instrumentation_options"
+RESOURCE_ARG = "resource"
 SAMPLING_RATIO_ARG = "sampling_ratio"
 
 
@@ -97,3 +98,6 @@ _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES = _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES 
 
 def _is_attach_enabled():
     return isdir("/agents/python/")
+
+_AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME = "azure_app_service"
+_AZURE_VM_RESOURCE_DETECTOR_NAME = "azure_vm"

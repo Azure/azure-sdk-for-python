@@ -92,7 +92,7 @@
 /sdk/communication/azure-communication-rooms/                        @shirleyqin-msft @minnieliu @paolamvhz @alexokun @Mrayyan @shwali-msft @allchiang-msft @mikehang-msft
 
 # PRLabel: %Communication - SMS
-/sdk/communication/azure-communication-sms/                           @DimaKolomiiets @ozgurcivi-msft @gfeitosa-msft @besh2014 @phermanov-msft @ilyapaliakou-msft
+/sdk/communication/azure-communication-sms/                           @DimaKolomiiets @gfeitosa-msft @besh2014 @phermanov-msft @ilyapaliakou-msft
 
 # PRLabel: %Communication - Identity
 /sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk @AikoBB @maximrytych-ms @mjafferi-msft
@@ -104,10 +104,10 @@
 /sdk/communication/**/_shared/                                       @Azure/acs-identity-sdk @AikoBB @maximrytych-ms @mjafferi-msft
 
 # PRLabel: %Confidential Ledger
-/sdk/confidentialledger/azure-confidentialledger/                    @lynshi
+/sdk/confidentialledger/azure-confidentialledger/                    @PallabPaul
 
 # PRLabel: %Content Safety
-/sdk/contentsafety/                                                  @mengaims
+/sdk/contentsafety/                                                  @mengaims @JieZhou000
 
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @mccoyp
@@ -516,7 +516,7 @@
 #/<NotInRepo>/          @Drewm3 @avirishuv
 
 # ServiceLabel: %Confidential Ledger
-#/<NotInRepo>/          @lynshi
+#/<NotInRepo>/          @PallabPaul
 
 # ServiceLabel: %Connected Kubernetes %Service Attention
 #/<NotInRepo>/          @akashkeshari
@@ -666,7 +666,7 @@
 #/<NotInRepo>/          @shijojoy
 
 # ServiceLabel: %Mixed Reality
-#/<NotInRepo>/          @crtreasu @rikogeln
+#/<NotInRepo>/          @crtreasu @FlorianBorn71
 
 # ServiceLabel: %Mobile Engagement %Service Attention
 #/<NotInRepo>/          @kpiteira

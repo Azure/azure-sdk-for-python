@@ -10,16 +10,18 @@ import time
 import traceback
 from collections import OrderedDict
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Iterator, Optional, List, Union, Iterator
 
 from azure.ai.generative.index._documents import (
     DocumentChunksIterator,
+    DocumentSource,
 )
 from azure.ai.generative.index._documents.chunking import file_extension_splitters, split_documents
 from azure.ai.generative.index._documents.cracking import crack_documents, file_extension_loaders, files_to_document_source
 from azure.ai.generative.index._embeddings import DataEmbeddedDocument, EmbeddedDocumentSource, EmbeddingsContainer
 from azure.ai.generative.index._mlindex import MLIndex
 from azure.ai.generative.index._tasks.crack_and_chunk import custom_loading, get_activity_logging_filter, str2bool
+from azure.ai.generative.index._documents.document import Document, DocumentSource
 from azure.ai.generative.index._utils.logging import (
     _logger_factory,
     enable_appinsights_logging,
@@ -44,17 +46,17 @@ def crack_and_chunk_and_embed(
     chunk_size: int = 1000,
     chunk_overlap: int = 0,
     use_rcts: bool = True,
-    custom_loader: Optional[str] = None,
+    custom_loader: Optional[Union[str, Path]] = None,
     citation_url: Optional[str] = None,
-    citation_replacement_regex: Optional[Dict[str, str]] = None,
+    citation_replacement_regex: Optional[Union[str, bytes, bytearray]] = None,
     embeddings_model: str = "hugging_face://model/sentence-transformers/all-mpnet-base-v2",
     embeddings_connection: Optional[str] = None,
-    embeddings_container: Optional[Union[str, Path]] = None,
+    embeddings_container: Optional[EmbeddingsContainer] = None,
     verbosity: int = 0,
 ) -> EmbeddingsContainer:
     """Crack and chunk and embed and index documents."""
     if embeddings_container is None:
-        connection_args = {}
+        connection_args: Dict[str, Any] = {}
         if embeddings_connection is not None:
             connection_args["connection_type"] = "workspace_connection"
             if isinstance(embeddings_connection, str):
@@ -64,7 +66,7 @@ def crack_and_chunk_and_embed(
 
                 connection_args["connection"] = {"id": get_id_from_connection(embeddings_connection)}
 
-        embeddings_container = EmbeddingsContainer.from_uri(embeddings_model, **connection_args)
+        embeddings_container = EmbeddingsContainer.from_uri(embeddings_model, **connection_args)  # type: ignore[used-before-def,arg-type]
 
     if citation_replacement_regex:
         document_path_replacement = json.loads(citation_replacement_regex)
@@ -86,9 +88,10 @@ def crack_and_chunk_and_embed(
 
     # Below is destructive to EmbeddingsContainer in-memory tables
     # TODO: log metrics for reused_sources, deleted_sources, and sources_to_embed
-    sources_to_embed = OrderedDict()
+    sources_to_embed: Dict[str, DocumentSource] = OrderedDict() 
     reused_sources = OrderedDict()
-    for source_doc in filter_and_log_extensions(source_documents):
+    for source_doc in filter_and_log_extensions(source_documents):  # type: ignore
+        # TODO: Bug 2879646
         mtime = source_doc.mtime
         # Currently there's no lookup at filename level, only document_ids (post chunking)
         # TODO: Save document_source table along side embedded documents table
@@ -140,13 +143,14 @@ def crack_and_chunk_and_embed(
     if custom_loader:
         logger.info(f"Loading custom loader(s) from {custom_loader}", extra={"print": True})
         for python_file_path in Path(custom_loader).glob("**/*.py"):
-            custom_loading(python_file_path, extension_loaders, extension_splitters)
+            custom_loading(str(python_file_path), extension_loaders, extension_splitters)
 
     splitter_args = {"chunk_size": chunk_size, "chunk_overlap": chunk_overlap, "use_rcts": use_rcts}
-    cracked_sources = crack_documents(sources_to_embed.values(), file_extension_loaders=extension_loaders)
+    sources_to_embed_values: Iterator[DocumentSource] = iter(sources_to_embed.values())
+    cracked_sources = crack_documents(sources_to_embed_values, file_extension_loaders=extension_loaders)
     chunked_docs = split_documents(cracked_sources, splitter_args=splitter_args, file_extension_splitters=extension_splitters)
 
-    documents_to_embed = []
+    documents_to_embed: List[Document] = []
     for chunked_doc in chunked_docs:
         logger.info(f"Processing chunks for source: {chunked_doc.source.filename}")
         source_doc_ids = []
@@ -201,16 +205,16 @@ def crack_and_chunk_and_embed(
             "model": embeddings_container.arguments.get("model", ""),
         }
     ) as activity_logger:
-        embeddings = embeddings_container._embed_fn(data_to_embed, activity_logger=activity_logger)
+        embeddings = embeddings_container._embed_fn(data_to_embed, activity_logger=activity_logger)  # type: ignore[call-arg]
 
     for (document, embedding) in zip(documents_to_embed, embeddings):
         documents_embedded[document.document_id] = DataEmbeddedDocument(
-            document.document_id, document.mtime, document.metadata["content_hash"], document.load_data(), embedding, document.metadata
+            document.document_id, document.mtime, document.metadata["content_hash"], document.load_data(), embedding, document.metadata  # type: ignore[attr-defined]
         )
 
     # Set and save with EmbeddingsContainer (snapshot of state for this Run)
     embeddings_container._document_embeddings = documents_embedded
-    embeddings_container._deleted_documents = deleted_documents  # list(deleted_documents.keys())
+    embeddings_container._deleted_documents = deleted_documents
 
     file_count = len(sources_to_embed) + len(reused_sources)
     logger.info(f"Processed {file_count} files",)

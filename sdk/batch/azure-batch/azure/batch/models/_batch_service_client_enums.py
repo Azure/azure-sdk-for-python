@@ -114,8 +114,9 @@ class CachingType(str, Enum):
 
 class StorageAccountType(str, Enum):
 
-    standard_lrs = "standard_lrs"  #: The data disk should use standard locally redundant storage.
-    premium_lrs = "premium_lrs"  #: The data disk should use premium locally redundant storage.
+    standard_lrs = "standard_lrs"  #: The data disk / OS disk should use standard locally redundant storage.
+    premium_lrs = "premium_lrs"  #: The data disk / OS disk should use premium locally redundant storage.
+    standard_ssdlrs = "standardssd_lrs"  #: The data disk / OS disk should use standard SSD locally redundant storage.
 
 
 class ContainerType(str, Enum):
@@ -139,6 +140,11 @@ class NodePlacementPolicyType(str, Enum):
 class DiffDiskPlacement(str, Enum):
 
     cache_disk = "CacheDisk"  #: The Ephemeral OS Disk is stored on the VM cache.
+
+
+class SecurityTypes(str, Enum):
+
+    trusted_launch = "trustedLaunch"  #: Trusted launch protects against advanced and persistent attack techniques.
 
 
 class DynamicVNetAssignmentScope(str, Enum):

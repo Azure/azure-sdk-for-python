@@ -43,7 +43,7 @@ def _prepare_key(keyvalue: str) -> str:
         raise TypeError("PartitionKey or RowKey must be of type string.") from exc
 
 
-def _parameter_filter_substitution(parameters: Dict[str, str], query_filter: str) -> str:
+def _parameter_filter_substitution(parameters: Optional[Dict[str, str]], query_filter: str) -> str:
     """Replace user defined parameters in filter.
 
     :param parameters: User defined parameters
@@ -154,6 +154,7 @@ _PYTHON_TO_ENTITY_CONVERSIONS: Dict[Type, Callable[[Any], Tuple[Optional[EdmType
     str: _to_entity_str,
     bytes: _to_entity_binary,
 }
+
 # cspell:ignore Odatatype
 
 # Conversion from Edm type to a function which returns a tuple of the
@@ -196,7 +197,7 @@ def _add_entity_properties(source: Union[TableEntity, Mapping[str, Any]]) -> Dic
     :param source: A table entity.
     :type source: ~azure.data.tables.TableEntity or Mapping[str, Any]
     :return: An entity with property's metadata in JSON format.
-    :rtype: Mapping[str, Any]
+    :rtype: dict
     """
 
     properties = {}

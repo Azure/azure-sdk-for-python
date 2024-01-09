@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from dataclasses import dataclass
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 from azure.ai.resources.entities import AzureOpenAIConnection
 from azure.ai.ml._utils.utils import camel_to_snake
 
@@ -12,7 +12,7 @@ from azure.ai.ml._utils.utils import camel_to_snake
 class AzureOpenAIModelConfiguration:
     api_base: str
     api_key: str
-    api_version: str
+    api_version: Optional[str]
     model_name: str
     deployment_name: str
     model_kwargs: Dict[str, Any]

@@ -1,6 +1,27 @@
 # Release History
 
-## 1.12.0 (unreleased)
+## 1.14.0 (unreleased)
+
+### Features Added
+- Remove `experimental` tag for  `ml_client.jobs.validate`.
+
+### Bugs Fixed
+
+### Breaking Changes
+
+### Other Changes
+
+## 1.13.0 (unreleased)
+
+### Features Added
+
+### Bugs Fixed
+
+### Breaking Changes
+
+### Other Changes
+
+## 1.12.0 (2023-11-13)
 
 ### Features Added
 - Workspace Connections had 3 child classes added for open AI, cog search, and cog service connections.

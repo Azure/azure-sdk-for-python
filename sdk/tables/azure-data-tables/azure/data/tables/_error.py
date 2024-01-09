@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import re
 from enum import Enum
+from typing import Any
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.exceptions import (
@@ -187,9 +188,9 @@ def _decode_error(response, error_message=None, error_type=None, **kwargs):  # p
         error_type = HttpResponseError
 
     try:
-        error_message += f"\nErrorCode:{error_code.value}"
+        error_message = f"{error_message}\nErrorCode:{error_code.value}"
     except AttributeError:
-        error_message += f"\nErrorCode:{error_code}"
+        error_message = f"{error_message}\nErrorCode:{error_code}"
     for name, info in additional_data.items():
         error_message += f"\n{name}:{info}"
 
@@ -256,11 +257,11 @@ class TableTransactionError(HttpResponseError):
     :vartype additional_info: Mapping[str, Any]
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         super(TableTransactionError, self).__init__(**kwargs)
         self.index = kwargs.get("index", self._extract_index())
 
-    def _extract_index(self):
+    def _extract_index(self) -> int:
         try:
             message_sections = self.message.split(":", 1)
             return int(message_sections[0])

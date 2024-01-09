@@ -30,7 +30,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection_async import CosmosClientConnection as _CosmosClientConnection
 from .._base import build_options as _build_options
-from ..partition_key import NonePartitionKeyValue
+from ..partition_key import NonePartitionKeyValue, _return_undefined_or_empty_partition_key
 
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
@@ -61,7 +61,7 @@ class ScriptsProxy(object):
 
     def _get_resource_link(self, script_or_id: Union[Dict[str, Any], str], typ: str) -> str:
         if isinstance(script_or_id, str):
-            return u"{}/{}/{}".format(self.container_link, typ, script_or_id)
+            return "{}/{}/{}".format(self.container_link, typ, script_or_id)
         return script_or_id["_self"]
 
     @distributed_trace
@@ -220,7 +220,7 @@ class ScriptsProxy(object):
         partition_key = kwargs.pop("partition_key", None)
         if partition_key is not None:
             request_options["partitionKey"] = (
-                _CosmosClientConnection._return_undefined_or_empty_partition_key(
+                _return_undefined_or_empty_partition_key(
                     await self.container_proxy.is_system_key)
                 if partition_key == NonePartitionKeyValue
                 else partition_key
