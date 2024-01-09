@@ -3,6 +3,7 @@
 ### 4.5.2b4 (Unreleased)
 
 #### Features Added
+* Added **preview** support for Computed Properties on Python SDK (Must be enabled on the account level before it can be used). See [PR 33626](https://github.com/Azure/azure-sdk-for-python/pull/33626).
 
 #### Breaking Changes
 
