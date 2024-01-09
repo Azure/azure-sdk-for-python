@@ -7,10 +7,35 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
+from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class SmsSendResponseItemRepeatabilityResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class MmsContentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """MIME type of attachment.
+    """
+
+    IMAGE_PNG = "image/png"
+    IMAGE_JPEG = "image/jpeg"
+    IMAGE_GIF = "image/gif"
+    IMAGE_BMP = "image/bmp"
+    AUDIO_WAV = "audio/wav"
+    AUDIO_X_WAV = "audio/x-wav"
+    AUDIO_AC3 = "audio/ac3"
+    AUDIO_AMR = "audio/amr"
+    VIDEO_MP4 = "video/mp4"
+    VIDEO_X_MSVIDEO = "video/x-msvideo"
+    TEXT_PLAIN = "text/plain"
+
+class MmsSendResponseItemRepeatabilityResult(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The result of a repeatable request with one of the case-insensitive values accepted or
+    rejected.
+    """
+
+    ACCEPTED = "accepted"
+    REJECTED = "rejected"
+
+class SmsSendResponseItemRepeatabilityResult(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The result of a repeatable request with one of the case-insensitive values accepted or
     rejected.
     """

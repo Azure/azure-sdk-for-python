@@ -9,22 +9,310 @@
 import msrest.serialization
 
 
-class SendMessageRequest(msrest.serialization.Model):
-    """Represents the properties of a send message request.
+class MmsAttachment(msrest.serialization.Model):
+    """Represents the properties of a send request attachment.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param from_property: Required. The sender's phone number in E.164 format that is owned by the
-     authenticated account.
-    :type from_property: str
-    :param sms_recipients: Required. The recipient's phone number in E.164 format. In this version,
+    :ivar content_type: Required. MIME type of attachment. Possible values include: "image/png",
+     "image/jpeg", "image/gif", "image/bmp", "audio/wav", "audio/x-wav", "audio/ac3", "audio/amr",
+     "video/mp4", "video/x-msvideo", "text/plain".
+    :vartype content_type: str or ~azure.communication.sms.models.MmsContentType
+    :ivar content_in_base64: Required. Content of the attachment encoded in base 64.
+    :vartype content_in_base64: bytearray
+    """
+
+    _validation = {
+        'content_type': {'required': True},
+        'content_in_base64': {'required': True},
+    }
+
+    _attribute_map = {
+        'content_type': {'key': 'contentType', 'type': 'str'},
+        'content_in_base64': {'key': 'contentInBase64', 'type': 'bytearray'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword content_type: Required. MIME type of attachment. Possible values include: "image/png",
+         "image/jpeg", "image/gif", "image/bmp", "audio/wav", "audio/x-wav", "audio/ac3", "audio/amr",
+         "video/mp4", "video/x-msvideo", "text/plain".
+        :paramtype content_type: str or ~azure.communication.sms.models.MmsContentType
+        :keyword content_in_base64: Required. Content of the attachment encoded in base 64.
+        :paramtype content_in_base64: bytearray
+        """
+        super(MmsAttachment, self).__init__(**kwargs)
+        self.content_type = kwargs['content_type']
+        self.content_in_base64 = kwargs['content_in_base64']
+
+
+class MmsRecipient(msrest.serialization.Model):
+    """Represents properties for a single recipient.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar to: Required. The recipient's phone number in E.164 format.
+    :vartype to: str
+    :ivar repeatability_request_id: If specified, the client directs that the request is
+     repeatable; that is, the client can make the request multiple times with the same
+     Repeatability-Request-ID and get back an appropriate response without the server executing the
+     request multiple times. The value of the Repeatability-Request-ID is an opaque string
+     representing a client-generated, 36-character hexadecimal case-insensitive encoding of a UUID
+     (GUID), identifier for the request.
+    :vartype repeatability_request_id: str
+    :ivar repeatability_first_sent: MUST be sent by clients to specify that a request is
+     repeatable. Repeatability-First-Sent is used to specify the date and time at which the request
+     was first created.eg- Tue, 26 Mar 2019 16:06:51 GMT.
+    :vartype repeatability_first_sent: str
+    """
+
+    _validation = {
+        'to': {'required': True, 'min_length': 1},
+    }
+
+    _attribute_map = {
+        'to': {'key': 'to', 'type': 'str'},
+        'repeatability_request_id': {'key': 'repeatabilityRequestId', 'type': 'str'},
+        'repeatability_first_sent': {'key': 'repeatabilityFirstSent', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword to: Required. The recipient's phone number in E.164 format.
+        :paramtype to: str
+        :keyword repeatability_request_id: If specified, the client directs that the request is
+         repeatable; that is, the client can make the request multiple times with the same
+         Repeatability-Request-ID and get back an appropriate response without the server executing the
+         request multiple times. The value of the Repeatability-Request-ID is an opaque string
+         representing a client-generated, 36-character hexadecimal case-insensitive encoding of a UUID
+         (GUID), identifier for the request.
+        :paramtype repeatability_request_id: str
+        :keyword repeatability_first_sent: MUST be sent by clients to specify that a request is
+         repeatable. Repeatability-First-Sent is used to specify the date and time at which the request
+         was first created.eg- Tue, 26 Mar 2019 16:06:51 GMT.
+        :paramtype repeatability_first_sent: str
+        """
+        super(MmsRecipient, self).__init__(**kwargs)
+        self.to = kwargs['to']
+        self.repeatability_request_id = kwargs.get('repeatability_request_id', None)
+        self.repeatability_first_sent = kwargs.get('repeatability_first_sent', None)
+
+
+class MmsSendMessageRequest(msrest.serialization.Model):
+    """Represents the properties of a send MMS message request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar from_property: Required. The sender's identifier (typically phone number in E.164 format)
+     that is owned by the authenticated account.
+    :vartype from_property: str
+    :ivar recipients: Required. The recipient phone numbers in E.164 format.
+    :vartype recipients: list[~azure.communication.sms.models.MmsRecipient]
+    :ivar message: The contents of the message that will be sent to the recipient.
+    :vartype message: str
+    :ivar attachments: Required. A list of media attachments to include as part of the MMS. You can
+     have maximum 10 attachments.
+    :vartype attachments: list[~azure.communication.sms.models.MmsAttachment]
+    :ivar send_options: Optional configuration for sending MMS messages.
+    :vartype send_options: ~azure.communication.sms.models.MmsSendOptions
+    """
+
+    _validation = {
+        'from_property': {'required': True},
+        'recipients': {'required': True, 'max_items': 100, 'min_items': 1},
+        'message': {'max_length': 1000, 'min_length': 0},
+        'attachments': {'required': True, 'max_items': 10, 'min_items': 1},
+    }
+
+    _attribute_map = {
+        'from_property': {'key': 'from', 'type': 'str'},
+        'recipients': {'key': 'recipients', 'type': '[MmsRecipient]'},
+        'message': {'key': 'message', 'type': 'str'},
+        'attachments': {'key': 'attachments', 'type': '[MmsAttachment]'},
+        'send_options': {'key': 'sendOptions', 'type': 'MmsSendOptions'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword from_property: Required. The sender's identifier (typically phone number in E.164
+         format) that is owned by the authenticated account.
+        :paramtype from_property: str
+        :keyword recipients: Required. The recipient phone numbers in E.164 format.
+        :paramtype recipients: list[~azure.communication.sms.models.MmsRecipient]
+        :keyword message: The contents of the message that will be sent to the recipient.
+        :paramtype message: str
+        :keyword attachments: Required. A list of media attachments to include as part of the MMS. You
+         can have maximum 10 attachments.
+        :paramtype attachments: list[~azure.communication.sms.models.MmsAttachment]
+        :keyword send_options: Optional configuration for sending MMS messages.
+        :paramtype send_options: ~azure.communication.sms.models.MmsSendOptions
+        """
+        super(MmsSendMessageRequest, self).__init__(**kwargs)
+        self.from_property = kwargs['from_property']
+        self.recipients = kwargs['recipients']
+        self.message = kwargs.get('message', None)
+        self.attachments = kwargs['attachments']
+        self.send_options = kwargs.get('send_options', None)
+
+
+class MmsSendOptions(msrest.serialization.Model):
+    """Optional configuration for sending MMS messages.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar enable_delivery_report: Required. Enable this flag to receive a delivery report for this
+     message on the Azure Resource EventGrid.
+    :vartype enable_delivery_report: bool
+    :ivar tag: Use this field to provide metadata that will then be sent back in the corresponding
+     Delivery Report.
+    :vartype tag: str
+    """
+
+    _validation = {
+        'enable_delivery_report': {'required': True},
+    }
+
+    _attribute_map = {
+        'enable_delivery_report': {'key': 'enableDeliveryReport', 'type': 'bool'},
+        'tag': {'key': 'tag', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword enable_delivery_report: Required. Enable this flag to receive a delivery report for
+         this message on the Azure Resource EventGrid.
+        :paramtype enable_delivery_report: bool
+        :keyword tag: Use this field to provide metadata that will then be sent back in the
+         corresponding Delivery Report.
+        :paramtype tag: str
+        """
+        super(MmsSendOptions, self).__init__(**kwargs)
+        self.enable_delivery_report = kwargs['enable_delivery_report']
+        self.tag = kwargs.get('tag', None)
+
+
+class MmsSendResponse(msrest.serialization.Model):
+    """Response for a successful or multi status MMS send request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: Required.
+    :vartype value: list[~azure.communication.sms.models.MmsSendResponseItem]
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[MmsSendResponseItem]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword value: Required.
+        :paramtype value: list[~azure.communication.sms.models.MmsSendResponseItem]
+        """
+        super(MmsSendResponse, self).__init__(**kwargs)
+        self.value = kwargs['value']
+
+
+class MmsSendResponseItem(msrest.serialization.Model):
+    """MMS response for a single recipient.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar to: Required. The recipient's phone number in E.164 format.
+    :vartype to: str
+    :ivar message_id: The identifier of the outgoing message. Only present if message processed.
+    :vartype message_id: str
+    :ivar http_status_code: Required. HTTP Status code.
+    :vartype http_status_code: int
+    :ivar error_message: Optional error message in case of 4xx/5xx/repeatable errors.
+    :vartype error_message: str
+    :ivar repeatability_result: The result of a repeatable request with one of the case-insensitive
+     values accepted or rejected. Possible values include: "accepted", "rejected".
+    :vartype repeatability_result: str or
+     ~azure.communication.sms.models.MmsSendResponseItemRepeatabilityResult
+    :ivar successful: Required. Indicates if the message is processed successfully or not.
+    :vartype successful: bool
+    """
+
+    _validation = {
+        'to': {'required': True, 'min_length': 1},
+        'http_status_code': {'required': True},
+        'successful': {'required': True},
+    }
+
+    _attribute_map = {
+        'to': {'key': 'to', 'type': 'str'},
+        'message_id': {'key': 'messageId', 'type': 'str'},
+        'http_status_code': {'key': 'httpStatusCode', 'type': 'int'},
+        'error_message': {'key': 'errorMessage', 'type': 'str'},
+        'repeatability_result': {'key': 'repeatabilityResult', 'type': 'str'},
+        'successful': {'key': 'successful', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword to: Required. The recipient's phone number in E.164 format.
+        :paramtype to: str
+        :keyword message_id: The identifier of the outgoing message. Only present if message processed.
+        :paramtype message_id: str
+        :keyword http_status_code: Required. HTTP Status code.
+        :paramtype http_status_code: int
+        :keyword error_message: Optional error message in case of 4xx/5xx/repeatable errors.
+        :paramtype error_message: str
+        :keyword repeatability_result: The result of a repeatable request with one of the
+         case-insensitive values accepted or rejected. Possible values include: "accepted", "rejected".
+        :paramtype repeatability_result: str or
+         ~azure.communication.sms.models.MmsSendResponseItemRepeatabilityResult
+        :keyword successful: Required. Indicates if the message is processed successfully or not.
+        :paramtype successful: bool
+        """
+        super(MmsSendResponseItem, self).__init__(**kwargs)
+        self.to = kwargs['to']
+        self.message_id = kwargs.get('message_id', None)
+        self.http_status_code = kwargs['http_status_code']
+        self.error_message = kwargs.get('error_message', None)
+        self.repeatability_result = kwargs.get('repeatability_result', None)
+        self.successful = kwargs['successful']
+
+
+class SendMessageRequest(msrest.serialization.Model):
+    """Represents the properties of a send SMS message request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar from_property: Required. The sender's identifier (typically phone number in E.164 format)
+     that is owned by the authenticated account.
+    :vartype from_property: str
+    :ivar sms_recipients: Required. The recipient's phone number in E.164 format. In this version,
      a minimum of 1 and upto 100 recipients in the list are supported.
-    :type sms_recipients: list[~azure.communication.sms.models.SmsRecipient]
-    :param message: Required. The contents of the message that will be sent to the recipient. The
+    :vartype sms_recipients: list[~azure.communication.sms.models.SmsRecipient]
+    :ivar message: Required. The contents of the message that will be sent to the recipient. The
      allowable content is defined by RFC 5724.
-    :type message: str
-    :param sms_send_options: Optional configuration for sending SMS messages.
-    :type sms_send_options: ~azure.communication.sms.models.SmsSendOptions
+    :vartype message: str
+    :ivar sms_send_options: Optional configuration for sending SMS messages.
+    :vartype sms_send_options: ~azure.communication.sms.models.SmsSendOptions
     """
 
     _validation = {
@@ -44,6 +332,19 @@ class SendMessageRequest(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword from_property: Required. The sender's identifier (typically phone number in E.164
+         format) that is owned by the authenticated account.
+        :paramtype from_property: str
+        :keyword sms_recipients: Required. The recipient's phone number in E.164 format. In this
+         version, a minimum of 1 and upto 100 recipients in the list are supported.
+        :paramtype sms_recipients: list[~azure.communication.sms.models.SmsRecipient]
+        :keyword message: Required. The contents of the message that will be sent to the recipient. The
+         allowable content is defined by RFC 5724.
+        :paramtype message: str
+        :keyword sms_send_options: Optional configuration for sending SMS messages.
+        :paramtype sms_send_options: ~azure.communication.sms.models.SmsSendOptions
+        """
         super(SendMessageRequest, self).__init__(**kwargs)
         self.from_property = kwargs['from_property']
         self.sms_recipients = kwargs['sms_recipients']
@@ -52,23 +353,23 @@ class SendMessageRequest(msrest.serialization.Model):
 
 
 class SmsRecipient(msrest.serialization.Model):
-    """Recipient details for sending SMS messages.
+    """Represents properties for a single recipient.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param to: Required. The recipient's phone number in E.164 format.
-    :type to: str
-    :param repeatability_request_id: If specified, the client directs that the request is
+    :ivar to: Required. The recipient's phone number in E.164 format.
+    :vartype to: str
+    :ivar repeatability_request_id: If specified, the client directs that the request is
      repeatable; that is, the client can make the request multiple times with the same
      Repeatability-Request-ID and get back an appropriate response without the server executing the
      request multiple times. The value of the Repeatability-Request-ID is an opaque string
      representing a client-generated, 36-character hexadecimal case-insensitive encoding of a UUID
      (GUID), identifier for the request.
-    :type repeatability_request_id: str
-    :param repeatability_first_sent: MUST be sent by clients to specify that a request is
+    :vartype repeatability_request_id: str
+    :ivar repeatability_first_sent: MUST be sent by clients to specify that a request is
      repeatable. Repeatability-First-Sent is used to specify the date and time at which the request
      was first created.eg- Tue, 26 Mar 2019 16:06:51 GMT.
-    :type repeatability_first_sent: str
+    :vartype repeatability_first_sent: str
     """
 
     _validation = {
@@ -85,6 +386,21 @@ class SmsRecipient(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword to: Required. The recipient's phone number in E.164 format.
+        :paramtype to: str
+        :keyword repeatability_request_id: If specified, the client directs that the request is
+         repeatable; that is, the client can make the request multiple times with the same
+         Repeatability-Request-ID and get back an appropriate response without the server executing the
+         request multiple times. The value of the Repeatability-Request-ID is an opaque string
+         representing a client-generated, 36-character hexadecimal case-insensitive encoding of a UUID
+         (GUID), identifier for the request.
+        :paramtype repeatability_request_id: str
+        :keyword repeatability_first_sent: MUST be sent by clients to specify that a request is
+         repeatable. Repeatability-First-Sent is used to specify the date and time at which the request
+         was first created.eg- Tue, 26 Mar 2019 16:06:51 GMT.
+        :paramtype repeatability_first_sent: str
+        """
         super(SmsRecipient, self).__init__(**kwargs)
         self.to = kwargs['to']
         self.repeatability_request_id = kwargs.get('repeatability_request_id', None)
@@ -96,12 +412,12 @@ class SmsSendOptions(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param enable_delivery_report: Required. Enable this flag to receive a delivery report for this
+    :ivar enable_delivery_report: Required. Enable this flag to receive a delivery report for this
      message on the Azure Resource EventGrid.
-    :type enable_delivery_report: bool
-    :param tag: Use this field to provide metadata that will then be sent back in the corresponding
+    :vartype enable_delivery_report: bool
+    :ivar tag: Use this field to provide metadata that will then be sent back in the corresponding
      Delivery Report.
-    :type tag: str
+    :vartype tag: str
     """
 
     _validation = {
@@ -117,18 +433,26 @@ class SmsSendOptions(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword enable_delivery_report: Required. Enable this flag to receive a delivery report for
+         this message on the Azure Resource EventGrid.
+        :paramtype enable_delivery_report: bool
+        :keyword tag: Use this field to provide metadata that will then be sent back in the
+         corresponding Delivery Report.
+        :paramtype tag: str
+        """
         super(SmsSendOptions, self).__init__(**kwargs)
         self.enable_delivery_report = kwargs['enable_delivery_report']
         self.tag = kwargs.get('tag', None)
 
 
 class SmsSendResponse(msrest.serialization.Model):
-    """Response for a successful or multi status send Sms request.
+    """Response for a successful or multi status SMS send request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required.
-    :type value: list[~azure.communication.sms.models.SmsSendResponseItem]
+    :ivar value: Required.
+    :vartype value: list[~azure.communication.sms.models.SmsSendResponseItem]
     """
 
     _validation = {
@@ -143,30 +467,33 @@ class SmsSendResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword value: Required.
+        :paramtype value: list[~azure.communication.sms.models.SmsSendResponseItem]
+        """
         super(SmsSendResponse, self).__init__(**kwargs)
         self.value = kwargs['value']
 
 
 class SmsSendResponseItem(msrest.serialization.Model):
-    """Response for a single recipient.
+    """SMS response for a single recipient.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param to: Required. The recipient's phone number in E.164 format.
-    :type to: str
-    :param message_id: The identifier of the outgoing Sms message. Only present if message
-     processed.
-    :type message_id: str
-    :param http_status_code: Required. HTTP Status code.
-    :type http_status_code: int
-    :param repeatability_result: The result of a repeatable request with one of the
-     case-insensitive values accepted or rejected. Possible values include: "accepted", "rejected".
-    :type repeatability_result: str or
+    :ivar to: Required. The recipient's phone number in E.164 format.
+    :vartype to: str
+    :ivar message_id: The identifier of the outgoing message. Only present if message processed.
+    :vartype message_id: str
+    :ivar http_status_code: Required. HTTP Status code.
+    :vartype http_status_code: int
+    :ivar error_message: Optional error message in case of 4xx/5xx/repeatable errors.
+    :vartype error_message: str
+    :ivar repeatability_result: The result of a repeatable request with one of the case-insensitive
+     values accepted or rejected. Possible values include: "accepted", "rejected".
+    :vartype repeatability_result: str or
      ~azure.communication.sms.models.SmsSendResponseItemRepeatabilityResult
-    :param successful: Required. Indicates if the message is processed successfully or not.
-    :type successful: bool
-    :param error_message: Optional error message in case of 4xx/5xx/repeatable errors.
-    :type error_message: str
+    :ivar successful: Required. Indicates if the message is processed successfully or not.
+    :vartype successful: bool
     """
 
     _validation = {
@@ -179,19 +506,35 @@ class SmsSendResponseItem(msrest.serialization.Model):
         'to': {'key': 'to', 'type': 'str'},
         'message_id': {'key': 'messageId', 'type': 'str'},
         'http_status_code': {'key': 'httpStatusCode', 'type': 'int'},
+        'error_message': {'key': 'errorMessage', 'type': 'str'},
         'repeatability_result': {'key': 'repeatabilityResult', 'type': 'str'},
         'successful': {'key': 'successful', 'type': 'bool'},
-        'error_message': {'key': 'errorMessage', 'type': 'str'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
+        """
+        :keyword to: Required. The recipient's phone number in E.164 format.
+        :paramtype to: str
+        :keyword message_id: The identifier of the outgoing message. Only present if message processed.
+        :paramtype message_id: str
+        :keyword http_status_code: Required. HTTP Status code.
+        :paramtype http_status_code: int
+        :keyword error_message: Optional error message in case of 4xx/5xx/repeatable errors.
+        :paramtype error_message: str
+        :keyword repeatability_result: The result of a repeatable request with one of the
+         case-insensitive values accepted or rejected. Possible values include: "accepted", "rejected".
+        :paramtype repeatability_result: str or
+         ~azure.communication.sms.models.SmsSendResponseItemRepeatabilityResult
+        :keyword successful: Required. Indicates if the message is processed successfully or not.
+        :paramtype successful: bool
+        """
         super(SmsSendResponseItem, self).__init__(**kwargs)
         self.to = kwargs['to']
         self.message_id = kwargs.get('message_id', None)
         self.http_status_code = kwargs['http_status_code']
+        self.error_message = kwargs.get('error_message', None)
         self.repeatability_result = kwargs.get('repeatability_result', None)
         self.successful = kwargs['successful']
-        self.error_message = kwargs.get('error_message', None)

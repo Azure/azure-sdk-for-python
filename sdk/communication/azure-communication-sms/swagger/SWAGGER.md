@@ -15,8 +15,8 @@ autorest SWAGGER.md
 
 ### Settings
 ``` yaml
-tag: package-sms-2021-03-07
-require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/896d05e37dbb00712726620b8d679cc3c3be09fb/specification/communication/data-plane/Sms/readme.md
+tag: package-2024-01-14-preview
+require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/4ad21c4cd5f024b520b77907b8ac15fb84c8413a/specification/communication/data-plane/Sms/readme.md
 output-folder: ../azure/communication/sms/_generated
 namespace: azure.communication.sms
 no-namespace-folders: true
@@ -28,4 +28,15 @@ v3: true
 no-async: false
 add-credential: false
 title: Azure Communication SMS Service
+use-extension:
+  "@autorest/python": "5.9.3"
+```
+
+### Directive renaming "MmsSendRequestAttachment" property to "MmsAttachment" in MMS
+``` yaml
+directive:
+    from: swagger-document
+    where: '$.definitions.MmsSendRequestAttachment'
+    transform: >
+        $["x-ms-client-name"] = "MmsAttachment";
 ```

@@ -6,8 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._mms_operations import MmsOperations
 from ._sms_operations import SmsOperations
 
 __all__ = [
+    'MmsOperations',
     'SmsOperations',
 ]

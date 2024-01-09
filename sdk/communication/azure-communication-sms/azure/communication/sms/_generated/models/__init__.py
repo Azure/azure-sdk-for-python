@@ -7,12 +7,24 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import MmsAttachment
+    from ._models_py3 import MmsRecipient
+    from ._models_py3 import MmsSendMessageRequest
+    from ._models_py3 import MmsSendOptions
+    from ._models_py3 import MmsSendResponse
+    from ._models_py3 import MmsSendResponseItem
     from ._models_py3 import SendMessageRequest
     from ._models_py3 import SmsRecipient
     from ._models_py3 import SmsSendOptions
     from ._models_py3 import SmsSendResponse
     from ._models_py3 import SmsSendResponseItem
 except (SyntaxError, ImportError):
+    from ._models import MmsAttachment  # type: ignore
+    from ._models import MmsRecipient  # type: ignore
+    from ._models import MmsSendMessageRequest  # type: ignore
+    from ._models import MmsSendOptions  # type: ignore
+    from ._models import MmsSendResponse  # type: ignore
+    from ._models import MmsSendResponseItem  # type: ignore
     from ._models import SendMessageRequest  # type: ignore
     from ._models import SmsRecipient  # type: ignore
     from ._models import SmsSendOptions  # type: ignore
@@ -20,14 +32,24 @@ except (SyntaxError, ImportError):
     from ._models import SmsSendResponseItem  # type: ignore
 
 from ._azure_communication_sms_service_enums import (
+    MmsContentType,
+    MmsSendResponseItemRepeatabilityResult,
     SmsSendResponseItemRepeatabilityResult,
 )
 
 __all__ = [
+    'MmsAttachment',
+    'MmsRecipient',
+    'MmsSendMessageRequest',
+    'MmsSendOptions',
+    'MmsSendResponse',
+    'MmsSendResponseItem',
     'SendMessageRequest',
     'SmsRecipient',
     'SmsSendOptions',
     'SmsSendResponse',
     'SmsSendResponseItem',
+    'MmsContentType',
+    'MmsSendResponseItemRepeatabilityResult',
     'SmsSendResponseItemRepeatabilityResult',
 ]

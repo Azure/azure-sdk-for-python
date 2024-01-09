@@ -23,7 +23,7 @@ class AzureCommunicationSMSServiceConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: The communication resource, for example https://my-resource.communication.azure.com.
+    :param endpoint: The communication resource, for example https://resourcename.communication.azure.com.
     :type endpoint: str
     """
 
@@ -38,7 +38,7 @@ class AzureCommunicationSMSServiceConfiguration(Configuration):
         super(AzureCommunicationSMSServiceConfiguration, self).__init__(**kwargs)
 
         self.endpoint = endpoint
-        self.api_version = "2021-03-07"
+        self.api_version = "2024-01-14-preview"
         kwargs.setdefault('sdk_moniker', 'azurecommunicationsmsservice/{}'.format(VERSION))
         self._configure(**kwargs)
 

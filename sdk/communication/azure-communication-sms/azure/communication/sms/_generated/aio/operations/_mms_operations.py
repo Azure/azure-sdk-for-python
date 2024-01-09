@@ -17,13 +17,13 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._sms_operations import build_send_request
+from ...operations._mms_operations import build_send_request
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class SmsOperations:
-    """SmsOperations async operations.
+class MmsOperations:
+    """MmsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -47,21 +47,21 @@ class SmsOperations:
     @distributed_trace_async
     async def send(
         self,
-        send_message_request: "_models.SendMessageRequest",
+        body: "_models.MmsSendMessageRequest",
         **kwargs: Any
-    ) -> "_models.SmsSendResponse":
-        """Sends a SMS message from a phone number that belongs to the authenticated account.
+    ) -> "_models.MmsSendResponse":
+        """Sends MMS message from a phone number that belongs to the authenticated account.
 
-        Sends a SMS message from a phone number that belongs to the authenticated account.
+        Sends MMS message from a phone number that belongs to the authenticated account.
 
-        :param send_message_request: Represents the body of the send message request.
-        :type send_message_request: ~azure.communication.sms.models.SendMessageRequest
+        :param body: Represents the body of the send MMS message request.
+        :type body: ~azure.communication.sms.models.MmsSendMessageRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SmsSendResponse, or the result of cls(response)
-        :rtype: ~azure.communication.sms.models.SmsSendResponse
+        :return: MmsSendResponse, or the result of cls(response)
+        :rtype: ~azure.communication.sms.models.MmsSendResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SmsSendResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MmsSendResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -69,7 +69,7 @@ class SmsOperations:
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(send_message_request, 'SendMessageRequest')
+        json = self._serialize.body(body, 'MmsSendMessageRequest')
 
         request = build_send_request(
             content_type=content_type,
@@ -89,12 +89,12 @@ class SmsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('SmsSendResponse', pipeline_response)
+        deserialized = self._deserialize('MmsSendResponse', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    send.metadata = {'url': '/sms'}  # type: ignore
+    send.metadata = {'url': '/mms'}  # type: ignore
 
