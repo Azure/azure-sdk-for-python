@@ -97,7 +97,7 @@ class InternalInput(Input):
 
     @overload
     @classmethod
-    def _from_base(cls, _input: None) -> None:
+    def _from_base(cls, _input: None) -> None:  # type: ignore[misc]
         ...
 
     @overload
