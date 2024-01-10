@@ -157,18 +157,18 @@ class DenseCaptionsResult(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar values: The list of image captions. Required.
-    :vartype values: list[~azure.ai.vision.imageanalysis.models.DenseCaption]
+    :ivar values_property: The list of image captions. Required.
+    :vartype values_property: list[~azure.ai.vision.imageanalysis.models.DenseCaption]
     """
 
-    values: List["_models.DenseCaption"] = rest_field()
+    values_property: List["_models.DenseCaption"] = rest_field(name="values")
     """The list of image captions. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        values: List["_models.DenseCaption"],
+        values_property: List["_models.DenseCaption"],
     ):
         ...
 
@@ -627,18 +627,19 @@ class ObjectsResult(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar values: A list of physical object detected in an image and their location. Required.
-    :vartype values: list[~azure.ai.vision.imageanalysis.models.DetectedObject]
+    :ivar values_property: A list of physical object detected in an image and their location.
+     Required.
+    :vartype values_property: list[~azure.ai.vision.imageanalysis.models.DetectedObject]
     """
 
-    values: List["_models.DetectedObject"] = rest_field()
+    values_property: List["_models.DetectedObject"] = rest_field(name="values")
     """A list of physical object detected in an image and their location. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        values: List["_models.DetectedObject"],
+        values_property: List["_models.DetectedObject"],
     ):
         ...
 
@@ -658,18 +659,18 @@ class PeopleResult(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar values: A list of people detected in an image and their location. Required.
-    :vartype values: list[~azure.ai.vision.imageanalysis.models.DetectedPerson]
+    :ivar values_property: A list of people detected in an image and their location. Required.
+    :vartype values_property: list[~azure.ai.vision.imageanalysis.models.DetectedPerson]
     """
 
-    values: List["_models.DetectedPerson"] = rest_field()
+    values_property: List["_models.DetectedPerson"] = rest_field(name="values")
     """A list of people detected in an image and their location. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        values: List["_models.DetectedPerson"],
+        values_property: List["_models.DetectedPerson"],
     ):
         ...
 
@@ -725,18 +726,18 @@ class SmartCropsResult(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar values: A list of crop regions. Required.
-    :vartype values: list[~azure.ai.vision.imageanalysis.models.CropRegion]
+    :ivar values_property: A list of crop regions. Required.
+    :vartype values_property: list[~azure.ai.vision.imageanalysis.models.CropRegion]
     """
 
-    values: List["_models.CropRegion"] = rest_field()
+    values_property: List["_models.CropRegion"] = rest_field(name="values")
     """A list of crop regions. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        values: List["_models.CropRegion"],
+        values_property: List["_models.CropRegion"],
     ):
         ...
 
@@ -758,18 +759,18 @@ class TagsResult(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar values: A list of tags. Required.
-    :vartype values: list[~azure.ai.vision.imageanalysis.models.DetectedTag]
+    :ivar values_property: A list of tags. Required.
+    :vartype values_property: list[~azure.ai.vision.imageanalysis.models.DetectedTag]
     """
 
-    values: List["_models.DetectedTag"] = rest_field()
+    values_property: List["_models.DetectedTag"] = rest_field(name="values")
     """A list of tags. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        values: List["_models.DetectedTag"],
+        values_property: List["_models.DetectedTag"],
     ):
         ...
 

@@ -26,6 +26,8 @@ USAGE:
                          where `your-resource-name` is your unique Azure Computer Vision resource name.
     2) VISION_KEY - Your Computer Vision key (a 32-character Hexadecimal number)
 """
+
+
 def sample_analyze_all_image_file():
     import os
     from azure.ai.vision.imageanalysis import ImageAnalysisClient
@@ -36,21 +38,21 @@ def sample_analyze_all_image_file():
     import sys
     import logging
 
-    # Acquire the logger for this client library. Use 'azure' to affect both 
+    # Acquire the logger for this client library. Use 'azure' to affect both
     # 'azure.core` and `azure.ai.vision.imageanalysis' libraries.
-    logger = logging.getLogger('azure')
+    logger = logging.getLogger("azure")
 
     # Set the desired logging level. logging.INFO or logging.DEBUG are good options.
     logger.setLevel(logging.INFO)
 
     # Direct logging output to stdout (the default):
-    handler = logging.StreamHandler(stream = sys.stdout)
+    handler = logging.StreamHandler(stream=sys.stdout)
     # Or direct logging output to a file:
     # handler = logging.FileHandler(filename = 'sample.log')
     logger.addHandler(handler)
 
     # Optional: change the default logging format. Here we add a timestamp.
-    formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(name)s:%(message)s')
+    formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(message)s")
     handler.setFormatter(formatter)
     # [END logging]
 
@@ -64,34 +66,30 @@ def sample_analyze_all_image_file():
         exit()
 
     # Load image to analyze into a 'bytes' object
-    with open("sample.jpg", 'rb') as f:
+    with open("sample.jpg", "rb") as f:
         image_data = f.read()
 
     # [START create_client_with_logging]
     # Create an Image Analysis client with none redacted log
-    client = ImageAnalysisClient(
-        endpoint = endpoint,
-        credential = AzureKeyCredential(key),
-        logging_enable = True
-    )
+    client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key), logging_enable=True)
     # [END create_client_with_logging]
 
     # Analyze all visual features from an image stream. This will be a synchronously (blocking) call.
     result = client.analyze(
-        image_data = image_data,
-        visual_features = [
+        image_data=image_data,
+        visual_features=[
             VisualFeatures.TAGS,
             VisualFeatures.OBJECTS,
             VisualFeatures.CAPTION,
             VisualFeatures.DENSE_CAPTIONS,
             VisualFeatures.READ,
             VisualFeatures.SMART_CROPS,
-            VisualFeatures.PEOPLE
-        ], # Mandatory. Select one or more visual features to analyze.
-        smart_crops_aspect_ratios = [0.9, 1.33], # Optional. Relevant only if SMART_CROPS was specified above.
-        gender_neutral_caption = True, # Optional. Relevant only if CAPTION or DENSE_CAPTIONS were specified above.
-        language = "en", # Optional. Relevant only if TAGS is specified above. See https://aka.ms/cv-languages for supported languages.
-        model_version = "latest" # Optional. Analysis model version to use. Defaults to "latest".
+            VisualFeatures.PEOPLE,
+        ],  # Mandatory. Select one or more visual features to analyze.
+        smart_crops_aspect_ratios=[0.9, 1.33],  # Optional. Relevant only if SMART_CROPS was specified above.
+        gender_neutral_caption=True,  # Optional. Relevant only if CAPTION or DENSE_CAPTIONS were specified above.
+        language="en",  # Optional. Relevant only if TAGS is specified above. See https://aka.ms/cv-languages for supported languages.
+        model_version="latest",  # Optional. Analysis model version to use. Defaults to "latest".
     )
 
     # Print all analysis results to the console
@@ -111,7 +109,9 @@ def sample_analyze_all_image_file():
         for line in result.read.blocks[0].lines:
             print(f"   Line: '{line.text}', Bounding box {line.bounding_polygon}")
             for word in line.words:
-                print(f"     Word: '{word.text}', Bounding polygon {word.bounding_polygon}, Confidence {word.confidence:.4f}")
+                print(
+                    f"     Word: '{word.text}', Bounding polygon {word.bounding_polygon}, Confidence {word.confidence:.4f}"
+                )
 
     if result.tags is not None:
         print(" Tags:")
@@ -138,5 +138,5 @@ def sample_analyze_all_image_file():
     print(f" Model version: {result.model_version}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample_analyze_all_image_file()
