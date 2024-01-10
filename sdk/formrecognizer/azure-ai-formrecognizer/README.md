@@ -20,7 +20,7 @@ Azure Document Intelligence ([previously known as Form Recognizer][service-renam
 
 ## _Disclaimer_
 
-_This package supports API version of the service 2.0, 2.1, 2022-08-31 and 2023-07-31. From API version of the service 2023-10-31, it's supported in package `azure-ai-documentintelligence`. Please refer this [doc][fr_to_di_migration_guideline] for migration details._
+_This package supports API version of the service 2.0, 2.1, 2022-08-31 and 2023-07-31. Service API version 2023-10-31-preview and later are supported in package `azure-ai-documentintelligence`. Please refer this [doc][fr_to_di_migration_guideline] for migration details._
 
 
 ## Getting started
