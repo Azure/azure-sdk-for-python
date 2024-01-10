@@ -143,11 +143,11 @@ class DatabaseProxy(object):
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
 
-        self._properties = self.client_connection.ReadDatabase(
+        self._properties, last_response_headers = self.client_connection.ReadDatabase(
             database_link, options=request_options, **kwargs
         )
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, self._properties)
+            response_hook(last_response_headers, self._properties)
         return self._properties
 
     @distributed_trace
@@ -234,14 +234,14 @@ class DatabaseProxy(object):
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
-        data = self.client_connection.CreateContainer(
+        result, last_response_headers = self.client_connection.CreateContainer(
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
         )
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, data)
+            response_hook(last_response_headers, result)
 
-        return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data)
+        return ContainerProxy(self.client_connection, self.database_link, result["id"], properties=result)
 
     @distributed_trace
     def create_container_if_not_exists(  # pylint:disable=docstring-missing-param
@@ -336,9 +336,10 @@ class DatabaseProxy(object):
             request_options["populateQueryMetrics"] = populate_query_metrics
 
         collection_link = self._get_container_link(container)
-        self.client_connection.DeleteContainer(collection_link, options=request_options, **kwargs)
+        last_response_headers = self.client_connection.DeleteContainer(
+            collection_link, options=request_options, **kwargs)
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, None)
+            response_hook(last_response_headers, None)
 
     def get_container_client(self, container: Union[str, ContainerProxy, Mapping[str, Any]]) -> ContainerProxy:
         """Get a `ContainerProxy` for a container with specified ID (name).
@@ -525,12 +526,12 @@ class DatabaseProxy(object):
             if value is not None
         }
 
-        container_properties = self.client_connection.ReplaceContainer(
+        container_properties, last_response_headers = self.client_connection.ReplaceContainer(
             container_link, collection=parameters, options=request_options, **kwargs
         )
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, container_properties)
+            response_hook(last_response_headers, container_properties)
 
         return ContainerProxy(
             self.client_connection, self.database_link, container_properties["id"], properties=container_properties
@@ -634,11 +635,11 @@ class DatabaseProxy(object):
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
 
-        user = self.client_connection.CreateUser(
+        user, last_response_headers = self.client_connection.CreateUser(
             database_link=self.database_link, user=body, options=request_options, **kwargs)
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, user)
+            response_hook(last_response_headers, user)
 
         return UserProxy(
             client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
@@ -693,12 +694,12 @@ class DatabaseProxy(object):
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
 
-        replaced_user = self.client_connection.ReplaceUser(
+        replaced_user, last_response_headers = self.client_connection.ReplaceUser(
             user_link=self._get_user_link(user), user=body, options=request_options, **kwargs
         )
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, replaced_user)
+            response_hook(last_response_headers, replaced_user)
 
         return UserProxy(
             client_connection=self.client_connection,
@@ -722,11 +723,11 @@ class DatabaseProxy(object):
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
 
-        self.client_connection.DeleteUser(
+        last_response_headers = self.client_connection.DeleteUser(
             user_link=self._get_user_link(user), options=request_options, **kwargs
         )
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, None)
+            response_hook(last_response_headers, None)
 
     @distributed_trace
     def read_offer(self, **kwargs: Any) -> Offer:
@@ -806,11 +807,11 @@ class DatabaseProxy(object):
                 message="Could not find ThroughputProperties for database " + self.database_link)
         new_offer = throughput_properties[0].copy()
         _replace_throughput(throughput=throughput, new_throughput_properties=new_offer)
-        data = self.client_connection.ReplaceOffer(
+        data, last_response_headers = self.client_connection.ReplaceOffer(
             offer_link=throughput_properties[0]["_self"],
             offer=throughput_properties[0],
             **kwargs
         )
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, data)
+            response_hook(last_response_headers, data)
         return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)

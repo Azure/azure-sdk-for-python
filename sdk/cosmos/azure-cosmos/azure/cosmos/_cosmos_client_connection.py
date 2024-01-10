@@ -320,7 +320,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         database: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Creates a database.
 
         :param dict database:
@@ -343,7 +343,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         database_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Reads a database.
 
         :param str database_link:
@@ -485,7 +485,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Creates a collection in a database.
 
         :param str database_link:
@@ -513,7 +513,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Replaces a collection and return it.
 
         :param str collection_link:
@@ -542,7 +542,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Reads a collection.
 
         :param str collection_link:
@@ -569,7 +569,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         user: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Creates a user.
 
         :param str database_link:
@@ -628,7 +628,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         user_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Reads a user.
 
         :param str user_link:
@@ -717,7 +717,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         database_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> None:
+    ) -> Dict[str, Any]:
         """Deletes a database.
 
         :param str database_link:
@@ -744,7 +744,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         permission: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Creates a permission for a user.
 
         :param str user_link:
@@ -809,7 +809,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         permission_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Reads a permission.
 
         :param str permission_link:
@@ -899,7 +899,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         user: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Replaces a user and return it.
 
         :param str user_link:
@@ -927,7 +927,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         user_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> None:
+    ) -> Dict[str, Any]:
         """Deletes a user.
 
         :param str user_link:
@@ -954,7 +954,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         permission: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Replaces a permission and return it.
 
         :param str permission_link:
@@ -982,7 +982,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         permission_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> None:
+    ) -> Dict[str, Any]:
         """Deletes a permission.
 
         :param str permission_link:
@@ -1254,7 +1254,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         document: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Creates a document in a collection.
 
         :param str database_or_container_link:
@@ -1366,7 +1366,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         document_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs
-    ) -> Dict[str, Any]:
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Reads a document.
 
         :param str document_link:
@@ -1475,7 +1475,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options = {}
 
         collection_id, path, trigger = self._GetContainerIdWithPathForTrigger(collection_link, trigger)
-        return self.Create(trigger, path, "triggers", collection_id, None, options, **kwargs)
+        result, last_response_headers = self.Create(trigger, path, "triggers", collection_id, None, options, **kwargs)
+        return result
 
     def UpsertTrigger(
         self,
@@ -1544,7 +1545,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         path = base.GetPathFromLink(trigger_link)
         trigger_id = base.GetResourceIdOrFullNameFromLink(trigger_link)
-        return self.Read(path, "triggers", trigger_id, None, options, **kwargs)
+        result, last_response_headers = self.Read(path, "triggers", trigger_id, None, options, **kwargs)
+        return result
 
     def ReadUserDefinedFunctions(
         self,
@@ -1635,7 +1637,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options = {}
 
         collection_id, path, udf = self._GetContainerIdWithPathForUDF(collection_link, udf)
-        return self.Create(udf, path, "udfs", collection_id, None, options, **kwargs)
+        result, last_response_headers = self.Create(udf, path, "udfs", collection_id, None, options, **kwargs)
+        return result
 
     def UpsertUserDefinedFunction(
         self,
@@ -1704,7 +1707,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         path = base.GetPathFromLink(udf_link)
         udf_id = base.GetResourceIdOrFullNameFromLink(udf_link)
-        return self.Read(path, "udfs", udf_id, None, options, **kwargs)
+        result, last_response_headers = self.Read(path, "udfs", udf_id, None, options, **kwargs)
+        return result
 
     def ReadStoredProcedures(
         self,
@@ -1795,7 +1799,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options = {}
 
         collection_id, path, sproc = self._GetContainerIdWithPathForSproc(collection_link, sproc)
-        return self.Create(sproc, path, "sprocs", collection_id, None, options, **kwargs)
+        result, last_response_headers = self.Create(sproc, path, "sprocs", collection_id, None, options, **kwargs)
+        return result
 
     def UpsertStoredProcedure(
         self,
@@ -1863,7 +1868,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         path = base.GetPathFromLink(sproc_link)
         sproc_id = base.GetResourceIdOrFullNameFromLink(sproc_link)
-        return self.Read(path, "sprocs", sproc_id, None, options, **kwargs)
+        result, last_response_headers = self.Read(path, "sprocs", sproc_id, None, options, **kwargs)
+        return result
 
     def ReadConflicts(
         self,
@@ -1933,7 +1939,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         conflict_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Reads a conflict.
 
         :param str conflict_link:
@@ -1958,7 +1964,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> None:
+    ) -> Dict[str, Any]:
         """Deletes a collection.
 
         :param str collection_link:
@@ -1985,7 +1991,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         new_document: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Replaces a document and returns it.
 
         :param str document_link:
@@ -2026,7 +2032,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         operations: List[Dict[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Patches a document and returns it.
 
         :param str document_link: The link to the document.
@@ -2052,11 +2058,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options.get("filterPredicate"):
             request_data["condition"] = options.get("filterPredicate")
         request_data["operations"] = operations
-        result, self.last_response_headers = self.__Patch(path, request_params, request_data, headers, **kwargs)
+        result, last_response_headers = self.__Patch(path, request_params, request_data, headers, **kwargs)
+        self.last_response_headers = last_response_headers
 
         # update session for request mutates data on server side
-        self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
-        return result
+        self._UpdateSessionIfRequired(headers, result, last_response_headers)
+        return result, last_response_headers
 
     def Batch(
         self,
@@ -2138,7 +2145,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         document_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> None:
+    ) -> Dict[str, Any]:
         """Deletes a document.
 
         :param str document_link:
@@ -2164,7 +2171,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> None:
+    ) -> Dict[str, Any]:
         """Exposes an API to delete all items with a single partition key without the user having
          to explicitly call delete on each record in the partition key.
 
@@ -2186,13 +2193,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         headers = base.GetHeaders(self, self.default_headers, "post", path, collection_id, "partitionkey", options)
         request_params = RequestObject("partitionkey", documents._OperationType.Delete)
-        _, self.last_response_headers = self.__Post(
+        _, last_response_headers = self.__Post(
             path=path,
             request_params=request_params,
             req_headers=headers,
             body=None,
             **kwargs
         )
+        self.last_response_headers = last_response_headers
+        return last_response_headers
 
     def ReplaceTrigger(
         self,
@@ -2227,7 +2236,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         path = base.GetPathFromLink(trigger_link)
         trigger_id = base.GetResourceIdOrFullNameFromLink(trigger_link)
-        return self.Replace(trigger, path, "triggers", trigger_id, None, options, **kwargs)
+        result, last_response_headers = self.Replace(trigger, path, "triggers", trigger_id, None, options, **kwargs)
+        return result
 
     def DeleteTrigger(
         self,
@@ -2253,7 +2263,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         path = base.GetPathFromLink(trigger_link)
         trigger_id = base.GetResourceIdOrFullNameFromLink(trigger_link)
-        return self.DeleteResource(path, "triggers", trigger_id, None, options, **kwargs)
+        self.DeleteResource(path, "triggers", trigger_id, None, options, **kwargs)
 
     def ReplaceUserDefinedFunction(
         self,
@@ -2288,7 +2298,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         path = base.GetPathFromLink(udf_link)
         udf_id = base.GetResourceIdOrFullNameFromLink(udf_link)
-        return self.Replace(udf, path, "udfs", udf_id, None, options, **kwargs)
+        result, last_response_headers = self.Replace(udf, path, "udfs", udf_id, None, options, **kwargs)
+        return result
 
     def DeleteUserDefinedFunction(
         self,
@@ -2314,7 +2325,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         path = base.GetPathFromLink(udf_link)
         udf_id = base.GetResourceIdOrFullNameFromLink(udf_link)
-        return self.DeleteResource(path, "udfs", udf_id, None, options, **kwargs)
+        self.DeleteResource(path, "udfs", udf_id, None, options, **kwargs)
 
     def ExecuteStoredProcedure(
         self,
@@ -2389,7 +2400,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         path = base.GetPathFromLink(sproc_link)
         sproc_id = base.GetResourceIdOrFullNameFromLink(sproc_link)
-        return self.Replace(sproc, path, "sprocs", sproc_id, None, options, **kwargs)
+        result, last_response_headers = self.Replace(sproc, path, "sprocs", sproc_id, None, options, **kwargs)
+        return result
 
     def DeleteStoredProcedure(
         self,
@@ -2415,14 +2427,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         path = base.GetPathFromLink(sproc_link)
         sproc_id = base.GetResourceIdOrFullNameFromLink(sproc_link)
-        return self.DeleteResource(path, "sprocs", sproc_id, None, options, **kwargs)
+        self.DeleteResource(path, "sprocs", sproc_id, None, options, **kwargs)
 
     def DeleteConflict(
         self,
         conflict_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> None:
+    ) -> Dict[str, Any]:
         """Deletes a conflict.
 
         :param str conflict_link:
@@ -2448,7 +2460,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         offer_link: str,
         offer: Dict[str, Any],
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Replaces an offer and returns it.
 
         :param str offer_link:
@@ -2465,47 +2477,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(offer_link)
         offer_id = base.GetResourceIdOrFullNameFromLink(offer_link)
         return self.Replace(offer, path, "offers", offer_id, None, None, **kwargs)
-
-    def ReadOffer(
-        self,
-        offer_link: str,
-        **kwargs: Any
-    ) -> Dict[str, Any]:
-        """Reads an offer.
-
-        :param str offer_link:
-            The link to the offer.
-
-        :return:
-            The read Offer.
-        :rtype:
-            dict
-
-        """
-        path = base.GetPathFromLink(offer_link)
-        offer_id = base.GetResourceIdOrFullNameFromLink(offer_link)
-        return self.Read(path, "offers", offer_id, None, {}, **kwargs)
-
-    def ReadOffers(
-        self,
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]:
-        """Reads all offers.
-
-        :param dict options:
-            The request options for the request
-
-        :return:
-            Query Iterable of Offers.
-        :rtype:
-            query_iterable.QueryIterable
-
-        """
-        if options is None:
-            options = {}
-
-        return self.QueryOffers(None, options, **kwargs)
 
     def QueryOffers(
         self,
@@ -2594,8 +2565,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         initial_headers: Optional[Mapping[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
-        """Creates a Azure Cosmos resource and returns it.
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+        """Creates an Azure Cosmos resource and returns it.
 
         :param dict body:
         :param str path:
@@ -2619,11 +2590,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Create will use WriteEndpoint since it uses POST operation
 
         request_params = RequestObject(typ, documents._OperationType.Create)
-        result, self.last_response_headers = self.__Post(path, request_params, body, headers, **kwargs)
+        result, last_response_headers = self.__Post(path, request_params, body, headers, **kwargs)
+        self.last_response_headers = last_response_headers
 
         # update session for write request
-        self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
-        return result
+        self._UpdateSessionIfRequired(headers, result, last_response_headers)
+        return result, last_response_headers
 
     def Upsert(
         self,
@@ -2675,8 +2647,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         initial_headers: Optional[Mapping[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
-        """Replaces a Azure Cosmos resource and returns it.
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+        """Replaces an Azure Cosmos resource and returns it.
 
         :param dict resource:
         :param str path:
@@ -2699,11 +2671,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         headers = base.GetHeaders(self, initial_headers, "put", path, id, typ, options)
         # Replace will use WriteEndpoint since it uses PUT operation
         request_params = RequestObject(typ, documents._OperationType.Replace)
-        result, self.last_response_headers = self.__Put(path, request_params, resource, headers, **kwargs)
+        result, last_response_headers = self.__Put(path, request_params, resource, headers, **kwargs)
+        self.last_response_headers = last_response_headers
 
         # update session for request mutates data on server side
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
-        return result
+        return result, last_response_headers
 
     def Read(
         self,
@@ -2713,8 +2686,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         initial_headers: Optional[Mapping[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
-        """Reads a Azure Cosmos resource and returns it.
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+        """Reads an Azure Cosmos resource and returns it.
 
         :param str path:
         :param str typ:
@@ -2736,8 +2709,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         headers = base.GetHeaders(self, initial_headers, "get", path, id, typ, options)
         # Read will use ReadEndpoint since it uses GET operation
         request_params = RequestObject(typ, documents._OperationType.Read)
-        result, self.last_response_headers = self.__Get(path, request_params, headers, **kwargs)
-        return result
+        result, last_response_headers = self.__Get(path, request_params, headers, **kwargs)
+        self.last_response_headers = last_response_headers
+        return result, last_response_headers
 
     def DeleteResource(
         self,
@@ -2747,8 +2721,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         initial_headers: Optional[Mapping[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> None:
-        """Deletes a Azure Cosmos resource and returns it.
+    ) -> Dict[str, Any]:
+        """Deletes an Azure Cosmos resource and returns it.
 
         :param str path:
         :param str typ:
@@ -2770,10 +2744,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         headers = base.GetHeaders(self, initial_headers, "delete", path, id, typ, options)
         # Delete will use WriteEndpoint since it uses DELETE operation
         request_params = RequestObject(typ, documents._OperationType.Delete)
-        result, self.last_response_headers = self.__Delete(path, request_params, headers, **kwargs)
+        result, last_response_headers = self.__Delete(path, request_params, headers, **kwargs)
+        self.last_response_headers = last_response_headers
 
         # update session for request mutates data on server side
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
+        return last_response_headers
 
     def __Get(
         self,
@@ -3015,9 +2991,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 options,
                 partition_key_range_id
             )
-            result, self.last_response_headers = self.__Get(path, request_params, headers, **kwargs)
+            result, last_response_headers = self.__Get(path, request_params, headers, **kwargs)
+            self.last_response_headers = last_response_headers
             if response_hook:
-                response_hook(self.last_response_headers, result)
+                response_hook(last_response_headers, result)
             return __GetBodiesFromQueryResult(result)
 
         query = self.__CheckAndUnifyQueryFormat(query)
@@ -3089,28 +3066,30 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     req_headers[http_constants.HttpHeaders.StartEpkString] = EPK_sub_range.min
                     req_headers[http_constants.HttpHeaders.EndEpkString] = EPK_sub_range.max
                 req_headers[http_constants.HttpHeaders.ReadFeedKeyType] = "EffectivePartitionKeyRange"
-                partial_result, self.last_response_headers = self.__Post(
+                partial_result, last_response_headers = self.__Post(
                     path, request_params, query, req_headers, **kwargs
                 )
+                self.last_response_headers = last_response_headers
                 if results:
                     # add up all the query results from all over lapping ranges
                     results["Documents"].extend(partial_result["Documents"])
                 else:
                     results = partial_result
                 if response_hook:
-                    response_hook(self.last_response_headers, partial_result)
+                    response_hook(last_response_headers, partial_result)
             # if the prefix partition query has results lets return it
             if results:
                 return __GetBodiesFromQueryResult(results)
 
-        result, self.last_response_headers = self.__Post(path, request_params, query, req_headers, **kwargs)
-        if self.last_response_headers.get(http_constants.HttpHeaders.IndexUtilization) is not None:
+        result, last_response_headers = self.__Post(path, request_params, query, req_headers, **kwargs)
+        if last_response_headers.get(http_constants.HttpHeaders.IndexUtilization) is not None:
             INDEX_METRICS_HEADER = http_constants.HttpHeaders.IndexUtilization
-            index_metrics_raw = self.last_response_headers[INDEX_METRICS_HEADER]
-            self.last_response_headers[INDEX_METRICS_HEADER] = _utils.get_index_metrics_info(index_metrics_raw)
+            index_metrics_raw = last_response_headers[INDEX_METRICS_HEADER]
+            last_response_headers[INDEX_METRICS_HEADER] = _utils.get_index_metrics_info(index_metrics_raw)
+        self.last_response_headers = last_response_headers
 
         if response_hook:
-            response_hook(self.last_response_headers, result)
+            response_hook(last_response_headers, result)
 
         return __GetBodiesFromQueryResult(result)
 
@@ -3288,7 +3267,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             partition_key_definition = self.partition_key_definition_cache.get(collection_link)
         # Else read the collection from backend and add it to the cache
         else:
-            collection = self.ReadContainer(collection_link)
+            collection, last_response_headers = self.ReadContainer(collection_link)
             partition_key_definition = collection.get("partitionKey")
             self.partition_key_definition_cache[collection_link] = partition_key_definition
         return partition_key_definition
