@@ -54,7 +54,7 @@ def sample_people_image_file():
     print("Image analysis results:")
     print(" People:")
     if result.people is not None:
-        for person in result.people.values:
+        for person in result.people.list:
             print(f"   {person.bounding_box}, Confidence {person.confidence:.4f}")
     print(f" Image height: {result.metadata.height}")
     print(f" Image width: {result.metadata.width}")

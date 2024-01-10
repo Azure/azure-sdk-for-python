@@ -60,7 +60,7 @@ def sample_tags_image_file():
     print("Image analysis results:")
     print(" Tags:")
     if result.tags is not None:
-        for tag in result.tags.values:
+        for tag in result.tags.list:
             print(f"   '{tag.name}', Confidence {tag.confidence:.4f}")
     print(f" Image height: {result.metadata.height}")
     print(f" Image width: {result.metadata.width}")

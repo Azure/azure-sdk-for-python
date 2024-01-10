@@ -55,7 +55,7 @@ def sample_objects_image_file():
     print("Image analysis results:")
     print(" Objects:")
     if result.objects is not None:
-        for object in result.objects.values:
+        for object in result.objects.list:
             print(f"   '{object.tags[0].name}', {object.bounding_box}, Confidence: {object.tags[0].confidence:.4f}")
     print(f" Image height: {result.metadata.height}")
     print(f" Image width: {result.metadata.width}")

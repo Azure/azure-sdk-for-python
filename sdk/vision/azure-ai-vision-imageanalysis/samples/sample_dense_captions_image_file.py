@@ -68,7 +68,7 @@ def sample_dense_captions_image_file():
     print("Image analysis results:")
     print(" Dense Captions:")
     if result.dense_captions is not None:
-        for caption in result.dense_captions.values:
+        for caption in result.dense_captions.list:
             print(f"   '{caption.text}', {caption.bounding_box}, Confidence: {caption.confidence:.4f}")
     print(f" Image height: {result.metadata.height}")
     print(f" Image width: {result.metadata.width}")
