@@ -174,6 +174,7 @@ def get_running_async_lock() -> Any:
 
     try:
         import asyncio
+
         # Check if we are running in an asyncio event loop.
         asyncio.get_running_loop()
         return asyncio.Lock()
@@ -181,5 +182,6 @@ def get_running_async_lock() -> Any:
         # Otherwise, assume we are running in a trio event loop if it has already been imported.
         if "trio" in sys.modules:
             import trio  # pylint: disable=networking-import-outside-azure-core-transport
+
             return trio.Lock()
         raise RuntimeError("An asyncio or trio event loop is required.") from err

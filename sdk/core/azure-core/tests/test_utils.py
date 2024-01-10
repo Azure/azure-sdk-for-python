@@ -10,7 +10,6 @@ from azure.core.utils import case_insensitive_dict
 from azure.core.utils._utils import get_running_async_lock
 
 
-
 @pytest.fixture()
 def accept_cases():
     return ["accept", "Accept", "ACCEPT", "aCCePT"]
@@ -118,17 +117,19 @@ def test_case_iter():
 @pytest.mark.asyncio
 async def test_get_running_async_module_asyncio():
     import asyncio
+
     assert isinstance(get_running_async_lock(), asyncio.Lock)
 
 
 @pytest.mark.trio
 async def test_get_running_async_module_trio():
     import trio
+
     assert isinstance(get_running_async_lock(), trio.Lock)
 
 
 def test_get_running_async_module_sync():
-    with patch.dict('sys.modules'):
+    with patch.dict("sys.modules"):
         # Ensure trio isn't in sys.modules (i.e. imported).
         sys.modules.pop("trio", None)
         with pytest.raises(RuntimeError):
