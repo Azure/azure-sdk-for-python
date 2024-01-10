@@ -12,7 +12,7 @@ from ._constants import AmqpMessageBodyType
 from .._mixin import DictMixin
 
 
-class AmqpAnnotatedMessage(object):
+class AmqpAnnotatedMessage:
     # pylint: disable=too-many-instance-attributes
     """
     The AMQP Annotated Message for advanced sending and receiving scenarios which allows you to

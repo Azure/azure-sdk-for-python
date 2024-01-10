@@ -96,3 +96,5 @@ stages:
                 ${{ parameters.BuildTargetingString }}
                 --service="${{ parameters.ServiceDirectory }}" 
                 --toxenv="strict-sphinx"
+            env:
+              GH_TOKEN: $(azuresdk-github-pat)

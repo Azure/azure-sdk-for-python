@@ -103,7 +103,7 @@ class ManagedIdentityCredential(AsyncContextManager):
             _LOGGER.info("%s will use IMDS", self.__class__.__name__)
             self._credential = ImdsCredential(**kwargs)
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "ManagedIdentityCredential":
         if self._credential:
             await self._credential.__aenter__()
         return self

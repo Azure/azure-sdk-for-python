@@ -10,6 +10,9 @@
 
 ### Other Changes
 
+- Implement distro detection for statsbeat feature
+    ([#33761](https://github.com/Azure/azure-sdk-for-python/pull/33761))
+
 ## 1.1.1 (2023-12-04)
 
 ### Features Added

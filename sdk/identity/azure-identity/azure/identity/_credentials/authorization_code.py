@@ -50,11 +50,11 @@ class AuthorizationCodeCredential(GetTokenMixin):
         self._redirect_uri = redirect_uri
         super(AuthorizationCodeCredential, self).__init__()
 
-    def __enter__(self):
+    def __enter__(self) -> "AuthorizationCodeCredential":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self._client.__exit__(*args)
 
     def close(self) -> None:
