@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# mypy: disable-error-code="attr-defined"
 """
 DESCRIPTION:
     This sample demonstrates how to analyze all supported visual features from the image file sample.jpg,

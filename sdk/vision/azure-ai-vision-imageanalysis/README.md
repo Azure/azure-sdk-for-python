@@ -53,7 +53,7 @@ from azure.ai.vision.imageanalysis import ImageAnalysisClient
 from azure.ai.vision.imageanalysis.models import VisualFeatures
 from azure.core.credentials import AzureKeyCredential
 
-# Set the values of your computer vision endpoint and computer vision key 
+# Set the values of your computer vision endpoint and computer vision key
 # as environment variables:
 try:
     endpoint = os.environ["VISION_ENDPOINT"]
@@ -64,10 +64,7 @@ except KeyError:
     exit()
 
 # Create an Image Analysis client for synchronous operations
-client = ImageAnalysisClient(
-    endpoint = endpoint,
-    credential = AzureKeyCredential(key)
-)
+client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 ```
 
 <!-- END SNIPPET -->
@@ -135,14 +132,14 @@ Notes:
 
 ```python
 # Load image to analyze into a 'bytes' object
-with open("sample.jpg", 'rb') as f:
+with open("sample.jpg", "rb") as f:
     image_data = f.read()
 
 # Get a caption for the image. This will be a synchronously (blocking) call.
 result = client.analyze(
-    image_data = image_data,
-    visual_features = [ VisualFeatures.CAPTION ],
-    gender_neutral_caption = True # Optional (default is False)
+    image_data=image_data,
+    visual_features=[VisualFeatures.CAPTION],
+    gender_neutral_caption=True,  # Optional (default is False)
 )
 
 # Print caption results to the console
@@ -165,9 +162,9 @@ This example is similar to the above, expect it calls the `analyze` method and p
 ```python
 # Get a caption for the image. This will be a synchronously (blocking) call.
 result = client.analyze(
-    image_url = "https://aka.ms/azsdk/image-analysis/sample.jpg",
-    visual_features = [ VisualFeatures.CAPTION ],
-    gender_neutral_caption = True # Optional (default is False)
+    image_url="https://aka.ms/azsdk/image-analysis/sample.jpg",
+    visual_features=[VisualFeatures.CAPTION],
+    gender_neutral_caption=True,  # Optional (default is False)
 )
 
 # Print caption results to the console
@@ -187,14 +184,11 @@ This example demonstrates how to extract printed or hand-written text for the im
 
 ```python
 # Load image to analyze into a 'bytes' object
-with open("sample.jpg", 'rb') as f:
+with open("sample.jpg", "rb") as f:
     image_data = f.read()
 
 # Extract text (OCR) from an image stream. This will be a synchronously (blocking) call.
-result = client.analyze(
-    image_data = image_data,
-    visual_features = [ VisualFeatures.READ ]
-)
+result = client.analyze(image_data=image_data, visual_features=[VisualFeatures.READ])
 
 # Print text (OCR) analysis results to the console
 print("Image analysis results:")
@@ -203,7 +197,9 @@ if result.read is not None:
     for line in result.read.blocks[0].lines:
         print(f"   Line: '{line.text}', Bounding box {line.bounding_polygon}")
         for word in line.words:
-            print(f"     Word: '{word.text}', Bounding polygon {word.bounding_polygon}, Confidence {word.confidence:.4f}")
+            print(
+                f"     Word: '{word.text}', Bounding polygon {word.bounding_polygon}, Confidence {word.confidence:.4f}"
+            )
 ```
 
 <!-- END SNIPPET -->
@@ -221,8 +217,7 @@ This example is similar to the above, expect it calls the `analyze` method and p
 ```python
 # Extract text (OCR) from an image stream. This will be a synchronously (blocking) call.
 result = client.analyze(
-    image_url = "https://aka.ms/azsdk/image-analysis/sample.jpg",
-    visual_features = [ VisualFeatures.READ ]
+    image_url="https://aka.ms/azsdk/image-analysis/sample.jpg", visual_features=[VisualFeatures.READ]
 )
 
 # Print text (OCR) analysis results to the console
@@ -232,7 +227,9 @@ if result.read is not None:
     for line in result.read.blocks[0].lines:
         print(f"   Line: '{line.text}', Bounding box {line.bounding_polygon}")
         for word in line.words:
-            print(f"     Word: '{word.text}', Bounding polygon {word.bounding_polygon}, Confidence {word.confidence:.4f}")
+            print(
+                f"     Word: '{word.text}', Bounding polygon {word.bounding_polygon}, Confidence {word.confidence:.4f}"
+            )
 ```
 
 <!-- END SNIPPET -->
@@ -277,21 +274,21 @@ The client uses the standard [Python logging library](https://docs.python.org/3/
 import sys
 import logging
 
-# Acquire the logger for this client library. Use 'azure' to affect both 
+# Acquire the logger for this client library. Use 'azure' to affect both
 # 'azure.core` and `azure.ai.vision.imageanalysis' libraries.
-logger = logging.getLogger('azure')
+logger = logging.getLogger("azure")
 
 # Set the desired logging level. logging.INFO or logging.DEBUG are good options.
 logger.setLevel(logging.INFO)
 
 # Direct logging output to stdout (the default):
-handler = logging.StreamHandler(stream = sys.stdout)
+handler = logging.StreamHandler(stream=sys.stdout)
 # Or direct logging output to a file:
 # handler = logging.FileHandler(filename = 'sample.log')
 logger.addHandler(handler)
 
 # Optional: change the default logging format. Here we add a timestamp.
-formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(name)s:%(message)s')
+formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(message)s")
 handler.setFormatter(formatter)
 ```
 
@@ -303,11 +300,7 @@ By default logs redact the values of URL query strings, the values of some HTTP 
 
 ```python
 # Create an Image Analysis client with none redacted log
-client = ImageAnalysisClient(
-    endpoint = endpoint,
-    credential = AzureKeyCredential(key),
-    logging_enable = True
-)
+client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key), logging_enable=True)
 ```
 
 <!-- END SNIPPET -->

@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# mypy: disable-error-code="attr-defined"
 """
 DESCRIPTION:
     This sample demonstrates how to extract content tags in an image file sample.jpg, using a synchronous client.
