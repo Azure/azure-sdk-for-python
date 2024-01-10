@@ -12,6 +12,8 @@ from conftest import (
     OPENAI,
     ALL,
     AZURE_AD,
+    GPT_4_AZURE,
+    GPT_4_OPENAI,
     configure
 )
 
@@ -718,3 +720,344 @@ class TestChatCompletions(AzureRecordedTestCase):
                     assert c.delta.role == "assistant"
                 if c.delta.content:
                     assert c.delta.content is not None
+
+    @configure
+    @pytest.mark.parametrize("api_type", [GPT_4_AZURE, GPT_4_OPENAI])
+    def test_chat_completion_seed(self, client, azure_openai_creds, api_type, **kwargs):
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "Why is the sky blue?"}
+        ]
+
+        completion = client.chat.completions.create(messages=messages, seed=42, **kwargs)
+        assert completion.system_fingerprint
+        completion = client.chat.completions.create(messages=messages, seed=42, **kwargs)
+        assert completion.system_fingerprint
+
+    @configure
+    @pytest.mark.parametrize("api_type", [GPT_4_AZURE, GPT_4_OPENAI])
+    def test_chat_completion_json_response(self, client, azure_openai_creds, api_type, **kwargs):
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "Who won the world series in 2020? Return in json with answer as the key."}
+        ]
+
+        completion = client.chat.completions.create(messages=messages, response_format={ "type": "json_object" }, **kwargs)
+        assert completion.id
+        assert completion.object == "chat.completion"
+        assert completion.system_fingerprint
+        assert completion.model
+        assert completion.created
+        assert completion.usage.completion_tokens is not None
+        assert completion.usage.prompt_tokens is not None
+        assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
+        assert len(completion.choices) == 1
+        assert completion.choices[0].finish_reason
+        assert completion.choices[0].index is not None
+        assert json.loads(completion.choices[0].message.content)
+        assert completion.choices[0].message.role
+
+    @configure
+    @pytest.mark.parametrize("api_type", [GPT_4_AZURE])
+    def test_chat_completion_block_list_term(self, client, azure_openai_creds, api_type, **kwargs):
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "What is the best time of year to pick pineapple?"}
+        ]
+        with pytest.raises(openai.BadRequestError) as e:
+            client.chat.completions.create(messages=messages, **kwargs)
+        err = json.loads(e.value.response.text)
+        assert err["error"]["code"] == "content_filter"
+        content_filter_result = err["error"]["innererror"]["content_filter_result"]
+        assert content_filter_result["custom_blocklists"][0]["filtered"] is True
+        assert content_filter_result["custom_blocklists"][0]["id"].startswith("CustomBlockList")
+        assert content_filter_result["hate"]["filtered"] is False
+        assert content_filter_result["hate"]["severity"] == "safe"
+        assert content_filter_result["self_harm"]["filtered"] is False
+        assert content_filter_result["self_harm"]["severity"] == "safe"
+        assert content_filter_result["sexual"]["filtered"] is False
+        assert content_filter_result["sexual"]["severity"] == "safe"
+        assert content_filter_result["violence"]["filtered"] is False
+        assert content_filter_result["violence"]["severity"] == "safe"
+        assert content_filter_result["profanity"]["detected"] is False
+        assert content_filter_result["profanity"]["filtered"] is False
+        assert content_filter_result["jailbreak"]["detected"] is False
+        assert content_filter_result["jailbreak"]["filtered"] is False
+
+    @configure
+    @pytest.mark.parametrize("api_type", [GPT_4_AZURE, GPT_4_OPENAI])
+    def test_chat_completion_tools(self, client, azure_openai_creds, api_type, **kwargs):
+        messages = [
+            {"role": "system", "content": "Don't make assumptions about what values to plug into tools. Ask for clarification if a user request is ambiguous."},
+            {"role": "user", "content": "What's the weather like today in Seattle?"}
+        ]
+        tools = [
+            {
+                "type": "function",
+                "function": {
+                    "name": "get_current_weather",
+                    "description": "Get the current weather in a given location",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "The city and state, e.g. San Francisco, CA",
+                        },
+                        "unit": {"type": "string", "enum": ["celsius", "fahrenheit"]},
+                        },
+                        "required": ["location"],
+                    },
+                }
+            }
+        ]
+
+        completion = client.chat.completions.create(
+            messages=messages,
+            tools=tools,
+            tool_choice="auto",
+            **kwargs
+        )
+        assert completion.id
+        assert completion.object == "chat.completion"
+        assert completion.model
+        assert completion.created
+        assert completion.usage.completion_tokens is not None
+        assert completion.usage.prompt_tokens is not None
+        assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
+        assert len(completion.choices) == 1
+        assert completion.choices[0].finish_reason
+        assert completion.choices[0].index is not None
+        assert completion.choices[0].message.role
+        function_call =  completion.choices[0].message.tool_calls[0].function
+        assert function_call.name == "get_current_weather"
+        assert "Seattle" in function_call.arguments
+        if api_type == GPT_4_AZURE:
+            # workaround to address difference between AOAI and OAI
+            completion.choices[0].message.content = None
+        messages.append(completion.choices[0].message)
+
+        tool_call_id = completion.choices[0].message.tool_calls[0].id
+        messages.append(
+            {
+                "role": "tool",
+                "tool_call_id": tool_call_id,
+                "content": "{\"temperature\": \"22\", \"unit\": \"celsius\", \"description\": \"Sunny\"}"
+            }
+        )
+        tool_completion = client.chat.completions.create(
+            messages=messages,
+            tools=tools,
+            **kwargs
+        )
+        assert tool_completion
+        assert "sunny" in tool_completion.choices[0].message.content.lower()
+        assert "22" in tool_completion.choices[0].message.content
+        assert tool_completion.choices[0].message.role == "assistant"
+
+    @configure
+    @pytest.mark.parametrize("api_type", [GPT_4_AZURE, GPT_4_OPENAI])
+    def test_chat_completion_tools_stream(self, client, azure_openai_creds, api_type, **kwargs):
+        messages = [
+            {"role": "system", "content": "Don't make assumptions about what values to plug into tools. Ask for clarification if a user request is ambiguous."},
+            {"role": "user", "content": "What's the weather like today in Seattle?"}
+        ]
+
+        tools = [
+            {
+                "type": "function",
+                "function": {
+                    "name": "get_current_weather",
+                    "description": "Get the current weather in a given location",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "The city and state, e.g. San Francisco, CA",
+                        },
+                        "unit": {"type": "string", "enum": ["celsius", "fahrenheit"]},
+                        },
+                        "required": ["location"],
+                    },
+                }
+            }
+        ]
+        response = client.chat.completions.create(
+            messages=messages,
+            tools=tools,
+            stream=True,
+            **kwargs
+        )
+        args = ""
+        for completion in response:
+            for c in completion.choices:
+                assert c.delta is not None
+                if c.delta.role:
+                    assistant = c.delta.role
+                if c.delta.tool_calls:
+                    if c.delta.tool_calls[0].type:
+                        tool_type = c.delta.tool_calls[0].type
+                    if c.delta.tool_calls[0].id:
+                        tool_id = c.delta.tool_calls[0].id
+                    if c.delta.tool_calls[0].function.name:
+                        function_name = c.delta.tool_calls[0].function.name
+                    if c.delta.tool_calls[0].function.arguments:
+                        args += c.delta.tool_calls[0].function.arguments
+        assert "Seattle" in args
+
+        assistant_message = {
+            "role": assistant,
+            "tool_calls": [
+                {
+                    "id": tool_id,
+                    "type": tool_type,
+                    "function": {
+                        "name": function_name,
+                        "arguments": args
+                    }
+                }
+            ],
+            "content": None
+        }
+        messages.append(assistant_message)
+        messages.append(
+            {
+                "role": "tool",
+                "tool_call_id": tool_id,
+                "content": "{\"temperature\": \"22\", \"unit\": \"celsius\", \"description\": \"Sunny\"}"
+            }
+        )
+        function_completion = client.chat.completions.create(
+            messages=messages,
+            tools=tools,
+            stream=True,
+            **kwargs
+        )
+        content = ""
+        for func in function_completion:
+            for c in func.choices:
+                assert c.delta is not None
+                if c.delta.content:
+                    content += c.delta.content
+                if c.delta.role:
+                    assert c.delta.role == "assistant"
+        assert "sunny" in content.lower()
+        assert "22" in content
+
+    @configure
+    @pytest.mark.parametrize("api_type", [GPT_4_AZURE, GPT_4_OPENAI])
+    def test_chat_completion_tools_parallel_func(self, client, azure_openai_creds, api_type, **kwargs):
+        messages = [
+            {"role": "system", "content": "Don't make assumptions about what values to plug into tools. Ask for clarification if a user request is ambiguous."},
+            {"role": "user", "content": "What's the weather like today in Seattle and Los Angeles?"}
+        ]
+        tools = [
+            {
+                "type": "function",
+                "function": {
+                    "name": "get_current_weather",
+                    "description": "Get the current weather in a given location",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "The city and state, e.g. San Francisco, CA",
+                        },
+                        "unit": {"type": "string", "enum": ["celsius", "fahrenheit"]},
+                        },
+                        "required": ["location"],
+                    },
+                }
+            }
+        ]
+
+        completion = client.chat.completions.create(
+            messages=messages,
+            tools=tools,
+            tool_choice="auto",
+            **kwargs
+        )
+        assert completion.id
+        assert completion.object == "chat.completion"
+        assert completion.model
+        assert completion.created
+        assert completion.usage.completion_tokens is not None
+        assert completion.usage.prompt_tokens is not None
+        assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
+        assert len(completion.choices) == 1
+        assert completion.choices[0].finish_reason
+        assert completion.choices[0].index is not None
+        assert completion.choices[0].message.role
+
+        assert len(completion.choices[0].message.tool_calls) == 2
+        if api_type == GPT_4_AZURE:
+            # workaround to address difference between AOAI and OAI
+            completion.choices[0].message.content = None
+        messages.append(completion.choices[0].message)
+
+        function_call = completion.choices[0].message.tool_calls[0].function
+        assert function_call.name == "get_current_weather"
+        assert "Seattle" in function_call.arguments
+        tool_call_id_0 = completion.choices[0].message.tool_calls[0].id
+
+        function_call = completion.choices[0].message.tool_calls[1].function
+        assert function_call.name == "get_current_weather"
+        assert "Los Angeles" in function_call.arguments
+        tool_call_id_1 = completion.choices[0].message.tool_calls[1].id
+        messages.append(
+            {
+                "role": "tool",
+                "tool_call_id": tool_call_id_0,
+                "content": "{\"temperature\": \"22\", \"unit\": \"celsius\", \"description\": \"Cloudy\"}"
+            }
+        )
+        messages.append(
+            {
+                "role": "tool",
+                "tool_call_id": tool_call_id_1,
+                "content": "{\"temperature\": \"80\", \"unit\": \"fahrenheit\", \"description\": \"Sunny\"}"
+            }
+        )
+        tool_completion = client.chat.completions.create(
+            messages=messages,
+            tools=tools,
+            **kwargs
+        )
+        assert tool_completion
+        assert "sunny" in tool_completion.choices[0].message.content.lower()
+        assert "cloudy" in tool_completion.choices[0].message.content.lower()
+        assert "22" in tool_completion.choices[0].message.content
+        assert "80" in tool_completion.choices[0].message.content
+        assert tool_completion.choices[0].message.role == "assistant"
+
+    @configure
+    @pytest.mark.parametrize("api_type", [OPENAI, GPT_4_AZURE])
+    def test_chat_completion_vision(self, client, azure_openai_creds, api_type, **kwargs):
+        completion = client.chat.completions.create(
+            model="gpt-4-vision-preview",
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "What's in this image?"},
+                        {
+                            "type": "image_url",
+                            "image_url": "https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/images/handwritten-note.jpg",
+                        },
+                    ],
+                }
+            ],
+        )
+        assert completion.id
+        assert completion.object == "chat.completion"
+        assert completion.model
+        assert completion.created
+        assert completion.usage.completion_tokens is not None
+        assert completion.usage.prompt_tokens is not None
+        assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
+        assert len(completion.choices) == 1
+        assert completion.choices[0].index is not None
+        assert completion.choices[0].message.content is not None
+        assert completion.choices[0].message.role

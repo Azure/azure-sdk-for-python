@@ -184,9 +184,9 @@ class EventHubProducerClient(
             network_tracing=kwargs.pop("logging_enable", False),
             **kwargs
         )
-        self._producers = {
+        self._producers: Dict[str, Optional[EventHubProducer]] = {
             ALL_PARTITIONS: self._create_producer()
-        }  # type: Dict[str, Optional[EventHubProducer]]
+        }
         self._lock = asyncio.Lock(
             **self._internal_kwargs
         )  # sync the creation of self._producers
@@ -222,10 +222,10 @@ class EventHubProducerClient(
                     "'max_buffer_length' must be an integer greater than 0 in buffered mode"
                 )
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "EventHubProducerClient":
         return self
 
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *args: Any) -> None:
         await self.close()
 
     async def _buffered_send(self, events, **kwargs):

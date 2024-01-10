@@ -16,9 +16,10 @@ class AzureMLOnBehalfOfCredential(object):
     # pylint: disable=line-too-long
     """Authenticates a user via the on-behalf-of flow.
 
-    This credential can only be used on `Azure Machine Learning Compute.
-    <https://docs.microsoft.com/azure/machine-learning/concept-compute-target#azure-machine-learning-compute-managed>`_ during job execution when user request to
-    run job during its identity.
+    This credential can only be used on `Azure Machine Learning Compute
+    <https://docs.microsoft.com/azure/machine-learning/concept-compute-target#azure-machine-learning-compute-managed>`_ or `Azure Machine Learning Serverless Spark Compute
+    <https://learn.microsoft.com/en-us/azure/machine-learning/apache-spark-azure-ml-concepts#serverless-spark-compute>`_
+    during job execution when user request to run job using its identity.
     """
     # pylint: enable=line-too-long
 

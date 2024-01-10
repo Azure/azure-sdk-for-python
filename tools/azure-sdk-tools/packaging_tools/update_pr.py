@@ -5,10 +5,8 @@ from pathlib import Path
 import re
 import tempfile
 
-from azure_devtools.ci_tools.git_tools import (
-    do_commit,
-)
-from azure_devtools.ci_tools.github_tools import manage_git_folder, configure_user
+from ci_tools.git_tools import do_commit
+from ci_tools.github_tools import manage_git_folder, configure_user
 
 from git import Repo
 from github import Github
@@ -21,7 +19,6 @@ _SDK_FOLDER_RE = re.compile(r"^(sdk/[\w-]+)/(azure[\w-]+)/", re.ASCII)
 
 
 def update_pr(gh_token, repo_id, pr_number):
-    from github import Github
 
     con = Github(gh_token)
     repo = con.get_repo(repo_id)

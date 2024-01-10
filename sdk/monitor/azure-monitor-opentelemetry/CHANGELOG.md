@@ -1,17 +1,28 @@
 # Release History
 
-## 1.1.1 (Unreleased)
+## 1.1.2 (Unreleased)
 
 ### Features Added
-
-- Default Resource Detector environment variable to allow for customization. Add App Service Resource Detector to Auto-Instrumentation.
-    ([#33340](https://github.com/Azure/azure-sdk-for-python/pull/33340))
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+- Implement distro detection for statsbeat feature
+    ([#33761](https://github.com/Azure/azure-sdk-for-python/pull/33761))
+
+## 1.1.1 (2023-12-04)
+
+### Features Added
+
+- Add App Service Resource Detector to Auto-Instrumentation.
+    ([#33340](https://github.com/Azure/azure-sdk-for-python/pull/33340))
+- Default Resource Detector environment variable to enable configuration.
+    ([#33305](https://github.com/Azure/azure-sdk-for-python/pull/33305))
+    ([#33373](https://github.com/Azure/azure-sdk-for-python/pull/33373))
+    ([#33390](https://github.com/Azure/azure-sdk-for-python/pull/33390))
 
 ## 1.1.0 (2023-11-08)
 

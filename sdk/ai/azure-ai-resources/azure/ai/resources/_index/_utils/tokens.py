@@ -6,14 +6,14 @@ import contextlib
 import os
 from functools import lru_cache
 from pathlib import Path
-from typing import Callable, Optional
+from typing import Callable, Optional, Union
 
 utils_path = Path(__file__).parent
 tiktoken_encodings_path = utils_path / "encodings"
 
 
 @contextlib.contextmanager
-def tiktoken_cache_dir(cache_dir: Optional[Path] = "default"):
+def tiktoken_cache_dir(cache_dir: Optional[Union[str, Path]] = "default"):
     """
     Set TikToken cache directory in environment while in context.
 

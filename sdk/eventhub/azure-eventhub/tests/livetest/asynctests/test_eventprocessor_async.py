@@ -30,7 +30,7 @@ async def event_handler(partition_context, event):
 @pytest.mark.asyncio
 async def test_loadbalancer_balance():
 
-    class MockEventHubClient(object):
+    class MockEventHubClient:
         eventhub_name = "test_eventhub_name"
 
         def __init__(self):
@@ -46,7 +46,7 @@ async def test_loadbalancer_balance():
         async def close(self):
             pass
 
-    class MockEventhubConsumer(object):
+    class MockEventhubConsumer:
         def __init__(self, **kwargs):
             self.stop = False
             self._on_event_received = kwargs.get("on_event_received")
@@ -113,7 +113,7 @@ async def test_loadbalancer_balance():
 
 @pytest.mark.asyncio
 async def test_loadbalancer_list_ownership_error():
-    class MockEventHubClient(object):
+    class MockEventHubClient:
         eventhub_name = "test_eventhub_name"
 
         def __init__(self):
@@ -129,7 +129,7 @@ async def test_loadbalancer_list_ownership_error():
         async def close(self):
             pass
 
-    class MockEventhubConsumer(object):
+    class MockEventhubConsumer:
         def __init__(self, **kwargs):
             self.stop = False
             self._on_event_received = kwargs.get("on_event_received")
@@ -177,7 +177,7 @@ async def test_loadbalancer_list_ownership_error():
 @pytest.mark.asyncio
 async def test_partition_processor():
 
-    class MockEventHubClient(object):
+    class MockEventHubClient:
         eventhub_name = "test_eventhub_name"
 
         def __init__(self):
@@ -193,7 +193,7 @@ async def test_partition_processor():
         async def close(self):
             pass
 
-    class MockEventhubConsumer(object):
+    class MockEventhubConsumer:
         def __init__(self, **kwargs):
             self.stop = False
             self._on_event_received = kwargs.get("on_event_received")
@@ -262,7 +262,7 @@ async def test_partition_processor():
 @pytest.mark.asyncio
 async def test_partition_processor_process_events_error():
 
-    class MockEventHubClient(object):
+    class MockEventHubClient:
         eventhub_name = "test_eventhub_name"
 
         def __init__(self):
@@ -278,7 +278,7 @@ async def test_partition_processor_process_events_error():
         async def close(self):
             pass
 
-    class MockEventhubConsumer(object):
+    class MockEventhubConsumer:
         def __init__(self, **kwargs):
             self.stop = False
             self._on_event_received = kwargs.get("on_event_received")
@@ -333,7 +333,7 @@ async def test_partition_processor_process_eventhub_consumer_error():
     async def partition_close_handler(partition_context, reason):
         partition_close_handler.reason = reason
 
-    class MockEventHubClient(object):
+    class MockEventHubClient:
         eventhub_name = "test_eh_name"
 
         def __init__(self):
@@ -345,7 +345,7 @@ async def test_partition_processor_process_eventhub_consumer_error():
         async def get_partition_ids(self):
             return ["0", "1"]
 
-    class MockEventhubConsumer(object):
+    class MockEventhubConsumer:
         def __init__(self, **kwargs):
             self.stop = False
             self._on_event_received = kwargs.get("on_event_received")
@@ -395,7 +395,7 @@ async def test_partition_processor_process_error_close_error():
         partition_close_handler.called = True
         raise RuntimeError("close error")
 
-    class MockEventHubClient(object):
+    class MockEventHubClient:
         eventhub_name = "test_eh_name"
 
         def __init__(self):
@@ -407,7 +407,7 @@ async def test_partition_processor_process_error_close_error():
         async def get_partition_ids(self):
             return ["0", "1"]
 
-    class MockEventhubConsumer(object):
+    class MockEventhubConsumer:
         def __init__(self, **kwargs):
             self.stop = False
             self._on_event_received = kwargs.get("on_event_received")
@@ -452,7 +452,7 @@ async def test_partition_processor_process_error_close_error():
 
 @pytest.mark.asyncio
 async def test_ownership_manager_release_partition():
-    class MockEventHubClient(object):
+    class MockEventHubClient:
         eventhub_name = "test_eh_name"
 
         def __init__(self):
@@ -552,7 +552,7 @@ def test_balance_ownership_greedy(ownerships, partitions, expected_result):
             "last_modified_time": time.time()
         }
     }
-    class MockEventHubClient(object):
+    class MockEventHubClient:
         eventhub_name = TEST_EVENTHUB
 
         def __init__(self):
@@ -624,7 +624,7 @@ def test_balance_ownership_balanced(ownerships, partitions, expected_result):
             "last_modified_time": time.time()
         }
     }
-    class MockEventHubClient(object):
+    class MockEventHubClient:
         eventhub_name = TEST_EVENTHUB
 
         def __init__(self):
@@ -643,7 +643,7 @@ def test_balance_ownership_balanced(ownerships, partitions, expected_result):
 @pytest.mark.asyncio
 async def test_partition_processor_process_update_checkpoint_error():
 
-    class MockEventHubClient(object):
+    class MockEventHubClient:
         eventhub_name = "test_eventhub_name"
 
         def __init__(self):
@@ -659,7 +659,7 @@ async def test_partition_processor_process_update_checkpoint_error():
         async def close(self):
             pass
 
-    class MockEventhubConsumer(object):
+    class MockEventhubConsumer:
         def __init__(self, **kwargs):
             self.stop = False
             self._on_event_received = kwargs.get("on_event_received")

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import cast, Optional, NoReturn, Union, TYPE_CHECKING
+from typing import Any, cast, Optional, NoReturn, Union, TYPE_CHECKING
 
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives.asymmetric.padding import AsymmetricPadding, OAEP, PKCS1v15, PSS, MGF1
@@ -50,7 +50,7 @@ def get_encryption_algorithm(padding: AsymmetricPadding) -> EncryptionAlgorithm:
     """Maps an `AsymmetricPadding` to an encryption algorithm.
 
     :param padding: The padding to use.
-    :type padding: :class:`~cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding`
+    :type padding: ~cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding
 
     :returns: The corresponding Key Vault encryption algorithm.
     :rtype: EncryptionAlgorithm
@@ -86,9 +86,9 @@ def get_signature_algorithm(padding: AsymmetricPadding, algorithm: HashAlgorithm
     """Maps an `AsymmetricPadding` and `HashAlgorithm` to a signature algorithm.
 
     :param padding: The padding to use.
-    :type padding: :class:`~cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding`
+    :type padding: ~cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding
     :param algorithm: The algorithm to use.
-    :type algorithm: :class:`~cryptography.hazmat.primitives.hashes.HashAlgorithm`
+    :type algorithm: ~cryptography.hazmat.primitives.hashes.HashAlgorithm
 
     :returns: The corresponding Key Vault signature algorithm.
     :rtype: SignatureAlgorithm
@@ -127,9 +127,9 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
         """Creates a `KeyVaultRSAPublicKey` from a `CryptographyClient` and key.
 
         :param client: The client that will be used to communicate with Key Vault.
-        :type client: :class:`~azure.keyvault.keys.crypto.CryptographyClient`
+        :type client: ~azure.keyvault.keys.crypto.CryptographyClient
         :param key_material: They Key Vault key's material, as a `JsonWebKey`.
-        :type key_material: :class:`~azure.keyvault.keys.JsonWebKey`
+        :type key_material: ~azure.keyvault.keys.JsonWebKey
         """
         self._client: "CryptographyClient" = client
         self._key: JsonWebKey = key_material
@@ -141,7 +141,7 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
         :param padding: The padding to use. Supported paddings are `OAEP` and `PKCS1v15`. For `OAEP` padding, supported
             hash algorithms are `SHA1` and `SHA256`. The only supported mask generation function is `MGF1`. See
             https://learn.microsoft.com/azure/key-vault/keys/about-keys-details for details.
-        :type padding: :class:`~cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding`
+        :type padding: ~cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding
 
         :returns: The encrypted ciphertext, as bytes.
         :rtype: bytes
@@ -178,9 +178,9 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
         serialization.
 
         :param encoding: A value from the `Encoding` enum.
-        :type encoding: :class:`~cryptography.hazmat.primitives.serialization.Encoding`
+        :type encoding: ~cryptography.hazmat.primitives.serialization.Encoding
         :param format: A value from the `PublicFormat` enum.
-        :type format: :class:`~cryptography.hazmat.primitives.serialization.PublicFormat`
+        :type format: ~cryptography.hazmat.primitives.serialization.PublicFormat
 
         :returns: The serialized key.
         :rtype: bytes
@@ -202,11 +202,11 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
         :param padding: The padding to use. Supported paddings are `PKCS1v15` and `PSS`. For `PSS`, the only supported
             mask generation function is `MGF1`. See https://learn.microsoft.com/azure/key-vault/keys/about-keys-details
             for details.
-        :type padding: :class:`~cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding`
+        :type padding: ~cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding
         :param algorithm: The algorithm to sign with. Only `HashAlgorithm`s are supported -- specifically, `SHA256`,
             `SHA384`, and `SHA512`.
-        :type algorithm: :class:`~cryptography.hazmat.primitives.asymmetric.utils.Prehashed` or
-            :class:`~cryptography.hazmat.primitives.hashes.HashAlgorithm`
+        :type algorithm: ~cryptography.hazmat.primitives.asymmetric.utils.Prehashed or
+            cryptography.hazmat.primitives.hashes.HashAlgorithm
 
         :raises InvalidSignature: If the signature does not validate.
         """
@@ -244,9 +244,9 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
 
         :param bytes signature: The signature.
         :param padding: An instance of `AsymmetricPadding`. Recovery is only supported with some of the padding types.
-        :type padding: :class:`~cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding`
+        :type padding: ~cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding
         :param algorithm: An instance of `HashAlgorithm`. Can be None to return all the data present in the signature.
-        :type algorithm: :class:`~cryptography.hazmat.primitives.hashes.HashAlgorithm`
+        :type algorithm: ~cryptography.hazmat.primitives.hashes.HashAlgorithm
 
         :returns: The signed data.
         :rtype: bytes
@@ -296,9 +296,9 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         """Creates a `KeyVaultRSAPrivateKey` from a `CryptographyClient` and key.
 
         :param client: The client that will be used to communicate with Key Vault.
-        :type client: :class:`~azure.keyvault.keys.crypto.CryptographyClient`
+        :type client: ~azure.keyvault.keys.crypto.CryptographyClient
         :param key_material: They Key Vault key's material, as a `JsonWebKey`.
-        :type key_material: :class:`~azure.keyvault.keys.JsonWebKey`
+        :type key_material: ~azure.keyvault.keys.JsonWebKey
         """
         self._client: "CryptographyClient" = client
         self._key: JsonWebKey = key_material
@@ -310,7 +310,7 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         :param padding: The padding to use. Supported paddings are `OAEP` and `PKCS1v15`. For `OAEP` padding, supported
             hash algorithms are `SHA1` and `SHA256`. The only supported mask generation function is `MGF1`. See
             https://learn.microsoft.com/azure/key-vault/keys/about-keys-details for details.
-        :type padding: :class:`~cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding`
+        :type padding: ~cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding
 
         :returns: The decrypted plaintext, as bytes.
         :rtype: bytes
@@ -336,7 +336,7 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         The public key implementation will use the same underlying cryptography client as this private key.
 
         :returns: The `KeyVaultRSAPublicKey` associated with the key.
-        :rtype: :class:`~azure.keyvault.keys.crypto.KeyVaultRSAPublicKey`
+        :rtype: ~azure.keyvault.keys.crypto.KeyVaultRSAPublicKey
         """
         return KeyVaultRSAPublicKey(self._client, self._key)
 
@@ -352,11 +352,11 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         :param padding: The padding to use. Supported paddings are `PKCS1v15` and `PSS`. For `PSS`, the only supported
             mask generation function is `MGF1`. See https://learn.microsoft.com/azure/key-vault/keys/about-keys-details
             for details.
-        :type padding: :class:`~cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding`
+        :type padding: ~cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding
         :param algorithm: The algorithm to sign with. Only `HashAlgorithm`s are supported -- specifically, `SHA256`,
             `SHA384`, and `SHA512`.
-        :type algorithm: :class:`~cryptography.hazmat.primitives.asymmetric.utils.Prehashed` or
-            :class:`~cryptography.hazmat.primitives.hashes.HashAlgorithm`
+        :type algorithm: ~cryptography.hazmat.primitives.asymmetric.utils.Prehashed or
+            cryptography.hazmat.primitives.hashes.HashAlgorithm
 
         :returns: The signature, as bytes.
         :rtype: bytes
@@ -373,7 +373,7 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         """Returns an `RSAPrivateNumbers` representing the key's private numbers.
 
         :returns: The private numbers of the key.
-        :rtype: :class:`~cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateNumbers`
+        :rtype: ~cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateNumbers
         """
         # Fetch public numbers from JWK
         e = int.from_bytes(self._key.e, "big")  # type: ignore[attr-defined]
@@ -412,11 +412,11 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         (such as `BestAvailableEncryption` or `NoEncryption`) are chosen to define the exact serialization.
 
         :param encoding: A value from the `Encoding` enum.
-        :type encoding: :class:`~cryptography.hazmat.primitives.serialization.Encoding`
+        :type encoding: ~cryptography.hazmat.primitives.serialization.Encoding
         :param format: A value from the `PrivateFormat` enum.
-        :type format: :class:`~cryptography.hazmat.primitives.serialization.PrivateFormat`
+        :type format: ~cryptography.hazmat.primitives.serialization.PrivateFormat
         :param encryption_algorithm: An instance of an object conforming to the `KeySerializationEncryption` interface.
-        :type encryption_algorithm: :class:`~cryptography.hazmat.primitives.serialization.KeySerializationEncryption`
+        :type encryption_algorithm: ~cryptography.hazmat.primitives.serialization.KeySerializationEncryption
 
         :returns: The serialized key.
         :rtype: bytes
@@ -465,7 +465,7 @@ class EncryptResult:
         authenticated algorithm
     """
 
-    def __init__(self, key_id: Optional[str], algorithm: EncryptionAlgorithm, ciphertext: bytes, **kwargs) -> None:
+    def __init__(self, key_id: Optional[str], algorithm: EncryptionAlgorithm, ciphertext: bytes, **kwargs: Any) -> None:
         self.key_id = key_id
         self.algorithm = algorithm
         self.ciphertext = ciphertext

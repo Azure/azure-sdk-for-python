@@ -7,7 +7,7 @@ from __future__ import annotations
 import asyncio
 import time
 import logging
-from typing import Union, cast, TYPE_CHECKING, List, Optional
+from typing import Union, cast, TYPE_CHECKING, List, Optional, Any
 
 try:
     from uamqp import (
@@ -36,6 +36,7 @@ from ...exceptions import (
 
 if TYPE_CHECKING:
     from .._client_base_async import ClientBaseAsync, ConsumerProducerMixin
+    from ..._consumer_async import EventHubConsumer
     from ..._common import EventData
     try:
         from uamqp import Message
@@ -51,7 +52,7 @@ if uamqp_installed:
         """
 
         @staticmethod
-        async def create_connection_async(**kwargs):
+        async def create_connection_async(**kwargs) -> ConnectionAsync:
             """
             Creates and returns the uamqp async Connection object.
             :keyword str host: The hostname, used by uamqp.
@@ -194,11 +195,16 @@ if uamqp_installed:
             return client
 
         @staticmethod
-        def message_received_async(consumer, message: Message) -> None:
+        def message_received_async(consumer, message: "Message") -> None:
             consumer._message_buffer.append(message) # pylint: disable=protected-access
 
         @staticmethod
-        async def receive_messages_async(consumer, batch, max_batch_size, max_wait_time):
+        async def receive_messages_async(
+            consumer: "EventHubConsumer",
+            batch: bool,
+            max_batch_size: int,
+            max_wait_time: Optional[int] = None
+        ):
             """
             Receives messages, creates events, and returns them by calling the on received callback.
             :param ~azure.eventhub.aio.EventHubConsumer consumer: The EventHubConsumer.
@@ -338,7 +344,7 @@ if uamqp_installed:
             await mgmt_client.open_async(connection=conn)
 
         @staticmethod
-        async def mgmt_client_request_async(mgmt_client, mgmt_msg, **kwargs):
+        async def mgmt_client_request_async(mgmt_client: AMQPClientAsync, mgmt_msg: str, **kwargs: Any):
             """
             Send mgmt request.
             :param ~uamqp.AMQPClient mgmt_client: Client to send request with.
@@ -360,9 +366,9 @@ if uamqp_installed:
                 **kwargs
             )
             status_code = response.application_properties[kwargs.get("status_code_field")]
-            description = response.application_properties.get(
+            description: Optional[Union[str, bytes]] = response.application_properties.get(
                 kwargs.get("description_fields")
-            )  # type: Optional[Union[str, bytes]]
+            )
             return status_code, description, response
 
         @staticmethod

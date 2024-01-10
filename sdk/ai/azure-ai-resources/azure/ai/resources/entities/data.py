@@ -10,7 +10,7 @@ from azure.ai.ml.constants import AssetTypes as DataAssetTypes
 from azure.ai.resources.constants import AssetTypes
 
 
-DataAssetTypesMapping: Dict[DataAssetTypes, AssetTypes] = {
+DataAssetTypesMapping: Dict[DataAssetTypes, str] = {
     DataAssetTypes.URI_FILE: AssetTypes.FILE,
     DataAssetTypes.URI_FOLDER: AssetTypes.FOLDER,
     DataAssetTypes.MLTABLE: AssetTypes.TABLE,
@@ -21,7 +21,7 @@ DataAssetTypesMapping: Dict[DataAssetTypes, AssetTypes] = {
 class Data:
     name: str
     path: str
-    version: str = None
+    version: Optional[str] = None
     type: str = AssetTypes.FOLDER
     description: Optional[str] = None
     tags: Optional[Dict[str, str]] = None

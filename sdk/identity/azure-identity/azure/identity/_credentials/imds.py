@@ -65,7 +65,7 @@ class ImdsCredential(GetTokenMixin):
             self._endpoint_available = None
         self._user_assigned_identity = "client_id" in kwargs or "identity_config" in kwargs
 
-    def __enter__(self):
+    def __enter__(self) -> "ImdsCredential":
         self._client.__enter__()
         return self
 
