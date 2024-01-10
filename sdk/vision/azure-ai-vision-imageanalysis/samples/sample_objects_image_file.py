@@ -23,13 +23,15 @@ USAGE:
                          where `your-resource-name` is your unique Azure Computer Vision resource name.
     2) VISION_KEY - Your Computer Vision key (a 32-character Hexadecimal number)
 """
+
+
 def sample_objects_image_file():
     import os
     from azure.ai.vision.imageanalysis import ImageAnalysisClient
     from azure.ai.vision.imageanalysis.models import VisualFeatures
     from azure.core.credentials import AzureKeyCredential
 
-    # Set the values of your computer vision endpoint and computer vision key 
+    # Set the values of your computer vision endpoint and computer vision key
     # as environment variables:
     try:
         endpoint = os.environ["VISION_ENDPOINT"]
@@ -40,20 +42,14 @@ def sample_objects_image_file():
         exit()
 
     # Create an Image Analysis client
-    client = ImageAnalysisClient(
-        endpoint = endpoint,
-        credential = AzureKeyCredential(key)
-    )
+    client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Load image to analyze into a 'bytes' object
-    with open("sample.jpg", 'rb') as f:
+    with open("sample.jpg", "rb") as f:
         image_data = f.read()
 
     # Detect objects in an image stream. This will be a synchronously (blocking) call.
-    result = client.analyze(
-        image_data = image_data,
-        visual_features = [ VisualFeatures.OBJECTS ]
-    )
+    result = client.analyze(image_data=image_data, visual_features=[VisualFeatures.OBJECTS])
 
     # Print Objects analysis results to the console
     print("Image analysis results:")
@@ -66,5 +62,5 @@ def sample_objects_image_file():
     print(f" Model version: {result.model_version}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample_objects_image_file()
