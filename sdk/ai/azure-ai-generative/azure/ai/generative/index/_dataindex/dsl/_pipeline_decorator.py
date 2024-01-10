@@ -57,7 +57,7 @@ P = ParamSpec("P")
 
 # Overload the returns a decorator when func is None
 @overload
-def pipeline(  # type: ignore[misc]
+def pipeline(
     # TODO: Bug 2876412
     func: None = None,
     *,
