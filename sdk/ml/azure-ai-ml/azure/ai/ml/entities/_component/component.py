@@ -102,7 +102,7 @@ class Component(
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
         display_name: Optional[str] = None,
-        is_deterministic: Optional[bool] = True,
+        is_deterministic: bool = True,
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
         yaml_str: Optional[str] = None,
@@ -145,7 +145,7 @@ class Component(
         self._schema = _schema
         self._type = type
         self._display_name = display_name
-        self._is_deterministic = is_deterministic if is_deterministic else True
+        self._is_deterministic = is_deterministic
         self._inputs = self._build_io(inputs, is_input=True)
         self._outputs = self._build_io(outputs, is_input=False)
         # Store original yaml
