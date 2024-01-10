@@ -52,7 +52,7 @@ exclude = [
   "azure/ai/ml/parallel/",
   "azure/ai/ml/sweep/",
   "azure/ai/ml/_azure_environments.py",
-  "azure/ai/ml/_exceptions.py",
+  "azure/ai/ml/exceptions.py",
   "azure/ai/ml/_scope_dependent_operations.py",
   "azure/ai/ml/_ml_client.py",
   "azure/ai/ml/_exception_helper.py",
