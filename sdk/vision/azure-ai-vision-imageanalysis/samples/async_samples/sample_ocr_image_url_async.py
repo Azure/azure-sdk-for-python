@@ -47,11 +47,15 @@ async def sample_ocr_image_file_async():
         exit()
 
     # Create an asynchronous Image Analysis client
-    client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    client = ImageAnalysisClient(
+        endpoint=endpoint,
+        credential=AzureKeyCredential(key)
+    )
 
     # Extract text (OCR) from an image URL, asynchronously.
     result = await client.analyze(
-        image_url="https://aka.ms/azsdk/image-analysis/sample.jpg", visual_features=[VisualFeatures.READ]
+        image_url="https://aka.ms/azsdk/image-analysis/sample.jpg",
+        visual_features=[VisualFeatures.READ]
     )
 
     await client.close()

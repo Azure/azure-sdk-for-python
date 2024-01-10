@@ -47,12 +47,16 @@ def sample_ocr_image_url():
         exit()
 
     # Create an Image Analysis client
-    client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    client = ImageAnalysisClient(
+        endpoint=endpoint,
+        credential=AzureKeyCredential(key)
+    )
 
     # [START read]
     # Extract text (OCR) from an image stream. This will be a synchronously (blocking) call.
     result = client.analyze(
-        image_url="https://aka.ms/azsdk/image-analysis/sample.jpg", visual_features=[VisualFeatures.READ]
+        image_url="https://aka.ms/azsdk/image-analysis/sample.jpg",
+        visual_features=[VisualFeatures.READ]
     )
 
     # Print text (OCR) analysis results to the console

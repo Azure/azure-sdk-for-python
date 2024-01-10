@@ -64,7 +64,10 @@ except KeyError:
     exit()
 
 # Create an Image Analysis client for synchronous operations
-client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+client = ImageAnalysisClient(
+    endpoint=endpoint,
+    credential=AzureKeyCredential(key)
+)
 ```
 
 <!-- END SNIPPET -->
@@ -188,7 +191,10 @@ with open("sample.jpg", "rb") as f:
     image_data = f.read()
 
 # Extract text (OCR) from an image stream. This will be a synchronously (blocking) call.
-result = client.analyze(image_data=image_data, visual_features=[VisualFeatures.READ])
+result = client.analyze(
+    image_data=image_data,
+    visual_features=[VisualFeatures.READ]
+)
 
 # Print text (OCR) analysis results to the console
 print("Image analysis results:")
@@ -217,7 +223,8 @@ This example is similar to the above, expect it calls the `analyze` method and p
 ```python
 # Extract text (OCR) from an image stream. This will be a synchronously (blocking) call.
 result = client.analyze(
-    image_url="https://aka.ms/azsdk/image-analysis/sample.jpg", visual_features=[VisualFeatures.READ]
+    image_url="https://aka.ms/azsdk/image-analysis/sample.jpg",
+    visual_features=[VisualFeatures.READ]
 )
 
 # Print text (OCR) analysis results to the console
@@ -300,7 +307,11 @@ By default logs redact the values of URL query strings, the values of some HTTP 
 
 ```python
 # Create an Image Analysis client with none redacted log
-client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key), logging_enable=True)
+client = ImageAnalysisClient(
+    endpoint=endpoint,
+    credential=AzureKeyCredential(key),
+    logging_enable=True
+)
 ```
 
 <!-- END SNIPPET -->
