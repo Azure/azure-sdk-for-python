@@ -55,7 +55,7 @@ class ClientAssertionCredential(AsyncContextManager, GetTokenMixin):
         )
         super().__init__(**kwargs)
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "ClientAssertionCredential":
         await self._client.__aenter__()
         return self
 

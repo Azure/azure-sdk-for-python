@@ -18,7 +18,7 @@ All of these samples need the endpoint to your Document Intelligence resource ([
 You can check all samples from [here][sample_path].
 
 ## Prerequisites
-* Python 3.7 or later is required to use this package
+* Python 3.8 or later is required to use this package
 * You must have an [Azure subscription][azure_subscription] and an
 [Azure Document Intelligence account][azure_document_intelligence_account] to run these samples.
 
