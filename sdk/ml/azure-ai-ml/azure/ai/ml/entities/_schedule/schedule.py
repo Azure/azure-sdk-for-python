@@ -6,7 +6,7 @@ import logging
 import typing
 from os import PathLike
 from pathlib import Path
-from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Union
+from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Union, cast
 
 from typing_extensions import Literal
 
@@ -357,7 +357,7 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         :rtype: MutableValidationResult
         """
         if isinstance(self.create_job, PipelineJob):
-            return self.create_job._validate()
+            return cast(MutableValidationResult, self.create_job._validate())
         return self._create_empty_validation_result()
 
     @classmethod
