@@ -340,7 +340,9 @@ class InternalComponent(Component, AdditionalIncludesMixin):
             # additional includes config file itself should be ignored
             rebased_ignore_file = ComponentIgnoreFile(
                 tmp_code_dir,
-                additional_includes_file_name=Path(self._source_path).with_suffix(_ADDITIONAL_INCLUDES_SUFFIX).name  # type: ignore[arg-type]
+                additional_includes_file_name=Path(self._source_path)
+                .with_suffix(_ADDITIONAL_INCLUDES_SUFFIX)
+                .name  # type: ignore[arg-type]
                 # TODO: Bug 2881943
             )
 
