@@ -469,7 +469,7 @@ class MLIndex:
                     from azure.ai.generative.index._utils.connections import get_connection_by_id_v2
                     index_connection = get_connection_by_id_v2(index_connection, credential=credential)
                 self.index_config["connection"] = {"id": get_id_from_connection(index_connection)}
-        self.save(just_config=True)
+        self.save(self.base_uri, just_config=True)
         # TODO: Bug 2877747
         return self
 
