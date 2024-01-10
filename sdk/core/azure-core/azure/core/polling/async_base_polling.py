@@ -153,7 +153,9 @@ class AsyncLROBasePolling(
         """
         if self._path_format_arguments:
             status_link = self._client.format_url(status_link, **self._path_format_arguments)
-        status_link, request_params = update_api_version_of_status_link(status_link, self._lro_options)
+        status_link, request_params = update_api_version_of_status_link(
+            status_link, (self._lro_options or {}).get("api_version")
+        )
         # Re-inject 'x-ms-client-request-id' while polling
         if "request_id" not in self._operation_config:
             self._operation_config["request_id"] = self._get_request_id()

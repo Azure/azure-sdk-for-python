@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Support add or replace api-version when lro polling #33192
+
 ## 1.29.6 (2023-12-14)
 
 ### Bugs Fixed
@@ -18,7 +20,6 @@
 
 ### Other Changes
 
-- Support add or replace api-version when lro polling #33192
 - Added dependency on `anyio` >=3.0,<5.0
 - Bumped minimum dependency on `requests` to 2.21.0.
 
