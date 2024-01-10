@@ -1,0 +1,6 @@
+{
+    "AssetsRepo": "Azure/azure-sdk-assets",
+    "AssetsRepoPrefixPath": "python",
+    "TagPrefix": "python/elasticsan/azure-mgmt-elasticsan",
+    "Tag": "python/elasticsan/azure-mgmt-elasticsan_6701eea37b"
+}
