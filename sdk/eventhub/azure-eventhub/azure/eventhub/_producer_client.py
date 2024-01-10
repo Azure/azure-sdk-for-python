@@ -197,6 +197,9 @@ class EventHubProducerClient(
             network_tracing=kwargs.get("logging_enable"),
             **kwargs
         )
+
+        self._keep_alive = kwargs.get("keep_alive", None)
+
         self._producers: Dict[str, Optional[EventHubProducer]] = {
             ALL_PARTITIONS: self._create_producer()
         }
@@ -210,7 +213,6 @@ class EventHubProducerClient(
         self._max_wait_time = max_wait_time
         self._max_buffer_length = max_buffer_length
         self._executor = kwargs.get("buffer_concurrency")
-        self._keep_alive = kwargs.get("keep_alive", None)
 
         if self._buffered_mode:
             setattr(self, "send_batch", self._buffered_send_batch)
