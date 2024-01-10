@@ -32,12 +32,11 @@ try:
                 refresh_on=[WatchKey("refresh_message")],
                 refresh_interval=1,
                 on_refresh_success=mock_callback,
-                feature_flag_enabled=True,
             ) as client:
                 assert client["refresh_message"] == "original value"
                 assert client["my_json"]["key"] == "value"
-                assert "FeatureManagement" in client
-                assert "Alpha" in client["FeatureManagement"]
+                assert "FeatureManagementFeatureFlags" in client
+                assert "Alpha" in client["FeatureManagementFeatureFlags"]
                 setting = await client._client.get_configuration_setting(key="refresh_message")
                 setting.value = "updated value"
                 await client._client.set_configuration_setting(setting)
@@ -85,13 +84,12 @@ try:
                 appconfiguration_endpoint_string,
                 keyvault_secret_url=appconfiguration_keyvault_secret_url,
                 on_refresh_success=mock_callback,
-                feature_flag_enabled=True,
             ) as client:
                 assert client["refresh_message"] == "original value"
                 assert client["non_refreshed_message"] == "Static"
                 assert client["my_json"]["key"] == "value"
-                assert "FeatureManagement" in client
-                assert "Alpha" in client["FeatureManagement"]
+                assert "FeatureManagementFeatureFlags" in client
+                assert "Alpha" in client["FeatureManagementFeatureFlags"]
                 setting = await client._client.get_configuration_setting(key="refresh_message")
                 setting.value = "updated value"
                 await client._client.set_configuration_setting(setting)

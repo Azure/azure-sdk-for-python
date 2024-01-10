@@ -2,15 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TypeVar, Optional, Any
+from typing import Optional, Any
 
 from azure.core.credentials import AccessToken
 from .._internal import AadClient, AsyncContextManager
 from .._internal.get_token_mixin import GetTokenMixin
 from ..._credentials.certificate import get_client_credential
 from ..._internal import AadClientCertificate, validate_tenant_id
-
-T = TypeVar("T", bound="CertificateCredential")
 
 
 class CertificateCredential(AsyncContextManager, GetTokenMixin):
@@ -63,7 +61,7 @@ class CertificateCredential(AsyncContextManager, GetTokenMixin):
         self._client_id = client_id
         super().__init__()
 
-    async def __aenter__(self: T) -> T:
+    async def __aenter__(self) -> "CertificateCredential":
         await self._client.__aenter__()
         return self
 
