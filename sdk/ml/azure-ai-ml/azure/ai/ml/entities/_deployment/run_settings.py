@@ -14,17 +14,17 @@ class RunSettings:
     """Run Settings entity.
 
     :param name: Run settings name
-    :type name: str
+    :type name: typing.Optional[str]
     :param display_name: Run settings display name
-    :type display_name: str
+    :type display_name: typing.Optional[str]
     :param experiment_name: Run settings experiment name
-    :type experiment_name: str
+    :type experiment_name: typing.Optional[str]
     :param description: Run settings description
-    :type description: str
+    :type description: typing.Optional[str]
     :param tags: Run settings tags
-    :type tags: Dict[str, Any]
+    :type tags: typing.Optional[Dict[str, Any]]
     :param settings: Run settings - settings
-    :type settings: Dict[str, Any]
+    :type settings: typing.Optional[Dict[str, Any]]
     """
 
     def __init__(
