@@ -21,6 +21,7 @@ from .. import models as _models
 from ._operations._operations import ImageAnalysisClientOperationsMixin
 from ._client import ImageAnalysisClient as ImageAnalysisClientGenerated
 
+
 class ImageAnalysisClient(ImageAnalysisClientGenerated):
     """ImageAnalysisClient.
 
@@ -115,28 +116,31 @@ class ImageAnalysisClient(ImageAnalysisClientGenerated):
         visual_features_impl: List[Union[str, _models.VisualFeatures]] = list(visual_features)
 
         if image_url is not None:
-            return await ImageAnalysisClientOperationsMixin._analyze_from_url( # pylint: disable=protected-access
+            return await ImageAnalysisClientOperationsMixin._analyze_from_url(  # pylint: disable=protected-access
                 self,
-                image_content = _models._models.ImageUrl(url = image_url), # pylint: disable=protected-access
-                visual_features = visual_features_impl,
-                language = language,
-                gender_neutral_caption = gender_neutral_caption,
-                smart_crops_aspect_ratios = smart_crops_aspect_ratios,
-                model_version = model_version,
-                **kwargs)
+                image_content=_models._models.ImageUrl(url=image_url),  # pylint: disable=protected-access
+                visual_features=visual_features_impl,
+                language=language,
+                gender_neutral_caption=gender_neutral_caption,
+                smart_crops_aspect_ratios=smart_crops_aspect_ratios,
+                model_version=model_version,
+                **kwargs
+            )
 
         if image_data is not None:
-            return await ImageAnalysisClientOperationsMixin._analyze_from_buffer( # pylint: disable=protected-access
+            return await ImageAnalysisClientOperationsMixin._analyze_from_buffer(  # pylint: disable=protected-access
                 self,
-                image_content = image_data,
-                visual_features = visual_features_impl,
-                language = language,
-                gender_neutral_caption = gender_neutral_caption,
-                smart_crops_aspect_ratios = smart_crops_aspect_ratios,
-                model_version = model_version,
-                **kwargs)
+                image_content=image_data,
+                visual_features=visual_features_impl,
+                language=language,
+                gender_neutral_caption=gender_neutral_caption,
+                smart_crops_aspect_ratios=smart_crops_aspect_ratios,
+                model_version=model_version,
+                **kwargs
+            )
 
         raise ValueError("Either image_data or image_url must be specified.")
+
 
 __all__: List[str] = [
     "ImageAnalysisClient"
