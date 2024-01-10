@@ -29,13 +29,12 @@ def main():
         subscription_id="{subscription-id}",
     )
 
-    response = client.virtual_machine_image_templates.begin_delete(
+    client.virtual_machine_image_templates.begin_delete(
         resource_group_name="myResourceGroup",
         image_template_name="myImageTemplate",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/imagebuilder/resource-manager/Microsoft.VirtualMachineImages/stable/2022-07-01/examples/DeleteImageTemplate.json
+# x-ms-original-file: specification/imagebuilder/resource-manager/Microsoft.VirtualMachineImages/stable/2023-07-01/examples/DeleteImageTemplate.json
 if __name__ == "__main__":
     main()

@@ -89,7 +89,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         # note AadClient handles "authority" and any pipeline kwargs
         self._client = AadClient(tenant_id, client_id, **kwargs)
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "OnBehalfOfCredential":
         await self._client.__aenter__()
         return self
 

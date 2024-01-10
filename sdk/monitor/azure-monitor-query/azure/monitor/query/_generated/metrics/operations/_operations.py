@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -168,6 +168,7 @@ class MetricDefinitionsOperations:
 
     @distributed_trace
     def list(self, resource_uri: str, *, metricnamespace: Optional[str] = None, **kwargs: Any) -> Iterable[JSON]:
+        # pylint: disable=line-too-long
         """Lists the metric definitions for the resource.
 
         :param resource_uri: The identifier of the resource. Required.
@@ -320,6 +321,7 @@ class MetricsOperations:
         metricnamespace: Optional[str] = None,
         **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """**Lists the metric values for a resource**.
 
         :param resource_uri: The identifier of the resource. Required.

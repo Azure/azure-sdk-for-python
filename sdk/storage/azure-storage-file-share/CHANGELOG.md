@@ -2,12 +2,18 @@
 
 ## 12.16.0b1 (Unreleased)
 
+This version and all future versions will require Python 3.8+. Python 3.7 is no longer supported.
+
 ### Features Added
 - Added `exists` method to `ShareFileClient` to check if a file exists.
 
 ### Bugs Fixed
 - Fixed an issue where the `ShareDirectoryClient` returned by `get_subdirectory_client` with a `ShareDirectoryClient`
 pointing to the root of the file share would raise an `InvalidResourceName` on any operations.
+- Bumped dependency of `typing-extensions` to `>=4.6.0` to avoid potential `TypeError` with `typing.TypeVar` on
+Python 3.12.
+- Fixed an issue where authentication errors could raise `AttributeError` instead of `ClientAuthenticationError` when
+using async OAuth credentials.
 
 ## 12.15.0 (2023-11-07)
 

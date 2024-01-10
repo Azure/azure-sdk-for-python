@@ -10,6 +10,9 @@
 
 ### Other Changes
 
+- Changed the default polling interval from 30s to 5s.
+- Python 3.7 is no longer supported. Please use Python version 3.8 or later.
+
 ## 1.0.0b1 (2023-11-17)
 
 This is the first preview of the `azure-ai-documentintelligence` package, targeting API version `2023-10-31-preview` of the Document Intelligence service(formerly known as Form Recognizer).

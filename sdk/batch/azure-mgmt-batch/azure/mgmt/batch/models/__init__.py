@@ -66,6 +66,7 @@ from ._models_py3 import ListCertificatesResult
 from ._models_py3 import ListPoolsResult
 from ._models_py3 import ListPrivateEndpointConnectionsResult
 from ._models_py3 import ListPrivateLinkResourcesResult
+from ._models_py3 import ManagedDisk
 from ._models_py3 import MetadataItem
 from ._models_py3 import MountConfiguration
 from ._models_py3 import NFSMountConfiguration
@@ -92,12 +93,15 @@ from ._models_py3 import ResizeOperationStatus
 from ._models_py3 import Resource
 from ._models_py3 import ResourceFile
 from ._models_py3 import ScaleSettings
+from ._models_py3 import SecurityProfile
+from ._models_py3 import ServiceArtifactReference
 from ._models_py3 import SkuCapability
 from ._models_py3 import StartTask
 from ._models_py3 import SupportedSku
 from ._models_py3 import SupportedSkusResult
 from ._models_py3 import TaskContainerSettings
 from ._models_py3 import TaskSchedulingPolicy
+from ._models_py3 import UefiSettings
 from ._models_py3 import UserAccount
 from ._models_py3 import UserAssignedIdentities
 from ._models_py3 import UserIdentity
@@ -209,6 +213,7 @@ __all__ = [
     "ListPoolsResult",
     "ListPrivateEndpointConnectionsResult",
     "ListPrivateLinkResourcesResult",
+    "ManagedDisk",
     "MetadataItem",
     "MountConfiguration",
     "NFSMountConfiguration",
@@ -235,12 +240,15 @@ __all__ = [
     "Resource",
     "ResourceFile",
     "ScaleSettings",
+    "SecurityProfile",
+    "ServiceArtifactReference",
     "SkuCapability",
     "StartTask",
     "SupportedSku",
     "SupportedSkusResult",
     "TaskContainerSettings",
     "TaskSchedulingPolicy",
+    "UefiSettings",
     "UserAccount",
     "UserAssignedIdentities",
     "UserIdentity",

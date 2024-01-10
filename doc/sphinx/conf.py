@@ -276,3 +276,8 @@ latex_documents = [
 
 # If false, no module index is generated.
 #latex_domain_indices = True
+
+# Used my myst-parser
+# https://myst-parser.readthedocs.io/en/latest/syntax/optional.html#syntax-header-anchors
+# Controls allowable header anchors in markdown files. Value allows header anchors for h1 - h6
+myst_heading_anchors = 6

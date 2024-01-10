@@ -6,6 +6,7 @@ from typing import Dict, Union
 
 from azure.ai.generative.index._docstore import FileBasedDocstore
 from azure.ai.generative.index._embeddings import WrappedLangChainDocument
+from azure.ai.generative.index._documents import Document
 from langchain.docstore.base import AddableMixin, Docstore
 from langchain.docstore.document import Document as LangChainDocument
 
@@ -48,7 +49,11 @@ class FileBasedDocStore(Docstore, AddableMixin):
             Document if found, else error message.
         """
         doc = self.docstore.search(search)
-        return LangChainDocument(page_content=doc.page_content, metadata=doc.metadata) if doc else doc
+        if isinstance(doc, Document):
+            found_doc: Document = doc
+            return LangChainDocument(page_content=found_doc.page_content, metadata=found_doc.metadata)
+        else:
+            return doc
 
     def save(self, output_path: str):
         """

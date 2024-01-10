@@ -126,12 +126,12 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
         acquire tokens for any tenant the application can access.
     """
 
-    def __enter__(self):
+    def __enter__(self) -> "VisualStudioCodeCredential":
         if self._client:
             self._client.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         if self._client:
             self._client.__exit__(*args)
 

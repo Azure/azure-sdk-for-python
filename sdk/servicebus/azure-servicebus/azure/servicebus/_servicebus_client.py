@@ -123,7 +123,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         self._amqp_transport = UamqpTransport if uamqp_transport else PyamqpTransport
 
         # If the user provided http:// or sb://, let's be polite and strip that.
-        self.fully_qualified_namespace = strip_protocol_from_uri(
+        self.fully_qualified_namespace: str = strip_protocol_from_uri(
             fully_qualified_namespace.strip()
         )
 
@@ -150,12 +150,12 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         self._custom_endpoint_address = kwargs.get('custom_endpoint_address')
         self._connection_verify = kwargs.get("connection_verify")
 
-    def __enter__(self):
+    def __enter__(self) -> "ServiceBusClient":
         if self._connection_sharing:
             self._create_connection()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self.close()
 
     def _create_connection(self):
@@ -449,17 +449,23 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         self._handlers.add(handler)
         return handler
 
-    def get_topic_sender(self, topic_name, **kwargs):
-        # type: (str, Any) -> ServiceBusSender
+    def get_topic_sender(
+        self,
+        topic_name: str,
+        *,
+        client_identifier: Optional[str] = None,
+        socket_timeout: Optional[float] = None,
+        **kwargs: Any
+    ) -> ServiceBusSender:
         """Get ServiceBusSender for the specific topic.
 
         :param str topic_name: The path of specific Service Bus Topic the client connects to.
-        :keyword str client_identifier: A string-based identifier to uniquely identify the sender instance.
+        :keyword str or None client_identifier: A string-based identifier to uniquely identify the sender instance.
          Service Bus will associate it with some error messages for easier correlation of errors.
          If not specified, a unique id will be generated.
-        :keyword float socket_timeout: The time in seconds that the underlying socket on the connection should
-         wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
-         and 1 for TransportType.AmqpOverWebsocket. If connection errors are occurring due to write timing out,
+        :keyword float or None socket_timeout: The time in seconds that the underlying socket on the connection should
+         wait when sending and receiving data before timing out. If None, a default value of 0.2 for TransportType.Amqp
+         and 1 for TransportType.AmqpOverWebsocket is used. If connection errors are occurring due to write timing out,
          a larger than default value may need to be passed in.
         :returns: A topic sender.
         :rtype: ~azure.servicebus.ServiceBusSender
@@ -497,6 +503,8 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
             custom_endpoint_address=self._custom_endpoint_address,
             connection_verify=self._connection_verify,
             amqp_transport=self._amqp_transport,
+            client_identifier=client_identifier,
+            socket_timeout=socket_timeout,
             **kwargs
         )
         self._handlers.add(handler)
