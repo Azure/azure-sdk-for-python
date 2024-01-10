@@ -210,6 +210,7 @@ class EventHubProducerClient(
         self._max_wait_time = max_wait_time
         self._max_buffer_length = max_buffer_length
         self._executor = kwargs.get("buffer_concurrency")
+        self._keep_alive = kwargs.get("keep_alive", None)
 
         if self._buffered_mode:
             setattr(self, "send_batch", self._buffered_send_batch)
@@ -380,6 +381,7 @@ class EventHubProducerClient(
             send_timeout=send_timeout,
             idle_timeout=self._idle_timeout,
             amqp_transport=self._amqp_transport,
+            keep_alive=self._keep_alive,
         )
         return handler
 
