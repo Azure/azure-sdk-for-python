@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# mypy: disable-error-code="attr-defined"
 """
 DESCRIPTION:
     This sample demonstrates how to generate a human-readable sentence that describes the content
@@ -28,6 +27,7 @@ USAGE:
 """
 import asyncio
 
+
 async def sample_caption_image_file_async():
     import os
     from azure.ai.vision.imageanalysis.aio import ImageAnalysisClient
@@ -44,19 +44,19 @@ async def sample_caption_image_file_async():
         exit()
 
     # Load image to analyze into a 'bytes' object
-    with open("sample.jpg", 'rb') as f:
+    with open("sample.jpg", "rb") as f:
         image_data = f.read()
 
     # Create an asynchronous Image Analysis client
     client = ImageAnalysisClient(
-        endpoint = endpoint,
-        credential = AzureKeyCredential(key)
+        endpoint=endpoint,
+        credential=AzureKeyCredential(key)
     )
 
     # Get a caption for the image, asynchronously.
     result = await client.analyze(
-        image_data = image_data,
-        visual_features = [ VisualFeatures.CAPTION ]
+        image_data=image_data,
+        visual_features=[VisualFeatures.CAPTION]
     )
 
     await client.close()
@@ -74,5 +74,6 @@ async def sample_caption_image_file_async():
 async def main():
     await sample_caption_image_file_async()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())
