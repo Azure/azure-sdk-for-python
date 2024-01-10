@@ -69,9 +69,10 @@ def _get_creationflags_and_startupinfo_for_background_process(
         CREATE_NEW_CONSOLE = 0x00000010
         args["creationflags"] = CREATE_NEW_CONSOLE
 
-        startupinfo = subprocess.STARTUPINFO()
-        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        startupinfo.wShowWindow = subprocess.SW_HIDE
+        # Bug Item number: 2895261
+        startupinfo = subprocess.STARTUPINFO()  # type: ignore
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW  # type: ignore
+        startupinfo.wShowWindow = subprocess.SW_HIDE  # type: ignore
         args["startupinfo"] = startupinfo
 
     else:
