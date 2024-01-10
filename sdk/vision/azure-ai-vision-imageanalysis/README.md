@@ -13,7 +13,6 @@ Use the Image Analysis client library to:
 | [Vision Studio](https://portal.vision.cognitive.azure.com/gallery/imageanalysis)
 | [API reference documentation](https://aka.ms/azsdk/image-analysis/ref-docs/python)
 | [Package (Pypi)](https://aka.ms/azsdk/image-analysis/package/pypi)
-| [Package (Conda)](https://aka.ms/azsdk/image-analysis/package/conda)
 | [SDK source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/vision/azure-ai-vision-imageanalysis/azure/ai/vision/imageanalysis)
 
 ## Getting started
