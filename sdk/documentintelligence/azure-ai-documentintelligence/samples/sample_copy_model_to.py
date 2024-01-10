@@ -48,7 +48,7 @@ def sample_copy_model_to(custom_model_id):
     )
     target_auth = target_client.authorize_model_copy(
         AuthorizeCopyRequest(
-            model_id=str(uuid.uuid4()), # target model ID
+            model_id=str(uuid.uuid4()),  # target model ID
             description="copied model",
         )
     )

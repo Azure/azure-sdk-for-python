@@ -42,9 +42,7 @@ async def sample_manage_models():
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
     container_sas_url = os.environ["DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL"]
 
-    document_intelligence_admin_client = DocumentIntelligenceAdministrationClient(
-        endpoint, AzureKeyCredential(key)
-    )
+    document_intelligence_admin_client = DocumentIntelligenceAdministrationClient(endpoint, AzureKeyCredential(key))
     async with document_intelligence_admin_client:
         poller = await document_intelligence_admin_client.begin_build_document_model(
             BuildDocumentModelRequest(
@@ -62,9 +60,7 @@ async def sample_manage_models():
         print(f"Model expires on: {model.expiration_date_time}")
         print("Doc types the model can recognize:")
         for name, doc_type in model.doc_types.items():
-            print(
-                f"Doc Type: '{name}' built with '{doc_type.build_mode}' mode which has the following fields:"
-            )
+            print(f"Doc Type: '{name}' built with '{doc_type.build_mode}' mode which has the following fields:")
             for field_name, field in doc_type.field_schema.items():
                 print(
                     f"Field: '{field_name}' has type '{field['type']}' and confidence score "
@@ -107,6 +103,7 @@ async def sample_manage_models():
         await document_intelligence_admin_client.delete_model(model_id=my_model.model_id)
 
         from azure.core.exceptions import ResourceNotFoundError
+
         try:
             await document_intelligence_admin_client.get_model(model_id=my_model.model_id)
         except ResourceNotFoundError:

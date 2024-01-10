@@ -50,11 +50,11 @@ async def sample_copy_model_to(custom_model_id):
     async with target_client:
         target_auth = await target_client.authorize_model_copy(
             AuthorizeCopyRequest(
-                model_id=str(uuid.uuid4()), # target model ID
+                model_id=str(uuid.uuid4()),  # target model ID
                 description="copied model",
             )
         )
-    
+
     source_client = DocumentIntelligenceAdministrationClient(
         endpoint=source_endpoint, credential=AzureKeyCredential(source_key)
     )

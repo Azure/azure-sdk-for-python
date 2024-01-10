@@ -42,7 +42,9 @@ def analyze_receipts_from_url():
 
     document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_forms/receipt/contoso-receipt.png"
-    poller = document_intelligence_client.begin_analyze_document("prebuilt-receipt", AnalyzeDocumentRequest(url_source=url))
+    poller = document_intelligence_client.begin_analyze_document(
+        "prebuilt-receipt", AnalyzeDocumentRequest(url_source=url)
+    )
     receipts = poller.result()
     # [END analyze_receipts_from_url]
 

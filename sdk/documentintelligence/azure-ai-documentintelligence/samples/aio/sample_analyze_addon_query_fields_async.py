@@ -74,6 +74,7 @@ async def analyze_query_fields():
 async def main():
     await analyze_query_fields()
 
+
 if __name__ == "__main__":
     from azure.core.exceptions import HttpResponseError
     from dotenv import find_dotenv, load_dotenv

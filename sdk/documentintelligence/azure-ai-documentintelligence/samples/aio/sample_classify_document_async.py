@@ -50,9 +50,7 @@ async def classify_document(classifier_id):
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
     classifier_id = os.getenv("CLASSIFIER_ID", classifier_id)
 
-    document_intelligence_client = DocumentIntelligenceClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     async with document_intelligence_client:
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_intelligence_client.begin_classify_document(
@@ -109,6 +107,7 @@ async def main():
             classifier = await poller.result()
         classifier_id = classifier.classifier_id
     await classify_document(classifier_id)
+
 
 if __name__ == "__main__":
     from azure.core.exceptions import HttpResponseError

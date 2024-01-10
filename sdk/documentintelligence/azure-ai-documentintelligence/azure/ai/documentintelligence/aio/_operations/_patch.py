@@ -29,8 +29,9 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class DocumentIntelligenceAdministrationClientOperationsMixin(GeneratedDIAdminClientOps):  # pylint: disable=name-too-long
-
+class DocumentIntelligenceAdministrationClientOperationsMixin(
+    GeneratedDIAdminClientOps
+):  # pylint: disable=name-too-long
     @distributed_trace_async
     async def begin_build_classifier(
         self, build_request: Union[_models.BuildDocumentClassifierRequest, JSON, IO], **kwargs: Any
