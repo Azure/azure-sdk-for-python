@@ -31,7 +31,7 @@ Older API versions are supported in `azure-ai-formrecognizer`, please see the [M
 
 #### Prequisites
 
-- Python 3.7 or later is required to use this package.
+- Python 3.8 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - An existing Azure AI Document Intelligence instance.
 

@@ -101,6 +101,7 @@ class TestBaseExporter(unittest.TestCase):
             api_version="2021-02-10_Preview",
             connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
             disable_offline_storage=False,
+            distro_version="1.0.0",
             storage_maintenance_period=30,
             storage_max_size=1000,
             storage_min_retry_interval=100,
@@ -115,6 +116,7 @@ class TestBaseExporter(unittest.TestCase):
             base._endpoint,
             "https://westus-0.in.applicationinsights.azure.com/",
         )
+        self.assertEqual(base._distro_version, "1.0.0")
         self.assertIsNotNone(base.storage)
         self.assertEqual(base.storage._max_size, 1000)
         self.assertEqual(base.storage._retention_period, 2000)

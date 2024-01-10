@@ -17,7 +17,7 @@ Policy = Union[AsyncHTTPPolicy, SansIOHTTPPolicy]
 
 # pylint:disable=invalid-overridden-method
 class AadClient(AadClientBase):
-    async def __aenter__(self):
+    async def __aenter__(self) -> "AadClient":
         await self._pipeline.__aenter__()
         return self
 
