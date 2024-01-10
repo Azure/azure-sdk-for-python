@@ -32,6 +32,7 @@ AZURE_AD = "azuread"
 WHISPER_AZURE = "whisper_azure"
 WHISPER_AZURE_AD = "whisper_azuread"
 WHISPER_ALL = ["whisper_azure", "whisper_azuread", "openai"]
+TTS_OPENAI = "tts_openai"
 DALLE_AZURE = "dalle_azure"
 DALLE_AZURE_AD = "dalle_azuread"
 DALLE_ALL = ["dalle_azure", "dalle_azuread", "openai"]
@@ -70,6 +71,7 @@ ENV_OPENAI_EMBEDDINGS_MODEL = "text-embedding-ada-002"
 ENV_OPENAI_AUDIO_MODEL = "whisper-1"
 ENV_OPENAI_DALLE_MODEL = "dall-e-3"
 ENV_OPENAI_CHAT_COMPLETIONS_GPT4_MODEL = "gpt-4-1106-preview"
+ENV_OPENAI_TTS_MODEL = "tts-1"
 
 # Fake values
 TEST_ENDPOINT = "https://test-resource.openai.azure.com/"
@@ -137,7 +139,7 @@ def client(api_type):
             azure_ad_token_provider=get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
             api_version=ENV_AZURE_OPENAI_API_VERSION,
         )
-    elif api_type == "openai" or api_type == "gpt_4_openai":
+    elif api_type in ["openai", "gpt_4_openai", "tts_openai"]:
         client = openai.OpenAI(
             api_key=os.getenv(ENV_OPENAI_KEY)
         )
@@ -184,7 +186,7 @@ def client_async(api_type):
             azure_ad_token_provider=get_bearer_token_provider_async(AsyncDefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
             api_version=ENV_AZURE_OPENAI_API_VERSION,
         )
-    elif api_type == "openai" or api_type == "gpt_4_openai":
+    elif api_type in ["openai", "gpt_4_openai", "tts_openai"]:
         client = openai.AsyncOpenAI(
             api_key=os.getenv(ENV_OPENAI_KEY)
         )
@@ -222,6 +224,8 @@ def build_kwargs(args, api_type):
             return {"model": ENV_AZURE_OPENAI_AUDIO_NAME}
         elif api_type == "openai":
             return {"model": ENV_OPENAI_AUDIO_MODEL}
+        elif api_type == "tts_openai":
+            return {"model": ENV_OPENAI_TTS_MODEL}
     if test_feature.startswith("test_chat_completions") \
         or test_feature.startswith(("test_client", "test_models")):
         if api_type in ["azure", "azuread"]:
