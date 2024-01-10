@@ -13,9 +13,11 @@ from pathlib import Path
 from typing import Any, Dict, Iterator, Optional, List, Union, Iterator
 
 from azure.ai.generative.index._documents import (
+    SUPPORTED_EXTENSIONS,
     DocumentChunksIterator,
     DocumentSource,
 )
+
 from azure.ai.generative.index._documents.chunking import file_extension_splitters, split_documents
 from azure.ai.generative.index._documents.cracking import crack_documents, file_extension_loaders, files_to_document_source
 from azure.ai.generative.index._embeddings import DataEmbeddedDocument, EmbeddedDocumentSource, EmbeddingsContainer
@@ -91,7 +93,7 @@ def crack_and_chunk_and_embed(
     # TODO: log metrics for reused_sources, deleted_sources, and sources_to_embed
     sources_to_embed: Dict[str, DocumentSource] = OrderedDict() 
     reused_sources = OrderedDict()
-    for source_doc in filter_and_log_extensions(source_documents):
+    for source_doc in filter_and_log_extensions(source_documents, SUPPORTED_EXTENSIONS):
         # TODO: Bug 2879646
         mtime = source_doc.mtime
         # Currently there's no lookup at filename level, only document_ids (post chunking)
