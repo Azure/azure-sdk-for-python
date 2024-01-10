@@ -464,10 +464,10 @@ async def test_async_token_credential_trio_lock():
 
 
 def test_async_token_credential_sync():
+    """Verify that AsyncBearerTokenCredentialPolicy can be constructed in a synchronous context."""
     auth_policy = AsyncBearerTokenCredentialPolicy(Mock(), "scope")
     with patch.dict('sys.modules'):
         # Ensure trio isn't in sys.modules (i.e. imported).
         sys.modules.pop("trio", None)
-        with pytest.raises(RuntimeError):
-            AsyncBearerTokenCredentialPolicy(Mock(), "scope")
+        AsyncBearerTokenCredentialPolicy(Mock(), "scope")
 

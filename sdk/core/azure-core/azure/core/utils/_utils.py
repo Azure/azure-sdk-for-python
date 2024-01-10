@@ -6,7 +6,6 @@
 # --------------------------------------------------------------------------
 import datetime
 import sys
-from types import ModuleType
 from typing import (
     Any,
     Iterable,
@@ -165,11 +164,11 @@ class CaseInsensitiveDict(MutableMapping[str, Any]):
         return str(dict(self.items()))
 
 
-def get_running_async_module() -> ModuleType:
+def get_running_async_lock() -> Any:
     """Get the name of the async library that the current context is running under.
 
-    :return: The async library module.
-    :rtype: ModuleType
+    :return: An instance of the running async library's Lock class.
+    :rtype: Any
     :raises: RuntimeError if the current context is not running under an async library.
     """
 
@@ -177,10 +176,10 @@ def get_running_async_module() -> ModuleType:
         import asyncio
         # Check if we are running in an asyncio event loop.
         asyncio.get_running_loop()
-        return asyncio
+        return asyncio.Lock()
     except RuntimeError as err:
         # Otherwise, assume we are running in a trio event loop if it has already been imported.
         if "trio" in sys.modules:
             import trio  # pylint: disable=networking-import-outside-azure-core-transport
-            return trio
+            return trio.Lock()
         raise RuntimeError("An asyncio or trio event loop is required.") from err
