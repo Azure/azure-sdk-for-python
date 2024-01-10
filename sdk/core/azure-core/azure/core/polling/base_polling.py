@@ -98,9 +98,14 @@ def update_api_version_of_status_link(
             key: [urllib.parse.quote(v) for v in value]
             for key, value in urllib.parse.parse_qs(parsed_status_link.query).items()
         }
+        add_api_version = True
         for k in request_params.keys():
             if k.lower() == "api-version":
                 request_params[k] = api_version
+                add_api_version = False
+                break
+        if add_api_version:
+            request_params["api-version"] = api_version
         status_link = urllib.parse.urljoin(status_link, parsed_status_link.path)
     return status_link, request_params
 
