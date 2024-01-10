@@ -74,7 +74,7 @@ class Component(
     :param display_name: Display name of the component.
     :type display_name: str
     :param is_deterministic: Whether the component is deterministic. Defaults to True.
-    :type is_deterministic: Optional[bool]
+    :type is_deterministic: bool
     :param inputs: Inputs of the component.
     :type inputs: dict
     :param outputs: Outputs of the component.
