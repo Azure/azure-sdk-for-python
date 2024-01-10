@@ -91,7 +91,7 @@ def crack_and_chunk_and_embed(
     # TODO: log metrics for reused_sources, deleted_sources, and sources_to_embed
     sources_to_embed: Dict[str, DocumentSource] = OrderedDict() 
     reused_sources = OrderedDict()
-    for source_doc in filter_and_log_extensions(source_documents):  # type: ignore
+    for source_doc in filter_and_log_extensions(source_documents):
         # TODO: Bug 2879646
         mtime = source_doc.mtime
         # Currently there's no lookup at filename level, only document_ids (post chunking)

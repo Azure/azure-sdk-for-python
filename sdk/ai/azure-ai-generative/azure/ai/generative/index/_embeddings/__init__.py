@@ -619,7 +619,7 @@ class EmbeddingsContainer:
                     doc_id,
                     mtime,
                     document_hash,
-                    path_to_data=None,  # type: ignore[arg-type]
+                    path_to_data=None,
                     #TODO: Bug 2879181
                     index=None,
                     embeddings_container_path=embeddings_container_path,
@@ -899,7 +899,7 @@ class EmbeddingsContainer:
 
         if hasattr(input_documents, "__module__") and "langchain" in input_documents.__module__ and "document_loaders" in input_documents.__module__:
             input_documents = iter([WrappedLangChainDocument(d)
-                                   for d in input_documents.load()])  # type: ignore[union-attr]
+                                   for d in input_documents.load()])
             # TODO: Bug 2879186
         elif isinstance(input_documents, DocumentChunksIterator):
             flattened_docs: List = []
