@@ -120,7 +120,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         get_certificate_command = partial(self.get_certificate, certificate_name=certificate_name, **kwargs)
 
         create_certificate_polling = CreateCertificatePollerAsync(
-            get_certificate_command=get_certificate_command, interval=polling_interval
+            self._transport, get_certificate_command=get_certificate_command, interval=polling_interval
         )
         def no_op(*_, **__) -> Any:  # The deserialization callback is ignored based on polling implementation
             pass
@@ -224,6 +224,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         polling_method = AsyncDeleteRecoverPollingMethod(
             # no recovery ID means soft-delete is disabled, in which case we initialize the poller as finished
             finished=deleted_certificate.recovery_id is None,
+            transport=self._transport,
             command=partial(self.get_deleted_certificate, certificate_name=certificate_name, **kwargs),
             final_resource=deleted_certificate,
             interval=polling_interval,
@@ -314,7 +315,11 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
         command = partial(self.get_certificate, certificate_name=certificate_name, **kwargs)
         polling_method = AsyncDeleteRecoverPollingMethod(
-            command=command, final_resource=recovered_certificate, finished=False, interval=polling_interval
+            transport=self._transport,
+            command=command,
+            final_resource=recovered_certificate,
+            finished=False,
+            interval=polling_interval
         )
         await polling_method.run()
 

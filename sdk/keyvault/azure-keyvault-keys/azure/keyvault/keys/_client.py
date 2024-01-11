@@ -349,6 +349,7 @@ class KeyClient(KeyVaultClientBase):
         polling_method = DeleteRecoverPollingMethod(
             # no recovery ID means soft-delete is disabled, in which case we initialize the poller as finished
             finished=deleted_key.recovery_id is None,
+            transport=self._transport,
             command=command,
             final_resource=deleted_key,
             interval=polling_interval,
@@ -549,6 +550,7 @@ class KeyClient(KeyVaultClientBase):
         command = partial(self.get_key, name=name, **kwargs)
         polling_method = DeleteRecoverPollingMethod(
             finished=False,
+            transport=self._transport,
             command=command,
             final_resource=recovered_key,
             interval=polling_interval,

@@ -2,13 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
-import asyncio
 import logging
 from typing import Any, Callable
 
-from azure.core.polling import AsyncPollingMethod
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
+from azure.core.pipeline.transport import AsyncHttpTransport
+from azure.core.polling import AsyncPollingMethod
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +23,8 @@ class AsyncDeleteRecoverPollingMethod(AsyncPollingMethod):
     Similarly, while recovering a deleted resource, Key Vault will respond 404 to GET requests for the non-deleted
     resource; when it responds 2xx, the resource exists in the non-deleted collection, i.e. its recovery is complete.
 
+    :param transport: The Key Vault client's transport being used for the operation.
+    :type transport: AsyncHttpTransport
     :param command: An awaitable to invoke when polling.
     :type command: Callable
     :param final_resource: The final resource returned by the polling operation.
@@ -33,8 +34,14 @@ class AsyncDeleteRecoverPollingMethod(AsyncPollingMethod):
     """
 
     def __init__(
-            self, command: Callable, final_resource: Any, finished: bool, interval: int = 2
+            self,
+            transport: AsyncHttpTransport,
+            command: Callable,
+            final_resource: Any,
+            finished: bool,
+            interval: int = 2
         ) -> None:
+        self._transport = transport
         self._command = command
         self._resource = final_resource
         self._polling_interval = interval
@@ -62,7 +69,8 @@ class AsyncDeleteRecoverPollingMethod(AsyncPollingMethod):
             while not self.finished():
                 await self._update_status()
                 if not self.finished():
-                    await asyncio.sleep(self._polling_interval)
+                    # We should always ask the client's transport to sleep, instead of sleeping directly
+                    await self._transport.sleep(self._polling_interval)
         except Exception as e:
             logger.warning(str(e))
             raise

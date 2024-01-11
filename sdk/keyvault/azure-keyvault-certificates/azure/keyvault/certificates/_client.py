@@ -121,7 +121,7 @@ class CertificateClient(KeyVaultClientBase):
         get_certificate_command = partial(self.get_certificate, certificate_name=certificate_name, **kwargs)
 
         create_certificate_polling = CreateCertificatePoller(
-            get_certificate_command=get_certificate_command, interval=polling_interval
+            transport=self._transport, get_certificate_command=get_certificate_command, interval=polling_interval
         )
 
         def no_op(*_, **__) -> Any:  # The deserialization callback is ignored based on polling implementation
@@ -225,6 +225,7 @@ class CertificateClient(KeyVaultClientBase):
         polling_method = DeleteRecoverPollingMethod(
             # no recovery ID means soft-delete is disabled, in which case we initialize the poller as finished
             finished=deleted_cert.recovery_id is None,
+            transport=self._transport,
             command=partial(self.get_deleted_certificate, certificate_name=certificate_name, **kwargs),
             final_resource=deleted_cert,
             interval=polling_interval,
@@ -318,7 +319,11 @@ class CertificateClient(KeyVaultClientBase):
         recovered_certificate = KeyVaultCertificate._from_certificate_bundle(recovered_cert_bundle)
         command = partial(self.get_certificate, certificate_name=certificate_name, **kwargs)
         polling_method = DeleteRecoverPollingMethod(
-            finished=False, command=command, final_resource=recovered_certificate, interval=polling_interval
+            finished=False,
+            transport=self._transport,
+            command=command,
+            final_resource=recovered_certificate,
+            interval=polling_interval
         )
 
         return KeyVaultOperationPoller(polling_method)
