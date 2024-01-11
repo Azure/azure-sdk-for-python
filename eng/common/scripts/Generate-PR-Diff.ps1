@@ -32,12 +32,13 @@ function Get-ChangedServices {
     return $changedServices
 }
 
-$ArtifactPath = Resolve-Path $ArtifactPath
-$ArtifactName = Join-Path $ArtifactPath "diff.json"
 
 if (!Test-Path $ArtifactPath) {
     New-Item -ItemType Directory -Path $ArtifactPath | Out-Null
 }
+
+$ArtifactPath = Resolve-Path $ArtifactPath
+$ArtifactName = Join-Path $ArtifactPath "diff.json"
 
 $changedFiles = Get-ChangedFiles -DiffPath $TargetPath
 $changedServices = Get-ChangedServices -ChangedFiles $changedFiles
