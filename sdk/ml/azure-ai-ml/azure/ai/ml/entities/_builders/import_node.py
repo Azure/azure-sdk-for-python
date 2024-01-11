@@ -115,7 +115,7 @@ class Import(BaseNode):
         return []
 
     def _to_rest_object(self, **kwargs: Any) -> dict:
-        rest_obj = super()._to_rest_object(**kwargs)
+        rest_obj: dict = super()._to_rest_object(**kwargs)
         rest_obj.update(
             convert_ordered_dict_to_dict(
                 {
@@ -123,7 +123,7 @@ class Import(BaseNode):
                 }
             )
         )
-        return dict(rest_obj)
+        return rest_obj
 
     @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "Import":

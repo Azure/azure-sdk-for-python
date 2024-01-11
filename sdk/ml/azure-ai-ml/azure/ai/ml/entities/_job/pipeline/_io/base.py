@@ -687,9 +687,10 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         )
 
     def _deepcopy(self) -> "NodeOutput":
+        data_output: Output = copy.copy(self._data)
         return NodeOutput(
             port_name=self._port_name,
-            data=cast(Output, copy.copy(self._data)),
+            data=data_output,
             owner=self._owner,
             meta=self._meta,
             binding_output=self._binding_output,

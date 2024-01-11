@@ -50,4 +50,6 @@ class PathAwareSchemaValidatableMixin(SchemaValidatableMixin):
     def _dump_for_validation(self) -> typing.Dict:
         # this is not a necessary step but to keep the same behavior as before
         # empty items will be removed when converting to dict
-        return typing.cast(dict, convert_ordered_dict_to_dict(super()._dump_for_validation()))
+        # TODO: Bug Item number: 2897665
+        convert_dict: typing.Dict = convert_ordered_dict_to_dict(super()._dump_for_validation())  # type: ignore
+        return convert_dict

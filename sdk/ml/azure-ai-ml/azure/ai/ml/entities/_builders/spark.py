@@ -254,7 +254,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
 
         :rtype: ~azure.ai.ml.entities.SparkResourceConfiguration
         """
-        return cast(SparkResourceConfiguration, self._resources)
+        return self._resources
 
     @resources.setter
     def resources(self, value: Optional[Union[Dict, SparkResourceConfiguration]]) -> None:

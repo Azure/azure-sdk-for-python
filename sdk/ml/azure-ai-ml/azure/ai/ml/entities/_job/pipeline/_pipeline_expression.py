@@ -8,7 +8,7 @@ import re
 import tempfile
 from collections import namedtuple
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union, cast
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
 from azure.ai.ml._utils.utils import dump_yaml_to_file, get_all_data_binding_expressions, load_yaml
 from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, DefaultOpenEncoding
@@ -504,7 +504,8 @@ class PipelineExpression(PipelineExpressionMixin):
         """
         if self._string_concatenation:
             return self._to_data_binding()
-        return cast(Union[str, "BaseNode"], self._create_component())
+        res: Union[str, "BaseNode"] = self._create_component()
+        return res
 
     @staticmethod
     def parse_pipeline_inputs_from_data_binding(data_binding: str) -> List[str]:

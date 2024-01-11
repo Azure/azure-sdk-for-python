@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
-from typing import Any, Optional, cast
+from typing import Any, Optional
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import BanditPolicy as RestBanditPolicy
 from azure.ai.ml._restclient.v2023_04_01_preview.models import EarlyTerminationPolicy as RestEarlyTerminationPolicy
@@ -41,7 +41,8 @@ class EarlyTerminationPolicy(ABC, RestTranslatableMixin):
         if obj.policy_type == EarlyTerminationPolicyType.TRUNCATION_SELECTION:
             policy = TruncationSelectionPolicy._from_rest_object(obj)  # pylint: disable=protected-access
 
-        return cast(Optional["EarlyTerminationPolicy"], policy)
+        res_policy: Optional["EarlyTerminationPolicy"] = policy
+        return res_policy
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, EarlyTerminationPolicy):
