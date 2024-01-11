@@ -154,40 +154,10 @@ class OnlineInferenceConfiguration:
         )
 
     def _to_rest_object(self) -> RestOnlineInferenceConfiguration:
-        if self.liveness_route is not None and self.readiness_route is not None and self.scoring_route is not None:
-            return RestOnlineInferenceConfiguration(
-                liveness_route=self.liveness_route._to_rest_object(),
-                readiness_route=self.readiness_route._to_rest_object(),
-                scoring_route=self.scoring_route._to_rest_object(),
-                entry_script=self.entry_script,
-                configuration=self.configuration,
-            )
-
-        if self.liveness_route is None:
-            return RestOnlineInferenceConfiguration(
-                readiness_route=self.readiness_route._to_rest_object() if self.readiness_route is not None else None,
-                scoring_route=self.scoring_route._to_rest_object() if self.scoring_route is not None else None,
-                entry_script=self.entry_script,
-                configuration=self.configuration,
-            )
-
-        if self.readiness_route is None:
-            return RestOnlineInferenceConfiguration(
-                liveness_route=self.liveness_route._to_rest_object(),
-                scoring_route=self.scoring_route._to_rest_object() if self.scoring_route is not None else None,
-                entry_script=self.entry_script,
-                configuration=self.configuration,
-            )
-
-        if self.scoring_route is None:
-            return RestOnlineInferenceConfiguration(
-                liveness_route=self.liveness_route._to_rest_object(),
-                readiness_route=self.readiness_route._to_rest_object(),
-                entry_script=self.entry_script,
-                configuration=self.configuration,
-            )
-
         return RestOnlineInferenceConfiguration(
+            liveness_route=self.liveness_route._to_rest_object() if self.liveness_route is not None else None,
+            readiness_route=self.readiness_route._to_rest_object() if self.readiness_route is not None else None,
+            scoring_route=self.scoring_route._to_rest_object() if self.scoring_route is not None else None,
             entry_script=self.entry_script,
             configuration=self.configuration,
         )
