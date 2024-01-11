@@ -33,7 +33,7 @@ function Get-ChangedServices {
 }
 
 
-if (!Test-Path $ArtifactPath) {
+if (!(Test-Path $ArtifactPath)) {
     New-Item -ItemType Directory -Path $ArtifactPath | Out-Null
 }
 
