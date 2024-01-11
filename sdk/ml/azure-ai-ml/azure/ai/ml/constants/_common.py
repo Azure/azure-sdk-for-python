@@ -330,6 +330,7 @@ class ArmConstants:
     DEFAULT_VALUE = "defaultValue"
 
     STORAGE = "StorageAccount"
+    STORAGE_CONTAINER = "StorageContainer"
     KEY_VAULT = "KeyVault"
     APP_INSIGHTS = "AppInsights"
     LOG_ANALYTICS = "LogAnalytics"
@@ -787,6 +788,12 @@ class InputOutputModes:
     """Evaluation download asset type."""
     DIRECT = "direct"
     """Direct asset type."""
+
+
+class WorkspaceConnectionTypes:
+    """Names for workspace connection types that are different from that underlying api enum values."""
+
+    CUSTOM = "custom"
 
 
 class LegacyAssetTypes:

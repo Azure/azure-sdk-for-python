@@ -8,7 +8,7 @@ from azure.ai.ml.entities._job.pipeline._attr_dict import _AttrDict
 
 
 class PipelineJobSettings(_AttrDict):
-    """Settings for a pipeline job.
+    """Settings of PipelineJob.
 
     :param default_datastore: The default datastore of the pipeline.
     :type default_datastore: str

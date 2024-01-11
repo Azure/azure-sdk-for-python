@@ -6,16 +6,6 @@ verifytypes = false
 pylint = true
 strict_sphinx = true
 
-[tool.interrogate]
-fail-under = 75
-verbose = 2
-ignore-module = true
-exclude = ["setup.py", "tests", "azure/ai/ml/_restclient", "scripts", "samples"]
-ignore-init-method = true  # constructor docstrings are placed in the class docstring, not the init docstring 
-ignore-private = true
-ignore-semiprivate = true
-ignore-magic = true
-
 [tool.isort]
 profile = "black"
 line_length = 120
@@ -37,3 +27,6 @@ warn_unreachable = true
 ignore_missing_imports = true 
 follow_imports = "skip" 
 follow_imports_for_stubs = "skip"
+
+[tool.pylint.'MESSAGES CONTROL']
+disable = "line-too-long, trailing-whitespace"

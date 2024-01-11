@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Any, Iterable
+from typing import Any, Iterable, Optional
 
 from azure.core.tracing.decorator import distributed_trace
 
@@ -66,7 +66,7 @@ class AIResourceOperations:
         *,
         ai_resource: AIResource,
         update_dependent_resources: bool = False,
-        endpoint_resource_id: str = None,
+        endpoint_resource_id: Optional[str] = None,
         endpoint_kind: str = ENDPOINT_AI_SERVICE_KIND,
         **kwargs,
     ) -> LROPoller[AIResource]:

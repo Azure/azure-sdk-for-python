@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class PartitionContext(object):
+class PartitionContext:
     """Contains partition related context information.
 
     A `PartitionContext` instance will be passed to the event, error and initialization callbacks defined
@@ -34,7 +34,7 @@ class PartitionContext(object):
         self.partition_id = partition_id
         self.eventhub_name = eventhub_name
         self.consumer_group = consumer_group
-        self._last_received_event = None  # type: Optional[EventData]
+        self._last_received_event: Optional[EventData] = None
         self._checkpoint_store = checkpoint_store
 
     @property

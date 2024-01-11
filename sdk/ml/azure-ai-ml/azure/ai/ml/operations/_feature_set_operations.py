@@ -15,7 +15,7 @@ from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningServices as ServiceClient082023Preview
+from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
 from azure.ai.ml._restclient.v2023_10_01 import AzureMachineLearningServices as ServiceClient102023
 from azure.ai.ml._restclient.v2023_10_01.models import (
     FeaturesetVersion,
@@ -341,10 +341,10 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :type feature_set_name: str
         :param version: Feature set version.
         :type version: str
-        :keyword feature_name. This is case-sensitive.
+        :keyword feature_name: This is case-sensitive.
         :paramtype feature_name: str
-        :keyword tags: String representation of a comma-separated list of tag names (and optionally values).
-            (e.g. "tag1,tag2=value2")
+        :keyword tags: String representation of a comma-separated list of tag names, and optionally, values.
+            For example, "tag1,tag2=value2". If provided, only features matching the specified tags are returned.
         :paramtype tags: str
         :return: Feature object
         :rtype: ~azure.ai.ml.entities.Feature

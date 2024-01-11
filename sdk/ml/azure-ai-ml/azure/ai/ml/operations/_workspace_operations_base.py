@@ -11,7 +11,7 @@ from typing import Any, Callable, Dict, MutableMapping, Optional, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningServices as ServiceClient082023Preview
+from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
@@ -654,44 +654,67 @@ class WorkspaceOperationsBase(ABC):
             _set_val(
                 param["spark_runtime_version"], workspace._feature_store_settings.compute_runtime.spark_runtime_version
             )
-            _set_val(
-                param["offline_store_connection_name"],
-                workspace._feature_store_settings.offline_store_connection_name
-                if workspace._feature_store_settings.offline_store_connection_name
-                else "",
-            )
-            _set_val(
-                param["online_store_connection_name"],
-                workspace._feature_store_settings.online_store_connection_name
-                if workspace._feature_store_settings.online_store_connection_name
-                else "",
-            )
+            if workspace._feature_store_settings.offline_store_connection_name:
+                _set_val(
+                    param["offline_store_connection_name"],
+                    workspace._feature_store_settings.offline_store_connection_name,
+                )
+            if workspace._feature_store_settings.online_store_connection_name:
+                _set_val(
+                    param["online_store_connection_name"],
+                    workspace._feature_store_settings.online_store_connection_name,
+                )
 
         if workspace._kind and workspace._kind.lower() == "featurestore":
             materialization_identity = kwargs.get("materialization_identity", None)
             offline_store_target = kwargs.get("offline_store_target", None)
             online_store_target = kwargs.get("online_store_target", None)
 
-            from azure.ai.ml._utils._arm_id_utils import AzureResourceId
+            from azure.ai.ml._utils._arm_id_utils import AzureResourceId, AzureStorageContainerResourceId
 
-            if offline_store_target is not None:
-                arm_id = AzureResourceId(offline_store_target)
-                _set_val(param["offline_store_target"], offline_store_target)
+            if offline_store_target:
+                arm_id = AzureStorageContainerResourceId(offline_store_target)
+                _set_val(param["offlineStoreStorageAccountOption"], "existing")
+                _set_val(param["offline_store_container_name"], arm_id.container)
+                _set_val(param["offline_store_storage_account_name"], arm_id.storage_account)
                 _set_val(param["offline_store_resource_group_name"], arm_id.resource_group_name)
                 _set_val(param["offline_store_subscription_id"], arm_id.subscription_id)
-            if online_store_target is not None:
+            else:
+                _set_val(param["offlineStoreStorageAccountOption"], "new")
+                _set_val(
+                    param["offline_store_container_name"],
+                    _generate_storage_container(workspace.name, resources_being_deployed),
+                )
+                if not workspace.storage_account:
+                    _set_val(param["offline_store_storage_account_name"], param["storageAccountName"]["value"])
+                else:
+                    _set_val(
+                        param["offline_store_storage_account_name"],
+                        _generate_storage(workspace.name, resources_being_deployed),
+                    )
+                _set_val(param["offline_store_resource_group_name"], workspace.resource_group)
+                _set_val(param["offline_store_subscription_id"], self._subscription_id)
+
+            if online_store_target:
                 arm_id = AzureResourceId(online_store_target)
-                _set_val(param["online_store_target"], online_store_target)
+                _set_val(param["online_store_resource_id"], online_store_target)
                 _set_val(param["online_store_resource_group_name"], arm_id.resource_group_name)
                 _set_val(param["online_store_subscription_id"], arm_id.subscription_id)
 
             if materialization_identity:
-                _set_val(param["materialization_identity_resource_id"], materialization_identity.resource_id)
+                arm_id = AzureResourceId(materialization_identity.resource_id)
+                _set_val(param["materializationIdentityOption"], "existing")
+                _set_val(param["materialization_identity_name"], arm_id.asset_name)
+                _set_val(param["materialization_identity_resource_group_name"], arm_id.resource_group_name)
+                _set_val(param["materialization_identity_subscription_id"], arm_id.subscription_id)
             else:
+                _set_val(param["materializationIdentityOption"], "new")
                 _set_val(
                     param["materialization_identity_name"],
-                    f"materialization-uai-{workspace.resource_group}-{workspace.name}",
+                    _generate_materialization_identity(workspace, self._subscription_id, resources_being_deployed),
                 )
+                _set_val(param["materialization_identity_resource_group_name"], workspace.resource_group)
+                _set_val(param["materialization_identity_subscription_id"], self._subscription_id)
 
             if not kwargs.get("grant_materialization_permissions", None):
                 _set_val(param["grant_materialization_permissions"], "false")
@@ -754,7 +777,8 @@ class WorkspaceOperationsBase(ABC):
         param = get_template(resource_type=ArmConstants.FEATURE_STORE_ROLE_ASSIGNMENTS_PARAM)
 
         materialization_identity_id = kwargs.get("materialization_identity_id", None)
-        _set_val(param["materialization_identity_resource_id"], materialization_identity_id)
+        if materialization_identity_id:
+            _set_val(param["materialization_identity_resource_id"], materialization_identity_id)
 
         _set_val(param["workspace_name"], workspace.name)
         resource_group = kwargs.get("resource_group", workspace.resource_group)
@@ -876,6 +900,22 @@ def _generate_storage(name: str, resources_being_deployed: dict) -> str:
     return storage
 
 
+def _generate_storage_container(name: str, resources_being_deployed: dict) -> str:
+    """Generates a name for a storage container resource to be created with workspace based on workspace name,
+    sets name and type in resources_being_deployed.
+
+    :param name: The name for the related workspace.
+    :type name: str
+    :param resources_being_deployed: Dict for resources being deployed.
+    :type resources_being_deployed: dict
+    :return: String for name of storage container
+    :rtype: str
+    """
+    storage_container = get_name_for_dependent_resource(name, "container")
+    resources_being_deployed[storage_container] = (ArmConstants.STORAGE_CONTAINER, None)
+    return storage_container
+
+
 def _generate_log_analytics(name: str, resources_being_deployed: dict) -> str:
     """Generates a name for a log analytics resource to be created with workspace based on workspace name,
     sets name and type in resources_being_deployed.
@@ -935,6 +975,39 @@ def _generate_container_registry(name: str, resources_being_deployed: dict) -> s
         None,
     )
     return con_reg
+
+
+def _generate_materialization_identity(
+    workspace: Workspace, subscription_id: str, resources_being_deployed: dict
+) -> str:
+    """Generates a name for a materialization identity resource to be created
+    with feature store based on workspace information,
+    sets name and type in resources_being_deployed.
+
+    :param workspace: The workspace object.
+    :type workspace: Workspace
+    :param subscription_id: The subscription id
+    :type subscription_id: str
+    :param resources_being_deployed: Dict for resources being deployed.
+    :type resources_being_deployed: dict
+    :return: String for name of materialization identity.
+    :rtype: str
+    """
+    import uuid
+
+    namespace = ""
+    namespace_raw = f"{subscription_id[:12]}_{workspace.resource_group[:12]}_{workspace.location}"
+    for char in namespace_raw.lower():
+        if char.isalpha() or char.isdigit():
+            namespace = namespace + char
+    namespace = namespace.encode("utf-8").hex()
+    namespace = uuid.UUID(namespace[:32].ljust(32, "0"))
+    materialization_identity = f"materialization-uai-" f"{uuid.uuid3(namespace, workspace.name.lower()).hex}"
+    resources_being_deployed[materialization_identity] = (
+        ArmConstants.USER_ASSIGNED_IDENTITIES,
+        None,
+    )
+    return materialization_identity
 
 
 class CustomArmTemplateDeploymentPollingMethod(PollingMethod):

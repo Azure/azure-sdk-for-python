@@ -23,6 +23,7 @@ from azure.ai.ml.entities._credentials import (
 )
 
 from ..._schema import PathAwareSchema
+from ..._utils.utils import is_data_binding_expression
 from ...constants._common import ARM_ID_PREFIX
 from ...constants._component import NodeType
 from .._component.component import Component
@@ -168,7 +169,11 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
 
         self._task = task
 
-        if mini_batch_size is not None and not isinstance(mini_batch_size, int):
+        if (
+            mini_batch_size is not None
+            and not isinstance(mini_batch_size, int)
+            and not is_data_binding_expression(mini_batch_size)
+        ):
             """Convert str to int."""  # pylint: disable=pointless-string-statement
             pattern = re.compile(r"^\d+([kKmMgG][bB])*$")
             if not pattern.match(mini_batch_size):
