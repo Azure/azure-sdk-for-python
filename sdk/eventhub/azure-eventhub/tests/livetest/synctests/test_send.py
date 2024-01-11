@@ -557,3 +557,10 @@ def test_send_with_callback(connstr_receivers, uamqp_transport):
         assert sent_events[-1][1] == "0"
 
         assert not on_error.err
+
+@pytest.mark.parametrize("keep_alive", [None, 30, 60])
+@pytest.mark.liveTest
+def test_send_with_keep_alive(connstr_receivers, keep_alive, uamqp_transport):
+    connection_str, receivers = connstr_receivers
+    client = EventHubProducerClient.from_connection_string(connection_str, keep_alive=keep_alive, uamqp_transport=uamqp_transport)
+    assert client._producers["all_partitions"]._keep_alive == keep_alive

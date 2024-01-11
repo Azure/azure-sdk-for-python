@@ -184,6 +184,7 @@ class EventHubProducerClient(
             network_tracing=kwargs.pop("logging_enable", False),
             **kwargs
         )
+        self._keep_alive = kwargs.get("keep_alive", None)
         self._producers: Dict[str, Optional[EventHubProducer]] = {
             ALL_PARTITIONS: self._create_producer()
         }
@@ -365,6 +366,7 @@ class EventHubProducerClient(
             send_timeout=send_timeout,
             idle_timeout=self._idle_timeout,
             amqp_transport = self._amqp_transport,
+            keep_alive = self._keep_alive,
             **self._internal_kwargs
         )
         return handler
