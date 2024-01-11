@@ -58,8 +58,7 @@ P = ParamSpec("P")
 # Overload the returns a decorator when func is None
 @overload
 def pipeline(
-    # TODO: Bug 2876412
-    func: None = None,
+    func: Optional[Callable[P, T]] = None,
     *,
     name: Optional[str] = None,
     version: Optional[str] = None,
