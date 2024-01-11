@@ -64,21 +64,18 @@ class CodeMetric(Metric):
 
 
 # WIP: This implementation will change
-class LLMMetric(Metric):
+class PromptMetric(Metric):
     def __init__(self, name, parameters, description=None, examples=None, model_config=None):
-        super(LLMMetric, self).__init__(name=name)
+        super(PromptMetric, self).__init__(name=name)
 
         self.parameters = parameters
         self.examples = examples
         self.model_config = model_config
         self.description = description
-        self._prompt = self._build_prompt()
+        self.prompt = self._build_prompt()
 
     def _build_prompt(self):
-        from jinja2 import Template, Environment, FileSystemLoader
-        from jinja2 import meta
-
-        env = Environment()
+        from jinja2 import Template
 
         with importlib.resources.open_text("azure.ai.generative.evaluate.metrics.templates", "custom_metric_base.jinja2", encoding="utf-8") as template_file:
             template = Template(template_file.read())
@@ -93,7 +90,7 @@ class LLMMetric(Metric):
 
     @staticmethod
     def _from_jinja2_template(path, name):
-        from jinja2 import Template, Environment
+        from jinja2 import Environment
         from jinja2 import meta
 
         env = Environment()
@@ -104,27 +101,11 @@ class LLMMetric(Metric):
 
         template_variables = meta.find_undeclared_variables(template)
 
-        metric = LLMMetric(
+        metric = PromptMetric(
             name=name,
             parameters=[param for param in template_variables]
         )
 
-        metric._prompt = template_content
+        metric.prompt = template_content
 
         return metric
-
-    def _to_aml_metric(self, openai_params):
-        from azureml.metrics import AzureMLCustomPromptMetric
-
-        openai_params.update({
-            "max_tokens": 100
-        })
-
-        custom_prompt_config = {
-            "input_vars": self.parameters,
-            "metric_name": self._name,
-            "user_prompt_template": self._prompt,
-            "openai_params": openai_params,
-        }
-
-        return AzureMLCustomPromptMetric(**custom_prompt_config)
