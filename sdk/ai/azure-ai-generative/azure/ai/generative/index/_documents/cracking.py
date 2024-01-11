@@ -128,8 +128,7 @@ class UnstructuredHTMLFileIOLoader(UnstructuredFileIOLoader, BaseDocumentLoader)
         """Initialize a text file loader."""
         self.metadata = metadata
         self.document_source = document_source
-        super().__init__(file=file, mode=mode, **unstructured_kwargs)
-        # TODO: Bug 2878420
+        super().__init__(file=file, **unstructured_kwargs)
 
     def load(self) -> List[Document]:
         """Load file contents into Documents."""
@@ -344,7 +343,7 @@ def crack_documents(sources: Iterator[DocumentSource], file_extension_loaders=fi
     for i, source in enumerate(sources):
         file_start_time = time.time()
         # TODO: Bug 2878422 for all type: ignore in this method
-        files_by_extension[source.path.suffix.lower()] += 1
+        files_by_extension[source.path(Path).suffix.lower()] += 1
         loader_cls = file_extension_loaders.get(source.path.suffix.lower())
         if i % log_batch_size == 0:
             for ext in files_by_extension:
