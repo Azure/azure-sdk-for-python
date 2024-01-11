@@ -39,6 +39,10 @@ def df_to_dict_list(df, extra_kwargs: Dict = None):
 def run_pf_flow_with_dict_list(flow_path, data: List[Dict], flow_params=None):
     from promptflow import PFClient
 
+
+    columns = data[0].keys()
+    column_mapping = {col: f"${{data.{col}}}" for col in columns} # e.g. {"question": "${data.question}"}
+
     with tempfile.TemporaryDirectory() as tmpdir:
         tmp_path = os.path.join(tmpdir, "test_data.jsonl")
         with open(tmp_path, "w") as f:
@@ -53,6 +57,7 @@ def run_pf_flow_with_dict_list(flow_path, data: List[Dict], flow_params=None):
         return pf_client.run(
             flow=flow_path,
             data=tmp_path,
+            column_mapping=column_mapping,
             **flow_params
         )
 
