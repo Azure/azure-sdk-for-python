@@ -8,6 +8,7 @@ import datetime
 import sys
 from typing import (
     Any,
+    AsyncContextManager,
     Iterable,
     Iterator,
     Mapping,
@@ -164,11 +165,11 @@ class CaseInsensitiveDict(MutableMapping[str, Any]):
         return str(dict(self.items()))
 
 
-def get_running_async_lock() -> Any:
+def get_running_async_lock() -> AsyncContextManager:
     """Get the name of the async library that the current context is running under.
 
     :return: An instance of the running async library's Lock class.
-    :rtype: Any
+    :rtype: AsyncContextManager
     :raises: RuntimeError if the current context is not running under an async library.
     """
 
