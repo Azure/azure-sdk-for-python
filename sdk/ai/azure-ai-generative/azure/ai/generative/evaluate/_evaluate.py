@@ -28,9 +28,10 @@ from azure.ai.generative.evaluate._mlflow_log_collector import RedirectUserOutpu
 from azure.ai.generative.evaluate._constants import SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING, SUPPORTED_TASK_TYPE, CHAT, \
     TYPE_TO_KWARGS_MAPPING, TASK_TYPE_TO_METRICS_MAPPING, SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING
 from azure.ai.generative.evaluate._evaluation_result import EvaluationResult
+from ._metrics_handler._prompt_metric_handler import PromptMetricHandler
 
 from ._utils import _write_properties_to_run_history
-from .metrics.custom_metric import LLMMetric, CodeMetric
+from .metrics.custom_metric import CodeMetric, PromptMetric
 
 LOGGER = logging.getLogger(__name__)
 
@@ -46,6 +47,7 @@ def _get_handler_class(
         handler = LocalCodeHandler
 
     return handler
+
 
 def _get_metric_handler_class(
         asset,
@@ -264,11 +266,33 @@ def _evaluate(
         if metrics is None:
             metrics = SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING[task_type].DEFAULT_LIST
 
-        inbuilt_metrics = [metric for metric in metrics if not isinstance(metric, (LLMMetric, CodeMetric))]
-        custom_prompt_metrics = [metric for metric in metrics if isinstance(metric, LLMMetric)]
+        inbuilt_metrics = [metric for metric in metrics if not isinstance(metric, (PromptMetric, CodeMetric))]
+        custom_prompt_metrics = [metric for metric in metrics if isinstance(metric, PromptMetric)]
         code_metrics = [metric for metric in metrics if isinstance(metric, CodeMetric)]
 
         # TODO : Once PF is used for inbuilt metrics parallelize submission of metrics calculation of different kind
+
+        if custom_prompt_metrics:
+            for metric in custom_prompt_metrics:
+                metrics_config.setdefault(metric.name, {param: param for param in metric.parameters})
+
+            prompt_metric_handler = PromptMetricHandler(
+                task_type="custom-prompt-metric",
+                metrics=custom_prompt_metrics,
+                prediction_data=asset_handler.prediction_data,
+                truth_data=asset_handler.ground_truth,
+                test_data=asset_handler.test_data,
+                metrics_mapping=metrics_config,
+                prediction_data_column_name=prediction_data if isinstance(prediction_data, str) else None,
+                ground_truth_column_name=truth_data if isinstance(truth_data, str) else None,
+                type_to_kwargs="custom-prompt-metric"
+            )
+
+            prompt_metric_results = prompt_metric_handler.calculate_metrics()
+
+            if prompt_metric_results is not None:
+                for k, v in metrics_results.items():
+                    v.update(prompt_metric_results[k])
 
         if code_metrics:
             code_metric_handler = CodeMetricHandler(
@@ -337,7 +361,9 @@ def _evaluate(
                     else:
                         raise ex
 
-            eval_artifact_df = _get_instance_table(metrics_results, task_type, asset_handler).to_json(orient="records", lines=True, force_ascii=False)
+            eval_artifact_df = _get_instance_table(metrics_results, task_type, asset_handler).to_json(orient="records",
+                                                                                                      lines=True,
+                                                                                                      force_ascii=False)
             tmp_path = os.path.join(tmpdir, "eval_results.jsonl")
 
             with open(tmp_path, "w", encoding="utf-8") as f:

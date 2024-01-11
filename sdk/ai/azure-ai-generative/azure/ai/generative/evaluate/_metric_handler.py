@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 from azure.ai.generative.evaluate._constants import TYPE_TO_KWARGS_MAPPING
 from azure.ai.generative.evaluate._constants import TASK_TYPE_TO_METRICS_MAPPING
-from azure.ai.generative.evaluate.metrics.custom_metric import LLMMetric, CodeMetric
+from azure.ai.generative.evaluate.metrics.custom_metric import CodeMetric
 
 LOGGER = logging.getLogger(__name__)
 
@@ -43,17 +43,6 @@ class MetricHandler(object):
     def _get_data_for_metrics(self):
         metrics_mapping = copy.deepcopy(self.metrics_mapping)
         metrics_mapping_to_log = {}
-
-        # if self.prediction_data_column_name:
-        #     metrics_mapping.update(
-        #         {"y_pred": self.prediction_data_column_name}
-        #     )
-        #
-        # if self.ground_truth_column_name:
-        #     metrics_mapping.update(
-        #         {"y_test": self.ground_truth_column_name}
-        #     )
-
         metrics_data = {}
         data_mapping = metrics_mapping["data_mapping"]
         data_columns = self._type_to_kwargs
@@ -76,10 +65,6 @@ class MetricHandler(object):
                             data_column: data_source[data_mapping[data_column]].values.tolist()
                         }
                     )
-                # popped_value = data_mapping.pop(data_column, None)
-                # metrics_mapping_to_log[data_column] = popped_value
-
-        # metrics_data.update(metrics_mapping)
 
         self._metrics_mapping_to_log = metrics_mapping_to_log
 
@@ -132,7 +117,7 @@ class CodeMetricHandler(MetricHandler):
             ground_truth_column_name=ground_truth_column_name,
             metrics_mapping=metrics_mapping,
             metrics=metrics,
-            type_to_kwargs="test",
+            type_to_kwargs=type_to_kwargs,
         )
 
         self._validate()
@@ -147,14 +132,13 @@ class CodeMetricHandler(MetricHandler):
         metrics_dict = {"artifacts": {}, "metrics": {}}
         metric_results_futures = {}
         with tqdm(total=len(self.metrics)) as progress_bar:
-            with ThreadPoolExecutor(thread_name_prefix="CodeMetrics_Metrics") as thread_pool:
+            with ThreadPoolExecutor(thread_name_prefix="code_metrics") as thread_pool:
                 for metric in self.metrics:
                     metric_values = []
                     metric_results_futures.update({metric.name: thread_pool.submit(
                         self._calculate_metric, metric, self.test_data.to_dict('records'),
                         self.prediction_data.to_dict('records') if self.prediction_data is not None else None
-                    )}
-                    )
+                    )})
 
                 for metric_name, metric_result_future in metric_results_futures.items():
                     try:
@@ -164,7 +148,6 @@ class CodeMetricHandler(MetricHandler):
                             metrics_dict["metrics"].update(metric_result["metrics"])
                         progress_bar.update(1)
                     except Exception as ex:
-                        # print(ex)
                         progress_bar.update(1)
                         LOGGER.info(f"Error calculating value for {metric_name}, failed with error {str(ex)} : Stack trace : {str(ex.__traceback__)}")
 
@@ -176,7 +159,7 @@ class CodeMetricHandler(MetricHandler):
         row_metric_result = []
         aggregated_metrics = None
 
-        with ThreadPoolExecutor(thread_name_prefix="CodeMetrics_Metrics_Row") as thread_pool:
+        with ThreadPoolExecutor(thread_name_prefix="code_metrics_row") as thread_pool:
             for i in range(0, len(data)):
                 row_metric_futures.append(thread_pool.submit(
                     metric.calculate, data[i], response[i]
@@ -197,5 +180,5 @@ class CodeMetricHandler(MetricHandler):
             "metrics": aggregated_metrics
         }
 
-    # def _calculate_metric(self, metric, data, response):
-    #     with ThreadPoolExecutor()
+
+
