@@ -41,7 +41,7 @@ steps:
 
   - pwsh: |
       $(Build.SourcesDirectory)/eng/common/scripts/Generate-PR-Diff.ps1 -ArtifactPath $(Build.ArtifactStagingDirectory)/BlastRadius/ -TargetPath sdk/
-      cat $(Build.ArtifactStagingDirectory)/BlastRadius/diff.txt
+      cat $(Build.ArtifactStagingDirectory)/BlastRadius/diff.json
     displayName: Calculate Blast Radius
 
   - script: |
