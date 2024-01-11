@@ -61,7 +61,7 @@ def _get_match_headers(
     kwargs: Dict[str, Any],
     match_param: str,
     etag_param: str
-) -> Tuple[Optional[Any], Optional[str]]:
+) -> Tuple[Optional[str], Optional[Any]]:
     if_match = None
     if_none_match = None
     match_condition = kwargs.pop(match_param, None)
@@ -188,18 +188,17 @@ def serialize_query_format(formater: Union[str, DelimitedJsonDialect]) -> Option
             headers = False
         if isinstance(formater, str):
             raise ValueError("Unknown string value provided. Accepted values: ParquetDialect")
-        else:
-            csv_serialization_settings = DelimitedTextConfiguration(
-                column_separator=formater.delimiter,
-                field_quote=formater.quotechar,
-                record_separator=formater.lineterminator,
-                escape_char=formater.escapechar,
-                headers_present=headers
-            )
-            qq_format = QueryFormat(
-                type=QueryFormatType.DELIMITED,
-                delimited_text_configuration=csv_serialization_settings
-            )
+        csv_serialization_settings = DelimitedTextConfiguration(
+            column_separator=formater.delimiter,
+            field_quote=formater.quotechar,
+            record_separator=formater.lineterminator,
+            escape_char=formater.escapechar,
+            headers_present=headers
+        )
+        qq_format = QueryFormat(
+            type=QueryFormatType.DELIMITED,
+            delimited_text_configuration=csv_serialization_settings
+        )
     elif isinstance(formater, list):
         arrow_serialization_settings = ArrowConfiguration(schema=formater)
         qq_format = QueryFormat(type=QueryFormatType.arrow, arrow_configuration=arrow_serialization_settings)

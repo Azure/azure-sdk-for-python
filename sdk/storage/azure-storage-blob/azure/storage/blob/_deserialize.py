@@ -71,7 +71,7 @@ def deserialize_ors_policies(policy_dictionary: Optional[Dict[str, str]]) -> Opt
     or_policy_status_headers = {key: val for key, val in policy_dictionary.items()
                                 if 'or-' in key and key != 'x-ms-or-policy-id'}
 
-    parsed_result = {}
+    parsed_result: Dict[str, List[ObjectReplicationRule]] = {}
 
     for key, val in or_policy_status_headers.items():
         # list blobs gives or-policy_rule and get blob properties gives x-ms-or-policy_rule
@@ -137,7 +137,7 @@ def service_stats_deserialize(generated: "StorageServiceStats") -> Dict[str, Any
 def service_properties_deserialize(generated: "StorageServiceProperties") -> Dict[str, Any]:
     cors_list = None
     if generated.cors is not None:
-        cors_list = [CorsRule._from_generated(cors) for cors in generated.cors]
+        cors_list = [CorsRule._from_generated(cors) for cors in generated.cors]  # pylint: disable=protected-access
     return {
         'analytics_logging': BlobAnalyticsLogging._from_generated(generated.logging),  # pylint: disable=protected-access
         'hour_metrics': Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
@@ -211,11 +211,14 @@ def load_single_xml_node(element: Element, name: str) -> Optional[Element]:
 def load_many_xml_nodes(
     element: Element,
     name: str,
-    wrapper: Element = None
+    wrapper: Optional[str] = None
 ) -> List[Optional[Element]]:
+    found_element: Optional[Element] = element
     if wrapper:
-        element = load_single_xml_node(element, wrapper)
-    return list(element.findall(name))
+        found_element = load_single_xml_node(element, wrapper)
+    if found_element is None:
+        return []
+    return list(found_element.findall(name))
 
 
 def load_xml_string(element: Element, name: str) -> Optional[str]:
