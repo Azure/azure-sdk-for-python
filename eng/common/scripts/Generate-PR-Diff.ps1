@@ -50,5 +50,6 @@ $result = [PSCustomObject]@{
 }
 
 Write-Host $result
+Write-Host "Trying to write to $ArtifactName"
 
 $result | ConvertTo-Json | Out-File $ArtifactName
