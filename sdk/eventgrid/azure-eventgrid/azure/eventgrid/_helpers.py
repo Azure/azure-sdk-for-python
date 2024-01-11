@@ -27,13 +27,12 @@ from ._generated.models import (
 if TYPE_CHECKING:
     from datetime import datetime
 
-def generate_sas( # pylint: disable=unused-argument
+def generate_sas(
     endpoint: str,
     shared_access_key: str,
     expiration_date_utc: "datetime",
     *,
     api_version: str = constants.DEFAULT_API_VERSION,
-    **kwargs: Any
 ) -> str:
     """Helper method to generate shared access signature given hostname, key, and expiration date.
     :param str endpoint: The topic endpoint to send the events to.
