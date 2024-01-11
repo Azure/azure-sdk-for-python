@@ -1,10 +1,16 @@
 # Release History
 
-## 12.4.5 (Unreleased)
+## 12.5.1 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 12.5.0 (2024-01-10)
 
 ### Bugs Fixed
 * Fixed issue in serializing EntityProperty tuples where a value of None could be serialized as the string "None".
