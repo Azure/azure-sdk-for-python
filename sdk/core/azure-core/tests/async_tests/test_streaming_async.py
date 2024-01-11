@@ -180,7 +180,26 @@ async def test_decompress_compressed_header(http_request):
         decoded = content.decode("utf-8")
         assert decoded == "test"
 
-
+@pytest.mark.asyncio
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_compress_compressed_no_header_offline(port, http_request):
+    # expect compressed text
+    client = AsyncPipelineClient("")
+    async with client:
+        request = http_request(method="GET", url="http://localhost:{}/streams/compressed_no_header".format(port))
+        pipeline_response = await client._pipeline.run(request,stream=True)
+        response = pipeline_response.http_response
+        data = response.stream_download(client._pipeline,decompress=False)
+        content = b""
+        async for d in data:
+            content += d
+        try:
+            decoded = content.decode("utf-8")
+            assert False
+        except UnicodeDecodeError:
+            pass  
+        
+              
 @pytest.mark.live_test_only
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
