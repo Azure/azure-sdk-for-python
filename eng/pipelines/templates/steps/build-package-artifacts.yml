@@ -74,6 +74,8 @@ steps:
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
     displayName: 'Generate Packages'
     condition: succeededOrFailed()
+    env:
+      CIBW_BUILD_VERBOSITY: 3
 
   - script: |
       pip install twine==4.0.2
