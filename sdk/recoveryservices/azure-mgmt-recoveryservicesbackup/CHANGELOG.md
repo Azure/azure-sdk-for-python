@@ -1,5 +1,17 @@
 # Release History
 
+## 8.0.0 (2024-01-22)
+
+### Features Added
+
+  - Model AzureVmWorkloadSAPHanaDBInstanceProtectedItem has a new parameter vault_id
+  - Model BackupStatusResponse has a new parameter acquire_storage_account_lock
+  - Model BackupStatusResponse has a new parameter protected_items_count
+
+### Breaking Changes
+
+  - Renamed operation ProtectionContainersOperations.register to ProtectionContainersOperations.begin_register
+
 ## 7.0.0 (2023-09-18)
 
 ### Features Added
