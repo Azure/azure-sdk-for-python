@@ -137,7 +137,7 @@ def service_stats_deserialize(generated: "StorageServiceStats") -> Dict[str, Any
 def service_properties_deserialize(generated: "StorageServiceProperties") -> Dict[str, Any]:
     cors_list = None
     if generated.cors is not None:
-        cors_list = [CorsRule._from_generated(cors) for cors in generated.cors]
+        cors_list = [CorsRule._from_generated(cors) for cors in generated.cors]  # pylint: disable=protected-access
     return {
         'analytics_logging': BlobAnalyticsLogging._from_generated(generated.logging),  # pylint: disable=protected-access
         'hour_metrics': Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access

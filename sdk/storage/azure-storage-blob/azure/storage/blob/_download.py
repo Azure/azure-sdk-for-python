@@ -9,8 +9,11 @@ import threading
 import time
 import warnings
 from io import BytesIO
-from typing import Any, Callable, cast, Dict, Generator, Generic, IO, Iterator, List, Optional, Tuple, TypeVar, Union, TYPE_CHECKING
-from typing_extensions import Protocol
+from typing import (
+    Any, Callable, cast, Dict, Generator,
+    Generic, IO, Iterator, List, Optional,
+    Tuple, TypeVar, TYPE_CHECKING
+)
 
 from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError
 from azure.core.tracing.common import with_current_context
