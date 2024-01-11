@@ -900,7 +900,6 @@ class EmbeddingsContainer:
         if hasattr(input_documents, "__module__") and "langchain" in input_documents.__module__ and "document_loaders" in input_documents.__module__:
             input_documents = iter([WrappedLangChainDocument(d)
                                    for d in input_documents.load()])
-            # TODO: Bug 2879186
         elif isinstance(input_documents, DocumentChunksIterator):
             flattened_docs: List = []
             for chunked_doc in input_documents:
