@@ -7,7 +7,6 @@ from azure.cosmos.aio import CosmosClient
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
-from azure.core import MatchConditions
 import datetime
 
 import asyncio
