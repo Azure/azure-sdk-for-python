@@ -343,7 +343,7 @@ def crack_documents(sources: Iterator[DocumentSource], file_extension_loaders=fi
     for i, source in enumerate(sources):
         file_start_time = time.time()
         # TODO: Bug 2878422 for all type: ignore in this method
-        files_by_extension[source.path.suffix.lower()] += 1
+        files_by_extension[Union[Path, source.path].suffix.lower()] += 1
         loader_cls = file_extension_loaders.get(source.path.suffix.lower())
         if i % log_batch_size == 0:
             for ext in files_by_extension:
