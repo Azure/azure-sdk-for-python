@@ -8,10 +8,7 @@ import hashlib
 import hmac
 import base64
 
-try:
-    from urllib.parse import quote
-except ImportError:
-    from urllib2 import quote  # type: ignore
+from urllib.parse import quote
 
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
