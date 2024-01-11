@@ -9,4 +9,5 @@ verifysdist = false
 verifywhl = false
 
 [tool.cibuildwheel]
-skip = ["*-musllinux*", "pp*"]
+build = ["cp38*", "cp39*", "cp310*", "cp311*", "cp312*", "pp39*", "pp310*"]
+skip = ["*-musllinux*"]
