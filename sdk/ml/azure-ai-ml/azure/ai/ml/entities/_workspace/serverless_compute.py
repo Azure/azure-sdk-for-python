@@ -36,7 +36,7 @@ class ServerlessComputeSettings:
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, ServerlessComputeSettings):
-            return NotImplemented
+            return False
         return self.custom_subnet == other.custom_subnet and self.no_public_ip == other.no_public_ip
 
     def _to_rest_object(self) -> RestServerlessComputeSettings:
