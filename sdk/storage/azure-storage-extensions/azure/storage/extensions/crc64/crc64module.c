@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #define Py_LIMITED_API 3
 
@@ -5,7 +7,7 @@
 #include "crc64.h"
 
 static PyMethodDef crc64_methods[] = {
-    { "compute_crc64", (PyCFunction)compute_crc64, METH_VARARGS, "Compute Storage CRC64 over given data." },
+    { "compute_crc64", (PyCFunction)compute_crc64, METH_VARARGS, "Compute Storage CRC64 over given data with given initial CRC64 value."},
     { NULL, NULL, 0, NULL }
 };
 
@@ -17,6 +19,7 @@ static PyModuleDef crc64_module = {
     crc64_methods
 };
 
-PyMODINIT_FUNC PyInit_crc64() {
+PyMODINIT_FUNC
+PyInit_crc64() {
     return PyModule_Create(&crc64_module);
 }
