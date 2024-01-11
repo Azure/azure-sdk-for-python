@@ -13,7 +13,7 @@
 - Implement distro detection for statsbeat feature
     ([#33761](https://github.com/Azure/azure-sdk-for-python/pull/33761))
 - Fix siteName in diagnostic logging
-    ([#XXXXX](https://github.com/Azure/azure-sdk-for-python/pull/XXXXX))
+    ([#33808](https://github.com/Azure/azure-sdk-for-python/pull/33808))
 
 ## 1.1.1 (2023-12-04)
 
