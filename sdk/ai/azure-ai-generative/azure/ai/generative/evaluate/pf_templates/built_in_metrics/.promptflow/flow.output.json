@@ -1,9 +1,0 @@
-{
-  "ada_similarity": NaN,
-  "f1_score": NaN,
-  "gpt_coherence": 5.0,
-  "gpt_fluency": NaN,
-  "gpt_groundedness": 5.0,
-  "gpt_relevance": 5.0,
-  "gpt_similarity": NaN
-}
