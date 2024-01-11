@@ -351,6 +351,9 @@ class ScheduleOperations(_ScopeDependentOperations):
                     for inputs in signal.inputs.values():
                         self._job_operations._resolve_job_input(inputs, schedule._base_path)
                 for data in signal.input_data.values():
+                    if data.input_data is not None:
+                        for inputs in data.input_data.values():
+                            self._job_operations._resolve_job_input(inputs, schedule._base_path)
                     data.pre_processing_component = self._orchestrators.get_asset_arm_id(
                         asset=data.pre_processing_component if hasattr(data, "pre_processing_component") else None,
                         azureml_type=AzureMLResourceType.COMPONENT,
