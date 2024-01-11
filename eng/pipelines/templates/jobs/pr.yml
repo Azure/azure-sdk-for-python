@@ -1,0 +1,23 @@
+pr:
+  branches:
+    include:
+      - main
+      - feature/*
+      - release/*
+      - hotfix/*
+
+variables:
+  - template: ../variables/globals.yml
+  - name: Warn
+    ${{ if parameters.NoWarn }}:
+      value: ''
+    ${{ if not(parameters.NoWarn) }}:
+      value: -warnaserror
+  # A path to directory to contain the output of "dotnet pack" call,
+  # to be consumed as input by "publish" task.
+  - name: packagesToPublishDir
+    value: $(Build.ArtifactStagingDirectory)/packages
+
+stages:
+  - stage: BuildTestAndPackage
+    

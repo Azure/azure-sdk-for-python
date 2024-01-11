@@ -262,3 +262,4 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
         finally:
             self.clean_up(client.delete_datasource_credential, variables, key="credential_id")
         return variables
+
