@@ -94,7 +94,7 @@ setup(
             "azureml-fsspec>=1",
             "azureml-mlflow",
             "fsspec>=2023.3",
-            "openai>=0.27.8,<1",
+            "openai>=0.27.8",
             "tiktoken>=0.3,<1",
             "mmh3",
             "requests",
@@ -114,7 +114,7 @@ setup(
             "promptflow-vectordb"
         ],
         "qa_generation": [
-            "openai>=0.27.8,<1"
+            "openai>=0.27.8"
         ],
         "simulator": [
             "aiohttp>=3.8.5",
