@@ -46,7 +46,7 @@ $changedServices = Get-ChangedServices -ChangedFiles $changedFiles
 $result = [PSCustomObject]@{
     "ChangedFiles" = $changedFiles
     "ChangedServices" = $changedServices
-    "PRNumber" = $env:SYSTEM_PULLREQUEST_PULLREQUESTID
+    "PRNumber" = $env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER
 }
 
 Write-Host $result
