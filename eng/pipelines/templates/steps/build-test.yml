@@ -27,11 +27,6 @@ steps:
       gci -r $(Build.ArtifactStagingDirectory)
     displayName: Dump Artifact Directory
 
-  - pwsh: |
-      $(Build.SourcesDirectory)/eng/common/scripts/Generate-PR-Diff.ps1 $(Build.ArtifactStagingDirectory)/BlastRadius/ sdk/
-      cat $(Build.ArtifactStagingDirectory)/BlastRadius/diff.txt
-    displayName: Calculate Blast Radius
-
   - template: /eng/pipelines/templates/steps/use-python-version.yml
     parameters:
       versionSpec: '${{ parameters.PythonVersion }}'

@@ -39,6 +39,11 @@ steps:
 
   - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
 
+  - pwsh: |
+      $(Build.SourcesDirectory)/eng/common/scripts/Generate-PR-Diff.ps1 $(Build.ArtifactStagingDirectory)/BlastRadius/ sdk/
+      cat $(Build.ArtifactStagingDirectory)/BlastRadius/diff.txt
+    displayName: Calculate Blast Radius
+
   - script: |
       echo "##vso[build.addbuildtag]Scheduled"
     displayName: 'Tag scheduled builds'

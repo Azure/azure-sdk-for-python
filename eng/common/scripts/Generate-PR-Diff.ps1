@@ -16,7 +16,7 @@ Param (
   [Parameter(Mandatory=$True)]
   [string] $ArtifactPath,
   [Parameter(Mandatory=$True)]
-  [string] $TargetPath,
+  [string] $TargetPath
 )
 
 . (Join-Path $PSScriptRoot "Helpers" git-helpers.ps1)
