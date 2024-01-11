@@ -17,7 +17,7 @@ from azure.communication.phonenumbers._generated.models import PhoneNumberOperat
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
 from phone_numbers_testcase import PhoneNumbersTestCase
 
-SKIP_PURCHASE_PHONE_NUMBER_TESTS = True
+SKIP_PURCHASE_PHONE_NUMBER_TESTS = False
 PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON = "Phone numbers shouldn't be purchased in live tests"
 
 SKIP_INT_PHONE_NUMBER_TESTS = os.getenv(
