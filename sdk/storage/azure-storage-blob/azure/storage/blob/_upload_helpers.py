@@ -247,7 +247,7 @@ def upload_page_blob(
         response = cast(Dict[str, Any],client.create(
             content_length=0,
             blob_content_length=length,
-            blob_sequence_number=0,
+            blob_sequence_number=None,  # type: ignore [arg-type]
             blob_http_headers=kwargs.pop('blob_headers', None),
             blob_tags_string=blob_tags_string,
             tier=tier,
