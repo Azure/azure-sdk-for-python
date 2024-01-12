@@ -705,8 +705,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :caption: Getting the container client to interact with a specific container.
         """
         if isinstance(container, ContainerProperties):
-            if container.name is not None:
-                container_name = container.name
+            container_name = container.name
         else:
             container_name = container
         _pipeline = Pipeline(
@@ -760,19 +759,19 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 "Please use 'BlobProperties.name' or any other str input type instead.",
                 DeprecationWarning
             )
-        try:
+        if isinstance(container, ContainerProperties):
             container_name = container.name
-        except AttributeError:
+        else:
             container_name = container
-        try:
+        if hasattr(blob, 'name'):
             blob_name = blob.name
-        except AttributeError:
+        else:
             blob_name = blob
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
-        return BlobClient( # type: ignore
+        return BlobClient(
             self.url, container_name=container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
