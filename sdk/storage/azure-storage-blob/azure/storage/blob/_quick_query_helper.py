@@ -5,10 +5,13 @@
 # --------------------------------------------------------------------------
 
 from io import BytesIO
-from typing import Any, Dict, Generator, IO, Iterable, Optional, Union
+from typing import Any, Dict, Generator, IO, Iterable, Optional, Union, TYPE_CHECKING
 
 from ._shared.avro.avro_io import DatumReader
 from ._shared.avro.datafile import DataFileReader
+
+if TYPE_CHECKING:
+    from ._models import BlobQueryError
 
 
 class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
@@ -30,10 +33,10 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
         container: str = None,  # type: ignore [assignment]
         errors: Any = None,
         record_delimiter: str = '\n',
-        encoding: Any = None,
+        encoding: Optional[str] = None,
         headers: Dict[str, Any] = None,  # type: ignore [assignment]
         response: Any = None,
-        error_cls = None,
+        error_cls: "BlobQueryError" = None,  # type: ignore [assignment]
     ) -> None:
         self.name = name
         self.container = container
