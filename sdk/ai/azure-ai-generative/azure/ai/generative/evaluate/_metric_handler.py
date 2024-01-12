@@ -116,8 +116,13 @@ class MetricHandler(object):
         }
         nodes_list = ["gpt_coherence", "gpt_similarity", "gpt_relevance", "gpt_fluency", "gpt_groundedness"]
 
-        pf_run = run_pf_flow_with_dict_list(flow_path, dict_list, flow_params={"connections": {node: connection_override for node in nodes_list}})
+        import time
 
+        start = time.time()
+        pf_run = run_pf_flow_with_dict_list(flow_path, dict_list, flow_params={"connections": {node: connection_override for node in nodes_list}})
         wait_for_pf_run_to_complete(pf_run.name)
+        end = time.time()
+
+        print(f"Time taken for PF run: {end - start}")
 
         return pf_run.name

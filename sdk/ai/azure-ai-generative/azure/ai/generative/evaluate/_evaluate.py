@@ -254,8 +254,8 @@ def _evaluate(
     if "y_test" in data_mapping:
         truth_data = data_mapping.get("y_test")
 
-    if target is None and prediction_data is None:
-        raise Exception("target and prediction data cannot be null")
+    # if target is None and prediction_data is None:
+    #     raise Exception("target and prediction data cannot be null")
 
     if task_type not in SUPPORTED_TASK_TYPE:
         raise Exception(f"task type {task_type} is not supported")

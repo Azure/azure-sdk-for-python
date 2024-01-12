@@ -13,6 +13,9 @@ class BaseHandler(metaclass=abc.ABCMeta):
         self.asset = asset
 
         test_data_df = pd.DataFrame(test_data)
+        if self.asset is None:
+            self._input_output_data = test_data_df
+            self._prediction_data = test_data_df
 
         if isinstance(prediction_data, str) and prediction_data in test_data_df.columns:
             self._prediction_data = test_data_df[[prediction_data]]
