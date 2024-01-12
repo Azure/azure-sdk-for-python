@@ -32,7 +32,7 @@ from azure.ai.generative.evaluate._evaluation_result import EvaluationResult
 from ._metrics_handler._prompt_metric_handler import PromptMetricHandler
 
 from ._utils import _write_properties_to_run_history
-from .metrics.custom_metric import CodeMetric, PromptMetric
+from .metrics._custom_metric import CodeMetric, PromptMetric
 
 LOGGER = logging.getLogger(__name__)
 

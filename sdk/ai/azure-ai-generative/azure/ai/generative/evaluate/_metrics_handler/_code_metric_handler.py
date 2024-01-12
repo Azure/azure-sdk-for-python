@@ -9,7 +9,7 @@ from concurrent.futures.thread import ThreadPoolExecutor
 from numpy import NaN
 
 from .._metric_handler import MetricHandler
-from ..metrics.custom_metric import CodeMetric
+from ..metrics._custom_metric import CodeMetric
 
 LOGGER = logging.getLogger(__name__)
 
