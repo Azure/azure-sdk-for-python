@@ -34,7 +34,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
 ):  # pylint: disable=name-too-long
     @distributed_trace
     def begin_build_classifier(
-        self, build_request: Union[_models.BuildDocumentClassifierRequest, JSON, IO], **kwargs: Any
+        self, build_request: Union[_models.BuildDocumentClassifierRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.DocumentClassifierDetails]:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -92,7 +92,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
 
     @distributed_trace
     def begin_build_document_model(
-        self, build_request: Union[_models.BuildDocumentModelRequest, JSON, IO], **kwargs: Any
+        self, build_request: Union[_models.BuildDocumentModelRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.DocumentModelDetails]:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -150,7 +150,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
 
     @distributed_trace
     def begin_compose_model(
-        self, compose_request: Union[_models.ComposeDocumentModelRequest, JSON, IO], **kwargs: Any
+        self, compose_request: Union[_models.ComposeDocumentModelRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.DocumentModelDetails]:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -208,7 +208,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
 
     @distributed_trace
     def begin_copy_model_to(
-        self, model_id: str, copy_to_request: Union[_models.CopyAuthorization, JSON, IO], **kwargs: Any
+        self, model_id: str, copy_to_request: Union[_models.CopyAuthorization, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.DocumentModelDetails]:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
