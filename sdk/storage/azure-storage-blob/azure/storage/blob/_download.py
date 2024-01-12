@@ -9,8 +9,11 @@ import threading
 import time
 import warnings
 from io import BytesIO
-from typing import Any, Callable, Dict, Generator, Generic, IO, Iterator, List, Optional, Tuple, TypeVar, Union, TYPE_CHECKING
-from typing_extensions import Protocol
+from typing import (
+    Any, Callable, cast, Dict, Generator,
+    Generic, IO, Iterator, List, Optional,
+    Tuple, TypeVar, TYPE_CHECKING
+)
 
 from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError
 from azure.core.tracing.common import with_current_context
@@ -40,7 +43,7 @@ T = TypeVar('T', bytes, str)
 def process_range_and_offset(
     start_range: int,
     end_range: int,
-    length: int,
+    length: Optional[int],
     encryption_options: Dict[str, Any],
     encryption_data: Optional["_EncryptionData"]
 ) -> Tuple[Tuple[int, int], Tuple[int, int]]:
@@ -55,7 +58,7 @@ def process_range_and_offset(
     return (start_range, end_range), (start_offset, end_offset)
 
 
-def process_content(data: Iterator[bytes], start_offset: int, end_offset: int, encryption: Dict[str, Any]) -> bytes:
+def process_content(data: Any, start_offset: int, end_offset: int, encryption: Dict[str, Any]) -> bytes:
     if data is None:
         raise ValueError("Response cannot be None.")
 
@@ -80,17 +83,17 @@ def process_content(data: Iterator[bytes], start_offset: int, end_offset: int, e
 class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
-        client: "BlobOperations",
-        non_empty_ranges: List,
-        total_size: int,
-        chunk_size: int,
-        current_progress: int,
-        start_range: int,
-        end_range: int,
-        validate_content: bool,
-        stream=None,
+        client: "BlobOperations" = None,  # type: ignore [assignment]
+        non_empty_ranges: Optional[List[Dict[str, Any]]] = None,
+        total_size: int = None,  # type: ignore [assignment]
+        chunk_size: int = None,  # type: ignore [assignment]
+        current_progress: int = None,  # type: ignore [assignment]
+        start_range: int = None,  # type: ignore [assignment]
+        end_range: int = None,  # type: ignore [assignment]
+        validate_content: bool = None,  # type: ignore [assignment]
+        stream = None,
         parallel: Optional[int] = None,
-        encryption_options: Optional[Dict[str, Any]] = None,
+        encryption_options: Dict[str, Any] = None,  # type: ignore [assignment]
         encryption_data: Optional["_EncryptionData"] = None,
         progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
         **kwargs: Any
@@ -214,6 +217,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
             retry_active = True
             retry_total = 3
             while retry_active:
+                response: Any = None
                 try:
                     _, response = self.client.download(
                         range=range_header,
@@ -238,7 +242,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
             # This makes sure that if_match is set so that we can validate
             # that subsequent downloads are to an unmodified blob
             if self.request_options.get("modified_access_conditions"):
-                self.request_options["modified_access_conditions"].if_match = response.properties.etag  #type: ignore
+                self.request_options["modified_access_conditions"].if_match = response.properties.etag
 
         return chunk_data
 
@@ -246,12 +250,12 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
 class _ChunkIterator(object):
     """Iterator for chunks in blob download stream."""
 
-    def __init__(self, size: int, content: bytes, downloader: _ChunkDownloader, chunk_size: int) -> None:
+    def __init__(self, size: int, content: bytes, downloader: Optional[_ChunkDownloader], chunk_size: int) -> None:
         self.size = size
         self._chunk_size = chunk_size
         self._current_content = content
         self._iter_downloader = downloader
-        self._iter_chunks = None
+        self._iter_chunks: Optional[Generator[int, None, None]] = None
         self._complete = (size == 0)
 
     def __len__(self) -> int:
@@ -304,11 +308,11 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
     A streaming object to download from Azure Storage.
     """
 
-    name: Optional[str]
+    name: str
     """The name of the blob being downloaded."""
-    container: Optional[str]
+    container: str
     """The name of the container where the blob is."""
-    properties: Optional["BlobProperties"]
+    properties: "BlobProperties"
     """The properties of the blob being downloaded. If only a range of the data is being
     downloaded, this will be reflected in the properties."""
     size: int
@@ -317,15 +321,15 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
     def __init__(
         self,
-        clients: Optional["AzureBlobStorage"] = None,
-        config: Optional["StorageConfiguration"] = None,
+        clients: "AzureBlobStorage" = None,  # type: ignore [assignment]
+        config: "StorageConfiguration" = None,  # type: ignore [assignment]
         start_range: Optional[int] = None,
-        end_range: Optional[int] = None, 
-        validate_content: Optional[bool] = None,
-        encryption_options: Optional[Dict[str, Any]] = None,
+        end_range: Optional[int] = None,
+        validate_content: bool = None,  # type: ignore [assignment]
+        encryption_options: Dict[str, Any] = None,  # type: ignore [assignment]
         max_concurrency: int = 1,
-        name: Optional[str] = None,
-        container: Optional[str] = None,
+        name: str = None,  # type: ignore [assignment]
+        container: str = None,  # type: ignore [assignment]
         encoding: Optional[str] = None,
         download_cls: Optional[Callable] = None,
         **kwargs: Any
@@ -381,7 +385,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         )
 
         self._response = self._initial_request()
-        self.properties = self._response.properties
+        self.properties = cast("BlobProperties", self._response.properties)
         self.properties.name = self.name
         self.properties.container = self.container
 
@@ -395,7 +399,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         # Overwrite the content MD5 as it is the MD5 for the last range instead
         # of the stored MD5
         # TODO: Set to the stored MD5 when the service returns this
-        self.properties.content_md5 = None  #type: ignore
+        self.properties.content_md5 = None  # type: ignore [attr-defined]
 
     def __len__(self):
         return self.size
@@ -406,7 +410,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         # Adjust cls for get_properties
         self._request_options['cls'] = deserialize_blob_properties
 
-        properties = self._clients.blob.get_properties(**self._request_options)
+        properties = cast("BlobProperties", self._clients.blob.get_properties(**self._request_options))
         # This will return None if there is no encryption metadata or there are parsing errors.
         # That is acceptable here, the proper error will be caught and surfaced when attempting
         # to decrypt the blob.
@@ -428,14 +432,14 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         retry_total = 3
         while retry_active:
             try:
-                location_mode, response = self._clients.blob.download(
+                location_mode, response = cast(Tuple[Optional[str], Any], self._clients.blob.download(
                     range=range_header,
                     range_get_content_md5=range_validation,
                     validate_content=self._validate_content,
                     data_stream_total=None,
                     download_stream_current=0,
                     **self._request_options
-                )
+                ))
 
                 # Check the location we read from to ensure we use the same one
                 # for subsequent requests.
@@ -449,7 +453,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 # Remove any extra encryption data size from blob size
                 self._file_size = adjust_blob_size_for_encryption(self._file_size, self._encryption_data)
 
-                if self._end_range is not None:
+                if self._end_range is not None and self._start_range is not None:
                     # Use the end range index unless it is over the end of the file
                     self.size = min(self._file_size, self._end_range - self._start_range + 1)
                 elif self._start_range is not None:
@@ -563,7 +567,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
             iter_downloader = _ChunkDownloader(
                 client=self._clients.blob,
-                non_empty_ranges=self._non_empty_ranges,  #type: ignore
+                non_empty_ranges=self._non_empty_ranges,
                 total_size=self.size,
                 chunk_size=self._config.max_chunk_get_size,
                 current_progress=self._first_get_size,
@@ -594,13 +598,13 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         :returns:
             The requested data as bytes or a string if encoding was specified. If
             the return value is empty, there is no more data to read.
-        :rtype: T
+        :rtype: Any
         """
         if size == -1:
             return self.readall()
         # Empty blob or already read to the end
         if size == 0 or self._offset >= self.size:
-            return b'' if not self._encoding else ''
+            return b'' if not self._encoding else ''  # type: ignore [return-value]
 
         stream = BytesIO()
         remaining_size = size
@@ -659,9 +663,9 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             self._offset += remaining_size
 
         data = stream.getvalue()
-        if self._encoding and isinstance(self._encoding, str):
-            return data.decode(self._encoding)
-        return data
+        if self._encoding:
+            return data.decode(self._encoding)  # type: ignore [return-value]
+        return data  # type: ignore [return-value]
 
     def readall(self) -> T:
         """
@@ -672,11 +676,11 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         :rtype: T
         """
         stream = BytesIO()
-        self.readinto(stream)
+        self.readinto(stream)  # type: ignore [arg-type]
         data = stream.getvalue()
         if self._encoding:
-            return data.decode(self._encoding)
-        return data
+            return data.decode(self._encoding)  # type: ignore [return-value]
+        return data  # type: ignore [return-value]
 
     def content_as_bytes(self, max_concurrency=1):
         """DEPRECATED: Download the contents of this file.
@@ -750,7 +754,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         # Write the content to the user stream if there is data left
         if self._offset < len(self._current_content):
             content = self._current_content[self._offset:]
-            stream.write(content)
+            stream.write(content)  # type: ignore [call-overload]
             self._offset += len(content)
             if self._progress_hook:
                 self._progress_hook(len(content), self.size)

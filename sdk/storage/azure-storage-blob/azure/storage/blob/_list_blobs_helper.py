@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, Callable, List, Optional, Union, TYPE_CHECKING
+from typing import Any, Callable, cast, List, Optional, Tuple, Union
 from urllib.parse import unquote
 
 from azure.core.exceptions import HttpResponseError
@@ -96,7 +96,7 @@ class BlobPropertiesPaged(PageIterator):
             process_storage_error(error)
 
     def _extract_data_cb(self, get_next_return):
-        self.location_mode, self._response = get_next_return
+        self.location_mode, self._response = cast(Tuple[Optional[str], Any], get_next_return)
         self.service_endpoint = self._response.service_endpoint
         self.prefix = self._response.prefix
         self.marker = self._response.marker
@@ -111,7 +111,7 @@ class BlobPropertiesPaged(PageIterator):
             return item
         if isinstance(item, BlobItemInternal):
             blob = get_blob_properties_from_generated_code(item)  # pylint: disable=protected-access
-            blob.container = self.container
+            blob.container = self.container  # type: ignore [assignment]
             return blob
         return item
 
@@ -250,7 +250,7 @@ class BlobPrefix(ItemPaged, DictMixin):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super(BlobPrefix, self).__init__(*args, page_iterator_class=BlobPrefixPaged, **kwargs)
-        self.name = kwargs.get('name')
+        self.name = kwargs.get('prefix')
         self.prefix = kwargs.get('prefix')
         self.results_per_page = kwargs.get('results_per_page')
         self.container = kwargs.get('container')

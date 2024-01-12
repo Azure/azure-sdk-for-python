@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from datetime import datetime
 
 
-class BlobLeaseClient(object):
+class BlobLeaseClient():
     """Creates a new BlobLeaseClient.
 
     This client provides lease operations on a BlobClient or ContainerClient.
