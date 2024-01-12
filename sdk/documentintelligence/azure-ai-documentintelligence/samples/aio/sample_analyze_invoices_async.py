@@ -42,7 +42,6 @@ async def analyze_invoice():
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import AnalyzeResult
 
-
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
@@ -63,7 +62,9 @@ async def analyze_invoice():
                     print(f"Vendor Name: {vendor_name.get('content')} has confidence: {vendor_name.get('confidence')}")
                 vendor_address = invoice.fields.get("VendorAddress")
                 if vendor_address:
-                    print(f"Vendor Address: {vendor_address.get('content')} has confidence: {vendor_address.get('confidence')}")
+                    print(
+                        f"Vendor Address: {vendor_address.get('content')} has confidence: {vendor_address.get('confidence')}"
+                    )
                 vendor_address_recipient = invoice.fields.get("VendorAddressRecipient")
                 if vendor_address_recipient:
                     print(
@@ -71,7 +72,9 @@ async def analyze_invoice():
                     )
                 customer_name = invoice.fields.get("CustomerName")
                 if customer_name:
-                    print(f"Customer Name: {customer_name.get('content')} has confidence: {customer_name.get('confidence')}")
+                    print(
+                        f"Customer Name: {customer_name.get('content')} has confidence: {customer_name.get('confidence')}"
+                    )
                 customer_id = invoice.fields.get("CustomerId")
                 if customer_id:
                     print(f"Customer Id: {customer_id.get('content')} has confidence: {customer_id.get('confidence')}")
@@ -90,16 +93,22 @@ async def analyze_invoice():
                     print(f"Invoice Id: {invoice_id.get('content')} has confidence: {invoice_id.get('confidence')}")
                 invoice_date = invoice.fields.get("InvoiceDate")
                 if invoice_date:
-                    print(f"Invoice Date: {invoice_date.get('content')} has confidence: {invoice_date.get('confidence')}")
+                    print(
+                        f"Invoice Date: {invoice_date.get('content')} has confidence: {invoice_date.get('confidence')}"
+                    )
                 invoice_total = invoice.fields.get("InvoiceTotal")
                 if invoice_total:
-                    print(f"Invoice Total: {invoice_total.get('content')} has confidence: {invoice_total.get('confidence')}")
+                    print(
+                        f"Invoice Total: {invoice_total.get('content')} has confidence: {invoice_total.get('confidence')}"
+                    )
                 due_date = invoice.fields.get("DueDate")
                 if due_date:
                     print(f"Due Date: {due_date.get('content')} has confidence: {due_date.get('confidence')}")
                 purchase_order = invoice.fields.get("PurchaseOrder")
                 if purchase_order:
-                    print(f"Purchase Order: {purchase_order.get('content')} has confidence: {purchase_order.get('confidence')}")
+                    print(
+                        f"Purchase Order: {purchase_order.get('content')} has confidence: {purchase_order.get('confidence')}"
+                    )
                 billing_address = invoice.fields.get("BillingAddress")
                 if billing_address:
                     print(
@@ -155,7 +164,9 @@ async def analyze_invoice():
                             )
                         item_date = item.get("valueObject").get("Date")
                         if item_date:
-                            print(f"......Date: {item_date.get('content')} has confidence: {item_date.get('confidence')}")
+                            print(
+                                f"......Date: {item_date.get('content')} has confidence: {item_date.get('confidence')}"
+                            )
                         tax = item.get("valueObject").get("Tax")
                         if tax:
                             print(f"......Tax: {tax.get('content')} has confidence: {tax.get('confidence')}")

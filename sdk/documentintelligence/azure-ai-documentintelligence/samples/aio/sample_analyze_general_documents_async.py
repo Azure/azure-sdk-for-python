@@ -119,7 +119,9 @@ async def analyze_general_documents():
                 print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
                 if cell.bounding_regions:
                     for region in cell.bounding_regions:
-                        print(f"...content on page {region.page_number} is within bounding polygon '{region.polygon}'\n")
+                        print(
+                            f"...content on page {region.page_number} is within bounding polygon '{region.polygon}'\n"
+                        )
     print("----------------------------------------")
     # [END analyze_general_documents]
 

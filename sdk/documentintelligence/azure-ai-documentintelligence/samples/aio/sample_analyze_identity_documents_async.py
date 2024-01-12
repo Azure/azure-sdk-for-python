@@ -41,7 +41,6 @@ async def analyze_identity_documents():
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import AnalyzeResult
 
-
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
@@ -65,7 +64,9 @@ async def analyze_identity_documents():
                     print(f"Last Name: {last_name.get('valueString')} has confidence: {last_name.confidence}")
                 document_number = id_document.fields.get("DocumentNumber")
                 if document_number:
-                    print(f"Document Number: {document_number.get('valueString')} has confidence: {document_number.confidence}")
+                    print(
+                        f"Document Number: {document_number.get('valueString')} has confidence: {document_number.confidence}"
+                    )
                 dob = id_document.fields.get("DateOfBirth")
                 if dob:
                     print(f"Date of Birth: {dob.get('valueDate')} has confidence: {dob.confidence}")

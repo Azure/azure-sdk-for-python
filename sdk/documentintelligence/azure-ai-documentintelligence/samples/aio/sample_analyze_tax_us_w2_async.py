@@ -62,7 +62,9 @@ async def analyze_tax_us_w2():
             if w2.fields:
                 form_variant = w2.fields.get("W2FormVariant")
                 if form_variant:
-                    print(f"Form variant: {form_variant.get('valueString')} has confidence: " f"{form_variant.confidence}")
+                    print(
+                        f"Form variant: {form_variant.get('valueString')} has confidence: " f"{form_variant.confidence}"
+                    )
                 tax_year = w2.fields.get("TaxYear")
                 if tax_year:
                     print(f"Tax year: {tax_year.get('valueString')} has confidence: {tax_year.confidence}")
@@ -88,7 +90,8 @@ async def analyze_tax_us_w2():
                 control_number = w2.fields.get("ControlNumber")
                 if control_number:
                     print(
-                        f"Control Number: {control_number.get('valueString')} has confidence: " f"{control_number.confidence}"
+                        f"Control Number: {control_number.get('valueString')} has confidence: "
+                        f"{control_number.confidence}"
                     )
                 employer = w2.fields.get("Employer")
                 if employer:
@@ -98,7 +101,9 @@ async def analyze_tax_us_w2():
                         print(f"...Name: {employer_name.get('valueString')} has confidence: {employer_name.confidence}")
                     employer_id = employer.get("valueObject").get("IdNumber")
                     if employer_id:
-                        print(f"...ID Number: {employer_id.get('valueString')} has confidence: {employer_id.confidence}")
+                        print(
+                            f"...ID Number: {employer_id.get('valueString')} has confidence: {employer_id.confidence}"
+                        )
                     employer_address = employer.get("valueObject").get("Address")
                     if employer_address:
                         print(f"...Address: {format_address_value(employer_address.get('valueAddress'))}")
@@ -150,7 +155,9 @@ async def analyze_tax_us_w2():
                     )
                 allocated_tips = w2.fields.get("AllocatedTips")
                 if allocated_tips:
-                    print(f"Allocated tips: {allocated_tips.get('valueNumber')} has confidence: {allocated_tips.confidence}")
+                    print(
+                        f"Allocated tips: {allocated_tips.get('valueNumber')} has confidence: {allocated_tips.confidence}"
+                    )
                 verification_code = w2.fields.get("VerificationCode")
                 if verification_code:
                     print(
@@ -172,7 +179,9 @@ async def analyze_tax_us_w2():
                     for item in additional_info.get("valueArray"):
                         letter_code = item.get("valueObject").get("LetterCode")
                         if letter_code:
-                            print(f"...Letter code: {letter_code.get('valueString')} has confidence: {letter_code.confidence}")
+                            print(
+                                f"...Letter code: {letter_code.get('valueString')} has confidence: {letter_code.confidence}"
+                            )
                         amount = item.get("valueObject").get("Amount")
                         if amount:
                             print(f"...Amount: {amount.get('valueNumber')} has confidence: {amount.confidence}")

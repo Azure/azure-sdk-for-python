@@ -76,7 +76,9 @@ def analyze_languages():
         for lang_idx, lang in enumerate(result.languages):
             print(f"- Language #{lang_idx}: locale '{lang.locale}'")
             print(f"  Confidence: {lang.confidence}")
-            print(f"  Text: '{','.join([result.content[span.offset : span.offset + span.length] for span in lang.spans])}'")
+            print(
+                f"  Text: '{','.join([result.content[span.offset : span.offset + span.length] for span in lang.spans])}'"
+            )
 
     print("----------------------------------------")
     # [END analyze_languages]

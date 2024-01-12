@@ -67,9 +67,9 @@ async def analyze_query_fields():
     print("Here are extra fields in result:\n")
     if result.documents:
         for doc in result.documents:
-            if doc.fields and doc.fields['Address']:
+            if doc.fields and doc.fields["Address"]:
                 print(f"Address: {doc.fields['Address'].value_string}")
-            if doc.fields and doc.fields['InvoiceNumber']:
+            if doc.fields and doc.fields["InvoiceNumber"]:
                 print(f"Invoice number: {doc.fields['InvoiceNumber'].value_string}")
     # [END analyze_query_fields]
 
