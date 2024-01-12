@@ -5,6 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from datetime import datetime
 import functools
 from typing import (
     Any, AnyStr, cast, Dict, List, IO, Iterable, Iterator, Optional, overload, Union,
@@ -58,7 +59,6 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from azure.core.pipeline.transport import HttpResponse  # pylint: disable=C4756
     from azure.storage.blob import BlobServiceClient
-    from datetime import datetime
     from ._models import (
         AccessPolicy,
         PremiumPageBlobTier,
