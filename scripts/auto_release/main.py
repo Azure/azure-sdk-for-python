@@ -237,10 +237,14 @@ class CodegenTestPR:
 
         modify_file(sdk_readme, edit_sdk_readme)
 
+    @property
+    def readme_python_md_path(self)-> Path:
+        return Path(self.spec_repo) / "specification" / self.spec_readme.split("specification/")[-1].replace("readme.md", "readme.python.md")
+
     # Use the template to update readme and setup by packaging_tools
     @return_origin_path
     def check_file_with_packaging_tool(self):
-        python_md = Path(self.spec_repo) / "specification" / self.spec_readme.split("specification/")[-1].replace("readme.md", "readme.python.md")
+        python_md = self.readme_python_md_path
         title = ""
         if python_md.exists():
             with open(python_md, "r") as file_in:
@@ -398,6 +402,20 @@ class CodegenTestPR:
                 if os.path.getsize(package) > 2 * 1024 * 1024:
                     self.check_package_size_result.append(f'ERROR: Package size is over 2MBytes: {Path(package).name}!!!')
 
+    def check_model_flatten(self):
+        if not self.next_version.startswith("1.0.0"):
+            return
+        with open(self.readme_python_md_path, 'r') as file_in:
+            content = file_in.read()
+        
+        if "flatten-models: false" in content and self.issue_link:
+            api = GhApi(owner='Azure', repo='sdk-release-request', token=self.bot_token)
+            issue_number = int(self.issue_link.split('/')[-1])
+            issue = api.issues.get(issue_number=issue_number)
+            assignee = issue.assignee.login if issue.assignee else ""
+            api.issues.create_comment(issue_number=issue_number, body=f'@{assignee}, please set `flatten-models: false` in readme.python.md')
+            raise Exception("Please set `flatten-models: false` in readme.python.md")
+
     def check_file(self):
         self.check_file_with_packaging_tool()
         self.check_pprint_name()
@@ -406,6 +424,7 @@ class CodegenTestPR:
         self.check_changelog_file()
         self.check_dev_requirement()
         self.check_package_size()
+        self.check_model_flatten()
 
     def sdk_code_path(self) -> str:
         return str(Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}'))
