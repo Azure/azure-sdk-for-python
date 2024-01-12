@@ -408,7 +408,7 @@ class CodegenTestPR:
         with open(self.readme_python_md_path, 'r') as file_in:
             content = file_in.read()
         
-        if "flatten-models: false" in content and self.issue_link:
+        if "flatten-models: false" not in content and self.issue_link:
             api = GhApi(owner='Azure', repo='sdk-release-request', token=self.bot_token)
             issue_number = int(self.issue_link.split('/')[-1])
             issue = api.issues.get(issue_number=issue_number)
