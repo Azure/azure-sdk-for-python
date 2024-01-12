@@ -13,7 +13,6 @@ Use the Image Analysis client library to:
 | [Vision Studio](https://portal.vision.cognitive.azure.com/gallery/imageanalysis)
 | [API reference documentation](https://aka.ms/azsdk/image-analysis/ref-docs/python)
 | [Package (Pypi)](https://aka.ms/azsdk/image-analysis/package/pypi)
-| [Package (Conda)](https://aka.ms/azsdk/image-analysis/package/conda)
 | [SDK source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/vision/azure-ai-vision-imageanalysis/azure/ai/vision/imageanalysis)
 
 ## Getting started
@@ -72,11 +71,16 @@ client = ImageAnalysisClient(
 
 <!-- END SNIPPET -->
 
-A synchronous client supports synchronous analysis methods, meaning they will block until the service responds with analysis results. The code snippets below all use synchronous methods because it's easier for a getting-started guide. The SDK offers equivalent asynchronous APIs which are often preferred. To create an asynchronous client, simply update the above code to import `ImageAnalysisClient` from the `aio` namespace:
+A synchronous client supports synchronous analysis methods, meaning they will block until the service responds with analysis results. The code snippets below all use synchronous methods because it's easier for a getting-started guide. The SDK offers equivalent asynchronous APIs which are often preferred. To create an asynchronous client, do the following:
 
-```python
-from azure.ai.vision.imageanalysis.aio import ImageAnalysisClient
-```
+* Update the above code to import `ImageAnalysisClient` from the `aio` namespace:
+    ```python
+    from azure.ai.vision.imageanalysis.aio import ImageAnalysisClient
+    ```
+* Install the additional package [aiohttp](https://pypi.org/project/aiohttp/):
+    ```bash
+    pip install aiohttp
+    ```
 
 ## Key concepts
 
