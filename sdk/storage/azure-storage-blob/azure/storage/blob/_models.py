@@ -362,7 +362,7 @@ class ContainerProperties(DictMixin):
     dictionary interface, for example: ``container_props["last_modified"]``.
     Additionally, the container name is available as ``container_props["name"]``."""
 
-    name: Optional[str]
+    name: str
     """Name of the container."""
     last_modified: "datetime"
     """A datetime object representing the last time the container was modified."""
@@ -394,7 +394,7 @@ class ContainerProperties(DictMixin):
     """The version of a deleted container."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.name = None
+        self.name = None  # type: ignore [assignment]
         self.last_modified = kwargs.get('Last-Modified')  # type: ignore [assignment]
         self.etag = kwargs.get('ETag')  # type: ignore [assignment]
         self.lease = LeaseProperties(**kwargs)
