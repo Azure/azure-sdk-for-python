@@ -21,7 +21,7 @@ class ParameterizedSpark(SparkJobEntryMixin):
 
     :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
         to a remote location.
-    :type code: str
+    :type code: Optional[Union[str, os.PathLike]]
     :param entry: The file or class entry point.
     :type entry: dict[str, str]
     :param py_files: The list of .zip, .egg or .py files to place on the PYTHONPATH for Python apps.

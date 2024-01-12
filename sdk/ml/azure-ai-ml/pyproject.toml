@@ -28,55 +28,36 @@ extend_skip_glob = [
 ]
 
 [tool.mypy] 
-exclude = ["azure/ai/ml/_vendor",
-"azure/ai/ml/_restclient",
-"azure/ai/ml/_schema",
-"azure/ai/ml/_internal",
-"azure/ai/ml/entities/_assets",
-"azure/ai/ml/entities/_builders",
-"azure/ai/ml/entities/_workspace",
-"azure/ai/ml/entities/_job",
-"azure/ai/ml/entities/_notification",
-"azure/ai/ml/entities/_feature_set",
-"azure/ai/ml/entities/_deployment",
-"azure/ai/ml/entities/_inputs_outputs",
-"azure/ai/ml/entities/_load_functions.py",
-"azure/ai/ml/exceptions.py",
-"azure/ai/ml/_azure_environments.py",
-"azure/ai/ml/_scope_dependent_operations.py",
-"azure/ai/ml/entities/_credentials.py",
-"azure/ai/ml/entities/_util.py",
-"azure/ai/ml/_ml_client.py",
-"azure/ai/ml/_exception_helper.py",
-"azure/ai/ml/entities/_registry",
-"azure/ai/ml/entities/_validation",
-"azure/ai/ml/entities/_assets",
-"azure/ai/ml/entities/_component",
-"azure/ai/ml/entities/_data_import",
-"azure/ai/ml/entities/_datastore",
-"azure/ai/ml/entities/_compute",
-"azure/ai/ml/_sweep",
-"azure/ai/ml/_parallel",
-"azure/ai/ml/operations",
-"azure/ai/ml/identity",
-"azure/ai/ml/entities/_schedule",
-"azure/ai/ml/entities/_endpoint",
-"azure/ai/ml/entities/_monitoring",
-"azure/ai/ml/dsl",
-"azure/ai/ml/data_transfer",
-"azure/ai/ml/constants",
-"azure/ai/ml/automl",
-"azure/ai/ml/_utils",
-"azure/ai/ml/_telemetry",
-"azure/ai/ml/_logging",
-"azure/ai/ml/_local_endpoints",
-"azure/ai/ml/_file_utils",
-"azure/ai/ml/_artifacts",
-"azure/ai/ml/_arm_deployments"
-] 
-disallow_untyped_defs = true 
-warn_unused_ignores = true 
-warn_return_any = true 
-ignore_missing_imports = true 
-follow_imports = "skip" 
-follow_imports_for_stubs = "skip"
+python_version = "3.10"
+exclude = [
+  "azure/ai/ml/_restclient",
+  "azure/ai/ml/_vendor/",
+  "azure/ai/ml/_schema/",
+  "azure/ai/ml/_arm_deployments/",
+  "tests",
+  "setup.py",
+  "samples",
+  "azure/ai/ml/_artifacts/",
+  "azure/ai/ml/_file_utils/",
+  "azure/ai/ml/_local_endpoints/",
+  "azure/ai/ml/_logging/",
+  "azure/ai/ml/_telemetry/",
+  "azure/ai/ml/_utils",
+  "azure/ai/ml/constants/",
+  "azure/ai/ml/data_transfer/",
+  "azure/ai/ml/dsl",
+  "azure/ai/ml/entities/",
+  "azure/ai/ml/identity/",
+  "azure/ai/ml/operations/",
+  "azure/ai/ml/parallel/",
+  "azure/ai/ml/sweep/",
+  "azure/ai/ml/_azure_environments.py",
+  "azure/ai/ml/exceptions.py",
+  "azure/ai/ml/_scope_dependent_operations.py",
+  "azure/ai/ml/_ml_client.py",
+  "azure/ai/ml/_exception_helper.py",
+]   
+warn_unused_configs = true 
+follow_imports = "skip"
+ignore_missing_imports = true
+follow_imports_for_stubs = false
