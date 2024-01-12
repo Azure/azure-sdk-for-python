@@ -44,7 +44,7 @@ class RunOperations(_ScopeDependentOperations):
             run_id,
         )
 
-    def get_run_children(self, run_id: str, max_results: Optional[int]) -> Iterable[_BaseJob]:
+    def get_run_children(self, run_id: str, max_results: int = 50) -> Iterable[_BaseJob]:
         return self._operation.get_child(
             self._subscription_id,
             self._resource_group_name,
