@@ -1062,7 +1062,7 @@ def _commit_block_list_options(
     options.update(kwargs)
     return options
 
-def _set_blob_tags_options(version_id: Optional[str], tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> Dict[str, Any]:
+def _set_blob_tags_options(version_id: Optional[str], tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> Dict[str, Any]: # pylint: disable=line-too-long
     """Creates a dictionary containing the options for setting blob tags.
 
     :param Optional[str] version_id:
