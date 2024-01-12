@@ -563,4 +563,5 @@ def test_send_with_callback(connstr_receivers, uamqp_transport):
 def test_send_with_keep_alive(connstr_receivers, keep_alive, uamqp_transport):
     connection_str, receivers = connstr_receivers
     client = EventHubProducerClient.from_connection_string(connection_str, keep_alive=keep_alive, uamqp_transport=uamqp_transport)
-    assert client._producers["all_partitions"]._keep_alive == keep_alive
+    for producer in client._producers:
+        assert producer._keep_alive == keep_alive
