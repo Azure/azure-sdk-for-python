@@ -194,7 +194,7 @@ class DataTransferCopy(DataTransfer):
         self.data_copy_mode = data_copy_mode
         is_component = isinstance(component, DataTransferCopyComponent)
         if is_component:
-            _component: DataTransferCopyComponent = cast(DataTransferCopyComponent, component)
+            _component: DataTransferCopyComponent = component
             self.task = _component.task or self.task
             self.data_copy_mode = _component.data_copy_mode or self.data_copy_mode
         self._init = False
@@ -223,7 +223,9 @@ class DataTransferCopy(DataTransfer):
         }.items():
             if value is not None:
                 rest_obj[key] = value
-        return cast(dict, convert_ordered_dict_to_dict(rest_obj))
+        # TODO: Bug Item number: 2897665
+        convert_dict: dict = convert_ordered_dict_to_dict(rest_obj)  # type: ignore
+        return convert_dict
 
     @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> Any:
@@ -258,7 +260,7 @@ class DataTransferCopy(DataTransfer):
         """
         if isinstance(self._component, Component):
             # call this to validate inputs
-            node = self._component(*args, **kwargs)
+            node: DataTransferCopy = self._component(*args, **kwargs)
             # merge inputs
             for name, original_input in self.inputs.items():
                 if name not in kwargs:
@@ -277,7 +279,7 @@ class DataTransferCopy(DataTransfer):
             node.tags = self.tags
             # Pass through the display name only if the display name is not system generated.
             node.display_name = self.display_name if self.display_name != self.name else None
-            return cast(DataTransferCopy, node)
+            return node
         msg = "copy_data can be called as a function only when referenced component is {}, currently got {}."
         raise ValidationException(
             message=msg.format(type(Component), self._component),
@@ -373,11 +375,7 @@ class DataTransferImport(DataTransfer):
                 yaml_path="outputs.sink",
                 message="Outputs field only support one output called sink in import task",
             )
-        if (
-            "sink" in self.outputs
-            and not isinstance(self.outputs["sink"], str)
-            and isinstance(self.outputs["sink"]._data, Output)
-        ):
+        if "sink" in self.outputs and not isinstance(self.outputs["sink"], str):
             sink_output = self.outputs["sink"]._data
             if self.source is not None:
 
@@ -402,16 +400,18 @@ class DataTransferImport(DataTransfer):
         }.items():
             if value is not None:
                 rest_obj[key] = value
-        return cast(dict, convert_ordered_dict_to_dict(rest_obj))
+        # TODO: Bug Item number: 2897665
+        convert_dict: Dict = convert_ordered_dict_to_dict(rest_obj)  # type: ignore
+        return convert_dict
 
     @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "DataTransferImport":
         from .data_transfer_func import import_data
 
         loaded_data = load_from_dict(DataTransferImportJobSchema, data, context, additional_message, **kwargs)
-        data_transfer_job = import_data(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
+        data_transfer_job: DataTransferImport = import_data(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
-        return cast(DataTransferImport, data_transfer_job)
+        return data_transfer_job
 
     def _to_job(self) -> DataTransferImportJob:
         return DataTransferImportJob(
@@ -552,16 +552,18 @@ class DataTransferExport(DataTransfer):
         }.items():
             if value is not None:
                 rest_obj[key] = value
-        return cast(dict, convert_ordered_dict_to_dict(rest_obj))
+        # TODO: Bug Item number: 2897665
+        convert_dict: dict = convert_ordered_dict_to_dict(rest_obj)  # type: ignore
+        return convert_dict
 
     @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "DataTransferExport":
         from .data_transfer_func import export_data
 
         loaded_data = load_from_dict(DataTransferExportJobSchema, data, context, additional_message, **kwargs)
-        data_transfer_job = export_data(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
+        data_transfer_job: DataTransferExport = export_data(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
-        return cast(DataTransferExport, data_transfer_job)
+        return data_transfer_job
 
     def _to_job(self) -> DataTransferExportJob:
         return DataTransferExportJob(
