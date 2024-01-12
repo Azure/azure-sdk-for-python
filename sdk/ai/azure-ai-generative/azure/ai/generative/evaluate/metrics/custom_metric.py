@@ -7,6 +7,8 @@ import json
 import os
 import urllib.parse
 
+from azure.ai.generative.evaluate.metrics._parsers import ScoreReasonParser, ScoreParser
+
 
 class Metric(metaclass=abc.ABCMeta):
 
@@ -73,6 +75,7 @@ class PromptMetric(Metric):
         self.model_config = model_config
         self.description = description
         self.prompt = self._build_prompt()
+        self._parser = ScoreReasonParser
 
     def _build_prompt(self):
         from jinja2 import Template
@@ -89,7 +92,7 @@ class PromptMetric(Metric):
         return prompt_as_string
 
     @staticmethod
-    def _from_jinja2_template(path, name):
+    def from_template(path, name):
         from jinja2 import Environment
         from jinja2 import meta
 
@@ -107,5 +110,6 @@ class PromptMetric(Metric):
         )
 
         metric.prompt = template_content
+        metric._parser = ScoreParser
 
         return metric

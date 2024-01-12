@@ -15,10 +15,12 @@ LOGGER = logging.getLogger(__name__)
 class AzureOpenAIClient:
 
     def __init__(self, openai_params):
-        self._azure_endpoint = openai_params.get("azure_endpoint", None)
+        self._azure_endpoint = openai_params.get("azure_endpoint", None) if openai_params.get("azure_endpoint", None) \
+            else openai_params.get("api_base", None)
         self._api_key = openai_params.get("api_key", None)
         self._api_version = openai_params.get("api_version", None)
-        self._azure_deployment = openai_params.get("azure_deployment", None)
+        self._azure_deployment = openai_params.get("azure_deployment", None)\
+            if openai_params.get("azure_deployment", None) else openai_params.get("deployment_id", None)
 
         self._client = AsyncAzureOpenAI(
             azure_endpoint=self._azure_endpoint,

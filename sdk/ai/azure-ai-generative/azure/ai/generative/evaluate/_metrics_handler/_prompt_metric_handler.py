@@ -17,29 +17,6 @@ from ..metrics.custom_metric import PromptMetric
 LOGGER = logging.getLogger(__name__)
 
 
-class ScoreReasonParser(object):
-
-    @staticmethod
-    def parse(value, metric):
-        try:
-            value_json = json.loads(value)
-            score = value_json.get("score")
-            reason = value_json.get("reason")
-        except JSONDecodeError as json_parse_error:
-            LOGGER.debug(
-                f"Error parsing metric {metric.name} value as returned json from LLM is not a valid json : {value}")
-            if score is not None:
-                reason = f"Error parsing reason. Output from LLM : {value}"
-            if score is None:
-                score = np.NaN
-                reason = f"Error parsing LLM response. Output from LLM : {value}"
-        except Exception as ex:
-            score = np.NaN
-            reason = str(value)
-
-        return {metric.name: score, f"{metric.name}_reason": reason}
-
-
 class PromptMetricHandler(MetricHandler):
     def __init__(
             self,
@@ -113,7 +90,7 @@ class PromptMetricHandler(MetricHandler):
         message = self._convert_metric_to_message(metric, data)
         response = await self._client.bounded_chat_completion(message)
         content = self._client.get_chat_compeletion_content_from_response(response)
-        result = ScoreReasonParser.parse(content if content is not None else response, metric)
+        result = metric._parser.parse(content if content is not None else response, metric)
         return result
 
     async def _compute_metric(self, metric):
