@@ -167,7 +167,8 @@ class FeatureSet(Artifact):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return dict(FeatureSetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))
+        feature_set_schema: Dict = FeatureSetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return feature_set_schema
 
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
         # if datastore_arm_id is null, capture the full_storage_path

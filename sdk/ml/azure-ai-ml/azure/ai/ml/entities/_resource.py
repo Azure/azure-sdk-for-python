@@ -7,7 +7,7 @@ import abc
 import os
 from os import PathLike
 from pathlib import Path
-from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Union, cast
+from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Union
 
 from msrest import Serializer
 
@@ -60,7 +60,7 @@ class Resource(abc.ABC):
         self._id = kwargs.pop("id", None)
         self.__source_path: Union[str, PathLike] = kwargs.pop("source_path", "")
         self._base_path = kwargs.pop(BASE_PATH_CONTEXT_KEY, None) or os.getcwd()  # base path should never be None
-        self._creation_context = kwargs.pop("creation_context", None)
+        self._creation_context: Optional[SystemData] = kwargs.pop("creation_context", None)
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._serialize.client_side_validation = False
@@ -94,7 +94,7 @@ class Resource(abc.ABC):
         :return: The creation metadata for the resource.
         :rtype: Optional[~azure.ai.ml.entities.SystemData]
         """
-        return cast(Optional[SystemData], self._creation_context)
+        return self._creation_context
 
     @property
     def base_path(self) -> str:
@@ -171,10 +171,10 @@ class Resource(abc.ABC):
         from azure.ai.ml._arm_deployments.arm_helper import get_template
 
         # pylint: disable=no-member
-        template = get_template(resource_type=self._arm_type)  # type: ignore
+        template: Dict = get_template(resource_type=self._arm_type)  # type: ignore
         # pylint: disable=no-member
         template["copy"]["name"] = f"{self._arm_type}Deployment"  # type: ignore
-        return dict(template)
+        return template
 
     def _get_arm_resource_and_params(self, **kwargs: Any) -> List:
         """Get arm resource and parameters.

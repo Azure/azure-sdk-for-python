@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import json
 import os
-from typing import Any, Dict, Optional, Union, cast
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml import Input, Output
 from azure.ai.ml._schema import PathAwareSchema
@@ -177,7 +177,8 @@ class ParallelFor(LoopNode, NodeIOMixin):
         # convert items to rest object
         rest_items = self._to_rest_items(items=self.items)
         rest_node.update({"items": rest_items, "outputs": self._to_rest_outputs()})
-        return cast(dict, convert_ordered_dict_to_dict(rest_node))
+        convert_dict: dict = convert_ordered_dict_to_dict(rest_node)
+        return convert_dict
 
     @classmethod
     # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype

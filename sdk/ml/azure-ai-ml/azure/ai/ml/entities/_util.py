@@ -6,7 +6,7 @@ import hashlib
 import json
 import os
 import shutil
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Type, TypeVar, Union, cast, overload
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Type, TypeVar, Union, overload
 from unittest import mock
 
 import msrest
@@ -506,11 +506,11 @@ def resolve_pipeline_parameter(data: Any) -> Union[T, str, "NodeOutput"]:
     from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 
     if isinstance(data, PipelineExpression):
-        data = cast(Union[str, BaseNode], data.resolve())
+        data = data.resolve()
     if isinstance(data, (BaseNode, Pipeline)):
         # For the case use a node/pipeline node as the input, we use its only one output as the real input.
         # Here we set node = node.outputs, then the following logic will get the output object.
-        data = cast(OutputsAttrDict, data.outputs)
+        data = data.outputs
     if isinstance(data, OutputsAttrDict):
         # For the case that use the outputs of another component as the input,
         # we use the only one output as the real input,
@@ -522,8 +522,9 @@ def resolve_pipeline_parameter(data: Any) -> Union[T, str, "NodeOutput"]:
                 no_personal_data_message="multiple output(s) found of specified outputs, exactly 1 output required.",
                 target=ErrorTarget.PIPELINE,
             )
-        data = cast(NodeOutput, list(data.values())[0])
-    return cast(Union[T, str, "NodeOutput"], data)
+        data = list(data.values())[0]
+    res_data: Union[T, str, "NodeOutput"] = data
+    return res_data
 
 
 def normalize_job_input_output_type(input_output_value: Union[RestJobOutput, RestJobInput, Dict]) -> None:

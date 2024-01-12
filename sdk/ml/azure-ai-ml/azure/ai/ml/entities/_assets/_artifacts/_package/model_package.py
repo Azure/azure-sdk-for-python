@@ -7,7 +7,7 @@
 import re
 from os import PathLike
 from pathlib import Path
-from typing import IO, Any, AnyStr, Dict, List, Optional, Union, cast
+from typing import IO, Any, AnyStr, Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2023_08_01_preview.models import CodeConfiguration
 from azure.ai.ml._restclient.v2023_08_01_preview.models import ModelPackageInput as RestModelPackageInput
@@ -275,7 +275,8 @@ class ModelPackage(Resource, PackageRequest):
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        return cast(ModelPackage, load_from_dict(ModelPackageSchema, data, context, **kwargs))
+        model_pkg: ModelPackage = load_from_dict(ModelPackageSchema, data, context, **kwargs)
+        return model_pkg
 
     def dump(
         self,
@@ -296,7 +297,9 @@ class ModelPackage(Resource, PackageRequest):
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False)
 
     def _to_dict(self) -> Dict:
-        return dict(ModelPackageSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))  # pylint: disable=no-member
+        # pylint: disable=no-member
+        model_pkg_schema: Dict = ModelPackageSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return model_pkg_schema
 
     @classmethod
     def _from_rest_object(cls, model_package_rest_object: PackageResponse) -> Any:
