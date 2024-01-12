@@ -563,7 +563,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
             pass
         else:
             if not path.isabs(self.code):
-                _component = cast(SparkComponent, self.component)
+                _component: SparkComponent = self.component  # type: ignore
                 code_path = Path(_component.base_path) / self.code
                 if code_path.exists():
                     code_path = code_path.resolve().absolute()

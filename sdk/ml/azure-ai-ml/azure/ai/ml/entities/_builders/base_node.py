@@ -301,7 +301,9 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         return str(self._component.name)
 
     def _to_dict(self) -> Dict:
-        return dict(convert_ordered_dict_to_dict(self._dump_for_validation()))
+        # TODO: Bug Item number: 2897665
+        convert_dict: Dict = convert_ordered_dict_to_dict(self._dump_for_validation())  # type: ignore
+        return convert_dict
 
     @classmethod
     def _create_validation_error(cls, message: str, no_personal_data_message: str) -> ValidationException:
@@ -488,7 +490,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         :return: A dictionary containing the outputs for the object.
         :rtype: Dict[str, Union[str, Output]]
         """
-        return cast(Dict, self._outputs)
+        return self._outputs  # type: ignore
 
     def __str__(self) -> str:
         try:

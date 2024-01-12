@@ -161,7 +161,7 @@ class JobService(JobServiceBase):
 
     @classmethod
     def _from_rest_object(cls, obj: RestJobService) -> "JobService":
-        return cast(JobService, cls._from_rest_job_service_object(obj))
+        return cls._from_rest_job_service_object(obj)  # type: ignore
 
     def _to_rest_object(self) -> RestJobService:
         return self._to_rest_job_service()
@@ -284,7 +284,7 @@ class TensorBoardJobService(JobServiceBase):
 
     @classmethod
     def _from_rest_object(cls, obj: RestJobService) -> "TensorBoardJobService":
-        tensorboard_job_Service = cast(TensorBoardJobService, cls._from_rest_job_service_object(obj))
+        tensorboard_job_Service = cls._from_rest_job_service_object(obj)  # type: ignore
         tensorboard_job_Service.log_dir = _get_property(obj.properties, "logDir")
         return tensorboard_job_Service
 
@@ -343,7 +343,7 @@ class JupyterLabJobService(JobServiceBase):
 
     @classmethod
     def _from_rest_object(cls, obj: RestJobService) -> "JupyterLabJobService":
-        return cast(JupyterLabJobService, cls._from_rest_job_service_object(obj))
+        return cls._from_rest_job_service_object(obj)  # type: ignore
 
     def _to_rest_object(self) -> RestJobService:
         return self._to_rest_job_service()
@@ -399,7 +399,7 @@ class VsCodeJobService(JobServiceBase):
 
     @classmethod
     def _from_rest_object(cls, obj: RestJobService) -> "VsCodeJobService":
-        return cast(VsCodeJobService, cls._from_rest_job_service_object(obj))
+        return cls._from_rest_job_service_object(obj)  # type: ignore
 
     def _to_rest_object(self) -> RestJobService:
         return self._to_rest_job_service()

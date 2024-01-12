@@ -10,7 +10,7 @@ from collections import OrderedDict
 from enum import Enum as PyEnum
 from enum import EnumMeta
 from inspect import Parameter, getmro, signature
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Type, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Type, Union
 
 from typing_extensions import Annotated, Literal, TypeAlias
 
@@ -66,7 +66,7 @@ def _get_annotation_by_value(val: Any) -> Union["Input", Type["Input"]]:
         if not annotation:
             # Fall back to default
             annotation = Input._get_default_unknown_input()
-    return cast(Union["Input", Type["Input"]], annotation)
+    return annotation  # type: ignore
 
 
 def _get_annotation_cls_by_type(
@@ -97,7 +97,6 @@ def _get_param_with_standard_annotation(
     :rtype: Dict[str, Union[Annotation, "Input", "Output"]]
     """
     # TODO: we'd better remove this potential recursive import
-    from .group_input import GroupInput
     from .input import Input
     from .output import Output
 
@@ -129,11 +128,11 @@ def _get_param_with_standard_annotation(
                 annotation = EnumInput(type="string", enum=annotation)
             # Handle Group annotation
             if is_group(annotation):
-                annotation = cast(GroupInput, copy.deepcopy(getattr(annotation, IOConstants.GROUP_ATTR_NAME)))
+                annotation = copy.deepcopy(getattr(annotation, IOConstants.GROUP_ATTR_NAME))
             # Try creating annotation by type when got like 'param: int'
             if not _is_dsl_type_cls(annotation) and not _is_dsl_types(annotation):
                 origin_annotation = annotation
-                annotation = cast(Input, _get_annotation_cls_by_type(annotation, raise_error=False))
+                annotation = _get_annotation_cls_by_type(annotation, raise_error=False)
                 if not annotation:
                     msg = f"Unsupported annotation type {origin_annotation!r} for parameter {name!r}."
                     raise UserErrorException(msg)

@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, Optional, Union, cast
+from typing import Any, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview import models
 from azure.ai.ml.entities._credentials import (
@@ -37,16 +37,7 @@ def from_rest_datastore_credentials(
     elif isinstance(rest_credentials, models.CertificateDatastoreCredentials):
         config_class = CertificateConfiguration
 
-    return cast(
-        Union[
-            AccountKeyConfiguration,
-            SasTokenConfiguration,
-            ServicePrincipalConfiguration,
-            CertificateConfiguration,
-            NoneCredentialConfiguration,
-        ],
-        config_class._from_datastore_rest_object(rest_credentials),
-    )
+    return config_class._from_datastore_rest_object(rest_credentials)  # type: ignore
 
 
 def _from_rest_datastore_credentials_preview(

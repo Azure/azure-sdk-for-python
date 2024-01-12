@@ -6,7 +6,7 @@ import json
 import os
 from collections import defaultdict
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Generator, List, Optional, Tuple, Union, cast
+from typing import TYPE_CHECKING, Any, Dict, Generator, List, Optional, Tuple, Union
 
 import yaml
 from marshmallow import EXCLUDE, Schema, ValidationError
@@ -410,7 +410,8 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         from azure.ai.ml.entities._builders.parallel import Parallel
 
         with self._inputs._fit_inputs(kwargs):  # pylint: disable=protected-access
-            return cast(Parallel, super()._func(**kwargs))  # pylint: disable=not-callable
+            # pylint: disable=not-callable
+            return super()._func(**kwargs)  # type: ignore
 
     @classmethod
     def _get_flow_definition(

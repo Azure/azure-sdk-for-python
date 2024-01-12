@@ -9,7 +9,7 @@ import os
 import typing
 from abc import abstractmethod
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union, cast
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import CodeConfiguration as RestCodeConfiguration
 from azure.ai.ml._restclient.v2023_04_01_preview.models import EndpointComputeType
@@ -588,10 +588,7 @@ class KubernetesOnlineDeployment(OnlineDeployment):
             environment=deployment.environment_id,
             resources=ResourceRequirementsSettings._from_rest_object(deployment.container_resource_requirements),
             app_insights_enabled=deployment.app_insights_enabled,
-            scale_settings=cast(
-                Optional[Union[DefaultScaleSettings, TargetUtilizationScaleSettings]],
-                OnlineScaleSettings._from_rest_object(deployment.scale_settings),
-            ),
+            scale_settings=OnlineScaleSettings._from_rest_object(deployment.scale_settings),  # type: ignore
             liveness_probe=ProbeSettings._from_rest_object(deployment.liveness_probe),
             readiness_probe=ProbeSettings._from_rest_object(deployment.readiness_probe),
             environment_variables=deployment.environment_variables,
@@ -831,10 +828,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
             code_configuration=code_config,
             environment=deployment.environment_id,
             app_insights_enabled=deployment.app_insights_enabled,
-            scale_settings=cast(
-                Optional[Union[DefaultScaleSettings, TargetUtilizationScaleSettings]],
-                OnlineScaleSettings._from_rest_object(deployment.scale_settings),
-            ),
+            scale_settings=OnlineScaleSettings._from_rest_object(deployment.scale_settings),  # type: ignore
             liveness_probe=ProbeSettings._from_rest_object(deployment.liveness_probe),
             environment_variables=deployment.environment_variables,
             readiness_probe=ProbeSettings._from_rest_object(deployment.readiness_probe),
