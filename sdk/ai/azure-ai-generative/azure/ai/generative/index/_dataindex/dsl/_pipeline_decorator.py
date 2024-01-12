@@ -103,6 +103,38 @@ def pipeline(
     """
     get_component = kwargs.get("get_component", False)
 
+    # Overload the returns a decorator when func is None
+    @overload
+    def pipeline(  # type: ignore[misc]
+        # TODO: Bug 2876412
+        func: None = None,
+        *,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        experiment_name: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs,
+    ) -> Callable[[Callable[P, T]], Callable[P, PipelineJob]]:
+        ...
+
+
+    # Overload the returns a decorated function when func isn't None
+    @overload
+    def pipeline(
+        func: Optional[Callable[P, T]] = None,
+        *,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        experiment_name: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs,
+    ) -> Callable[P, PipelineJob]:
+        ...
+
     def pipeline_decorator(func: Callable[P, T]) -> Callable[P, PipelineJob]:
         # pylint: disable=isinstance-second-argument-not-valid-type
         if not isinstance(func, Callable):  # type: ignore
@@ -222,6 +254,4 @@ def pipeline(
     # enable use decorator without "()" if all arguments are default values
     if func is not None:
         return pipeline_decorator(func)
-    else:
-        return lambda p: PipelineJob()
     return pipeline_decorator
