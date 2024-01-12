@@ -289,7 +289,10 @@ if receipts.documents:
         if receipt.fields:
             merchant_name = receipt.fields.get("MerchantName")
             if merchant_name:
-                print(f"Merchant Name: {merchant_name.get('valueString')} has confidence: " f"{merchant_name.confidence}")
+                print(
+                    f"Merchant Name: {merchant_name.get('valueString')} has confidence: "
+                    f"{merchant_name.confidence}"
+                )
             transaction_date = receipt.fields.get("TransactionDate")
             if transaction_date:
                 print(
@@ -321,7 +324,9 @@ if receipts.documents:
                         )
             subtotal = receipt.fields.get("Subtotal")
             if subtotal:
-                print(f"Subtotal: {format_price(subtotal.get('valueCurrency'))} has confidence: {subtotal.confidence}")
+                print(
+                    f"Subtotal: {format_price(subtotal.get('valueCurrency'))} has confidence: {subtotal.confidence}"
+                )
             tax = receipt.fields.get("TotalTax")
             if tax:
                 print(f"Total tax: {format_price(tax.get('valueCurrency'))} has confidence: {tax.confidence}")
