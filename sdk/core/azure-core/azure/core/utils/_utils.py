@@ -166,7 +166,7 @@ class CaseInsensitiveDict(MutableMapping[str, Any]):
 
 
 def get_running_async_lock() -> AsyncContextManager:
-    """Get the name of the async library that the current context is running under.
+    """Get a lock instance from the async library that the current context is running under.
 
     :return: An instance of the running async library's Lock class.
     :rtype: AsyncContextManager
