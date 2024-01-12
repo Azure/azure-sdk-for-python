@@ -168,4 +168,4 @@ class LoopNode(ControlFlowNode, ABC):
 
         node_type = obj.get(CommonYamlFields.TYPE, None)
         load_from_rest_obj_func = pipeline_node_factory.get_load_from_rest_object_func(_type=node_type)
-        return cast(LoopNode, load_from_rest_obj_func(obj, pipeline_jobs))
+        return load_from_rest_obj_func(obj, pipeline_jobs)  # type: ignore

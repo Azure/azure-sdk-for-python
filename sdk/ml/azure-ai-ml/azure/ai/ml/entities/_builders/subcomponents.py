@@ -43,7 +43,8 @@ def save_mltable_yaml(path: str, mltable_paths: List[str]) -> None:
 
 # TODO 2293610: add support for more types of outputs besides uri_folder and mltable
 @command_component()
-def create_scatter_output_table(aggregated_output: Output, **kwargs: str) -> Output:
+# pylint: disable=unsubscriptable-object
+def create_scatter_output_table(aggregated_output: Output["mltable"], **kwargs: str) -> Output:  # type: ignore
     """Create scatter output table.
 
     This function is used by the FL scatter gather node to reduce a dynamic number of silo outputs

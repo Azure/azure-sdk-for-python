@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Any, Dict, List, Optional, Tuple, Union, cast
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from marshmallow import Schema
 
@@ -258,7 +258,7 @@ class DataTransferCopy(DataTransfer):
         """
         if isinstance(self._component, Component):
             # call this to validate inputs
-            node = self._component(*args, **kwargs)
+            node: DataTransferCopy = self._component(*args, **kwargs)
             # merge inputs
             for name, original_input in self.inputs.items():
                 if name not in kwargs:
@@ -277,7 +277,7 @@ class DataTransferCopy(DataTransfer):
             node.tags = self.tags
             # Pass through the display name only if the display name is not system generated.
             node.display_name = self.display_name if self.display_name != self.name else None
-            return cast(DataTransferCopy, node)
+            return node
         msg = "copy_data can be called as a function only when referenced component is {}, currently got {}."
         raise ValidationException(
             message=msg.format(type(Component), self._component),
