@@ -71,11 +71,16 @@ client = ImageAnalysisClient(
 
 <!-- END SNIPPET -->
 
-A synchronous client supports synchronous analysis methods, meaning they will block until the service responds with analysis results. The code snippets below all use synchronous methods because it's easier for a getting-started guide. The SDK offers equivalent asynchronous APIs which are often preferred. To create an asynchronous client, simply update the above code to import `ImageAnalysisClient` from the `aio` namespace:
+A synchronous client supports synchronous analysis methods, meaning they will block until the service responds with analysis results. The code snippets below all use synchronous methods because it's easier for a getting-started guide. The SDK offers equivalent asynchronous APIs which are often preferred. To create an asynchronous client, do the following:
 
-```python
-from azure.ai.vision.imageanalysis.aio import ImageAnalysisClient
-```
+* Update the above code to import `ImageAnalysisClient` from the `aio` namespace:
+    ```python
+    from azure.ai.vision.imageanalysis.aio import ImageAnalysisClient
+    ```
+* Install the additional package [aiohttp](https://pypi.org/project/aiohttp/):
+    ```bash
+    pip install aiohttp
+    ```
 
 ## Key concepts
 
