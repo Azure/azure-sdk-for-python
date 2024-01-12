@@ -22,11 +22,12 @@ from mlflow.entities import Metric
 from mlflow.exceptions import MlflowException
 from mlflow.protos.databricks_pb2 import ErrorCode, INVALID_PARAMETER_VALUE
 
-from azure.ai.generative.evaluate._metric_handler import MetricHandler, CodeMetricHandler
+from azure.ai.generative.evaluate._metric_handler import MetricHandler
+from azure.ai.generative.evaluate._metrics_handler._code_metric_handler import CodeMetricHandler
 from azure.ai.generative.evaluate._utils import _is_flow, load_jsonl, _get_artifact_dir_path, _copy_artifact
 from azure.ai.generative.evaluate._mlflow_log_collector import RedirectUserOutputStreams
 from azure.ai.generative.evaluate._constants import SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING, SUPPORTED_TASK_TYPE, CHAT, \
-    TYPE_TO_KWARGS_MAPPING, TASK_TYPE_TO_METRICS_MAPPING, SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING
+    TYPE_TO_KWARGS_MAPPING, SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING
 from azure.ai.generative.evaluate._evaluation_result import EvaluationResult
 from ._metrics_handler._prompt_metric_handler import PromptMetricHandler
 
@@ -308,7 +309,7 @@ def _evaluate(
                 metrics_mapping=metrics_config,
                 prediction_data_column_name=prediction_data if isinstance(prediction_data, str) else None,
                 ground_truth_column_name=truth_data if isinstance(truth_data, str) else None,
-                # type_to_kwargs=metric.parameters
+                type_to_kwargs="code-prompt-metric"
             )
 
             code_metric_results = code_metric_handler.calculate_metrics()
