@@ -17,6 +17,7 @@ try:
     from azure.identity import DefaultAzureCredential
     from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, ActivityLogger
     from azure.core.tracing.decorator import distributed_trace
+    from azure.ai.generative._user_agent import OPENAI_USER_AGENT
 except ImportError as e:
     print("In order to use qa, please install the 'qa_generation' extra of azure-ai-generative")
     raise e
@@ -64,13 +65,15 @@ def _completion_with_retries(*args, **kwargs):
                     client = AzureOpenAI(
                         azure_endpoint = kwargs["api_base"], 
                         api_key=kwargs["api_key"],  
-                        api_version=kwargs["api_version"]
+                        api_version=kwargs["api_version"],
+                        default_headers={"Client-Type-User-Agent": OPENAI_USER_AGENT},
                     )
                     response = client.chat.completions.create(messages=kwargs["messages"], model=kwargs["deployment_id"], temperature=kwargs["temperature"], max_tokens=kwargs["max_tokens"])
                 else:
                     from openai import OpenAI
                     client = OpenAI(
-                        api_key=kwargs["api_key"],  
+                        api_key=kwargs["api_key"],
+                        default_headers={"Client-Type-User-Agent": OPENAI_USER_AGENT},  
                     )
                     response = client.chat.completions.create(messages=kwargs["messages"], model=kwargs["model"], temperature=kwargs["temperature"], max_tokens=kwargs["max_tokens"])
                 return response.choices[0].message.content, dict(response.usage)
@@ -97,13 +100,15 @@ async def _completion_with_retries_async(*args, **kwargs):
                     client = AsyncAzureOpenAI(
                         azure_endpoint = kwargs["api_base"], 
                         api_key=kwargs["api_key"],  
-                        api_version=kwargs["api_version"]
+                        api_version=kwargs["api_version"],
+                        default_headers={"Client-Type-User-Agent": OPENAI_USER_AGENT},
                     )
                     response = await client.chat.completions.create(messages=kwargs["messages"], model=kwargs["deployment_id"], temperature=kwargs["temperature"], max_tokens=kwargs["max_tokens"])
                 else:
                     from openai import AsyncOpenAI
                     client = AsyncOpenAI(
-                        api_key=kwargs["api_key"],  
+                        api_key=kwargs["api_key"],
+                        default_headers={"Client-Type-User-Agent": OPENAI_USER_AGENT},
                     )
                     response = await client.chat.completions.create(messages=kwargs["messages"], model=kwargs["model"], temperature=kwargs["temperature"], max_tokens=kwargs["max_tokens"])
                 return response.choices[0].message.content, dict(response.usage)

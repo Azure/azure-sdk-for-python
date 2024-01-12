@@ -14,6 +14,7 @@ from azure.ai.generative.index._utils.connections import (
     get_connection_credential,
 )
 from azure.ai.generative.index._utils.logging import get_logger
+from azure.ai.generative._user_agent import OPENAI_USER_AGENT
 
 try:
     from azure.ai.resources.entities import BaseConnection
@@ -171,6 +172,7 @@ def init_llm(model_config: dict, **kwargs):
                 openai_api_type=model_config.get("api_type"),
                 openai_api_version=model_config.get("api_version"),
                 max_retries=model_config.get("max_retries", 3),
+                default_headers={"Client-Type-User-Agent": OPENAI_USER_AGENT},
                 **kwargs
             )  # type: ignore
             if model_config.get("temperature", None) is not None:
@@ -185,6 +187,7 @@ def init_llm(model_config: dict, **kwargs):
                 model_kwargs=model_kwargs,
                 openai_api_key=model_config.get("api_key"),
                 max_retries=model_config.get("max_retries", 3),
+                default_headers={"Client-Type-User-Agent": OPENAI_USER_AGENT},
                 **kwargs
             )  # type: ignore
             if model_config.get("temperature", None) is not None:
@@ -197,6 +200,7 @@ def init_llm(model_config: dict, **kwargs):
             max_tokens=model_config.get("max_tokens"),
             model_kwargs=model_kwargs,
             openai_api_key=model_config.get("api_key"),
+            default_headers={"Client-Type-User-Agent": OPENAI_USER_AGENT},
             **kwargs
         )  # type: ignore
         if model_config.get("temperature", None) is not None:

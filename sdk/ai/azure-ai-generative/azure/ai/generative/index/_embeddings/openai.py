@@ -6,6 +6,7 @@ import os
 import time
 from typing import Any, Dict, List, Optional
 
+from azure.ai.generative._user_agent import OPENAI_USER_AGENT
 from azure.ai.generative.index._utils.logging import get_logger
 from packaging import version
 
@@ -29,6 +30,7 @@ class OpenAIEmbedder:
         embedding_ctx_length: Optional[int] = None,
         show_progress_bar: bool = False,
         openai_passthrough_args: Optional[dict] = None,
+        user_agent_header: Dict[str, str] = None,
     ):
         """Initialize an OpenAI Embedding client."""
         self.api_base = api_base
@@ -77,11 +79,13 @@ class OpenAIEmbedder:
                     api_key=self.api_key,
                     api_version=self.api_version,
                     azure_endpoint=self.api_base,
+                    default_headers={"Client-Type-User-Agent": OPENAI_USER_AGENT},
                 )
             else:
                 client = openai.OpenAI(
                     api_key=self.api_key,
                     base_url=self.api_base,
+                    default_headers={"Client-Type-User-Agent": OPENAI_USER_AGENT},
                 )
 
             self.embedding_client = client.embeddings

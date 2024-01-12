@@ -6,6 +6,7 @@ import os
 import time
 from typing import Any, Dict, List, Optional
 
+from azure.ai.generative._user_agent import OPENAI_USER_AGENT
 from azure.ai.resources._index._utils.logging import get_logger
 from packaging import version
 
@@ -76,11 +77,13 @@ class OpenAIEmbedder:
                     api_key=self.api_key,
                     api_version=self.api_version,
                     azure_endpoint=self.api_base,
+                    default_headers={"Client-Type-User-Agent": OPENAI_USER_AGENT},
                 )
             else:
                 client = openai.OpenAI(
                     api_key=self.api_key,
                     base_url=self.api_base,
+                    default_headers={"Client-Type-User-Agent": OPENAI_USER_AGENT},
                 )
 
             self.embedding_client = client.embeddings
