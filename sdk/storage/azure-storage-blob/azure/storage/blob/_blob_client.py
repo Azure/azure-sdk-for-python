@@ -2273,7 +2273,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     @distributed_trace
-    def get_blob_tags(self, **kwargs: Any) -> Dict[str, Any]:
+    def get_blob_tags(self, **kwargs: Any) -> Optional[Dict[str, str]]:
         """The Get Tags operation enables users to get tags on a blob or specific blob version, or snapshot.
 
         .. versionadded:: 12.4.0
@@ -2296,7 +2296,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: Key value pairs of blob tags.
-        :rtype: Dict[str, str]
+        :rtype: Optional[Dict[str, str]]
         """
         version_id = get_version_id(self.version_id, kwargs)
         options = _get_blob_tags_options(version_id=version_id, snapshot=self.snapshot, **kwargs)
