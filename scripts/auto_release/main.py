@@ -403,18 +403,18 @@ class CodegenTestPR:
                     self.check_package_size_result.append(f'ERROR: Package size is over 2MBytes: {Path(package).name}!!!')
 
     def check_model_flatten(self):
-        if not self.next_version.startswith("1.0.0"):
-            return
-        with open(self.readme_python_md_path, 'r') as file_in:
-            content = file_in.read()
-        
-        if "flatten-models: false" not in content and self.issue_link:
-            api = GhApi(owner='Azure', repo='sdk-release-request', token=self.bot_token)
-            issue_number = int(self.issue_link.split('/')[-1])
-            issue = api.issues.get(issue_number=issue_number)
-            assignee = issue.assignee.login if issue.assignee else ""
-            api.issues.create_comment(issue_number=issue_number, body=f'@{assignee}, please set `flatten-models: false` in readme.python.md')
-            raise Exception("Please set `flatten-models: false` in readme.python.md")
+        last_version = self.get_last_release_version()
+        if last_version == "" or last_version.startswith("1.0.0b"):
+            with open(self.readme_python_md_path, 'r') as file_in:
+                content = file_in.read()
+            
+            if "flatten-models: false" not in content and self.issue_link:
+                api = GhApi(owner='Azure', repo='sdk-release-request', token=self.bot_token)
+                issue_number = int(self.issue_link.split('/')[-1])
+                issue = api.issues.get(issue_number=issue_number)
+                assignee = issue.assignee.login if issue.assignee else ""
+                api.issues.create_comment(issue_number=issue_number, body=f'@{assignee}, please set `flatten-models: false` in readme.python.md')
+                raise Exception("Please set `flatten-models: false` in readme.python.md")
 
     def check_file(self):
         self.check_file_with_packaging_tool()
