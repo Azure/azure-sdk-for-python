@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, Callable, cast, List, Optional, Tuple, Union, TYPE_CHECKING
+from typing import Any, Callable, cast, List, Optional, Tuple, Union
 from urllib.parse import unquote
 
 from azure.core.exceptions import HttpResponseError

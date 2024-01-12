@@ -32,9 +32,9 @@ class ContainerPropertiesPaged(AsyncPageIterator):
     :param Optional[str] continuation_token: An opaque continuation token.
     """
 
-    service_endpoint: Optional[str] 
+    service_endpoint: Optional[str]
     """The service URL."""
-    prefix: Optional[str] 
+    prefix: Optional[str]
     """A container name prefix being used to filter the list."""
     marker: Optional[str]
     """The continuation token of the current page of results."""
