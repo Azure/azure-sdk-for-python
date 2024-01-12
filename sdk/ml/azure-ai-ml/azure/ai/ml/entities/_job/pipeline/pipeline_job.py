@@ -8,7 +8,7 @@ import logging
 import typing
 from functools import partial
 from pathlib import Path
-from typing import Any, Dict, Generator, List, Optional, Union, cast
+from typing import Any, Dict, Generator, List, Optional, Union
 
 from typing_extensions import Literal
 
@@ -160,7 +160,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         # If component is Pipeline component, jobs will be component.jobs
         self._jobs = (jobs or {}) if isinstance(component, str) else {}
 
-        self.component: Union[PipelineComponent, str] = cast(Union[PipelineComponent, str], component)
+        self.component: Union[PipelineComponent, str] = component  # type: ignore
         if "type" not in kwargs:
             kwargs["type"] = JobType.PIPELINE
         if isinstance(component, PipelineComponent):
@@ -390,7 +390,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
                 """
                 # handle group input
                 if GroupInput._is_group_attr_dict(_input_output_data):
-                    _new_input_output_data: _GroupAttrDict = cast(_GroupAttrDict, _input_output_data)
+                    _new_input_output_data: _GroupAttrDict = _input_output_data  # type: ignore
                     # flatten to avoid nested cases
                     flattened_values: List[Input] = list(_new_input_output_data.flatten(_name).values())
                     # handle invalid empty group

@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 # pylint: disable=protected-access
-from typing import Any, Callable, Dict, List, Mapping, Optional, Union, cast
+from typing import Any, Callable, Dict, List, Mapping, Optional, Union
 
 from marshmallow import INCLUDE
 
@@ -268,7 +268,7 @@ class _PipelineNodeFactory:
 
     @classmethod
     def _automl_from_rest_object(cls, node: Dict) -> AutoMLJob:
-        _outputs = cast(Dict[str, Union[str, dict]], node.get("outputs"))
+        _outputs = node.get("outputs")  # type: ignore
         # rest dict outputs -> Output objects
         outputs = AutoMLJob._from_rest_outputs(_outputs)
         # Output objects -> yaml dict outputs

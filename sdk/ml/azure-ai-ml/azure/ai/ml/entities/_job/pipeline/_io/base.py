@@ -410,7 +410,7 @@ class NodeInput(InputOutputBase):
             port_name=self._port_name,
             data=self._data,
             owner=owner,
-            meta=cast(Input, self._meta),
+            meta=self._meta,  # type: ignore
         )
 
     def _deepcopy(self) -> "NodeInput":
@@ -418,7 +418,7 @@ class NodeInput(InputOutputBase):
             port_name=self._port_name,
             data=copy.copy(self._data),
             owner=self._owner,
-            meta=cast(Input, self._meta),
+            meta=self._meta,  # type: ignore
         )
 
     def _get_data_owner(self) -> Optional["BaseNode"]:
