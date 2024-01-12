@@ -12,7 +12,7 @@ import tqdm.asyncio
 
 from .._client.openai_client import AzureOpenAIClient
 from .._metric_handler import MetricHandler
-from ..metrics.custom_metric import PromptMetric
+from ..metrics._custom_metric import PromptMetric
 
 LOGGER = logging.getLogger(__name__)
 
