@@ -43,8 +43,7 @@ setup(
     ext_modules=[
         Extension(
             'crc64',
-            glob.glob(os.path.join(package_folder_path, 'crc64', '*.c')),
-            py_limited_api=True
+            glob.glob(os.path.join(package_folder_path, 'crc64', '*.c'))
         ),
     ],
 )

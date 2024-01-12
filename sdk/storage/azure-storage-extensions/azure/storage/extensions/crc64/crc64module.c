@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#define Py_LIMITED_API 3
-
 #include <Python.h>
 #include "crc64.h"
 
