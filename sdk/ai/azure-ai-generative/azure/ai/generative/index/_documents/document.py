@@ -11,7 +11,7 @@ from pathlib import Path
 class DocumentSource:
     """Document Source."""
 
-    path: Optional[Path]
+    path: Path
     filename: str
     url: str
     mtime: float

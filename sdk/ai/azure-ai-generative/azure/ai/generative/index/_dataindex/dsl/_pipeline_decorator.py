@@ -54,6 +54,39 @@ module_logger = logging.getLogger(__name__)
 T = TypeVar("T")
 P = ParamSpec("P")
 
+
+# Overload the returns a decorator when func is None
+@overload
+def pipeline(
+    func: None = None,
+    *,
+    name: Optional[str] = None,
+    version: Optional[str] = None,
+    display_name: Optional[str] = None,
+    description: Optional[str] = None,
+    experiment_name: Optional[str] = None,
+    tags: Optional[Dict[str, str]] = None,
+    **kwargs,
+) -> Callable[[Callable[P, T]], Callable[P, PipelineJob]]:
+    ...
+
+
+# Overload the returns a decorated function when func isn't None
+@overload
+def pipeline(
+    func: Optional[Callable[P, T]] = None,
+    *,
+    name: Optional[str] = None,
+    version: Optional[str] = None,
+    display_name: Optional[str] = None,
+    description: Optional[str] = None,
+    experiment_name: Optional[str] = None,
+    tags: Optional[Dict[str, str]] = None,
+    **kwargs,
+) -> Callable[P, PipelineJob]:
+    ...
+
+
 def pipeline(
     func: Optional[Callable[P, T]] = None,
     *,
