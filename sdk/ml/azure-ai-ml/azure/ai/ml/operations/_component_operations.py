@@ -112,10 +112,10 @@ class ComponentOperations(_ScopeDependentOperations):
 
     @property
     def _code_operations(self) -> CodeOperations:
-        return cast(
-            CodeOperations,
-            self._all_operations.get_operation(AzureMLResourceType.CODE, lambda x: isinstance(x, CodeOperations)),
+        res: CodeOperations = self._all_operations.get_operation(
+            AzureMLResourceType.CODE, lambda x: isinstance(x, CodeOperations)
         )
+        return res
 
     @property
     def _environment_operations(self) -> EnvironmentOperations:
