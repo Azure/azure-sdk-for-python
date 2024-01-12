@@ -74,10 +74,9 @@ setup(
     install_requires=[
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
         "azure-ai-resources<2.0.0,>=1.0.0b1",
-        "azureml-telemetry~=1.0,>=1.51.0",
         "mlflow-skinny<3",
         "opencensus-ext-azure~=1.0",
-        "opencensus-ext-logging",
+        "opencensus-ext-logging<=0.1.1",
     ],
     extras_require={
         "evaluate": [
@@ -95,7 +94,7 @@ setup(
             "azureml-fsspec>=1",
             "azureml-mlflow",
             "fsspec>=2023.3",
-            "openai>=0.27.8,<1",
+            "openai>=0.27.8",
             "tiktoken>=0.3,<1",
             "mmh3",
             "requests",
@@ -110,12 +109,12 @@ setup(
             "azure-search-documents==11.4.0b11"
         ],
         "promptflow": [
-            "promptflow[azure]",
-            "promptflow-tools",
+            "promptflow[azure]==0.1.0b8",
+            "promptflow-tools==0.1.0b15",
             "promptflow-vectordb"
         ],
         "qa_generation": [
-            "openai>=0.27.8,<1"
+            "openai>=0.27.8"
         ],
         "simulator": [
             "aiohttp>=3.8.5",

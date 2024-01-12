@@ -1,6 +1,18 @@
 # Release History
 
-## 1.4.0 (Unreleased)
+## 1.5.0b1 (Unreleased)
+
+### Features Added
+
+- Added support for a new communication identifier `MicrosoftTeamsAppIdentifier`.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.4.0 (2023-11-30)
 
 ### Features Added
 

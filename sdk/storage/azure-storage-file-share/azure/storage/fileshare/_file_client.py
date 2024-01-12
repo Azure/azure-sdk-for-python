@@ -17,7 +17,7 @@ from urllib.parse import urlparse, quote, unquote
 
 from typing_extensions import Self
 
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from ._generated import AzureFileStorage
@@ -347,6 +347,29 @@ class ShareFileClient(StorageAccountHostsMixin):
         lease = ShareLeaseClient(self, lease_id=lease_id)  # type: ignore
         lease.acquire(**kwargs)
         return lease
+
+    @distributed_trace
+    def exists(self, **kwargs: Any) -> bool:
+        """
+        Returns True if the file exists and returns False otherwise.
+
+        :keyword int timeout:
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`_.
+        :returns: True if the file exists, False otherwise.
+        :rtype: bool
+        """
+        try:
+            self._client.file.get_properties(**kwargs)
+            return True
+        except HttpResponseError as error:
+            try:
+                process_storage_error(error)
+            except ResourceNotFoundError:
+                return False
 
     @distributed_trace
     def create_file(  # type: ignore

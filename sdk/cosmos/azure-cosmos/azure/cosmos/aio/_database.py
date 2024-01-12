@@ -87,7 +87,7 @@ class DatabaseProxy(object):
         """
         self.client_connection = client_connection
         self.id = id
-        self.database_link = u"dbs/{}".format(self.id)
+        self.database_link = "dbs/{}".format(self.id)
         self._properties = properties
 
     def __repr__(self) -> str:
@@ -104,16 +104,16 @@ class DatabaseProxy(object):
         return cast("Dict[str, str]", container_or_id)["id"]
 
     def _get_container_link(self, container_or_id: Union[str, ContainerProxy, Dict[str, Any]]) -> str:
-        return u"{}/colls/{}".format(self.database_link, self._get_container_id(container_or_id))
+        return "{}/colls/{}".format(self.database_link, self._get_container_id(container_or_id))
 
     def _get_user_link(self, user_or_id: Union[UserProxy, str, Dict[str, Any]]) -> str:
         if isinstance(user_or_id, str):
-            return u"{}/users/{}".format(self.database_link, user_or_id)
+            return "{}/users/{}".format(self.database_link, user_or_id)
         try:
             return cast("UserProxy", user_or_id).user_link
         except AttributeError:
             pass
-        return u"{}/users/{}".format(self.database_link, cast("Dict[str, str]", user_or_id)["id"])
+        return "{}/users/{}".format(self.database_link, cast("Dict[str, str]", user_or_id)["id"])
 
     async def _get_properties(self) -> Dict[str, Any]:
         if self._properties is None:
@@ -175,6 +175,9 @@ class DatabaseProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword List[Dict[str, str]] computed_properties: Sets The computed properties for this container in the Azure
+            Cosmos DB Service. For more Information on how to use computed properties visit
+            `here: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
@@ -225,6 +228,9 @@ class DatabaseProxy(object):
         analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
         if analytical_storage_ttl is not None:
             definition["analyticalStorageTtl"] = analytical_storage_ttl
+        computed_properties = kwargs.pop('computed_properties', None)
+        if computed_properties:
+            definition["computedProperties"] = computed_properties
 
         request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -269,6 +275,9 @@ class DatabaseProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword List[Dict[str, str]] computed_properties: Sets The computed properties for this container in the Azure
+            Cosmos DB Service. For more Information on how to use computed properties visit
+            `here: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
@@ -284,6 +293,7 @@ class DatabaseProxy(object):
         conflict_resolution_policy = kwargs.pop('conflict_resolution_policy', None)
         analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
         offer_throughput = kwargs.pop('offer_throughput', None)
+        computed_properties = kwargs.pop("computed_properties", None)
         try:
             container_proxy = self.get_container_client(id)
             await container_proxy.read(**kwargs)
@@ -297,7 +307,8 @@ class DatabaseProxy(object):
                 offer_throughput=offer_throughput,
                 unique_key_policy=unique_key_policy,
                 conflict_resolution_policy=conflict_resolution_policy,
-                analytical_storage_ttl=analytical_storage_ttl
+                analytical_storage_ttl=analytical_storage_ttl,
+                computed_properties=computed_properties
             )
 
     def get_container_client(self, container: Union[str, ContainerProxy, Dict[str, Any]]) -> ContainerProxy:

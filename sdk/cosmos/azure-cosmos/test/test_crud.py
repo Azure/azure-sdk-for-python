@@ -2346,7 +2346,7 @@ class CRUDTests(unittest.TestCase):
             self.client.create_database(id='id_with_space ')
             self.assertFalse(True)
         except ValueError as e:
-            self.assertEqual('Id ends with a space.', e.args[0])
+            self.assertEqual('Id ends with a space or newline.', e.args[0])
         # Id shouldn't contain '/'.
 
         try:

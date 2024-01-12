@@ -33,6 +33,7 @@
     "sdk/batch/azure-batch/**",
     "sdk/ai/**/index/**",
     "sdk/ai/azure-ai-generative/tests/**",
+    "sdk/ai/azure-ai-resources/azure/ai/resources/_index/_langchain/vendor/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customsearch/**",
@@ -113,6 +114,7 @@
     "eng/common/docgeneration/Generate-DocIndex.ps1",
     "eng/**/*.py",
     ".gitignore",
+    "tools/azure-sdk-tools/ci_tools/github_tools.py",
     "tools/azure-sdk-tools/devtools_testutils/fake_credentials.py",
     "tools/azure-sdk-tools/packaging_tools/**",
     "tools/azure-sdk-tools/setup.py",
@@ -160,6 +162,7 @@
     "alru",
     "amqp",
     "amqps",
+    "anyio",
     "apim",
     "Asal",
     "asgi",
@@ -927,7 +930,9 @@
         "ctxt",
         "wday",
         "percentilesw",
-        "plotly"
+        "plotly",
+        "nbformat",
+        "nbconvert"
       ]
     },
     {
@@ -1408,7 +1413,16 @@
     {
       "filename": "sdk/ai/azure-ai-resources/**",
       "words": [
-        "etest"
+        "azuread",
+        "all-mpnet-base-v2",
+        "dtype",
+        "LLMRAG",
+        "pipelinerunid",
+        "pydantic",
+        "swigfaiss",
+        "tiktokens",
+        "tqdm",
+        "wasb"
       ]
     },
     {
@@ -1643,6 +1657,16 @@
         "wday",
         "JSONify",
         "Nify"
+      ]
+    },
+    {
+      "filename": "sdk/vision/azure-ai-vision-imageanalysis/azure/ai/vision/imageanalysis/**/*.py",
+      "words": [
+        "mros",
+        "Nify",
+        "deserializers",
+        "ctxt",
+        "wday"
       ]
     },
     {

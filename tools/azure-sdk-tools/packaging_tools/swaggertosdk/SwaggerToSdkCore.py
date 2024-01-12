@@ -4,21 +4,18 @@ from enum import Enum, unique
 import json
 import logging
 import os
-from pickle import GET
 import re
 import tempfile
 from pathlib import Path
 
 from urllib3 import PoolManager, Retry
 
-from github import Github, UnknownObjectException
-
 from .autorest_tools import (
     autorest_latest_version_finder,
     autorest_bootstrap_version_finder,
     autorest_swagger_to_sdk_conf,
 )
-from azure_devtools.ci_tools.github_tools import get_files, GithubLink
+from ci_tools.github_tools import get_files, GithubLink
 
 _LOGGER = logging.getLogger(__name__)
 

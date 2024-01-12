@@ -5,7 +5,8 @@
 from azure.ai.ml.entities._assets._artifacts.data import Data
 
 
-@classmethod
+@classmethod  # type: ignore[misc]
+# TODO: Bug 2874139
 def _resolve_cls_and_type(cls, data, params_override):
     from azure.ai.ml.entities._data_import.data_import import DataImport
     from azure.ai.generative.index._dataindex.entities.data_index import DataIndex

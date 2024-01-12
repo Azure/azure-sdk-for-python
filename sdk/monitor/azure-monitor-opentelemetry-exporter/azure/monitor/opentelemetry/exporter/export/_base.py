@@ -29,6 +29,8 @@ from azure.monitor.opentelemetry.exporter._generated.models import (
     TelemetryItem,
 )
 from azure.monitor.opentelemetry.exporter._constants import (
+    _AZURE_MONITOR_DISTRO_VERSION_ARG,
+    _INVALID_STATUS_CODES,
     _REACHED_INGESTION_STATUS_CODES,
     _REDIRECT_STATUS_CODES,
     _REQ_DURATION_NAME,
@@ -99,6 +101,7 @@ class BaseExporter:
         self._storage_directory = kwargs.get('storage_directory', default_storage_directory)  # Storage path in which to store retry files.
         self._storage_retention_period = kwargs.get('storage_retention_period', 48 * 60 * 60)  # Retention period in seconds (default 48 hrs)
         self._timeout = kwargs.get('timeout', 10.0)  # networking timeout in seconds
+        self._distro_version = kwargs.get(_AZURE_MONITOR_DISTRO_VERSION_ARG, '')  # If set, indicates the exporter is instantiated via Azure monitor OpenTelemetry distro. Versions corresponds to distro version.
 
         config = AzureMonitorClientConfiguration(self._endpoint, **kwargs)
         policies = [
@@ -178,6 +181,8 @@ class BaseExporter:
         """
         if len(envelopes) > 0:
             result = ExportResult.SUCCESS
+            # Track whether or not exporter has successfully reached ingestion
+            # Currently only used for statsbeat exporter to detect shutdown cases
             reach_ingestion = False
             start_time = time.time()
             try:
@@ -270,6 +275,11 @@ class BaseExporter:
                             'Non-retryable server side error: %s.',
                             response_error.message,
                         )
+                        if _is_invalid_code(response_error.status_code):
+                            # Shutdown statsbeat on invalid code from customer endpoint
+                            # Import here to avoid circular dependencies
+                            from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import shutdown_statsbeat_metrics
+                            shutdown_statsbeat_metrics()
                     result = ExportResult.FAILED_NOT_RETRYABLE
             except ServiceRequestError as request_error:
                 # Errors when we're fairly sure that the server did not receive the
@@ -344,6 +354,16 @@ def _get_auth_policy(credential, default_auth_policy):
             'Must pass in valid TokenCredential.'
         )
     return default_auth_policy
+
+
+def _is_invalid_code(response_code: Optional[int]) -> bool:
+    """Determine if response is a invalid response.
+
+    :param int response_code: HTTP response code
+    :return: True if response is a invalid response
+    :rtype: bool
+    """
+    return response_code in _INVALID_STATUS_CODES
 
 
 def _is_redirect_code(response_code: Optional[int]) -> bool:

@@ -56,12 +56,12 @@ class ChainedTokenCredential:
         self._successful_credential = None  # type: Optional[TokenCredential]
         self.credentials = credentials
 
-    def __enter__(self):
+    def __enter__(self) -> "ChainedTokenCredential":
         for credential in self.credentials:
             credential.__enter__()  # type: ignore
         return self
 
-    def __exit__(self, *args: Any):
+    def __exit__(self, *args: Any) -> None:
         for credential in self.credentials:
             credential.__exit__(*args)  # type: ignore
 

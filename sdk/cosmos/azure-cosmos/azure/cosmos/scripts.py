@@ -22,43 +22,51 @@
 """Create, read, update and delete and execute scripts in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, List, Dict, Union, Iterable, Optional
+from typing import Any, Dict, List, Mapping, Union, Optional
 
-from azure.cosmos._cosmos_client_connection import CosmosClientConnection
+from azure.core.paging import ItemPaged
+
+from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options
-from .partition_key import NonePartitionKeyValue
+from .partition_key import NonePartitionKeyValue, _return_undefined_or_empty_partition_key
 
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
 
-class ScriptType(object):
+class ScriptType:
     StoredProcedure = "sprocs"
     Trigger = "triggers"
     UserDefinedFunction = "udfs"
 
 
-class ScriptsProxy(object):
+class ScriptsProxy:
     """An interface to interact with stored procedures.
 
     This class should not be instantiated directly. Instead, use the
     :func:`ContainerProxy.scripts` attribute.
     """
 
-    def __init__(self, client_connection, container_link, is_system_key):
-        # type: (CosmosClientConnection, str, bool) -> None
+    def __init__(
+        self,
+        client_connection: CosmosClientConnection,
+        container_link: str,
+        is_system_key: bool
+    ) -> None:
         self.client_connection = client_connection
         self.container_link = container_link
         self.is_system_key = is_system_key
 
-    def _get_resource_link(self, script_or_id, typ):
-        # type: (Union[Dict[str, Any], str], str) -> str
+    def _get_resource_link(self, script_or_id: Union[str, Mapping[str, Any]], typ: str) -> str:
         if isinstance(script_or_id, str):
-            return u"{}/{}/{}".format(self.container_link, typ, script_or_id)
+            return "{}/{}/{}".format(self.container_link, typ, script_or_id)
         return script_or_id["_self"]
 
-    def list_stored_procedures(self, max_item_count=None, **kwargs):
-        # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
+    def list_stored_procedures(
+        self,
+        max_item_count: Optional[int] = None,
+        **kwargs: Any
+    ) -> ItemPaged[Dict[str, Any]]:
         """List all stored procedures in the container.
 
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
@@ -73,8 +81,13 @@ class ScriptsProxy(object):
             collection_link=self.container_link, options=feed_options, **kwargs
         )
 
-    def query_stored_procedures(self, query, parameters=None, max_item_count=None, **kwargs):
-        # type: (str, Optional[List[Dict[str, Any]]], Optional[int], Any) -> Iterable[Dict[str, Any]]
+    def query_stored_procedures(
+        self,
+        query: str,
+        parameters: Optional[List[Dict[str, Any]]] = None,
+        max_item_count: Optional[int] = None,
+        **kwargs: Any
+    ) -> ItemPaged[Dict[str, Any]]:
         """Return all stored procedures matching the given `query`.
 
         :param str query: The Azure Cosmos DB SQL query to execute.
@@ -87,7 +100,6 @@ class ScriptsProxy(object):
         feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-
         return self.client_connection.QueryStoredProcedures(
             collection_link=self.container_link,
             query=query if parameters is None else dict(query=query, parameters=parameters),
@@ -95,8 +107,7 @@ class ScriptsProxy(object):
             **kwargs
         )
 
-    def get_stored_procedure(self, sproc, **kwargs):
-        # type: (Union[str, Dict[str, Any]], Any) -> Dict[str, Any]
+    def get_stored_procedure(self, sproc: Union[str, Mapping[str, Any]], **kwargs: Any) -> Dict[str, Any]:
         """Get the stored procedure identified by `id`.
 
         :param sproc: The ID (name) or dict representing stored procedure to retrieve.
@@ -111,8 +122,7 @@ class ScriptsProxy(object):
             sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure), options=request_options, **kwargs
         )
 
-    def create_stored_procedure(self, body, **kwargs):
-        # type: (Dict[str, Any], Any) -> Dict[str, Any]
+    def create_stored_procedure(self, body: Dict[str, Any], **kwargs: Any) -> Dict[str, Any]:
         """Create a new stored procedure in the container.
 
         To replace an existing sproc, use the :func:`Container.scripts.replace_stored_procedure` method.
@@ -128,8 +138,12 @@ class ScriptsProxy(object):
             collection_link=self.container_link, sproc=body, options=request_options, **kwargs
         )
 
-    def replace_stored_procedure(self, sproc, body, **kwargs):
-        # type: (Union[str, Dict[str, Any]], Dict[str, Any], Any) -> Dict[str, Any]
+    def replace_stored_procedure(
+        self,
+        sproc: Union[str, Mapping[str, Any]],
+        body: Dict[str, Any],
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Replace a specified stored procedure in the container.
 
         If the stored procedure does not already exist in the container, an exception is raised.
@@ -143,7 +157,6 @@ class ScriptsProxy(object):
         :rtype: Dict[str, Any]
         """
         request_options = build_options(kwargs)
-
         return self.client_connection.ReplaceStoredProcedure(
             sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure),
             sproc=body,
@@ -151,8 +164,7 @@ class ScriptsProxy(object):
             **kwargs
         )
 
-    def delete_stored_procedure(self, sproc, **kwargs):
-        # type: (Union[str, Dict[str, Any]], Any) -> None
+    def delete_stored_procedure(self, sproc: Union[str, Mapping[str, Any]], **kwargs: Any) -> None:
         """Delete a specified stored procedure from the container.
 
         If the stored procedure does not already exist in the container, an exception is raised.
@@ -164,20 +176,18 @@ class ScriptsProxy(object):
         :rtype: None
         """
         request_options = build_options(kwargs)
-
         self.client_connection.DeleteStoredProcedure(
             sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure), options=request_options, **kwargs
         )
 
     def execute_stored_procedure(
         self,
-        sproc,  # type: Union[str, Dict[str, Any]]
-        partition_key=None,  # type: Optional[str]
-        params=None,  # type: Optional[List[Dict[str, Any]]]
-        enable_script_logging=None,  # type: Optional[bool]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Any
+        sproc: Union[str, Mapping[str, Any]],
+        partition_key: Optional[Union[str, bool, int, float]] = None,
+        params: Optional[List[Dict[str, Any]]] = None,
+        enable_script_logging: Optional[bool] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Execute a specified stored procedure.
 
         If the stored procedure does not already exist in the container, an exception is raised.
@@ -194,11 +204,10 @@ class ScriptsProxy(object):
             or if the stored procedure with given id does not exist in the container.
         :rtype: Dict[str, Any]
         """
-
         request_options = build_options(kwargs)
         if partition_key is not None:
             request_options["partitionKey"] = (
-                CosmosClientConnection._return_undefined_or_empty_partition_key(self.is_system_key)
+                _return_undefined_or_empty_partition_key(self.is_system_key)
                 if partition_key == NonePartitionKeyValue
                 else partition_key
             )
@@ -212,8 +221,7 @@ class ScriptsProxy(object):
             **kwargs
         )
 
-    def list_triggers(self, max_item_count=None, **kwargs):
-        # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
+    def list_triggers(self, max_item_count: Optional[int] = None, **kwargs: Any) -> ItemPaged[Dict[str, Any]]:
         """List all triggers in the container.
 
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
@@ -228,8 +236,13 @@ class ScriptsProxy(object):
             collection_link=self.container_link, options=feed_options, **kwargs
         )
 
-    def query_triggers(self, query, parameters=None, max_item_count=None, **kwargs):
-        # type: (str, Optional[List[Dict[str, Any]]], Optional[int], Any) -> Iterable[Dict[str, Any]]
+    def query_triggers(
+        self,
+        query: str,
+        parameters: Optional[List[Dict[str, Any]]] = None,
+        max_item_count: Optional[int] = None,
+        **kwargs: Any
+    ) -> ItemPaged[Dict[str, Any]]:
         """Return all triggers matching the given `query`.
 
         :param str query: The Azure Cosmos DB SQL query to execute.
@@ -250,8 +263,7 @@ class ScriptsProxy(object):
             **kwargs
         )
 
-    def get_trigger(self, trigger, **kwargs):
-        # type: (Union[str, Dict[str, Any]], Any) -> Dict[str, Any]
+    def get_trigger(self, trigger: Union[str, Mapping[str, Any]], **kwargs: Any) -> Dict[str, Any]:
         """Get a trigger identified by `id`.
 
         :param trigger: The ID (name) or dict representing trigger to retrieve.
@@ -266,8 +278,7 @@ class ScriptsProxy(object):
             trigger_link=self._get_resource_link(trigger, ScriptType.Trigger), options=request_options, **kwargs
         )
 
-    def create_trigger(self, body, **kwargs):
-        # type: (Dict[str, Any], Any) -> Dict[str, Any]
+    def create_trigger(self, body: Dict[str, Any], **kwargs: Any) -> Dict[str, Any]:
         """Create a trigger in the container.
 
         To replace an existing trigger, use the :func:`ContainerProxy.scripts.replace_trigger` method.
@@ -278,13 +289,16 @@ class ScriptsProxy(object):
         :rtype: Dict[str, Any]
         """
         request_options = build_options(kwargs)
-
         return self.client_connection.CreateTrigger(
             collection_link=self.container_link, trigger=body, options=request_options, **kwargs
         )
 
-    def replace_trigger(self, trigger, body, **kwargs):
-        # type: (Union[str, Dict[str, Any]], Dict[str, Any], Any) -> Dict[str, Any]
+    def replace_trigger(
+        self,
+        trigger: Union[str, Mapping[str, Any]],
+        body: Dict[str, Any],
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Replace a specified trigger in the container.
 
         If the trigger does not already exist in the container, an exception is raised.
@@ -306,8 +320,7 @@ class ScriptsProxy(object):
             **kwargs
         )
 
-    def delete_trigger(self, trigger, **kwargs):
-        # type: (Union[str, Dict[str, Any]], Any) -> None
+    def delete_trigger(self, trigger: Union[str, Mapping[str, Any]], **kwargs: Any) -> None:
         """Delete a specified trigger from the container.
 
         If the trigger does not already exist in the container, an exception is raised.
@@ -319,13 +332,15 @@ class ScriptsProxy(object):
         :rtype: None
         """
         request_options = build_options(kwargs)
-
         self.client_connection.DeleteTrigger(
             trigger_link=self._get_resource_link(trigger, ScriptType.Trigger), options=request_options, **kwargs
         )
 
-    def list_user_defined_functions(self, max_item_count=None, **kwargs):
-        # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
+    def list_user_defined_functions(
+        self,
+        max_item_count: Optional[int] = None,
+        **kwargs: Any
+    ) -> ItemPaged[Dict[str, Any]]:
         """List all the user-defined functions in the container.
 
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
@@ -340,8 +355,13 @@ class ScriptsProxy(object):
             collection_link=self.container_link, options=feed_options, **kwargs
         )
 
-    def query_user_defined_functions(self, query, parameters=None, max_item_count=None, **kwargs):
-        # type: (str, Optional[List[Dict[str, Any]]], Optional[int], Any) -> Iterable[Dict[str, Any]]
+    def query_user_defined_functions(
+        self,
+        query: str,
+        parameters: Optional[List[Dict[str, Any]]] = None,
+        max_item_count: Optional[int] = None,
+        **kwargs: Any
+    ) -> ItemPaged[Dict[str, Any]]:
         """Return user-defined functions matching a given `query`.
 
         :param str query: The Azure Cosmos DB SQL query to execute.
@@ -362,8 +382,7 @@ class ScriptsProxy(object):
             **kwargs
         )
 
-    def get_user_defined_function(self, udf, **kwargs):
-        # type: (Union[str, Dict[str, Any]], Any) -> Dict[str, Any]
+    def get_user_defined_function(self, udf: Union[str, Mapping[str, Any]], **kwargs: Any) -> Dict[str, Any]:
         """Get a user-defined functions identified by `id`.
 
         :param udf: The ID (name) or dict representing udf to retrieve.
@@ -373,13 +392,11 @@ class ScriptsProxy(object):
         :rtype: Iterable[Dict[str, Any]]
         """
         request_options = build_options(kwargs)
-
         return self.client_connection.ReadUserDefinedFunction(
             udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction), options=request_options, **kwargs
         )
 
-    def create_user_defined_function(self, body, **kwargs):
-        # type: (Dict[str, Any], Any) -> Dict[str, Any]
+    def create_user_defined_function(self, body: Dict[str, Any], **kwargs: Any) -> Dict[str, Any]:
         """Create a user-defined function in the container.
 
         To replace an existing UDF, use the :func:`ContainerProxy.scripts.replace_user_defined_function` method.
@@ -390,13 +407,16 @@ class ScriptsProxy(object):
         :rtype: Dict[str, Any]
         """
         request_options = build_options(kwargs)
-
         return self.client_connection.CreateUserDefinedFunction(
             collection_link=self.container_link, udf=body, options=request_options, **kwargs
         )
 
-    def replace_user_defined_function(self, udf, body, **kwargs):
-        # type: (Union[str, Dict[str, Any]], Dict[str, Any], Any) -> Dict[str, Any]
+    def replace_user_defined_function(
+        self,
+        udf: Union[str, Mapping[str, Any]],
+        body: Dict[str, Any],
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Replace a specified user-defined function in the container.
 
         If the UDF does not already exist in the container, an exception is raised.
@@ -410,7 +430,6 @@ class ScriptsProxy(object):
         :rtype: Dict[str, Any]
         """
         request_options = build_options(kwargs)
-
         return self.client_connection.ReplaceUserDefinedFunction(
             udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction),
             udf=body,
@@ -418,8 +437,7 @@ class ScriptsProxy(object):
             **kwargs
         )
 
-    def delete_user_defined_function(self, udf, **kwargs):
-        # type: (Union[str, Dict[str, Any]], Any) -> None
+    def delete_user_defined_function(self, udf: Union[str, Mapping[str, Any]], **kwargs: Any) -> None:
         """Delete a specified user-defined function from the container.
 
         If the UDF does not already exist in the container, an exception is raised.
@@ -431,7 +449,6 @@ class ScriptsProxy(object):
         :rtype: None
         """
         request_options = build_options(kwargs)
-
         self.client_connection.DeleteUserDefinedFunction(
             udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction), options=request_options, **kwargs
         )

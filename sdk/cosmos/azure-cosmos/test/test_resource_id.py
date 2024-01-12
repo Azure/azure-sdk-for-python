@@ -89,7 +89,7 @@ class TestResourceIds(unittest.TestCase):
         created_container = created_database.create_container(id=container_id, partition_key=partition_key)
 
         # Define errors returned by checks
-        error_strings = ['Id contains illegal chars.', 'Id ends with a space.']
+        error_strings = ['Id contains illegal chars.', 'Id ends with a space or newline.']
 
         # Define illegal strings
         illegal_strings = [
@@ -100,6 +100,8 @@ class TestResourceIds(unittest.TestCase):
             "ID_with_tab\t",
             "ID\r_with_return_carriage",
             "ID_with_newline\n",
+            "ID_with_newline\n2",
+            "ID_with_more_than_255" + "_" * 255,
             "ID_with_trailing_spaces   "
         ]
 

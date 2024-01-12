@@ -240,6 +240,11 @@ def build_and_install_dev_reqs(file: str, pkg_root: str) -> None:
 
     with open(file, "r") as f:
         for line in f:
+            # Remove inline comments which are denoted by a "#".
+            line = line.split("#")[0].strip()
+            if not line:
+                continue
+
             args = [part.strip() for part in line.split() if part and not part.strip() == "-e"]
             amended_line = " ".join(args)
 
@@ -262,7 +267,7 @@ def build_and_install_dev_reqs(file: str, pkg_root: str) -> None:
     shutil.rmtree(os.path.join(pkg_root, ".tmp_whl_dir"))
 
 
-def is_relative_install_path(req: str, package_path: str) -> str:
+def is_relative_install_path(req: str, package_path: str) -> bool:
     possible_setup_path = os.path.join(package_path, req, "setup.py")
 
     # blank lines are _allowed_ in a dev requirements. they should not resolve to the package_path erroneously

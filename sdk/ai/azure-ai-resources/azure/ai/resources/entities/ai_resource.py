@@ -31,7 +31,7 @@ class AIResource:
         public_network_access: Optional[str] = None,
         identity: Optional[IdentityConfiguration] = None,
         primary_user_assigned_identity: Optional[str] = None,
-        default_workspace_resource_group: Optional[str] = None,  # Unpacked WorkspaceHubConfig field
+        default_project_resource_group: Optional[str] = None,  # Unpacked WorkspaceHubConfig field
         **kwargs,
     ):
         self._workspace_hub = WorkspaceHub(
@@ -49,7 +49,7 @@ class AIResource:
             primary_user_assigned_identity=primary_user_assigned_identity,
             workspace_hub_config=WorkspaceHubConfig(
                 additional_workspace_storage_accounts=[],
-                default_workspace_resource_group=default_workspace_resource_group,
+                default_workspace_resource_group=default_project_resource_group,
             ),
             **kwargs,
         )
@@ -70,7 +70,15 @@ class AIResource:
         resource._workspace_hub = workspace_hub
         return resource
 
-    # TODO test all accessors/setters
+    @property
+    def id(self) -> str:
+        """The read-only id of the resource. Set by the backend.
+
+        :return: ID of the resource.
+        :rtype: str
+        """
+        return self._workspace_hub.id
+    
     @property
     def name(self) -> str:
         """The name of the resource.
@@ -332,17 +340,17 @@ class AIResource:
         return self._workspace_hub.enable_data_isolation
 
     @property
-    def default_workspace_resource_group(self) -> str:
-        """The default_workspace_resource_group of the resource.
+    def default_project_resource_group(self) -> str:
+        """The default_project_resource_group of the resource.
 
         :return: Name of the resource.
         :rtype: str
         """
         return self._workspace_hub.workspace_hub_config.default_workspace_resource_group
 
-    @default_workspace_resource_group.setter
-    def default_workspace_resource_group(self, value: str):
-        """Set the default_workspace_resource_group of the resource.
+    @default_project_resource_group.setter
+    def default_project_resource_group(self, value: str):
+        """Set the default_project_resource_group of the resource.
 
         :param value: The new type to assign to the resource.
         :type value: str

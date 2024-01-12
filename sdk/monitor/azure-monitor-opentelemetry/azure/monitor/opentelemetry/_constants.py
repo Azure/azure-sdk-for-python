@@ -21,8 +21,11 @@ DISABLE_AZURE_CORE_TRACING_ARG = "disable_azure_core_tracing"
 DISABLE_LOGGING_ARG = "disable_logging"
 DISABLE_METRICS_ARG = "disable_metrics"
 DISABLE_TRACING_ARG = "disable_tracing"
+# TODO: Use constant in exporter once available
+DISTRO_VERSION_ARG = "distro_version"
 LOGGER_NAME_ARG = "logger_name"
 INSTRUMENTATION_OPTIONS_ARG = "instrumentation_options"
+RESOURCE_ARG = "resource"
 SAMPLING_RATIO_ARG = "sampling_ratio"
 
 
@@ -97,3 +100,6 @@ _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES = _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES 
 
 def _is_attach_enabled():
     return isdir("/agents/python/")
+
+_AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME = "azure_app_service"
+_AZURE_VM_RESOURCE_DETECTOR_NAME = "azure_vm"
