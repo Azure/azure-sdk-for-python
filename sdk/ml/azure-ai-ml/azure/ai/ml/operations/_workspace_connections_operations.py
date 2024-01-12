@@ -151,5 +151,6 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
             workspace_name=self._workspace_name,
             cls=lambda objs: [WorkspaceConnection._from_rest_object(obj) for obj in objs],
             category=_snake_to_camel(connection_type) if connection_type else connection_type,
+            params={"includeAll": "true"},
             **self._scope_kwargs,
         )
