@@ -17,10 +17,12 @@ from opentelemetry._logs.severity import SeverityNumber
 
 from azure.monitor.opentelemetry.exporter.export._base import ExportResult
 from azure.monitor.opentelemetry.exporter.export.logs._exporter import (
-    _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
     AzureMonitorLogExporter,
     _get_log_export_result,
     _get_severity_level,
+)
+from azure.monitor.opentelemetry.exporter._constants import (
+    _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
 )
 from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
 from azure.monitor.opentelemetry.exporter._utils import (

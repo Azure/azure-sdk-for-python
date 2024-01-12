@@ -19,7 +19,6 @@ from ci_tools.environment_exclusions import (
 )
 from ci_tools.parsing import ParsedSetup
 from ci_tools.variables import in_ci
-from gh_tools.vnext_issue_creator import create_vnext_issue
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -116,6 +115,7 @@ if __name__ == "__main__":
         check_call(commands)
     except CalledProcessError as error:
         if args.next and in_ci() and is_check_enabled(args.target_package, "pyright") and not is_typing_ignored(package_name):
+            from gh_tools.vnext_issue_creator import create_vnext_issue
             create_vnext_issue(package_name, "pyright")
 
         print("See https://aka.ms/python/typing-guide for information.\n\n")

@@ -64,11 +64,11 @@ class MsalClient:  # pylint:disable=client-accepts-api-version-keyword
         self._local = threading.local()
         self._pipeline = build_pipeline(**kwargs)
 
-    def __enter__(self):
+    def __enter__(self) -> "MsalClient":
         self._pipeline.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self._pipeline.__exit__(*args)
 
     def close(self) -> None:
