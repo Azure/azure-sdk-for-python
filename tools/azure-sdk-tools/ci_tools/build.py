@@ -186,11 +186,11 @@ def create_package(
 
         if platform.system() == "Darwin":
             run_logged(
-                [sys.executable, "-m", "cibuildwheel", "--platform", "macos", "--print-build-identifiers", "--output-dir", dist], prefix="cibuildwheel", cwd=setup_parsed.folder
+                [sys.executable, "-m", "cibuildwheel", "--platform", "macos", "--output-dir", dist], prefix="cibuildwheel", cwd=setup_parsed.folder
             )
         else:
             run_logged(
-                [sys.executable, "-m", "cibuildwheel", "--print-build-identifiers", "--output-dir", dist], prefix="cibuildwheel", cwd=setup_parsed.folder
+                [sys.executable, "-m", "cibuildwheel", "--output-dir", dist], prefix="cibuildwheel", cwd=setup_parsed.folder
             )
 
     if enable_wheel:
