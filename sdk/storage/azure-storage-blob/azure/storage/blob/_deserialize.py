@@ -190,18 +190,16 @@ def get_blob_properties_from_generated_code(generated: "BlobItemInternal") -> Bl
     blob.has_versions_only = generated.has_versions_only
     return blob
 
-def parse_tags(generated_tags: Optional["BlobTags"]) -> Union[Dict[str, str], None]:
+def parse_tags(generated_tags: "BlobTags") -> Dict[str, str]:
     """Deserialize a list of BlobTag objects into a dict.
 
-    :param Optional[[BlobTags]] generated_tags:
+    :param BlobTags generated_tags:
         The BlobTags objects from generated code.
     :returns: A dictionary of the BlobTag objects.
-    :rtype: Dict[str, str] or None
+    :rtype: Dict[str, str]
     """
-    if generated_tags:
-        tag_dict = {t.key: t.value for t in generated_tags.blob_tag_set}
-        return tag_dict
-    return None
+    tag_dict = {t.key: t.value for t in generated_tags.blob_tag_set}
+    return tag_dict
 
 
 def load_single_xml_node(element: Element, name: str) -> Optional[Element]:
