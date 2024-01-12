@@ -10,6 +10,7 @@ from functools import wraps
 from typing import List, Any, Dict
 from packaging.version import Version
 from ghapi.all import GhApi
+from github import Github
 from azure.storage.blob import BlobServiceClient, ContainerClient
 from datetime import datetime, timedelta
 
@@ -409,12 +410,13 @@ class CodegenTestPR:
                 content = file_in.read()
             
             if "flatten-models: false" not in content and self.issue_link:
-                api = GhApi(owner='Azure', repo='sdk-release-request', token=self.bot_token)
+                api = Github(self.bot_token).get_repo("Azure/sdk-release-request")
                 issue_number = int(self.issue_link.split('/')[-1])
-                issue = api.issues.get(issue_number=issue_number)
+                issue = api.get_issue(issue_number)
                 assignee = issue.assignee.login if issue.assignee else ""
-                api.issues.create_comment(issue_number=issue_number, body=f'@{assignee}, please set `flatten-models: false` in readme.python.md')
-                raise Exception("Please set `flatten-models: false` in readme.python.md")
+                message = "please set `flatten-models: false` in readme.python.md"
+                issue.create_comment(f'@{assignee}, {message}')
+                raise Exception(message)
 
     def check_file(self):
         self.check_file_with_packaging_tool()
