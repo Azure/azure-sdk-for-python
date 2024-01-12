@@ -278,10 +278,11 @@ class JobOperations(_ScopeDependentOperations):
 
         schedule_defined = kwargs.pop("schedule_defined", None)
         scheduled_job_name = kwargs.pop("scheduled_job_name", None)
+        max_results = kwargs.pop("max_results", None)
 
         if parent_job_name:
             parent_job = self.get(parent_job_name)
-            return self._runs_operations.get_run_children(parent_job.name)
+            return self._runs_operations.get_run_children(parent_job.name, max_results)
 
         return self._operation_2023_02_preview.list(
             self._operation_scope.resource_group_name,
