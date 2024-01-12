@@ -4,7 +4,7 @@
 
 import os
 from pathlib import Path
-from typing import Any, Dict, Optional, Union, cast
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
     ResourceManagementAssetReferenceData,
@@ -62,8 +62,8 @@ class WorkspaceAssetReference(Asset):
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-
-        return cast(WorkspaceAssetReference, load_from_dict(WorkspaceAssetReferenceSchema, data, context, **kwargs))
+        res: WorkspaceAssetReference = load_from_dict(WorkspaceAssetReferenceSchema, data, context, **kwargs)
+        return res
 
     def _to_rest_object(self) -> ResourceManagementAssetReferenceData:
         resource_management_details = ResourceManagementAssetReferenceDetails(

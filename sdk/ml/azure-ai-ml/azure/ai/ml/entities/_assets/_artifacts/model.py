@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from os import PathLike
 from pathlib import Path
-from typing import Any, Dict, Optional, Union, cast
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     FlavorData,
@@ -118,7 +118,8 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        return cast(Model, load_from_dict(ModelSchema, data, context, **kwargs))
+        res: Model = load_from_dict(ModelSchema, data, context, **kwargs)
+        return res
 
     def _to_dict(self) -> Dict:
         return dict(ModelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))  # pylint: disable=no-member

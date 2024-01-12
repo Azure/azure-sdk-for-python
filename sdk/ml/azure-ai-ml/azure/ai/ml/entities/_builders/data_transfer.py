@@ -410,9 +410,9 @@ class DataTransferImport(DataTransfer):
         from .data_transfer_func import import_data
 
         loaded_data = load_from_dict(DataTransferImportJobSchema, data, context, additional_message, **kwargs)
-        data_transfer_job = import_data(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
+        data_transfer_job: DataTransferImport = import_data(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
-        return cast(DataTransferImport, data_transfer_job)
+        return data_transfer_job
 
     def _to_job(self) -> DataTransferImportJob:
         return DataTransferImportJob(
@@ -561,9 +561,9 @@ class DataTransferExport(DataTransfer):
         from .data_transfer_func import export_data
 
         loaded_data = load_from_dict(DataTransferExportJobSchema, data, context, additional_message, **kwargs)
-        data_transfer_job = export_data(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
+        data_transfer_job: DataTransferExport = export_data(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
-        return cast(DataTransferExport, data_transfer_job)
+        return data_transfer_job
 
     def _to_job(self) -> DataTransferExportJob:
         return DataTransferExportJob(

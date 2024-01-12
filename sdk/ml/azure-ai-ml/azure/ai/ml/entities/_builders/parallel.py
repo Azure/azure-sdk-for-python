@@ -10,7 +10,7 @@ import logging
 import os
 import re
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple, Type, Union, cast
+from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 from marshmallow import INCLUDE, Schema
 
@@ -517,7 +517,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         """
         if isinstance(self._component, Component):
             # call this to validate inputs
-            node = self._component(*args, **kwargs)
+            node: Parallel = self._component(*args, **kwargs)
             # merge inputs
             for name, original_input in self.inputs.items():
                 if name not in kwargs:
@@ -547,7 +547,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
             node.resources = copy.deepcopy(self.resources)
             node.environment_variables = copy.deepcopy(self.environment_variables)
             node.identity = copy.deepcopy(self.identity)
-            return cast(Parallel, node)
+            return node
         raise Exception(
             f"Parallel can be called as a function only when referenced component is {type(Component)}, "
             f"currently got {self._component}."

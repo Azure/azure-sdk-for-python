@@ -124,7 +124,8 @@ def _get_param_with_standard_annotation(
                 annotation = EnumInput(type="string", enum=annotation)
             # Handle Group annotation
             if is_group(annotation):
-                annotation = cast(GroupInput, copy.deepcopy(getattr(annotation, IOConstants.GROUP_ATTR_NAME)))
+                _deep_copy: GroupInput = copy.deepcopy(getattr(annotation, IOConstants.GROUP_ATTR_NAME))
+                annotation = _deep_copy
             # Try creating annotation by type when got like 'param: int'
             if not _is_dsl_type_cls(annotation) and not _is_dsl_types(annotation):
                 origin_annotation = annotation
