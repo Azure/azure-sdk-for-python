@@ -39,6 +39,7 @@ GPT_4_AZURE = "gpt_4_azure"
 GPT_4_AZURE_AD = "gpt_4_azuread"
 GPT_4_OPENAI = "gpt_4_openai"
 GPT_4_ALL = ["gpt_4_azure", "gpt_4_azuread", "gpt_4_openai"]
+ASST_AZURE = "asst_azure"
 
 # Environment variable keys
 ENV_AZURE_OPENAI_ENDPOINT = "AZ_OPENAI_ENDPOINT"
@@ -54,8 +55,10 @@ ENV_CLIENT_SECRET = "AZURE_CLIENT_SECRET"
 ENV_AZURE_OPENAI_SEARCH_ENDPOINT = "AZURE_OPENAI_SEARCH_ENDPOINT"
 ENV_AZURE_OPENAI_SEARCH_KEY = "AZURE_OPENAI_SEARCH_KEY"
 ENV_AZURE_OPENAI_SEARCH_INDEX = "AZURE_OPENAI_SEARCH_INDEX"
+ENV_AZURE_OPENAI_ASST_ENDPOINT = "AZURE_OPENAI_ASST_ENDPOINT"
+ENV_AZURE_OPENAI_ASST_KEY = "AZURE_OPENAI_ASST_KEY"
 
-ENV_AZURE_OPENAI_API_VERSION = "2023-12-01-preview"
+ENV_AZURE_OPENAI_API_VERSION = "2024-01-01-preview"
 ENV_AZURE_OPENAI_COMPLETIONS_NAME = "gpt-35-turbo-instruct"
 ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME = "gpt-35-turbo-16k"
 ENV_AZURE_OPENAI_EMBEDDINGS_NAME = "text-embedding-ada-002"
@@ -165,6 +168,12 @@ def client(api_type):
             azure_ad_token_provider=get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
             api_version=ENV_AZURE_OPENAI_API_VERSION,
         )
+    elif api_type == "asst_azure":
+        client = openai.AzureOpenAI(
+            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ASST_ENDPOINT),
+            api_key=os.getenv(ENV_AZURE_OPENAI_ASST_KEY),
+            api_version=ENV_AZURE_OPENAI_API_VERSION,
+        )
     return client
 
 
@@ -212,6 +221,12 @@ def client_async(api_type):
             azure_ad_token_provider=get_bearer_token_provider_async(AsyncDefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
             api_version=ENV_AZURE_OPENAI_API_VERSION,
         )
+    elif api_type == "asst_azure":
+        client = openai.AsyncAzureOpenAI(
+            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ASST_ENDPOINT),
+            api_key=os.getenv(ENV_AZURE_OPENAI_ASST_KEY),
+            api_version=ENV_AZURE_OPENAI_API_VERSION,
+        )
     return client
 
 
@@ -247,7 +262,7 @@ def build_kwargs(args, api_type):
             return {"model": ENV_AZURE_OPENAI_DALLE_NAME}
         elif api_type == "openai":
             return {"model": ENV_OPENAI_DALLE_MODEL}
-    if test_feature.startswith(("test_module_client", "test_cli")):
+    if test_feature.startswith(("test_module_client", "test_cli", "test_assistants")):
         return {}
     raise ValueError(f"Test feature: {test_feature} needs to have its kwargs configured.")
 
