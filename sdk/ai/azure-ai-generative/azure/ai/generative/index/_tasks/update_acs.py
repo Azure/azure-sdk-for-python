@@ -94,9 +94,8 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
             elif field_type == "metadata":
                 fields.append(SimpleField(name=field_name, type=SearchFieldDataType.String))
             elif field_type == "embedding":
-                # TODO: Bug 2878424 to address type: ignore in this section
+                assert isinstance(embeddings, EmbeddingsContainer)
                 if current_version >= pkg_version.parse("11.4.0b11"):
-                    assert isinstance(embeddings, EmbeddingsContainer)
                     fields.append(
                         SearchField(
                             name=field_name,
@@ -109,7 +108,6 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
                         )
                     )
                 else:
-                    assert isinstance(embeddings, EmbeddingsContainer)
                     fields.append(
                         SearchField(
                             name=field_name,
