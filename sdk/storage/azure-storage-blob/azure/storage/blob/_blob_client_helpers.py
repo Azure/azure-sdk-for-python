@@ -385,13 +385,13 @@ def _download_blob_options(
     return options
 
 def _quick_query_options(
-    snapshot: str,
+    snapshot: Optional[str],
     query_expression: str,
     **kwargs: Any
 ) -> Tuple[Dict[str, Any], str]:
     """Creates a dictionary containing the options for a quick query operation.
 
-    :param str snapshot:
+    :param Optional[str] snapshot:
         The snapshot data of the blob.
     :param str query_expression:
         A query statement.
@@ -483,14 +483,14 @@ def _generic_delete_blob_options(delete_snapshots: Optional[str] = None, **kwarg
     return options
 
 def _delete_blob_options(
-    snapshot: str,
+    snapshot: Optional[str],
     version_id: Optional[str],
     delete_snapshots: Optional[str] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
     """Creates a dictionary containing the options for a specific delete blob operation.
 
-    :param str snapshot:
+    :param Optional[str] snapshot:
         The snapshot data of the blob.
     :param Optional[str] version_id:
         The version id that specifies the version of the blob to operate on.
@@ -1062,7 +1062,7 @@ def _commit_block_list_options(
     options.update(kwargs)
     return options
 
-def _set_blob_tags_options(version_id: Optional[str], tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> Dict[str, Any]:
+def _set_blob_tags_options(version_id: Optional[str], tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> Dict[str, Any]: # pylint: disable=line-too-long
     """Creates a dictionary containing the options for setting blob tags.
 
     :param Optional[str] version_id:
@@ -1090,12 +1090,12 @@ def _set_blob_tags_options(version_id: Optional[str], tags: Optional[Dict[str, s
     options.update(kwargs)
     return options
 
-def _get_blob_tags_options(version_id: Optional[str], snapshot: str, **kwargs: Any) -> Dict[str, Any]:
+def _get_blob_tags_options(version_id: Optional[str], snapshot: Optional[str], **kwargs: Any) -> Dict[str, Any]:
     """Creates a dictionary containing the options for getting blob tags.
 
     :param Optional[str] version_id:
         The version id that specifies the version of the blob to operate on.
-    :param str snapshot:
+    :param Optional[str] snapshot:
         The snapshot data of the blob.
     :returns: A dictionary containing the options for a get blob tags operation.
     :rtype: Dict[str, Any]
@@ -1113,7 +1113,7 @@ def _get_blob_tags_options(version_id: Optional[str], snapshot: str, **kwargs: A
     return options
 
 def _get_page_ranges_options( # type: ignore
-    snapshot: str,
+    snapshot: Optional[str],
     offset: Optional[int] = None,
     length: Optional[int] = None,
     previous_snapshot_diff: Optional[Union[str, Dict[str, Any]]] = None,
@@ -1121,7 +1121,7 @@ def _get_page_ranges_options( # type: ignore
 ) -> Dict[str, Any]:
     """Creates a dictionary containing the options for getting page ranges.
 
-    :param str snapshot:
+    :param Optional[str] snapshot:
         The snapshot data of the blob.
     :param Optional[int] offset:
         Start of byte range to use for getting valid page ranges.

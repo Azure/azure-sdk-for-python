@@ -359,7 +359,7 @@ def get_adjusted_upload_size(length: int, encryption_version: str) -> int:
 def get_adjusted_download_range_and_offset(
         start: int,
         end: int,
-        length: int,
+        length: Optional[int],
         encryption_data: Optional[_EncryptionData]) -> Tuple[Tuple[int, int], Tuple[int, int]]:
     """
     Gets the new download range and offsets into the decrypted data for
@@ -376,7 +376,7 @@ def get_adjusted_download_range_and_offset(
 
     :param int start: The user-requested start index.
     :param int end: The user-requested end index.
-    :param int length: The user-requested length. Only used for V1.
+    :param Optional[int] length: The user-requested length. Only used for V1.
     :param Optional[_EncryptionData] encryption_data: The encryption data to determine version and sizes.
     :return: (new start, new end), (start offset, end offset)
     :rtype: Tuple[Tuple[int, int], Tuple[int, int]]
@@ -453,25 +453,26 @@ def parse_encryption_data(metadata: Dict[str, Any]) -> Optional[_EncryptionData]
         return None
 
 
-def adjust_blob_size_for_encryption(size: int, encryption_data: _EncryptionData) -> int:
+def adjust_blob_size_for_encryption(size: int, encryption_data: Optional[_EncryptionData]) -> int:
     """
     Adjusts the given blob size for encryption by subtracting the size of
     the encryption data (nonce + tag). This only has an affect for encryption V2.
 
     :param int size: The original blob size.
-    :param _EncryptionData encryption_data: The encryption data to determine version and sizes.
+    :param Optional[_EncryptionData] encryption_data: The encryption data to determine version and sizes.
     :return: The new blob size.
     :rtype: int
     """
-    if is_encryption_v2(encryption_data) and encryption_data.encrypted_region_info is not None:
-        nonce_length = encryption_data.encrypted_region_info.nonce_length
-        data_length = encryption_data.encrypted_region_info.data_length
-        tag_length = encryption_data.encrypted_region_info.tag_length
-        region_length = nonce_length + data_length + tag_length
+    if is_encryption_v2(encryption_data):
+        if encryption_data is not None and encryption_data.encrypted_region_info is not None:
+            nonce_length = encryption_data.encrypted_region_info.nonce_length
+            data_length = encryption_data.encrypted_region_info.data_length
+            tag_length = encryption_data.encrypted_region_info.tag_length
+            region_length = nonce_length + data_length + tag_length
 
-        num_regions = math.ceil(size / region_length)
-        metadata_size = num_regions * (nonce_length + tag_length)
-        return size - metadata_size
+            num_regions = math.ceil(size / region_length)
+            metadata_size = num_regions * (nonce_length + tag_length)
+            return size - metadata_size
 
     return size
 

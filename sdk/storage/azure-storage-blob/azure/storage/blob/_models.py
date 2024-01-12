@@ -364,26 +364,26 @@ class ContainerProperties(DictMixin):
 
     name: Optional[str]
     """Name of the container."""
-    last_modified: Optional["datetime"]
+    last_modified: "datetime"
     """A datetime object representing the last time the container was modified."""
-    etag: Optional[str]
+    etag: str
     """The ETag contains a value that you can use to perform operations
         conditionally."""
     lease: "LeaseProperties"
     """Stores all the lease information for the container."""
     public_access: Optional[str]
     """Specifies whether data in the container may be accessed publicly and the level of access."""
-    has_immutability_policy: Optional[bool]
+    has_immutability_policy: bool
     """Represents whether the container has an immutability policy."""
-    has_legal_hold: Optional[bool]
+    has_legal_hold: bool
     """Represents whether the container has a legal hold."""
-    immutable_storage_with_versioning_enabled: Optional[bool]
+    immutable_storage_with_versioning_enabled: bool
     """Represents whether immutable storage with versioning enabled on the container.
 
         .. versionadded:: 12.10.0
             This was introduced in API version '2020-10-02'.
     """
-    metadata: Optional[Dict[str, Any]]
+    metadata: Dict[str, Any]
     """A dict with name-value pairs to associate with the
         container as metadata."""
     encryption_scope: Optional["ContainerEncryptionScope"]
@@ -395,17 +395,17 @@ class ContainerProperties(DictMixin):
 
     def __init__(self, **kwargs: Any) -> None:
         self.name = None
-        self.last_modified = kwargs.get('Last-Modified')
-        self.etag = kwargs.get('ETag')
+        self.last_modified = kwargs.get('Last-Modified')  # type: ignore [assignment]
+        self.etag = kwargs.get('ETag')  # type: ignore [assignment]
         self.lease = LeaseProperties(**kwargs)
         self.public_access = kwargs.get('x-ms-blob-public-access')
-        self.has_immutability_policy = kwargs.get('x-ms-has-immutability-policy')
+        self.has_immutability_policy = kwargs.get('x-ms-has-immutability-policy')  # type: ignore [assignment]
         self.deleted = None
         self.version = None
-        self.has_legal_hold = kwargs.get('x-ms-has-legal-hold')
-        self.metadata = kwargs.get('metadata')
+        self.has_legal_hold = kwargs.get('x-ms-has-legal-hold')  # type: ignore [assignment]
+        self.metadata = kwargs.get('metadata')  # type: ignore [assignment]
         self.encryption_scope = None
-        self.immutable_storage_with_versioning_enabled = kwargs.get('x-ms-immutable-storage-with-versioning-enabled')  # pylint: disable=name-too-long
+        self.immutable_storage_with_versioning_enabled = kwargs.get('x-ms-immutable-storage-with-versioning-enabled')  # type: ignore [assignment]  # pylint: disable=name-too-long
         default_encryption_scope = kwargs.get('x-ms-default-encryption-scope')
         if default_encryption_scope:
             self.encryption_scope = ContainerEncryptionScope(
@@ -442,9 +442,9 @@ class ContainerPropertiesPaged(PageIterator):
     :param Optional[str] continuation_token: An opaque continuation token.
     """
 
-    service_endpoint: Optional[str] 
+    service_endpoint: Optional[str]
     """The service URL."""
-    prefix: Optional[str] 
+    prefix: Optional[str]
     """A container name prefix being used to filter the list."""
     marker: Optional[str]
     """The continuation token of the current page of results."""
@@ -457,7 +457,7 @@ class ContainerPropertiesPaged(PageIterator):
         options include "primary" and "secondary"."""
     current_page: List["ContainerProperties"]
     """The current page of listed results."""
-    
+
     def __init__(
         self, command: Callable,
         prefix: Optional[str] = None,
@@ -531,9 +531,9 @@ class ImmutabilityPolicy(DictMixin):
 class FilteredBlob(DictMixin):
     """Blob info from a Filter Blobs API call."""
 
-    name: Optional[str] 
+    name: str  # type: ignore [assignment]
     """Blob name"""
-    container_name: Optional[str]
+    container_name: str  # type: ignore [assignment]
     """Container name."""
     tags: Optional[Dict[str, str]]
     """Key value pairs of blob tags."""
@@ -547,9 +547,9 @@ class FilteredBlob(DictMixin):
 class LeaseProperties(DictMixin):
     """Blob Lease Properties."""
 
-    status: Optional[str]
+    status: str
     """The lease status of the blob. Possible values: locked|unlocked"""
-    state: Optional[str]
+    state: str
     """Lease state of the blob. Possible values: available|leased|expired|breaking|broken"""
     duration: Optional[str]
     """When a blob is leased, specifies whether the lease is of infinite or fixed duration."""
@@ -730,7 +730,7 @@ class PageRange(DictMixin):
         End of page range in bytes.
     """
 
-    cleared: Optional[bool]
+    cleared: bool
     """Whether the range has been cleared."""
 
     def __init__(self, start: Optional[int] = None, end: Optional[int] = None, *, cleared: bool = False) -> None:
@@ -801,7 +801,7 @@ class AccessPolicy(GenAccessPolicy):
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
-    :type permission: Optional[Union[ContainerSasPermissions, str]]
+    :paramtype permission: Optional[Union[ContainerSasPermissions, str]]
     :param expiry:
         The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy
@@ -809,23 +809,23 @@ class AccessPolicy(GenAccessPolicy):
         been specified in an associated stored access policy. Azure will always
         convert values to UTC. If a date is passed in without timezone info, it
         is assumed to be UTC.
-    :type expiry: Optional[Union[str, datetime]]
+    :paramtype expiry: Optional[Union[str, datetime]]
     :param start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
         storage service receives the request. Azure will always convert values
         to UTC. If a date is passed in without timezone info, it is assumed to
         be UTC.
-    :type start: Optional[Union[str, datetime]]
+    :paramtype start: Optional[Union[str, datetime]]
     """
     def __init__(
         self, permission: Optional[Union["ContainerSasPermissions", str]] = None,
         expiry: Optional[Union[str, "datetime"]] = None,
         start: Optional[Union[str, "datetime"]] = None
     ) -> None:
-        self.start = start  #type: ignore
-        self.expiry = expiry  #type: ignore
-        self.permission = permission  #type: ignore
+        self.start = start  # type: ignore [assignment]
+        self.expiry = expiry  # type: ignore [assignment]
+        self.permission = permission  # type: ignore [assignment]
 
 
 class ContainerSasPermissions(object):
@@ -1179,22 +1179,22 @@ class ObjectReplicationPolicy(DictMixin):
 class BlobProperties(DictMixin):
     """Blob Properties."""
 
-    name: Optional[str]
+    name: str
     """The name of the blob."""
-    container: Optional[str]
+    container: str
     """The container in which the blob resides."""
     snapshot: Optional[str]
     """Datetime value that uniquely identifies the blob snapshot."""
-    blob_type: Optional["BlobType"]
+    blob_type: "BlobType"
     """String indicating this blob's type."""
-    metadata: Optional[Dict[str, str]]
+    metadata: Dict[str, str]
     """Name-value pairs associated with the blob as metadata."""
-    last_modified: Optional["datetime"]
+    last_modified: "datetime"
     """A datetime object representing the last time the blob was modified."""
-    etag: Optional[str]
+    etag: str
     """The ETag contains a value that you can use to perform operations
         conditionally."""
-    size: Optional[int]
+    size: int
     """The size of the content returned. If the entire blob was requested,
         the length of blob in bytes. If a subset of the blob was requested, the
         length of the returned subset."""
@@ -1208,7 +1208,7 @@ class BlobProperties(DictMixin):
     page_blob_sequence_number: Optional[int]
     """(For Page Blobs) Sequence number for page blob used for coordinating
         concurrent writes."""
-    server_encrypted: Optional[bool]
+    server_encrypted: bool
     """Set to true if the blob is encrypted on the server."""
     copy: "CopyProperties"
     """Stores all the copy properties for the blob."""
@@ -1216,7 +1216,7 @@ class BlobProperties(DictMixin):
     """Stores all the content settings for the blob."""
     lease: LeaseProperties
     """Stores all the lease information for the blob."""
-    blob_tier: Optional[Union["AccessTier", str]]
+    blob_tier: Optional[StandardBlobTier]
     """Indicates the access tier of the blob. The hot tier is optimized
         for storing data that is accessed frequently. The cool storage tier
         is optimized for storing data that is infrequently accessed and stored
@@ -1236,7 +1236,7 @@ class BlobProperties(DictMixin):
     """A datetime object representing the time at which the blob was deleted."""
     remaining_retention_days: Optional[int]
     """The number of days that the blob will be retained before being permanently deleted by the service."""
-    creation_time: Optional["datetime"]
+    creation_time: "datetime"
     """Indicates when the blob was created, in UTC."""
     archive_status: Optional[str]
     """Archive status of blob."""
@@ -1268,22 +1268,22 @@ class BlobProperties(DictMixin):
         Currently this parameter of upload_blob() API is for BlockBlob only."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.name = kwargs.get('name')
-        self.container = None
+        self.name = kwargs.get('name')  # type: ignore [assignment]
+        self.container = None  # type: ignore [assignment]
         self.snapshot = kwargs.get('x-ms-snapshot')
         self.version_id = kwargs.get('x-ms-version-id')
         self.is_current_version = kwargs.get('x-ms-is-current-version')
-        self.blob_type = BlobType(kwargs['x-ms-blob-type']) if kwargs.get('x-ms-blob-type') else None
-        self.metadata = kwargs.get('metadata')
+        self.blob_type = BlobType(kwargs['x-ms-blob-type']) if kwargs.get('x-ms-blob-type') else None  # type: ignore [assignment] # pylint: disable=line-too-long
+        self.metadata = kwargs.get('metadata')  # type: ignore [assignment]
         self.encrypted_metadata = kwargs.get('encrypted_metadata')
-        self.last_modified = kwargs.get('Last-Modified')
-        self.etag = kwargs.get('ETag')
-        self.size = kwargs.get('Content-Length')
+        self.last_modified = kwargs.get('Last-Modified')  # type: ignore [assignment]
+        self.etag = kwargs.get('ETag')  # type: ignore [assignment]
+        self.size = kwargs.get('Content-Length')  # type: ignore [assignment]
         self.content_range = kwargs.get('Content-Range')
         self.append_blob_committed_block_count = kwargs.get('x-ms-blob-committed-block-count')
         self.is_append_blob_sealed = kwargs.get('x-ms-blob-sealed')
         self.page_blob_sequence_number = kwargs.get('x-ms-blob-sequence-number')
-        self.server_encrypted = kwargs.get('x-ms-server-encrypted')
+        self.server_encrypted = kwargs.get('x-ms-server-encrypted')  # type: ignore [assignment]
         self.copy = CopyProperties(**kwargs)
         self.content_settings = ContentSettings(**kwargs)
         self.lease = LeaseProperties(**kwargs)
@@ -1294,7 +1294,7 @@ class BlobProperties(DictMixin):
         self.deleted = False
         self.deleted_time = None
         self.remaining_retention_days = None
-        self.creation_time = kwargs.get('x-ms-creation-time')
+        self.creation_time = kwargs.get('x-ms-creation-time')  # type: ignore [assignment]
         self.archive_status = kwargs.get('x-ms-archive-status')
         self.encryption_key_sha256 = kwargs.get('x-ms-encryption-key-sha256')
         self.encryption_scope = kwargs.get('x-ms-encryption-scope')
