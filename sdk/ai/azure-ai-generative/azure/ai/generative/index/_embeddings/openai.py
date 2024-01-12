@@ -30,7 +30,6 @@ class OpenAIEmbedder:
         embedding_ctx_length: Optional[int] = None,
         show_progress_bar: bool = False,
         openai_passthrough_args: Optional[dict] = None,
-        user_agent_header: Dict[str, str] = None,
     ):
         """Initialize an OpenAI Embedding client."""
         self.api_base = api_base
