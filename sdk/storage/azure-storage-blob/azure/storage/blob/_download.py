@@ -587,7 +587,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             downloader=iter_downloader,
             chunk_size=self._config.max_chunk_get_size)
 
-    def read(self, size: int = -1) -> Any:
+    def read(self, size: int = -1) -> T:
         """
         Read up to size bytes from the stream and return them. If size
         is unspecified or is -1, all bytes will be read.
@@ -604,7 +604,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             return self.readall()
         # Empty blob or already read to the end
         if size == 0 or self._offset >= self.size:
-            return b'' if not self._encoding else ''
+            return b'' if not self._encoding else ''  # type: ignore [return-value]
 
         stream = BytesIO()
         remaining_size = size
@@ -663,9 +663,9 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             self._offset += remaining_size
 
         data = stream.getvalue()
-        if self._encoding and isinstance(self._encoding, str):
-            return data.decode(self._encoding)
-        return data
+        if self._encoding:
+            return data.decode(self._encoding)  # type: ignore [return-value]
+        return data  # type: ignore [return-value]
 
     def readall(self) -> T:
         """
@@ -676,11 +676,11 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         :rtype: T
         """
         stream = BytesIO()
-        self.readinto(stream)
+        self.readinto(stream)  # type: ignore [arg-type]
         data = stream.getvalue()
         if self._encoding:
-            return data.decode(self._encoding)
-        return data
+            return data.decode(self._encoding)  # type: ignore [return-value]
+        return data  # type: ignore [return-value]
 
     def content_as_bytes(self, max_concurrency=1):
         """DEPRECATED: Download the contents of this file.
@@ -754,7 +754,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         # Write the content to the user stream if there is data left
         if self._offset < len(self._current_content):
             content = self._current_content[self._offset:]
-            stream.write(content)
+            stream.write(content)  # type: ignore [call-overload]
             self._offset += len(content)
             if self._progress_hook:
                 self._progress_hook(len(content), self.size)
