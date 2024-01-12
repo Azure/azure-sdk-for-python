@@ -29,15 +29,17 @@ connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
 async def shared_transport_async():
     # [START shared_transport_async]
-    shared_transport = AioHttpTransport()
+    import aiohttp
+
+    session = aiohttp.ClientSession()
+    shared_transport = AioHttpTransport(session=session, session_owner=False)    # here we set session_owner to False to indicate that we don't want to close the session when the client is closed
     async with shared_transport:
         blob_service_client1 = BlobServiceClient.from_connection_string(
             connection_string,
             transport=shared_transport,
-            session_owner=False,  # here we set session_owner to False to indicate that we don't want to close the session when the client is closed
         )
         blob_service_client2 = BlobServiceClient.from_connection_string(
-            connection_string, transport=shared_transport, session_owner=False
+            connection_string, transport=shared_transport
         )
         containers1 = blob_service_client1.list_containers()
         async for contain in containers1:
@@ -45,6 +47,7 @@ async def shared_transport_async():
         containers2 = blob_service_client2.list_containers()
         async for contain in containers2:
             print(contain.name)
+    await session.close()  # we need to close the session manually
     # [END shared_transport_async]
 
 
@@ -54,13 +57,13 @@ async def shared_transport_async_with_pooling():
 
     conn = aiohttp.TCPConnector(limit=100)
     session = aiohttp.ClientSession(connector=conn)
-    shared_transport = AioHttpTransport(session=session)
+    shared_transport = AioHttpTransport(session=session, session_owner=False)
     async with shared_transport:
         blob_service_client1 = BlobServiceClient.from_connection_string(
-            connection_string, transport=shared_transport, session_owner=False
+            connection_string, transport=shared_transport
         )
         blob_service_client2 = BlobServiceClient.from_connection_string(
-            connection_string, transport=shared_transport, session_owner=False
+            connection_string, transport=shared_transport
         )
         containers1 = blob_service_client1.list_containers()
         async for contain in containers1:
@@ -68,6 +71,7 @@ async def shared_transport_async_with_pooling():
         containers2 = blob_service_client2.list_containers()
         async for contain in containers2:
             print(contain.name)
+    await session.close()  # we need to close the session manually
     # [END shared_transport_async_with_pooling]
 
 
