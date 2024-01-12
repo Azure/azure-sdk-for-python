@@ -108,12 +108,12 @@ class EnvironmentCredential:
             else:
                 _LOGGER.info("No environment configuration found.")
 
-    def __enter__(self):
+    def __enter__(self) -> "EnvironmentCredential":
         if self._credential:
             self._credential.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         if self._credential:
             self._credential.__exit__(*args)
 

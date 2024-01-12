@@ -19,14 +19,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# disable (too-many-lines) check
-# pylint: disable=C0302
+# pylint: disable=too-many-lines, protected-access
 
 """Document client class for the Azure Cosmos database service.
 """
-import re
-from typing import Callable, Dict, Any, Iterable, List, Mapping, Optional, Sequence, Tuple, Union, cast
 import urllib.parse
+from typing import Callable, Dict, Any, Iterable, List, Mapping, Optional, Sequence, Tuple, Union, cast, Type
+from typing_extensions import TypedDict
 
 from urllib3.util.retry import Retry
 from azure.core.credentials import TokenCredential
@@ -57,19 +56,23 @@ from ._routing import routing_map_provider, routing_range
 from ._retry_utility import ConnectionRetryPolicy
 from . import _session
 from . import _utils
-from .partition_key import _Undefined, _Empty, PartitionKey
+from .partition_key import (
+    _Undefined,
+    _Empty,
+    PartitionKey,
+    _return_undefined_or_empty_partition_key,
+    NonePartitionKeyValue
+)
 from ._auth_policy import CosmosBearerTokenCredentialPolicy
 from ._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from ._range_partition_resolver import RangePartitionResolver
 
-
-# Cosmos table validation regex breakdown:
-# ^ Match start of string.
-# [^/\#?]{0,255} Match any character that is not /\#? for between 0-255 characters.
-# $ End of string
-_VALID_COSMOS_RESOURCE = re.compile(r"^[^/\\#?\t\r\n]{0,255}$")
-
-# pylint: disable=protected-access
+PartitionKeyType = Union[str, int, float, bool, List[Union[str, int, float, bool]], Type[NonePartitionKeyValue]]
+class CredentialDict(TypedDict, total=False):
+    masterKey: str
+    resourceTokens: Mapping[str, Any]
+    permissionFeed: Iterable[Mapping[str, Any]]
+    clientSecretCredential: TokenCredential
 
 
 class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-many-instance-attributes
@@ -99,7 +102,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def __init__(
             self,
             url_connection: str,
-            auth: Dict[str, Any],
+            auth: CredentialDict,
             connection_policy: Optional[ConnectionPolicy] = None,
             consistency_level: Optional[str] = None,
             **kwargs: Any
@@ -120,7 +123,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """
         self.url_connection = url_connection
         self.master_key: Optional[str] = None
-        self.resource_tokens: Optional[Dict[str, Any]] = None
+        self.resource_tokens: Optional[Mapping[str, Any]] = None
         self.aad_credentials: Optional[TokenCredential] = None
         if auth is not None:
             self.master_key = auth.get("masterKey")
@@ -232,7 +235,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :type consistency_level: Optional[str]
         :rtype: None
         """
-        if consistency_level is None:
+        if consistency_level is None and database_account.ConsistencyPolicy:
             # Set to default level present in account
             user_consistency_policy = database_account.ConsistencyPolicy
             consistency_level = user_consistency_policy.get(Constants.DefaultConsistencyLevel)
@@ -310,12 +313,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """
         if not database_link:
             raise ValueError("database_link is None or empty.")
-
         return self.partition_resolvers.get(base.TrimBeginningAndEndingSlashes(database_link))
 
     def CreateDatabase(
         self,
-        database: Mapping[str, Any],
+        database: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -332,8 +334,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """
         if options is None:
             options = {}
-
-        CosmosClientConnection.__ValidateResource(database)
+        base._validate_resource(database)
         path = "/dbs"
         return self.Create(database, path, "dbs", None, None, options, **kwargs)
 
@@ -481,7 +482,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def CreateContainer(
         self,
         database_link: str,
-        collection: Mapping[str, Any],
+        collection: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -501,7 +502,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        CosmosClientConnection.__ValidateResource(collection)
+        base._validate_resource(collection)
         path = base.GetPathFromLink(database_link, "colls")
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
         return self.Create(collection, path, "colls", database_id, None, options, **kwargs)
@@ -509,7 +510,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def ReplaceContainer(
         self,
         collection_link: str,
-        collection: Mapping[str, Any],
+        collection: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -531,7 +532,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        CosmosClientConnection.__ValidateResource(collection)
+        base._validate_resource(collection)
         path = base.GetPathFromLink(collection_link)
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         return self.Replace(collection, path, "colls", collection_id, None, options, **kwargs)
@@ -565,7 +566,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def CreateUser(
         self,
         database_link: str,
-        user: Mapping[str, Any],
+        user: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -593,7 +594,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def UpsertUser(
         self,
         database_link: str,
-        user: Mapping[str, Any],
+        user: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -617,7 +618,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         return self.Upsert(user, path, "users", database_id, None, options, **kwargs)
 
     def _GetDatabaseIdWithPathForUser(self, database_link: str, user: Mapping[str, Any]) -> Tuple[Optional[str], str]:
-        CosmosClientConnection.__ValidateResource(user)
+        base._validate_resource(user)
         path = base.GetPathFromLink(database_link, "users")
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
         return database_id, path
@@ -740,7 +741,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def CreatePermission(
         self,
         user_link: str,
-        permission: Mapping[str, Any],
+        permission: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -768,7 +769,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def UpsertPermission(
         self,
         user_link: str,
-        permission: Mapping[str, Any],
+        permission: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -798,7 +799,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         permission: Mapping[str, Any],
         user_link: str
     ) -> Tuple[str, Optional[str]]:
-        CosmosClientConnection.__ValidateResource(permission)
+        base._validate_resource(permission)
         path = base.GetPathFromLink(user_link, "permissions")
         user_id = base.GetResourceIdOrFullNameFromLink(user_link)
         return path, user_id
@@ -895,7 +896,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def ReplaceUser(
         self,
         user_link: str,
-        user: Mapping[str, Any],
+        user: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -916,7 +917,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        CosmosClientConnection.__ValidateResource(user)
+        base._validate_resource(user)
         path = base.GetPathFromLink(user_link)
         user_id = base.GetResourceIdOrFullNameFromLink(user_link)
         return self.Replace(user, path, "users", user_id, None, options, **kwargs)
@@ -950,7 +951,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def ReplacePermission(
         self,
         permission_link: str,
-        permission: Mapping[str, Any],
+        permission: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -971,7 +972,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        CosmosClientConnection.__ValidateResource(permission)
+        base._validate_resource(permission)
         path = base.GetPathFromLink(permission_link)
         permission_id = base.GetResourceIdOrFullNameFromLink(permission_link)
         return self.Replace(permission, path, "permissions", permission_id, None, options, **kwargs)
@@ -1029,7 +1030,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         database_or_container_link: str,
         query: Optional[Union[str, Dict[str, Any]]],
         options: Optional[Mapping[str, Any]] = None,
-        partition_key: Optional[Union[str, float, bool]] = None,
+        partition_key: Optional[PartitionKeyType] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
@@ -1039,7 +1040,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The link to the database when using partitioning, otherwise link to the document collection.
         :param (str or dict) query: the query to be used
         :param dict options: The request options for the request.
-        :param str partition_key: Partition key for the query(default value None)
+        :param partition_key: Partition key for the query(default value None)
+        :type: partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
         :param response_hook: A callable invoked with the response metadata.
         :type response_hook: Callable[[Dict[str, str], Dict[str, Any]]
 
@@ -1249,7 +1251,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def CreateItem(
         self,
         database_or_container_link: str,
-        document: Mapping[str, Any],
+        document: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -1286,7 +1288,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def UpsertItem(
         self,
         database_or_container_link: str,
-        document: Mapping[str, Any],
+        document: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -1340,7 +1342,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if document is None:
             raise ValueError("document is None.")
 
-        CosmosClientConnection.__ValidateResource(document)
+        base._validate_resource(document)
         document = dict(document)
         if not document.get("id") and not options.get("disableAutomaticIdGeneration"):
             document["id"] = base.GenerateGuidId()
@@ -1451,7 +1453,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def CreateTrigger(
         self,
         collection_link: str,
-        trigger: Mapping[str, Any],
+        trigger: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -1478,7 +1480,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def UpsertTrigger(
         self,
         collection_link: str,
-        trigger: Mapping[str, Any],
+        trigger: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -1507,7 +1509,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_link: str,
         trigger: Mapping[str, Any]
     ) -> Tuple[Optional[str], str, Dict[str, Any]]:
-        CosmosClientConnection.__ValidateResource(trigger)
+        base._validate_resource(trigger)
         trigger = dict(trigger)
         if trigger.get("serverScript"):
             trigger["body"] = str(trigger.pop("serverScript", ""))
@@ -1611,7 +1613,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def CreateUserDefinedFunction(
         self,
         collection_link: str,
-        udf: Mapping[str, Any],
+        udf: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -1638,7 +1640,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def UpsertUserDefinedFunction(
         self,
         collection_link: str,
-        udf: Mapping[str, Any],
+        udf: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -1667,7 +1669,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_link: str,
         udf: Mapping[str, Any]
     ) -> Tuple[Optional[str], str, Dict[str, Any]]:
-        CosmosClientConnection.__ValidateResource(udf)
+        base._validate_resource(udf)
         udf = dict(udf)
         if udf.get("serverScript"):
             udf["body"] = str(udf.pop("serverScript", ""))
@@ -1771,7 +1773,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def CreateStoredProcedure(
         self,
         collection_link: str,
-        sproc: Mapping[str, Any],
+        sproc: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -1798,7 +1800,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def UpsertStoredProcedure(
         self,
         collection_link: str,
-        sproc: Mapping[str, Any],
+        sproc: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -1827,7 +1829,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_link: str,
         sproc: Mapping[str, Any]
     ) -> Tuple[Optional[str], str, Dict[str, Any]]:
-        CosmosClientConnection.__ValidateResource(sproc)
+        base._validate_resource(sproc)
         sproc = dict(sproc)
         if sproc.get("serverScript"):
             sproc["body"] = str(sproc.pop("serverScript", ""))
@@ -1980,7 +1982,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def ReplaceItem(
         self,
         document_link: str,
-        new_document: Mapping[str, Any],
+        new_document: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -1998,7 +2000,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             dict
 
         """
-        CosmosClientConnection.__ValidateResource(new_document)
+        base._validate_resource(new_document)
         path = base.GetPathFromLink(document_link)
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
 
@@ -2021,7 +2023,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def PatchItem(
         self,
         document_link: str,
-        operations: Sequence[Mapping[str, Any]],
+        operations: List[Dict[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -2170,7 +2172,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The link to the document collection.
         :param dict options:
             The request options for the request.
-
         :return:
             None
         :rtype:
@@ -2196,7 +2197,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def ReplaceTrigger(
         self,
         trigger_link: str,
-        trigger: Mapping[str, Any],
+        trigger: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -2217,7 +2218,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        CosmosClientConnection.__ValidateResource(trigger)
+        base._validate_resource(trigger)
         trigger = dict(trigger)
         if trigger.get("serverScript"):
             trigger["body"] = str(trigger.pop("serverScript", ""))
@@ -2257,7 +2258,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def ReplaceUserDefinedFunction(
         self,
         udf_link: str,
-        udf: Mapping[str, Any],
+        udf: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -2278,7 +2279,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        CosmosClientConnection.__ValidateResource(udf)
+        base._validate_resource(udf)
         udf = dict(udf)
         if udf.get("serverScript"):
             udf["body"] = str(udf.pop("serverScript", ""))
@@ -2318,7 +2319,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def ExecuteStoredProcedure(
         self,
         sproc_link: str,
-        params: Optional[Union[Mapping[str, Any], Sequence[Mapping[str, Any]]]],
+        params: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -2343,7 +2344,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         initial_headers = self.default_headers.copy()
         initial_headers[http_constants.HttpHeaders.Accept] = runtime_constants.MediaTypes.Json
 
-        if params and not isinstance(params, Sequence):
+        if params and not isinstance(params, list):
             params = [params]
 
         path = base.GetPathFromLink(sproc_link)
@@ -2358,7 +2359,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def ReplaceStoredProcedure(
         self,
         sproc_link: str,
-        sproc: Mapping[str, Any],
+        sproc: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -2379,7 +2380,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        CosmosClientConnection.__ValidateResource(sproc)
+        base._validate_resource(sproc)
         sproc = dict(sproc)
         if sproc.get("serverScript"):
             sproc["body"] = str(sproc.pop("serverScript", ""))
@@ -2445,7 +2446,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def ReplaceOffer(
         self,
         offer_link: str,
-        offer: Mapping[str, Any],
+        offer: Dict[str, Any],
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Replaces an offer and returns it.
@@ -2460,7 +2461,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             dict
 
         """
-        CosmosClientConnection.__ValidateResource(offer)
+        base._validate_resource(offer)
         path = base.GetPathFromLink(offer_link)
         offer_id = base.GetResourceIdOrFullNameFromLink(offer_link)
         return self.Replace(offer, path, "offers", offer_id, None, None, **kwargs)
@@ -2586,7 +2587,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
     def Create(
         self,
-        body: Mapping[str, Any],
+        body: Dict[str, Any],
         path: str,
         typ: str,
         id: Optional[str],
@@ -2626,7 +2627,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
     def Upsert(
         self,
-        body: Mapping[str, Any],
+        body: Dict[str, Any],
         path: str,
         typ: str,
         id: Optional[str],
@@ -2667,7 +2668,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
     def Replace(
         self,
-        resource: Mapping[str, Any],
+        resource: Dict[str, Any],
         path: str,
         typ: str,
         id: Optional[str],
@@ -2805,7 +2806,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self,
         path: str,
         request_params: RequestObject,
-        body: Any,
+        body: Optional[Union[str, List[Dict[str, Any]], Dict[str, Any]]],
         req_headers: Mapping[str, Any],
         **kwargs: Any
     ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
@@ -2813,7 +2814,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         :param str path: the url to be used for the request.
         :param ~azure.cosmos._request_object.RequestObject request_params: the request parameters.
-        :param Union[str, unicode, Dict[Any, Any]] body: the request body.
+        :param Union[str, List[Dict[str, Any]], Dict[Any, Any]] body: the request body.
         :param Dict[str, Any] req_headers: the request headers.
         :return: Tuple of (result, headers).
         :rtype: tuple of (dict, dict)
@@ -2834,7 +2835,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self,
         path: str,
         request_params: RequestObject,
-        body: Any,
+        body: Dict[str, Any],
         req_headers: Mapping[str, Any],
         **kwargs: Any
     ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
@@ -2863,7 +2864,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self,
         path: str,
         request_params: RequestObject,
-        request_data: Any,
+        request_data: Dict[str, Any],
         req_headers: Mapping[str, Any],
         **kwargs: Any
     ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
@@ -2871,7 +2872,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         :param str path: the url to be used for the request.
         :param ~azure.cosmos._request_object.RequestObject request_params: the request parameters.
-        :param Union[str, unicode, Dict[Any, Any]] request_data: the request body.
+        :param Union[str, Dict[Any, Any]] request_data: the request body.
         :param Dict[str, Any] req_headers: the request headers.
         :return: Tuple of (result, headers).
         :rtype: tuple of (dict, dict)
@@ -2954,8 +2955,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             path: str,
             resource_type: str,
             resource_id: Optional[str],
-            result_fn: Callable[[Mapping[str, Any]], Iterable[Mapping[str, Any]]],
-            create_fn: Optional[Callable[['CosmosClientConnection', Mapping[str, Any]], Mapping[str, Any]]],
+            result_fn: Callable[[Dict[str, Any]], List[Dict[str, Any]]],
+            create_fn: Optional[Callable[['CosmosClientConnection', Dict[str, Any]], Dict[str, Any]]],
             query: Optional[Union[str, Dict[str, Any]]],
             options: Optional[Mapping[str, Any]] = None,
             partition_key_range_id: Optional[str] = None,
@@ -2989,7 +2990,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             __GetBodiesFromQueryResult = result_fn
         else:
 
-            def __GetBodiesFromQueryResult(result: Optional[Mapping[str, Any]]) -> List[Mapping[str, Any]]:
+            def __GetBodiesFromQueryResult(result: Dict[str, Any]) -> List[Dict[str, Any]]:
                 if create_fn and result is not None:
                     return [create_fn(self, body) for body in result_fn(result)]
                 # If there is no change feed, the result data is empty and result is None.
@@ -3136,7 +3137,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             path,
             "docs",
             resource_id,
-            lambda r: cast(Iterable[Mapping[str, Any]], r),
+            lambda r: cast(List[Dict[str, Any]], r),
             None,
             query,
             options,
@@ -3173,20 +3174,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             raise TypeError("query body must be a string.")
         else:
             raise SystemError("Unexpected query compatibility mode.")
-
         return query_body
-
-    @staticmethod
-    def __ValidateResource(resource: Mapping[str, Any]) -> None:
-        id_: Optional[str] = resource.get("id")
-        if id_:
-            try:
-                if _VALID_COSMOS_RESOURCE.match(id_) is None:
-                    raise ValueError("Id contains illegal chars.")
-                if id_[-1] in [" ", "\n"]:
-                    raise ValueError("Id ends with a space or newline.")
-            except TypeError as e:
-                raise TypeError("Id type must be a string.") from e
 
     # Adds the partition key to options
     def _AddPartitionKey(
@@ -3252,14 +3240,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 break
             # At any point if we don't find the value of a sub-property in the document, we return as Undefined
             if part not in partitionKey:
-                return self._return_undefined_or_empty_partition_key(is_system_key)
+                return _return_undefined_or_empty_partition_key(is_system_key)
             partitionKey = partitionKey[part]
             matchCount += 1
 
         # Match the count of hops we did to get the partitionKey with the length of
         # partition key parts and validate that it's not a dict at that level
         if (matchCount != expected_matchCount) or isinstance(partitionKey, Mapping):
-            return self._return_undefined_or_empty_partition_key(is_system_key)
+            return _return_undefined_or_empty_partition_key(is_system_key)
         return partitionKey
 
     def refresh_routing_map_provider(self) -> None:
@@ -3304,9 +3292,3 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             partition_key_definition = collection.get("partitionKey")
             self.partition_key_definition_cache[collection_link] = partition_key_definition
         return partition_key_definition
-
-    @staticmethod
-    def _return_undefined_or_empty_partition_key(is_system_key: bool) -> Union[_Empty, _Undefined]:
-        if is_system_key:
-            return _Empty()
-        return _Undefined()

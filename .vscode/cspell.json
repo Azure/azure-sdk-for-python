@@ -1660,6 +1660,16 @@
       ]
     },
     {
+      "filename": "sdk/vision/azure-ai-vision-imageanalysis/azure/ai/vision/imageanalysis/**/*.py",
+      "words": [
+        "mros",
+        "Nify",
+        "deserializers",
+        "ctxt",
+        "wday"
+      ]
+    },
+    {
       "filename": "sdk/iothub/azure-iot-deviceprovisioning/azure/iot/deviceprovisioning/_serialization.py",
       "words": [
         "ctxt",
