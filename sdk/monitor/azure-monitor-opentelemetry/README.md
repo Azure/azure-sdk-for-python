@@ -65,7 +65,7 @@ You can use `configure_azure_monitor` to set up instrumentation for your app to 
 You can configure further with [OpenTelemetry environment variables][ot_env_vars] such as:
 | Environment Variable | Description |
 |-------------|----------------------|
-| [OTEL_SERVICE_NAME][ot_spec_service_name], [OTEL_RESOURCE_ATTRIBUTES][ot_spec_resource_attributes] | Specifies the OpenTelemetry [resource][ot_spec_resource] associated with your application. |
+| [OTEL_SERVICE_NAME][ot_spec_service_name], [OTEL_RESOURCE_ATTRIBUTES][ot_spec_resource_attributes] | Specifies the OpenTelemetry [Resource][ot_spec_resource] associated with your application. |
 | `OTEL_LOGS_EXPORTER` | If set to `None`, disables collection and export of logging telemetry. |
 | `OTEL_METRICS_EXPORTER` | If set to `None`, disables collection and export of metric telemetry. |
 | `OTEL_TRACES_EXPORTER` | If set to `None`, disables collection and export of distributed tracing telemetry. |

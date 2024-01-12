@@ -150,15 +150,18 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
     # pylint: disable=docstring-keyword-should-match-keyword-only
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "AzureMonitorTraceExporter":
-        """Create an AzureMonitorTraceExporter from a connection string.
+        """
+        Create an AzureMonitorTraceExporter from a connection string. This is
+        the recommended way of instantiation if a connection string is passed in
+        explicitly. If a user wants to use a connection string provided by
+        environment variable, the constructor of the exporter can be called
+        directly.
 
-        This is the recommended way of instantation if a connection string is passed in explicitly.
-        If a user wants to use a connection string provided by environment variable, the constructor
-        of the exporter can be called directly.
-
-        :param str conn_str: The connection string to be used for authentication.
-        :keyword str api_version: The service API version used. Defaults to latest.
-        :returns an instance of ~AzureMonitorTraceExporter
+        :param str conn_str: The connection string to be used for
+            authentication.
+        :keyword str api_version: The service API version used. Defaults to
+            latest.
+        :return: an instance of ~AzureMonitorTraceExporter
         :rtype: ~azure.monitor.opentelemetry.exporter.AzureMonitorTraceExporter
         """
         return cls(connection_string=conn_str, **kwargs)

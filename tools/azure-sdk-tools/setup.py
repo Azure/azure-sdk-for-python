@@ -20,8 +20,6 @@ DEPENDENCIES = [
     "PyYAML",
     "urllib3",
     "tomli-w==1.0.0",
-    # gh tools
-    "PyGithub>=1.59.0",
 ]
 
 setup(
@@ -60,6 +58,7 @@ setup(
         ":python_version<'3.11'": ["tomli==2.0.1"],
         "build": ["six", "setuptools", "pyparsing", "certifi", "cibuildwheel"],
         "conda": ["beautifulsoup4"],
-        "systemperf": ["aiohttp>=3.0", "requests>=2.0", "tornado==6.0.3", "httpx>=0.21", "azure-core"]
+        "systemperf": ["aiohttp>=3.0", "requests>=2.0", "tornado==6.0.3", "httpx>=0.21", "azure-core"],
+        "ghtools": ["PyGithub>=1.59.0"],
     },
 )
