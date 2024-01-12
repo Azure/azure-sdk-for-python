@@ -342,7 +342,7 @@ def crack_documents(sources: Iterator[DocumentSource], file_extension_loaders=fi
     log_batch_size = 100
     for i, source in enumerate(sources):
         file_start_time = time.time()
-        # TODO: Bug 2878422 for all type: ignore in this method
+        assert isinstance(source.path, Path)
         files_by_extension[source.path.suffix.lower()] += 1
         loader_cls = file_extension_loaders.get(source.path.suffix.lower())
         if i % log_batch_size == 0:
