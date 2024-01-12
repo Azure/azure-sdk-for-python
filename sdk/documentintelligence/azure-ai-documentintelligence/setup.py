@@ -13,7 +13,7 @@ from setuptools import setup, find_packages
 
 
 PACKAGE_NAME = "azure-ai-documentintelligence"
-PACKAGE_PPRINT_NAME = "Azure Ai Documentintelligence"
+PACKAGE_PPRINT_NAME = "Azure Ai Document Intelligence"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")
