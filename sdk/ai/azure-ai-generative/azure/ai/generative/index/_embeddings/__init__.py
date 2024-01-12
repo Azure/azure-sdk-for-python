@@ -896,8 +896,9 @@ class EmbeddingsContainer:
     def _get_embeddings_internal(self, input_documents: Union[Iterator[Document], BaseLoader, DocumentChunksIterator]) -> OrderedDict:
         if self._embed_fn is None:
             raise ValueError("No embed function provided.")
-
+            
         if hasattr(input_documents, "__module__") and "langchain" in input_documents.__module__ and "document_loaders" in input_documents.__module__:
+            assert  isinstance(BaseLoader, input_documents)
             input_documents = iter([WrappedLangChainDocument(d)
                                    for d in input_documents.load()])
         elif isinstance(input_documents, DocumentChunksIterator):
