@@ -2027,7 +2027,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
     def get_block_list(
         self, block_list_type: str = "committed",
         **kwargs: Any
-    ) -> Tuple[List[BlobBlock], List[BlobBlock]]:
+    ) -> Tuple[List[Optional[BlobBlock]], List[Optional[BlobBlock]]]:
         """The Get Block List operation retrieves the list of blocks that have
         been uploaded as part of a block blob.
 
@@ -2051,7 +2051,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: A tuple of two lists - committed and uncommitted blocks
-        :rtype: tuple(list(~azure.storage.blob.BlobBlock), list(~azure.storage.blob.BlobBlock))
+        :rtype: Tuple[List[Optional[BlobBlock]], List[Optional[BlobBlock]]]
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
@@ -2065,7 +2065,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        return _get_block_list_result(blocks)  # type: ignore
+        return _get_block_list_result(blocks)
 
     @distributed_trace
     def commit_block_list(
