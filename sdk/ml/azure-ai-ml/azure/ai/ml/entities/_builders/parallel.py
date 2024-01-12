@@ -9,7 +9,7 @@ import json
 import logging
 import os
 import re
-from typing import Any, Dict, List, Optional, Tuple, Type, Union, cast
+from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 from marshmallow import INCLUDE, Schema
 
@@ -216,13 +216,13 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
         return str, Output
 
     @property
-    def retry_settings(self) -> RetrySettings:
+    def retry_settings(self) -> Optional[RetrySettings]:
         """Get the retry settings for the parallel job.
 
         :return: The retry settings for the parallel job.
         :rtype: ~azure.ai.ml.entities._job.parallel.retry_settings.RetrySettings
         """
-        return cast(RetrySettings, self._retry_settings)
+        return self._retry_settings
 
     @retry_settings.setter
     def retry_settings(self, value: Union[RetrySettings, Dict]) -> None:
@@ -302,13 +302,13 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
         return res
 
     @property
-    def task(self) -> Optional[ParallelTask]:
+    def task(self) -> Optional[Union[ParallelTask, RunFunction, Dict]]:
         """Get the parallel task.
 
         :return: The parallel task.
         :rtype: ~azure.ai.ml.entities._job.parallel.parallel_task.ParallelTask
         """
-        return cast(Optional[ParallelTask], self._task)
+        return self._task
 
     @task.setter
     def task(self, value: Union[ParallelTask, Dict]) -> None:
@@ -419,7 +419,9 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
                 rest_attr = parallel_attr
             else:
                 raise Exception(f"Expecting {base_type} for {attr}, got {type(parallel_attr)} instead.")
-        return cast(dict, convert_ordered_dict_to_dict(rest_attr))
+        # TODO: Bug Item number: 2897665
+        convert_dict: dict = convert_ordered_dict_to_dict(rest_attr)  # type: ignore
+        return convert_dict
 
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
