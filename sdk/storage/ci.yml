@@ -49,7 +49,7 @@ extends:
     - name: azure-storage-queue
       safeName: azurestoragequeue
     - name: azure-storage-extensions
-      safeName: azure-storage-extensions
+      safeName: azurestorageextensions
     - name: azure-mgmt-storage
       safeName: azuremgmtstorage
     - name: azure-mgmt-storagecache
