@@ -24,10 +24,10 @@ from azure.core.async_paging import AsyncItemPaged
 
 from azure.storage.blob.aio import BlobServiceClient
 from .custom_iterator import CustomIterator, AsyncCustomIterator
-from ._test_base import _TableTest
+from ._test_base import _BlobTest
 
 
-class DownloadPageableTest(_TableTest):
+class _DownloadXMLPageableTest(_BlobTest):
     def __init__(self, arguments):
         super().__init__(arguments)
         storage_conn_str = os.environ["AZURE_STORAGE_CONN_STR"]

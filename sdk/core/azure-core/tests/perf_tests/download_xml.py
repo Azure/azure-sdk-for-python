@@ -19,10 +19,10 @@ from azure.core.rest import HttpRequest
 from azure.storage.blob._generated.operations._block_blob_operations import (
     build_upload_request
 )
-from ._test_base import _ServiceTest
+from ._test_base import _BlobTest
 
 
-class DownloadXMLDataTest(_ServiceTest):
+class DownloadXMLDataTest(_BlobTest):
     def __init__(self, arguments):
         super().__init__(arguments)
         blob_name = "downloadtest"
@@ -44,7 +44,7 @@ class DownloadXMLDataTest(_ServiceTest):
             content_length=self.args.size,
             content_type='application/octet-stream',
             headers={
-                'x-ms-version': '2023-11-03',
+                'x-ms-version': self.api_version,
                 'x-ms-date': current_time,
             },
         )
@@ -65,7 +65,7 @@ class DownloadXMLDataTest(_ServiceTest):
                 self.blob_endpoint,
                 params={'comp': 'blocklist', 'blocklisttype': 'committed'},
                 headers={
-                    'x-ms-version': '2023-11-03',
+                    'x-ms-version': self.api_version,
                     'Accept': 'application/xml',
                     'x-ms-date': current_time,
                 }
@@ -89,7 +89,7 @@ class DownloadXMLDataTest(_ServiceTest):
                 self.blob_endpoint,
                 params={'comp': 'blocklist', 'blocklisttype': 'committed'},
                 headers={
-                    'x-ms-version': '2023-11-03',
+                    'x-ms-version': self.api_version,
                     'Accept': 'application/xml',
                     'x-ms-date': current_time,
                 }

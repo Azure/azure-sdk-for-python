@@ -19,10 +19,10 @@ from azure.core.rest import HttpRequest
 from azure.storage.blob._generated.operations._block_blob_operations import (
     build_upload_request
 )
-from ._test_base import _ServiceTest
+from ._test_base import _BlobTest
 
 
-class DownloadBinaryDataTest(_ServiceTest):
+class DownloadBinaryDataTest(_BlobTest):
     def __init__(self, arguments):
         super().__init__(arguments)
         blob_name = "streamdownloadtest"
@@ -44,7 +44,7 @@ class DownloadBinaryDataTest(_ServiceTest):
             content_length=self.args.size,
             content_type='application/octet-stream',
             headers={
-                'x-ms-version': '2023-11-03',
+                'x-ms-version': self.api_version,
                 'x-ms-date': current_time,
             },
         )
@@ -64,13 +64,12 @@ class DownloadBinaryDataTest(_ServiceTest):
                 'GET',
                 self.blob_endpoint,
                 headers={
-                    'x-ms-version': '2023-11-03',
-                    'Accept': 'application/xml',
+                    'x-ms-version': self.api_version,
+                    'Accept': 'application/octet-stream',
                     'x-ms-date': current_time,
-                    'Content-Type': 'application/octet-stream'
                 }
             ),
-            stream=True
+            stream=False
         ).http_response
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
@@ -83,11 +82,12 @@ class DownloadBinaryDataTest(_ServiceTest):
                 'GET',
                 self.blob_endpoint,
                 headers={
-                    'x-ms-version': '2023-11-03',
+                    'x-ms-version': self.api_version,
                     'Accept': 'application/octet-stream',
                     'x-ms-date': current_time,
                 }
-            )
+            ),
+            stream=False
         )).http_response
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
