@@ -101,9 +101,7 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
                             name=field_name,
                             type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
                             searchable=True,
-                            vector_search_dimensions={
-                                embeddings.get_embedding_dimensions()
-                            },
+                            vector_search_dimensions=embeddings.get_embedding_dimensions(),
                             vector_search_profile=f"{field_name}_config",
                         )
                     )
