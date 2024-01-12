@@ -34,6 +34,7 @@ def sample_manage_models():
         DocumentBuildMode,
         BuildDocumentModelRequest,
         AzureBlobContentSource,
+        DocumentModelDetails,
     )
     from azure.core.credentials import AzureKeyCredential
 
@@ -50,20 +51,22 @@ def sample_manage_models():
             description="my model description",
         )
     )
-    model = poller.result()
+    model: DocumentModelDetails = poller.result()
 
     print(f"Model ID: {model.model_id}")
     print(f"Description: {model.description}")
     print(f"Model created on: {model.created_date_time}")
     print(f"Model expires on: {model.expiration_date_time}")
-    print("Doc types the model can recognize:")
-    for name, doc_type in model.doc_types.items():
-        print(f"Doc Type: '{name}' built with '{doc_type.build_mode}' mode which has the following fields:")
-        for field_name, field in doc_type.field_schema.items():
-            print(
-                f"Field: '{field_name}' has type '{field['type']}' and confidence score "
-                f"{doc_type.field_confidence[field_name]}"
-            )
+    if model.doc_types:
+        print("Doc types the model can recognize:")
+        for name, doc_type in model.doc_types.items():
+            print(f"Doc Type: '{name}' built with '{doc_type.build_mode}' mode which has the following fields:")
+            for field_name, field in doc_type.field_schema.items():
+                if doc_type.field_confidence:
+                    print(
+                        f"Field: '{field_name}' has type '{field['type']}' and confidence score "
+                        f"{doc_type.field_confidence[field_name]}"
+                    )
     # [END build_model]
 
     # [START get_resource_info]

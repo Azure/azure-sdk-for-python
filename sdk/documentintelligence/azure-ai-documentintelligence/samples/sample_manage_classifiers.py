@@ -34,6 +34,7 @@ def sample_manage_classifiers():
         AzureBlobContentSource,
         ClassifierDocumentTypeDetails,
         BuildDocumentClassifierRequest,
+        DocumentClassifierDetails,
     )
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
@@ -59,14 +60,15 @@ def sample_manage_classifiers():
             description="IRS document classifier",
         )
     )
-    classifier = poller.result()
+    classifier: DocumentClassifierDetails = poller.result()
     print(f"Built classifier with ID: {classifier.classifier_id}")
     print(f"API version used to build the classifier model: {classifier.api_version}")
     print(f"Classifier description: {classifier.description}")
     print(f"Document classes used for training the model:")
     for doc_type, details in classifier.doc_types.items():
         print(f"Document type: {doc_type}")
-        print(f"Container source: {details.azure_blob_source.container_url}\n")
+        if details.azure_blob_source:
+            print(f"Container source: {details.azure_blob_source.container_url}\n")
     # [END build_classifier]
 
     # Next, we get a paged list of all of our document classifiers
