@@ -9,11 +9,7 @@ from wsgiref.handlers import format_date_time
 
 from azure.core.rest import HttpRequest
 from azure.core.exceptions import (
-    ClientAuthenticationError,
     HttpResponseError,
-    ResourceExistsError,
-    ResourceNotFoundError,
-    ResourceNotModifiedError,
     map_error,
 )
 from azure.storage.blob._generated.operations._block_blob_operations import (
@@ -35,12 +31,6 @@ class UpdateEntityJSONTest(_TableTest):
         self.table_name = f"updateentitytest{randint(1, 1000)}"
         self.connection_string = self.get_from_env("AZURE_STORAGE_CONN_STR")
         self.async_table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
-        self.error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
 
         # base entity
         partition_key = str(uuid.uuid4())

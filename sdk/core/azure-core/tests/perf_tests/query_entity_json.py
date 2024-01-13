@@ -9,11 +9,7 @@ from urllib.parse import quote
 
 from azure.core.rest import HttpRequest
 from azure.core.exceptions import (
-    ClientAuthenticationError,
     HttpResponseError,
-    ResourceExistsError,
-    ResourceNotFoundError,
-    ResourceNotModifiedError,
     map_error,
 )
 from azure.data.tables.aio import TableClient
@@ -25,12 +21,6 @@ class QueryEntityJSONTest(_TableTest):
         self.table_name = f"queryentitytest{randint(1, 1000)}"
         self.connection_string = self.get_from_env("AZURE_STORAGE_CONN_STR")
         self.async_table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
-        self.error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
 
         # query params
         self.select = quote("Property2")

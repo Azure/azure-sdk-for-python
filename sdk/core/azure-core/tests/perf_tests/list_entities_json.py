@@ -8,6 +8,7 @@ from wsgiref.handlers import format_date_time
 
 from azure.core.rest import HttpRequest
 from azure.core.exceptions import (
+    HttpResponseError,
     map_error,
 )
 from azure.core.paging import ItemPaged

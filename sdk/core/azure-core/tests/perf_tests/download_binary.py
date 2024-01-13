@@ -8,11 +8,7 @@ from wsgiref.handlers import format_date_time
 from devtools_testutils.perfstress_tests import get_random_bytes
 
 from azure.core.exceptions import (
-    ClientAuthenticationError,
     HttpResponseError,
-    ResourceExistsError,
-    ResourceNotFoundError,
-    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.rest import HttpRequest
@@ -27,12 +23,6 @@ class DownloadBinaryDataTest(_BlobTest):
         super().__init__(arguments)
         blob_name = "streamdownloadtest"
         self.blob_endpoint = f"{self.account_endpoint}{self.container_name}/{blob_name}"
-        self.error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
 
     async def global_setup(self):
         await super().global_setup()

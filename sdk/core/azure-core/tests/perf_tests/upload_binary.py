@@ -8,11 +8,7 @@ from wsgiref.handlers import format_date_time
 from devtools_testutils.perfstress_tests import get_random_bytes, WriteStream
 
 from azure.core.exceptions import (
-    ClientAuthenticationError,
     HttpResponseError,
-    ResourceExistsError,
-    ResourceNotFoundError,
-    ResourceNotModifiedError,
     map_error,
 )
 from azure.storage.blob._generated.operations._block_blob_operations import (

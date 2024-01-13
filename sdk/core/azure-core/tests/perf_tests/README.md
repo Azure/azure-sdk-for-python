@@ -36,10 +36,11 @@ Using the `perfstress` command alone will list the available perf tests found.
 
 The tests currently available:
 
-- `UploadBinaryDataTest` - Puts binary data of `size` in a Storage Blob (corresponds to the upload_blob Blob operation).
-- `DownloadXMLDataTest` - Gets XML data from a Storage Blob (corresponds to the get_block_list Blob operation).
-- `DownloadPageableTest` - Gets pageable data from a Storage Blob (corresponds to the list_blobs Blob operation).
-- `DownloadBinaryDataTest` - Gets binary data of `size` from a Storage Blob (corresponds to the download_blob Blob operation).
+- `UploadBinaryDataTest` - Puts binary data of `size` in a Storage Blob (corresponds to the `upload_blob` Blob operation).
+- `DownloadBinaryDataTest` - Gets binary data of `size` from a Storage Blob (corresponds to the `download_blob` Blob operation).
+- `UpdateEntityJSONTest` - Puts JSON data of `size` in a Storage Table (corresponds to the `update_entity` Tables operation).
+- `QueryEntityJSONTest` - Gets JSON data of `size` from a Storage Table (corresponds to the `query_entities` Tables operation).
+- `ListEntitiesPageableTest` - Gets pageable data from a Storage Table (corresponds to the `list_entities` Tables operation).
 
 ### Common perf command line options
 
@@ -61,10 +62,10 @@ The options that are available for all Core perf tests:
     - "requests": AsyncioRequestsTransport
   - For sync:
     - "requests": RequestsTransport (default)
-- `--size=10240` - Size of request content (in bytes). Defaults to 10240. (Not used by `DownloadPageableTest`.)
+- `--size=10240` - Size of request content (in bytes). Defaults to 10240. (Not used by `ListEntitiesPageableTest`.)
 
 #### Additional DownloadPageableTest command line options
-The options that are additionally available for `DownloadPageableTest`:
+The options that are additionally available for `ListEntitiesPageableTest`:
 
 - `--count=100` - Number of blobs to list. Defaults to 100.
 
