@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import logging
-import time
 from typing import Any, Callable, Optional, Union
 
 from azure.core.pipeline.transport import HttpTransport
