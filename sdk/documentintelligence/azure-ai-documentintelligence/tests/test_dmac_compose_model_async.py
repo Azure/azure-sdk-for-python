@@ -77,5 +77,5 @@ class TestTrainingAsync(AsyncDocumentIntelligenceTest):
                     assert key
                     assert field["type"]
                     assert doc_details.field_confidence[key] is not None
-        
+
         return recorded_variables
