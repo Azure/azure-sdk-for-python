@@ -14,6 +14,12 @@ from azure.core.pipeline.transport import (
     AsyncioRequestsTransport,
 )
 from azure.core.credentials import AzureNamedKeyCredential
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+)
 
 from azure.storage.blob._shared.authentication import SharedKeyCredentialPolicy as BlobSharedKeyCredentialPolicy
 from azure.data.tables._authentication import SharedKeyCredentialPolicy as TableSharedKeyCredentialPolicy
@@ -48,6 +54,13 @@ class _ServiceTest(PerfStressTest):
                     self.async_transport = async_transport_types[self.args.transport]
                 except:
                     raise ValueError(f"Invalid async transport:{self.args.transport}\n Valid options are:\n- aiohttp\n- requests\n")
+
+        self.error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
 
     @staticmethod
     def add_arguments(parser):
@@ -118,6 +131,14 @@ class _TableTest(_ServiceTest):
             "PartitionKey": pk,
             "RowKey": rk,
             "Data": 'a' * data_length,
+        }
+    
+    def get_entity(self, rk=0):
+        return {
+            "PartitionKey": 'pk',
+            "RowKey": str(rk),
+            "Property1": f'a{rk}',
+            "Property2": f'b{rk}'
         }
 
     async def close(self):
