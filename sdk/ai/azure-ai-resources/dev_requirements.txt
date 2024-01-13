@@ -5,3 +5,4 @@
 -e ../../ml/azure-ai-ml
 pytest
 pytest-xdist
+anyio>=3.6,<5.0
