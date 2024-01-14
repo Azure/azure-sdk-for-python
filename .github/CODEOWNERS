@@ -621,7 +621,7 @@
 #/<NotInRepo>/          @romahamu @omzevall
 
 # ServiceLabel: %Image Analysis %Service Attention
-/sdk/vision/azure-ai-vision-imageanalysis/          @dargilco @rhurey
+#/<NotInRepo>/          @dargilco @rhurey
 
 # ServiceLabel: %Import Export %Service Attention
 #/<NotInRepo>/          @madhurinms
