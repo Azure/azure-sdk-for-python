@@ -1625,7 +1625,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         udf: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Upserts a user-defined function in a collection.
 
         :param str collection_link:
@@ -1787,7 +1787,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         sproc: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Upserts a stored procedure in a collection.
 
         :param str collection_link:
