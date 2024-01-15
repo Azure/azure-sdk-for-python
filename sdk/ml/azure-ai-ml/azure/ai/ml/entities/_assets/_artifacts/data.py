@@ -8,7 +8,7 @@ import os
 import re
 from os import PathLike
 from pathlib import Path
-from typing import Dict, Optional, Type, Union
+from typing import Dict, List, Optional, Tuple, Type, Union
 
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
@@ -211,7 +211,7 @@ class Data(Artifact):
         return data
 
     @classmethod
-    def _resolve_cls_and_type(cls, data, params_override):
+    def _resolve_cls_and_type(cls, data: Dict, params_override: Optional[List[Dict]] = None) -> Tuple:
         from azure.ai.ml.entities._data_import.data_import import DataImport
 
         if "source" in data:

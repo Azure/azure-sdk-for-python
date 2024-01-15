@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Optional
+from typing import Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview import models
 from azure.ai.ml.entities._credentials import (
@@ -14,14 +14,18 @@ from azure.ai.ml.entities._credentials import (
     SasTokenConfiguration,
     ServicePrincipalConfiguration,
 )
-from azure.ai.ml.entities._datastore._on_prem_credentials import (
-    BaseKerberosCredentials,
-    KerberosKeytabCredentials,
-    KerberosPasswordCredentials,
-)
+from azure.ai.ml.entities._datastore._on_prem_credentials import KerberosKeytabCredentials, KerberosPasswordCredentials
 
 
-def from_rest_datastore_credentials(rest_credentials: models.DatastoreCredentials):
+def from_rest_datastore_credentials(
+    rest_credentials: models.DatastoreCredentials,
+) -> Union[
+    AccountKeyConfiguration,
+    SasTokenConfiguration,
+    ServicePrincipalConfiguration,
+    CertificateConfiguration,
+    NoneCredentialConfiguration,
+]:
     config_class = NoneCredentialConfiguration
 
     if isinstance(rest_credentials, models.AccountKeyDatastoreCredentials):
@@ -38,7 +42,7 @@ def from_rest_datastore_credentials(rest_credentials: models.DatastoreCredential
 
 def _from_rest_datastore_credentials_preview(
     rest_credentials: models.DatastoreCredentials,
-) -> Optional[BaseKerberosCredentials]:
+) -> Optional[Union[KerberosKeytabCredentials, KerberosPasswordCredentials]]:
     if isinstance(rest_credentials, models.KerberosKeytabCredentials):
         return KerberosKeytabCredentials._from_rest_object(rest_credentials)
     if isinstance(rest_credentials, models.KerberosPasswordCredentials):

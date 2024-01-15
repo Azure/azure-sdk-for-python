@@ -81,10 +81,11 @@ class Code(Artifact):
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        return load_from_dict(CodeAssetSchema, data, context, **kwargs)
+        return load_from_dict(CodeAssetSchema, data, context, **kwargs)  # type: ignore
 
     def _to_dict(self) -> Dict:
-        return CodeAssetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        # pylint: disable=no-member
+        return CodeAssetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # type: ignore
 
     @classmethod
     def _from_rest_object(cls, code_rest_object: CodeVersionData) -> "Code":
@@ -127,7 +128,8 @@ class Code(Artifact):
         else:
             self._path = asset_artifact.full_storage_path  # pylint: disable=attribute-defined-outside-init
 
-    def _to_arm_resource_param(self, **kwargs):  # pylint: disable=unused-argument
+    # pylint: disable=unused-argument
+    def _to_arm_resource_param(self, **kwargs):  # type: ignore
         properties = self._to_rest_object().properties
 
         return {

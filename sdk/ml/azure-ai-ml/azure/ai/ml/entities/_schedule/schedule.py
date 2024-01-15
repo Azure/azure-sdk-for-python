@@ -6,7 +6,7 @@ import logging
 import typing
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Optional, Union
+from typing import IO, AnyStr, Dict, List, Optional, Tuple, Union
 
 from typing_extensions import Literal
 
@@ -103,7 +103,9 @@ class Schedule(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, Resource)
         )
 
     @classmethod
-    def _resolve_cls_and_type(cls, data, params_override):  # pylint: disable=unused-argument
+    def _resolve_cls_and_type(
+        cls, data: Dict, params_override: Optional[List[Dict]] = None
+    ) -> Tuple:  # pylint: disable=unused-argument
         from azure.ai.ml.entities._data_import.schedule import ImportDataSchedule
         from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
 
