@@ -2766,7 +2766,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         body: Optional[Union[str, List[Dict[str, Any]], Dict[str, Any]]],
         req_headers: Dict[str, Any],
         **kwargs: Any
-    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    ) -> Union[Tuple[Dict[str, Any], Dict[str, Any]], Tuple[List[Dict[str, Any]], Dict[str, Any]]]:
         """Azure Cosmos 'POST' http request.
 
         :param str path: the url to be used for the request.
