@@ -66,9 +66,9 @@ class ModelBatchDeployment(Deployment):
         scoring_script: Optional[
             Union[str, PathLike]
         ] = None,  # promoted property from code_configuration.scoring_script
-        **kwargs,  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
     ):
-        self._provisioning_state = kwargs.pop("provisioning_state", None)
+        self._provisioning_state: Optional[str] = kwargs.pop("provisioning_state", None)
         super().__init__(
             name=name,
             endpoint_name=endpoint_name,
@@ -84,17 +84,18 @@ class ModelBatchDeployment(Deployment):
         )
         self.compute = compute
         self.resources = resources
-        self.model_deployment_settings = ModelBatchDeploymentSettings(
-            mini_batch_size=settings.mini_batch_size,
-            instance_count=settings.instance_count,
-            max_concurrency_per_instance=settings.max_concurrency_per_instance,
-            output_action=settings.output_action,
-            output_file_name=settings.output_file_name,
-            retry_settings=settings.retry_settings,
-            environment_variables=settings.environment_variables,
-            error_threshold=settings.error_threshold,
-            logging_level=settings.logging_level,
-        )
+        if settings is not None:
+            self.model_deployment_settings = ModelBatchDeploymentSettings(
+                mini_batch_size=settings.mini_batch_size,
+                instance_count=settings.instance_count,
+                max_concurrency_per_instance=settings.max_concurrency_per_instance,
+                output_action=settings.output_action,
+                output_file_name=settings.output_file_name,
+                retry_settings=settings.retry_settings,
+                environment_variables=settings.environment_variables,
+                error_threshold=settings.error_threshold,
+                logging_level=settings.logging_level,
+            )
 
     def _to_rest_object(self, location: str) -> BatchDeploymentData:  # pylint: disable=arguments-differ
         self._validate()
@@ -137,7 +138,7 @@ class ModelBatchDeployment(Deployment):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "ModelBatchDeployment":
         data = data or {}
         params_override = params_override or []
@@ -147,10 +148,11 @@ class ModelBatchDeployment(Deployment):
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path.cwd(),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        return load_from_dict(ModelBatchDeploymentSchema, data, context, **kwargs)
+        res: ModelBatchDeployment = load_from_dict(ModelBatchDeploymentSchema, data, context, **kwargs)
+        return res
 
     @classmethod
-    def _update_params(cls, params_override) -> None:
+    def _update_params(cls, params_override: Any) -> None:
         for param in params_override:
             endpoint_name = param.get("endpoint_name")
             if isinstance(endpoint_name, str):
@@ -193,4 +195,7 @@ class ModelBatchDeployment(Deployment):
             )
 
     def _to_dict(self) -> Dict:
-        return ModelBatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        res: dict = ModelBatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
+            self
+        )  # pylint: disable=no-member
+        return res

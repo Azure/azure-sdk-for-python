@@ -6,6 +6,7 @@
 
 from functools import singledispatch
 from pathlib import Path
+from typing import Any
 
 from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase as JobBaseData
 from azure.ai.ml.constants._common import DEFAULT_EXPERIMENT_NAME
@@ -33,7 +34,7 @@ def generate_defaults(job: Job, rest_job: JobBaseData) -> None:
 
 
 @singledispatch
-def to_rest_job_object(something) -> JobBaseData:
+def to_rest_job_object(something: Any) -> JobBaseData:
     raise NotImplementedError()
 
 

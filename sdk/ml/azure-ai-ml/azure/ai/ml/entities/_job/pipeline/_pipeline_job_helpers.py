@@ -7,7 +7,7 @@ from typing import Dict, List, Tuple, Type, Union
 from azure.ai.ml._restclient.v2023_04_01_preview.models import InputDeliveryMode
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Mpi, PyTorch, TensorFlow, Ray
+from azure.ai.ml._restclient.v2023_04_01_preview.models import Mpi, PyTorch, Ray, TensorFlow
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
@@ -23,7 +23,7 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 def process_sdk_component_job_io(
     io: Dict[str, Union[str, float, bool, Input]],
     io_binding_regex_list: List[str],
-) -> Tuple[Dict[str, str], Dict[str, Union[str, float, bool, Input]]]:
+) -> Tuple[Dict, Dict[str, Union[str, float, bool, Input]]]:
     """Separates SDK ComponentJob inputs that are data bindings (i.e. string inputs prefixed with 'inputs.' or
     'outputs.') and dataset and literal inputs/outputs.
 
@@ -101,7 +101,7 @@ def from_dict_to_rest_io(
     :return: Map from IO name to IO bindings and Map from IO name to IO objects.
     :rtype: Tuple[Dict[str, str], Dict[str, Union[RestJobInput, RestJobOutput]]]
     """
-    io_bindings = {}
+    io_bindings: dict = {}
     rest_io_objects = {}
     DIRTY_MODE_MAPPING = {
         "Mount": InputDeliveryMode.READ_ONLY_MOUNT,
@@ -163,9 +163,7 @@ def from_dict_to_rest_io(
     return io_bindings, rest_io_objects
 
 
-def from_dict_to_rest_distribution(
-    distribution_dict: Dict[str, Union[str, int]]
-) -> Union[PyTorch, Mpi, TensorFlow, Ray]:
+def from_dict_to_rest_distribution(distribution_dict: Dict) -> Union[PyTorch, Mpi, TensorFlow, Ray]:
     target_type = distribution_dict["distribution_type"].lower()
     if target_type == "pytorch":
         return PyTorch(**distribution_dict)

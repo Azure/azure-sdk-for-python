@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 # pylint: disable=protected-access
 
-from typing import Callable, Dict, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Optional, Tuple, Union
 
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import AssetTypes, LegacyAssetTypes
@@ -29,7 +29,7 @@ SUPPORTED_INPUTS = [
 ]
 
 
-def _parse_input(input_value):
+def _parse_input(input_value: Union[Input, dict, str, PipelineInput, NodeOutput]) -> Tuple:
     component_input, job_input = None, None
     if isinstance(input_value, Input):
         component_input = Input(**input_value._to_dict())
@@ -69,7 +69,7 @@ def _parse_input(input_value):
     return component_input, job_input
 
 
-def _parse_output(output_value):
+def _parse_output(output_value: Union[Output, Dict]) -> Tuple:
     component_output, job_output = None, None
     if isinstance(output_value, Output):
         component_output = Output(**output_value._to_dict())
@@ -95,7 +95,7 @@ def _parse_output(output_value):
     return component_output, job_output
 
 
-def _parse_inputs_outputs(io_dict: Dict, parse_func: Callable) -> Tuple[Dict, Dict]:
+def _parse_inputs_outputs(io_dict: Optional[Dict], parse_func: Callable) -> Tuple[Dict, Dict]:
     component_io_dict, job_io_dict = {}, {}
     if io_dict:
         for key, val in io_dict.items():
@@ -118,7 +118,7 @@ def copy_data(
     outputs: Optional[Dict] = None,
     is_deterministic: bool = True,
     data_copy_mode: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> DataTransferCopy:
     """Create a DataTransferCopy object which can be used inside dsl.pipeline as a function.
 
@@ -197,7 +197,7 @@ def import_data(
     compute: Optional[str] = None,
     source: Optional[Union[Dict, Database, FileSystem]] = None,
     outputs: Optional[Dict] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> DataTransferImport:
     """Create a DataTransferImport object which can be used inside dsl.pipeline.
 
@@ -266,7 +266,7 @@ def export_data(
     compute: Optional[str] = None,
     sink: Optional[Union[Dict, Database, FileSystem]] = None,
     inputs: Optional[Dict] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> DataTransferExport:
     """Create a DataTransferExport object which can be used inside dsl.pipeline.
 

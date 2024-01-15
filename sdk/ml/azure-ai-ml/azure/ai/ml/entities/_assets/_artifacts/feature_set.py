@@ -110,7 +110,7 @@ class FeatureSet(Artifact):
         return FeaturesetVersion(name=self.name, properties=featureset_version_properties)
 
     @classmethod
-    def _from_rest_object(cls, featureset_rest_object: FeaturesetVersion) -> "FeatureSet":
+    def _from_rest_object(cls, featureset_rest_object: FeaturesetVersion) -> Optional["FeatureSet"]:
         if not featureset_rest_object:
             return None
         featureset_rest_object_details: FeaturesetVersionProperties = featureset_rest_object.properties
@@ -167,7 +167,7 @@ class FeatureSet(Artifact):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return FeatureSetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return dict(FeatureSetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))
 
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
         # if datastore_arm_id is null, capture the full_storage_path
