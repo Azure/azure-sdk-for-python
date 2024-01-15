@@ -31,6 +31,7 @@ from urllib3.util.retry import Retry
 from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
 from azure.core import PipelineClient
+from azure.core.pipeline.transport import HttpRequest, HttpResponse  # pylint: disable=no-legacy-azure-core-http-response-import
 from azure.core.pipeline.policies import (
     HTTPPolicy,
     ContentDecodePolicy,
@@ -205,7 +206,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         ]
 
         transport = kwargs.pop("transport", None)
-        self.pipeline_client = PipelineClient(base_url=url_connection, transport=transport, policies=policies)
+        self.pipeline_client: PipelineClient[HttpRequest, HttpResponse] = PipelineClient(
+            base_url=url_connection,
+            transport=transport,
+            policies=policies
+        )
 
         # Query compatibility mode.
         # Allows to specify compatibility mode used by client when making query requests. Should be removed when
@@ -404,7 +409,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[ItemPaged[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
             return (
                 self.__QueryFeed(
                     "/dbs", "dbs", "", lambda r: r["Databases"],
@@ -466,7 +471,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(database_link, "colls")
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[ItemPaged[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
             return (
                 self.__QueryFeed(
                     path, "colls", database_id, lambda r: r["DocumentCollections"],
@@ -699,7 +704,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(database_link, "users")
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[ItemPaged[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
             return (
                 self.__QueryFeed(
                     path, "users", database_id, lambda r: r["Users"],
@@ -835,7 +840,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         user_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> ItemPaged[Dict[str, Any]]:
         """Reads all permissions for a user.
 
         :param str user_link:
@@ -881,7 +886,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(user_link, "permissions")
         user_id = base.GetResourceIdOrFullNameFromLink(user_link)
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[ItemPaged[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
             return (
                 self.__QueryFeed(
                     path, "permissions", user_id, lambda r: r["Permissions"], lambda _, b: b, query, options, **kwargs
@@ -1069,7 +1074,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(database_or_container_link, "docs")
         collection_id = base.GetResourceIdOrFullNameFromLink(database_or_container_link)
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[ItemPaged[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
             return (
                 self.__QueryFeed(
                     path,
@@ -1163,7 +1168,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(collection_link, resource_key)
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[ItemPaged[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
             return (
                 self.__QueryFeed(
                     path,
@@ -1235,7 +1240,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(collection_link, "pkranges")
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[ItemPaged[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
             return (
                 self.__QueryFeed(
                     path, "pkranges", collection_id, lambda r: r["PartitionKeyRanges"],
@@ -1438,7 +1443,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(collection_link, "triggers")
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[ItemPaged[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
             return (
                 self.__QueryFeed(
                     path, "triggers", collection_id, lambda r: r["Triggers"], lambda _, b: b, query, options, **kwargs
@@ -1599,7 +1604,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(collection_link, "udfs")
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[ItemPaged[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
             return (
                 self.__QueryFeed(
                     path, "udfs", collection_id, lambda r: r["UserDefinedFunctions"],
@@ -1761,7 +1766,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(collection_link, "sprocs")
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[ItemPaged[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
             return (
                 self.__QueryFeed(
                     path, "sprocs", collection_id, lambda r: r["StoredProcedures"],
@@ -1921,7 +1926,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(collection_link, "conflicts")
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[ItemPaged[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
             return (
                 self.__QueryFeed(
                     path, "conflicts", collection_id, lambda r: r["Conflicts"],
@@ -2499,7 +2504,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[ItemPaged[Dict[str, Any]], Dict[str, Any]]:
+        def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
             return (
                 self.__QueryFeed(
                     "/offers", "offers", "", lambda r: r["Offers"], lambda _, b: b, query, options, **kwargs
@@ -2755,7 +2760,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self,
         path: str,
         request_params: RequestObject,
-        req_headers: Mapping[str, Any],
+        req_headers: Dict[str, Any],
         **kwargs: Any
     ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Azure Cosmos 'GET' http request.
@@ -2783,7 +2788,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path: str,
         request_params: RequestObject,
         body: Optional[Union[str, List[Dict[str, Any]], Dict[str, Any]]],
-        req_headers: Mapping[str, Any],
+        req_headers: Dict[str, Any],
         **kwargs: Any
     ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Azure Cosmos 'POST' http request.
@@ -2812,7 +2817,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path: str,
         request_params: RequestObject,
         body: Dict[str, Any],
-        req_headers: Mapping[str, Any],
+        req_headers: Dict[str, Any],
         **kwargs: Any
     ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Azure Cosmos 'PUT' http request.
@@ -2841,7 +2846,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path: str,
         request_params: RequestObject,
         request_data: Dict[str, Any],
-        req_headers: Mapping[str, Any],
+        req_headers: Dict[str, Any],
         **kwargs: Any
     ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Azure Cosmos 'PATCH' http request.
@@ -2869,7 +2874,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self,
         path: str,
         request_params: RequestObject,
-        req_headers: Mapping[str, Any],
+        req_headers: Dict[str, Any],
         **kwargs: Any
     ) -> Tuple[None, Dict[str, Any]]:
         """Azure Cosmos 'DELETE' http request.
@@ -2900,7 +2905,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         options: Mapping[str, Any],
         partition_key_range_id: Optional[str] = None,
         **kwargs: Any
-    ) -> Tuple[ItemPaged[Dict[str, Any]], Dict[str, Any]]:
+    ) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
         """Query Feed for Document Collection resource.
 
         :param str path: Path to the document collection.
@@ -2939,7 +2944,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
             is_query_plan: bool = False,
             **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]:
+    ) -> List[Dict[str, Any]]:
         """Query for more than one Azure Cosmos resources.
 
         :param str path:
@@ -3093,7 +3098,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         return __GetBodiesFromQueryResult(result)
 
-    def _GetQueryPlanThroughGateway(self, query: str, resource_link: str, **kwargs: Any) -> ItemPaged[Dict[str, Any]]:
+    def _GetQueryPlanThroughGateway(self, query: str, resource_link: str, **kwargs: Any) -> List[Dict[str, Any]]:
         supported_query_features = (documents._QueryFeature.Aggregate + "," +
                                     documents._QueryFeature.CompositeAggregate + "," +
                                     documents._QueryFeature.Distinct + "," +

@@ -111,7 +111,9 @@ class TestClassifiersAsync(AsyncDocumentIntelligenceTest):
     @DocumentIntelligencePreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_build_classifier_file_list(self, client, documentintelligence_training_data_classifier_sas_url, **kwargs):
+    async def test_build_classifier_file_list(
+        self, client, documentintelligence_training_data_classifier_sas_url, **kwargs
+    ):
         set_bodiless_matcher()
         recorded_variables = kwargs.pop("variables", {})
         recorded_variables.setdefault("classifier_id", str(uuid.uuid4()))
@@ -121,27 +123,32 @@ class TestClassifiersAsync(AsyncDocumentIntelligenceTest):
             doc_types={
                 "IRS-1040-A": ClassifierDocumentTypeDetails(
                     azure_blob_file_list_source=AzureBlobFileListContentSource(
-                        container_url=documentintelligence_training_data_classifier_sas_url, file_list="IRS-1040-A.jsonl"
+                        container_url=documentintelligence_training_data_classifier_sas_url,
+                        file_list="IRS-1040-A.jsonl",
                     )
                 ),
                 "IRS-1040-B": ClassifierDocumentTypeDetails(
                     azure_blob_file_list_source=AzureBlobFileListContentSource(
-                        container_url=documentintelligence_training_data_classifier_sas_url, file_list="IRS-1040-B.jsonl"
+                        container_url=documentintelligence_training_data_classifier_sas_url,
+                        file_list="IRS-1040-B.jsonl",
                     )
                 ),
                 "IRS-1040-C": ClassifierDocumentTypeDetails(
                     azure_blob_file_list_source=AzureBlobFileListContentSource(
-                        container_url=documentintelligence_training_data_classifier_sas_url, file_list="IRS-1040-C.jsonl"
+                        container_url=documentintelligence_training_data_classifier_sas_url,
+                        file_list="IRS-1040-C.jsonl",
                     )
                 ),
                 "IRS-1040-D": ClassifierDocumentTypeDetails(
                     azure_blob_file_list_source=AzureBlobFileListContentSource(
-                        container_url=documentintelligence_training_data_classifier_sas_url, file_list="IRS-1040-D.jsonl"
+                        container_url=documentintelligence_training_data_classifier_sas_url,
+                        file_list="IRS-1040-D.jsonl",
                     )
                 ),
                 "IRS-1040-E": ClassifierDocumentTypeDetails(
                     azure_blob_file_list_source=AzureBlobFileListContentSource(
-                        container_url=documentintelligence_training_data_classifier_sas_url, file_list="IRS-1040-E.jsonl"
+                        container_url=documentintelligence_training_data_classifier_sas_url,
+                        file_list="IRS-1040-E.jsonl",
                     )
                 ),
             },

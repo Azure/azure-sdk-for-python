@@ -37,7 +37,6 @@ from ._base import (
     _replace_throughput,
     GenerateGuidId
 )
-from .documents import IndexingDirective
 from .exceptions import CosmosResourceNotFoundError
 from .http_constants import StatusCodes
 from .offer import Offer, ThroughputProperties
@@ -74,12 +73,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     """
 
     def __init__(
-            self,
-            client_connection: CosmosClientConnection,
-            database_link: str,
-            id: str,
-            properties: Optional[Dict[str, Any]] = None
-        ) -> None:
+        self,
+        client_connection: CosmosClientConnection,
+        database_link: str,
+        id: str,
+        properties: Optional[Dict[str, Any]] = None
+    ) -> None:
         self.id = id
         self.container_link = "{}/colls/{}".format(database_link, self.id)
         self.client_connection = client_connection
@@ -297,7 +296,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             This is used to process the change feed in parallel across multiple consumers.
         :param bool is_start_from_beginning: Get whether change feed should start from
             beginning (true) or from current (false). By default, it's start from current (false).
-        :param continuation: e_tag value to be used as continuation for reading change feed.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param str continuation: e_tag value to be used as continuation for reading change feed.
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
@@ -370,7 +368,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword int continuation_token_limit: **provisional keyword** The size limit in kb of the
+        :keyword int continuation_token_limit: **provisional** The size limit in kb of the
         response continuation token in the query response. Valid values are positive integers.
         A value of 0 is the same as not passing a value (default no limit).
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
@@ -476,7 +474,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         :param item: The ID (name) or dict representing item to be replaced.
         :type item: Union[str, Dict[str, Any]]
-        :param body: A dict-like object representing the item to replace.
+        :param body: A dict representing the item to replace.
         :type body: Dict[str, Any]
         :param str pre_trigger_include: trigger id to be used as pre operation trigger.
         :param str post_trigger_include: trigger id to be used as post operation trigger.
@@ -578,7 +576,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         populate_query_metrics: Optional[bool] = None,
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
-        indexing_directive: Optional[Union[int, IndexingDirective]] = None,
+        indexing_directive: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Create an item in the container.
