@@ -370,8 +370,8 @@ def get_rest_dict_for_node_attrs(
         if isinstance(_target_obj, _BaseIdentityConfiguration):
             # Bug Item number: 2883348
             return get_rest_dict_for_node_attrs(
-                _target_obj._to_job_rest_object(), clear_empty_value=clear_empty_value
-            )  # type: ignore
+                _target_obj._to_job_rest_object(), clear_empty_value=clear_empty_value  # type: ignore
+            )
         return get_rest_dict_for_node_attrs(_target_obj._to_rest_object(), clear_empty_value=clear_empty_value)
 
     if isinstance(target_obj, msrest.serialization.Model):

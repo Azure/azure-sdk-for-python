@@ -192,7 +192,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
         self.environment_variables = {} if environment_variables is None else environment_variables
         self._identity = identity
         if isinstance(self.component, ParallelComponent):
-            self.resources = self.resources or copy.deepcopy(self.component.resources)
+            self.resources = self.resources or copy.deepcopy(self.component.resources)  # type: ignore
             self.retry_settings = self.retry_settings or copy.deepcopy(self.component.retry_settings)
             self.input_data = self.input_data or self.component.input_data
             self.max_concurrency_per_instance = (
@@ -222,7 +222,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
         :return: The retry settings for the parallel job.
         :rtype: ~azure.ai.ml.entities._job.parallel.retry_settings.RetrySettings
         """
-        return self._retry_settings
+        return self._retry_settings  # type: ignore
 
     @retry_settings.setter
     def retry_settings(self, value: Union[RetrySettings, Dict]) -> None:
@@ -289,7 +289,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
                 ]
             )
             value = identity_schema._deserialize(value=value, attr=None, data=None)
-        self._identity = value
+        self._identity = value  # type: ignore
 
     @property
     def component(self) -> Union[str, ParallelComponent]:

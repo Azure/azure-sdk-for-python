@@ -680,8 +680,8 @@ class DataQualitySignal(DataSignal):
         rest_metrics = (
             # Bug Item number: 2883365
             _to_rest_data_quality_metrics(
-                self.metric_thresholds.numerical, self.metric_thresholds.categorical
-            )  # type: ignore
+                self.metric_thresholds.numerical, self.metric_thresholds.categorical  # type: ignore
+            )
             if isinstance(self.metric_thresholds, MetricThreshold)
             else None
         )

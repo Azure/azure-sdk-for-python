@@ -285,7 +285,7 @@ class WorkspaceConnection(Resource):
         return str(self.name)
 
     def _to_rest_object(self) -> RestWorkspaceConnection:
-        workspace_connection_properties_class = None
+        workspace_connection_properties_class: Any = None
         auth_type = self.credentials.type if self._credentials else None
 
         if auth_type == camel_to_snake(ConnectionAuthType.PAT):

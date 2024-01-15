@@ -177,7 +177,8 @@ class ParallelFor(LoopNode, NodeIOMixin):
         # convert items to rest object
         rest_items = self._to_rest_items(items=self.items)
         rest_node.update({"items": rest_items, "outputs": self._to_rest_outputs()})
-        convert_dict: dict = convert_ordered_dict_to_dict(rest_node)
+        # TODO: Bug Item number: 2897665
+        convert_dict: dict = convert_ordered_dict_to_dict(rest_node)  # type: ignore
         return convert_dict
 
     @classmethod

@@ -194,7 +194,7 @@ class DataTransferCopy(DataTransfer):
         self.data_copy_mode = data_copy_mode
         is_component = isinstance(component, DataTransferCopyComponent)
         if is_component:
-            _component: DataTransferCopyComponent = component
+            _component: DataTransferCopyComponent = component  # type: ignore
             self.task = _component.task or self.task
             self.data_copy_mode = _component.data_copy_mode or self.data_copy_mode
         self._init = False

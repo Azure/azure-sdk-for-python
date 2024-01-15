@@ -65,7 +65,8 @@ class ControlFlowNode(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, AB
         """
         rest_obj = self._to_dict()
         rest_obj["_source"] = self._source
-        convert_dict: dict = convert_ordered_dict_to_dict(rest_obj)
+        # TODO: Bug Item number: 2897665
+        convert_dict: dict = convert_ordered_dict_to_dict(rest_obj)  # type: ignore
         return convert_dict
 
     def _register_in_current_pipeline_component_builder(self) -> None:

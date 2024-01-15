@@ -51,5 +51,5 @@ class PathAwareSchemaValidatableMixin(SchemaValidatableMixin):
         # this is not a necessary step but to keep the same behavior as before
         # empty items will be removed when converting to dict
         # TODO: Bug Item number: 2897665
-        convert_dict: typing.Dict = convert_ordered_dict_to_dict(super()._dump_for_validation())
+        convert_dict: typing.Dict = convert_ordered_dict_to_dict(super()._dump_for_validation())  # type: ignore
         return convert_dict

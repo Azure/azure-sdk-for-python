@@ -218,7 +218,7 @@ class Pipeline(BaseNode):
             return
         for key, val in self.component.outputs.items():
             node_output = self.outputs.get(key)
-            copy_output_setting(source=val, target=node_output)
+            copy_output_setting(source=val, target=node_output)  # type: ignore
 
     @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "Job":

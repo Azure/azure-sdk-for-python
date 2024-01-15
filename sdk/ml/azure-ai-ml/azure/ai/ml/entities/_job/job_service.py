@@ -285,8 +285,8 @@ class TensorBoardJobService(JobServiceBase):
     @classmethod
     def _from_rest_object(cls, obj: RestJobService) -> "TensorBoardJobService":
         tensorboard_job_Service = cls._from_rest_job_service_object(obj)  # type: ignore
-        tensorboard_job_Service.log_dir = _get_property(obj.properties, "logDir")
-        return tensorboard_job_Service
+        tensorboard_job_Service.log_dir = _get_property(obj.properties, "logDir")  # type: ignore
+        return tensorboard_job_Service  # type: ignore
 
     def _to_rest_object(self) -> RestJobService:
         updated_properties = _append_or_update_properties(self.properties, "logDir", self.log_dir)
