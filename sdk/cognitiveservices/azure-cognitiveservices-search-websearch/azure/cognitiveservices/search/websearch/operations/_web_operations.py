@@ -310,11 +310,10 @@ class WebOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.search.websearch.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.search.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        url = path_format_arguments['Endpoint']
 
         # Construct parameters
         query_parameters = {}
