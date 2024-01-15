@@ -50,19 +50,19 @@ class _FlowPortNames:
 
 
 class _FlowComponentPortDict(dict):
-    def __init__(self, ports):
+    def __init__(self, ports: Dict):
         self._allow_update_item = True
         super().__init__()
         for input_port_name, input_port in ports.items():
             self[input_port_name] = input_port
         self._allow_update_item = False
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: Any, value: Any) -> None:
         if not self._allow_update_item:
             raise RuntimeError("Ports of flow component are not editable.")
         super().__setitem__(key, value)
 
-    def __delitem__(self, key):
+    def __delitem__(self, key: Any) -> None:
         if not self._allow_update_item:
             raise RuntimeError("Ports of flow component are not editable.")
         super().__delitem__(key)
@@ -71,7 +71,7 @@ class _FlowComponentPortDict(dict):
 class FlowComponentInputDict(_FlowComponentPortDict):
     """Input port dictionary for FlowComponent, with fixed input ports."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(
             {
                 _FlowPortNames.CONNECTIONS: GroupInput(values={}, _group_class=None),
@@ -157,7 +157,7 @@ class FlowComponentInputDict(_FlowComponentPortDict):
 class FlowComponentOutputDict(_FlowComponentPortDict):
     """Output port dictionary for FlowComponent, with fixed output ports."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(
             {
                 _FlowPortNames.FLOW_OUTPUTS: Output(type=AssetTypes.URI_FOLDER),
@@ -222,7 +222,7 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         is_deterministic: bool = True,
         additional_includes: Optional[List] = None,
         properties: Optional[Dict] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         # validate init params are valid type
         kwargs[COMPONENT_TYPE] = NodeType.FLOW_PARALLEL
@@ -270,7 +270,7 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         # unlike other Component, code is a private property in FlowComponent and
         # will be used to store the arm id of the created code before constructing rest object
         # we haven't used self.flow directly as self.flow can be a path to the flow dag yaml file instead of a directory
-        self._code_arm_id = None
+        self._code_arm_id: Optional[str] = None
 
     # region valid properties
     @property
@@ -403,14 +403,14 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         rest_obj.properties.component_spec["flow_file_name"] = self._flow
         return rest_obj
 
-    def _func(self, **kwargs) -> "Parallel":  # pylint: disable=invalid-overridden-method
+    def _func(self, **kwargs: Any) -> "Parallel":  # pylint: disable=invalid-overridden-method
         with self._inputs._fit_inputs(kwargs):  # pylint: disable=protected-access
             return super()._func(**kwargs)  # pylint: disable=not-callable
 
     @classmethod
     def _get_flow_definition(
         cls,
-        base_path,
+        base_path: Path,
         *,
         flow: Optional[Union[str, os.PathLike]] = None,
         source_path: Optional[Union[str, os.PathLike]] = None,
@@ -442,7 +442,8 @@ class FlowComponent(Component, AdditionalIncludesMixin):
 
         if flow is None:
             # Flow component must be created with a local yaml file, so no need to check if source_path exists
-            flow_file_name = os.path.basename(source_path)
+            if isinstance(source_path, (os.PathLike, str)):
+                flow_file_name = os.path.basename(source_path)
             return Path(base_path), flow_file_name
 
         flow_path = Path(flow)
@@ -465,7 +466,9 @@ class FlowComponent(Component, AdditionalIncludesMixin):
 
     # region SchemaValidatableMixin
     @classmethod
-    def _load_with_schema(cls, data, *, context=None, raise_original_exception=False, **kwargs):
+    def _load_with_schema(
+        cls, data: Any, *, context: Optional[Any] = None, raise_original_exception: bool = False, **kwargs: Any
+    ) -> Any:
         # FlowComponent should be loaded with FlowSchema or FlowRunSchema instead of FlowComponentSchema
         context = context or {BASE_PATH_CONTEXT_KEY: Path.cwd()}
         _schema = data.get("$schema", None)
@@ -499,7 +502,7 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         return loaded_dict
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context: Any) -> Union[PathAwareSchema, Schema]:
         return FlowComponentSchema(context=context)
 
     # endregion
@@ -508,7 +511,8 @@ class FlowComponent(Component, AdditionalIncludesMixin):
     def _get_origin_code_value(self) -> Union[str, os.PathLike, None]:
         if self._code_arm_id:
             return self._code_arm_id
-        return self.base_path
+        res: Union[str, os.PathLike, None] = self.base_path
+        return res
 
     def _fill_back_code_value(self, value: str) -> None:
         self._code_arm_id = value

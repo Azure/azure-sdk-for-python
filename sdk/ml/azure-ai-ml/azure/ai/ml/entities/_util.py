@@ -6,7 +6,7 @@ import hashlib
 import json
 import os
 import shutil
-from typing import Any, Dict, Iterable, List, Optional, Type, TypeVar, Union, overload
+from typing import Any, Dict, Iterable, List, Optional, Tuple, Type, TypeVar, Union, overload
 from unittest import mock
 
 import msrest
@@ -138,7 +138,8 @@ def find_type_in_override(params_override: Optional[list] = None) -> Optional[st
     params_override = params_override or []
     for override in params_override:
         if CommonYamlFields.TYPE in override:
-            return override[CommonYamlFields.TYPE]
+            res: Optional[str] = override[CommonYamlFields.TYPE]
+            return res
     return None
 
 
@@ -150,10 +151,12 @@ def is_compute_in_override(params_override: Optional[list] = None) -> bool:
     :return: True if compute is in params override
     :rtype: bool
     """
-    return any(EndpointYamlFields.COMPUTE in param for param in params_override)
+    if params_override is not None:
+        return any(EndpointYamlFields.COMPUTE in param for param in params_override)
+    return False
 
 
-def load_from_dict(schema: Any, data: Dict, context: Dict, additional_message: str = "", **kwargs):
+def load_from_dict(schema: Any, data: Dict, context: Dict, additional_message: str = "", **kwargs: Any) -> Any:
     """Load data from dict.
 
     :param schema: The schema to load data with.
@@ -197,7 +200,7 @@ def decorate_validation_error(schema: Any, pretty_error: str, additional_message
     return f"Validation for {schema.__name__} failed:\n\n {pretty_error} \n\n {additional_message}"
 
 
-def get_md5_string(text):
+def get_md5_string(text: str) -> str:
     """Get md5 string for a given text.
 
     :param text: The text to get md5 string for.
@@ -280,7 +283,7 @@ def convert_ordered_dict_to_dict(target_object: Union[Dict, List], remove_empty:
     return target_object
 
 
-def _general_copy(src: Union[str, os.PathLike], dst: Union[str, os.PathLike], make_dirs: bool = True):
+def _general_copy(src: Union[str, os.PathLike], dst: Union[str, os.PathLike], make_dirs: bool = True) -> None:
     """Wrapped `shutil.copy2` function for possible "Function not implemented" exception raised by it.
 
     Background: `shutil.copy2` will throw OSError when dealing with Azure File.
@@ -302,7 +305,7 @@ def _general_copy(src: Union[str, os.PathLike], dst: Union[str, os.PathLike], ma
         shutil.copy2(src, dst)
 
 
-def _dump_data_binding_expression_in_fields(obj):
+def _dump_data_binding_expression_in_fields(obj: Any) -> Any:
     for key, value in obj.__dict__.items():
         # PipelineInput is subclass of NodeInput
         from ._job.pipeline._io import NodeInput
@@ -317,7 +320,9 @@ def _dump_data_binding_expression_in_fields(obj):
 T = TypeVar("T")
 
 
-def get_rest_dict_for_node_attrs(target_obj: T, clear_empty_value: bool = False) -> Union[T, Dict]:
+def get_rest_dict_for_node_attrs(
+    target_obj: Union[T, str], clear_empty_value: bool = False
+) -> Union[T, Dict, List, str, int, float, bool]:
     """Convert object to dict and convert OrderedDict to dict.
     Allow data binding expression as value, disregarding of the type defined in rest object.
 
@@ -334,30 +339,30 @@ def get_rest_dict_for_node_attrs(target_obj: T, clear_empty_value: bool = False)
     if target_obj is None:
         return None
     if isinstance(target_obj, dict):
-        result = {}
+        result_dict: dict = {}
         for key, value in target_obj.items():
             if value is None:
                 continue
             if key in ["additional_properties"]:
                 continue
-            result[key] = get_rest_dict_for_node_attrs(value, clear_empty_value)
-        return result
+            result_dict[key] = get_rest_dict_for_node_attrs(value, clear_empty_value)
+        return result_dict
     if isinstance(target_obj, list):
-        result = []
+        result_list: list = []
         for item in target_obj:
-            result.append(get_rest_dict_for_node_attrs(item, clear_empty_value))
-        return result
+            result_list.append(get_rest_dict_for_node_attrs(item, clear_empty_value))
+        return result_list
     if isinstance(target_obj, RestTranslatableMixin):
         # note that the rest object may be invalid as data binding expression may not fit
         # rest object structure
         # pylint: disable=protected-access
-        target_obj = _dump_data_binding_expression_in_fields(copy.deepcopy(target_obj))
+        _target_obj: RestTranslatableMixin = _dump_data_binding_expression_in_fields(copy.deepcopy(target_obj))
 
         from azure.ai.ml.entities._credentials import _BaseIdentityConfiguration
 
-        if isinstance(target_obj, _BaseIdentityConfiguration):
-            return get_rest_dict_for_node_attrs(target_obj._to_job_rest_object(), clear_empty_value=clear_empty_value)
-        return get_rest_dict_for_node_attrs(target_obj._to_rest_object(), clear_empty_value=clear_empty_value)
+        if isinstance(_target_obj, _BaseIdentityConfiguration):
+            return get_rest_dict_for_node_attrs(_target_obj._to_job_rest_object(), clear_empty_value=clear_empty_value)
+        return get_rest_dict_for_node_attrs(_target_obj._to_rest_object(), clear_empty_value=clear_empty_value)
 
     if isinstance(target_obj, msrest.serialization.Model):
         # can't use result.as_dict() as data binding expression may not fit rest object structure
@@ -378,11 +383,11 @@ class _DummyRestModelFromDict(msrest.serialization.Model):
     a non-existent public attribute.
     """
 
-    def __init__(self, rest_dict):
+    def __init__(self, rest_dict: Optional[dict]):
         self._rest_dict = rest_dict or {}
         super().__init__()
 
-    def __getattribute__(self, item):
+    def __getattribute__(self, item: str) -> Any:
         if not item.startswith("_"):
             return self._rest_dict.get(item, None)
         return super().__getattribute__(item)
@@ -412,7 +417,7 @@ def from_rest_dict_to_dummy_rest_object(rest_dict: Optional[Dict]) -> _DummyRest
     raise ValueError("Unexpected type {}".format(type(rest_dict)))
 
 
-def extract_label(input_str: str):
+def extract_label(input_str: str) -> Union[Tuple, List]:
     """Extract label from input string.
 
     :param input_str: The input string
@@ -478,10 +483,8 @@ def resolve_pipeline_parameters(
 
 def resolve_pipeline_parameter(data: T) -> Union[T, str, "NodeOutput"]:
     """Resolve pipeline parameter.
-
     1. Resolve BaseNode and OutputsAttrDict type to NodeOutput.
     2. Remove empty value (optional).
-
     :param data: The pipeline parameter
     :type data: T
     :return:
@@ -515,7 +518,7 @@ def resolve_pipeline_parameter(data: T) -> Union[T, str, "NodeOutput"]:
     return data
 
 
-def normalize_job_input_output_type(input_output_value: Union[RestJobOutput, RestJobInput, Dict]):
+def normalize_job_input_output_type(input_output_value: Union[RestJobOutput, RestJobInput, Dict]) -> None:
     """Normalizes the `job_input_type`, `job_output_type`, and `type` keys for REST job output and input objects.
 
     :param input_output_value: Either a REST input or REST output of a job
@@ -593,10 +596,11 @@ def get_type_from_spec(data: dict, *, valid_keys: Iterable[str]) -> str:
             no_personal_data_message="Unsupported component type",
             error_category=ErrorCategory.USER_ERROR,
         )
-    return _type
+    res: str = _type
+    return res
 
 
-def copy_output_setting(source: Union["Output", "NodeOutput"], target: "NodeOutput"):
+def copy_output_setting(source: Union["Output", "NodeOutput"], target: "NodeOutput") -> None:
     """Copy node output setting from source to target.
 
     Currently only path, name, version will be copied.

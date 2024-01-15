@@ -7,7 +7,7 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_08_01_preview.models import Workspace as RestWorkspace
 from azure.ai.ml._schema._feature_store.feature_store_schema import FeatureStoreSchema
@@ -119,7 +119,7 @@ class FeatureStore(Workspace):
         identity: Optional[IdentityConfiguration] = None,
         primary_user_assigned_identity: Optional[str] = None,
         managed_network: Optional[ManagedNetwork] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         feature_store_settings = kwargs.pop(
             "feature_store_settings",
@@ -160,7 +160,7 @@ class FeatureStore(Workspace):
         self.managed_network = managed_network
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspace) -> "FeatureStore":
+    def _from_rest_object(cls, rest_obj: RestWorkspace) -> Optional["FeatureStore"]:
         if not rest_obj:
             return None
 
@@ -201,7 +201,7 @@ class FeatureStore(Workspace):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "FeatureStore":
         data = data or {}
         params_override = params_override or []
@@ -214,4 +214,5 @@ class FeatureStore(Workspace):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return FeatureStoreSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = FeatureStoreSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res

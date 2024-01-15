@@ -38,11 +38,11 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
     """
 
     def __init__(
-        self,
+        self,  # pylint: disable=unused-argument
         *,
         job_tier: Optional[Literal["spot", "basic", "standard", "premium"]] = None,
         priority: Optional[Literal["low", "medium", "high"]] = None,
-        **kwargs,  # pylint: disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         self.job_tier = job_tier
         self.priority = priority
@@ -64,7 +64,7 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
         priority = JobPriorityValues.REST_TO_ENTITY.get(obj.priority, None) if obj.priority else None
         return cls(job_tier=job_tier, priority=priority)
 
-    def _validate(self):
+    def _validate(self) -> None:
         for key, enum_class in [("job_tier", JobTierNames), ("priority", JobPriorityValues)]:
             value = getattr(self, key)
             if is_data_binding_expression(value):

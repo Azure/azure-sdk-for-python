@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access,no-member
 
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoMLJob as RestAutoMLJob
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Forecasting as RestForecasting
@@ -44,7 +44,7 @@ class ForecastingJob(AutoMLTabular):
         *,
         primary_metric: Optional[str] = None,
         forecasting_settings: Optional[ForecastingSettings] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initialize a new AutoML Forecasting task."""
         # Extract any task specific settings
@@ -90,7 +90,7 @@ class ForecastingJob(AutoMLTabular):
             else ForecastingPrimaryMetrics[camel_to_snake(value).upper()]
         )
 
-    @property
+    @property  # type: ignore
     def training(self) -> ForecastingTrainingSettings:
         """
         Return the forecast training settings.
@@ -100,8 +100,12 @@ class ForecastingJob(AutoMLTabular):
         """
         return self._training or ForecastingTrainingSettings()
 
+    @training.setter
+    def training(self, value: Union[Dict, ForecastingTrainingSettings]) -> None:  # pylint: disable=unused-argument
+        ...
+
     @property
-    def forecasting_settings(self) -> ForecastingSettings:
+    def forecasting_settings(self) -> Optional[ForecastingSettings]:
         """
         Return the forecast settings.
 
@@ -495,26 +499,46 @@ class ForecastingJob(AutoMLTabular):
 
         # Disable stack ensemble by default, since it is currently not supported for forecasting tasks
         if enable_stack_ensemble is None:
-            self._training.enable_stack_ensemble = False
+            if self._training is not None:
+                self._training.enable_stack_ensemble = False
 
     def _to_rest_object(self) -> JobBase:
-        forecasting_task = RestForecasting(
-            target_column_name=self.target_column_name,
-            training_data=self.training_data,
-            validation_data=self.validation_data,
-            validation_data_size=self.validation_data_size,
-            weight_column_name=self.weight_column_name,
-            cv_split_column_names=self.cv_split_column_names,
-            n_cross_validations=self.n_cross_validations,
-            test_data=self.test_data,
-            test_data_size=self.test_data_size,
-            featurization_settings=self._featurization._to_rest_object() if self._featurization else None,
-            limit_settings=self._limits._to_rest_object() if self._limits else None,
-            training_settings=self._training._to_rest_object() if self._training else None,
-            primary_metric=self.primary_metric,
-            log_verbosity=self.log_verbosity,
-            forecasting_settings=self._forecasting_settings._to_rest_object(),
-        )
+        if self._forecasting_settings is not None:
+            forecasting_task = RestForecasting(
+                target_column_name=self.target_column_name,
+                training_data=self.training_data,
+                validation_data=self.validation_data,
+                validation_data_size=self.validation_data_size,
+                weight_column_name=self.weight_column_name,
+                cv_split_column_names=self.cv_split_column_names,
+                n_cross_validations=self.n_cross_validations,
+                test_data=self.test_data,
+                test_data_size=self.test_data_size,
+                featurization_settings=self._featurization._to_rest_object() if self._featurization else None,
+                limit_settings=self._limits._to_rest_object() if self._limits else None,
+                training_settings=self._training._to_rest_object() if self._training else None,
+                primary_metric=self.primary_metric,
+                log_verbosity=self.log_verbosity,
+                forecasting_settings=self._forecasting_settings._to_rest_object(),
+            )
+        else:
+            forecasting_task = RestForecasting(
+                target_column_name=self.target_column_name,
+                training_data=self.training_data,
+                validation_data=self.validation_data,
+                validation_data_size=self.validation_data_size,
+                weight_column_name=self.weight_column_name,
+                cv_split_column_names=self.cv_split_column_names,
+                n_cross_validations=self.n_cross_validations,
+                test_data=self.test_data,
+                test_data_size=self.test_data_size,
+                featurization_settings=self._featurization._to_rest_object() if self._featurization else None,
+                limit_settings=self._limits._to_rest_object() if self._limits else None,
+                training_settings=self._training._to_rest_object() if self._training else None,
+                primary_metric=self.primary_metric,
+                log_verbosity=self.log_verbosity,
+                forecasting_settings=None,
+            )
 
         self._resolve_data_inputs(forecasting_task)
         self._validation_data_to_rest(forecasting_task)
@@ -603,7 +627,7 @@ class ForecastingJob(AutoMLTabular):
         data: Dict,
         context: Dict,
         additional_message: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> "ForecastingJob":
         from azure.ai.ml._schema.automl.table_vertical.forecasting import AutoMLForecastingSchema
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLForecastingNodeSchema
@@ -633,17 +657,18 @@ class ForecastingJob(AutoMLTabular):
         job.set_data(**data_settings)
         return job
 
-    def _to_dict(self, inside_pipeline=False) -> Dict:  # pylint: disable=arguments-differ
+    def _to_dict(self, inside_pipeline: bool = False) -> Dict:  # pylint: disable=arguments-differ
         from azure.ai.ml._schema.automl.table_vertical.forecasting import AutoMLForecastingSchema
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLForecastingNodeSchema
 
+        schema_dict: dict = {}
         if inside_pipeline:
             schema_dict = AutoMLForecastingNodeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         else:
             schema_dict = AutoMLForecastingSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return schema_dict
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, ForecastingJob):
             return NotImplemented
 
@@ -652,5 +677,5 @@ class ForecastingJob(AutoMLTabular):
 
         return self.primary_metric == other.primary_metric and self._forecasting_settings == other._forecasting_settings
 
-    def __ne__(self, other):
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
