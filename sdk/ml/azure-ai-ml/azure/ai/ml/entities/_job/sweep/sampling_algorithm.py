@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
-from typing import Optional, Union
+from typing import Any, Optional, Union, cast
 
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     BayesianSamplingAlgorithm as RestBayesianSamplingAlgorithm,
@@ -28,7 +28,7 @@ class SamplingAlgorithm(ABC, RestTranslatableMixin):
         if not obj:
             return None
 
-        sampling_algorithm = None
+        sampling_algorithm: Any = None
         if obj.sampling_algorithm_type == SamplingAlgorithmType.RANDOM:
             sampling_algorithm = RandomSamplingAlgorithm._from_rest_object(obj)  # pylint: disable=protected-access
 
@@ -38,7 +38,7 @@ class SamplingAlgorithm(ABC, RestTranslatableMixin):
         if obj.sampling_algorithm_type == SamplingAlgorithmType.BAYESIAN:
             sampling_algorithm = BayesianSamplingAlgorithm._from_rest_object(obj)  # pylint: disable=protected-access
 
-        return sampling_algorithm
+        return cast(Optional["SamplingAlgorithm"], sampling_algorithm)
 
 
 class RandomSamplingAlgorithm(SamplingAlgorithm):

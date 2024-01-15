@@ -41,7 +41,7 @@ class OnlineScaleSettings(RestTranslatableMixin):
     def _to_rest_object(self) -> RestOnlineScaleSettings:
         pass
 
-    def _merge_with(self, other: Optional["OnlineScaleSettings"]) -> None:
+    def _merge_with(self, other: Any) -> None:
         if other:
             self.type = other.type or self.type
 

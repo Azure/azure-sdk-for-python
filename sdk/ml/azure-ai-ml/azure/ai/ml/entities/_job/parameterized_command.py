@@ -5,6 +5,7 @@
 # pylint: disable=protected-access
 
 import logging
+import os
 from typing import Dict, Optional, Union
 
 from marshmallow import INCLUDE
@@ -67,17 +68,18 @@ class ParameterizedCommand:
 
     def __init__(
         self,
-        command: str = "",
+        command: Optional[str] = "",
         resources: Optional[Union[dict, JobResourceConfiguration]] = None,
-        code: Optional[str] = None,
+        code: Optional[Union[str, os.PathLike]] = None,
         environment_variables: Optional[Dict] = None,
         distribution: Optional[
             Union[
-                dict,
+                Dict,
                 MpiDistribution,
                 TensorFlowDistribution,
                 PyTorchDistribution,
                 RayDistribution,
+                DistributionConfiguration,
             ]
         ] = None,
         environment: Optional[Union[Environment, str]] = None,
@@ -96,7 +98,16 @@ class ParameterizedCommand:
     @property
     def distribution(
         self,
-    ) -> Optional[Union[dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution, RayDistribution,]]:
+    ) -> Optional[
+        Union[
+            dict,
+            MpiDistribution,
+            TensorFlowDistribution,
+            PyTorchDistribution,
+            RayDistribution,
+            DistributionConfiguration,
+        ]
+    ]:
         """The configuration for the distributed command component or job.
 
         :return: The distribution configuration.

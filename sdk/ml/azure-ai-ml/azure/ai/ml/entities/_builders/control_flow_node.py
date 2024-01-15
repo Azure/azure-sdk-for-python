@@ -65,8 +65,7 @@ class ControlFlowNode(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, AB
         """
         rest_obj = self._to_dict()
         rest_obj["_source"] = self._source
-        res: dict = convert_ordered_dict_to_dict(rest_obj)
-        return res
+        return cast(dict, convert_ordered_dict_to_dict(rest_obj))
 
     def _register_in_current_pipeline_component_builder(self) -> None:
         """Register this node in current pipeline component builder by adding self to a global stack."""

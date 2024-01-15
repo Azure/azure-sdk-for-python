@@ -5,7 +5,7 @@
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import CommandJob as RestCommandJob
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
@@ -24,6 +24,11 @@ from azure.ai.ml.entities._job.job_io_mixin import JobIOMixin
 from azure.ai.ml.entities._util import load_from_dict
 
 from .job import Job
+
+# avoid circular import error
+if TYPE_CHECKING:
+    from azure.ai.ml.entities._builders import Import
+    from azure.ai.ml.entities._component.import_component import ImportComponent
 
 module_logger = logging.getLogger(__name__)
 

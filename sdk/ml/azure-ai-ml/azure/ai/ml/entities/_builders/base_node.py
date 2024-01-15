@@ -9,7 +9,7 @@ import uuid
 from abc import abstractmethod
 from enum import Enum
 from functools import wraps
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.ai.ml._utils._arm_id_utils import get_resource_name_from_arm_id_safe
 from azure.ai.ml.constants import JobType
@@ -124,24 +124,9 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         self,
         *,
         type: str = JobType.COMPONENT,  # pylint: disable=redefined-builtin
-        component: Component,
-        inputs: Optional[
-            Dict[
-                str,
-                Union[
-                    PipelineInput,
-                    NodeOutput,
-                    Input,
-                    str,
-                    bool,
-                    int,
-                    float,
-                    Enum,
-                    "Input",
-                ],
-            ]
-        ] = None,
-        outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
+        component: Any,
+        inputs: Optional[Dict] = None,
+        outputs: Optional[Dict] = None,
         name: Optional[str] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
@@ -237,7 +222,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         self._name = value
 
     @classmethod
-    def _get_supported_inputs_types(cls) -> Tuple:
+    def _get_supported_inputs_types(cls) -> Any:
         """Get the supported input types for node input.
 
         :param cls: The class (or instance) to retrieve supported input types for.
@@ -303,7 +288,8 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
             # If component is remote, return it's asset id
             return self._component.id
         # Otherwise, return the component version or arm id.
-        return self._component
+        res: Union[str, Component] = self._component
+        return res
 
     def _get_component_name(self) -> Optional[str]:
         # first use component version/job's display name or name as component name
@@ -495,7 +481,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         return self._inputs  # type: ignore
 
     @property
-    def outputs(self) -> Dict[str, Union[str, Output]]:
+    def outputs(self) -> Dict:
         """Get the outputs of the object.
 
         :return: A dictionary containing the outputs for the object.
@@ -508,9 +494,10 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
             return str(self._to_yaml())
         except BaseException:  # pylint: disable=broad-except
             # add try catch in case component job failed in schema parse
-            return str(_AttrDict.__str__())
+            _obj: _AttrDict = _AttrDict()
+            return _obj.__str__()
 
-    def __hash__(self) -> int:
+    def __hash__(self) -> int:  # type: ignore
         return hash(self.__str__())
 
     def __help__(self) -> Any:
@@ -529,7 +516,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         :return: The origin job outputs
         :rtype: Dict[str, Union[str, Output]]
         """
-        outputs: Dict[str, Union[str, Output]] = {}
+        outputs: Dict = {}
         if self.outputs is not None:
             for output_name, output_obj in self.outputs.items():
                 if isinstance(output_obj, NodeOutput):

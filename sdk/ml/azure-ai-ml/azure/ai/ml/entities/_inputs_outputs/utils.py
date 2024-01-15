@@ -10,12 +10,17 @@ from collections import OrderedDict
 from enum import Enum as PyEnum
 from enum import EnumMeta
 from inspect import Parameter, getmro, signature
-from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Type, Union, cast
 
 from typing_extensions import Annotated, Literal, TypeAlias
 
 from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.exceptions import UserErrorException
+
+# avoid circular import error
+if TYPE_CHECKING:
+    from .input import Input
+    from .output import Output
 
 SUPPORTED_RETURN_TYPES_PRIMITIVE = list(IOConstants.PRIMITIVE_TYPE_2_STR.keys())
 
@@ -39,6 +44,8 @@ def _get_annotation_by_value(val: Any) -> Union["Input", Type["Input"]]:
     from .enum_input import EnumInput
     from .input import Input
 
+    annotation: Any = None
+
     def _is_dataset(data: Any) -> bool:
         from azure.ai.ml.entities._job.job_io_mixin import JobIOMixin
 
@@ -61,7 +68,7 @@ def _get_annotation_by_value(val: Any) -> Union["Input", Type["Input"]]:
             annotation = Input._get_default_unknown_input()
         else:
             return _new_annotation
-    return annotation
+    return cast(Union["Input", Type["Input"]], annotation)
 
 
 def _get_annotation_cls_by_type(
@@ -171,7 +178,7 @@ def _get_param_with_standard_annotation(
         # Create instance if is type class
         complete_annotation = anno
         if _is_dsl_type_cls(anno):
-            if anno is not None and not isinstance(anno, str):
+            if anno is not None and not isinstance(anno, (str, Input, Output)):
                 complete_annotation = anno()
         if complete_annotation is not None and not isinstance(complete_annotation, str):
             complete_annotation._port_name = name

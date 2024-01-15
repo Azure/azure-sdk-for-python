@@ -23,7 +23,9 @@ SUPPORTED_INPUTS = [AssetTypes.URI_FILE, AssetTypes.URI_FOLDER, AssetTypes.MLTAB
 
 
 def _parse_input(input_value: Union[Input, dict, str, bool, int, float]) -> Tuple:
-    component_input, job_input = None, None
+    component_input = None
+    job_input: Union[Input, dict, str, bool, int, float] = ""
+
     if isinstance(input_value, Input):
         component_input = Input(**input_value._to_dict())
         input_type = input_value.type
@@ -47,7 +49,9 @@ def _parse_input(input_value: Union[Input, dict, str, bool, int, float]) -> Tupl
 
 
 def _parse_output(output_value: Union[Output, dict]) -> Tuple:
-    component_output, job_output = None, None
+    component_output = None
+    job_output: Union[Output, dict] = {}
+
     if isinstance(output_value, Output):
         component_output = Output(**output_value._to_dict())
         job_output = Output(**output_value._to_dict())

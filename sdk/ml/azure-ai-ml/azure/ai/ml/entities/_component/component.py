@@ -8,7 +8,6 @@ from pathlib import Path
 from typing import IO, TYPE_CHECKING, Any, AnyStr, Callable, Dict, Iterable, Optional, Tuple, Union
 
 from marshmallow import INCLUDE
-from typing_extensions import Literal
 
 from ..._restclient.v2023_08_01_preview.models import (
     ComponentContainer,
@@ -102,7 +101,7 @@ class Component(
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
         display_name: Optional[str] = None,
-        is_deterministic: bool = True,
+        is_deterministic: Optional[bool] = True,
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
         yaml_str: Optional[str] = None,
@@ -110,6 +109,7 @@ class Component(
         creation_context: Optional[SystemData] = None,
         **kwargs: Any,
     ) -> None:
+        self.latest_version = None
         self._intellectual_property = kwargs.pop("intellectual_property", None)
         # Setting this before super init because when asset init version, _auto_increment_version's value may change
         self._auto_increment_version = kwargs.pop("auto_increment", False)
@@ -193,7 +193,7 @@ class Component(
         self._display_name = custom_display_name
 
     @property
-    def is_deterministic(self) -> bool:
+    def is_deterministic(self) -> Optional[bool]:
         """Whether the component is deterministic.
 
         :return: Whether the component is deterministic
@@ -221,7 +221,7 @@ class Component(
         return self._outputs
 
     @property
-    def version(self) -> str:
+    def version(self) -> Optional[str]:
         """Version of the component.
 
         :return: Version of the component.
@@ -265,8 +265,8 @@ class Component(
 
     @staticmethod
     def _resolve_component_source_from_id(
-        id: Optional[str],
-    ) -> Literal[ComponentSource.CLASS, ComponentSource.REMOTE_REGISTRY, ComponentSource.REMOTE_WORKSPACE_COMPONENT]:
+        id: Optional[Union["Component", str]],
+    ) -> Any:
         """Resolve the component source from id.
         :param id: The component ID
         :type id: Optional[str]
@@ -283,7 +283,7 @@ class Component(
         # azureml: prefix will be removed for arm versioned id.
         return (
             ComponentSource.REMOTE_REGISTRY
-            if id.startswith(REGISTRY_URI_FORMAT)
+            if not isinstance(id, Component) and id.startswith(REGISTRY_URI_FORMAT)
             else ComponentSource.REMOTE_WORKSPACE_COMPONENT
         )
 
@@ -318,7 +318,7 @@ class Component(
 
     @classmethod
     def _build_io(cls, io_dict: Union[Dict, Input, Output], is_input: bool) -> Dict:
-        component_io = {}
+        component_io: dict = {}
         for name, port in io_dict.items():
             if is_input:
                 component_io[name] = port if isinstance(port, Input) else Input(**port)
@@ -422,7 +422,7 @@ class Component(
             properties=component_container_details.properties,
             type=NodeType._CONTAINER,
             # Set this field to None as it hold a default True in init.
-            is_deterministic=None,  # type: ignore
+            is_deterministic=None,
         )
         component.latest_version = component_container_details.latest_version
         return component
@@ -511,7 +511,8 @@ class Component(
     def _get_resource_type(cls) -> str:
         return "Microsoft.MachineLearningServices/workspaces/components/versions"
 
-    def _get_resource_name_version(self) -> Tuple[str, str]:
+    def _get_resource_name_version(self) -> Tuple:
+        version: Optional[str] = None
         if not self.version and not self._auto_increment_version:
             version = str(uuid.uuid4())
         else:

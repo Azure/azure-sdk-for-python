@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import re
-from typing import List, Union
+from typing import Any, List, Union
 
 from marshmallow import fields
 
@@ -139,7 +139,7 @@ def _get_type_inferred_value(value: str) -> Union[bool, int, float, str]:
 
 def _convert_from_rest_object(
     sweep_distribution_str: str,
-) -> Union[bool, int, float, str, SweepDistribution]:
+) -> Any:
     # sweep_distribution_str can be a distribution like "choice('vitb16r224', 'vits16r224')" or
     # a single value like "True", "1", "1.0567", "vitb16r224"
 

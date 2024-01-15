@@ -5,7 +5,7 @@ import os
 from contextlib import contextmanager
 from enum import Enum
 from pathlib import Path
-from typing import Iterable, List, Optional, Union
+from typing import Any, Generator, List, Optional, Union
 
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 from azure.ai.ml._utils._asset_utils import IgnoreFile, get_ignore_file
@@ -212,7 +212,7 @@ class ComponentCodeMixin:
         return str(origin_code_value)
 
     def _append_diagnostics_and_check_if_origin_code_reliable_for_local_path_validation(
-        self, base_validation_result: MutableValidationResult = None
+        self, base_validation_result: Optional[MutableValidationResult] = None
     ) -> bool:
         """Append diagnostics from customized validation logic to the base validation result and check if origin code
         value is valid for path validation.
@@ -244,7 +244,7 @@ class ComponentCodeMixin:
         return code_type == CodeType.LOCAL
 
     @contextmanager
-    def _build_code(self) -> Iterable[Optional[Code]]:
+    def _build_code(self) -> Generator:
         """Create a Code object if necessary based on origin code value and yield it.
 
         :return: If built code is the same as its origin value, do nothing and yield None.
@@ -258,6 +258,7 @@ class ComponentCodeMixin:
             # git also need to be resolved into arm id
             yield Code(path=origin_code_value)
         elif code_type in [CodeType.LOCAL, CodeType.NONE]:
+            code: Any
             with self._try_build_local_code() as code:
                 yield code
         else:
@@ -265,7 +266,7 @@ class ComponentCodeMixin:
             yield None
 
     @contextmanager
-    def _try_build_local_code(self) -> Iterable[Optional[Code]]:
+    def _try_build_local_code(self) -> Generator:
         """Extract the logic of _build_code for local code for further override.
 
         :return: The Code object if could be constructed, None otherwise

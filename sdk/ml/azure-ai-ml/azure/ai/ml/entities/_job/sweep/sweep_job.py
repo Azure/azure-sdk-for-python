@@ -51,19 +51,7 @@ from .early_termination_policy import (
 )
 from .objective import Objective
 from .parameterized_sweep import ParameterizedSweep
-from .search_space import (
-    Choice,
-    LogNormal,
-    LogUniform,
-    Normal,
-    QLogNormal,
-    QLogUniform,
-    QNormal,
-    QUniform,
-    Randint,
-    SweepDistribution,
-    Uniform,
-)
+from .search_space import SweepDistribution
 
 module_logger = logging.getLogger(__name__)
 
@@ -147,17 +135,12 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         compute: Optional[str] = None,
         limits: Optional[SweepJobLimits] = None,
         sampling_algorithm: Optional[Union[str, SamplingAlgorithm]] = None,
-        search_space: Optional[
-            Dict[
-                str,
-                Union[
-                    Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
-                ],
-            ]
-        ] = None,
+        search_space: Optional[Dict] = None,
         objective: Optional[Objective] = None,
-        trial: Optional[Union[CommandJob, CommandComponent]] = None,
-        early_termination: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
+        trial: Optional[Union[CommandJob, CommandComponent, ParameterizedCommand]] = None,
+        early_termination: Optional[
+            Union[EarlyTerminationPolicy, BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]
+        ] = None,
         queue_settings: Optional[QueueSettings] = None,
         resources: Optional[Union[dict, JobResourceConfiguration]] = None,
         **kwargs: Any,
@@ -240,7 +223,9 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             outputs=to_rest_data_outputs(self.outputs),
             identity=self.identity._to_job_rest_object() if self.identity else None,
             queue_settings=self.queue_settings._to_rest_object() if self.queue_settings else None,
-            resources=self.resources._to_rest_object() if self.resources else None,
+            resources=self.resources._to_rest_object()
+            if self.resources and not isinstance(self.resources, dict)
+            else None,
         )
         sweep_job_resource = JobBase(properties=sweep_job)
         sweep_job_resource.name = self.name

@@ -7,8 +7,6 @@
 import logging
 from typing import Any, Dict, Optional, Union
 
-from typing_extensions import Literal
-
 from ..._restclient.v2023_04_01_preview.models import QueueSettings as RestQueueSettings
 from ..._utils._experimental import experimental
 from ..._utils.utils import is_data_binding_expression
@@ -40,8 +38,8 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
     def __init__(
         self,  # pylint: disable=unused-argument
         *,
-        job_tier: Optional[Literal["spot", "basic", "standard", "premium"]] = None,
-        priority: Optional[Literal["low", "medium", "high"]] = None,
+        job_tier: Optional[str] = None,
+        priority: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         self.job_tier = job_tier

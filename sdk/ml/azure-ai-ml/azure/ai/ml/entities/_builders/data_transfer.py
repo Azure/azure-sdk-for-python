@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 from marshmallow import Schema
 
@@ -43,7 +43,7 @@ from .base_node import BaseNode
 module_logger = logging.getLogger(__name__)
 
 
-def _build_source_sink(io_dict: Union[Dict, Database, FileSystem]) -> Union[Database, FileSystem]:
+def _build_source_sink(io_dict: Optional[Union[Dict, Database, FileSystem]]) -> Optional[Union[Database, FileSystem]]:
     if io_dict is None:
         return io_dict
     if isinstance(io_dict, (Database, FileSystem)):
@@ -94,7 +94,7 @@ class DataTransfer(BaseNode):
     def __init__(
         self,
         *,
-        component: Union[str, DataTransferCopyComponent],
+        component: Union[str, DataTransferCopyComponent, DataTransferImportComponent],
         compute: Optional[str] = None,
         inputs: Optional[Dict[str, Union[NodeOutput, Input, str]]] = None,
         outputs: Optional[Dict[str, Union[str, Output]]] = None,
@@ -113,7 +113,8 @@ class DataTransfer(BaseNode):
 
     @property
     def component(self) -> Union[str, DataTransferComponent]:
-        return self._component
+        res: Union[str, DataTransferComponent] = self._component
+        return res
 
     @classmethod
     def _load_from_rest_job(cls, obj: JobBase) -> "DataTransfer":
@@ -193,7 +194,7 @@ class DataTransferCopy(DataTransfer):
         self.data_copy_mode = data_copy_mode
         is_component = isinstance(component, DataTransferCopyComponent)
         if is_component:
-            _component: DataTransferCopyComponent = component
+            _component: DataTransferCopyComponent = cast(DataTransferCopyComponent, component)
             self.task = _component.task or self.task
             self.data_copy_mode = _component.data_copy_mode or self.data_copy_mode
         self._init = False
@@ -222,8 +223,7 @@ class DataTransferCopy(DataTransfer):
         }.items():
             if value is not None:
                 rest_obj[key] = value
-        res: dict = convert_ordered_dict_to_dict(rest_obj)
-        return res
+        return cast(dict, convert_ordered_dict_to_dict(rest_obj))
 
     @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> Any:
@@ -340,7 +340,7 @@ class DataTransferImport(DataTransfer):
         self.task = DataTransferTaskType.IMPORT_DATA
         is_component = isinstance(component, DataTransferImportComponent)
         if is_component:
-            _component: DataTransferImportComponent = component
+            _component: DataTransferImportComponent = cast(DataTransferImportComponent, component)
             self.task = _component.task or self.task
         self.source = _build_source_sink(source)
         self._init = False
@@ -402,8 +402,7 @@ class DataTransferImport(DataTransfer):
         }.items():
             if value is not None:
                 rest_obj[key] = value
-        res: dict = convert_ordered_dict_to_dict(rest_obj)
-        return res
+        return cast(dict, convert_ordered_dict_to_dict(rest_obj))
 
     @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "DataTransferImport":
@@ -463,7 +462,7 @@ class DataTransferExport(DataTransfer):
     def __init__(
         self,
         *,
-        component: Union[str, DataTransferExportComponent],
+        component: Union[str, DataTransferCopyComponent, DataTransferImportComponent],
         compute: Optional[str] = None,
         sink: Optional[Union[Dict, Database, FileSystem]] = None,
         inputs: Optional[Dict[str, Union[NodeOutput, Input, str]]] = None,
@@ -482,13 +481,13 @@ class DataTransferExport(DataTransfer):
         self.task = DataTransferTaskType.EXPORT_DATA
         is_component = isinstance(component, DataTransferExportComponent)
         if is_component:
-            _component: DataTransferExportComponent = component
+            _component: DataTransferExportComponent = cast(DataTransferExportComponent, component)
             self.task = _component.task or self.task
         self.sink = sink
         self._init = False
 
     @property
-    def sink(self) -> Union[None, Database, FileSystem]:
+    def sink(self) -> Optional[Union[Dict, Database, FileSystem]]:
         """The sink of external data and databases.
 
         :return: The sink of external data and databases.
@@ -530,7 +529,7 @@ class DataTransferExport(DataTransfer):
             )
         if "source" in self.inputs and isinstance(self.inputs["source"]._data, Input):
             source_input = self.inputs["source"]._data
-            if self.sink is not None:
+            if self.sink is not None and not isinstance(self.sink, Dict):
                 if (self.sink.type == ExternalDataType.DATABASE and source_input.type != AssetTypes.URI_FILE) or (
                     self.sink.type == ExternalDataType.FILE_SYSTEM and source_input.type != AssetTypes.URI_FOLDER
                 ):
@@ -553,8 +552,7 @@ class DataTransferExport(DataTransfer):
         }.items():
             if value is not None:
                 rest_obj[key] = value
-        res: dict = convert_ordered_dict_to_dict(rest_obj)
-        return res
+        return cast(dict, convert_ordered_dict_to_dict(rest_obj))
 
     @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "DataTransferExport":

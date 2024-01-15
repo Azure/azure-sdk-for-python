@@ -155,9 +155,7 @@ class _PipelineNodeFactory:
         """
         return self._get_func(_type, self._create_instance_funcs)
 
-    def get_load_from_rest_object_func(
-        self, _type: str
-    ) -> Callable[[Any], Union[BaseNode, AutoMLJob, ControlFlowNode]]:
+    def get_load_from_rest_object_func(self, _type: str) -> Callable:
         """Get the function to load a node from a rest object.
 
         :param _type: The type of the node.
@@ -172,7 +170,7 @@ class _PipelineNodeFactory:
         _type: str,
         *,
         create_instance_func: Optional[Callable[..., Union[BaseNode, AutoMLJob]]] = None,
-        load_from_rest_object_func: Optional[Callable[[Any], Union[BaseNode, AutoMLJob, ControlFlowNode]]] = None,
+        load_from_rest_object_func: Optional[Callable] = None,
         nested_schema: Optional[Union[NestedField, List[NestedField]]] = None,
     ) -> None:
         """Register a type of node.
@@ -265,7 +263,8 @@ class _PipelineNodeFactory:
         else:
             obj[CommonYamlFields.TYPE] = _type
 
-        return self.get_load_from_rest_object_func(_type)(obj, **kwargs)
+        res: Union[BaseNode, AutoMLJob, ControlFlowNode] = self.get_load_from_rest_object_func(_type)(obj, **kwargs)
+        return res
 
     @classmethod
     def _automl_from_rest_object(cls, node: Dict) -> AutoMLJob:
