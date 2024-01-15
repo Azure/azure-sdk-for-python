@@ -1480,7 +1480,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options = {}
 
         collection_id, path, trigger = self._GetContainerIdWithPathForTrigger(collection_link, trigger)
-        result, last_response_headers = self.Create(trigger, path, "triggers", collection_id, None, options, **kwargs)
+        result, _ = self.Create(trigger, path, "triggers", collection_id, None, options, **kwargs)
         return result
 
     def UpsertTrigger(
@@ -1550,7 +1550,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         path = base.GetPathFromLink(trigger_link)
         trigger_id = base.GetResourceIdOrFullNameFromLink(trigger_link)
-        result, last_response_headers = self.Read(path, "triggers", trigger_id, None, options, **kwargs)
+        result, _ = self.Read(path, "triggers", trigger_id, None, options, **kwargs)
         return result
 
     def ReadUserDefinedFunctions(
@@ -1642,7 +1642,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options = {}
 
         collection_id, path, udf = self._GetContainerIdWithPathForUDF(collection_link, udf)
-        result, last_response_headers = self.Create(udf, path, "udfs", collection_id, None, options, **kwargs)
+        result, _ = self.Create(udf, path, "udfs", collection_id, None, options, **kwargs)
         return result
 
     def UpsertUserDefinedFunction(
@@ -1712,7 +1712,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         path = base.GetPathFromLink(udf_link)
         udf_id = base.GetResourceIdOrFullNameFromLink(udf_link)
-        result, last_response_headers = self.Read(path, "udfs", udf_id, None, options, **kwargs)
+        result, _ = self.Read(path, "udfs", udf_id, None, options, **kwargs)
         return result
 
     def ReadStoredProcedures(
@@ -1804,7 +1804,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options = {}
 
         collection_id, path, sproc = self._GetContainerIdWithPathForSproc(collection_link, sproc)
-        result, last_response_headers = self.Create(sproc, path, "sprocs", collection_id, None, options, **kwargs)
+        result, _ = self.Create(sproc, path, "sprocs", collection_id, None, options, **kwargs)
         return result
 
     def UpsertStoredProcedure(
@@ -1873,7 +1873,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         path = base.GetPathFromLink(sproc_link)
         sproc_id = base.GetResourceIdOrFullNameFromLink(sproc_link)
-        result, last_response_headers = self.Read(path, "sprocs", sproc_id, None, options, **kwargs)
+        result, _ = self.Read(path, "sprocs", sproc_id, None, options, **kwargs)
         return result
 
     def ReadConflicts(
@@ -2241,7 +2241,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         path = base.GetPathFromLink(trigger_link)
         trigger_id = base.GetResourceIdOrFullNameFromLink(trigger_link)
-        result, last_response_headers = self.Replace(trigger, path, "triggers", trigger_id, None, options, **kwargs)
+        result, _ = self.Replace(trigger, path, "triggers", trigger_id, None, options, **kwargs)
         return result
 
     def DeleteTrigger(
@@ -2303,7 +2303,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         path = base.GetPathFromLink(udf_link)
         udf_id = base.GetResourceIdOrFullNameFromLink(udf_link)
-        result, last_response_headers = self.Replace(udf, path, "udfs", udf_id, None, options, **kwargs)
+        result, _ = self.Replace(udf, path, "udfs", udf_id, None, options, **kwargs)
         return result
 
     def DeleteUserDefinedFunction(
@@ -2405,7 +2405,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         path = base.GetPathFromLink(sproc_link)
         sproc_id = base.GetResourceIdOrFullNameFromLink(sproc_link)
-        result, last_response_headers = self.Replace(sproc, path, "sprocs", sproc_id, None, options, **kwargs)
+        result, _ = self.Replace(sproc, path, "sprocs", sproc_id, None, options, **kwargs)
         return result
 
     def DeleteStoredProcedure(
@@ -3272,7 +3272,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             partition_key_definition = self.partition_key_definition_cache.get(collection_link)
         # Else read the collection from backend and add it to the cache
         else:
-            collection, last_response_headers = self.ReadContainer(collection_link)
+            collection, _ = self.ReadContainer(collection_link)
             partition_key_definition = collection.get("partitionKey")
             self.partition_key_definition_cache[collection_link] = partition_key_definition
         return partition_key_definition

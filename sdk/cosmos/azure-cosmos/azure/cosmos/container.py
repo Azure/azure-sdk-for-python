@@ -229,7 +229,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
-        result, last_response_headers = self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
+        result, last_response_headers = self.client_connection.ReadItem(document_link=doc_link,
+                                                                        options=request_options, **kwargs)
         if response_hook:
             response_hook(last_response_headers, result)
         return result
@@ -758,7 +759,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["postTriggerInclude"] = post_trigger_include
 
         document_link = self._get_document_link(item)
-        last_response_headers = self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
+        last_response_headers = self.client_connection.DeleteItem(document_link=document_link,
+                                                                  options=request_options, **kwargs)
         if response_hook:
             response_hook(last_response_headers, None)
 

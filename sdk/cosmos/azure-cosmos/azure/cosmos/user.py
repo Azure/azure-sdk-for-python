@@ -81,7 +81,8 @@ class UserProxy:
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        self._properties, last_response_headers = self.client_connection.ReadUser(user_link=self.user_link, options=request_options, **kwargs)
+        self._properties, last_response_headers = self.client_connection.ReadUser(user_link=self.user_link,
+                                                                                  options=request_options, **kwargs)
         if response_hook:
             response_hook(last_response_headers, self._properties)
         return self._properties
