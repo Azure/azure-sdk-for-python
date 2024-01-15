@@ -10,6 +10,7 @@ import logging
 import platform
 import traceback
 import os
+from typing import Optional
 
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 from opencensus.ext.azure.common import utils
@@ -48,9 +49,9 @@ class ActivityLogger:
         self.package_logger: logging.Logger = logging.getLogger(AI_RESOURCES_INTERNAL_LOGGER_NAMESPACE + name)
         self.package_logger.propagate = False
         self.module_logger = logging.getLogger(name)
-        self.custom_dimensions = {}
+        self.custom_dimensions: dict = {}
 
-    def update_info(self, data: dict = None) -> None:
+    def update_info(self, data: Optional[dict] = None) -> None:
         if data and "app_insights_handler" in data:
             handler = data.pop("app_insights_handler")
         else:

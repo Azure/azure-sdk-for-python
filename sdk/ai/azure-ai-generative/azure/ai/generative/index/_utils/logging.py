@@ -7,8 +7,9 @@ import logging
 import sys
 from contextlib import contextmanager, suppress
 from functools import lru_cache
+from typing import Optional
 
-import pkg_resources
+import pkg_resources  # type:ignore[import]
 
 COMPONENT_NAME = "azure.ai.generative.index"
 instrumentation_key = ""
@@ -44,7 +45,7 @@ try:
     current_folder = os.path.dirname(os.path.realpath(__file__))
     telemetry_config_path = os.path.join(current_folder, "_telemetry.json")
 
-    verbosity = logging.INFO
+    verbosity: Optional[int] = logging.INFO
     instrumentation_key = INSTRUMENTATION_KEY
     telemetry_enabled = True
 except Exception:
@@ -55,7 +56,7 @@ except Exception:
     verbosity = None
     telemetry_enabled = False
 
-    class ActivityLoggerAdapter(logging.LoggerAdapter):
+    class ActivityLoggerAdapter(logging.LoggerAdapter):  # type: ignore[no-redef]
         """Make logger look like Activity Logger."""
 
         def __init__(self, logger, activity_info):
@@ -188,7 +189,7 @@ class LoggerFactory:
                 activity_logger.error(message)
 
     @staticmethod
-    def get_stack(limit=3, start=1) -> str:
+    def get_stack(limit=3, start=1) -> Optional[str]:
         """Get the stack trace as a string."""
         try:
             stack = inspect.stack()
@@ -206,8 +207,7 @@ class LoggerFactory:
                 lines.append(STACK_FMT % (file, line, func))
             return "\n".join(lines)
         except Exception:
-            pass
-        return None
+            return None
 
     @staticmethod
     @lru_cache(maxsize=1)

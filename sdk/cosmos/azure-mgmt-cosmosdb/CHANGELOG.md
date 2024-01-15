@@ -1,5 +1,59 @@
 # Release History
 
+## 9.4.0 (2023-12-19)
+
+### Features Added
+
+  - Model GremlinDatabaseGetPropertiesResource has a new parameter create_mode
+  - Model GremlinDatabaseGetPropertiesResource has a new parameter restore_parameters
+  - Model GremlinDatabaseResource has a new parameter create_mode
+  - Model GremlinDatabaseResource has a new parameter restore_parameters
+  - Model GremlinGraphGetPropertiesResource has a new parameter create_mode
+  - Model GremlinGraphGetPropertiesResource has a new parameter restore_parameters
+  - Model GremlinGraphResource has a new parameter create_mode
+  - Model GremlinGraphResource has a new parameter restore_parameters
+  - Model MongoDBCollectionGetPropertiesResource has a new parameter create_mode
+  - Model MongoDBCollectionGetPropertiesResource has a new parameter restore_parameters
+  - Model MongoDBCollectionResource has a new parameter create_mode
+  - Model MongoDBCollectionResource has a new parameter restore_parameters
+  - Model MongoDBDatabaseGetPropertiesResource has a new parameter create_mode
+  - Model MongoDBDatabaseGetPropertiesResource has a new parameter restore_parameters
+  - Model MongoDBDatabaseResource has a new parameter create_mode
+  - Model MongoDBDatabaseResource has a new parameter restore_parameters
+  - Model RestorableGremlinDatabasePropertiesResource has a new parameter can_undelete
+  - Model RestorableGremlinDatabasePropertiesResource has a new parameter can_undelete_reason
+  - Model RestorableGremlinGraphPropertiesResource has a new parameter can_undelete
+  - Model RestorableGremlinGraphPropertiesResource has a new parameter can_undelete_reason
+  - Model RestorableMongodbCollectionPropertiesResource has a new parameter can_undelete
+  - Model RestorableMongodbCollectionPropertiesResource has a new parameter can_undelete_reason
+  - Model RestorableMongodbDatabasePropertiesResource has a new parameter can_undelete
+  - Model RestorableMongodbDatabasePropertiesResource has a new parameter can_undelete_reason
+  - Model RestorableSqlContainerPropertiesResource has a new parameter can_undelete
+  - Model RestorableSqlContainerPropertiesResource has a new parameter can_undelete_reason
+  - Model RestorableSqlContainerPropertiesResourceContainer has a new parameter computed_properties
+  - Model RestorableSqlContainerPropertiesResourceContainer has a new parameter create_mode
+  - Model RestorableSqlContainerPropertiesResourceContainer has a new parameter restore_parameters
+  - Model RestorableSqlDatabasePropertiesResource has a new parameter can_undelete
+  - Model RestorableSqlDatabasePropertiesResource has a new parameter can_undelete_reason
+  - Model RestorableSqlDatabasePropertiesResourceDatabase has a new parameter create_mode
+  - Model RestorableSqlDatabasePropertiesResourceDatabase has a new parameter restore_parameters
+  - Model RestorableTablePropertiesResource has a new parameter can_undelete
+  - Model RestorableTablePropertiesResource has a new parameter can_undelete_reason
+  - Model SqlContainerGetPropertiesResource has a new parameter computed_properties
+  - Model SqlContainerGetPropertiesResource has a new parameter create_mode
+  - Model SqlContainerGetPropertiesResource has a new parameter restore_parameters
+  - Model SqlContainerResource has a new parameter computed_properties
+  - Model SqlContainerResource has a new parameter create_mode
+  - Model SqlContainerResource has a new parameter restore_parameters
+  - Model SqlDatabaseGetPropertiesResource has a new parameter create_mode
+  - Model SqlDatabaseGetPropertiesResource has a new parameter restore_parameters
+  - Model SqlDatabaseResource has a new parameter create_mode
+  - Model SqlDatabaseResource has a new parameter restore_parameters
+  - Model TableGetPropertiesResource has a new parameter create_mode
+  - Model TableGetPropertiesResource has a new parameter restore_parameters
+  - Model TableResource has a new parameter create_mode
+  - Model TableResource has a new parameter restore_parameters
+
 ## 9.3.0 (2023-10-23)
 
 ### Features Added

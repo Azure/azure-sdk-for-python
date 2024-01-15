@@ -2,11 +2,15 @@
 
 ## 12.15.0b1 (Unreleased)
 
+This version and all future versions will require Python 3.8+. Python 3.7 is no longer supported.
+
 ### Features Added
 
 ### Bugs Fixed
 - Bumped dependency of `typing-extensions` to `>=4.6.0` to avoid potential `TypeError` with `typing.TypeVar` on
 Python 3.12.
+- Fixed an issue where authentication errors could raise `AttributeError` instead of `ClientAuthenticationError` when
+using async OAuth credentials.
 
 ## 12.14.0 (2023-11-07)
 

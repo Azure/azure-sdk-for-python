@@ -5,14 +5,22 @@
 #pylint: disable=too-many-lines
 
 import asyncio
-import collections
+from collections.abc import AsyncIterator
 import datetime
 import functools
 import logging
 import time
 import warnings
 from enum import Enum
-from typing import Any, List, Optional, AsyncIterator, Union, TYPE_CHECKING, cast
+from typing import (
+    Any,
+    List,
+    Optional,
+    AsyncIterator as AsyncIteratorType,
+    Union,
+    TYPE_CHECKING,
+    cast
+)
 
 from ..exceptions import MessageLockLostError
 from ._servicebus_session_async import ServiceBusSession
@@ -73,7 +81,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMixin):
+class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
     """The ServiceBusReceiver class defines a high level interface for
     receiving messages from the Azure Service Bus Queue or Topic Subscription.
 
@@ -159,7 +167,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         **kwargs: Any
     ) -> None:
         self._session_id = None
-        self._message_iter: Optional[AsyncIterator[Union["uamqp_Message", "pyamqp_Message"]]] = (
+        self._message_iter: Optional[AsyncIteratorType[Union["uamqp_Message", "pyamqp_Message"]]] = (
             None
         )
         self._amqp_transport: "AmqpTransportAsync"
@@ -235,7 +243,16 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             self
         )
 
-    def __aiter__(self):
+    async def __aenter__(self) -> "ServiceBusReceiver":
+        if self._shutdown.is_set():
+            raise ValueError(
+                "The handler has already been shutdown. Please use ServiceBusClient to "
+                "create a new instance."
+            )
+        await self._open_with_retry()
+        return self
+
+    def __aiter__(self) -> AsyncIteratorType[ServiceBusReceivedMessage]:
         return self._iter_contextual_wrapper()
 
     async def _inner_anext(self, wait_time: Optional[float] = None) -> ServiceBusReceivedMessage:
@@ -584,7 +601,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
     def _get_streaming_message_iter(
         self, max_wait_time: Optional[float] = None
-    ) -> AsyncIterator[ServiceBusReceivedMessage]:
+    ) -> AsyncIteratorType[ServiceBusReceivedMessage]:
         """Receive messages from an iterator indefinitely, or if a max_wait_time is specified, until
         such a timeout occurs.
 

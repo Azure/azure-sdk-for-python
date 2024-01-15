@@ -10,8 +10,8 @@
 
 ### Other Changes
 
-- Shutdown statsbeat on customer exporter 400 status code
-    ([#31881](https://github.com/Azure/azure-sdk-for-python/pull/31881))
+- Implement distro detection for statsbeat feature
+    ([#33761](https://github.com/Azure/azure-sdk-for-python/pull/33761))
 
 ## 1.1.1 (2023-12-04)
 
