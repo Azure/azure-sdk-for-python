@@ -4,7 +4,7 @@
 
 import logging
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
 from azure.ai.ml._schema.job.parallel_job import ParallelJobSchema
@@ -23,6 +23,11 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 from ..job import Job
 from ..job_io_mixin import JobIOMixin
 from .parameterized_parallel import ParameterizedParallel
+
+# avoid circular import error
+if TYPE_CHECKING:
+    from azure.ai.ml.entities._builders import Parallel
+    from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 
 module_logger = logging.getLogger(__name__)
 
@@ -136,6 +141,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
             value = getattr(self, key)
             from azure.ai.ml.entities import BatchRetrySettings, JobResourceConfiguration
 
+            values_to_check: List = []
             if key == "retry_settings" and isinstance(value, BatchRetrySettings):
                 values_to_check = [value.max_retries, value.timeout]
             elif key == "resources" and isinstance(value, JobResourceConfiguration):
@@ -189,7 +195,8 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
 
         component = self._to_component(context, **kwargs)
 
-        return Parallel(  # pylint: disable=abstract-class-instantiated
+        # pylint: disable=abstract-class-instantiated
+        return Parallel(
             component=component,
             compute=self.compute,
             # Need to supply the inputs with double curly.
@@ -207,7 +214,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
             environment_variables=self.environment_variables,
             properties=self.properties,
             identity=self.identity,
-            resources=self.resources if self.resources else None,
+            resources=self.resources if self.resources and not isinstance(self.resources, dict) else None,
         )
 
     def _validate(self) -> None:

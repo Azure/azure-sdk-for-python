@@ -147,8 +147,9 @@ def _validate_inputs_for(input_consumer_name: str, input_consumer: str, inputs: 
             )
 
 
-def validate_inputs_for_command(command: str, inputs: Optional[Dict]) -> None:
-    _validate_inputs_for("command", command, inputs)
+def validate_inputs_for_command(command: Optional[str], inputs: Optional[Dict]) -> None:
+    if command is not None:
+        _validate_inputs_for("command", command, inputs)
 
 
 def validate_inputs_for_args(args: str, inputs: Optional[Dict[str, Any]]) -> None:
@@ -304,7 +305,7 @@ def from_rest_inputs_to_dataset_literal(inputs: Dict[str, RestJobInput]) -> Dict
     return from_rest_inputs
 
 
-def to_rest_data_outputs(outputs: Optional[Dict[str, Output]]) -> Dict[str, RestJobOutput]:
+def to_rest_data_outputs(outputs: Optional[Dict]) -> Dict[str, RestJobOutput]:
     """Turns job outputs into REST format.
 
     :param outputs: Dictionary of dataset outputs from job

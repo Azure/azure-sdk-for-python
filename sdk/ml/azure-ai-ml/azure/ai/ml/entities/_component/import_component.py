@@ -72,8 +72,11 @@ class ImportComponent(Component):
         self.output = output
 
     def _to_dict(self) -> Dict:
-        res: dict = convert_ordered_dict_to_dict({**self._other_parameter, **super(ImportComponent, self)._to_dict()})
-        return res
+        # TODO: Bug Item number: 2897665
+        convert_dict: Dict = convert_ordered_dict_to_dict(  # type: ignore
+            {**self._other_parameter, **super(ImportComponent, self)._to_dict()}
+        )
+        return convert_dict
 
     @classmethod
     def _create_schema_for_validation(cls, context: Any) -> Union[PathAwareSchema, Schema]:

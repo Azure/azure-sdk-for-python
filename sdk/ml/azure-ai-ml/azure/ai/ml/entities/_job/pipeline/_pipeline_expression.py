@@ -185,11 +185,13 @@ class PipelineExpressionMixin:
         self._validate_binary_operation(other, PipelineExpressionOperator.GTE)
         return PipelineExpression._from_operation(self, other, PipelineExpressionOperator.GTE)
 
-    def __eq__(self, other: Any) -> "PipelineExpression":
+    # Bug Item number: 2883354
+    def __eq__(self, other: Any) -> "PipelineExpression":  # type: ignore
         self._validate_binary_operation(other, PipelineExpressionOperator.EQ)
         return PipelineExpression._from_operation(self, other, PipelineExpressionOperator.EQ)
 
-    def __ne__(self, other: Any) -> "PipelineExpression":
+    # Bug Item number: 2883354
+    def __ne__(self, other: Any) -> "PipelineExpression":  # type: ignore
         self._validate_binary_operation(other, PipelineExpressionOperator.NE)
         return PipelineExpression._from_operation(self, other, PipelineExpressionOperator.NE)
 
@@ -370,7 +372,7 @@ class PipelineExpression(PipelineExpressionMixin):
             _postfix: List[str],
             _expression_inputs: Dict[str, ExpressionInput],
         ) -> Tuple[List[str], dict]:
-            if not _component_output._meta._is_primitive_type:
+            if _component_output._meta is not None and not _component_output._meta._is_primitive_type:
                 error_message = (
                     f"Component output {_component_output._port_name} in expression must "
                     f"be a primitive type with value {True!r}, "
@@ -381,7 +383,7 @@ class PipelineExpression(PipelineExpressionMixin):
             _has_prefix = False
             # "output" is the default output name for command component, add component's name as prefix
             if _name == "output":
-                if _component_output._owner is not None:
+                if _component_output._owner is not None and not isinstance(_component_output._owner.component, str):
                     _name = f"{_component_output._owner.component.name}__output"
                 _has_prefix = True
             # following loop is expected to execute at most twice:
@@ -391,7 +393,9 @@ class PipelineExpression(PipelineExpressionMixin):
                 _seen_input = _expression_inputs[_name]
                 if isinstance(_seen_input.value, PipelineInput):
                     if not _has_prefix:
-                        if _component_output._owner is not None:
+                        if _component_output._owner is not None and not isinstance(
+                            _component_output._owner.component, str
+                        ):
                             _name = f"{_component_output._owner.component.name}__{_component_output._port_name}"
                         _has_prefix = True
                         continue
@@ -402,7 +406,9 @@ class PipelineExpression(PipelineExpressionMixin):
                         _new_name = f"{_seen_input.value._owner.component.name}__{_seen_input.value._port_name}"
                         _postfix = _update_postfix(_postfix, _name, _new_name)
                         _expression_inputs[_new_name] = ExpressionInput(_new_name, _seen_input.type, _seen_input)
-                        if _component_output._owner is not None:
+                        if _component_output._owner is not None and not isinstance(
+                            _component_output._owner.component, str
+                        ):
                             _name = f"{_component_output._owner.component.name}__{_component_output._port_name}"
                         _has_prefix = True
                     _name = _get_or_create_input_name(_name, _component_output, _expression_inputs)
@@ -498,7 +504,8 @@ class PipelineExpression(PipelineExpressionMixin):
         """
         if self._string_concatenation:
             return self._to_data_binding()
-        return self._create_component()
+        res: Union[str, "BaseNode"] = self._create_component()
+        return res
 
     @staticmethod
     def parse_pipeline_inputs_from_data_binding(data_binding: str) -> List[str]:

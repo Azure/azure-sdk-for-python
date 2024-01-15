@@ -93,20 +93,20 @@ class SparkComponent(
     def __init__(
         self,
         *,
-        code: Union[str, os.PathLike] = ".",
+        code: Optional[Union[str, os.PathLike]] = ".",
         entry: Optional[Union[Dict[str, str], SparkJobEntry]] = None,
         py_files: Optional[List[str]] = None,
         jars: Optional[List[str]] = None,
         files: Optional[List[str]] = None,
         archives: Optional[List[str]] = None,
-        driver_cores: Optional[int] = None,
+        driver_cores: Optional[Union[int, str]] = None,
         driver_memory: Optional[str] = None,
-        executor_cores: Optional[int] = None,
+        executor_cores: Optional[Union[int, str]] = None,
         executor_memory: Optional[str] = None,
-        executor_instances: Optional[int] = None,
-        dynamic_allocation_enabled: Optional[bool] = None,
-        dynamic_allocation_min_executors: Optional[int] = None,
-        dynamic_allocation_max_executors: Optional[int] = None,
+        executor_instances: Optional[Union[int, str]] = None,
+        dynamic_allocation_enabled: Optional[Union[bool, str]] = None,
+        dynamic_allocation_min_executors: Optional[Union[int, str]] = None,
+        dynamic_allocation_max_executors: Optional[Union[int, str]] = None,
         conf: Optional[Dict[str, str]] = None,
         environment: Optional[Union[str, Environment]] = None,
         inputs: Optional[Dict] = None,
@@ -125,7 +125,7 @@ class SparkComponent(
             **kwargs,
         )
 
-        self.code: Union[str, os.PathLike] = code
+        self.code: Optional[Union[str, os.PathLike]] = code
         self.entry = entry
         self.py_files = py_files
         self.jars = jars
@@ -171,8 +171,11 @@ class SparkComponent(
         return validation_result
 
     def _to_dict(self) -> Dict:
-        res: dict = convert_ordered_dict_to_dict({**self._other_parameter, **super(SparkComponent, self)._to_dict()})
-        return res
+        # TODO: Bug Item number: 2897665
+        convert_dict: Dict = convert_ordered_dict_to_dict(  # type: ignore
+            {**self._other_parameter, **super(SparkComponent, self)._to_dict()}
+        )
+        return convert_dict
 
     def _to_ordered_dict_for_yaml_dump(self) -> Dict:
         """Dump the component content into a sorted yaml string.

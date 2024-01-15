@@ -115,7 +115,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
     def __init__(
         self,
         *,
-        component: Optional[Union[str, PipelineComponent]] = None,
+        component: Optional[Union[str, PipelineComponent, Component]] = None,
         inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
         outputs: Optional[Dict[str, Output]] = None,
         name: Optional[str] = None,
@@ -160,7 +160,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         # If component is Pipeline component, jobs will be component.jobs
         self._jobs = (jobs or {}) if isinstance(component, str) else {}
 
-        self.component: Union[PipelineComponent, str] = component
+        self.component: Union[PipelineComponent, str] = component  # type: ignore
         if "type" not in kwargs:
             kwargs["type"] = JobType.PIPELINE
         if isinstance(component, PipelineComponent):
@@ -178,7 +178,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
 
         self._remove_pipeline_input()
         self.compute = compute
-        self._settings = None
+        self._settings: Any = None
         self.settings = settings
         self.identity = identity
         # TODO: remove default code & environment?
@@ -186,7 +186,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         self._default_environment = None
 
     @property
-    def inputs(self) -> Dict[str, Union[Input, str, bool, int, float]]:
+    def inputs(self) -> Dict:
         """Inputs of the pipeline job.
 
         :return: Inputs of the pipeline job.
@@ -332,6 +332,8 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         return validation_result
 
     def _validate_init_finalize_job(self) -> MutableValidationResult:  # pylint: disable=too-many-statements
+        from azure.ai.ml.entities._job.pipeline._io import InputOutputBase, _GroupAttrDict
+
         validation_result = self._create_empty_validation_result()
         # subgraph (PipelineComponent) should not have on_init/on_finalize set
         for job_name, job in self.jobs.items():
@@ -377,7 +379,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         def _is_isolated_job(_validate_job_name: str) -> bool:
             def _try_get_data_bindings(
                 _name: str, _input_output_data: Union["_GroupAttrDict", "InputOutputBase"]
-            ) -> Optional[List[str]]:
+            ) -> Optional[List]:
                 """Try to get data bindings from input/output data, return None if not found.
                 :param _name: The name to use when flattening GroupAttrDict
                 :type _name: str
@@ -388,8 +390,9 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
                 """
                 # handle group input
                 if GroupInput._is_group_attr_dict(_input_output_data):
+                    _new_input_output_data: _GroupAttrDict = _input_output_data  # type: ignore
                     # flatten to avoid nested cases
-                    flattened_values: List[Input] = list(_input_output_data.flatten(_name).values())
+                    flattened_values: List[Input] = list(_new_input_output_data.flatten(_name).values())
                     # handle invalid empty group
                     if len(flattened_values) == 0:
                         return None
@@ -483,7 +486,8 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         """
         component = self._to_component(context, **kwargs)
 
-        return Pipeline(  # pylint: disable=abstract-class-instantiated
+        # pylint: disable=abstract-class-instantiated
+        return Pipeline(
             component=component,
             compute=self.compute,
             # Need to supply the inputs with double curly.

@@ -18,6 +18,7 @@ from azure.ai.ml.entities._credentials import (
 )
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.distribution import (
+    DistributionConfiguration,
     MpiDistribution,
     PyTorchDistribution,
     RayDistribution,
@@ -48,7 +49,9 @@ SUPPORTED_INPUTS = [
 
 
 def _parse_input(input_value: Union[Input, Dict, SweepDistribution, str, bool, int, float]) -> Tuple:
-    component_input, job_input = None, None
+    component_input = None
+    job_input: Optional[Union[Input, Dict, SweepDistribution, str, bool, int, float]] = None
+
     if isinstance(input_value, Input):
         component_input = Input(**input_value._to_dict())
         input_type = input_value.type
@@ -77,8 +80,10 @@ def _parse_input(input_value: Union[Input, Dict, SweepDistribution, str, bool, i
     return component_input, job_input
 
 
-def _parse_output(output_value: Union[Output, Dict, str, None]) -> Tuple:
-    component_output, job_output = None, None
+def _parse_output(output_value: Optional[Union[Output, Dict, str]]) -> Tuple:
+    component_output = None
+    job_output: Optional[Union[Output, Dict, str]] = None
+
     if isinstance(output_value, Output):
         component_output = Output(**output_value._to_dict())
         job_output = Output(**output_value._to_dict())
@@ -125,7 +130,14 @@ def command(
     environment: Optional[Union[str, Environment]] = None,
     environment_variables: Optional[Dict] = None,
     distribution: Optional[
-        Union[Dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution, RayDistribution]
+        Union[
+            Dict,
+            MpiDistribution,
+            TensorFlowDistribution,
+            PyTorchDistribution,
+            RayDistribution,
+            DistributionConfiguration,
+        ]
     ] = None,
     compute: Optional[str] = None,
     inputs: Optional[Dict] = None,

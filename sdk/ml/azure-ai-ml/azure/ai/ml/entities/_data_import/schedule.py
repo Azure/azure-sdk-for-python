@@ -43,7 +43,7 @@ class ImportDataSchedule(Schedule):
         self,
         *,
         name: str,
-        trigger: Union[CronTrigger, RecurrenceTrigger],
+        trigger: Optional[Union[CronTrigger, RecurrenceTrigger]],
         import_data: DataImport,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
@@ -110,6 +110,6 @@ class ImportDataSchedule(Schedule):
                 action=ImportDataAction(data_import_definition=self.import_data._to_rest_object()),
                 display_name=self.display_name,
                 is_enabled=self._is_enabled,
-                trigger=self.trigger._to_rest_object(),
+                trigger=self.trigger._to_rest_object() if self.trigger is not None else None,
             )
         )

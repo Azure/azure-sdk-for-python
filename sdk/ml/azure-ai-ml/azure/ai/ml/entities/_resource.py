@@ -43,7 +43,7 @@ class Resource(abc.ABC):
 
     def __init__(
         self,
-        name: str,
+        name: Optional[str],
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
@@ -51,14 +51,14 @@ class Resource(abc.ABC):
     ) -> None:
         self.name = name
         self.description = description
-        self.tags = dict(tags) if tags else {}
+        self.tags: Optional[Dict] = dict(tags) if tags else {}
         self.properties = dict(properties) if properties else {}
         # Conditional assignment to prevent entity bloat when unused.
         self._print_as_yaml = kwargs.pop("print_as_yaml", False)
 
         # Hide read only properties in kwargs
         self._id = kwargs.pop("id", None)
-        self.__source_path: Optional[str] = kwargs.pop("source_path", None)
+        self.__source_path: Union[str, PathLike] = kwargs.pop("source_path", "")
         self._base_path = kwargs.pop(BASE_PATH_CONTEXT_KEY, None) or os.getcwd()  # base path should never be None
         self._creation_context: Optional[SystemData] = kwargs.pop("creation_context", None)
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -67,7 +67,7 @@ class Resource(abc.ABC):
         super().__init__(**kwargs)
 
     @property
-    def _source_path(self) -> Optional[str]:
+    def _source_path(self) -> Union[str, PathLike]:
         # source path is added to display file location for validation error messages
         # usually, base_path = Path(source_path).parent if source_path else os.getcwd()
         return self.__source_path
@@ -106,7 +106,7 @@ class Resource(abc.ABC):
         return self._base_path
 
     @abc.abstractmethod
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> Any:
         """Dump the object content into a file.
 
         :param dest: The local path or file stream to write the YAML content to.
@@ -171,10 +171,10 @@ class Resource(abc.ABC):
         from azure.ai.ml._arm_deployments.arm_helper import get_template
 
         # pylint: disable=no-member
-        template = get_template(resource_type=self._arm_type)  # type: ignore
+        template: Dict = get_template(resource_type=self._arm_type)  # type: ignore
         # pylint: disable=no-member
         template["copy"]["name"] = f"{self._arm_type}Deployment"  # type: ignore
-        return dict(template)
+        return template
 
     def _get_arm_resource_and_params(self, **kwargs: Any) -> List:
         """Get arm resource and parameters.

@@ -97,7 +97,8 @@ class ModelBatchDeployment(Deployment):
                 logging_level=settings.logging_level,
             )
 
-    def _to_rest_object(self, location: str) -> BatchDeploymentData:  # pylint: disable=arguments-differ
+    # pylint: disable=arguments-differ
+    def _to_rest_object(self, location: str) -> BatchDeploymentData:  # type: ignore
         self._validate()
         code_config = (
             RestCodeConfiguration(

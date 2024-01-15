@@ -139,7 +139,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         self.scatter_gather_graph._to_rest_object()
 
         # set output to final aggregation step's output
-        self._outputs = self.scatter_gather_graph.outputs
+        self._outputs: Dict = self.scatter_gather_graph.outputs
         super(FLScatterGather, self).__init__(
             type=JobType.COMPONENT,  # pylint: disable=redefined-builtin
             component=None,
@@ -202,7 +202,8 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             # produce aggregate step inputs by merging static kwargs and mapped arguments from
             # internal merge components
             agg_inputs: Dict = {}
-            agg_inputs.update(self.aggregation_kwargs)
+            if self.aggregation_kwargs is not None:
+                agg_inputs.update(self.aggregation_kwargs)
             internal_merge_outputs = {
                 self._get_aggregator_input_name(k): v.outputs.aggregated_output for k, v in merge_comp_mapping.items()
             }
@@ -237,7 +238,8 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                     internal_datastore=self.aggregation_datastore,
                     orchestrator_datastore=self.aggregation_datastore,
                 )
-            return executed_aggregation_component.outputs
+            res: PipelineJob = executed_aggregation_component.outputs
+            return res
 
         @pipeline(name="Scatter gather graph")
         # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
@@ -249,8 +251,9 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             """
 
             silo_inputs: Dict = {}
-            # Start with static inputs
-            silo_inputs.update(self.shared_silo_kwargs)
+            if self.shared_silo_kwargs is not None:
+                # Start with static inputs
+                silo_inputs.update(self.shared_silo_kwargs)
 
             # merge in inputs passed in from previous iteration's aggregate step)
             if self.aggregation_to_silo_argument_map is not None:
@@ -269,9 +272,11 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                 mapping=do_while_mapping,
                 max_iteration_count=self.max_iterations,
             )
-            return scatter_gather_body.outputs
+            res_scatter: PipelineJob = scatter_gather_body.outputs
+            return res_scatter
 
-        return create_scatter_gather_graph()
+        res: PipelineJob = create_scatter_gather_graph()
+        return res
 
     @classmethod
     def _get_fl_datastore_path(
@@ -417,7 +422,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                 # This is dangerous, and we need to make sure they both use the same datastore,
                 # so we keep datastore types identical across this recursive call.
                 cls._anchor_step(
-                    pipeline_step.component,
+                    pipeline_step.component,  # type: ignore
                     compute,
                     internal_datastore=internal_datastore,
                     orchestrator_datastore=orchestrator_datastore,
@@ -439,23 +444,24 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                                 )
                             )
                 # ...then recursively anchor each job inside the pipeline
-                for job_key in pipeline_step.jobs:
-                    job = pipeline_step.jobs[job_key]
-                    # replace orchestrator with internal datastore, jobs components
-                    # should either use the local datastore
-                    # or have already had their outputs re-assigned.
-                    cls._anchor_step(
-                        job,
-                        compute,
-                        internal_datastore=internal_datastore,
-                        orchestrator_datastore=internal_datastore,
-                        _path=f"{_path}.jobs.{job_key}",
-                    )
+                if not isinstance(pipeline_step, CommandComponent):
+                    for job_key in pipeline_step.jobs:
+                        job = pipeline_step.jobs[job_key]
+                        # replace orchestrator with internal datastore, jobs components
+                        # should either use the local datastore
+                        # or have already had their outputs re-assigned.
+                        cls._anchor_step(
+                            job,
+                            compute,
+                            internal_datastore=internal_datastore,
+                            orchestrator_datastore=internal_datastore,
+                            _path=f"{_path}.jobs.{job_key}",
+                        )
 
         elif pipeline_step.type == "command":
             # if the current step is a command component
             # make sure the compute corresponds to the silo
-            if pipeline_step.compute is None:
+            if not isinstance(pipeline_step, CommandComponent) and pipeline_step.compute is None:
                 pipeline_step.compute = compute
             # then anchor each of the job's outputs
             for name, output in pipeline_step.outputs.items():
@@ -591,7 +597,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             )
         else:
             first_silo = silo_configs[0]
-            expected_inputs = []
+            expected_inputs: Any = {}
             if hasattr(first_silo, "inputs"):
                 expected_inputs = first_silo.inputs.keys()
             num_expected_inputs = len(expected_inputs)
@@ -875,5 +881,6 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         """
         rest_node = super(FLScatterGather, self)._to_rest_object(**kwargs)
         rest_node.update({"outputs": self._to_rest_outputs()})
-        res: dict = convert_ordered_dict_to_dict(rest_node)
-        return res
+        # TODO: Bug Item number: 2897665
+        convert_dict: dict = convert_ordered_dict_to_dict(rest_node)  # type: ignore
+        return convert_dict

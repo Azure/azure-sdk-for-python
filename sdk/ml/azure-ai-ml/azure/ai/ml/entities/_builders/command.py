@@ -9,7 +9,7 @@ import logging
 import os
 from enum import Enum
 from os import PathLike
-from typing import Any, Dict, List, Optional, Tuple, Union, overload
+from typing import Any, Dict, List, Optional, Tuple, Union, cast, overload
 
 from marshmallow import INCLUDE, Schema
 
@@ -155,17 +155,22 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         outputs: Optional[Dict[str, Union[str, Output]]] = None,
         limits: Optional[CommandJobLimits] = None,
         identity: Optional[
-            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+            Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
         distribution: Optional[
-            Union[Dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution, RayDistribution]
+            Union[
+                Dict,
+                MpiDistribution,
+                TensorFlowDistribution,
+                PyTorchDistribution,
+                RayDistribution,
+                DistributionConfiguration,
+            ]
         ] = None,
         environment: Optional[Union[Environment, str]] = None,
         environment_variables: Optional[Dict] = None,
         resources: Optional[JobResourceConfiguration] = None,
-        services: Optional[
-            Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
-        ] = None,
+        services: Optional[Dict] = None,
         queue_settings: Optional[QueueSettings] = None,
         **kwargs: Any,
     ) -> None:
@@ -203,7 +208,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
             self.resources = self.resources or self.component.resources
             self.distribution = self.distribution or self.component.distribution
 
-        self._swept = False
+        self._swept: bool = False
         self._init = False
 
     @classmethod
@@ -230,7 +235,16 @@ class Command(BaseNode, NodeWithGroupInputMixin):
     @property
     def distribution(
         self,
-    ) -> Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]:
+    ) -> Optional[
+        Union[
+            Dict,
+            MpiDistribution,
+            TensorFlowDistribution,
+            PyTorchDistribution,
+            RayDistribution,
+            DistributionConfiguration,
+        ]
+    ]:
         """The configuration for the distributed command component or job.
 
         :return: The configuration for distributed jobs.
@@ -263,7 +277,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         self._distribution = value
 
     @property
-    def resources(self) -> JobResourceConfiguration:
+    def resources(self) -> Any:
         """The compute resource configuration for the command component or job.
 
         :rtype: ~azure.ai.ml.entities.JobResourceConfiguration
@@ -282,7 +296,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         self._resources = value
 
     @property
-    def queue_settings(self) -> QueueSettings:
+    def queue_settings(self) -> Optional[QueueSettings]:
         """The queue settings for the command component or job.
 
         :return: The queue settings for the command component or job.
@@ -304,7 +318,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
     @property
     def identity(
         self,
-    ) -> Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
+    ) -> Optional[Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
         """The identity that the job will use while running on compute.
 
         :return: The identity that the job will use while running on compute.
@@ -316,9 +330,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
     @identity.setter
     def identity(
         self,
-        value: Union[
-            Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration, None
-        ],
+        value: Optional[Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]],
     ) -> None:
         """Sets the identity that the job will use while running on compute.
 
@@ -357,9 +369,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
     @services.setter
     def services(
         self,
-        value: Dict[
-            str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]
-        ],
+        value: Dict,
     ) -> None:
         """Sets the interactive services for the node.
 
@@ -374,7 +384,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         self._services = _resolve_job_services(value)
 
     @property
-    def component(self) -> Union[str, CommandComponent]:
+    def component(self) -> Any:
         """The ID or instance of the command component or job to be run for the step.
 
         :return: The ID or instance of the command component or job to be run for the step.
@@ -649,10 +659,11 @@ class Command(BaseNode, NodeWithGroupInputMixin):
 
         if not queue_settings:
             queue_settings = self.queue_settings
-        if job_tier is not None:
-            queue_settings.job_tier = job_tier
-        if priority is not None:
-            queue_settings.priority = priority
+        if queue_settings is not None:
+            if job_tier is not None:
+                queue_settings.job_tier = job_tier
+            if priority is not None:
+                queue_settings.priority = priority
 
         sweep_node = Sweep(
             trial=copy.deepcopy(
@@ -760,13 +771,12 @@ class Command(BaseNode, NodeWithGroupInputMixin):
             "limits": get_rest_dict_for_node_attrs(self.limits, clear_empty_value=True),
             "resources": get_rest_dict_for_node_attrs(self.resources, clear_empty_value=True),
             "services": get_rest_dict_for_node_attrs(self.services),
-            "identity": self.identity._to_dict() if self.identity else None,
+            "identity": self.identity._to_dict() if self.identity and not isinstance(self.identity, Dict) else None,
             "queue_settings": get_rest_dict_for_node_attrs(self.queue_settings, clear_empty_value=True),
         }.items():
             if value is not None:
                 rest_obj[key] = value
-        res: dict = convert_ordered_dict_to_dict(rest_obj)
-        return res
+        return cast(dict, convert_ordered_dict_to_dict(rest_obj))
 
     @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "Command":
@@ -942,9 +952,7 @@ def _resolve_job_services(
 
 def _resolve_job_services(
     services: Optional[Dict[str, Union[JobServiceBase, Dict]]],
-) -> Optional[
-    Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
-]:
+) -> Optional[Dict]:
     """Resolve normal dict to dict[str, JobService]
 
     :param services: A dict that maps service names to either a JobServiceBase object, or a Dict used to build one

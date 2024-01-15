@@ -9,7 +9,7 @@ import re
 from enum import Enum
 from os import PathLike, path
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 from marshmallow import INCLUDE, Schema
 
@@ -134,16 +134,16 @@ class Spark(BaseNode, SparkJobEntryMixin):
         *,
         component: Union[str, SparkComponent],
         identity: Optional[
-            Union[Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+            Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
-        driver_cores: Optional[int] = None,
+        driver_cores: Optional[Union[int, str]] = None,
         driver_memory: Optional[str] = None,
-        executor_cores: Optional[int] = None,
+        executor_cores: Optional[Union[int, str]] = None,
         executor_memory: Optional[str] = None,
-        executor_instances: Optional[int] = None,
-        dynamic_allocation_enabled: Optional[bool] = None,
-        dynamic_allocation_min_executors: Optional[int] = None,
-        dynamic_allocation_max_executors: Optional[int] = None,
+        executor_instances: Optional[Union[int, str]] = None,
+        dynamic_allocation_enabled: Optional[Union[bool, str]] = None,
+        dynamic_allocation_min_executors: Optional[Union[int, str]] = None,
+        dynamic_allocation_max_executors: Optional[Union[int, str]] = None,
         conf: Optional[Dict[str, str]] = None,
         inputs: Optional[
             Dict[
@@ -196,7 +196,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
         if is_spark_component:
             # conf is dict and we need copy component conf here, otherwise node conf setting will affect component
             # setting
-            _component: SparkComponent = component
+            _component = cast(SparkComponent, component)
             self.conf = self.conf or copy.copy(_component.conf)
             self.driver_cores = self.driver_cores or _component.driver_cores
             self.driver_memory = self.driver_memory or _component.driver_memory
@@ -245,10 +245,11 @@ class Spark(BaseNode, SparkJobEntryMixin):
 
         :rtype: ~azure.ai.ml.entities.SparkComponent
         """
-        return self._component
+        res: Union[str, SparkComponent] = self._component
+        return res
 
     @property
-    def resources(self) -> Optional[SparkResourceConfiguration]:
+    def resources(self) -> Optional[Union[Dict, SparkResourceConfiguration]]:
         """The compute resource configuration for the job.
 
         :rtype: ~azure.ai.ml.entities.SparkResourceConfiguration
@@ -256,7 +257,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
         return self._resources
 
     @resources.setter
-    def resources(self, value: Union[Dict[str, str], SparkResourceConfiguration, None]) -> None:
+    def resources(self, value: Optional[Union[Dict, SparkResourceConfiguration]]) -> None:
         """Sets the compute resource configuration for the job.
 
         :param value: The compute resource configuration for the job.
@@ -269,7 +270,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
     @property
     def identity(
         self,
-    ) -> Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
+    ) -> Optional[Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
         """The identity that the Spark job will use while running on compute.
 
         :rtype: Union[~azure.ai.ml.entities.ManagedIdentityConfiguration, ~azure.ai.ml.entities.AmlTokenConfiguration,
@@ -314,7 +315,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
         :rtype: Union[str, PathLike]
         """
         if isinstance(self.component, Component):
-            _code: Union[str, PathLike] = self.component.code
+            _code: Optional[Union[str, PathLike]] = self.component.code
             return _code
         return None
 
@@ -562,7 +563,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
             pass
         else:
             if not path.isabs(self.code):
-                _component: SparkComponent = self.component
+                _component: SparkComponent = self.component  # type: ignore
                 code_path = Path(_component.base_path) / self.code
                 if code_path.exists():
                     code_path = code_path.resolve().absolute()
