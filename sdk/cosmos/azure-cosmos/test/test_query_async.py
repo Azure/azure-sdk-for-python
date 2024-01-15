@@ -846,6 +846,7 @@ class TestQueryAsync:
 
     @pytest.mark.asyncio
     async def test_computed_properties_query(self):
+        await self._set_up()
         computed_properties = [{'name': "cp_lower", 'query': "SELECT VALUE LOWER(c.db_group) FROM c"},
                                {'name': "cp_power",
                                 'query': "SELECT VALUE POWER(c.val, 2) FROM c"},
@@ -862,10 +863,10 @@ class TestQueryAsync:
             {'id': str(uuid.uuid4()), 'pk': 'test', 'val': 3, 'stringProperty': 'randomWord7', 'db_group': 'group2'},
             {'id': str(uuid.uuid4()), 'pk': 'test', 'val': 2, 'stringProperty': 'randomWord8', 'db_group': 'GroUp3'}
         ]
-        created_database = await self.config.create_database_if_not_exist(self.client)
         created_collection = await self.created_db.create_container_if_not_exists(
-            "computed_properties_query_test_" + str(uuid.uuid4()), PartitionKey(path="/pk")
-            , computed_properties=computed_properties)
+            "computed_properties_query_test_" + str(uuid.uuid4()),
+            PartitionKey(path="/pk"),
+            computed_properties=computed_properties)
 
         # Create Items
         for item in items:
@@ -909,8 +910,6 @@ class TestQueryAsync:
         queried_items = [q async for q in created_collection.query_items(query='Select * from c Where c.cp_str_len = 3',
                                                                          partition_key="test")]
         assert len(queried_items) == 0
-
-        await self.client.delete_database(created_database)
 
     def _MockNextFunction(self):
         if self.count < len(self.payloads):
