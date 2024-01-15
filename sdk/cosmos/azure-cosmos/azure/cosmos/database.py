@@ -671,12 +671,12 @@ class DatabaseProxy(object):
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
 
-        user = self.client_connection.UpsertUser(
+        user, last_response_headers = self.client_connection.UpsertUser(
             database_link=self.database_link, user=body, options=request_options, **kwargs
         )
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, user)
+            response_hook(last_response_headers, user)
 
         return UserProxy(
             client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user

@@ -223,12 +223,12 @@ class UserProxy:
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
 
-        permission = self.client_connection.UpsertPermission(
+        permission, last_response_headers = self.client_connection.UpsertPermission(
             user_link=self.user_link, permission=body, options=request_options, **kwargs
         )
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, permission)
+            response_hook(last_response_headers, permission)
 
         return Permission(
             id=permission["id"],

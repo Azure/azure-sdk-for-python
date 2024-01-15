@@ -602,7 +602,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         user: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Upserts a user.
 
         :param str database_link:
@@ -777,7 +777,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         permission: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Upserts a permission for a user.
 
         :param str user_link:
@@ -1296,7 +1296,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         document: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Upserts a document in a collection.
 
         :param str database_or_container_link:
@@ -1483,32 +1483,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         result, _ = self.Create(trigger, path, "triggers", collection_id, None, options, **kwargs)
         return result
 
-    def UpsertTrigger(
-        self,
-        collection_link: str,
-        trigger: Dict[str, Any],
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> Dict[str, Any]:
-        """Upserts a trigger in a collection.
-
-        :param str collection_link:
-            The link to the document collection.
-        :param dict trigger:
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            The upserted Trigger.
-        :rtype:
-            dict
-
-        """
-        if options is None:
-            options = {}
-
-        collection_id, path, trigger = self._GetContainerIdWithPathForTrigger(collection_link, trigger)
-        return self.Upsert(trigger, path, "triggers", collection_id, None, options, **kwargs)
 
     def _GetContainerIdWithPathForTrigger(
         self,
@@ -2096,13 +2070,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         formatted_operations = base._format_batch_operations(batch_operations)
 
-        results, self.last_response_headers = self._Batch(
+        results, last_response_headers = self._Batch(
             formatted_operations,
             path,
             collection_id,
             options,
             **kwargs
         )
+        self.last_response_headers = last_response_headers
         final_responses = []
         is_error = False
         error_status = 0
@@ -2118,7 +2093,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if is_error:
             raise exceptions.CosmosBatchOperationError(
                 error_index=error_index,
-                headers=self.last_response_headers,
+                headers=last_response_headers,
                 status_code=error_status,
                 message="There was an error in the transactional batch on index {}. Error message: {}".format(
                     str(error_index),
@@ -2611,8 +2586,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         initial_headers: Optional[Mapping[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
-        """Upserts a Azure Cosmos resource and returns it.
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+        """Upserts an Azure Cosmos resource and returns it.
 
         :param dict body:
         :param str path:
@@ -2638,10 +2613,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # Upsert will use WriteEndpoint since it uses POST operation
         request_params = RequestObject(typ, documents._OperationType.Upsert)
-        result, self.last_response_headers = self.__Post(path, request_params, body, headers, **kwargs)
+        result, last_response_headers = self.__Post(path, request_params, body, headers, **kwargs)
+        self.last_response_headers = last_response_headers
         # update session for write request
-        self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
-        return result
+        self._UpdateSessionIfRequired(headers, result, last_response_headers)
+        return result, last_response_headers
 
     def Replace(
         self,
