@@ -9,7 +9,7 @@ import json
 import logging
 import os
 import re
-from typing import Any, Dict, List, Optional, Tuple, Type, Union
+from typing import Any, Dict, List, Optional, Tuple, Type, Union, cast
 
 from marshmallow import INCLUDE, Schema
 
@@ -121,7 +121,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
         resources: Optional[JobResourceConfiguration] = None,
         environment_variables: Optional[Dict] = None,
         identity: Optional[
-            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration, Dict]
         ] = None,
         **kwargs: Any,
     ) -> None:
@@ -192,7 +192,9 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
         self.environment_variables = {} if environment_variables is None else environment_variables
         self._identity = identity
         if isinstance(self.component, ParallelComponent):
-            self.resources = self.resources or copy.deepcopy(self.component.resources)
+            self.resources = cast(JobResourceConfiguration, self.resources) or cast(
+                JobResourceConfiguration, copy.deepcopy(self.component.resources)
+            )
             self.retry_settings = self.retry_settings or copy.deepcopy(self.component.retry_settings)
             self.input_data = self.input_data or self.component.input_data
             self.max_concurrency_per_instance = (
@@ -222,7 +224,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
         :return: The retry settings for the parallel job.
         :rtype: ~azure.ai.ml.entities._job.parallel.retry_settings.RetrySettings
         """
-        return self._retry_settings
+        return cast(RetrySettings, self._retry_settings)
 
     @retry_settings.setter
     def retry_settings(self, value: Union[RetrySettings, Dict]) -> None:
@@ -258,7 +260,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
     @property
     def identity(
         self,
-    ) -> Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
+    ) -> Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration, Dict]]:
         """The identity that the job will use while running on compute.
 
         :return: The identity that the job will use while running on compute.
@@ -270,9 +272,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
     @identity.setter
     def identity(
         self,
-        value: Union[
-            Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration, None
-        ],
+        value: Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration, None],
     ) -> None:
         """Sets the identity that the job will use while running on compute.
 
@@ -308,7 +308,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
         :return: The parallel task.
         :rtype: ~azure.ai.ml.entities._job.parallel.parallel_task.ParallelTask
         """
-        return self._task
+        return cast(Optional[ParallelTask], self._task)
 
     @task.setter
     def task(self, value: Union[ParallelTask, Dict]) -> None:
@@ -448,7 +448,9 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
                     "partition_keys": json.dumps(self.partition_keys)
                     if self.partition_keys is not None
                     else self.partition_keys,
-                    "identity": self.identity._to_dict() if self.identity else None,
+                    "identity": self.identity._to_dict()
+                    if self.identity and not isinstance(self.identity, Dict)
+                    else None,
                     "resources": get_rest_dict_for_node_attrs(self.resources),
                 }
             )

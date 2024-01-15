@@ -7,7 +7,7 @@
 import logging
 from os import PathLike
 from pathlib import Path
-from typing import IO, Any, AnyStr, Dict, Optional, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union, cast
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthKeys as RestEndpointAuthKeys
 from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthMode
@@ -258,7 +258,7 @@ class OnlineEndpoint(Endpoint):
                 public_network_access=obj.properties.public_network_access,
             )
 
-        return endpoint
+        return cast(OnlineEndpoint, endpoint)
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, OnlineEndpoint):

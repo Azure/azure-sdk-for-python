@@ -194,7 +194,7 @@ class WorkspaceConnection(Resource):
         return self._is_shared
 
     @is_shared.setter
-    def is_shared(self, value: bool):
+    def is_shared(self, value: bool) -> None:
         """Assign the is_shared property of the connection, determining if it is shared amongst other
             lean workspaces within its parent workspace hub. Only applicable for connections created
             within a lean workspace workspace.
@@ -285,7 +285,7 @@ class WorkspaceConnection(Resource):
         return str(self.name)
 
     def _to_rest_object(self) -> RestWorkspaceConnection:
-        workspace_connection_properties_class = None
+        workspace_connection_properties_class: Any = None
         auth_type = self.credentials.type if self._credentials else None
 
         if auth_type == camel_to_snake(ConnectionAuthType.PAT):

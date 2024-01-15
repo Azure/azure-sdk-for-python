@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import re
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 from azure.ai.ml import Output
 from azure.ai.ml._schema import PathAwareSchema
@@ -599,7 +599,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             first_silo = silo_configs[0]
             expected_inputs: Any = {}
             if hasattr(first_silo, "inputs"):
-                expected_inputs = first_silo.inputs.keys()
+                expected_inputs = cast(List, first_silo.inputs.keys())
             num_expected_inputs = len(expected_inputs)
             # pylint: disable=consider-using-enumerate
             for i in range(len(silo_configs)):

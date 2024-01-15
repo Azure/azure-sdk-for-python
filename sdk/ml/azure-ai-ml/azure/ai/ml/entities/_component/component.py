@@ -218,8 +218,7 @@ class Component(
         :return: Outputs of the component.
         :rtype: dict
         """
-        res: dict = self._outputs
-        return res
+        return self._outputs
 
     @property
     def version(self) -> Optional[str]:
@@ -424,7 +423,7 @@ class Component(
             properties=component_container_details.properties,
             type=NodeType._CONTAINER,
             # Set this field to None as it hold a default True in init.
-            is_deterministic=None,  # type: ignore
+            is_deterministic=None,
         )
         component.latest_version = component_container_details.latest_version
         return component

@@ -5,7 +5,7 @@
 # pylint: disable=protected-access, too-many-lines
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, cast
 
 import isodate
 from typing_extensions import Literal
@@ -392,21 +392,21 @@ class MonitoringSignal(RestTranslatableMixin):
         ]
     ]:
         if obj.signal_type == MonitoringSignalType.DATA_DRIFT:
-            return DataDriftSignal._from_rest_object(obj)
-        if obj.signal_type == MonitoringSignalType.DATA_QUALITY:
-            return DataQualitySignal._from_rest_object(obj)
-        if obj.signal_type == MonitoringSignalType.PREDICTION_DRIFT:
-            return PredictionDriftSignal._from_rest_object(obj)
-        if obj.signal_type == "ModelPerformanceSignalBase":
-            return ModelPerformanceSignal._from_rest_object(obj)
-        if obj.signal_type == MonitoringSignalType.FEATURE_ATTRIBUTION_DRIFT:
-            return FeatureAttributionDriftSignal._from_rest_object(obj)
-        if obj.signal_type == MonitoringSignalType.CUSTOM:
-            return CustomMonitoringSignal._from_rest_object(obj)
-        if obj.signal_type == MonitoringSignalType.GENERATION_SAFETY_QUALITY:
-            return GenerationSafetyQualitySignal._from_rest_object(obj)
+            res = DataDriftSignal._from_rest_object(obj)
+        elif obj.signal_type == MonitoringSignalType.DATA_QUALITY:
+            res = DataQualitySignal._from_rest_object(obj)
+        elif obj.signal_type == MonitoringSignalType.PREDICTION_DRIFT:
+            res = PredictionDriftSignal._from_rest_object(obj)
+        elif obj.signal_type == "ModelPerformanceSignalBase":
+            res = ModelPerformanceSignal._from_rest_object(obj)
+        elif obj.signal_type == MonitoringSignalType.FEATURE_ATTRIBUTION_DRIFT:
+            res = cast(MonitoringSignal, FeatureAttributionDriftSignal._from_rest_object(obj))
+        elif obj.signal_type == MonitoringSignalType.CUSTOM:
+            res = cast(MonitoringSignal, CustomMonitoringSignal._from_rest_object(obj))
+        elif obj.signal_type == MonitoringSignalType.GENERATION_SAFETY_QUALITY:
+            res = cast(MonitoringSignal, GenerationSafetyQualitySignal._from_rest_object(obj))
 
-        return None
+        return res
 
 
 @experimental

@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import logging
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union, cast
 
 from marshmallow import Schema
 
@@ -213,11 +213,12 @@ class Pipeline(BaseNode):
     def _copy_pipeline_component_out_setting_to_node(self) -> None:
         """Copy pipeline component output's setting to node level."""
         from azure.ai.ml.entities import PipelineComponent
+        from azure.ai.ml.entities._job.pipeline._io import NodeOutput
 
         if not isinstance(self.component, PipelineComponent):
             return
         for key, val in self.component.outputs.items():
-            node_output = self.outputs.get(key)
+            node_output = cast(NodeOutput, self.outputs.get(key))
             copy_output_setting(source=val, target=node_output)
 
     @classmethod

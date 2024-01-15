@@ -7,7 +7,7 @@ import abc
 import os
 from os import PathLike
 from pathlib import Path
-from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Union
+from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Union, cast
 
 from msrest import Serializer
 
@@ -94,7 +94,7 @@ class Resource(abc.ABC):
         :return: The creation metadata for the resource.
         :rtype: Optional[~azure.ai.ml.entities.SystemData]
         """
-        return self._creation_context
+        return cast(Optional[SystemData], self._creation_context)
 
     @property
     def base_path(self) -> str:

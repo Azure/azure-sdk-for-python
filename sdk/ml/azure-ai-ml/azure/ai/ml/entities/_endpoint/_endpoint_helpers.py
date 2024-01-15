@@ -24,6 +24,9 @@ def validate_endpoint_or_deployment_name(name: Optional[str], is_deployment: boo
     :param is_deployment: Whether the name is a deployment name. Defaults to False
     :type is_deployment: bool
     """
+    if name is None:
+        return
+
     type_str = "a deployment" if is_deployment else "an endpoint"
     target = ErrorTarget.DEPLOYMENT if is_deployment else ErrorTarget.ENDPOINT
     if name is None:

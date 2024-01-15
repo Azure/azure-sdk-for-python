@@ -165,8 +165,8 @@ class OnlineInferenceConfiguration:
 
         if self.liveness_route is None:
             return RestOnlineInferenceConfiguration(
-                readiness_route=self.readiness_route._to_rest_object(),
-                scoring_route=self.scoring_route._to_rest_object(),
+                readiness_route=self.readiness_route._to_rest_object() if self.readiness_route is not None else None,
+                scoring_route=self.scoring_route._to_rest_object() if self.scoring_route is not None else None,
                 entry_script=self.entry_script,
                 configuration=self.configuration,
             )
@@ -174,7 +174,7 @@ class OnlineInferenceConfiguration:
         if self.readiness_route is None:
             return RestOnlineInferenceConfiguration(
                 liveness_route=self.liveness_route._to_rest_object(),
-                scoring_route=self.scoring_route._to_rest_object(),
+                scoring_route=self.scoring_route._to_rest_object() if self.scoring_route is not None else None,
                 entry_script=self.entry_script,
                 configuration=self.configuration,
             )
