@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional, cast
 
 from typing_extensions import Literal
 
@@ -118,16 +118,12 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
         )
 
     @classmethod
-    def _from_rest_job_services(
-        cls, services: Dict[str, RestJobService]
-    ) -> Dict[
-        str, Union["JobService", "JupyterLabJobService", "SshJobService", "TensorBoardJobService", "VsCodeJobService"]
-    ]:
+    def _from_rest_job_services(cls, services: Dict[str, RestJobService]) -> Dict:
         # """Resolve Dict[str, RestJobService] to Dict[str, Specific JobService]"""
         if services is None:
             return None
 
-        result = {}
+        result: dict = {}
         for name, service in services.items():
             if service.job_service_type == JobServiceTypeNames.RestNames.JUPYTER_LAB:
                 result[name] = JupyterLabJobService._from_rest_object(service)
@@ -165,7 +161,7 @@ class JobService(JobServiceBase):
 
     @classmethod
     def _from_rest_object(cls, obj: RestJobService) -> "JobService":
-        return cls._from_rest_job_service_object(obj)
+        return cls._from_rest_job_service_object(obj)  # type: ignore
 
     def _to_rest_object(self) -> RestJobService:
         return self._to_rest_job_service()
@@ -225,7 +221,7 @@ class SshJobService(JobServiceBase):
 
     @classmethod
     def _from_rest_object(cls, obj: RestJobService) -> "SshJobService":
-        ssh_job_service = cls._from_rest_job_service_object(obj)
+        ssh_job_service = cast(SshJobService, cls._from_rest_job_service_object(obj))
         ssh_job_service.ssh_public_keys = _get_property(obj.properties, "sshPublicKeys")
         return ssh_job_service
 
@@ -288,7 +284,7 @@ class TensorBoardJobService(JobServiceBase):
 
     @classmethod
     def _from_rest_object(cls, obj: RestJobService) -> "TensorBoardJobService":
-        tensorboard_job_Service = cls._from_rest_job_service_object(obj)
+        tensorboard_job_Service = cls._from_rest_job_service_object(obj)  # type: ignore
         tensorboard_job_Service.log_dir = _get_property(obj.properties, "logDir")
         return tensorboard_job_Service
 
@@ -347,7 +343,7 @@ class JupyterLabJobService(JobServiceBase):
 
     @classmethod
     def _from_rest_object(cls, obj: RestJobService) -> "JupyterLabJobService":
-        return cls._from_rest_job_service_object(obj)
+        return cls._from_rest_job_service_object(obj)  # type: ignore
 
     def _to_rest_object(self) -> RestJobService:
         return self._to_rest_job_service()
@@ -403,7 +399,7 @@ class VsCodeJobService(JobServiceBase):
 
     @classmethod
     def _from_rest_object(cls, obj: RestJobService) -> "VsCodeJobService":
-        return cls._from_rest_job_service_object(obj)
+        return cls._from_rest_job_service_object(obj)  # type: ignore
 
     def _to_rest_object(self) -> RestJobService:
         return self._to_rest_job_service()

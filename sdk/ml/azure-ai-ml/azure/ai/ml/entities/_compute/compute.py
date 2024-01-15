@@ -7,7 +7,7 @@
 from abc import abstractmethod
 from os import PathLike
 from pathlib import Path
-from typing import IO, Any, AnyStr, Dict, Optional, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union, cast
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeResource
 from azure.ai.ml._schema.compute.compute import ComputeSchema
@@ -46,7 +46,7 @@ class Compute(Resource, RestTranslatableMixin):
         location: Optional[str] = None,
         description: Optional[str] = None,
         resource_id: Optional[str] = None,
-        tags: Optional[dict] = None,
+        tags: Optional[Dict] = None,
         **kwargs: Any,
     ) -> None:
         self._type: Optional[str] = kwargs.pop("type", None)
@@ -121,10 +121,12 @@ class Compute(Resource, RestTranslatableMixin):
         }
         compute_type = obj.properties.compute_type.lower() if obj.properties.compute_type else None
 
-        class_type = mapping.get(compute_type, None)
+        class_type = cast(
+            Optional[Union[AmlCompute, ComputeInstance, VirtualMachineCompute, KubernetesCompute, SynapseSparkCompute]],
+            mapping.get(compute_type, None),
+        )
         if class_type:
-            _class_type_from_rest: Compute = class_type._load_from_rest(obj)
-            return _class_type_from_rest
+            return class_type._load_from_rest(obj)
         _unsupported_from_rest: Compute = UnsupportedCompute._load_from_rest(obj)
         return _unsupported_from_rest
 

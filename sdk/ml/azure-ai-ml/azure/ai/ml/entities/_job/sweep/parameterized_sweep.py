@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, List, Optional, Type, Union
+from typing import Any, Dict, List, Optional, Type, Union
 
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
@@ -27,18 +27,6 @@ from .sampling_algorithm import (
     SamplingAlgorithm,
     SamplingAlgorithmType,
 )
-from .search_space import (
-    Choice,
-    LogNormal,
-    LogUniform,
-    Normal,
-    QLogNormal,
-    QLogUniform,
-    QNormal,
-    QUniform,
-    Randint,
-    Uniform,
-)
 
 # pylint: disable=unnecessary-lambda
 SAMPLING_ALGORITHM_TO_REST_CONSTRUCTOR: Dict[SamplingAlgorithmType, Type[RestSamplingAlgorithm]] = {
@@ -63,15 +51,8 @@ class ParameterizedSweep:
         limits: Optional[SweepJobLimits] = None,
         sampling_algorithm: Optional[Union[str, SamplingAlgorithm]] = None,
         objective: Optional[Union[Dict, Objective]] = None,
-        early_termination: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
-        search_space: Optional[
-            Dict[
-                str,
-                Union[
-                    Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
-                ],
-            ]
-        ] = None,
+        early_termination: Optional[Any] = None,
+        search_space: Optional[Dict] = None,
         queue_settings: Optional[QueueSettings] = None,
         resources: Optional[Union[dict, JobResourceConfiguration]] = None,
     ) -> None:
@@ -108,13 +89,24 @@ class ParameterizedSweep:
             self.objective = objective
 
     @property
-    def resources(self) -> JobResourceConfiguration:
+    def resources(self) -> Optional[Union[dict, JobResourceConfiguration]]:
         """Resources for sweep job.
 
         :returns: Resources for sweep job.
         :rtype: ~azure.ai.ml.entities.ResourceConfiguration
         """
         return self._resources
+
+    @resources.setter
+    def resources(self, value: Optional[Union[dict, JobResourceConfiguration]]) -> None:
+        """Set Resources for sweep job.
+
+        :param value: Compute Resource configuration for the job.
+        :type value: ~azure.ai.ml.entities.ResourceConfiguration
+        """
+        if isinstance(value, dict):
+            value = JobResourceConfiguration(**value)
+        self._resources = value
 
     @property
     def limits(self) -> Optional[SweepJobLimits]:
@@ -124,17 +116,6 @@ class ParameterizedSweep:
         :rtype: ~azure.ai.ml.sweep.SweepJobLimits
         """
         return self._limits
-
-    @resources.setter
-    def resources(self, value: Union[dict, JobResourceConfiguration]) -> None:
-        """Set Resources for sweep job.
-
-        :param value: Compute Resource configuration for the job.
-        :type value: ~azure.ai.ml.entities.ResourceConfiguration
-        """
-        if isinstance(value, dict):
-            value = JobResourceConfiguration(**value)
-        self._resources = value
 
     @limits.setter
     def limits(self, value: SweepJobLimits) -> None:
@@ -163,23 +144,24 @@ class ParameterizedSweep:
         properties: Optional[Dict] = None,
         docker_args: Optional[str] = None,
         shm_size: Optional[str] = None,
-    ):
+    ) -> None:
         """Set resources for Sweep."""
         if self.resources is None:
             self.resources = JobResourceConfiguration()
 
-        if locations is not None:
-            self.resources.locations = locations
-        if instance_type is not None:
-            self.resources.instance_type = instance_type
-        if instance_count is not None:
-            self.resources.instance_count = instance_count
-        if properties is not None:
-            self.resources.properties = properties
-        if docker_args is not None:
-            self.resources.docker_args = docker_args
-        if shm_size is not None:
-            self.resources.shm_size = shm_size
+        if not isinstance(self.resources, dict):
+            if locations is not None:
+                self.resources.locations = locations
+            if instance_type is not None:
+                self.resources.instance_type = instance_type
+            if instance_count is not None:
+                self.resources.instance_count = instance_count
+            if properties is not None:
+                self.resources.properties = properties
+            if docker_args is not None:
+                self.resources.docker_args = docker_args
+            if shm_size is not None:
+                self.resources.shm_size = shm_size
 
     def set_limits(
         self,
@@ -288,7 +270,7 @@ class ParameterizedSweep:
         )
 
     @property
-    def early_termination(self) -> Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]]:
+    def early_termination(self) -> Any:
         """Early termination policy for sweep job.
 
         :returns: Early termination policy for sweep job.
@@ -297,9 +279,7 @@ class ParameterizedSweep:
         return self._early_termination
 
     @early_termination.setter
-    def early_termination(
-        self, value: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]]
-    ) -> None:
+    def early_termination(self, value: Any) -> None:
         """Set early termination policy for sweep job.
 
         :param value: Early termination policy for sweep job.

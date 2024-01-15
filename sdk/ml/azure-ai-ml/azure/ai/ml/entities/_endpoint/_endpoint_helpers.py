@@ -3,13 +3,13 @@
 # ---------------------------------------------------------
 
 import re
-from typing import Any
+from typing import Any, Optional
 
 from azure.ai.ml.constants._endpoint import EndpointConfigurations
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 
-def validate_endpoint_or_deployment_name(name: str, is_deployment: bool = False) -> None:
+def validate_endpoint_or_deployment_name(name: Optional[str], is_deployment: bool = False) -> None:
     """Validates the name of an endpoint or a deployment
 
     A valid name of an endpoint or deployment:
@@ -26,6 +26,15 @@ def validate_endpoint_or_deployment_name(name: str, is_deployment: bool = False)
     """
     type_str = "a deployment" if is_deployment else "an endpoint"
     target = ErrorTarget.DEPLOYMENT if is_deployment else ErrorTarget.ENDPOINT
+    if name is None:
+        msg = "name cannot be None"
+        raise ValidationException(
+            message=msg,
+            target=target,
+            no_personal_data_message=msg,
+            error_category=ErrorCategory.USER_ERROR,
+            error_type=ValidationErrorType.INVALID_VALUE,
+        )
     if len(name) < EndpointConfigurations.MIN_NAME_LENGTH or len(name) > EndpointConfigurations.MAX_NAME_LENGTH:
         msg = f"The name for {type_str} must be at least 3 and at most 32 characters long (inclusive of both limits)."
         raise ValidationException(

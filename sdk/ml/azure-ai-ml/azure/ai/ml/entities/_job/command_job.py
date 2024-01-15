@@ -7,7 +7,7 @@
 import copy
 import logging
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import CommandJob as RestCommandJob
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
@@ -22,7 +22,7 @@ from azure.ai.ml.entities._credentials import (
     UserIdentityConfiguration,
     _BaseJobIdentityConfiguration,
 )
-from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job._input_output_helpers import (
     from_rest_data_outputs,
     from_rest_inputs_to_dataset_literal,
@@ -42,6 +42,11 @@ from .job_limits import CommandJobLimits
 from .job_resource_configuration import JobResourceConfiguration
 from .parameterized_command import ParameterizedCommand
 from .queue_settings import QueueSettings
+
+# avoid circular import error
+if TYPE_CHECKING:
+    from azure.ai.ml.entities import CommandComponent
+    from azure.ai.ml.entities._builders import Command
 
 module_logger = logging.getLogger(__name__)
 
@@ -77,10 +82,10 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         self,
         *,
         inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
-        outputs: Optional[Dict[str, Output]] = None,
+        outputs: Optional[Dict] = None,
         limits: Optional[CommandJobLimits] = None,
         identity: Optional[
-            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+            Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
         services: Optional[Dict] = None,
         **kwargs: Any,
@@ -144,7 +149,9 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             if self.distribution and not isinstance(self.distribution, Dict)
             else None,
             tags=self.tags,
-            identity=self.identity._to_job_rest_object() if self.identity else None,
+            identity=self.identity._to_job_rest_object()
+            if self.identity and not isinstance(self.identity, Dict)
+            else None,
             environment_variables=self.environment_variables,
             resources=resources._to_rest_object() if resources and not isinstance(resources, Dict) else None,
             limits=self.limits._to_rest_object() if self.limits else None,

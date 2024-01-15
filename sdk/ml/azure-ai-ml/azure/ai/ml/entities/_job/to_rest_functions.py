@@ -40,7 +40,8 @@ def to_rest_job_object(something: Any) -> JobBaseData:
 
 @to_rest_job_object.register(Job)
 def _(job: Job) -> JobBaseData:
-    rest_job = job._to_rest_object()
+    # Bug Item number: 2883432
+    rest_job = job._to_rest_object()  # type: ignore
     generate_defaults(job, rest_job)
     return rest_job
 

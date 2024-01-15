@@ -71,7 +71,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
         task_type: str,
         featurization: Optional[TabularFeaturizationSettings] = None,
         limits: Optional[TabularLimitSettings] = None,
-        training: Optional[TrainingSettings] = None,
+        training: Optional[Any] = None,
         **kwargs: Any,
     ) -> None:
         """Initialize an AutoML job entity for tabular data.
@@ -180,7 +180,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
             self.set_limits(**value)
 
     @property
-    def training(self) -> Optional[TrainingSettings]:
+    def training(self) -> Any:
         """Get the training settings for the AutoML job.
 
         :return: Training settings for the AutoML job.

@@ -4,40 +4,38 @@
 
 # pylint: disable=unused-argument, line-too-long
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
-from typing_extensions import Literal
-
-from azure.ai.ml.constants._monitoring import MonitorMetricName, MonitorFeatureType, MonitorModelType
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
-    MonitoringThreshold,
-    DataDriftMetricThresholdBase,
-    NumericalDataDriftMetricThreshold,
     CategoricalDataDriftMetricThreshold,
-    DataQualityMetricThresholdBase,
-    NumericalDataQualityMetricThreshold,
     CategoricalDataQualityMetricThreshold,
-    PredictionDriftMetricThresholdBase,
-    NumericalPredictionDriftMetricThreshold,
     CategoricalPredictionDriftMetricThreshold,
-    FeatureAttributionMetricThreshold,
-    ModelPerformanceMetricThresholdBase,
     ClassificationModelPerformanceMetricThreshold,
-    RegressionModelPerformanceMetricThreshold,
-    RegressionModelPerformanceMetric,
     CustomMetricThreshold,
+    DataDriftMetricThresholdBase,
+    DataQualityMetricThresholdBase,
+    FeatureAttributionMetricThreshold,
     GenerationSafetyQualityMetricThreshold,
+    ModelPerformanceMetricThresholdBase,
+    MonitoringThreshold,
+    NumericalDataDriftMetricThreshold,
+    NumericalDataQualityMetricThreshold,
+    NumericalPredictionDriftMetricThreshold,
+    PredictionDriftMetricThresholdBase,
+    RegressionModelPerformanceMetric,
+    RegressionModelPerformanceMetricThreshold,
 )
-from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
+from azure.ai.ml.constants._monitoring import MonitorFeatureType, MonitorMetricName, MonitorModelType
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 @experimental
 class MetricThreshold(RestTranslatableMixin):
-    def __init__(self, *, threshold: float = None):
+    def __init__(self, *, threshold: Optional[float] = None):
         self.data_type = None
-        self.metric_name = None
+        self.metric_name: Optional[str] = None
         self.threshold = threshold
 
 
@@ -58,10 +56,10 @@ class NumericalDriftMetrics(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        jensen_shannon_distance: float = None,
-        normalized_wasserstein_distance: float = None,
-        population_stability_index: float = None,
-        two_sample_kolmogorov_smirnov_test: float = None,
+        jensen_shannon_distance: Optional[float] = None,
+        normalized_wasserstein_distance: Optional[float] = None,
+        population_stability_index: Optional[float] = None,
+        two_sample_kolmogorov_smirnov_test: Optional[float] = None,
         metric: Optional[str] = None,
         metric_threshold: Optional[float] = None,
     ):
@@ -72,7 +70,7 @@ class NumericalDriftMetrics(RestTranslatableMixin):
         self.metric = metric
         self.metric_threshold = metric_threshold
 
-    def _find_name_and_threshold(self):
+    def _find_name_and_threshold(self) -> Tuple:
         metric_name = None
         threshold = None
         if self.jensen_shannon_distance:
@@ -91,9 +89,8 @@ class NumericalDriftMetrics(RestTranslatableMixin):
         return metric_name, threshold
 
     @classmethod
-    def _from_rest_object(  # pylint: disable=arguments-differ, inconsistent-return-statements
-        cls, metric_name, threshold
-    ) -> "NumericalDriftMetrics":
+    # pylint: disable=arguments-differ, inconsistent-return-statements
+    def _from_rest_object(cls, metric_name: str, threshold: Optional[float]) -> "NumericalDriftMetrics":  # type: ignore
         metric_name = camel_to_snake(metric_name)
         if metric_name == MonitorMetricName.JENSEN_SHANNON_DISTANCE:
             return cls(jensen_shannon_distance=threshold)
@@ -103,6 +100,7 @@ class NumericalDriftMetrics(RestTranslatableMixin):
             return cls(population_stability_index=threshold)
         if metric_name == MonitorMetricName.TWO_SAMPLE_KOLMOGOROV_SMIRNOV_TEST:
             return cls(two_sample_kolmogorov_smirnov_test=threshold)
+        return cls()
 
     @classmethod
     def _get_default_thresholds(cls) -> "NumericalDriftMetrics":
@@ -114,7 +112,7 @@ class NumericalDriftMetrics(RestTranslatableMixin):
     def defaults(cls) -> "NumericalDriftMetrics":
         return cls._get_default_thresholds()
 
-    def get_name_and_threshold(self):
+    def get_name_and_threshold(self) -> Tuple:
         return self._find_name_and_threshold()
 
 
@@ -133,15 +131,15 @@ class CategoricalDriftMetrics(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        jensen_shannon_distance: float = None,
-        population_stability_index: float = None,
-        pearsons_chi_squared_test: float = None,
+        jensen_shannon_distance: Optional[float] = None,
+        population_stability_index: Optional[float] = None,
+        pearsons_chi_squared_test: Optional[float] = None,
     ):
         self.jensen_shannon_distance = jensen_shannon_distance
         self.population_stability_index = population_stability_index
         self.pearsons_chi_squared_test = pearsons_chi_squared_test
 
-    def _find_name_and_threshold(self):
+    def _find_name_and_threshold(self) -> Tuple:
         metric_name = None
         threshold = None
         if self.jensen_shannon_distance:
@@ -157,8 +155,9 @@ class CategoricalDriftMetrics(RestTranslatableMixin):
         return metric_name, threshold
 
     @classmethod
-    def _from_rest_object(  # pylint: disable=arguments-differ, inconsistent-return-statements
-        cls, metric_name, threshold
+    # pylint: disable=arguments-differ, inconsistent-return-statements
+    def _from_rest_object(  # type: ignore
+        cls, metric_name: str, threshold: Optional[float]
     ) -> "CategoricalDriftMetrics":
         metric_name = camel_to_snake(metric_name)
         if metric_name == MonitorMetricName.JENSEN_SHANNON_DISTANCE:
@@ -167,6 +166,7 @@ class CategoricalDriftMetrics(RestTranslatableMixin):
             return cls(population_stability_index=threshold)
         if metric_name == MonitorMetricName.PEARSONS_CHI_SQUARED_TEST:
             return cls(pearsons_chi_squared_test=threshold)
+        return cls()
 
     @classmethod
     def _get_default_thresholds(cls) -> "CategoricalDriftMetrics":
@@ -178,7 +178,7 @@ class CategoricalDriftMetrics(RestTranslatableMixin):
     def defaults(cls) -> "CategoricalDriftMetrics":
         return cls._get_default_thresholds()
 
-    def get_name_and_threshold(self):
+    def get_name_and_threshold(self) -> Tuple:
         return self._find_name_and_threshold()
 
 
@@ -195,11 +195,11 @@ class DataDriftMetricThreshold(MetricThreshold):
     def __init__(
         self,
         *,
-        data_type: Literal[MonitorFeatureType.CATEGORICAL, MonitorFeatureType.NUMERICAL] = None,
-        threshold: float = None,
+        data_type: Optional[MonitorFeatureType] = None,
+        threshold: Optional[float] = None,
         metric: Optional[str] = None,
-        numerical: NumericalDriftMetrics = None,
-        categorical: CategoricalDriftMetrics = None,
+        numerical: Optional[NumericalDriftMetrics] = None,
+        categorical: Optional[CategoricalDriftMetrics] = None,
     ):
         super().__init__(threshold=threshold)
         self.data_type = data_type
@@ -254,7 +254,7 @@ class DataDriftMetricThreshold(MetricThreshold):
             categorical=CategoricalDriftMetrics.defaults(),
         )
 
-    def __eq__(self, other: Any):
+    def __eq__(self, other: Any) -> bool:
         if not isinstance(other, DataDriftMetricThreshold):
             return NotImplemented
         return self.numerical == other.numerical and self.categorical == other.categorical
@@ -273,10 +273,10 @@ class PredictionDriftMetricThreshold(MetricThreshold):
     def __init__(
         self,
         *,
-        data_type: Literal[MonitorFeatureType.CATEGORICAL, MonitorFeatureType.NUMERICAL] = None,
-        threshold: float = None,
-        numerical: NumericalDriftMetrics = None,
-        categorical: CategoricalDriftMetrics = None,
+        data_type: Optional[MonitorFeatureType] = None,
+        threshold: Optional[float] = None,
+        numerical: Optional[NumericalDriftMetrics] = None,
+        categorical: Optional[CategoricalDriftMetrics] = None,
     ):
         super().__init__(threshold=threshold)
         self.data_type = data_type
@@ -330,7 +330,7 @@ class PredictionDriftMetricThreshold(MetricThreshold):
             categorical=CategoricalDriftMetrics.defaults(),
         )
 
-    def __eq__(self, other: Any):
+    def __eq__(self, other: Any) -> bool:
         if not isinstance(other, PredictionDriftMetricThreshold):
             return NotImplemented
         return (
@@ -353,7 +353,11 @@ class DataQualityMetricsNumerical(RestTranslatableMixin):
     """
 
     def __init__(
-        self, *, null_value_rate: float = None, data_type_error_rate: float = None, out_of_bounds_rate: float = None
+        self,
+        *,
+        null_value_rate: Optional[float] = None,
+        data_type_error_rate: Optional[float] = None,
+        out_of_bounds_rate: Optional[float] = None,
     ):
         self.null_value_rate = null_value_rate
         self.data_type_error_rate = data_type_error_rate
@@ -426,7 +430,11 @@ class DataQualityMetricsCategorical(RestTranslatableMixin):
     """
 
     def __init__(
-        self, *, null_value_rate: float = None, data_type_error_rate: float = None, out_of_bounds_rate: float = None
+        self,
+        *,
+        null_value_rate: Optional[float] = None,
+        data_type_error_rate: Optional[float] = None,
+        out_of_bounds_rate: Optional[float] = None,
     ):
         self.null_value_rate = null_value_rate
         self.data_type_error_rate = data_type_error_rate
@@ -476,7 +484,7 @@ class DataQualityMetricsCategorical(RestTranslatableMixin):
     @classmethod
     def _get_default_thresholds(cls) -> "DataQualityMetricsCategorical":
         return cls(
-            null_value_rate="0.0",
+            null_value_rate=0.0,
             data_type_error_rate=0.0,
             out_of_bounds_rate=0.0,
         )
@@ -499,8 +507,8 @@ class DataQualityMetricThreshold(MetricThreshold):
     def __init__(
         self,
         *,
-        data_type: Literal[MonitorFeatureType.CATEGORICAL, MonitorFeatureType.NUMERICAL] = None,
-        threshold: float = None,
+        data_type: Optional[MonitorFeatureType] = None,
+        threshold: Optional[float] = None,
         metric_name: Optional[str] = None,
         numerical: Optional[DataQualityMetricsNumerical] = None,
         categorical: Optional[DataQualityMetricsCategorical] = None,
@@ -512,7 +520,7 @@ class DataQualityMetricThreshold(MetricThreshold):
         self.categorical = categorical
 
     def _to_rest_object(self) -> DataQualityMetricThresholdBase:
-        thresholds = []
+        thresholds: list = []
         if self.numerical:
             thresholds = thresholds + (
                 DataQualityMetricsNumerical(  # pylint: disable=protected-access
@@ -522,12 +530,17 @@ class DataQualityMetricThreshold(MetricThreshold):
                 )._to_rest_object()
             )
         if self.categorical:
-            thresholds = thresholds + (
-                DataQualityMetricsCategorical(  # pylint: disable=protected-access
-                    null_value_rate=self.numerical.null_value_rate,
-                    data_type_error_rate=self.numerical.data_type_error_rate,
-                    out_of_bounds_rate=self.numerical.out_of_bounds_rate,
-                )._to_rest_object()
+            thresholds = (
+                thresholds
+                + (
+                    DataQualityMetricsCategorical(  # pylint: disable=protected-access
+                        null_value_rate=self.numerical.null_value_rate,
+                        data_type_error_rate=self.numerical.data_type_error_rate,
+                        out_of_bounds_rate=self.numerical.out_of_bounds_rate,
+                    )._to_rest_object()
+                )
+                if self.numerical is not None
+                else thresholds
             )
         return thresholds
 
@@ -555,7 +568,7 @@ class DataQualityMetricThreshold(MetricThreshold):
             categorical=DataQualityMetricsCategorical()._get_default_thresholds(),  # pylint: disable=protected-access
         )
 
-    def __eq__(self, other: Any):
+    def __eq__(self, other: Any) -> bool:
         if not isinstance(other, DataQualityMetricThreshold):
             return NotImplemented
         return (
@@ -573,7 +586,9 @@ class FeatureAttributionDriftMetricThreshold(MetricThreshold):
     :paramtype normalized_discounted_cumulative_gain: float
     """
 
-    def __init__(self, *, normalized_discounted_cumulative_gain: float = None, threshold: float = None):
+    def __init__(
+        self, *, normalized_discounted_cumulative_gain: Optional[float] = None, threshold: Optional[float] = None
+    ):
         super().__init__(threshold=threshold)
         self.data_type = MonitorFeatureType.ALL_FEATURE_TYPES
         self.metric_name = MonitorMetricName.NORMALIZED_DISCOUNTED_CUMULATIVE_GAIN
@@ -597,37 +612,31 @@ class ModelPerformanceMetricThreshold(MetricThreshold):
     def __init__(
         self,
         *,
-        metric_name: Literal[
-            MonitorMetricName.ACCURACY,
-            MonitorMetricName.PRECISION,
-            MonitorMetricName.RECALL,
-            MonitorMetricName.F1_SCORE,
-            MonitorMetricName.MAE,
-            MonitorMetricName.MSE,
-            MonitorMetricName.RMSE,
-        ],
-        threshold: float = None,
+        metric_name: MonitorMetricName,
+        threshold: Optional[float] = None,
     ):
         super().__init__(threshold=threshold)
         self.metric_name = metric_name
 
-    def _to_rest_object(self, **kwargs) -> ModelPerformanceMetricThresholdBase:
+    def _to_rest_object(self, **kwargs: Any) -> ModelPerformanceMetricThresholdBase:
         model_type = kwargs.get("model_type")
-        if self.metric_name.lower() == MonitorMetricName.MAE.lower():
-            metric = RegressionModelPerformanceMetric.MEAN_ABSOLUTE_ERROR
-        elif self.metric_name.lower() == MonitorMetricName.MSE.lower():
-            metric = RegressionModelPerformanceMetric.MEAN_SQUARED_ERROR
-        elif self.metric_name.lower() == MonitorMetricName.RMSE.lower():
-            metric = RegressionModelPerformanceMetric.ROOT_MEAN_SQUARED_ERROR
-        else:
-            metric = snake_to_camel(self.metric_name)
+        metric = ""
+        if self.metric_name is not None:
+            if self.metric_name.lower() == MonitorMetricName.MAE.lower():
+                metric = RegressionModelPerformanceMetric.MEAN_ABSOLUTE_ERROR
+            elif self.metric_name.lower() == MonitorMetricName.MSE.lower():
+                metric = RegressionModelPerformanceMetric.MEAN_SQUARED_ERROR
+            elif self.metric_name.lower() == MonitorMetricName.RMSE.lower():
+                metric = RegressionModelPerformanceMetric.ROOT_MEAN_SQUARED_ERROR
+            else:
+                metric = snake_to_camel(self.metric_name)
         threshold = MonitoringThreshold(value=self.threshold) if self.threshold is not None else None
         return (
             RegressionModelPerformanceMetricThreshold(
                 metric=metric,
                 threshold=threshold,
             )
-            if model_type.lower() == MonitorModelType.REGRESSION.lower()
+            if model_type is not None and model_type.lower() == MonitorModelType.REGRESSION.lower()
             else ClassificationModelPerformanceMetricThreshold(
                 metric=metric,
                 threshold=threshold,
@@ -661,8 +670,8 @@ class CustomMonitoringMetricThreshold(MetricThreshold):
     def __init__(
         self,
         *,
-        metric_name: str,
-        threshold: float = None,
+        metric_name: Optional[str],
+        threshold: Optional[float] = None,
     ):
         super().__init__(threshold=threshold)
         self.metric_name = metric_name
@@ -697,11 +706,11 @@ class GenerationSafetyQualityMonitoringMetricThreshold(RestTranslatableMixin):  
     def __init__(
         self,
         *,
-        groundedness: Dict[str, float] = None,
-        relevance: Dict[str, float] = None,
-        coherence: Dict[str, float] = None,
-        fluency: Dict[str, float] = None,
-        similarity: Dict[str, float] = None,
+        groundedness: Optional[Dict[str, float]] = None,
+        relevance: Optional[Dict[str, float]] = None,
+        coherence: Optional[Dict[str, float]] = None,
+        fluency: Optional[Dict[str, float]] = None,
+        similarity: Optional[Dict[str, float]] = None,
     ):
         self.groundedness = groundedness
         self.relevance = relevance

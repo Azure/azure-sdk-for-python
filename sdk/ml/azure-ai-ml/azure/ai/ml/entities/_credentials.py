@@ -568,7 +568,8 @@ class UserIdentityConfiguration(_BaseIdentityConfiguration):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, UserIdentityConfiguration):
             return NotImplemented
-        return bool(self._to_job_rest_object() == other._to_job_rest_object())
+        res: bool = self._to_job_rest_object() == other._to_job_rest_object()
+        return res
 
 
 class AmlTokenConfiguration(_BaseIdentityConfiguration):
@@ -828,12 +829,12 @@ class ApiKeyConfiguration(RestTranslatableMixin, DictMixin):
     @classmethod
     def _from_workspace_connection_rest_object(
         cls, obj: Optional[RestWorkspaceConnectionApiKey]
-    ) -> "AccessKeyConfiguration":
+    ) -> "ApiKeyConfiguration":
         return cls(
             key=obj.key if obj is not None and obj.key else None,
         )
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, AccessKeyConfiguration):
+        if not isinstance(other, ApiKeyConfiguration):
             return NotImplemented
         return bool(self.key == other.key)

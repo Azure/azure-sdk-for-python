@@ -56,8 +56,8 @@ class Import(BaseNode):
         self,
         *,
         component: Union[str, ImportComponent],
-        inputs: Optional[Dict[str, Any]] = None,
-        outputs: Optional[Dict[str, Output]] = None,
+        inputs: Optional[Dict] = None,
+        outputs: Optional[Dict] = None,
         **kwargs: Any,
     ) -> None:
         # validate init params are valid type
@@ -88,7 +88,8 @@ class Import(BaseNode):
 
     @property
     def component(self) -> Union[str, ImportComponent]:
-        return self._component
+        res: Union[str, ImportComponent] = self._component
+        return res
 
     @classmethod
     def _attr_type_map(cls) -> dict:
@@ -114,7 +115,7 @@ class Import(BaseNode):
         return []
 
     def _to_rest_object(self, **kwargs: Any) -> dict:
-        rest_obj = super()._to_rest_object(**kwargs)
+        rest_obj: dict = super()._to_rest_object(**kwargs)
         rest_obj.update(
             convert_ordered_dict_to_dict(
                 {

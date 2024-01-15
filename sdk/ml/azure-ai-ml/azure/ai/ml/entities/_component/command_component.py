@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, cast
 
 from marshmallow import Schema
 
@@ -101,12 +101,19 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         tags: Optional[Dict] = None,
         display_name: Optional[str] = None,
         command: Optional[str] = None,
-        code: Optional[str] = None,
+        code: Optional[Union[str, os.PathLike]] = None,
         environment: Optional[Union[str, Environment]] = None,
         distribution: Optional[
-            Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]
+            Union[
+                Dict,
+                MpiDistribution,
+                TensorFlowDistribution,
+                PyTorchDistribution,
+                RayDistribution,
+                DistributionConfiguration,
+            ]
         ] = None,
-        resources: Optional[JobResourceConfiguration] = None,
+        resources: Optional[Union[Dict, JobResourceConfiguration]] = None,
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
         instance_count: Optional[int] = None,  # promoted property from resources.instance_count
@@ -178,7 +185,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         :return: The number of instances or nodes.
         :rtype: int
         """
-        return self.resources.instance_count if self.resources else None
+        return self.resources.instance_count if self.resources and not isinstance(self.resources, dict) else None
 
     @instance_count.setter
     def instance_count(self, value: int) -> None:
@@ -192,7 +199,8 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         if not self.resources:
             self.resources = JobResourceConfiguration(instance_count=value)
         else:
-            self.resources.instance_count = value
+            if not isinstance(self.resources, dict):
+                self.resources.instance_count = value
 
     @classmethod
     def _attr_type_map(cls) -> dict:
@@ -204,8 +212,9 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         }
 
     def _to_dict(self) -> Dict:
-        res: dict = convert_ordered_dict_to_dict({**self._other_parameter, **super(CommandComponent, self)._to_dict()})
-        return res
+        return cast(
+            dict, convert_ordered_dict_to_dict({**self._other_parameter, **super(CommandComponent, self)._to_dict()})
+        )
 
     @classmethod
     def _from_rest_object_to_init_params(cls, obj: ComponentVersion) -> Dict:
@@ -220,7 +229,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         # Return environment id of environment
         # handle case when environment is defined inline
         if isinstance(self.environment, Environment):
-            _id: str = self.environment.id
+            _id: Optional[str] = self.environment.id
             return _id
         return self.environment
 
@@ -264,7 +273,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         return validation_result
 
     def _is_valid_data_binding_expression(self, data_binding_expression: str) -> bool:
-        current_obj = self
+        current_obj: Any = self
         for item in data_binding_expression.split("."):
             if hasattr(current_obj, item):
                 current_obj = getattr(current_obj, item)

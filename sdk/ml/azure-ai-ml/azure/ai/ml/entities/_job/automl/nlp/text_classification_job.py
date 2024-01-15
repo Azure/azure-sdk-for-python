@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access,no-member
 
-from typing import Any, Dict, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoMLJob as RestAutoMLJob
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, TaskType
@@ -25,6 +25,10 @@ from azure.ai.ml.entities._job.automl.nlp.nlp_limit_settings import NlpLimitSett
 from azure.ai.ml.entities._job.automl.nlp.nlp_sweep_settings import NlpSweepSettings
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
+
+# avoid circular import error
+if TYPE_CHECKING:
+    from azure.ai.ml.entities._component.component import Component
 
 
 class TextClassificationJob(AutoMLNLPJob):
@@ -127,7 +131,7 @@ class TextClassificationJob(AutoMLNLPJob):
             outputs=to_rest_data_outputs(self.outputs),
             resources=self.resources,
             task_details=text_classification,
-            identity=self.identity._to_ob_rest_object() if self.identity else None,
+            identity=self.identity._to_job_rest_object() if self.identity else None,
             queue_settings=self.queue_settings,
         )
 

@@ -109,7 +109,7 @@ class Route:
     def _from_rest_object(cls, rest_obj: RestRoute) -> "RestRoute":
         return Route(port=rest_obj.port, path=rest_obj.path)
 
-    def _to_rest_object(self) -> RestRoute:
+    def _to_rest_object(self) -> Optional[RestRoute]:
         return RestRoute(port=self.port, path=self.path)
 
 
@@ -188,6 +188,9 @@ class OnlineInferenceConfiguration:
             )
 
         return RestOnlineInferenceConfiguration(
+            liveness_route=self.liveness_route._to_rest_object() if self.liveness_route is not None else None,
+            readiness_route=self.readiness_route._to_rest_object() if self.readiness_route is not None else None,
+            scoring_route=self.scoring_route._to_rest_object() if self.scoring_route is not None else None,
             entry_script=self.entry_script,
             configuration=self.configuration,
         )

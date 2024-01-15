@@ -30,7 +30,9 @@ class SchemaValidatableMixin:
         return ValidationResultBuilder.success()
 
     @classmethod
-    def _load_with_schema(cls, data, *, context, raise_original_exception=False, **kwargs):
+    def _load_with_schema(
+        cls, data: typing.Any, *, context: typing.Any, raise_original_exception: bool = False, **kwargs: typing.Any
+    ) -> typing.Any:
         schema = cls._create_schema_for_validation(context=context)
 
         try:
@@ -49,7 +51,7 @@ class SchemaValidatableMixin:
 
     @classmethod
     # pylint: disable-next=docstring-missing-param
-    def _create_schema_for_validation(cls, context) -> Schema:
+    def _create_schema_for_validation(cls, context: typing.Any) -> Schema:
         """Create a schema of the resource with specific context. Should be overridden by subclass.
 
         :return: The schema of the resource.
@@ -81,7 +83,8 @@ class SchemaValidatableMixin:
         :return: Converted dictionary
         :rtype: typing.Dict
         """
-        return self._schema_for_validation.dump(self)
+        res: dict = self._schema_for_validation.dump(self)
+        return res
 
     @classmethod
     def _create_validation_error(cls, message: str, no_personal_data_message: str) -> Exception:
@@ -101,11 +104,11 @@ class SchemaValidatableMixin:
 
     @classmethod
     def _try_raise(
-        cls, validation_result: MutableValidationResult, *, raise_error: bool = True
+        cls, validation_result: MutableValidationResult, *, raise_error: typing.Optional[bool] = True
     ) -> MutableValidationResult:
         return validation_result.try_raise(raise_error=raise_error, error_func=cls._create_validation_error)
 
-    def _validate(self, raise_error=False) -> MutableValidationResult:
+    def _validate(self, raise_error: typing.Optional[bool] = False) -> MutableValidationResult:
         """Validate the resource. If raise_error is True, raise ValidationError if validation fails and log warnings if
         applicable; Else, return the validation result.
 

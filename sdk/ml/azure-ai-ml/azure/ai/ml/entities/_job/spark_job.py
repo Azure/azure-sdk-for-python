@@ -6,7 +6,7 @@
 import copy
 import logging
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
 from marshmallow import INCLUDE
 
@@ -41,6 +41,11 @@ from .spark_helpers import _validate_compute_or_resources, _validate_input_outpu
 from .spark_job_entry import SparkJobEntry
 from .spark_job_entry_mixin import SparkJobEntryMixin
 from .spark_resource_configuration import SparkResourceConfiguration
+
+# avoid circular import error
+if TYPE_CHECKING:
+    from azure.ai.ml.entities import SparkComponent
+    from azure.ai.ml.entities._builders import Spark
 
 module_logger = logging.getLogger(__name__)
 
@@ -92,14 +97,14 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     def __init__(
         self,
         *,
-        driver_cores: Optional[int] = None,
+        driver_cores: Optional[Union[int, str]] = None,
         driver_memory: Optional[str] = None,
-        executor_cores: Optional[int] = None,
+        executor_cores: Optional[Union[int, str]] = None,
         executor_memory: Optional[str] = None,
-        executor_instances: Optional[int] = None,
-        dynamic_allocation_enabled: Optional[bool] = None,
-        dynamic_allocation_min_executors: Optional[int] = None,
-        dynamic_allocation_max_executors: Optional[int] = None,
+        executor_instances: Optional[Union[int, str]] = None,
+        dynamic_allocation_enabled: Optional[Union[bool, str]] = None,
+        dynamic_allocation_min_executors: Optional[Union[int, str]] = None,
+        dynamic_allocation_max_executors: Optional[Union[int, str]] = None,
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
         compute: Optional[str] = None,
@@ -112,7 +117,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         kwargs[TYPE] = JobType.SPARK
 
         super().__init__(**kwargs)
-        self.conf = self.conf or {}
+        self.conf: Dict = self.conf or {}
         self.properties_sparkJob = self.properties or {}
         self.driver_cores = driver_cores
         self.driver_memory = driver_memory
@@ -153,7 +158,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     @property
     def identity(
         self,
-    ) -> Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
+    ) -> Optional[Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
         """The identity that the Spark job will use while running on compute.
 
         :return: The identity that the Spark job will use while running on compute.
@@ -233,7 +238,9 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             jars=self.jars,
             files=self.files,
             archives=self.archives,
-            identity=self.identity._to_job_rest_object() if self.identity else None,
+            identity=self.identity._to_job_rest_object()
+            if self.identity and not isinstance(self.identity, dict)
+            else None,
             conf=conf,
             properties=self.properties_sparkJob,
             environment_id=self.environment,
@@ -375,7 +382,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
 
     def _validate(self) -> None:
         # TODO: make spark job schema validatable?
-        if self.resources:
+        if self.resources and not isinstance(self.resources, Dict):
             self.resources._validate()
         _validate_compute_or_resources(self.compute, self.resources)
         _validate_input_output_mode(self.inputs, self.outputs)

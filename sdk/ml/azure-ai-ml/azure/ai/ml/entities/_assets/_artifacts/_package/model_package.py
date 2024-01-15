@@ -230,12 +230,12 @@ class ModelPackage(Resource, PackageRequest):
         *,
         target_environment: Union[str, Dict[str, str]],
         inferencing_server: Union[AzureMLOnlineInferencingServer, AzureMLBatchInferencingServer],
-        base_environment_source: BaseEnvironment = None,
+        base_environment_source: Optional[BaseEnvironment] = None,
         environment_variables: Optional[Dict[str, str]] = None,
         inputs: Optional[List[ModelPackageInput]] = None,
         model_configuration: Optional[ModelConfiguration] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         if isinstance(target_environment, dict):
             target_environment = target_environment["name"]
@@ -275,8 +275,8 @@ class ModelPackage(Resource, PackageRequest):
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        res: ModelPackage = load_from_dict(ModelPackageSchema, data, context, **kwargs)
-        return res
+        model_pkg: ModelPackage = load_from_dict(ModelPackageSchema, data, context, **kwargs)
+        return model_pkg
 
     def dump(
         self,
@@ -297,7 +297,9 @@ class ModelPackage(Resource, PackageRequest):
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False)
 
     def _to_dict(self) -> Dict:
-        return dict(ModelPackageSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))  # pylint: disable=no-member
+        # pylint: disable=no-member
+        model_pkg_schema: Dict = ModelPackageSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return model_pkg_schema
 
     @classmethod
     def _from_rest_object(cls, model_package_rest_object: PackageResponse) -> Any:

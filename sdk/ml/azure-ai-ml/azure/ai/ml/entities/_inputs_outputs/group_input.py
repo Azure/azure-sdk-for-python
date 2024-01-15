@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import copy
 from enum import Enum as PyEnum
-from typing import Any, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationException
@@ -11,6 +11,10 @@ from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationEx
 from .input import Input
 from .output import Output
 from .utils import is_group
+
+# avoid circular import error
+if TYPE_CHECKING:
+    from azure.ai.ml.entities._job.pipeline._io import _GroupAttrDict
 
 
 class GroupInput(Input):
@@ -25,7 +29,7 @@ class GroupInput(Input):
     def __init__(self, values: dict, _group_class: Any) -> None:
         super().__init__(type=IOConstants.GROUP_TYPE_NAME)
         self.assert_group_value_valid(values)
-        self.values = values
+        self.values: Any = values
         # Create empty default by values
         # Note Output do not have default so just set a None
         self.default = self._create_default()
@@ -46,7 +50,8 @@ class GroupInput(Input):
 
     def __getattr__(self, item: Any) -> Any:
         try:
-            return super().__getattr__(item)
+            # Bug Item number: 2883363
+            return super().__getattr__(item)  # type: ignore
         except AttributeError:
             # TODO: why values is not a dict in some cases?
             if isinstance(self.values, dict) and item in self.values:
@@ -56,7 +61,7 @@ class GroupInput(Input):
     def _create_default(self) -> "_GroupAttrDict":
         from .._job.pipeline._io import PipelineInput
 
-        default_dict = {}
+        default_dict: dict = {}
         # Note: no top-level group names at this time.
         for k, v in self.values.items():
             # skip create default for outputs or port inputs
@@ -95,7 +100,8 @@ class GroupInput(Input):
             if value.type not in IOConstants.INPUT_TYPE_COMBINATION and not isinstance(value, GroupInput):
                 raise UserErrorException(msg.format(key, value.type))
             if key in names:
-                raise ValueError(f"Duplicate parameter name {value.name!r} found in Group values.")
+                if not isinstance(value, Input):
+                    raise ValueError(f"Duplicate parameter name {value.name!r} found in Group values.")
             names.add(key)
 
     def flatten(self, group_parameter_name: str) -> Dict:
