@@ -9,7 +9,7 @@ import logging
 import os
 from enum import Enum
 from os import PathLike
-from typing import Dict, List, Optional, Union, overload
+from typing import Any, Dict, List, Optional, Tuple, Union, overload
 
 from marshmallow import INCLUDE, Schema
 
@@ -167,7 +167,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
             Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
         ] = None,
         queue_settings: Optional[QueueSettings] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
@@ -175,7 +175,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         # resolve normal dict to dict[str, JobService]
         services = _resolve_job_services(services)
         kwargs.pop("type", None)
-        self._parameters = kwargs.pop("parameters", {})
+        self._parameters: dict = kwargs.pop("parameters", {})
         BaseNode.__init__(
             self,
             type=NodeType.COMMAND,
@@ -207,7 +207,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         self._init = False
 
     @classmethod
-    def _get_supported_inputs_types(cls):
+    def _get_supported_inputs_types(cls) -> Tuple:
         supported_types = super()._get_supported_inputs_types() or ()
         return (
             SweepDistribution,
@@ -215,7 +215,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         )
 
     @classmethod
-    def _get_supported_outputs_types(cls):
+    def _get_supported_outputs_types(cls) -> Tuple:
         return str, Output
 
     @property
@@ -340,7 +340,9 @@ class Command(BaseNode, NodeWithGroupInputMixin):
     @property
     def services(
         self,
-    ) -> Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]:
+    ) -> Optional[
+        Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
+    ]:
         """The interactive services for the node.
 
         This is an experimental parameter, and may change at any time.
@@ -389,7 +391,10 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         # the same as code
         if not isinstance(self.component, CommandComponent):
             return None
-        return self.component.command
+
+        if self.component.command is None:
+            return None
+        return str(self.component.command)
 
     @command.setter
     def command(self, value: str) -> None:
@@ -425,7 +430,11 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         # which is invalid in schema validation.
         if not isinstance(self.component, CommandComponent):
             return None
-        return self.component.code
+
+        if self.component.code is None:
+            return None
+
+        return str(self.component.code)
 
     @code.setter
     def code(self, value: str) -> None:
@@ -456,7 +465,8 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         properties: Optional[Dict] = None,
         docker_args: Optional[str] = None,
         shm_size: Optional[str] = None,
-        **kwargs,  # pylint: disable=unused-argument
+        # pylint: disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         """Set resources for Command.
 
@@ -507,7 +517,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         if isinstance(self.component, CommandComponent):
             self.component.resources = self.resources
 
-    def set_limits(self, *, timeout: int, **kwargs) -> None:  # pylint: disable=unused-argument
+    def set_limits(self, *, timeout: int, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         """Set limits for Command.
 
         :keyword timeout: The timeout for the job in seconds.
@@ -685,6 +695,33 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         }
 
     def _to_job(self) -> CommandJob:
+        if isinstance(self.component, CommandComponent):
+            return CommandJob(
+                id=self.id,
+                name=self.name,
+                display_name=self.display_name,
+                description=self.description,
+                tags=self.tags,
+                properties=self.properties,
+                command=self.component.command,
+                experiment_name=self.experiment_name,
+                code=self.component.code,
+                compute=self.compute,
+                status=self.status,
+                environment=self.environment,
+                distribution=self.distribution,
+                identity=self.identity,
+                environment_variables=self.environment_variables,
+                resources=self.resources,
+                limits=self.limits,
+                inputs=self._job_inputs,
+                outputs=self._job_outputs,
+                services=self.services,
+                creation_context=self.creation_context,
+                parameters=self.parameters,
+                queue_settings=self.queue_settings,
+            )
+
         return CommandJob(
             id=self.id,
             name=self.name,
@@ -692,9 +729,9 @@ class Command(BaseNode, NodeWithGroupInputMixin):
             description=self.description,
             tags=self.tags,
             properties=self.properties,
-            command=self.component.command,
+            command=None,
             experiment_name=self.experiment_name,
-            code=self.component.code,
+            code=None,
             compute=self.compute,
             status=self.status,
             environment=self.environment,
@@ -715,7 +752,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
         return ["resources", "distribution", "limits", "environment_variables", "queue_settings"]
 
-    def _to_rest_object(self, **kwargs) -> dict:
+    def _to_rest_object(self, **kwargs: Any) -> dict:
         rest_obj = super()._to_rest_object(**kwargs)
         for key, value in {
             "componentId": self._get_component_id(),
@@ -728,10 +765,11 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         }.items():
             if value is not None:
                 rest_obj[key] = value
-        return convert_ordered_dict_to_dict(rest_obj)
+        res: dict = convert_ordered_dict_to_dict(rest_obj)
+        return res
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Command":
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "Command":
         from .command_func import command
 
         loaded_data = load_from_dict(CommandJobSchema, data, context, additional_message, **kwargs)
@@ -740,7 +778,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         resources = loaded_data.pop("resources", None)
         limits = loaded_data.pop("limits", None)
 
-        command_job = command(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
+        command_job: Command = command(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
         command_job.resources = resources
         command_job.limits = limits
@@ -783,7 +821,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
 
         rest_command_job: RestCommandJob = obj.properties
 
-        command_job = command(
+        command_job: Command = command(
             name=obj.name,
             display_name=rest_command_job.display_name,
             description=rest_command_job.description,
@@ -810,9 +848,10 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         command_job.resources = JobResourceConfiguration._from_rest_object(rest_command_job.resources)
         command_job.limits = CommandJobLimits._from_rest_object(rest_command_job.limits)
         command_job.queue_settings = QueueSettings._from_rest_object(rest_command_job.queue_settings)
-        command_job.component._source = (
-            ComponentSource.REMOTE_WORKSPACE_JOB
-        )  # This is used by pipeline job telemetries.
+        if isinstance(command_job.component, CommandComponent):
+            command_job.component._source = (
+                ComponentSource.REMOTE_WORKSPACE_JOB
+            )  # This is used by pipeline job telemetries.
 
         # Handle special case of local job
         if (
@@ -824,7 +863,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
             command_job.resources.properties.pop(LOCAL_COMPUTE_PROPERTY)
         return command_job
 
-    def _build_inputs(self):
+    def _build_inputs(self) -> Dict:
         inputs = super(Command, self)._build_inputs()
         built_inputs = {}
         # Validate and remove non-specified inputs
@@ -835,13 +874,13 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         return built_inputs
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context: Any) -> Union[PathAwareSchema, Schema]:
         from azure.ai.ml._schema.pipeline import CommandSchema
 
         return CommandSchema(context=context)
 
     # pylint: disable-next=docstring-missing-param
-    def __call__(self, *args, **kwargs) -> "Command":
+    def __call__(self, *args: Any, **kwargs: Any) -> "Command":
         """Call Command as a function will return a new instance each time.
 
         :return: A Command node
@@ -849,7 +888,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         """
         if isinstance(self._component, CommandComponent):
             # call this to validate inputs
-            node = self._component(*args, **kwargs)
+            node: Command = self._component(*args, **kwargs)
             # merge inputs
             for name, original_input in self.inputs.items():
                 if name not in kwargs:
@@ -859,7 +898,8 @@ class Command(BaseNode, NodeWithGroupInputMixin):
                 # get outputs
             for name, original_output in self.outputs.items():
                 # use setattr here to make sure owner of input won't change
-                setattr(node.outputs, name, original_output._data)
+                if not isinstance(original_output, str):
+                    setattr(node.outputs, name, original_output._data)
             self._refine_optional_inputs_with_no_value(node, kwargs)
             # set default values: compute, environment_variables, outputs
             # won't copy name to be able to distinguish if a node's name is assigned by user

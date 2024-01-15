@@ -7,20 +7,24 @@
 import copy
 import json
 import logging
+import os
 import re
 from enum import Enum
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
-from marshmallow import Schema, INCLUDE
+from marshmallow import INCLUDE, Schema
+
+from azure.ai.ml._schema.core.fields import NestedField, UnionField
+from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
 from azure.ai.ml.entities._credentials import (
     AmlTokenConfiguration,
     ManagedIdentityConfiguration,
     UserIdentityConfiguration,
     _BaseJobIdentityConfiguration,
 )
-from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
-from azure.ai.ml._schema.core.fields import NestedField, UnionField
+
 from ..._schema import PathAwareSchema
+from ..._utils.utils import is_data_binding_expression
 from ...constants._common import ARM_ID_PREFIX
 from ...constants._component import NodeType
 from .._component.component import Component
@@ -33,7 +37,6 @@ from .._job.parallel.parallel_task import ParallelTask
 from .._job.parallel.retry_settings import RetrySettings
 from .._job.pipeline._io import NodeOutput, NodeWithGroupInputMixin
 from .._util import convert_ordered_dict_to_dict, get_rest_dict_for_node_attrs, validate_attribute_type
-from ..._utils.utils import is_data_binding_expression
 from .base_node import BaseNode
 
 module_logger = logging.getLogger(__name__)
@@ -134,7 +137,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         identity: Optional[
             Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
@@ -222,7 +225,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         self._init = False
 
     @classmethod
-    def _get_supported_outputs_types(cls):
+    def _get_supported_outputs_types(cls) -> Tuple:
         return str, Output
 
     @property
@@ -235,7 +238,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         return self._retry_settings
 
     @retry_settings.setter
-    def retry_settings(self, value):
+    def retry_settings(self, value: Union[RetrySettings, Dict]) -> None:
         """Set the retry settings for the parallel job.
 
         :param value: The retry settings for the parallel job.
@@ -255,7 +258,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         return self._resources
 
     @resources.setter
-    def resources(self, value):
+    def resources(self, value: Union[JobResourceConfiguration, Dict]) -> None:
         """Set the resource configuration for the parallel job.
 
         :param value: The resource configuration for the parallel job.
@@ -320,19 +323,19 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         return self._task
 
     @task.setter
-    def task(self, value):
+    def task(self, value: Union[ParallelTask, Dict]) -> None:
         """Set the parallel task.
 
         :param value: The parallel task.
         :type value: ~azure.ai.ml.entities._job.parallel.parallel_task.ParallelTask or dict
         """
         # base path should be reset if task is set via sdk
-        self._base_path = None
+        self._base_path: Optional[Union[str, os.PathLike]] = None
         if isinstance(value, dict):
             value = ParallelTask(**value)
         self._task = value
 
-    def _set_base_path(self, base_path):
+    def _set_base_path(self, base_path: Optional[Union[str, os.PathLike]]) -> None:
         if self._base_path:
             return
         super(Parallel, self)._set_base_path(base_path)
@@ -345,8 +348,9 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         properties: Optional[Dict] = None,
         docker_args: Optional[str] = None,
         shm_size: Optional[str] = None,
-        **kwargs,  # pylint: disable=unused-argument
-    ):
+        # pylint: disable=unused-argument
+        **kwargs: Any,
+    ) -> None:
         """Set the resources for the parallel job.
 
         :keyword instance_type: The instance type or a list of instance types used as supported by the compute target.
@@ -416,7 +420,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
             outputs=self._job_outputs,
         )
 
-    def _parallel_attr_to_dict(self, attr, base_type) -> dict:
+    def _parallel_attr_to_dict(self, attr: str, base_type: Type) -> dict:
         # Convert parallel attribute to dict
         rest_attr = None
         parallel_attr = getattr(self, attr)
@@ -427,7 +431,8 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
                 rest_attr = parallel_attr
             else:
                 raise Exception(f"Expecting {base_type} for {attr}, got {type(parallel_attr)} instead.")
-        return convert_ordered_dict_to_dict(rest_attr)
+        res: dict = convert_ordered_dict_to_dict(rest_attr)
+        return res
 
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
@@ -442,8 +447,8 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
             "input_data",
         ]
 
-    def _to_rest_object(self, **kwargs) -> dict:
-        rest_obj = super(Parallel, self)._to_rest_object(**kwargs)
+    def _to_rest_object(self, **kwargs: Any) -> dict:
+        rest_obj: Dict = super(Parallel, self)._to_rest_object(**kwargs)
         rest_obj.update(
             convert_ordered_dict_to_dict(
                 {
@@ -488,7 +493,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
             obj["identity"] = _BaseJobIdentityConfiguration._load(obj["identity"])
         return obj
 
-    def _build_inputs(self):
+    def _build_inputs(self) -> Dict:
         inputs = super(Parallel, self)._build_inputs()
         built_inputs = {}
         # Validate and remove non-specified inputs
@@ -498,13 +503,13 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         return built_inputs
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context: Any) -> Union[PathAwareSchema, Schema]:
         from azure.ai.ml._schema.pipeline import ParallelSchema
 
         return ParallelSchema(context=context)
 
     # pylint: disable-next=docstring-missing-param
-    def __call__(self, *args, **kwargs) -> "Parallel":
+    def __call__(self, *args: Any, **kwargs: Any) -> "Parallel":
         """Call Parallel as a function will return a new instance each time.
 
         :return: A Parallel node
@@ -512,7 +517,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         """
         if isinstance(self._component, Component):
             # call this to validate inputs
-            node = self._component(*args, **kwargs)
+            node: Parallel = self._component(*args, **kwargs)
             # merge inputs
             for name, original_input in self.inputs.items():
                 if name not in kwargs:
@@ -521,7 +526,8 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
                 # get outputs
             for name, original_output in self.outputs.items():
                 # use setattr here to make sure owner of input won't change
-                setattr(node.outputs, name, original_output._data)
+                if not isinstance(original_output, str):
+                    setattr(node.outputs, name, original_output._data)
             self._refine_optional_inputs_with_no_value(node, kwargs)
             # set default values: compute, environment_variables, outputs
             node._name = self.name

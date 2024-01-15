@@ -4,7 +4,7 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import pydash
 from marshmallow import EXCLUDE, Schema
@@ -21,6 +21,7 @@ from azure.ai.ml.entities._credentials import (
 )
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.job_limits import SweepJobLimits
+from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.pipeline._io import NodeInput
 from azure.ai.ml.entities._job.queue_settings import QueueSettings
 from azure.ai.ml.entities._job.sweep.early_termination_policy import (
@@ -45,10 +46,10 @@ from azure.ai.ml.entities._job.sweep.search_space import (
     SweepDistribution,
     Uniform,
 )
-from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationErrorType, ValidationException
 from azure.ai.ml.sweep import SweepJob
 
+from ..._restclient.v2022_10_01.models import ComponentVersion
 from ..._schema import PathAwareSchema
 from ..._schema._utils.data_binding_expression import support_data_binding_expression_for_fields
 from ..._utils.utils import camel_to_snake
@@ -121,10 +122,10 @@ class Sweep(ParameterizedSweep, BaseNode):
         ] = None,
         queue_settings: Optional[QueueSettings] = None,
         resources: Optional[Union[dict, JobResourceConfiguration]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         # TODO: get rid of self._job_inputs, self._job_outputs once we have general Input
-        self._job_inputs, self._job_outputs = inputs, outputs
+        self._job_inputs, self._job_outputs = inputs, outputs  # type: ignore
 
         kwargs.pop("type", None)
         BaseNode.__init__(
@@ -191,7 +192,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         self._search_space = search_space
 
     @classmethod
-    def _value_type_to_class(cls, value):
+    def _value_type_to_class(cls, value: Any) -> Dict:
         value_type = value["type"]
         search_space_dict = {
             SearchSpace.CHOICE: Choice,
@@ -205,10 +206,12 @@ class Sweep(ParameterizedSweep, BaseNode):
             SearchSpace.QLOGUNIFORM: QLogUniform,
             SearchSpace.QUNIFORM: QUniform,
         }
-        return search_space_dict[value_type](**value)
+
+        res: dict = search_space_dict[value_type](**value)
+        return res
 
     @classmethod
-    def _get_supported_inputs_types(cls):
+    def _get_supported_inputs_types(cls) -> Tuple:
         supported_types = super()._get_supported_inputs_types() or ()
         return (
             SweepDistribution,
@@ -216,7 +219,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         )
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Sweep":
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "Sweep":
         raise NotImplementedError("Sweep._load_from_dict is not supported")
 
     @classmethod
@@ -231,8 +234,8 @@ class Sweep(ParameterizedSweep, BaseNode):
             "resources",
         ]
 
-    def _to_rest_object(self, **kwargs) -> dict:
-        rest_obj = super(Sweep, self)._to_rest_object(**kwargs)
+    def _to_rest_object(self, **kwargs: Any) -> dict:
+        rest_obj: dict = super(Sweep, self)._to_rest_object(**kwargs)
         # hack: ParameterizedSweep.early_termination is not allowed to be None
         for key in ["early_termination"]:
             if key in rest_obj and rest_obj[key] is None:
@@ -241,7 +244,8 @@ class Sweep(ParameterizedSweep, BaseNode):
         # hack: only early termination policy does not follow yaml schema now, should be removed after server-side made
         # the change
         if "early_termination" in rest_obj:
-            rest_obj["early_termination"] = self.early_termination._to_rest_object().as_dict()
+            _early_termination: EarlyTerminationPolicy = self.early_termination
+            rest_obj["early_termination"] = _early_termination._to_rest_object().as_dict()
 
         rest_obj.update(
             {
@@ -277,7 +281,7 @@ class Sweep(ParameterizedSweep, BaseNode):
 
         return obj
 
-    def _get_trial_component_rest_obj(self):
+    def _get_trial_component_rest_obj(self) -> Union[Dict, ComponentVersion, None]:
         # trial component to rest object is different from usual component
         trial_component_id = self._get_component_id()
         if trial_component_id is None:
@@ -320,10 +324,10 @@ class Sweep(ParameterizedSweep, BaseNode):
         )
 
     @classmethod
-    def _get_component_attr_name(cls):
+    def _get_component_attr_name(cls) -> str:
         return "trial"
 
-    def _build_inputs(self):
+    def _build_inputs(self) -> Dict:
         inputs = super(Sweep, self)._build_inputs()
         built_inputs = {}
         # Validate and remove non-specified inputs
@@ -334,7 +338,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         return built_inputs
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context: Any) -> Union[PathAwareSchema, Schema]:
         from azure.ai.ml._schema.pipeline.component_job import SweepSchema
 
         return SweepSchema(context=context)
@@ -383,7 +387,7 @@ class Sweep(ParameterizedSweep, BaseNode):
             return True
         return self.search_space is not None and input_name in self.search_space
 
-    def __setattr__(self, key, value):
+    def __setattr__(self, key: Any, value: Any) -> None:
         super(Sweep, self).__setattr__(key, value)
         if key == "early_termination" and isinstance(self.early_termination, BanditPolicy):
             # only one of slack_amount and slack_factor can be specified but default value is 0.0.

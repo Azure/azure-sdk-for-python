@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import logging
 from enum import Enum
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from marshmallow import Schema
 
@@ -55,7 +55,7 @@ class Pipeline(BaseNode):
         ] = None,
         outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
         settings: Optional[PipelineJobSettings] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
@@ -98,7 +98,7 @@ class Pipeline(BaseNode):
         return self._settings
 
     @settings.setter
-    def settings(self, value):
+    def settings(self, value: Union[PipelineJobSettings, Dict]) -> None:
         """Set the settings of the pipeline.
 
         :param value: The settings of the pipeline.
@@ -116,13 +116,13 @@ class Pipeline(BaseNode):
         self._settings = value
 
     @classmethod
-    def _get_supported_inputs_types(cls):
+    def _get_supported_inputs_types(cls) -> None:  # type: ignore
         # Return None here to skip validation,
         # as input could be custom class object(parameter group).
         return None
 
     @property
-    def _skip_required_compute_missing_validation(self):
+    def _skip_required_compute_missing_validation(self) -> bool:
         return True
 
     @classmethod
@@ -178,8 +178,8 @@ class Pipeline(BaseNode):
             validation_result.merge_with(self.component._customized_validate())
         return validation_result
 
-    def _to_rest_object(self, **kwargs) -> dict:
-        rest_obj = super()._to_rest_object(**kwargs)
+    def _to_rest_object(self, **kwargs: Any) -> dict:
+        rest_obj: Dict = super()._to_rest_object(**kwargs)
         rest_obj.update(
             convert_ordered_dict_to_dict(
                 {
@@ -189,7 +189,7 @@ class Pipeline(BaseNode):
         )
         return rest_obj
 
-    def _build_inputs(self):
+    def _build_inputs(self) -> Dict:
         inputs = super(Pipeline, self)._build_inputs()
         built_inputs = {}
         # Validate and remove non-specified inputs
@@ -199,12 +199,12 @@ class Pipeline(BaseNode):
         return built_inputs
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context: Any) -> Union[PathAwareSchema, Schema]:
         from azure.ai.ml._schema.pipeline.pipeline_component import PipelineSchema
 
         return PipelineSchema(context=context)
 
-    def _copy_pipeline_component_out_setting_to_node(self):
+    def _copy_pipeline_component_out_setting_to_node(self) -> None:
         """Copy pipeline component output's setting to node level."""
         from azure.ai.ml.entities import PipelineComponent
 

@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import copy
-from typing import Dict, List, Optional, Tuple, Type, Union
+from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
@@ -28,15 +28,15 @@ class NodeIOMixin:
     dynamically."""
 
     @classmethod
-    def _get_supported_inputs_types(cls):
+    def _get_supported_inputs_types(cls) -> None:
         return None
 
     @classmethod
-    def _get_supported_outputs_types(cls):
+    def _get_supported_outputs_types(cls) -> None:
         return None
 
     @classmethod
-    def _validate_io(cls, value: dict, allowed_types: Optional[tuple], *, key: str = None):
+    def _validate_io(cls, value: dict, allowed_types: Optional[tuple], *, key: Optional[str] = None) -> None:
         if allowed_types is None:
             return
 
@@ -51,7 +51,9 @@ class NodeIOMixin:
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
 
-    def _build_input(self, name, meta: Input, data) -> NodeInput:
+    def _build_input(
+        self, name: str, meta: Input, data: Optional[Union[dict, int, bool, float, str, Output, "PipelineInput", Input]]
+    ) -> NodeInput:
         # output mode of last node should not affect input mode of next node
         if isinstance(data, NodeOutput):
             # Decoupled input and output
@@ -65,12 +67,12 @@ class NodeIOMixin:
             # parse dict to allowed type
             data = Input(**data)
 
-        # parameter group can be of custom type, so we don't check it here
-        if meta is not None and not isinstance(meta, GroupInput):
-            self._validate_io(data, self._get_supported_inputs_types(), key=name)
+            # parameter group can be of custom type, so we don't check it here
+            if meta is not None and not isinstance(meta, GroupInput):
+                self._validate_io(data, self._get_supported_inputs_types(), key=name)
         return NodeInput(port_name=name, meta=meta, data=data, owner=self)
 
-    def _build_output(self, name, meta: Output, data) -> NodeOutput:
+    def _build_output(self, name: str, meta: Output, data: Optional[Union[Output, str]]) -> NodeOutput:
         if isinstance(data, dict):
             data = Output(**data)
 
@@ -78,7 +80,8 @@ class NodeIOMixin:
         # For un-configured outputs, settings it to None, so we won't pass extra fields(eg: default mode)
         return NodeOutput(port_name=name, meta=meta, data=data, owner=self)
 
-    def _get_default_input_val(self, val):  # pylint: disable=unused-argument
+    # pylint: disable=unused-argument
+    def _get_default_input_val(self, val: Any):  # type: ignore
         # use None value as data placeholder for unfilled inputs.
         # server side will fill the default value
         return None
@@ -116,7 +119,7 @@ class NodeIOMixin:
         return InputsAttrDict(input_dict)
 
     def _build_outputs_dict(
-        self, outputs: Dict[str, Output], *, output_definition_dict: dict = None, none_data: bool = False
+        self, outputs: Dict[str, Output], *, output_definition_dict: Optional[dict] = None, none_data: bool = False
     ) -> OutputsAttrDict:
         """Build an output attribute dict so user can get/set outputs by
         accessing attribute, eg: node1.outputs.xxx.
@@ -163,7 +166,8 @@ class NodeIOMixin:
         :rtype: Dict[str, Union[Input, str, bool, int, float]]
         """
         inputs = {}
-        for name, input in self.inputs.items():  # pylint: disable=redefined-builtin
+        # pylint: disable=redefined-builtin
+        for name, input in self.inputs.items():  # type: ignore
             if isinstance(input, _GroupAttrDict):
                 # Flatten group inputs into inputs dict
                 inputs.update(input.flatten(group_parameter_name=name))
@@ -184,7 +188,7 @@ class NodeIOMixin:
         :rtype: Dict[str, Output]
         """
         outputs = {}
-        for name, output in self.outputs.items():
+        for name, output in self.outputs.items():  # type: ignore
             if isinstance(output, NodeOutput):
                 output = output._to_job_output()  # pylint: disable=protected-access
             outputs[name] = output
@@ -258,7 +262,7 @@ class NodeIOMixin:
             if "version" in binding:
                 rest_output_bindings[key].update({"version": binding["version"]})
 
-        def _rename_name_and_version(output_dict):
+        def _rename_name_and_version(output_dict: Dict) -> Dict:
             # NodeOutput can only be registered with name and version, therefore we rename here
             if "asset_name" in output_dict.keys():
                 output_dict["name"] = output_dict.pop("asset_name")
@@ -309,7 +313,7 @@ class NodeIOMixin:
 
         return {**data_outputs, **output_bindings}
 
-    def _update_output_types(self, rest_data_outputs: dict):
+    def _update_output_types(self, rest_data_outputs: dict) -> None:
         """Update output types in rest_data_outputs according to meta level output.
 
         :param rest_data_outputs: The REST data outputs
@@ -317,7 +321,7 @@ class NodeIOMixin:
         """
 
         for name, rest_output in rest_data_outputs.items():
-            original_output = self.outputs[name]
+            original_output = self.outputs[name]  # type: ignore
             # for configured output with meta, "correct" the output type to file to avoid the uri_folder default value
             if original_output and original_output.type:
                 if original_output.type in ["AnyFile", "uri_file"]:
@@ -362,7 +366,7 @@ class NodeWithGroupInputMixin(NodeIOMixin):
         cls,
         input_definition_dict: dict,
         inputs: Dict[str, Union[Input, str, bool, int, float]],
-    ):
+    ) -> None:
         """Raise error when group input receive a value not group type.
 
         :param input_definition_dict: The input definition dict
@@ -489,10 +493,12 @@ class PipelineJobIOMixin(NodeWithGroupInputMixin):
     """Provides ability to wrap pipeline job inputs/outputs and build data bindings
     dynamically."""
 
-    def _build_input(self, name, meta: Input, data) -> "PipelineInput":
+    def _build_input(
+        self, name: str, meta: Input, data: Optional[Union[int, bool, float, str, Output, PipelineInput, Input]]
+    ) -> "PipelineInput":
         return PipelineInput(name=name, meta=meta, data=data, owner=self)
 
-    def _build_output(self, name, meta: Output, data) -> "PipelineOutput":
+    def _build_output(self, name: str, meta: Output, data: Optional[Union[Output, str]]) -> "PipelineOutput":
         # TODO: settings data to None for un-configured outputs so we won't passing extra fields(eg: default mode)
         result = PipelineOutput(port_name=name, meta=meta, data=data, owner=self)
         return result
@@ -501,7 +507,7 @@ class PipelineJobIOMixin(NodeWithGroupInputMixin):
         self,
         inputs: Dict[str, Union[Input, str, bool, int, float]],
         *,
-        input_definition_dict: dict = None,
+        input_definition_dict: Optional[dict] = None,
     ) -> InputsAttrDict:
         """Build an input attribute dict so user can get/set inputs by
         accessing attribute, eg: node1.inputs.xxx.
@@ -575,13 +581,13 @@ class PipelineJobIOMixin(NodeWithGroupInputMixin):
         :rtype: Dict[str, Output]
         """
         outputs = {}
-        for name, output in self.outputs.items():
+        for name, output in self.outputs.items():  # type: ignore
             if isinstance(output, NodeOutput):
                 output = output._to_job_output()  # pylint: disable=protected-access
             outputs[name] = output
         return outputs
 
-    def _get_default_input_val(self, val):
+    def _get_default_input_val(self, val: Any):  # type: ignore
         # use Default value as data placeholder for unfilled inputs.
         # client side need to fill the default value for dsl.pipeline
         if isinstance(val, GroupInput):
@@ -589,7 +595,7 @@ class PipelineJobIOMixin(NodeWithGroupInputMixin):
             return copy.deepcopy(val.default)
         return val.default
 
-    def _update_output_types(self, rest_data_outputs: Dict):
+    def _update_output_types(self, rest_data_outputs: Dict) -> None:
         """Won't clear output type for pipeline level outputs since it's required in rest object.
 
         :param rest_data_outputs: The REST data outputs
@@ -600,7 +606,7 @@ class PipelineJobIOMixin(NodeWithGroupInputMixin):
 class AutoMLNodeIOMixin(NodeIOMixin):
     """Wrap outputs of automl node and build data bindings dynamically."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs):  # type: ignore
         # add a inputs field to align with other nodes
         self.inputs = {}
         super(AutoMLNodeIOMixin, self).__init__(**kwargs)

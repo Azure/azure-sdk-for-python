@@ -24,7 +24,7 @@ class SamplingAlgorithm(ABC, RestTranslatableMixin):
         self.type = None
 
     @classmethod
-    def _from_rest_object(cls, obj: RestSamplingAlgorithm) -> "SamplingAlgorithm":
+    def _from_rest_object(cls, obj: RestSamplingAlgorithm) -> Optional["SamplingAlgorithm"]:
         if not obj:
             return None
 

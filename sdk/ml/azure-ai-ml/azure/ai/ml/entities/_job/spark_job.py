@@ -6,7 +6,7 @@
 import copy
 import logging
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from marshmallow import INCLUDE
 
@@ -107,13 +107,13 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             Union[Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
         resources: Optional[Union[Dict, SparkResourceConfiguration]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         kwargs[TYPE] = JobType.SPARK
 
         super().__init__(**kwargs)
         self.conf = self.conf or {}
-        self.properties = self.properties or {}
+        self.properties_sparkJob = self.properties or {}
         self.driver_cores = driver_cores
         self.driver_memory = driver_memory
         self.executor_cores = executor_cores
@@ -131,7 +131,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             self.executor_instances = self.dynamic_allocation_min_executors
 
     @property
-    def resources(self) -> Optional[SparkResourceConfiguration]:
+    def resources(self) -> Optional[Union[Dict, SparkResourceConfiguration]]:
         """The compute resource configuration for the job.
 
         :return: The compute resource configuration for the job.
@@ -140,7 +140,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         return self._resources
 
     @resources.setter
-    def resources(self, value: Optional[Union[Dict[str, str], SparkResourceConfiguration]]):
+    def resources(self, value: Optional[Union[Dict[str, str], SparkResourceConfiguration]]) -> None:
         """Sets the compute resource configuration for the job.
 
         :param value: The compute resource configuration for the job.
@@ -168,7 +168,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         value: Optional[
             Union[Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ],
-    ):
+    ) -> None:
         """Sets the identity that the Spark job will use while running on compute.
 
         :param value: The identity that the Spark job will use while running on compute.
@@ -188,7 +188,8 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return SparkJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = SparkJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
     def filter_conf_fields(self) -> Dict[str, str]:
         """Filters out the fields of the conf attribute that are not among the Spark configuration fields
@@ -227,27 +228,29 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             description=self.description,
             tags=self.tags,
             code_id=self.code,
-            entry=self.entry._to_rest_object() if self.entry else None,
+            entry=self.entry._to_rest_object() if self.entry is not None and not isinstance(self.entry, dict) else None,
             py_files=self.py_files,
             jars=self.jars,
             files=self.files,
             archives=self.archives,
             identity=self.identity._to_job_rest_object() if self.identity else None,
             conf=conf,
-            properties=self.properties,
+            properties=self.properties_sparkJob,
             environment_id=self.environment,
             inputs=to_rest_dataset_literal_inputs(self.inputs, job_type=self.type),
             outputs=to_rest_data_outputs(self.outputs),
             args=self.args,
             compute_id=self.compute,
-            resources=self.resources._to_rest_object() if self.resources else None,
+            resources=self.resources._to_rest_object()
+            if self.resources and not isinstance(self.resources, Dict)
+            else None,
         )
         result = JobBase(properties=properties)
         result.name = self.name
         return result
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "SparkJob":
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "SparkJob":
         loaded_data = load_from_dict(SparkJobSchema, data, context, additional_message, **kwargs)
         return SparkJob(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
@@ -291,7 +294,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         )
         return spark_job
 
-    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> "SparkComponent":
+    def _to_component(self, context: Optional[Dict] = None, **kwargs: Any) -> "SparkComponent":
         """Translate a spark job to component.
 
         :param context: Context of spark job YAML file.
@@ -326,14 +329,14 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             dynamic_allocation_min_executors=self.dynamic_allocation_min_executors,
             dynamic_allocation_max_executors=self.dynamic_allocation_max_executors,
             conf=self.conf,
-            properties=self.properties,
+            properties=self.properties_sparkJob,
             environment=self.environment,
             inputs=self._to_inputs(inputs=self.inputs, pipeline_job_dict=pipeline_job_dict),
             outputs=self._to_outputs(outputs=self.outputs, pipeline_job_dict=pipeline_job_dict),
             args=self.args,
         )
 
-    def _to_node(self, context: Optional[Dict] = None, **kwargs) -> "Spark":
+    def _to_node(self, context: Optional[Dict] = None, **kwargs: Any) -> "Spark":
         """Translate a spark job to a pipeline node.
 
         :param context: Context of spark job YAML file.
@@ -367,7 +370,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             outputs=self.outputs,
             compute=self.compute,
             resources=self.resources,
-            properties=self.properties,
+            properties=self.properties_sparkJob,
         )
 
     def _validate(self) -> None:

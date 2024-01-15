@@ -9,7 +9,7 @@ import logging
 import re
 import typing
 from collections import Counter
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from marshmallow import Schema
 
@@ -70,7 +70,7 @@ class PipelineComponent(Component):
         outputs: Optional[Dict] = None,
         jobs: Optional[Dict[str, BaseNode]] = None,
         is_deterministic: Optional[bool] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         kwargs[COMPONENT_TYPE] = NodeType.PIPELINE
         super().__init__(
@@ -161,7 +161,7 @@ class PipelineComponent(Component):
 
         return validation_result
 
-    def _validate_compute_is_set(self, *, parent_node_name=None) -> MutableValidationResult:
+    def _validate_compute_is_set(self, *, parent_node_name: Optional[str] = None) -> MutableValidationResult:
         """Validate compute in pipeline component.
 
         This function will only be called from pipeline_job._validate_compute_is_set
@@ -209,7 +209,8 @@ class PipelineComponent(Component):
         # pylint: disable=too-many-nested-blocks
         binding_inputs = node._build_inputs()
         # Collect binding relation dict {'pipeline_input': ['node_input']}
-        binding_dict, optional_binding_in_expression_dict = {}, {}
+        binding_dict: dict = {}
+        optional_binding_in_expression_dict: dict = {}
         for component_input_name, component_binding_input in binding_inputs.items():
             if isinstance(component_binding_input, PipelineExpression):
                 for pipeline_input_name in component_binding_input._inputs.keys():
@@ -332,7 +333,7 @@ class PipelineComponent(Component):
         # command component), so we just use rest object to generate hash for pipeline component,
         # which doesn't have reuse issue.
         component_interface_dict = self._to_rest_object().properties.component_spec
-        hash_value = hash_dict(
+        hash_value: str = hash_dict(
             component_interface_dict,
             keys_to_omit=[
                 # omit name since anonymous component will have same name
@@ -348,7 +349,7 @@ class PipelineComponent(Component):
         return hash_value
 
     @classmethod
-    def _load_from_rest_pipeline_job(cls, data: Dict):
+    def _load_from_rest_pipeline_job(cls, data: Dict) -> "PipelineComponent":
         # TODO: refine this?
         # Set type as None here to avoid schema validation failed
         definition_inputs = {p: {"type": None} for p in data.get("inputs", {}).keys()}
@@ -363,7 +364,7 @@ class PipelineComponent(Component):
         )
 
     @classmethod
-    def _resolve_sub_nodes(cls, rest_jobs):
+    def _resolve_sub_nodes(cls, rest_jobs: Dict) -> Dict:
         from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
 
         sub_nodes = {}
@@ -385,7 +386,7 @@ class PipelineComponent(Component):
         return sub_nodes
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context: Any) -> Union[PathAwareSchema, Schema]:
         return PipelineComponentSchema(context=context)
 
     @classmethod
@@ -409,8 +410,8 @@ class PipelineComponent(Component):
         # Avoid new attr added by use `try_get_non...` instead of `hasattr` or `getattr` directly.
         return [k for k, has_set in examine_mapping.items() if has_set(try_get_non_arbitrary_attr(obj, k))]
 
-    def _get_telemetry_values(self, *args, **kwargs):
-        telemetry_values = super()._get_telemetry_values()
+    def _get_telemetry_values(self, *args: Any, **kwargs: Any) -> Dict:
+        telemetry_values: dict = super()._get_telemetry_values()
         telemetry_values.update(
             {
                 "source": self._source,
@@ -425,7 +426,7 @@ class PipelineComponent(Component):
     def _from_rest_object_to_init_params(cls, obj: ComponentVersion) -> Dict:
         # Pop jobs to avoid it goes with schema load
         jobs = obj.properties.component_spec.pop("jobs", None)
-        init_params_dict = super()._from_rest_object_to_init_params(obj)
+        init_params_dict: dict = super()._from_rest_object_to_init_params(obj)
         if jobs:
             try:
                 init_params_dict["jobs"] = PipelineComponent._resolve_sub_nodes(jobs)
@@ -491,8 +492,10 @@ class PipelineComponent(Component):
         result.name = self.name
         return result
 
-    def __str__(self):
+    def __str__(self) -> str:
         try:
-            return self._to_yaml()
+            toYaml: str = self._to_yaml()
+            return toYaml
         except BaseException:  # pylint: disable=broad-except
-            return super(PipelineComponent, self).__str__()
+            toStr: str = super(PipelineComponent, self).__str__()
+            return toStr

@@ -9,8 +9,8 @@ from abc import abstractmethod
 from os import PathLike
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_05_01.models import OnlineDeploymentData
 from azure.ai.ml._restclient.v2022_02_01_preview.models import BatchDeploymentData
+from azure.ai.ml._restclient.v2022_05_01.models import OnlineDeploymentData
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._resource import Resource
@@ -72,7 +72,7 @@ class Deployment(Resource, RestTranslatableMixin):
         environment_variables: Optional[Dict[str, str]] = None,
         code_path: Optional[Union[str, PathLike]] = None,
         scoring_script: Optional[Union[str, PathLike]] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         """Endpoint Deployment base class.
 
@@ -108,7 +108,7 @@ class Deployment(Resource, RestTranslatableMixin):
         # MFE is case-insensitive for Name. So convert the name into lower case here.
         name = name.lower() if name else None
         self.endpoint_name = endpoint_name
-        self._type = kwargs.pop("type", None)
+        self._type: Optional[str] = kwargs.pop("type", None)
 
         if code_configuration and (code_path or scoring_script):
             msg = "code_path and scoring_script are not allowed if code_configuration is provided."
@@ -131,7 +131,7 @@ class Deployment(Resource, RestTranslatableMixin):
         self.environment_variables = dict(environment_variables) if environment_variables else {}
 
     @property
-    def type(self) -> str:
+    def type(self) -> Optional[str]:
         """
         Type of deployment.
 
@@ -140,7 +140,7 @@ class Deployment(Resource, RestTranslatableMixin):
         return self._type
 
     @property
-    def code_path(self) -> Union[str, PathLike]:
+    def code_path(self) -> Optional[Union[str, PathLike]]:
         """
         The code directory containing the scoring script.
 
@@ -156,7 +156,7 @@ class Deployment(Resource, RestTranslatableMixin):
         self.code_configuration.code = value
 
     @property
-    def scoring_script(self) -> Union[str, PathLike]:
+    def scoring_script(self) -> Optional[Union[str, PathLike]]:
         """
         The scoring script file path relative to the code directory.
 
@@ -171,7 +171,7 @@ class Deployment(Resource, RestTranslatableMixin):
 
         self.code_configuration.scoring_script = value
 
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
         """Dump the deployment content into a file in yaml format.
 
         :param dest: The destination to receive this deployment's content.
@@ -191,7 +191,9 @@ class Deployment(Resource, RestTranslatableMixin):
         pass
 
     @classmethod
-    def _from_rest_object(cls, deployment_rest_object: Union[OnlineDeploymentData, BatchDeploymentData]):
+    def _from_rest_object(
+        cls, deployment_rest_object: Union[OnlineDeploymentData, BatchDeploymentData]
+    ) -> Union[OnlineDeploymentData, BatchDeploymentData]:
         from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
         from azure.ai.ml.entities._deployment.online_deployment import OnlineDeployment
 
@@ -223,9 +225,9 @@ class Deployment(Resource, RestTranslatableMixin):
                     error_type=ValidationErrorType.INVALID_VALUE,
                 )
             if other.tags:
-                self.tags = {**self.tags, **other.tags}
+                self.tags: dict = {**self.tags, **other.tags}
             if other.properties:
-                self.properties = {**self.properties, **other.properties}
+                self.properties: dict = {**self.properties, **other.properties}
             if other.environment_variables:
                 self.environment_variables = {
                     **self.environment_variables,

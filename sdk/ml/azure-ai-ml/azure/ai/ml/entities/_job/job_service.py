@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from typing_extensions import Literal
 
@@ -61,7 +61,7 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
         self._validate_nodes()
         self._validate_type_name()
 
-    def _validate_nodes(self):
+    def _validate_nodes(self) -> None:
         if not self.nodes in ["all", None]:
             msg = f"nodes should be either 'all' or None, but received '{self.nodes}'."
             raise ValidationException(
@@ -72,7 +72,7 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
 
-    def _validate_type_name(self):
+    def _validate_type_name(self) -> None:
         if self.type and not self.type in JobServiceTypeNames.ENTITY_TO_REST:
             msg = (
                 f"type should be one of " f"{JobServiceTypeNames.NAMES_ALLOWED_FOR_PUBLIC}, but received '{self.type}'."
@@ -85,7 +85,7 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
 
-    def _to_rest_job_service(self, updated_properties: Dict[str, str] = None) -> RestJobService:
+    def _to_rest_job_service(self, updated_properties: Optional[Dict[str, str]] = None) -> RestJobService:
         return RestJobService(
             endpoint=self.endpoint,
             job_service_type=JobServiceTypeNames.ENTITY_TO_REST.get(self.type, None) if self.type else None,
@@ -98,18 +98,15 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
     @classmethod
     def _to_rest_job_services(
         cls,
-        services: Dict[
-            str,
-            Union["JobService", "JupyterLabJobService", "SshJobService", "TensorBoardJobService", "VsCodeJobService"],
-        ],
-    ) -> Dict[str, RestJobService]:
+        services: Optional[Dict],
+    ) -> Optional[Dict[str, RestJobService]]:
         if services is None:
             return None
 
         return {name: service._to_rest_object() for name, service in services.items()}
 
     @classmethod
-    def _from_rest_job_service_object(cls, obj: RestJobService):
+    def _from_rest_job_service_object(cls, obj: RestJobService) -> "JobServiceBase":
         return cls(
             endpoint=obj.endpoint,
             type=JobServiceTypeNames.REST_TO_ENTITY.get(obj.job_service_type, None) if obj.job_service_type else None,
@@ -213,7 +210,7 @@ class SshJobService(JobServiceBase):
         port: Optional[int] = None,
         ssh_public_keys: Optional[str] = None,
         properties: Optional[Dict[str, str]] = None,
-        **kwargs: Dict,  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
     ) -> None:
         super().__init__(
             endpoint=endpoint,
@@ -276,7 +273,7 @@ class TensorBoardJobService(JobServiceBase):
         port: Optional[int] = None,
         log_dir: Optional[str] = None,
         properties: Optional[Dict[str, str]] = None,
-        **kwargs: Dict,  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
     ) -> None:
         super().__init__(
             endpoint=endpoint,
@@ -336,7 +333,7 @@ class JupyterLabJobService(JobServiceBase):
         status: Optional[str] = None,
         port: Optional[int] = None,
         properties: Optional[Dict[str, str]] = None,
-        **kwargs: Dict,  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
     ) -> None:
         super().__init__(
             endpoint=endpoint,
@@ -392,7 +389,7 @@ class VsCodeJobService(JobServiceBase):
         status: Optional[str] = None,
         port: Optional[int] = None,
         properties: Optional[Dict[str, str]] = None,
-        **kwargs: Dict,  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
     ) -> None:
         super().__init__(
             endpoint=endpoint,
@@ -412,14 +409,16 @@ class VsCodeJobService(JobServiceBase):
         return self._to_rest_job_service()
 
 
-def _append_or_update_properties(properties: Dict[str, str], key: str, value: str) -> Dict[str, str]:
+def _append_or_update_properties(
+    properties: Optional[Dict[str, str]], key: str, value: Optional[str]
+) -> Dict[str, str]:
     if value and not properties:
         properties = {key: value}
 
     if value and properties:
         properties.update({key: value})
-    return properties
+    return properties if properties is not None else {}
 
 
-def _get_property(properties: Dict[str, str], key: str) -> str:
+def _get_property(properties: Dict[str, str], key: str) -> Optional[str]:
     return properties.get(key, None) if properties else None

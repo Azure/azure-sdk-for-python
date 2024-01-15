@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from marshmallow import Schema
 
@@ -112,7 +112,7 @@ class SparkComponent(
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
         args: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
@@ -155,7 +155,7 @@ class SparkComponent(
         )
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context: Any) -> Union[PathAwareSchema, Schema]:
         return SparkComponentSchema(context=context)
 
     @classmethod
@@ -171,7 +171,8 @@ class SparkComponent(
         return validation_result
 
     def _to_dict(self) -> Dict:
-        return convert_ordered_dict_to_dict({**self._other_parameter, **super(SparkComponent, self)._to_dict()})
+        res: dict = convert_ordered_dict_to_dict({**self._other_parameter, **super(SparkComponent, self)._to_dict()})
+        return res
 
     def _to_ordered_dict_for_yaml_dump(self) -> Dict:
         """Dump the component content into a sorted yaml string.
@@ -180,7 +181,7 @@ class SparkComponent(
         :rtype: Dict
         """
 
-        obj = super()._to_ordered_dict_for_yaml_dump()
+        obj: dict = super()._to_ordered_dict_for_yaml_dump()
         # dict dumped base on schema will transfer code to an absolute path, while we want to keep its original value
         if self.code and isinstance(self.code, str):
             obj["code"] = self.code
@@ -190,11 +191,14 @@ class SparkComponent(
         # Return environment id of environment
         # handle case when environment is defined inline
         if isinstance(self.environment, Environment):
-            return self.environment.id
+            res: Optional[str] = self.environment.id
+            return res
         return self.environment
 
-    def __str__(self):
+    def __str__(self) -> str:
         try:
-            return self._to_yaml()
+            toYaml: str = self._to_yaml()
+            return toYaml
         except BaseException:  # pylint: disable=broad-except
-            return super(SparkComponent, self).__str__()
+            toStr: str = super(SparkComponent, self).__str__()
+            return toStr
