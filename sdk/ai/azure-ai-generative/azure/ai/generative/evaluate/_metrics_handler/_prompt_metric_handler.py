@@ -89,7 +89,7 @@ class PromptMetricHandler(MetricHandler):
     async def _compute_metric_row(self, metric, data):
         message = self._convert_metric_to_message(metric, data)
         response = await self._client.bounded_chat_completion(message)
-        content = self._client.get_chat_compeletion_content_from_response(response)
+        content = self._client.get_chat_completion_content_from_response(response)
         result = metric._parser.parse(content if content is not None else response, metric)
         return result
 
