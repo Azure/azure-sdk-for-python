@@ -34,6 +34,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     USER_AGENT_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
     PROP_PARTITION_KEY_AMQP_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
     AMQP_LONG_VALUE: Callable
+    AMQP_TIMESTAMP_VALUE: Callable
     AMQP_ARRAY_VALUE: Callable
     AMQP_UINT_VALUE: Callable
 
