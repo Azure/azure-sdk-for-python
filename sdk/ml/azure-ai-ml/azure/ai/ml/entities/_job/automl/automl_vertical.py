@@ -31,8 +31,8 @@ class AutoMLVertical(AutoMLJob):
     def __init__(
         self,
         task_type: str,
-        training_data: Optional[Input],
-        validation_data: Optional[Input],
+        training_data: Input,
+        validation_data: Input,
         test_data: Optional[Input] = None,
         **kwargs: Any
     ) -> None:
@@ -57,7 +57,7 @@ class AutoMLVertical(AutoMLJob):
         self._task_type = task_type
         self.training_data = training_data
         self.validation_data = validation_data
-        self.test_data = test_data
+        self.test_data = test_data  # type: ignore
         super().__init__(**kwargs)
 
     @property
@@ -89,7 +89,7 @@ class AutoMLVertical(AutoMLJob):
         return self._training_data
 
     @training_data.setter
-    def training_data(self, training_data: Optional[Input]) -> None:
+    def training_data(self, training_data: Input) -> None:
         """Set training data.
 
         :param training_data: Training data input
@@ -107,7 +107,7 @@ class AutoMLVertical(AutoMLJob):
         return self._validation_data
 
     @validation_data.setter
-    def validation_data(self, validation_data: Optional[Input]) -> None:
+    def validation_data(self, validation_data: Input) -> None:
         """Set validation data.
 
         :param validation_data: Validation data input
@@ -125,7 +125,7 @@ class AutoMLVertical(AutoMLJob):
         return self._test_data
 
     @test_data.setter
-    def test_data(self, test_data: Optional[Input]) -> None:
+    def test_data(self, test_data: Input) -> None:
         """Set test data.
 
         :param test_data: Test data input

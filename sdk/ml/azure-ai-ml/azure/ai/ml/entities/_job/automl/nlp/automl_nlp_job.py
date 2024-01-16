@@ -75,7 +75,9 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
     ):
         self._training_parameters: Optional[NlpFixedParameters] = None
 
-        super().__init__(task_type, training_data=training_data, validation_data=validation_data, **kwargs)
+        super().__init__(
+            task_type, training_data=training_data, validation_data=validation_data, **kwargs  # type: ignore
+        )
         self.log_verbosity = log_verbosity
         self._primary_metric: str = ""
         self.primary_metric = primary_metric
@@ -442,8 +444,8 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         from service (as MLTableJobInput), we should set responsible ones back to Input
         """
         super()._restore_data_inputs()
-        self.training_data = self.training_data if self.training_data else None
-        self.validation_data = self.validation_data if self.validation_data else None
+        self.training_data = self.training_data if self.training_data else None  # type: ignore
+        self.validation_data = self.validation_data if self.validation_data else None  # type: ignore
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, AutoMLNLPJob):
