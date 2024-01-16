@@ -14,6 +14,8 @@
     ([#33761](https://github.com/Azure/azure-sdk-for-python/pull/33761))
 - Fix siteName in diagnostic logging
     ([#33808](https://github.com/Azure/azure-sdk-for-python/pull/33808))
+- Update to opentelemetry-resource-detector-azure 0.1.1 and OTel SKD/API 1.21
+    ([#33866](https://github.com/Azure/azure-sdk-for-python/pull/33866))
 
 ## 1.1.1 (2023-12-04)
 
