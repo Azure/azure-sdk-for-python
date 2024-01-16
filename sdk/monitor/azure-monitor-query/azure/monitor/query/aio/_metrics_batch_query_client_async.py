@@ -139,7 +139,7 @@ class MetricsBatchQueryClient:  # pylint: disable=client-accepts-api-version-key
             top=max_results,
             orderby=order_by,
             filter=filter,
-            rollupby=roll_up_by,
+            rollupby=roll_up_by,  # cspell:ignore rollupby
             **kwargs
         )
 

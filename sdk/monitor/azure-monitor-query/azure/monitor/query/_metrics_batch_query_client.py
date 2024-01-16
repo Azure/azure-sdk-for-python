@@ -100,7 +100,7 @@ class MetricsBatchQueryClient:  # pylint: disable=client-accepts-api-version-key
         :paramtype filter: str
         :keyword roll_up_by: Dimension name(s) to rollup results by. For example if you only want to see
             metric values with a filter like 'City eq Seattle or City eq Tacoma' but don't want to see
-            separate values for each city, you can specify 'RollUpBy=City' to see the results for Seattle
+            separate values for each city, you can specify 'City' to see the results for Seattle
             and Tacoma rolled up into one timeseries. Default value is None.
         :paramtype roll_up_by: str
         :return: A list of MetricsQueryResult objects.
@@ -138,7 +138,7 @@ class MetricsBatchQueryClient:  # pylint: disable=client-accepts-api-version-key
             top=max_results,
             orderby=order_by,
             filter=filter,
-            rollupby=roll_up_by,
+            rollupby=roll_up_by,  # cspell:ignore rollupby
             **kwargs
         )
 
