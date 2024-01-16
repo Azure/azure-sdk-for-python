@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 
-from typing import Optional, Union
+from typing import Any, Optional, Union
 
 from azure.ai.ml.constants import ParallelTaskType
 from azure.ai.ml.entities._assets.environment import Environment
@@ -53,7 +53,7 @@ class RunFunction(ParallelTask):
         model: Optional[str] = None,
         append_row_to: Optional[str] = None,
         environment: Optional[Union[Environment, str]] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         super().__init__(
             code=code,

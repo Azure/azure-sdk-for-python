@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict, List
+from typing import Any, Dict, List, Optional
 
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._utils.utils import is_data_binding_expression
@@ -28,7 +28,7 @@ class ConditionNode(ControlFlowNode):
     """
 
     def __init__(
-        self, condition, *, true_block=None, false_block=None, **kwargs
+        self, condition: Any, *, true_block: Optional[List] = None, false_block: Optional[List] = None, **kwargs: Any
     ) -> None:  # pylint: disable=unused-argument
         kwargs.pop("type", None)
         super(ConditionNode, self).__init__(type=ControlFlowType.IF_ELSE, **kwargs)
@@ -41,7 +41,7 @@ class ConditionNode(ControlFlowNode):
         self._false_block = false_block
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> PathAwareSchema:  # pylint: disable=unused-argument
+    def _create_schema_for_validation(cls, context: Any) -> PathAwareSchema:  # pylint: disable=unused-argument
         from azure.ai.ml._schema.pipeline.condition_node import ConditionNodeSchema
 
         return ConditionNodeSchema(context=context)
@@ -62,7 +62,7 @@ class ConditionNode(ControlFlowNode):
         return cls(**loaded_data)
 
     @property
-    def true_block(self) -> List[BaseNode]:
+    def true_block(self) -> Optional[List]:
         """Get the list of nodes to execute when the condition is true.
 
         :return: The list of nodes to execute when the condition is true.
@@ -71,7 +71,7 @@ class ConditionNode(ControlFlowNode):
         return self._true_block
 
     @property
-    def false_block(self) -> List[BaseNode]:
+    def false_block(self) -> Optional[List]:
         """Get the list of nodes to execute when the condition is false.
 
         :return: The list of nodes to execute when the condition is false.
@@ -131,7 +131,7 @@ class ConditionNode(ControlFlowNode):
                 )
 
         # check if true/false block is valid binding
-        for name, blocks in {"true_block": self.true_block, "false_block": self.false_block}.items():
+        for name, blocks in {"true_block": self.true_block, "false_block": self.false_block}.items():  # type: ignore
             blocks = blocks if blocks else []
             for block in blocks:
                 if block is None or not isinstance(block, str):

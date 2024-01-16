@@ -40,7 +40,7 @@ class PathAwareSchemaValidatableMixin(SchemaValidatableMixin):
         return {BASE_PATH_CONTEXT_KEY: self.__base_path_for_validation}
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> PathAwareSchema:
+    def _create_schema_for_validation(cls, context: typing.Any) -> PathAwareSchema:
         raise NotImplementedError()
 
     @classmethod
@@ -50,4 +50,4 @@ class PathAwareSchemaValidatableMixin(SchemaValidatableMixin):
     def _dump_for_validation(self) -> typing.Dict:
         # this is not a necessary step but to keep the same behavior as before
         # empty items will be removed when converting to dict
-        return convert_ordered_dict_to_dict(super()._dump_for_validation())
+        return typing.cast(dict, convert_ordered_dict_to_dict(super()._dump_for_validation()))

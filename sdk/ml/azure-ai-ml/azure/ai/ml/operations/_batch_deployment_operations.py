@@ -5,7 +5,7 @@
 # pylint: disable=protected-access, too-many-boolean-expressions
 
 import re
-from typing import Dict, Optional, TypeVar, Union
+from typing import Any, Optional, TypeVar, Union
 
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import (
@@ -27,10 +27,10 @@ from azure.ai.ml.entities import BatchDeployment, BatchJob, ModelBatchDeployment
 from azure.ai.ml.entities._deployment.deployment import Deployment
 from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
 from azure.core.credentials import TokenCredential
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
 from ._operation_orchestrator import OperationOrchestrator
 
@@ -68,7 +68,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         service_client_05_2022: ServiceClient052022,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
-        **kwargs: Dict,
+        **kwargs: Any,
     ):
         super(BatchDeploymentOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
@@ -91,7 +91,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         deployment: DeploymentType,
         *,
         skip_script_validation: bool = False,
-        **kwargs,
+        **kwargs: Any,
     ) -> LROPoller[DeploymentType]:
         """Create or update a batch deployment.
 
@@ -322,7 +322,9 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         :return: The workspace location
         :rtype: str
         """
-        return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
+        return str(
+            self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
+        )
 
     def _validate_component(self, deployment: Deployment, orchestrators: OperationOrchestrator) -> None:
         """Validates that the value provided is associated to an existing component or otherwise we will try to create

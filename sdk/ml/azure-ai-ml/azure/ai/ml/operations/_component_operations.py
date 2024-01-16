@@ -9,7 +9,7 @@ from functools import partial
 from inspect import Parameter, signature
 from os import PathLike
 from pathlib import Path
-from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union, cast
 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
@@ -41,7 +41,7 @@ from azure.ai.ml.constants._common import (
     DefaultOpenEncoding,
     LROConfigurations,
 )
-from azure.ai.ml.entities import Component, Environment, ValidationResult
+from azure.ai.ml.entities import Component, ValidationResult
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
@@ -112,24 +112,33 @@ class ComponentOperations(_ScopeDependentOperations):
 
     @property
     def _code_operations(self) -> CodeOperations:
-        return self._all_operations.get_operation(AzureMLResourceType.CODE, lambda x: isinstance(x, CodeOperations))
+        return cast(
+            CodeOperations,
+            self._all_operations.get_operation(AzureMLResourceType.CODE, lambda x: isinstance(x, CodeOperations)),
+        )
 
     @property
     def _environment_operations(self) -> EnvironmentOperations:
-        return self._all_operations.get_operation(
-            AzureMLResourceType.ENVIRONMENT,
-            lambda x: isinstance(x, EnvironmentOperations),
+        return cast(
+            EnvironmentOperations,
+            self._all_operations.get_operation(
+                AzureMLResourceType.ENVIRONMENT,
+                lambda x: isinstance(x, EnvironmentOperations),
+            ),
         )
 
     @property
     def _workspace_operations(self) -> WorkspaceOperations:
-        return self._all_operations.get_operation(
-            AzureMLResourceType.WORKSPACE,
-            lambda x: isinstance(x, WorkspaceOperations),
+        return cast(
+            WorkspaceOperations,
+            self._all_operations.get_operation(
+                AzureMLResourceType.WORKSPACE,
+                lambda x: isinstance(x, WorkspaceOperations),
+            ),
         )
 
     @property
-    def _job_operations(self):
+    def _job_operations(self) -> Any:
         from ._job_operations import JobOperations
 
         return self._all_operations.get_operation(AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations))
@@ -162,39 +171,45 @@ class ComponentOperations(_ScopeDependentOperations):
         """
 
         if name:
-            return (
-                self._version_operation.list(
-                    name=name,
+            return cast(
+                Iterable[Component],
+                (
+                    self._version_operation.list(
+                        name=name,
+                        resource_group_name=self._resource_group_name,
+                        registry_name=self._registry_name,
+                        **self._init_args,
+                        cls=lambda objs: [Component._from_rest_object(obj) for obj in objs],
+                    )
+                    if self._registry_name
+                    else self._version_operation.list(
+                        name=name,
+                        resource_group_name=self._resource_group_name,
+                        workspace_name=self._workspace_name,
+                        list_view_type=list_view_type,
+                        **self._init_args,
+                        cls=lambda objs: [Component._from_rest_object(obj) for obj in objs],
+                    )
+                ),
+            )
+        return cast(
+            Iterable[Component],
+            (
+                self._container_operation.list(
                     resource_group_name=self._resource_group_name,
                     registry_name=self._registry_name,
                     **self._init_args,
-                    cls=lambda objs: [Component._from_rest_object(obj) for obj in objs],
+                    cls=lambda objs: [Component._from_container_rest_object(obj) for obj in objs],
                 )
                 if self._registry_name
-                else self._version_operation.list(
-                    name=name,
+                else self._container_operation.list(
                     resource_group_name=self._resource_group_name,
                     workspace_name=self._workspace_name,
                     list_view_type=list_view_type,
                     **self._init_args,
-                    cls=lambda objs: [Component._from_rest_object(obj) for obj in objs],
+                    cls=lambda objs: [Component._from_container_rest_object(obj) for obj in objs],
                 )
-            )
-        return (
-            self._container_operation.list(
-                resource_group_name=self._resource_group_name,
-                registry_name=self._registry_name,
-                **self._init_args,
-                cls=lambda objs: [Component._from_container_rest_object(obj) for obj in objs],
-            )
-            if self._registry_name
-            else self._container_operation.list(
-                resource_group_name=self._resource_group_name,
-                workspace_name=self._workspace_name,
-                list_view_type=list_view_type,
-                **self._init_args,
-                cls=lambda objs: [Component._from_container_rest_object(obj) for obj in objs],
-            )
+            ),
         )
 
     @monitor_with_telemetry_mixin(logger, "ComponentVersion.Get", ActivityType.INTERNALCALL)
@@ -293,7 +308,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
     @experimental
     @monitor_with_telemetry_mixin(logger, "Component.Download", ActivityType.PUBLICAPI)
-    def download(self, name: str, download_path: Union[PathLike, str] = ".", *, version: str = None) -> None:
+    def download(self, name: str, download_path: Union[PathLike, str] = ".", *, version: Optional[str] = None) -> None:
         """Download the specified component and its dependencies to local. Local component can be used to create
         the component in another workspace or for offline development.
 
@@ -358,7 +373,7 @@ class ComponentOperations(_ScopeDependentOperations):
         self,
         component: Union[Component, types.FunctionType],
         raise_on_failure: bool = False,
-        **kwargs,
+        **kwargs: Any,
     ) -> ValidationResult:
         """validate a specified component. if there are inline defined
         entities, e.g. Environment, Code, they won't be created.
@@ -426,7 +441,7 @@ class ComponentOperations(_ScopeDependentOperations):
             raise_error=raise_on_failure,
         )
 
-    def _update_flow_rest_object(self, rest_component_resource):
+    def _update_flow_rest_object(self, rest_component_resource: Any) -> None:
         import re
 
         from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
@@ -474,7 +489,9 @@ class ComponentOperations(_ScopeDependentOperations):
 
         return current_version, rest_component_resource
 
-    def _create_or_update_component_version(self, component, name, version, rest_component_resource):
+    def _create_or_update_component_version(
+        self, component: Component, name: str, version: Optional[str], rest_component_resource: Any
+    ) -> Any:
         try:
             if self._registry_name:
                 start_time = time.time()
@@ -531,7 +548,12 @@ class ComponentOperations(_ScopeDependentOperations):
         extra_keys=["is_anonymous"],
     )
     def create_or_update(
-        self, component: Union[Component, types.FunctionType], version=None, *, skip_validation: bool = False, **kwargs
+        self,
+        component: Union[Component, types.FunctionType],
+        version: Optional[str] = None,
+        *,
+        skip_validation: bool = False,
+        **kwargs: Any,
     ) -> Component:
         """Create or update a specified component. if there're inline defined
         entities, e.g. Environment, Code, they'll be created together with the
@@ -600,7 +622,7 @@ class ComponentOperations(_ScopeDependentOperations):
             version, rest_component_resource = self._reset_version_if_no_change(
                 component,
                 current_name=name,
-                current_version=version,
+                current_version=str(version),
             )
         else:
             rest_component_resource = component._to_rest_object()
@@ -635,7 +657,8 @@ class ComponentOperations(_ScopeDependentOperations):
         name: str,
         version: Optional[str] = None,
         label: Optional[str] = None,
-        **kwargs,  # pylint:disable=unused-argument
+        # pylint:disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         """Archive a component.
 
@@ -671,7 +694,8 @@ class ComponentOperations(_ScopeDependentOperations):
         name: str,
         version: Optional[str] = None,
         label: Optional[str] = None,
-        **kwargs,  # pylint:disable=unused-argument
+        # pylint:disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         """Restore an archived component.
 
@@ -732,13 +756,15 @@ class ComponentOperations(_ScopeDependentOperations):
         return Component._from_rest_object(result)
 
     @classmethod
-    def _try_resolve_environment_for_component(cls, component, _: str, resolver: _AssetResolver):
+    def _try_resolve_environment_for_component(
+        cls, component: Union[BaseNode, str], _: str, resolver: _AssetResolver
+    ) -> None:
         if isinstance(component, BaseNode):
             component = component._component  # pylint: disable=protected-access
 
         if isinstance(component, str):
             return
-        potential_parents = [component]
+        potential_parents: List[BaseNode] = [component]
         if hasattr(component, "task"):
             potential_parents.append(component.task)
         for parent in potential_parents:
@@ -752,8 +778,6 @@ class ComponentOperations(_ScopeDependentOperations):
             if isinstance(parent.environment, dict):
                 continue
             if type(parent.environment).__name__ == "InternalEnvironment":
-                continue
-            if not isinstance(parent.environment, (str, Environment)):
                 continue
             parent.environment = resolver(parent.environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
 
@@ -806,7 +830,7 @@ class ComponentOperations(_ScopeDependentOperations):
             resolver=resolver,
         )
 
-    def _resolve_inputs_for_pipeline_component_jobs(self, jobs: Dict[str, Any], base_path: str):
+    def _resolve_inputs_for_pipeline_component_jobs(self, jobs: Dict[str, Any], base_path: str) -> None:
         """Resolve inputs for jobs in a pipeline component.
 
         :param jobs: A dict of nodes in a pipeline component.
@@ -829,7 +853,7 @@ class ComponentOperations(_ScopeDependentOperations):
                 self._job_operations._resolve_automl_job_inputs(job_instance)
 
     @classmethod
-    def _resolve_binding_on_supported_fields_for_node(cls, node: BaseNode):
+    def _resolve_binding_on_supported_fields_for_node(cls, node: BaseNode) -> None:
         """Resolve all PipelineInput(binding from sdk) on supported fields to string.
 
         :param node: The node
@@ -847,7 +871,7 @@ class ComponentOperations(_ScopeDependentOperations):
                 setattr(node, field_name, val._data_binding())
 
     @classmethod
-    def _try_resolve_node_level_task_for_parallel_node(cls, node: BaseNode, _: str, resolver: _AssetResolver):
+    def _try_resolve_node_level_task_for_parallel_node(cls, node: BaseNode, _: str, resolver: _AssetResolver) -> None:
         """Resolve node.task.code for parallel node if it's a reference to node.component.task.code.
 
         This is a hack operation.
@@ -892,7 +916,7 @@ class ComponentOperations(_ScopeDependentOperations):
             node.task.environment = resolver(component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
 
     @classmethod
-    def _set_default_display_name_for_anonymous_component_in_node(cls, node: BaseNode, default_name: str):
+    def _set_default_display_name_for_anonymous_component_in_node(cls, node: BaseNode, default_name: str) -> None:
         """Set default display name for anonymous component in a node.
         If node._component is an anonymous component and without display name, set the default display name.
 
@@ -920,7 +944,7 @@ class ComponentOperations(_ScopeDependentOperations):
             component.display_name = default_name
 
     @classmethod
-    def _try_resolve_compute_for_node(cls, node: BaseNode, _: str, resolver: _AssetResolver):
+    def _try_resolve_compute_for_node(cls, node: BaseNode, _: str, resolver: _AssetResolver) -> None:
         """Resolve compute for base node.
 
         :param node: The node
@@ -944,7 +968,7 @@ class ComponentOperations(_ScopeDependentOperations):
     @classmethod
     def _divide_nodes_to_resolve_into_layers(
         cls, component: PipelineComponent, extra_operations: List[Callable[[BaseNode, str], Any]]
-    ):
+    ) -> List:
         """Traverse the pipeline component and divide nodes to resolve into layers. Note that all leaf nodes will be
         put in the last layer.
         For example, for below pipeline component, assuming that all nodes need to be resolved:
@@ -970,7 +994,7 @@ class ComponentOperations(_ScopeDependentOperations):
         :rtype: List[List[Tuple[str, BaseNode]]]
         """
         nodes_to_process = list(component.jobs.items())
-        layers = []
+        layers: List = []
         leaf_nodes = []
 
         while nodes_to_process:
@@ -1006,7 +1030,7 @@ class ComponentOperations(_ScopeDependentOperations):
             workspace_rest = self._workspace_operations._operation.get(
                 resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
             )
-            return workspace_rest.workspace_id
+            return str(workspace_rest.workspace_id)
         except HttpResponseError:
             return "{}/{}/{}".format(self._subscription_id, self._resource_group_name, self._workspace_name)
 
@@ -1050,7 +1074,7 @@ class ComponentOperations(_ScopeDependentOperations):
         self,
         component: Union[Component, str],
         resolver: _AssetResolver,
-    ):
+    ) -> None:
         """Resolve dependencies for pipeline component jobs.
         Will directly return if component is not a pipeline component.
 
@@ -1112,7 +1136,7 @@ class ComponentOperations(_ScopeDependentOperations):
             component_cache.resolve_nodes()
 
 
-def _refine_component(component_func: types.FunctionType) -> Component:
+def _refine_component(component_func: Any) -> Component:
     """Return the component of function that is decorated by command
     component decorator.
 
@@ -1122,7 +1146,7 @@ def _refine_component(component_func: types.FunctionType) -> Component:
     :rtype: Component
     """
 
-    def check_parameter_type(f: types.FunctionType):
+    def check_parameter_type(f: Any) -> None:
         """Check all parameter is annotated or has a default value with clear type(not None).
 
         :param f: The component function
@@ -1154,7 +1178,7 @@ def _refine_component(component_func: types.FunctionType) -> Component:
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-    def check_non_pipeline_inputs(f: types.FunctionType):
+    def check_non_pipeline_inputs(f: Any) -> None:
         """Check whether non_pipeline_inputs exist in pipeline builder.
 
         :param f: The component function

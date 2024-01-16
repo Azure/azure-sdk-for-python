@@ -54,7 +54,7 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
             return SparkResourceConfiguration(**obj)
         return SparkResourceConfiguration(instance_type=obj.instance_type, runtime_version=obj.runtime_version)
 
-    def _validate(self):
+    def _validate(self) -> None:
         # TODO: below logic is duplicated to SparkResourceConfigurationSchema, maybe make SparkJob schema validatable
         if self.instance_type is None or self.instance_type == "":
             msg = "Instance type must be specified for SparkResourceConfiguration"

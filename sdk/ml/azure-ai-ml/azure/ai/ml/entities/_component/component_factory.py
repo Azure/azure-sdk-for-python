@@ -32,8 +32,8 @@ class _ComponentFactory:
     """A class to create component instances from yaml dict or rest objects without hard-coded type check."""
 
     def __init__(self) -> None:
-        self._create_instance_funcs = {}
-        self._create_schema_funcs = {}
+        self._create_instance_funcs: Dict = {}
+        self._create_schema_funcs: Dict = {}
 
         self.register_type(
             _type=NodeType.PARALLEL,
@@ -90,7 +90,7 @@ class _ComponentFactory:
         )
 
     def get_create_funcs(
-        self, yaml_spec: dict, for_load=False
+        self, yaml_spec: dict, for_load: bool = False
     ) -> Tuple[Callable[..., Component], Callable[[Any], Schema]]:
         """Get registered functions to create an instance and its corresponding schema for the given type.
 
@@ -118,7 +118,7 @@ class _ComponentFactory:
         _type: str,
         create_instance_func: Callable[..., Component],
         create_schema_func: Callable[[Any], Schema],
-    ):
+    ) -> None:
         """Register a new component type.
 
         :param _type: The type name of the component.
@@ -132,7 +132,7 @@ class _ComponentFactory:
         self._create_schema_funcs[_type] = create_schema_func
 
     @classmethod
-    def load_from_dict(cls, *, data: Dict, context: Dict, _type: Optional[str] = None, **kwargs) -> Component:
+    def load_from_dict(cls, *, data: Dict, context: Dict, _type: Optional[str] = None, **kwargs: Any) -> Component:
         """Load a component from a YAML dict.
 
         :keyword data: The YAML dict.

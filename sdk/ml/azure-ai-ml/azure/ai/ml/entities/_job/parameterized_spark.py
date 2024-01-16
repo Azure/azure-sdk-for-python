@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 # pylint: disable=protected-access
 import os
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.entities._job.spark_job_entry import SparkJobEntry
@@ -45,7 +45,7 @@ class ParameterizedSpark(SparkJobEntryMixin):
     def __init__(
         self,
         code: Optional[Union[str, os.PathLike]] = ".",
-        entry: Union[Dict[str, str], SparkJobEntry, None] = None,
+        entry: Optional[Union[Dict[str, str], SparkJobEntry]] = None,
         py_files: Optional[List[str]] = None,
         jars: Optional[List[str]] = None,
         files: Optional[List[str]] = None,
@@ -53,8 +53,10 @@ class ParameterizedSpark(SparkJobEntryMixin):
         conf: Optional[Dict[str, str]] = None,
         environment: Optional[Union[str, Environment]] = None,
         args: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
+        self.args = None
+
         super().__init__(**kwargs)
         self.code = code
         self.entry = entry

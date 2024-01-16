@@ -29,7 +29,7 @@ class MaterializationStore:
         self.__target = target
 
     @property
-    def target(self):
+    def target(self) -> str:
         """Get target value
 
         :return: returns the ID of the target
@@ -38,7 +38,7 @@ class MaterializationStore:
         return self.__target
 
     @target.setter
-    def target(self, value: str):
+    def target(self, value: str) -> None:
         """Set target value
 
         :param value: the ID of the target

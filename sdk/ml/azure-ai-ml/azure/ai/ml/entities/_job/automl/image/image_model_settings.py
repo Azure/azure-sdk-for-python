@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Optional
+from typing import Any, Optional
 
 # pylint: disable=R0902,too-many-locals
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
@@ -13,11 +13,11 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 )
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     LearningRateScheduler,
+    LogTrainingMetrics,
+    LogValidationLoss,
     ModelSize,
     StochasticOptimizer,
     ValidationMetricType,
-    LogTrainingMetrics,
-    LogValidationLoss,
 )
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -363,7 +363,7 @@ class ImageModelSettingsClassification(ImageModelDistributionSettings):
         validation_crop_size: Optional[int] = None,
         validation_resize_size: Optional[int] = None,
         weighted_loss: Optional[int] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         super(ImageModelSettingsClassification, self).__init__(
             advanced_settings=advanced_settings,
@@ -699,7 +699,7 @@ class ImageModelSettingsObjectDetection(ImageModelDistributionSettings):
         validation_metric_type: Optional[ValidationMetricType] = None,
         log_training_metrics: Optional[LogTrainingMetrics] = None,
         log_validation_loss: Optional[LogValidationLoss] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         super(ImageModelSettingsObjectDetection, self).__init__(
             advanced_settings=advanced_settings,

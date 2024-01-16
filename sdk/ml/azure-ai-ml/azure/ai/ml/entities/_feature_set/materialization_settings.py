@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 from azure.ai.ml._restclient.v2023_10_01.models import MaterializationSettings as RestMaterializationSettings
 from azure.ai.ml._restclient.v2023_10_01.models import MaterializationStoreType
@@ -49,7 +49,8 @@ class MaterializationSettings(RestTranslatableMixin):
         notification: Optional[Notification] = None,
         resource: Optional[MaterializationComputeResource] = None,
         spark_configuration: Optional[Dict[str, str]] = None,
-        **kwargs  # pylint: disable=unused-argument
+        # pylint: disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         self.schedule = schedule
         self.offline_enabled = offline_enabled
@@ -80,7 +81,7 @@ class MaterializationSettings(RestTranslatableMixin):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: RestMaterializationSettings) -> "MaterializationSettings":
+    def _from_rest_object(cls, obj: RestMaterializationSettings) -> Optional["MaterializationSettings"]:
         if not obj:
             return None
         return MaterializationSettings(

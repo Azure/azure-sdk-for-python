@@ -84,7 +84,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-    def _get(self, name: str, version: str = None, **kwargs: Dict) -> FeaturestoreEntityVersion:
+    def _get(self, name: str, version: Optional[str] = None, **kwargs: Dict) -> FeaturestoreEntityVersion:
         return self._operation.get(
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,

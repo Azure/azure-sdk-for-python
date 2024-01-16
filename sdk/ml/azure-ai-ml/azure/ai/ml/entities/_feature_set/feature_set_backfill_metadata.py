@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from azure.ai.ml._restclient.v2023_10_01.models import (
     FeaturesetVersionBackfillResponse as RestFeaturesetVersionBackfillResponse,
@@ -26,13 +26,14 @@ class FeatureSetBackfillMetadata(RestTranslatableMixin):
         *,
         job_ids: Optional[List[str]] = None,
         type: Optional[str] = None,  # pylint: disable=redefined-builtin
-        **kwargs  # pylint: disable=unused-argument
+        # pylint: disable=unused-argument
+        **kwargs: Any
     ) -> None:
         self.type = type if type else "BackfillMaterialization"
         self.job_ids = job_ids
 
     @classmethod
-    def _from_rest_object(cls, obj: RestFeaturesetVersionBackfillResponse) -> "FeatureSetBackfillMetadata":
+    def _from_rest_object(cls, obj: RestFeaturesetVersionBackfillResponse) -> Optional["FeatureSetBackfillMetadata"]:
         if not obj:
             return None
         return FeatureSetBackfillMetadata(job_ids=obj.job_ids)

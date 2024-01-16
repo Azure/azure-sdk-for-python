@@ -6,7 +6,7 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, List, Optional, Union
+from typing import IO, Any, AnyStr, Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
@@ -41,8 +41,8 @@ class Registry(Resource):
         intellectual_property: Optional[IntellectualProperty] = None,
         managed_resource_group: Optional[str] = None,
         mlflow_registry_uri: Optional[str] = None,
-        replication_locations: List[RegistryRegionDetails],
-        **kwargs,
+        replication_locations: Optional[List],
+        **kwargs: Any,
     ):
         """Azure ML registry.
 
@@ -86,7 +86,7 @@ class Registry(Resource):
     def dump(
         self,
         dest: Union[str, PathLike, IO[AnyStr]],
-        **kwargs,  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
     ) -> None:
         """Dump the registry spec into a file in yaml format.
 
@@ -117,7 +117,8 @@ class Registry(Resource):
             if self.replication_locations[0].acr_config and len(self.replication_locations[0].acr_config) > 0:
                 self.container_registry = self.replication_locations[0].acr_config[0]
 
-        return schema.dump(self)
+        res: dict = schema.dump(self)
+        return res
 
     @classmethod
     def _load(
@@ -125,7 +126,7 @@ class Registry(Resource):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "Registry":
         data = data or {}
         params_override = params_override or []
@@ -141,7 +142,7 @@ class Registry(Resource):
         return Registry(**loaded_schema)
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestRegistry) -> "Registry":
+    def _from_rest_object(cls, rest_obj: RestRegistry) -> Optional["Registry"]:
         if not rest_obj:
             return None
         real_registry = rest_obj.properties
@@ -182,7 +183,7 @@ class Registry(Resource):
     def _convert_yaml_dict_to_entity_input(
         cls,
         input: Dict,  # pylint: disable=redefined-builtin
-    ):
+    ) -> None:
         # pop container_registry value.
         global_acr_exists = False
         if CONTAINER_REGISTRY in input:
