@@ -7,4 +7,3 @@ pylint = false
 regression = false
 sphinx = false
 black = false
-ci_enabled = false

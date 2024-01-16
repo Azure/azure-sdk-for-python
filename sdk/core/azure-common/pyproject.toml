@@ -6,4 +6,3 @@ mypy = false
 pylint = false
 regression = false
 black = false
-ci_enabled = false
