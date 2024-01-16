@@ -10,6 +10,9 @@
 
 ### Other Changes
 
+- Update to opentelemetry-resource-detector-azure 0.1.1 and OTel SKD/API 1.21
+    ([#33783](https://github.com/Azure/azure-sdk-for-python/pull/33783))
+
 ## 1.0.0b20 (2024-01-04)
 
 ### Other Changes

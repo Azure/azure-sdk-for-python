@@ -12,7 +12,7 @@
 
 - Implement distro detection for statsbeat feature
     ([#33761](https://github.com/Azure/azure-sdk-for-python/pull/33761))
-- Update to opentelemetry-resource-detector-azure 0.1.1
+- Update to opentelemetry-resource-detector-azure 0.1.1 and OTel SKD/API 1.21
     ([#33783](https://github.com/Azure/azure-sdk-for-python/pull/33783))
 
 ## 1.1.1 (2023-12-04)
