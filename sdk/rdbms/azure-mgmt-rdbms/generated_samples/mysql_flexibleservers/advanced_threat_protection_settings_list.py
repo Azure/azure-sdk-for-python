@@ -14,7 +14,7 @@ from azure.mgmt.rdbms.mysql_flexibleservers import MySQLManagementClient
     pip install azure-identity
     pip install azure-mgmt-rdbms
 # USAGE
-    python server_reset_gtid.py
+    python advanced_threat_protection_settings_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,16 +26,17 @@ from azure.mgmt.rdbms.mysql_flexibleservers import MySQLManagementClient
 def main():
     client = MySQLManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
+        subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    client.servers.begin_reset_gtid(
-        resource_group_name="TestGroup",
-        server_name="testserver",
-        parameters={"gtidSet": "4aff5b51-97ba-11ed-a955-002248036acc:1-16"},
-    ).result()
+    response = client.advanced_threat_protection_settings.list(
+        resource_group_name="threatprotection-6852",
+        server_name="threatprotection-2080",
+    )
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2023-10-01-preview/examples/ServerResetGtid.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2023-10-01-preview/examples/AdvancedThreatProtectionSettingsList.json
 if __name__ == "__main__":
     main()

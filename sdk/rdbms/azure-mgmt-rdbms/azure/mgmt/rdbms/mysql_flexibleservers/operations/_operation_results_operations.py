@@ -34,7 +34,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_execute_request(**kwargs: Any) -> HttpRequest:
+def build_get_request(location_name: str, operation_id: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -42,7 +42,17 @@ def build_execute_request(**kwargs: Any) -> HttpRequest:
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/providers/Microsoft.DBforMySQL/getPrivateDnsZoneSuffix")
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/providers/Microsoft.DBforMySQL/locations/{locationName}/operationResults/{operationId}",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "locationName": _SERIALIZER.url("location_name", location_name, "str", min_length=1, pattern=r"^[ \w]+$"),
+        "operationId": _SERIALIZER.url("operation_id", operation_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -50,17 +60,17 @@ def build_execute_request(**kwargs: Any) -> HttpRequest:
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class GetPrivateDnsZoneSuffixOperations:
+class OperationResultsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.rdbms.mysql_flexibleservers.MySQLManagementClient`'s
-        :attr:`get_private_dns_zone_suffix` attribute.
+        :attr:`operation_results` attribute.
     """
 
     models = _models
@@ -73,12 +83,18 @@ class GetPrivateDnsZoneSuffixOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def execute(self, **kwargs: Any) -> _models.GetPrivateDnsZoneSuffixResponse:
-        """Get private DNS zone suffix in the cloud.
+    def get(self, location_name: str, operation_id: str, **kwargs: Any) -> _models.OperationStatusExtendedResult:
+        """Get the operation result for a long running operation.
 
+        Get the operation result for a long running operation.
+
+        :param location_name: The name of the location. Required.
+        :type location_name: str
+        :param operation_id: The operation Id. Required.
+        :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: GetPrivateDnsZoneSuffixResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.rdbms.mysql_flexibleservers.models.GetPrivateDnsZoneSuffixResponse
+        :return: OperationStatusExtendedResult or the result of cls(response)
+        :rtype: ~azure.mgmt.rdbms.mysql_flexibleservers.models.OperationStatusExtendedResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -93,11 +109,14 @@ class GetPrivateDnsZoneSuffixOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
-        cls: ClsType[_models.GetPrivateDnsZoneSuffixResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.OperationStatusExtendedResult] = kwargs.pop("cls", None)
 
-        request = build_execute_request(
+        request = build_get_request(
+            location_name=location_name,
+            operation_id=operation_id,
+            subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.execute.metadata["url"],
+            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -116,11 +135,13 @@ class GetPrivateDnsZoneSuffixOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("GetPrivateDnsZoneSuffixResponse", pipeline_response)
+        deserialized = self._deserialize("OperationStatusExtendedResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    execute.metadata = {"url": "/providers/Microsoft.DBforMySQL/getPrivateDnsZoneSuffix"}
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.DBforMySQL/locations/{locationName}/operationResults/{operationId}"
+    }

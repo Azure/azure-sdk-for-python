@@ -45,7 +45,7 @@ def build_list_request(location_name: str, subscription_id: str, **kwargs: Any) 
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/providers/Microsoft.DBforMySQL/locations/{locationName}/capabilities",
+        "/subscriptions/{subscriptionId}/providers/Microsoft.DBforMySQL/locations/{locationName}/capabilitySets",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
@@ -63,14 +63,47 @@ def build_list_request(location_name: str, subscription_id: str, **kwargs: Any) 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class LocationBasedCapabilitiesOperations:
+def build_get_request(
+    location_name: str, subscription_id: str, capability_set_name: str = "default", **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/providers/Microsoft.DBforMySQL/locations/{locationName}/capabilitySets/{capabilitySetName}",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "locationName": _SERIALIZER.url("location_name", location_name, "str", min_length=1, pattern=r"^[ \w]+$"),
+        "capabilitySetName": _SERIALIZER.url(
+            "capability_set_name", capability_set_name, "str", pattern=r"^[a-z0-9][-a-z0-9]*(?<!-)$"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+class LocationBasedCapabilitySetOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.rdbms.mysql_flexibleservers.MySQLManagementClient`'s
-        :attr:`location_based_capabilities` attribute.
+        :attr:`location_based_capability_set` attribute.
     """
 
     models = _models
@@ -83,23 +116,21 @@ class LocationBasedCapabilitiesOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, location_name: str, **kwargs: Any) -> Iterable["_models.CapabilityProperties"]:
+    def list(self, location_name: str, **kwargs: Any) -> Iterable["_models.Capability"]:
         """Get capabilities at specified location in a given subscription.
 
         :param location_name: The name of the location. Required.
         :type location_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either CapabilityProperties or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.rdbms.mysql_flexibleservers.models.CapabilityProperties]
+        :return: An iterator like instance of either Capability or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.rdbms.mysql_flexibleservers.models.Capability]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
-        cls: ClsType[_models.CapabilitiesListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.CapabilitySetsList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -131,7 +162,7 @@ class LocationBasedCapabilitiesOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("CapabilitiesListResult", pipeline_response)
+            deserialized = self._deserialize("CapabilitySetsList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -156,5 +187,67 @@ class LocationBasedCapabilitiesOperations:
         return ItemPaged(get_next, extract_data)
 
     list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.DBforMySQL/locations/{locationName}/capabilities"
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.DBforMySQL/locations/{locationName}/capabilitySets"
+    }
+
+    @distributed_trace
+    def get(self, location_name: str, capability_set_name: str = "default", **kwargs: Any) -> _models.Capability:
+        """Get capabilities at specified location in a given subscription.
+
+        :param location_name: The name of the location. Required.
+        :type location_name: str
+        :param capability_set_name: Name of capability set. Default value is "default".
+        :type capability_set_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: Capability or the result of cls(response)
+        :rtype: ~azure.mgmt.rdbms.mysql_flexibleservers.models.Capability
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
+        cls: ClsType[_models.Capability] = kwargs.pop("cls", None)
+
+        request = build_get_request(
+            location_name=location_name,
+            subscription_id=self._config.subscription_id,
+            capability_set_name=capability_set_name,
+            api_version=api_version,
+            template_url=self.get.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("Capability", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.DBforMySQL/locations/{locationName}/capabilitySets/{capabilitySetName}"
     }
