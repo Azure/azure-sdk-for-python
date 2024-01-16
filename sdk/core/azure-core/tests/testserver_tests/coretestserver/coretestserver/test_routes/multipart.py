@@ -16,7 +16,7 @@ multipart_api = Blueprint("multipart_api", __name__)
 
 multipart_header_start = "multipart/form-data; boundary="
 
-# NOTE: the flask behavior is different for aiohttp and requests
+# NOTE: the flask behavior is different for aiohttp and requests if file has no name
 # in requests, we see the file content through request.form
 # in aiohttp, we see the file through request.files
 
@@ -147,3 +147,32 @@ def multipart_request():
         body_as_str.encode("ascii"),
         content_type="multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed",
     )
+
+def cal_files_num(files):
+    return sum([len(v) for _, v in files.lists()])
+
+@multipart_api.route("/data-and-named-files-array", methods=["POST"])
+def data_and_named_files_array():
+    assert_with_message("content type", multipart_header_start, request.content_type[: len(multipart_header_start)])
+    # files part
+    assert_with_message("num files", 2, cal_files_num(request.files))
+    assert_with_message("has file named fileContent", True, bool(request.files.get("fileContent")))
+    for idx, file_content in enumerate(request.files.getlist("fileContent")):
+        assert_with_message("file content type", "application/octet-stream", file_content.content_type)
+        content = file_content.read()
+        assert_with_message("file content length", 14, len(content))
+        assert_with_message("file content", b"<file content>", content)
+        assert_with_message("name", "fileContent", file_content.name)
+        assert_with_message("filename", str(idx), file_content.filename)
+        assert_with_message(
+            "has content disposition header", True, bool(file_content.headers.get("Content-Disposition"))
+        )
+        assert_with_message(
+            "content disposition",
+            f'form-data; name="fileContent"; filename="{idx}"',
+            file_content.headers["Content-Disposition"],
+        )
+    # data part
+    assert_with_message("data items num", 1, len(request.form.keys()))
+    assert_with_message("message", "Hello, world!", request.form["message"])
+    return Response(status=200)

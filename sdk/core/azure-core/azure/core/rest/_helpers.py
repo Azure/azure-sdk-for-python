@@ -104,8 +104,22 @@ def set_urlencoded_body(data, has_files):
     return default_headers, body
 
 
+def has_files_array(files):
+    return any(isinstance(f, (list, tuple)) for f in files.values())
+
+
+# when there are multi files in same field name, (str, (...)) instead of dict could avoid file lost
 def set_multipart_body(files):
-    formatted_files = {f: _format_data_helper(d) for f, d in files.items() if d is not None}
+    if has_files_array(files):
+        formatted_files = []
+        for f, d in files.items():
+            if isinstance(d, (list, tuple)):
+                for item in d:
+                    formatted_files.append((f, _format_data_helper(item)))
+            elif d is not None:
+                formatted_files.append((f, _format_data_helper(d)))
+    else:
+        formatted_files = {f: _format_data_helper(d) for f, d in files.items() if d is not None}
     return {}, formatted_files
 
 
