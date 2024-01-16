@@ -41,7 +41,7 @@ class AzureOpenAIClient:
                 return ex
 
     @staticmethod
-    def get_chat_compeletion_content_from_response(response):
+    def get_chat_completion_content_from_response(response):
         if isinstance(response, ChatCompletion):
             return response.choices[0].message.content
         return None
