@@ -716,7 +716,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)
         if response_hook:
             response_hook(last_response_headers, result)
-        return cast([List[Dict[str, Any]]], result)
+        return cast(List[Dict[str, Any]], result)
 
     @distributed_trace
     def delete_item(  # pylint:disable=docstring-missing-param
