@@ -185,7 +185,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     # amqp value types
     AMQP_LONG_VALUE: Callable = amqp_long_value
-    AMQP_TIMESTAMP_VALUE: Callable = 
+    AMQP_TIMESTAMP_VALUE: Callable = amqp_timestamp_value
     AMQP_ARRAY_VALUE: Callable = amqp_array_value
     AMQP_UINT_VALUE: Callable = amqp_uint_value
 
