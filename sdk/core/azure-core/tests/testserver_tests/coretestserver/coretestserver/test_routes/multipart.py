@@ -148,8 +148,10 @@ def multipart_request():
         content_type="multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed",
     )
 
+
 def cal_files_num(files):
     return sum([len(v) for _, v in files.lists()])
+
 
 @multipart_api.route("/data-and-named-files-array", methods=["POST"])
 def data_and_named_files_array():
