@@ -620,9 +620,10 @@ class Component(
         if args:
             # raise clear error message for unsupported positional args
             if self._func._has_parameters:  # type: ignore
+                _error = f"got {args} for {self.name}"
                 msg = (
-                    f"Component function doesn't support positional arguments, got {args} for {self.name}. "
-                    f"Please use keyword arguments like: {self._func._func_calling_example}."  # type: ignore
+                    f"Component function doesn't support positional arguments, {_error}. "  # type: ignore
+                    f"Please use keyword arguments like: {self._func._func_calling_example}."
                 )
             else:
                 msg = (
