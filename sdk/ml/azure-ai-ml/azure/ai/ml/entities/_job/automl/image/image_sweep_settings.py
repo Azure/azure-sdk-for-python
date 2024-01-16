@@ -45,7 +45,9 @@ class ImageSweepSettings(RestTranslatableMixin):
         sampling_algorithm: Union[
             str, SamplingAlgorithmType.GRID, SamplingAlgorithmType.BAYESIAN, SamplingAlgorithmType.RANDOM
         ],
-        early_termination: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
+        early_termination: Optional[
+            Union[EarlyTerminationPolicy, BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]
+        ] = None,
     ):
         self.sampling_algorithm = sampling_algorithm
         self.early_termination = early_termination

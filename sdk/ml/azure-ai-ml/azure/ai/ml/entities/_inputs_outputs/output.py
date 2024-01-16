@@ -23,6 +23,17 @@ class Output(_InputOutputBase):
     @overload
     def __init__(
         self,
+        type: Any,
+        path: Optional[str] = None,
+        mode: Optional[str] = None,
+        description: Optional[str] = None,
+        **kwargs: Any,
+    ):
+        ...
+
+    @overload
+    def __init__(
+        self,
         type: Literal["uri_folder"] = "uri_folder",
         path: Optional[str] = None,
         mode: Optional[str] = None,

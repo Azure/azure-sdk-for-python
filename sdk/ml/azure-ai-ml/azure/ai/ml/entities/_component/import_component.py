@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional, Union, cast
 
 from marshmallow import Schema
 
@@ -72,8 +72,9 @@ class ImportComponent(Component):
         self.output = output
 
     def _to_dict(self) -> Dict:
-        res: dict = convert_ordered_dict_to_dict({**self._other_parameter, **super(ImportComponent, self)._to_dict()})
-        return res
+        return cast(
+            dict, convert_ordered_dict_to_dict({**self._other_parameter, **super(ImportComponent, self)._to_dict()})
+        )
 
     @classmethod
     def _create_schema_for_validation(cls, context: Any) -> Union[PathAwareSchema, Schema]:

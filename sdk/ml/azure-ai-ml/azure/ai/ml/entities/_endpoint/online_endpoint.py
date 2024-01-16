@@ -7,7 +7,7 @@
 import logging
 from os import PathLike
 from pathlib import Path
-from typing import IO, Any, AnyStr, Dict, Optional, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union, cast
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthKeys as RestEndpointAuthKeys
 from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthMode
@@ -220,6 +220,8 @@ class OnlineEndpoint(Endpoint):
         auth_mode = cls._rest_auth_mode_to_yaml_auth_mode(obj.properties.auth_mode)
         # pylint: disable=protected-access
         identity = IdentityConfiguration._from_online_endpoint_rest_object(obj.identity) if obj.identity else None
+
+        endpoint: Any = KubernetesOnlineEndpoint()
         if obj.properties.compute:
             endpoint = KubernetesOnlineEndpoint(
                 id=obj.id,
@@ -256,7 +258,7 @@ class OnlineEndpoint(Endpoint):
                 public_network_access=obj.properties.public_network_access,
             )
 
-        return endpoint
+        return cast(OnlineEndpoint, endpoint)
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, OnlineEndpoint):
@@ -265,14 +267,26 @@ class OnlineEndpoint(Endpoint):
             return False
         if self.auth_mode is None or other.auth_mode is None:
             return False
-        # only compare mutable fields
-        return (
-            self.name.lower() == other.name.lower()
-            and self.auth_mode.lower() == other.auth_mode.lower()
-            and dict_eq(self.tags, other.tags)
-            and self.description == other.description
-            and dict_eq(self.traffic, other.traffic)
-        )
+
+        if self.name is None and other.name is None:
+            return (
+                self.auth_mode.lower() == other.auth_mode.lower()
+                and dict_eq(self.tags, other.tags)
+                and self.description == other.description
+                and dict_eq(self.traffic, other.traffic)
+            )
+
+        if self.name is not None and other.name is not None:
+            # only compare mutable fields
+            return (
+                self.name.lower() == other.name.lower()
+                and self.auth_mode.lower() == other.auth_mode.lower()
+                and dict_eq(self.tags, other.tags)
+                and self.description == other.description
+                and dict_eq(self.traffic, other.traffic)
+            )
+
+        return False
 
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)

@@ -6,7 +6,7 @@ import logging
 import warnings
 from os import PathLike
 from pathlib import Path
-from typing import IO, Any, AnyStr, Dict, List, Optional, Type, Union
+from typing import IO, Any, AnyStr, Dict, List, Optional, Union, cast
 
 from marshmallow import ValidationError
 
@@ -50,7 +50,7 @@ _DEFAULT_RELATIVE_ORIGIN = "./"
 
 
 def load_common(
-    cls: Type[Resource],
+    cls: Any,
     source: Union[str, PathLike, IO[AnyStr]],
     relative_origin: Optional[str] = None,
     params_override: Optional[list] = None,
@@ -111,7 +111,7 @@ def load_common(
                     f"type in the 'type' property."
                 )
 
-            def build_error(message, _):
+            def build_error(message: str, _: Any) -> ValidationError:
                 from azure.ai.ml.entities._util import decorate_validation_error
 
                 return ValidationError(
@@ -150,14 +150,15 @@ def _try_load_yaml_dict(source: Union[str, PathLike, IO[AnyStr]]) -> dict:
 
 
 def _load_common_raising_marshmallow_error(
-    cls: Type[Resource],
+    cls: Any,
     yaml_dict: Dict,
-    relative_origin: Union[PathLike, str, None],
+    relative_origin: Optional[Union[PathLike, str, IO[AnyStr]]],
     params_override: Optional[list] = None,
     **kwargs: Any,
 ) -> Resource:
     # pylint: disable=protected-access
-    return cls._load(data=yaml_dict, yaml_path=relative_origin, params_override=params_override, **kwargs)
+    res: Resource = cls._load(data=yaml_dict, yaml_path=relative_origin, params_override=params_override, **kwargs)
+    return res
 
 
 def load_job(
@@ -192,7 +193,7 @@ def load_job(
             :dedent: 8
             :caption: Loading a Job from a YAML config file.
     """
-    return load_common(Job, source, relative_origin, **kwargs)
+    return cast(Job, load_common(Job, source, relative_origin, **kwargs))
 
 
 def load_workspace(
@@ -231,7 +232,7 @@ def load_workspace(
             :dedent: 8
             :caption: Loading a Workspace from a YAML config file.
     """
-    return load_common(Workspace, source, relative_origin, **kwargs)
+    return cast(Workspace, load_common(Workspace, source, relative_origin, **kwargs))
 
 
 def load_registry(
@@ -261,7 +262,7 @@ def load_registry(
     :return: Loaded registry object.
     :rtype: Registry
     """
-    return load_common(Registry, source, relative_origin, **kwargs)
+    return cast(Registry, load_common(Registry, source, relative_origin, **kwargs))
 
 
 def load_datastore(
@@ -292,7 +293,7 @@ def load_datastore(
     :return: Loaded datastore object.
     :rtype: Datastore
     """
-    return load_common(Datastore, source, relative_origin, **kwargs)
+    return cast(Datastore, load_common(Datastore, source, relative_origin, **kwargs))
 
 
 def load_code(
@@ -323,7 +324,7 @@ def load_code(
     :return: Loaded code object.
     :rtype: ~azure.ai.ml.entities._assets._artifacts.code.Code
     """
-    return load_common(Code, source, relative_origin, **kwargs)
+    return cast(Code, load_common(Code, source, relative_origin, **kwargs))
 
 
 def load_compute(
@@ -362,7 +363,7 @@ def load_compute(
             :dedent: 8
             :caption: Loading a Compute object from a YAML file and overriding its description.
     """
-    return load_common(Compute, source, relative_origin, params_override=params_override, **kwargs)
+    return cast(Compute, load_common(Compute, source, relative_origin, params_override=params_override, **kwargs))
 
 
 def load_component(
@@ -419,7 +420,7 @@ def load_component(
             error_category=ErrorCategory.USER_ERROR,
             error_type=ValidationErrorType.MISSING_FIELD,
         )
-    return component_entity
+    return cast(Union[CommandComponent, ParallelComponent, PipelineComponent], component_entity)
 
 
 def load_model(
@@ -454,7 +455,7 @@ def load_model(
             :dedent: 8
             :caption: Loading a Model from a YAML config file, overriding the name and version parameters.
     """
-    return load_common(Model, source, relative_origin, **kwargs)
+    return cast(Model, load_common(Model, source, relative_origin, **kwargs))
 
 
 def load_data(
@@ -485,7 +486,7 @@ def load_data(
     :return: Constructed Data or DataImport object.
     :rtype: Data
     """
-    return load_common(Data, source, relative_origin, **kwargs)
+    return cast(Data, load_common(Data, source, relative_origin, **kwargs))
 
 
 def load_environment(
@@ -516,7 +517,7 @@ def load_environment(
     :return: Constructed environment object.
     :rtype: Environment
     """
-    return load_common(Environment, source, relative_origin, **kwargs)
+    return cast(Environment, load_common(Environment, source, relative_origin, **kwargs))
 
 
 def load_online_deployment(
@@ -547,7 +548,7 @@ def load_online_deployment(
     :return: Constructed online deployment object.
     :rtype: OnlineDeployment
     """
-    return load_common(OnlineDeployment, source, relative_origin, **kwargs)
+    return cast(OnlineDeployment, load_common(OnlineDeployment, source, relative_origin, **kwargs))
 
 
 def load_batch_deployment(
@@ -577,7 +578,7 @@ def load_batch_deployment(
     :return: Constructed batch deployment object.
     :rtype: BatchDeployment
     """
-    return load_common(BatchDeployment, source, relative_origin, **kwargs)
+    return cast(BatchDeployment, load_common(BatchDeployment, source, relative_origin, **kwargs))
 
 
 def load_model_batch_deployment(
@@ -607,7 +608,7 @@ def load_model_batch_deployment(
     :return: Constructed model batch deployment object.
     :rtype: ModelBatchDeployment
     """
-    return load_common(ModelBatchDeployment, source, relative_origin, **kwargs)
+    return cast(ModelBatchDeployment, load_common(ModelBatchDeployment, source, relative_origin, **kwargs))
 
 
 def load_pipeline_component_batch_deployment(
@@ -637,7 +638,10 @@ def load_pipeline_component_batch_deployment(
     :return: Constructed pipeline component batch deployment object.
     :rtype: PipelineComponentBatchDeployment
     """
-    return load_common(PipelineComponentBatchDeployment, source, relative_origin, **kwargs)
+    return cast(
+        PipelineComponentBatchDeployment,
+        load_common(PipelineComponentBatchDeployment, source, relative_origin, **kwargs),
+    )
 
 
 def load_online_endpoint(
@@ -668,7 +672,7 @@ def load_online_endpoint(
     :return: Constructed online endpoint object.
     :rtype: OnlineEndpoint
     """
-    return load_common(OnlineEndpoint, source, relative_origin, **kwargs)
+    return cast(OnlineEndpoint, load_common(OnlineEndpoint, source, relative_origin, **kwargs))
 
 
 def load_batch_endpoint(
@@ -697,7 +701,7 @@ def load_batch_endpoint(
     :return: Constructed batch endpoint object.
     :rtype: BatchEndpoint
     """
-    return load_common(BatchEndpoint, source, relative_origin, **kwargs)
+    return cast(BatchEndpoint, load_common(BatchEndpoint, source, relative_origin, **kwargs))
 
 
 def load_workspace_connection(
@@ -736,7 +740,7 @@ def load_workspace_connection(
             :dedent: 8
             :caption: Loading a Workspace Connection from a YAML config file.
     """
-    return load_common(WorkspaceConnection, source, relative_origin, **kwargs)
+    return cast(WorkspaceConnection, load_common(WorkspaceConnection, source, relative_origin, **kwargs))
 
 
 def load_schedule(
@@ -765,7 +769,7 @@ def load_schedule(
     :return: Constructed schedule object.
     :rtype: Schedule
     """
-    return load_common(Schedule, source, relative_origin, **kwargs)
+    return cast(Schedule, load_common(Schedule, source, relative_origin, **kwargs))
 
 
 def load_feature_store(
@@ -793,7 +797,7 @@ def load_feature_store(
     :return: Loaded feature store object.
     :rtype: FeatureStore
     """
-    return load_common(FeatureStore, source, relative_origin, **kwargs)
+    return cast(FeatureStore, load_common(FeatureStore, source, relative_origin, **kwargs))
 
 
 def load_feature_set(
@@ -824,7 +828,7 @@ def load_feature_set(
     :return: Constructed FeatureSet object.
     :rtype: FeatureSet
     """
-    return load_common(FeatureSet, source, relative_origin, **kwargs)
+    return cast(FeatureSet, load_common(FeatureSet, source, relative_origin, **kwargs))
 
 
 def load_feature_store_entity(
@@ -855,7 +859,7 @@ def load_feature_store_entity(
     :return: Constructed FeatureStoreEntity object.
     :rtype: FeatureStoreEntity
     """
-    return load_common(FeatureStoreEntity, source, relative_origin, **kwargs)
+    return cast(FeatureStoreEntity, load_common(FeatureStoreEntity, source, relative_origin, **kwargs))
 
 
 @experimental
@@ -894,7 +898,7 @@ def load_workspace_hub(
             :dedent: 8
             :caption: Loading a Workspace Hub from a YAML config file.
     """
-    return load_common(WorkspaceHub, source, relative_origin, **kwargs)
+    return cast(WorkspaceHub, load_common(WorkspaceHub, source, relative_origin, **kwargs))
 
 
 @experimental
@@ -930,14 +934,14 @@ def load_model_package(
             :dedent: 8
             :caption: Loading a ModelPackage from a YAML config file.
     """
-    return load_common(ModelPackage, source, relative_origin, **kwargs)
+    return cast(ModelPackage, load_common(ModelPackage, source, relative_origin, **kwargs))
 
 
 def load_feature_set_backfill_request(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> FeatureSetBackfillRequest:
     """Construct a FeatureSetBackfillRequest object from yaml file.
 
@@ -961,4 +965,4 @@ def load_feature_set_backfill_request(
     :return: Constructed FeatureSetBackfillRequest object.
     :rtype: FeatureSetBackfillRequest
     """
-    return load_common(FeatureSetBackfillRequest, source, relative_origin, **kwargs)
+    return cast(FeatureSetBackfillRequest, load_common(FeatureSetBackfillRequest, source, relative_origin, **kwargs))

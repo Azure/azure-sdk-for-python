@@ -11,7 +11,7 @@ from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
 from multiprocessing import cpu_count
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
+from typing import Any, Dict, Generator, List, Optional, Tuple, Union
 
 from azure.ai.ml.constants._common import AzureDevopsArtifactsType
 from azure.ai.ml.entities._validation import MutableValidationResult, ValidationResultBuilder
@@ -405,7 +405,7 @@ class AdditionalIncludes:
         return root_ignore_file
 
     @contextmanager
-    def merge_local_code_and_additional_includes(self) -> Path:
+    def merge_local_code_and_additional_includes(self) -> Generator:
         """Merge code and potential additional includes into a temporary folder and return the absolute path of it.
 
         If no additional includes are specified, just return the absolute path of the original code path.
@@ -495,15 +495,17 @@ class AdditionalIncludesMixin(ComponentCodeMixin):
         return getattr(self, self._get_additional_includes_field_name(), [])
 
     def _append_diagnostics_and_check_if_origin_code_reliable_for_local_path_validation(
-        self, base_validation_result: MutableValidationResult = None
+        self, base_validation_result: Optional[MutableValidationResult] = None
     ) -> bool:
         is_reliable: bool = super()._append_diagnostics_and_check_if_origin_code_reliable_for_local_path_validation(
             base_validation_result
         )
         additional_includes_obj = self._generate_additional_includes_obj()
-        base_validation_result.merge_with(
-            additional_includes_obj.validate(), field_name=self._get_additional_includes_field_name()
-        )
+
+        if base_validation_result is not None:
+            base_validation_result.merge_with(
+                additional_includes_obj.validate(), field_name=self._get_additional_includes_field_name()
+            )
         # if additional includes is specified, origin code will be merged with additional includes into a temp folder
         # before registered as a code asset, so origin code value is not reliable for local path validation
         if additional_includes_obj.with_includes:
@@ -518,7 +520,7 @@ class AdditionalIncludesMixin(ComponentCodeMixin):
         )
 
     @contextmanager
-    def _try_build_local_code(self) -> Iterable[Optional[Code]]:
+    def _try_build_local_code(self) -> Generator:
         """Build final code when origin code is a local code.
 
         Will merge code path with additional includes into a temp folder if additional includes is specified.
@@ -527,6 +529,7 @@ class AdditionalIncludesMixin(ComponentCodeMixin):
         :rtype: Iterable[Optional[Code]]
         """
         # will try to merge code and additional includes even if code is None
+        tmp_code_dir: Any
         with self._generate_additional_includes_obj().merge_local_code_and_additional_includes() as tmp_code_dir:
             if tmp_code_dir is None:
                 yield None

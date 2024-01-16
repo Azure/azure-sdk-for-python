@@ -4,7 +4,7 @@
 
 import json
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union, cast
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
@@ -81,8 +81,7 @@ class Properties(BaseProperty):
                 key = self._KEY_MAPPING[key.lower()]
             result[key] = value
         # recursively convert Ordered Dict to dictionary
-        res: dict = convert_ordered_dict_to_dict(result)
-        return res
+        return cast(dict, convert_ordered_dict_to_dict(result))
 
 
 class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
@@ -124,7 +123,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         *,
         locations: Optional[List[str]] = None,
         instance_count: Optional[int] = None,
-        instance_type: Optional[str] = None,
+        instance_type: Optional[Union[str, List]] = None,
         properties: Optional[Properties] = None,
         docker_args: Optional[str] = None,
         shm_size: Optional[str] = None,
@@ -141,7 +140,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         self.properties = properties
 
     @property
-    def properties(self) -> Optional[Properties]:
+    def properties(self) -> Optional[Union[Properties, Dict]]:
         """The properties of the job.
 
         :rtype: ~azure.ai.ml.entities._job.job_resource_configuration.Properties
@@ -169,7 +168,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
             instance_count=self.instance_count,
             instance_type=self.instance_type,
             max_instance_count=self.max_instance_count,
-            properties=self.properties.as_dict() if self.properties is not None else None,
+            properties=self.properties.as_dict() if isinstance(self.properties, Properties) else None,
             docker_args=self.docker_args,
             shm_size=self.shm_size,
         )

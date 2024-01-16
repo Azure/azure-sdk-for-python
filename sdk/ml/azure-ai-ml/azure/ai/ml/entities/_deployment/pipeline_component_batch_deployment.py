@@ -131,7 +131,7 @@ class PipelineComponentBatchDeployment(Resource):
             endpoint_name=_parse_endpoint_name_from_deployment_id(deployment.id),
         )
 
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
         """Dump the deployment content into a file in yaml format.
 
         :param dest: The destination to receive this deployment's content.

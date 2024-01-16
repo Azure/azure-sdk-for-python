@@ -6,7 +6,7 @@ import hashlib
 import json
 import os
 import shutil
-from typing import Any, Dict, Iterable, List, Optional, Tuple, Type, TypeVar, Union, overload
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Type, TypeVar, Union, cast, overload
 from unittest import mock
 
 import msrest
@@ -48,6 +48,11 @@ from ..constants._component import NodeType
 from ..constants._endpoint import EndpointYamlFields
 from ..entities._mixins import RestTranslatableMixin
 from ..exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+
+# avoid circular import error
+if TYPE_CHECKING:
+    from azure.ai.ml.entities._inputs_outputs import Output
+    from azure.ai.ml.entities._job.pipeline._io import NodeOutput
 
 # Maps schema class name to formatted error message pointing to Microsoft docs reference page for a schema's YAML
 REF_DOC_ERROR_MESSAGE_MAP = {
@@ -200,7 +205,7 @@ def decorate_validation_error(schema: Any, pretty_error: str, additional_message
     return f"Validation for {schema.__name__} failed:\n\n {pretty_error} \n\n {additional_message}"
 
 
-def get_md5_string(text: str) -> str:
+def get_md5_string(text: Optional[str]) -> str:
     """Get md5 string for a given text.
 
     :param text: The text to get md5 string for.
@@ -209,7 +214,9 @@ def get_md5_string(text: str) -> str:
     :rtype: str
     """
     try:
-        return hashlib.md5(text.encode("utf8")).hexdigest()  # nosec
+        if text is not None:
+            return hashlib.md5(text.encode("utf8")).hexdigest()  # nosec
+        return ""
     except Exception as ex:
         raise ex
 
@@ -356,7 +363,7 @@ def get_rest_dict_for_node_attrs(
         # note that the rest object may be invalid as data binding expression may not fit
         # rest object structure
         # pylint: disable=protected-access
-        _target_obj: RestTranslatableMixin = _dump_data_binding_expression_in_fields(copy.deepcopy(target_obj))
+        _target_obj = _dump_data_binding_expression_in_fields(copy.deepcopy(target_obj))
 
         from azure.ai.ml.entities._credentials import _BaseIdentityConfiguration
 
@@ -444,9 +451,7 @@ def resolve_pipeline_parameters(
     ...
 
 
-def resolve_pipeline_parameters(
-    pipeline_parameters: Optional[Dict[str, T]], remove_empty: bool = False
-) -> Optional[Dict[str, Union[T, str, "NodeOutput"]]]:
+def resolve_pipeline_parameters(pipeline_parameters: Optional[Dict], remove_empty: bool = False) -> Optional[Dict]:
     """Resolve pipeline parameters.
 
     1. Resolve BaseNode and OutputsAttrDict type to NodeOutput.
@@ -481,7 +486,7 @@ def resolve_pipeline_parameters(
     return pipeline_parameters
 
 
-def resolve_pipeline_parameter(data: T) -> Union[T, str, "NodeOutput"]:
+def resolve_pipeline_parameter(data: Any) -> Union[T, str, "NodeOutput"]:
     """Resolve pipeline parameter.
     1. Resolve BaseNode and OutputsAttrDict type to NodeOutput.
     2. Remove empty value (optional).
@@ -498,11 +503,11 @@ def resolve_pipeline_parameter(data: T) -> Union[T, str, "NodeOutput"]:
     from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 
     if isinstance(data, PipelineExpression):
-        data: Union[str, BaseNode] = data.resolve()
+        data = cast(Union[str, BaseNode], data.resolve())
     if isinstance(data, (BaseNode, Pipeline)):
         # For the case use a node/pipeline node as the input, we use its only one output as the real input.
         # Here we set node = node.outputs, then the following logic will get the output object.
-        data: OutputsAttrDict = data.outputs
+        data = cast(OutputsAttrDict, data.outputs)
     if isinstance(data, OutputsAttrDict):
         # For the case that use the outputs of another component as the input,
         # we use the only one output as the real input,
@@ -514,8 +519,8 @@ def resolve_pipeline_parameter(data: T) -> Union[T, str, "NodeOutput"]:
                 no_personal_data_message="multiple output(s) found of specified outputs, exactly 1 output required.",
                 target=ErrorTarget.PIPELINE,
             )
-        data: NodeOutput = list(data.values())[0]
-    return data
+        data = cast(NodeOutput, list(data.values())[0])
+    return cast(Union[T, str, "NodeOutput"], data)
 
 
 def normalize_job_input_output_type(input_output_value: Union[RestJobOutput, RestJobInput, Dict]) -> None:

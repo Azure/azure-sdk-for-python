@@ -10,6 +10,7 @@ from azure.ai.ml._schema.pipeline.control_flow_job import DoWhileSchema
 from azure.ai.ml.constants._component import DO_WHILE_MAX_ITERATION, ControlFlowType
 from azure.ai.ml.entities._job.job_limits import DoWhileJobLimits
 from azure.ai.ml.entities._job.pipeline._io import InputOutputBase, NodeInput, NodeOutput
+from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
 from azure.ai.ml.entities._validation import MutableValidationResult
 
 from .._util import load_from_dict, validate_attribute_type
@@ -41,8 +42,8 @@ class DoWhile(LoopNode):
     def __init__(
         self,
         *,
-        body: Pipeline,
-        condition: Union[str, NodeInput, NodeOutput],
+        body: Union[Pipeline, BaseNode],
+        condition: Optional[Union[str, NodeInput, NodeOutput]],
         mapping: Dict,
         limits: Optional[Union[dict, DoWhileJobLimits]] = None,
         **kwargs: Any,
@@ -75,7 +76,7 @@ class DoWhile(LoopNode):
         return self._mapping
 
     @property
-    def condition(self) -> Union[str, NodeInput, NodeOutput]:
+    def condition(self) -> Optional[Union[str, NodeInput, NodeOutput]]:
         """Get the boolean type control output of the body as the do-while loop condition.
 
         :return: Control output of the body as the do-while loop condition.
@@ -122,7 +123,8 @@ class DoWhile(LoopNode):
                 )
             return port_name
 
-        return port
+        res: Union[str, NodeInput, NodeOutput] = port
+        return res
 
     @classmethod
     def _create_instance_from_schema_dict(
@@ -245,6 +247,8 @@ class DoWhile(LoopNode):
             port_obj = port
         if (
             port_obj is not None
+            and port_obj._owner is not None  # pylint: disable=protected-access
+            and not isinstance(port_obj._owner, PipelineJob)  # pylint: disable=protected-access
             and port_obj._owner._instance_id != self.body._instance_id  # pylint: disable=protected-access
         ):
             # Check the port owner is dowhile body.
