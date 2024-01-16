@@ -913,7 +913,7 @@ def _generate_storage_container(name: str, resources_being_deployed: dict) -> st
     """
     storage_container = get_name_for_dependent_resource(name, "container")
     resources_being_deployed[storage_container] = (ArmConstants.STORAGE_CONTAINER, None)
-    return storage_container
+    return str(storage_container)
 
 
 def _generate_log_analytics(name: str, resources_being_deployed: dict) -> str:
@@ -1001,8 +1001,8 @@ def _generate_materialization_identity(
         if char.isalpha() or char.isdigit():
             namespace = namespace + char
     namespace = namespace.encode("utf-8").hex()
-    namespace = uuid.UUID(namespace[:32].ljust(32, "0"))
-    materialization_identity = f"materialization-uai-" f"{uuid.uuid3(namespace, workspace.name.lower()).hex}"
+    uuid_namespace = uuid.UUID(namespace[:32].ljust(32, "0"))
+    materialization_identity = f"materialization-uai-" f"{uuid.uuid3(uuid_namespace, workspace.name.lower()).hex}"
     resources_being_deployed[materialization_identity] = (
         ArmConstants.USER_ASSIGNED_IDENTITIES,
         None,

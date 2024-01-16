@@ -69,9 +69,10 @@ def _get_creationflags_and_startupinfo_for_background_process(
         CREATE_NEW_CONSOLE = 0x00000010
         args["creationflags"] = CREATE_NEW_CONSOLE
 
-        startupinfo = subprocess.STARTUPINFO()
-        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        startupinfo.wShowWindow = subprocess.SW_HIDE
+        # Bug Item number: 2895261
+        startupinfo = subprocess.STARTUPINFO()  # type: ignore
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW  # type: ignore
+        startupinfo.wShowWindow = subprocess.SW_HIDE  # type: ignore
         args["startupinfo"] = startupinfo
 
     else:
@@ -211,7 +212,8 @@ class CommonRuntimeHelper:
             os.path.join(self.common_runtime_temp_folder, "stderr"), "w+", encoding=DefaultOpenEncoding.WRITE
         )
 
-    def get_docker_client(self, registry: Dict) -> "docker.DockerClient":
+    # Bug Item number: 2885723
+    def get_docker_client(self, registry: Dict) -> "docker.DockerClient":  # type: ignore
         """Retrieves the Docker client for performing docker operations.
 
         :param registry: Registry information
@@ -243,7 +245,8 @@ class CommonRuntimeHelper:
 
         return client
 
-    def copy_bootstrapper_from_container(self, container: "docker.models.containers.Container") -> None:
+    # Bug Item number: 2885719
+    def copy_bootstrapper_from_container(self, container: "docker.models.containers.Container") -> None:  # type: ignore
         """Copy file/folder from container to local machine.
 
         :param container: Docker container

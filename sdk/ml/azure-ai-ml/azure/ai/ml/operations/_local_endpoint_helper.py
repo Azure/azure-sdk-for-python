@@ -160,7 +160,8 @@ class _LocalEndpointHelper(object):
 
 
 def _convert_container_to_endpoint(
-    container: "docker.models.containers.Container",
+    # Bug Item number: 2885719
+    container: "docker.models.containers.Container",  # type: ignore
     endpoint_json: Optional[dict] = None,
 ) -> OnlineEndpoint:
     """Converts provided Container for local deployment to OnlineEndpoint entity.
