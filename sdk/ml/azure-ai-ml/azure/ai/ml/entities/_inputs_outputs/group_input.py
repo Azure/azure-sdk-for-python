@@ -50,7 +50,8 @@ class GroupInput(Input):
 
     def __getattr__(self, item: Any) -> Any:
         try:
-            return super().__getattr__(item)
+            # TODO: Bug Item number: 2883363
+            return super().__getattr__(item)  # type: ignore
         except AttributeError:
             # TODO: why values is not a dict in some cases?
             if isinstance(self.values, dict) and item in self.values:

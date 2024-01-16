@@ -669,7 +669,10 @@ class DataQualitySignal(DataSignal):
             )
         rest_features = _to_rest_features(self.features) if self.features else None
         rest_metrics = (
-            _to_rest_data_quality_metrics(self.metric_thresholds.numerical, self.metric_thresholds.categorical)
+            # TODO: Bug Item number: 2883365
+            _to_rest_data_quality_metrics(
+                self.metric_thresholds.numerical, self.metric_thresholds.categorical  # type: ignore
+            )
             if isinstance(self.metric_thresholds, MetricThreshold)
             else None
         )

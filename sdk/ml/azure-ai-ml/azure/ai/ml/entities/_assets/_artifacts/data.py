@@ -122,7 +122,8 @@ class Data(Artifact):
     @path.setter
     def path(self, value: str) -> None:
         # Call the parent setter to resolve the path with base_path if it was a local path
-        super(Data, type(self)).path.fset(self, value)
+        # TODO: Bug Item number: 2883424
+        super(Data, type(self)).path.fset(self, value)  # type: ignore
         if self.type == AssetTypes.URI_FOLDER and self._path is not None and not is_url(self._path):
             self._path = Path(os.path.join(self._path, ""))
 

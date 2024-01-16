@@ -196,7 +196,8 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
             self.resources = cast(JobResourceConfiguration, self.resources) or cast(
                 JobResourceConfiguration, copy.deepcopy(self.component.resources)
             )
-            self.retry_settings = self.retry_settings or copy.deepcopy(self.component.retry_settings)
+            # TODO: Bug Item number: 2897665
+            self.retry_settings = self.retry_settings or copy.deepcopy(self.component.retry_settings)  # type: ignore
             self.input_data = self.input_data or self.component.input_data
             self.max_concurrency_per_instance = (
                 self.max_concurrency_per_instance or self.component.max_concurrency_per_instance

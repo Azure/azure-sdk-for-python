@@ -388,7 +388,8 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
             _type = "_".join([NodeType.DATA_TRANSFER, obj.get("task", "")])
         instance: BaseNode = pipeline_node_factory.get_create_instance_func(_type)()
         init_kwargs = instance._from_rest_object_to_init_params(obj)
-        instance.__init__(**init_kwargs)
+        # TODO: Bug Item number: 2883415
+        instance.__init__(**init_kwargs)  # type: ignore
         return instance
 
     @classmethod
@@ -503,7 +504,8 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
     def __help__(self) -> Any:
         # only show help when component has definition
         if isinstance(self._component, Component):
-            return self._component.__help__()
+            # TODO: Bug Item number: 2883422
+            return self._component.__help__()  # type: ignore
         return None
 
     def __bool__(self) -> bool:

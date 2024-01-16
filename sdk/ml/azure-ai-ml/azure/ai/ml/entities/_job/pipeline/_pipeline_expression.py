@@ -185,11 +185,13 @@ class PipelineExpressionMixin:
         self._validate_binary_operation(other, PipelineExpressionOperator.GTE)
         return PipelineExpression._from_operation(self, other, PipelineExpressionOperator.GTE)
 
-    def __eq__(self, other: Any) -> "PipelineExpression":
+    # TODO: Bug Item number: 2883354
+    def __eq__(self, other: Any) -> "PipelineExpression":  # type: ignore
         self._validate_binary_operation(other, PipelineExpressionOperator.EQ)
         return PipelineExpression._from_operation(self, other, PipelineExpressionOperator.EQ)
 
-    def __ne__(self, other: Any) -> "PipelineExpression":
+    # TODO: Bug Item number: 2883354
+    def __ne__(self, other: Any) -> "PipelineExpression":  # type: ignore
         self._validate_binary_operation(other, PipelineExpressionOperator.NE)
         return PipelineExpression._from_operation(self, other, PipelineExpressionOperator.NE)
 
