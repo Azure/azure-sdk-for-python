@@ -1247,7 +1247,7 @@
       ]
     },
     {
-      "filename": "sdk/ml/azure-ai-generative/**",
+      "filename": "sdk/ai/azure-ai-generative/**",
       "words": [
         "tqdm"
       ]
