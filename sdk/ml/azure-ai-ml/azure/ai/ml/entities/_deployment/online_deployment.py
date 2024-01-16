@@ -831,10 +831,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
             code_configuration=code_config,
             environment=deployment.environment_id,
             app_insights_enabled=deployment.app_insights_enabled,
-            scale_settings=cast(
-                Optional[Union[DefaultScaleSettings, TargetUtilizationScaleSettings]],
-                OnlineScaleSettings._from_rest_object(deployment.scale_settings),
-            ),
+            scale_settings=OnlineScaleSettings._from_rest_object(deployment.scale_settings),  # type: ignore
             liveness_probe=ProbeSettings._from_rest_object(deployment.liveness_probe),
             environment_variables=deployment.environment_variables,
             readiness_probe=ProbeSettings._from_rest_object(deployment.readiness_probe),
