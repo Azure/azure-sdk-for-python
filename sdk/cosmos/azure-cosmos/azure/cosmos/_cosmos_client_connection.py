@@ -1008,27 +1008,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         permission_id = base.GetResourceIdOrFullNameFromLink(permission_link)
         return self.DeleteResource(path, "permissions", permission_id, None, options, **kwargs)
 
-    def ReadItems(
-        self,
-        collection_link: str,
-        feed_options: Optional[Mapping[str, Any]] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
-        **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]:
-        """Reads all documents in a collection.
-
-        :param str collection_link: The link to the document collection.
-        :param dict feed_options: The additional options for the operation.
-        :param response_hook: A callable invoked with the response metadata.
-        :type response_hook: Callable[[Dict[str, str], Dict[str, Any]]
-        :return: Query Iterable of Documents.
-        :rtype: query_iterable.QueryIterable
-
-        """
-        if feed_options is None:
-            feed_options = {}
-
-        return self.QueryItems(collection_link, None, feed_options, response_hook=response_hook, **kwargs)
 
     def QueryItems(
         self,

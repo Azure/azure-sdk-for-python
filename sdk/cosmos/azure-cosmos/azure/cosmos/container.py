@@ -275,9 +275,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if hasattr(response_hook, "clear"):
             response_hook.clear()
 
-        items = self.client_connection.ReadItems(
-            collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs
-        )
         items = self.client_connection.QueryItems(
             database_or_container_link=self.container_link,
             query=None,
@@ -719,7 +716,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)
         if response_hook:
             response_hook(last_response_headers, result)
-        return result
+        return cast([List[Dict[str, Any]]], result)
 
     @distributed_trace
     def delete_item(  # pylint:disable=docstring-missing-param
