@@ -6,6 +6,7 @@ This version and all future versions will require Python 3.8+. Python 3.7 is no 
 
 ### Features Added
 - Added `exists` method to `ShareFileClient` to check if a file exists.
+- Added support for service version 2024-05-04.
 
 ### Bugs Fixed
 - Fixed an issue where the `ShareDirectoryClient` returned by `get_subdirectory_client` with a `ShareDirectoryClient`
