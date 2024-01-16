@@ -44,13 +44,13 @@ class RunOperations(_ScopeDependentOperations):
             run_id,
         )
 
-    def get_run_children(self, run_id: str, max_results: int = 50) -> Iterable[_BaseJob]:
+    def get_run_children(self, run_id: str, **kwargs) -> Iterable[_BaseJob]:
         return self._operation.get_child(
             self._subscription_id,
             self._resource_group_name,
             self._workspace_name,
             run_id,
-            top=max_results,
+            top=kwargs.pop("max_results", None),
             cls=lambda objs: [self._translate_from_rest_object(obj) for obj in objs],
         )
 
