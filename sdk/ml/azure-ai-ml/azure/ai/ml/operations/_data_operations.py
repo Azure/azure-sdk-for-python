@@ -7,7 +7,7 @@
 import os
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Union
+from typing import Any, Dict, Generator, Iterable, List, Optional, Union, cast
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -419,7 +419,7 @@ class DataOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(logger, "Data.ImportData", ActivityType.PUBLICAPI)
     @experimental
-    def import_data(self, data_import: DataImport, **kwargs) -> PipelineJob:
+    def import_data(self, data_import: DataImport, **kwargs: Any) -> PipelineJob:
         """Returns the data import job that is creating the data asset.
 
         :param data_import: DataImport object.
@@ -483,7 +483,7 @@ class DataOperations(_ScopeDependentOperations):
         name: str,
         *,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
-        **kwargs,
+        **kwargs: Any,
     ) -> Iterable[PipelineJob]:
         """List materialization jobs of the asset.
 
@@ -504,15 +504,18 @@ class DataOperations(_ScopeDependentOperations):
                 :caption: List materialization jobs example.
         """
 
-        return self._all_operations.all_operations[AzureMLResourceType.JOB].list(
-            job_type="Pipeline",
-            asset_name=name,
-            list_view_type=list_view_type,
-            **kwargs,
+        return cast(
+            Iterable[PipelineJob],
+            self._all_operations.all_operations[AzureMLResourceType.JOB].list(
+                job_type="Pipeline",
+                asset_name=name,
+                list_view_type=list_view_type,
+                **kwargs,
+            ),
         )
 
     @monitor_with_activity(logger, "Data.Validate", ActivityType.INTERNALCALL)
-    def _validate(self, data: Data) -> Union[List[str], None]:
+    def _validate(self, data: Data) -> Optional[List[str]]:
         if not data.path:
             msg = "Missing data path. Path is required for data."
             raise ValidationException(
@@ -550,7 +553,7 @@ class DataOperations(_ScopeDependentOperations):
                     mltable_metadata_dict=metadata_contents,
                     mltable_schema=mltable_metadata_schema,
                 )
-            return metadata.referenced_uris()
+            return cast(Optional[List[str]], metadata.referenced_uris())
 
         if is_url(asset_path):
             # skip validation for remote URI_FILE or URI_FOLDER
@@ -559,15 +562,15 @@ class DataOperations(_ScopeDependentOperations):
             _assert_local_path_matches_asset_type(asset_path, asset_type)
         else:
             abs_path = Path(base_path, asset_path).resolve()
-            _assert_local_path_matches_asset_type(abs_path, asset_type)
+            _assert_local_path_matches_asset_type(str(abs_path), asset_type)
 
         return None
 
-    def _try_get_mltable_metadata_jsonschema(self, mltable_schema_url: str) -> Union[Dict, None]:
+    def _try_get_mltable_metadata_jsonschema(self, mltable_schema_url: Optional[str]) -> Optional[Dict]:
         if mltable_schema_url is None:
             mltable_schema_url = MLTABLE_METADATA_SCHEMA_URL_FALLBACK
         try:
-            return download_mltable_metadata_schema(mltable_schema_url, self._requests_pipeline)
+            return cast(Optional[Dict], download_mltable_metadata_schema(mltable_schema_url, self._requests_pipeline))
         except Exception:  # pylint: disable=broad-except
             module_logger.info(
                 'Failed to download MLTable metadata jsonschema from "%s", skipping validation',
@@ -581,7 +584,8 @@ class DataOperations(_ScopeDependentOperations):
         name: str,
         version: Optional[str] = None,
         label: Optional[str] = None,
-        **kwargs,  # pylint:disable=unused-argument
+        # pylint:disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         """Archive a data asset.
 
@@ -619,7 +623,8 @@ class DataOperations(_ScopeDependentOperations):
         name: str,
         version: Optional[str] = None,
         label: Optional[str] = None,
-        **kwargs,  # pylint:disable=unused-argument
+        # pylint:disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         """Restore an archived data asset.
 
@@ -673,13 +678,13 @@ class DataOperations(_ScopeDependentOperations):
     @experimental
     def share(
         self,
-        name,
-        version,
+        name: str,
+        version: str,
         *,
-        share_with_name,
-        share_with_version,
-        registry_name,
-        **kwargs,
+        share_with_name: str,
+        share_with_version: str,
+        registry_name: str,
+        **kwargs: Any,
     ) -> Data:
         """Share a data asset from workspace to registry.
 
@@ -735,7 +740,7 @@ class DataOperations(_ScopeDependentOperations):
 
     @contextmanager
     # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
-    def _set_registry_client(self, registry_name: str) -> Iterable[None]:
+    def _set_registry_client(self, registry_name: str) -> Generator:
         """Sets the registry client for the data operations.
 
         :param registry_name: Name of the registry.

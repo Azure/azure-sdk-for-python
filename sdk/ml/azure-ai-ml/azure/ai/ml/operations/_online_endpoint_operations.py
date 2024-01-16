@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import json
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -18,7 +18,6 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
-
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import validate_response
@@ -170,7 +169,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.polling.LROPoller[None]
         """
         if local:
-            return self._local_endpoint_helper.delete(name=name)
+            return self._local_endpoint_helper.delete(name=str(name))
 
         path_format_arguments = {
             "endpointName": name,
@@ -296,12 +295,14 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         self,
         endpoint_name: str,
         *,
-        request_file: Optional[str] = None,
+        request_file: Any = None,
         deployment_name: Optional[str] = None,
-        input_data: Optional[Union[str, Data]] = None,  # pylint: disable=unused-argument
-        params_override=None,
+        # pylint: disable=unused-argument
+        input_data: Optional[Union[str, Data]] = None,
+        params_override: Any = None,
         local: bool = False,
-        **kwargs,  # pylint: disable=unused-argument
+        # pylint: disable=unused-argument
+        **kwargs: Any,
     ) -> str:
         """Invokes the endpoint with the provided payload.
 
@@ -355,10 +356,12 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
 
         response = self._requests_pipeline.post(endpoint.properties.scoring_uri, json=data, headers=headers)
         validate_response(response)
-        return response.text()
+        return str(response.text())
 
     def _get_workspace_location(self) -> str:
-        return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
+        return str(
+            self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
+        )
 
     def _get_online_credentials(
         self, name: str, auth_mode: Optional[str] = None
@@ -371,7 +374,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
                 **self._init_kwargs,
             )
             auth_mode = endpoint.properties.auth_mode
-        if auth_mode.lower() == KEY:
+        if auth_mode is not None and auth_mode.lower() == KEY:
             return self._online_operation.list_keys(
                 resource_group_name=self._resource_group_name,
                 workspace_name=self._workspace_name,
@@ -425,7 +428,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
 
         return poller
 
-    def _validate_deployment_name(self, endpoint_name, deployment_name):
+    def _validate_deployment_name(self, endpoint_name: str, deployment_name: str) -> None:
         deployments_list = self._online_deployment_operation.list(
             endpoint_name=endpoint_name,
             resource_group_name=self._resource_group_name,

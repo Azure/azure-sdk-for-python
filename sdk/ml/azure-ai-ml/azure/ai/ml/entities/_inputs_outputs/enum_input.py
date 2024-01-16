@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from enum import EnumMeta
-from typing import Iterable, Optional, Sequence, Type, Union
+from typing import Any, Iterable, List, Optional, Sequence, Tuple, Union
 
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
@@ -17,9 +17,9 @@ class EnumInput(Input):
         self,
         *,
         enum: Optional[Union[EnumMeta, Sequence[str]]] = None,
-        default=None,
-        description=None,
-        **kwargs,
+        default: Any = None,
+        description: Optional[str] = None,
+        **kwargs: Any,
     ) -> None:
         """Enum parameter parse the value according to its enum values.
 
@@ -31,17 +31,17 @@ class EnumInput(Input):
         :type description: str
         """
         enum_values = self._assert_enum_valid(enum)
+        self._enum_class: Optional[EnumMeta] = None
         # This is used to parse enum class instead of enum str value if a enum class is provided.
         if isinstance(enum, EnumMeta):
             self._enum_class = enum
             self._str2enum = dict(zip(enum_values, enum))
         else:
-            self._enum_class = None
             self._str2enum = {v: v for v in enum_values}
         super().__init__(type="string", default=default, enum=enum_values, description=description)
 
     @property
-    def _allowed_types(self):
+    def _allowed_types(self) -> Tuple:
         return (
             (str,)
             if not self._enum_class
@@ -52,7 +52,7 @@ class EnumInput(Input):
         )
 
     @classmethod
-    def _assert_enum_valid(cls, enum: Type):
+    def _assert_enum_valid(cls, enum: Optional[Union[EnumMeta, Sequence[str]]]) -> List:
         """Check whether the enum is valid and return the values of the enum.
 
         :param enum: The enum to validate
@@ -61,7 +61,7 @@ class EnumInput(Input):
         :rtype: List[Any]
         """
         if isinstance(enum, EnumMeta):
-            enum_values = [str(option.value) for option in enum]
+            enum_values = [str(option.value) for option in enum]  # type: ignore
         elif isinstance(enum, Iterable):
             enum_values = list(enum)
         else:
@@ -96,7 +96,7 @@ class EnumInput(Input):
 
         return enum_values
 
-    def _parse(self, val: str):
+    def _parse(self, val: str) -> Any:
         """Parse the enum value from a string value or the enum value.
 
         :param val: The string to parse
@@ -121,7 +121,7 @@ class EnumInput(Input):
             )
         return self._str2enum[val]
 
-    def _update_default(self, default_value):
+    def _update_default(self, default_value: Any) -> None:
         """Enum parameter support updating values with a string value.
 
         :param default_value: The default value for the input

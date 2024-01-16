@@ -58,7 +58,7 @@ class BatchEndpoint(Endpoint):
         default_deployment_name: Optional[str] = None,
         scoring_uri: Optional[str] = None,
         openapi_uri: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         super(BatchEndpoint, self).__init__(
             name=name,
@@ -107,7 +107,7 @@ class BatchEndpoint(Endpoint):
     def dump(
         self,
         dest: Optional[Union[str, PathLike, IO[AnyStr]]] = None,  # pylint: disable=unused-argument
-        **kwargs,  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
     ) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
         return BatchEndpointSchema(context=context).dump(self)  # type: ignore # pylint: disable=no-member
@@ -118,7 +118,7 @@ class BatchEndpoint(Endpoint):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "BatchEndpoint":
         data = data or {}
         params_override = params_override or []
@@ -126,7 +126,9 @@ class BatchEndpoint(Endpoint):
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path.cwd(),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        return load_from_dict(BatchEndpointSchema, data, context)
+        res: BatchEndpoint = load_from_dict(BatchEndpointSchema, data, context)
+        return res
 
     def _to_dict(self) -> Dict:
-        return BatchEndpointSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        res: dict = BatchEndpointSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        return res

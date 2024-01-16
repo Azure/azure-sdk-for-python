@@ -4,20 +4,21 @@
 
 # pylint: disable=protected-access
 
-from typing import Dict, Iterable, Optional
+from typing import Any, Dict, Iterable, Optional, cast
 
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._workspace_utils import delete_resource_by_arm_id
-from azure.ai.ml.constants._common import Scope, ArmConstants
-from azure.ai.ml.entities._workspace_hub._constants import WORKSPACE_HUB_KIND, ENDPOINT_AI_SERVICE_KIND
+from azure.ai.ml.constants._common import ArmConstants, Scope
+from azure.ai.ml.entities._workspace_hub._constants import ENDPOINT_AI_SERVICE_KIND, WORKSPACE_HUB_KIND
 from azure.ai.ml.entities._workspace_hub.workspace_hub import WorkspaceHub
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
+
 from ._workspace_operations_base import WorkspaceOperationsBase
 
 ops_logger = OpsLogger(__name__)
@@ -68,18 +69,24 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         """
 
         if scope == Scope.SUBSCRIPTION:
-            return self._operation.list_by_subscription(
+            return cast(
+                Iterable[WorkspaceHub],
+                self._operation.list_by_subscription(
+                    cls=lambda objs: [
+                        WorkspaceHub._from_rest_object(filterObj)
+                        for filterObj in filter(lambda ws: ws.kind.lower() == WORKSPACE_HUB_KIND, objs)
+                    ]
+                ),
+            )
+        return cast(
+            Iterable[WorkspaceHub],
+            self._operation.list_by_resource_group(
+                self._resource_group_name,
                 cls=lambda objs: [
                     WorkspaceHub._from_rest_object(filterObj)
                     for filterObj in filter(lambda ws: ws.kind.lower() == WORKSPACE_HUB_KIND, objs)
-                ]
-            )
-        return self._operation.list_by_resource_group(
-            self._resource_group_name,
-            cls=lambda objs: [
-                WorkspaceHub._from_rest_object(filterObj)
-                for filterObj in filter(lambda ws: ws.kind.lower() == WORKSPACE_HUB_KIND, objs)
-            ],
+                ],
+            ),
         )
 
     @distributed_trace
@@ -119,7 +126,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         *,
         workspace_hub: WorkspaceHub,
         update_dependent_resources: bool = False,
-        endpoint_resource_id: str = None,
+        endpoint_resource_id: Optional[str] = None,
         endpoint_kind: str = ENDPOINT_AI_SERVICE_KIND,
         **kwargs: Dict,
     ) -> LROPoller[WorkspaceHub]:
@@ -155,7 +162,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
                 :caption: Create the workspace hub.
         """
 
-        def get_callback():
+        def get_callback() -> WorkspaceHub:
             """Callback to be called after completion"""
             return self.get(name=workspace_hub.name)
 
@@ -207,7 +214,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-        def deserialize_callback(rest_obj):
+        def deserialize_callback(rest_obj: Any) -> WorkspaceHub:
             """Callback to be called after completion
 
             :param rest_obj: A rest representation of the Workspace.

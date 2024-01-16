@@ -4,7 +4,7 @@
 
 # pylint: disable=redefined-builtin
 
-from typing import Dict
+from typing import Dict, Optional
 
 from azure.ai.ml._restclient.v2023_08_01_preview.models import BaseEnvironmentId as RestBaseEnvironmentId
 from azure.ai.ml._schema.assets.package.base_environment_source import BaseEnvironmentSourceSchema
@@ -33,7 +33,7 @@ class BaseEnvironment:
             :caption: Create a Base Environment object.
     """
 
-    def __init__(self, type, resource_id: str = None):
+    def __init__(self, type: str, resource_id: Optional[str] = None):
         self.type = type
         self.resource_id = resource_id
 
@@ -43,7 +43,7 @@ class BaseEnvironment:
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return BaseEnvironmentSourceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return dict(BaseEnvironmentSourceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))
 
     def _to_rest_object(self) -> RestBaseEnvironmentId:
         return RestBaseEnvironmentId(base_environment_source_type=self.type, resource_id=self.resource_id)

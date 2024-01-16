@@ -1,6 +1,8 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from typing import Any
+
 from azure.ai.ml._schema.component.input_output import SUPPORTED_PARAM_TYPES
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 
@@ -9,8 +11,10 @@ class _InputOutputBase(DictMixin, RestTranslatableMixin):
     def __init__(
         self,
         *,
-        type,  # pylint: disable=redefined-builtin
-        **kwargs,  # pylint: disable=unused-argument
+        # pylint: disable=redefined-builtin
+        type: Any,
+        # pylint: disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         """Base class for Input & Output class.
 

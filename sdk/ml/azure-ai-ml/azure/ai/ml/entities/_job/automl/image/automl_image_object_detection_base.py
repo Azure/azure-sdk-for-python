@@ -4,15 +4,15 @@
 
 # pylint: disable=protected-access
 
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     LearningRateScheduler,
+    LogTrainingMetrics,
+    LogValidationLoss,
     ModelSize,
     StochasticOptimizer,
     ValidationMetricType,
-    LogTrainingMetrics,
-    LogValidationLoss,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._job.automl import SearchSpace
@@ -49,15 +49,18 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
         sweep: Optional[ImageSweepSettings] = None,
         training_parameters: Optional[ImageModelSettingsObjectDetection] = None,
         search_space: Optional[List[ImageObjectDetectionSearchSpace]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
+        self._training_parameters: Optional[ImageModelSettingsObjectDetection] = None
+
         super().__init__(task_type=task_type, limits=limits, sweep=sweep, **kwargs)
 
         self.training_parameters = training_parameters  # Assigning training_parameters through setter method.
+
         self._search_space = search_space
 
     @property
-    def training_parameters(self) -> ImageModelSettingsObjectDetection:
+    def training_parameters(self) -> Optional[ImageModelSettingsObjectDetection]:
         return self._training_parameters
 
     @training_parameters.setter
@@ -90,7 +93,7 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
             self.set_training_parameters(**value)
 
     @property
-    def search_space(self) -> List[ImageObjectDetectionSearchSpace]:
+    def search_space(self) -> Optional[List[ImageObjectDetectionSearchSpace]]:
         return self._search_space
 
     @search_space.setter
@@ -109,7 +112,8 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
 
         if all_search_space_type or all_dict_type:
             self._search_space = [
-                cast_to_specific_search_space(item, ImageObjectDetectionSearchSpace, self.task_type) for item in value
+                cast_to_specific_search_space(item, ImageObjectDetectionSearchSpace, self.task_type)  # type: ignore
+                for item in value
             ]
         else:
             msg = "Expected all items in the list to be either dictionaries or SearchSpace objects."
@@ -485,15 +489,18 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
 
         if isinstance(value, list):
             self._search_space.extend(
-                [cast_to_specific_search_space(item, ImageObjectDetectionSearchSpace, self.task_type) for item in value]
+                [
+                    cast_to_specific_search_space(item, ImageObjectDetectionSearchSpace, self.task_type)  # type: ignore
+                    for item in value
+                ]
             )
         else:
             self._search_space.append(
-                cast_to_specific_search_space(value, ImageObjectDetectionSearchSpace, self.task_type)
+                cast_to_specific_search_space(value, ImageObjectDetectionSearchSpace, self.task_type)  # type: ignore
             )
 
     @classmethod
-    def _get_search_space_from_str(cls, search_space_str: str):
+    def _get_search_space_from_str(cls, search_space_str: str) -> Optional[List[ImageObjectDetectionSearchSpace]]:
         return (
             [
                 ImageObjectDetectionSearchSpace._from_rest_object(entry)
@@ -504,7 +511,7 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
             else None
         )
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, AutoMLImageObjectDetectionBase):
             return NotImplemented
 
@@ -513,5 +520,5 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
 
         return self._training_parameters == other._training_parameters and self._search_space == other._search_space
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)

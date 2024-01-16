@@ -67,7 +67,7 @@ class TabularFeaturizationSettings(FeaturizationSettings):
         blocked_transformers: Optional[List[Union[BlockedTransformers, str]]] = None,
         column_name_and_types: Optional[Dict[str, str]] = None,
         dataset_language: Optional[str] = None,
-        transformer_params: Optional[Dict[str, List[ColumnTransformer]]] = None,
+        transformer_params: Optional[Dict] = None,
         mode: Optional[str] = None,
         enable_dnn_featurization: Optional[bool] = None,
     ):
@@ -96,7 +96,7 @@ class TabularFeaturizationSettings(FeaturizationSettings):
         self.type = FeaturizationSettingsType.TABULAR
 
     @property
-    def transformer_params(self) -> Dict[str, List[ColumnTransformer]]:
+    def transformer_params(self) -> Optional[Dict[str, List[ColumnTransformer]]]:
         """A dictionary of transformers and their parameters."""
         return self._transformer_params
 
@@ -109,12 +109,12 @@ class TabularFeaturizationSettings(FeaturizationSettings):
         )
 
     @property
-    def blocked_transformers(self) -> List[Union[BlockedTransformers, str]]:
+    def blocked_transformers(self) -> Optional[List[Union[BlockedTransformers, str]]]:
         """A list of transformers to ignore when featurizing."""
         return self._blocked_transformers
 
     @blocked_transformers.setter
-    def blocked_transformers(self, blocked_transformers_list: List[Union[BlockedTransformers, str]]):
+    def blocked_transformers(self, blocked_transformers_list: List[Union[BlockedTransformers, str]]) -> None:
         self._blocked_transformers = (
             None
             if blocked_transformers_list is None

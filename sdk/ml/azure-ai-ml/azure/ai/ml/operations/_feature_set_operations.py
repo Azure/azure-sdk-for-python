@@ -9,7 +9,7 @@ import os
 from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -113,7 +113,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-    def _get(self, name: str, version: str = None, **kwargs: Dict) -> FeaturesetVersion:
+    def _get(self, name: str, version: Optional[str] = None, **kwargs: Dict) -> FeaturesetVersion:
         return self._operation.get(
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
@@ -424,7 +424,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-        featureset_spec_path = str(featureset.specification.path)
+        featureset_spec_path: Any = str(featureset.specification.path)
         if is_url(featureset_spec_path):
             try:
                 featureset_spec_contents = read_remote_feature_set_spec_metadata(
