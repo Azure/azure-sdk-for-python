@@ -1215,6 +1215,12 @@
       ]
     },
     {
+      "filename": "sdk/ml/azure-ai-generative/**",
+      "words": [
+        "tqdm"
+      ]
+    },
+    {
       "filename": "sdk/attestation/azure-security-attestation/tests/conftest.py",
       "words":[
         "sharedwus"
