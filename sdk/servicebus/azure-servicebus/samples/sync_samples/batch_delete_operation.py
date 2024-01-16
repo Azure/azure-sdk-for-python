@@ -28,7 +28,7 @@ def send_single_message(sender):
     message = ServiceBusMessage("Single Message")
     sender.send_messages(message)
 
-servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR, logging_enable=True)
+servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR, logging_enable=True, retry_total=1)
 with servicebus_client:
     sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
     with sender:
@@ -36,8 +36,6 @@ with servicebus_client:
         time = datetime.datetime.utcnow()
         send_single_message(sender)
         send_single_message(sender)
-        # send_a_list_of_messages(sender)
-        # send_batch_message(sender)
 
     print("Send message is done.")
 
