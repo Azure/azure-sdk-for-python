@@ -41,7 +41,7 @@ def collect_open_issues() -> List[IssuePackage]:
     mgmt_label = request_repo.get_label('ManagementPlane')
     open_issues = request_repo.get_issues(state='open', labels=[mgmt_label])
     rest_repo = hub.get_repo(REST_REPO)
-    issues = [IssuePackage(issue, rest_repo) for issue in open_issues]
+    issues = [IssuePackage(issue, rest_repo) for issue in open_issues if issue.number == 2048]
     _LOG.info(f'collect {len(issues)} open issues')
 
     return issues
@@ -99,7 +99,7 @@ def main():
             _LOG.error(f'Error happened during handling {language} issue: {e}')
 
     # output
-    output(result)
+    # output(result)
     cmd_list = ['git add -u', 'git commit -m \"update excel\"', 'git push -f origin HEAD']
     [sp.call(cmd, shell=True) for cmd in cmd_list]
 
