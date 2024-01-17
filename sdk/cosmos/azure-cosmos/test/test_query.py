@@ -747,7 +747,6 @@ class QueryTest(unittest.TestCase):
             {'id': str(uuid.uuid4()), 'pk': 'test', 'val': 3, 'stringProperty': 'randomWord7', 'db_group': 'group2'},
             {'id': str(uuid.uuid4()), 'pk': 'test', 'val': 2, 'stringProperty': 'randomWord8', 'db_group': 'GroUp3'}
         ]
-        created_database = self.config.create_database_if_not_exist(self.client)
         created_collection = self.created_db.create_container_if_not_exists(
             "computed_properties_query_test_" + str(uuid.uuid4()), PartitionKey(path="/pk")
             , computed_properties=computed_properties)
@@ -793,8 +792,6 @@ class QueryTest(unittest.TestCase):
         queried_items = list(
             created_collection.query_items(query='Select * from c Where c.cp_str_len = 3', partition_key="test"))
         self.assertEqual(len(queried_items), 0)
-
-        self.client.delete_database(created_database)
 
 
     def _MockNextFunction(self):
