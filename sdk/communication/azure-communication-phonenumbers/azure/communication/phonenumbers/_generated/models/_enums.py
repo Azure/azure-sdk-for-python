@@ -16,6 +16,37 @@ class BillingFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MONTHLY = "monthly"
 
 
+class Error(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Mapping Error Messages to Codes."""
+
+    NO_ERROR = "NoError"
+    UNKNOWN_ERROR_CODE = "UnknownErrorCode"
+    OUT_OF_STOCK = "OutOfStock"
+    AUTHORIZATION_DENIED = "AuthorizationDenied"
+    MISSING_ADDRESS = "MissingAddress"
+    INVALID_ADDRESS = "InvalidAddress"
+    INVALID_OFFER_MODEL = "InvalidOfferModel"
+    NOT_ENOUGH_LICENSES = "NotEnoughLicenses"
+    NO_WALLET = "NoWallet"
+    NOT_ENOUGH_CREDIT = "NotEnoughCredit"
+    NUMBERS_PARTIALLY_ACQUIRED = "NumbersPartiallyAcquired"
+    ALL_NUMBERS_NOT_ACQUIRED = "AllNumbersNotAcquired"
+    RESERVATION_EXPIRED = "ReservationExpired"
+    PURCHASE_FAILED = "PurchaseFailed"
+    BILLING_UNAVAILABLE = "BillingUnavailable"
+    PROVISIONING_FAILED = "ProvisioningFailed"
+    UNKNOWN_SEARCH_ERROR = "UnknownSearchError"
+
+
+class OperatorNumberType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of service associated with the phone number."""
+
+    UNKNOWN = "unknown"
+    OTHER = "other"
+    GEOGRAPHIC = "geographic"
+    MOBILE = "mobile"
+
+
 class PhoneNumberAssignmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents the assignment type of the offering."""
 
@@ -48,6 +79,14 @@ class PhoneNumberOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RELEASE_PHONE_NUMBER = "releasePhoneNumber"
     SEARCH = "search"
     UPDATE_PHONE_NUMBER_CAPABILITIES = "updatePhoneNumberCapabilities"
+    RESERVATION_PURCHASE = "reservationPurchase"
+
+
+class PhoneNumberSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Source of the number, e.g. Cloud or OperatorConnect."""
+
+    CLOUD = "cloud"
+    OPERATOR_CONNECT = "operatorConnect"
 
 
 class PhoneNumberType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -55,3 +94,12 @@ class PhoneNumberType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     GEOGRAPHIC = "geographic"
     TOLL_FREE = "tollFree"
+
+
+class ReservationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ReservationStatus."""
+
+    ACTIVE = "active"
+    SUBMITTED = "submitted"
+    COMPLETED = "completed"
+    EXPIRED = "expired"
