@@ -88,7 +88,7 @@ class CodeMetricHandler(MetricHandler):
         with ThreadPoolExecutor(thread_name_prefix="code_metrics_row") as thread_pool:
             for i in range(0, len(data)):
                 row_metric_futures.append(thread_pool.submit(
-                    self._submit_method, metric.calculate, data[i], response[i]
+                    self._submit_method, metric.calculate, data=data[i], response=response[i]
                 ))
 
             for row_metric_future in row_metric_futures:
@@ -99,7 +99,8 @@ class CodeMetricHandler(MetricHandler):
                     row_metric_result.append(NaN)
 
         if metric.aggregator:
-            aggregated_metrics = self._submit_method(metric.aggregator, row_metric_result)
+            aggregated_metrics = self._submit_method(
+                metric.aggregator, values=row_metric_result, metric_name=metric.name)
 
         return {
             "artifacts": {metric.name: row_metric_result},

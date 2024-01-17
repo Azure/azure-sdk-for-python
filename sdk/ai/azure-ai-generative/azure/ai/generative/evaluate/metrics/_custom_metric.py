@@ -7,6 +7,7 @@ import json
 import os
 import urllib.parse
 
+from azure.ai.generative.evaluate.metrics._aggregators import mean
 from azure.ai.generative.evaluate.metrics._parsers import ScoreReasonParser, ScoreParser
 
 
@@ -63,7 +64,7 @@ class CodeMetric(Metric):
     def __init__(self, *, name, calculate, aggregator=None, **kwargs):
         super(CodeMetric, self).__init__(name=name)
         self.calculate = calculate
-        self.aggregator = aggregator
+        self.aggregator = aggregator if aggregator else mean
 
 
 # WIP: This implementation will change
@@ -123,6 +124,7 @@ class PromptMetric(Metric):
         self.description = description
         self.prompt = self._build_prompt()
         self._parser = ScoreReasonParser
+        self.aggregator = kwargs.get("aggregator") if kwargs.get("aggregator", None) else mean
 
     def _build_prompt(self):
         from jinja2 import Template

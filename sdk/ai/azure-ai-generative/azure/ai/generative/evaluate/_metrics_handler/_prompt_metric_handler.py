@@ -108,6 +108,14 @@ class PromptMetricHandler(MetricHandler):
             results["artifacts"].update({
                 key: [row[key] for row in responses]
             })
+
+        if metric.aggregator:
+            results["metrics"].update(
+                metric.aggregator(
+                    values=results.get("artifacts").get(metric.name), metric_name=metric.name
+                )
+            )
+
         return results
 
     async def _compute_metrics(self, metrics):
