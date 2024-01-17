@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from pathlib import Path
-from typing import Any, Dict, Optional, Union, cast
+from typing import Any, Dict, Optional, Union
 
 from marshmallow import Schema
 
@@ -72,9 +72,11 @@ class ImportComponent(Component):
         self.output = output
 
     def _to_dict(self) -> Dict:
-        return cast(
-            dict, convert_ordered_dict_to_dict({**self._other_parameter, **super(ImportComponent, self)._to_dict()})
+        # TODO: Bug Item number: 2897665
+        res: Dict = convert_ordered_dict_to_dict(  # type: ignore
+            {**self._other_parameter, **super(ImportComponent, self)._to_dict()}
         )
+        return res
 
     @classmethod
     def _create_schema_for_validation(cls, context: Any) -> Union[PathAwareSchema, Schema]:

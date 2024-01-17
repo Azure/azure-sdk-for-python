@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import re
-from typing import Any, Dict, List, Optional, Tuple, Union, cast
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from azure.ai.ml import Output
 from azure.ai.ml._schema import PathAwareSchema
@@ -599,7 +599,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             first_silo = silo_configs[0]
             expected_inputs: List = []
             if hasattr(first_silo, "inputs"):
-                expected_inputs = cast(List, first_silo.inputs.keys())
+                expected_inputs = first_silo.inputs.keys()  # type: ignore
             num_expected_inputs = len(expected_inputs)
             # pylint: disable=consider-using-enumerate
             for i in range(len(silo_configs)):
@@ -867,7 +867,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         :return: The outputs of the scatter-gather node.
         :rtype: Dict[str, Union[str, ~azure.ai.ml.Output]]
         """
-        return dict(self._outputs)
+        return self._outputs
 
     @classmethod
     def _create_schema_for_validation(cls, context: Any) -> PathAwareSchema:
@@ -881,5 +881,6 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         """
         rest_node = super(FLScatterGather, self)._to_rest_object(**kwargs)
         rest_node.update({"outputs": self._to_rest_outputs()})
-        res = cast(dict, convert_ordered_dict_to_dict(rest_node))
+        # TODO: Bug Item number: 2897665
+        res: dict = convert_ordered_dict_to_dict(rest_node)  # type: ignore
         return res

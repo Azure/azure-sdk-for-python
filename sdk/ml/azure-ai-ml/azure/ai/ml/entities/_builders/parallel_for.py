@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import json
 import os
-from typing import Any, Dict, Optional, Union, cast
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml import Input, Output
 from azure.ai.ml._schema import PathAwareSchema
@@ -177,7 +177,9 @@ class ParallelFor(LoopNode, NodeIOMixin):
         # convert items to rest object
         rest_items = self._to_rest_items(items=self.items)
         rest_node.update({"items": rest_items, "outputs": self._to_rest_outputs()})
-        return cast(dict, convert_ordered_dict_to_dict(rest_node))
+        # TODO: Bug Item number: 2897665
+        res: dict = convert_ordered_dict_to_dict(rest_node)  # type: ignore
+        return res
 
     @classmethod
     # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
@@ -239,8 +241,8 @@ class ParallelFor(LoopNode, NodeIOMixin):
                 raise UserErrorException(
                     "Referencing output with type {} is not supported in parallel_for node.".format(output.type)
                 )
-            if isinstance(output, NodeOutput):
-                output = output._to_job_output()  # type: ignore
+            if isinstance(output, NodeOutput):  # type: ignore
+                output = output._to_job_output()
             if isinstance(output, Output):
                 out_dict = output._to_dict()
                 out_dict["type"] = new_type

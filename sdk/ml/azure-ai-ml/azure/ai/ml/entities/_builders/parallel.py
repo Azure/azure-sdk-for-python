@@ -226,7 +226,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
         :return: The retry settings for the parallel job.
         :rtype: ~azure.ai.ml.entities._job.parallel.retry_settings.RetrySettings
         """
-        return cast(RetrySettings, self._retry_settings)
+        return self._retry_settings  # type: ignore
 
     @retry_settings.setter
     def retry_settings(self, value: Union[RetrySettings, Dict]) -> None:
@@ -310,7 +310,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
         :return: The parallel task.
         :rtype: ~azure.ai.ml.entities._job.parallel.parallel_task.ParallelTask
         """
-        return cast(Optional[ParallelTask], self._task)
+        return self._task  # type: ignore
 
     @task.setter
     def task(self, value: Union[ParallelTask, Dict]) -> None:
@@ -421,7 +421,9 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
                 rest_attr = parallel_attr
             else:
                 raise Exception(f"Expecting {base_type} for {attr}, got {type(parallel_attr)} instead.")
-        return cast(dict, convert_ordered_dict_to_dict(rest_attr))
+        # TODO: Bug Item number: 2897665
+        res: dict = convert_ordered_dict_to_dict(rest_attr)  # type: ignore
+        return res
 
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:

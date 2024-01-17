@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Any, Dict, List, Optional, Union, cast
+from typing import Any, Dict, List, Optional, Union
 
 from marshmallow import Schema
 
@@ -171,9 +171,11 @@ class SparkComponent(
         return validation_result
 
     def _to_dict(self) -> Dict:
-        return cast(
-            dict, convert_ordered_dict_to_dict({**self._other_parameter, **super(SparkComponent, self)._to_dict()})
+        # TODO: Bug Item number: 2897665
+        res: Dict = convert_ordered_dict_to_dict(  # type: ignore
+            {**self._other_parameter, **super(SparkComponent, self)._to_dict()}
         )
+        return res
 
     def _to_ordered_dict_for_yaml_dump(self) -> Dict:
         """Dump the component content into a sorted yaml string.

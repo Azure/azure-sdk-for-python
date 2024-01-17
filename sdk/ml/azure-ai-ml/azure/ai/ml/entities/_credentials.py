@@ -568,7 +568,8 @@ class UserIdentityConfiguration(_BaseIdentityConfiguration):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, UserIdentityConfiguration):
             return NotImplemented
-        return bool(self._to_job_rest_object() == other._to_job_rest_object())
+        res: bool = self._to_job_rest_object() == other._to_job_rest_object()
+        return res
 
 
 class AmlTokenConfiguration(_BaseIdentityConfiguration):

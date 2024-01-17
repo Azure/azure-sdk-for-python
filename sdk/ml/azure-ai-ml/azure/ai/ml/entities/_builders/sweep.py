@@ -4,7 +4,7 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Any, Dict, List, Optional, Tuple, Union, cast
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import pydash
 from marshmallow import EXCLUDE, Schema
@@ -238,7 +238,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         # hack: only early termination policy does not follow yaml schema now, should be removed after server-side made
         # the change
         if "early_termination" in rest_obj:
-            _early_termination = cast(EarlyTerminationPolicy, self.early_termination)
+            _early_termination: EarlyTerminationPolicy = self.early_termination  # type: ignore
             rest_obj["early_termination"] = _early_termination._to_rest_object().as_dict()
 
         rest_obj.update(
