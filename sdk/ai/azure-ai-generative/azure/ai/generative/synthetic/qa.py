@@ -14,7 +14,7 @@ try:
     from typing import Dict, List, Tuple, Any, Union, Optional
     from collections import defaultdict
     from azure.ai.resources.entities import BaseConnection
-    from azure.ai.resources.constants._common import USER_AGENT_HEADER_KEY
+    from azure.ai.generative.constants._common import USER_AGENT_HEADER_KEY
     from azure.identity import DefaultAzureCredential
     from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, ActivityLogger
     from azure.core.tracing.decorator import distributed_trace
