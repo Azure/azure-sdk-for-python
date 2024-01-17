@@ -49,7 +49,7 @@ The appropriate constructor is invoked in each sample to create a `TextTranslati
 
 ```python
 credential = TranslatorCredential(apikey, region)
-text_translator = TextTranslationClient(credential, endpoint)
+text_translator = TextTranslationClient(credential, endpoint=endpoint)
 ```
 
 <!-- END SNIPPET -->

@@ -6,7 +6,7 @@ import urllib.parse
 from datetime import date, datetime
 from typing import Set, List, Dict
 from random import randint
-
+from pathlib import Path
 from github import Github
 from github.Repository import Repository
 
@@ -44,6 +44,7 @@ class IssueProcess:
     package_name = ''  # target package name
     target_date = ''  # target release date asked by customer
     date_from_target = 0
+    spec_repo = None  # local swagger repo path
     """
 
     def __init__(self, issue_package: IssuePackage, request_repo_dict: Dict[str, Repository],
@@ -65,6 +66,7 @@ class IssueProcess:
         self.date_from_target = 0
         self.is_open = True
         self.issue_title = issue_package.issue.title.split(": ", 1)[-1]
+        self.spec_repo = Path(os.getenv('SPEC_REPO'))
 
     @property
     def created_date_format(self) -> str:
@@ -91,6 +93,16 @@ class IssueProcess:
     def comment(self, message: str) -> None:
         self.issue_package.issue.create_comment(message)
 
+    # get "workloads/resource-manager" from "workloads/resource-manager/Microsoft.Workloads/stable/2023-04-01/operations.json"
+    def get_valid_relative_readme_folder(self, readme_folder: str) -> str:
+        folder = Path(Path(readme_folder).as_posix().strip("/"))
+        while "resource-manager" in str(folder):
+            if Path(self.spec_repo, folder, "readme.md").exists():
+                return folder.as_posix()
+            folder = folder.parent
+
+        return folder.as_posix()
+
     def get_readme_from_pr_link(self, link: str) -> str:
         pr_number = int(link.replace(f"{_SWAGGER_PULL}/", "").split('/')[0])
 
@@ -102,10 +114,10 @@ class IssueProcess:
             if '/resource-manager' not in contents_url:
                 continue
             try:
-                pk_url_name.add(re.findall(r'/specification/(.*?)/resource-manager/', contents_url)[0])
+                pk_url_name.add(self.get_valid_relative_readme_folder(contents_url.split('/specification')[1]))
             except Exception as e:
                 continue
-        readme_link = [f'{_SWAGGER_URL}/{item}/resource-manager' for item in pk_url_name]
+        readme_link = [f'{_SWAGGER_URL}/{item}' for item in pk_url_name]
         if len(readme_link) > 1:
             multi_link = ', '.join(readme_link)
             pr = f"{_SWAGGER_PULL}/{pr_number}"
@@ -146,12 +158,19 @@ class IssueProcess:
             # (i.e. https://github.com/Azure/azure-rest-api-specs/tree/main/specification/xxxx)
             self.readme_link = link + '/resource-manager'
         else:
-            self.readme_link = link.split('/resource-manager')[0] + '/resource-manager'
+            relative_readme_folder = self.get_valid_relative_readme_folder(link.split('/specification')[1])
+            self.readme_link = f"{_SWAGGER_URL}/{relative_readme_folder}"
+
+    @property
+    def readme_local(self) -> str:
+        return str(Path(self.spec_repo, self.readme_link.split('specification/')[1]))
+
+    def get_local_file_content(self, name: str = "readme.md") -> str:
+        with open(Path(self.readme_local, name), 'r', encoding='utf-8') as f:
+            return f.read()
 
     def get_default_readme_tag(self) -> None:
-        pattern_resource_manager = re.compile(r'/specification/([\w-]+/)+resource-manager')
-        readme_path = pattern_resource_manager.search(self.readme_link).group() + '/readme.md'
-        contents = str(self.issue_package.rest_repo.get_contents(readme_path).decoded_content)
+        contents = self.get_local_file_content()
         pattern_tag = re.compile(r'tag: package-[\w+-.]+')
         self.default_readme_tag = pattern_tag.search(contents).group().split(':')[-1].strip()
 

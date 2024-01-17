@@ -4,12 +4,12 @@
 
 # pylint: disable=protected-access
 
-import uuid
 import json
 import os
 import re
+import uuid
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional, cast
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -95,7 +95,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         service_client_05_2022: ServiceClient052022,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
-        **kwargs: Dict,
+        **kwargs: Any,
     ):
         super(BatchEndpointOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
@@ -110,7 +110,9 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
     @property
     def _datastore_operations(self) -> "DatastoreOperations":
-        return self._all_operations.all_operations[AzureMLResourceType.DATASTORE]
+        from azure.ai.ml.operations import DatastoreOperations
+
+        return cast(DatastoreOperations, self._all_operations.all_operations[AzureMLResourceType.DATASTORE])
 
     @distributed_trace
     @monitor_with_activity(logger, "BatchEndpoint.List", ActivityType.PUBLICAPI)
@@ -256,7 +258,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         *,
         deployment_name: Optional[str] = None,
         inputs: Optional[Dict[str, Input]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> BatchJob:
         """Invokes the batch endpoint with the provided payload.
 
@@ -374,7 +376,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         headers = EndpointInvokeFields.DEFAULT_HEADER
         ml_audience_scopes = _resource_to_scopes(_get_aml_resource_id_from_metadata())
         module_logger.debug("ml_audience_scopes used: `%s`\n", ml_audience_scopes)
-        key = self._credentials.get_token(*ml_audience_scopes).token
+        key = self._credentials.get_token(*ml_audience_scopes).token if self._credentials is not None else ""
         headers[EndpointInvokeFields.AUTHORIZATION] = f"Bearer {key}"
         headers[EndpointInvokeFields.REPEATABILITY_REQUEST_ID] = str(uuid.uuid4())
 
@@ -437,9 +439,11 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             return list(result)
 
     def _get_workspace_location(self) -> str:
-        return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
+        return str(
+            self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
+        )
 
-    def _validate_deployment_name(self, endpoint_name, deployment_name):
+    def _validate_deployment_name(self, endpoint_name: str, deployment_name: str) -> None:
         deployments_list = self._batch_deployment_operation.list(
             endpoint_name=endpoint_name,
             resource_group_name=self._resource_group_name,
