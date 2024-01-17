@@ -21,7 +21,7 @@ def test_build_phone_numbers_get_search_result_request():
     assert isinstance(request, HttpRequest)
     assert request.method == "GET"
     assert test_id in request.url
-    assert "api-version=2022-12-01" in request.url
+    assert "api-version=2024-01-31-preview" in request.url
     assert request.headers["Accept"] == "application/json"
 
 def test_build_phone_numbers_purchase_phone_numbers_request():
