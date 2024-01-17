@@ -29,6 +29,7 @@ from azure.monitor.opentelemetry.exporter._generated.models import (
     TelemetryItem,
 )
 from azure.monitor.opentelemetry.exporter._constants import (
+    _AZURE_MONITOR_DISTRO_VERSION_ARG,
     _INVALID_STATUS_CODES,
     _REACHED_INGESTION_STATUS_CODES,
     _REDIRECT_STATUS_CODES,
@@ -100,6 +101,7 @@ class BaseExporter:
         self._storage_directory = kwargs.get('storage_directory', default_storage_directory)  # Storage path in which to store retry files.
         self._storage_retention_period = kwargs.get('storage_retention_period', 48 * 60 * 60)  # Retention period in seconds (default 48 hrs)
         self._timeout = kwargs.get('timeout', 10.0)  # networking timeout in seconds
+        self._distro_version = kwargs.get(_AZURE_MONITOR_DISTRO_VERSION_ARG, '')  # If set, indicates the exporter is instantiated via Azure monitor OpenTelemetry distro. Versions corresponds to distro version.
 
         config = AzureMonitorClientConfiguration(self._endpoint, **kwargs)
         policies = [

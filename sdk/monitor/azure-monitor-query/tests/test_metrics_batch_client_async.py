@@ -26,8 +26,8 @@ class TestMetricsClientAsync(AzureMonitorQueryBatchMetricsTestCase):
         async with client:
             responses = await client.query_batch(
                 [monitor_info['metrics_resource_id']],
+                [METRIC_NAME],
                 METRIC_RESOURCE_PROVIDER,
-                metric_names=[METRIC_NAME],
                 aggregations=[MetricAggregationType.COUNT],
             )
             assert responses
@@ -40,8 +40,8 @@ class TestMetricsClientAsync(AzureMonitorQueryBatchMetricsTestCase):
         async with client:
             responses = await client.query_batch(
                 [monitor_info['metrics_resource_id']],
+                [METRIC_NAME],
                 METRIC_RESOURCE_PROVIDER,
-                metric_names=[METRIC_NAME],
                 granularity=timedelta(minutes=5),
                 aggregations=[MetricAggregationType.COUNT],
             )

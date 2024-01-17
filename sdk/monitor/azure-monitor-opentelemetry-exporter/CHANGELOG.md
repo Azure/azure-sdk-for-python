@@ -1,14 +1,11 @@
 # Release History
 
-## 1.0.0b21 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 1.0.0b21 (2024-01-16)
 
 ### Other Changes
+
+- Update to OTel SKD/API 1.21
+    ([#33864](https://github.com/Azure/azure-sdk-for-python/pull/33864))
 
 ## 1.0.0b20 (2024-01-04)
 
@@ -22,6 +19,10 @@
     ([#33667](https://github.com/Azure/azure-sdk-for-python/pull/33667))
 - Readme examples are updated with correct imports
     ([#33691](https://github.com/Azure/azure-sdk-for-python/pull/33691))
+- Implement distro detection for statsbeat feature
+    ([#33761](https://github.com/Azure/azure-sdk-for-python/pull/33761))
+- Use empty resource for statsbeat `MeterProvider`
+    ([#33761](https://github.com/Azure/azure-sdk-for-python/pull/33761))
 
 ## 1.0.0b19 (2023-11-20)
 

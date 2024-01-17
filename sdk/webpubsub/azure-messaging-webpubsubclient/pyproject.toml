@@ -1,5 +1,4 @@
 [tool.azure-sdk-build]
-mypy = false
 pylint = false
 pyright = false
 type_check_samples = false
