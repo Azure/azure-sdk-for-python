@@ -29,16 +29,17 @@ connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 def shared_transport():
     # [START shared_transport]
     import requests
+
     session = requests.Session()
-    shared_transport = RequestsTransport(session=session, session_owner=False)   # here we set session_owner to False to indicate that we don't want to close the session when the client is closed
+    shared_transport = RequestsTransport(
+        session=session, session_owner=False
+    )  # here we set session_owner to False to indicate that we don't want to close the session when the client is closed
     with shared_transport:
         blob_service_client1 = BlobServiceClient.from_connection_string(
             connection_string,
             transport=shared_transport,
         )
-        blob_service_client2 = BlobServiceClient.from_connection_string(
-            connection_string, transport=shared_transport
-        )
+        blob_service_client2 = BlobServiceClient.from_connection_string(connection_string, transport=shared_transport)
         containers1 = blob_service_client1.list_containers()
         for contain in containers1:
             print(contain.name)
@@ -59,12 +60,8 @@ def shared_transport_with_pooling():
     session.mount("https://", adapter)
     shared_transport = RequestsTransport(session=session, session_owner=False)
     with shared_transport:
-        blob_service_client1 = BlobServiceClient.from_connection_string(
-            connection_string, transport=shared_transport
-        )
-        blob_service_client2 = BlobServiceClient.from_connection_string(
-            connection_string, transport=shared_transport
-        )
+        blob_service_client1 = BlobServiceClient.from_connection_string(connection_string, transport=shared_transport)
+        blob_service_client2 = BlobServiceClient.from_connection_string(connection_string, transport=shared_transport)
         containers1 = blob_service_client1.list_containers()
         for contain in containers1:
             print(contain.name)

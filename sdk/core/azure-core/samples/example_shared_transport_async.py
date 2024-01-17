@@ -32,15 +32,15 @@ async def shared_transport_async():
     import aiohttp
 
     session = aiohttp.ClientSession()
-    shared_transport = AioHttpTransport(session=session, session_owner=False)    # here we set session_owner to False to indicate that we don't want to close the session when the client is closed
+    shared_transport = AioHttpTransport(
+        session=session, session_owner=False
+    )  # here we set session_owner to False to indicate that we don't want to close the session when the client is closed
     async with shared_transport:
         blob_service_client1 = BlobServiceClient.from_connection_string(
             connection_string,
             transport=shared_transport,
         )
-        blob_service_client2 = BlobServiceClient.from_connection_string(
-            connection_string, transport=shared_transport
-        )
+        blob_service_client2 = BlobServiceClient.from_connection_string(connection_string, transport=shared_transport)
         containers1 = blob_service_client1.list_containers()
         async for contain in containers1:
             print(contain.name)
@@ -59,12 +59,8 @@ async def shared_transport_async_with_pooling():
     session = aiohttp.ClientSession(connector=conn)
     shared_transport = AioHttpTransport(session=session, session_owner=False)
     async with shared_transport:
-        blob_service_client1 = BlobServiceClient.from_connection_string(
-            connection_string, transport=shared_transport
-        )
-        blob_service_client2 = BlobServiceClient.from_connection_string(
-            connection_string, transport=shared_transport
-        )
+        blob_service_client1 = BlobServiceClient.from_connection_string(connection_string, transport=shared_transport)
+        blob_service_client2 = BlobServiceClient.from_connection_string(connection_string, transport=shared_transport)
         containers1 = blob_service_client1.list_containers()
         async for contain in containers1:
             print(contain.name)
