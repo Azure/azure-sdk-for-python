@@ -95,13 +95,13 @@ class IssueProcess:
 
     # get "workloads/resource-manager" from "workloads/resource-manager/Microsoft.Workloads/stable/2023-04-01/operations.json"
     def get_valid_relative_readme_folder(self, readme_folder: str) -> str:
-        folder = Path(readme_folder)
+        folder = Path(Path(readme_folder).as_posix().strip("/"))
         while "resource-manager" in str(folder):
             if Path(self.spec_repo, folder, "readme.md").exists():
-                return str(folder)
+                return folder.as_posix()
             folder = folder.parent
 
-        return str(folder)
+        return folder.as_posix()
 
     def get_readme_from_pr_link(self, link: str) -> str:
         pr_number = int(link.replace(f"{_SWAGGER_PULL}/", "").split('/')[0])
@@ -163,7 +163,7 @@ class IssueProcess:
 
     @property
     def readme_local(self) -> str:
-        return str(Path(self.spec_repo, self.readme_link.replace(_SWAGGER_URL, '')))
+        return str(Path(self.spec_repo, self.readme_link.split('specification/')[1]))
 
     def get_local_file_content(self, name: str = "readme.md") -> str:
         with open(Path(self.readme_local, name), 'r', encoding='utf-8') as f:
