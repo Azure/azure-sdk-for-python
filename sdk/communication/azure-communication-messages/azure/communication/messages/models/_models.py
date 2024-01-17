@@ -30,8 +30,8 @@ class NotificationContent(_model_base.Model):
     :vartype channel_registration_id: str
     :ivar to: The native external platform user identifiers of the recipient. Required.
     :vartype to: list[str]
-    :ivar type: Required. Default value is None.
-    :vartype type: str
+    :ivar kind: Required. Default value is None.
+    :vartype kind: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
@@ -39,7 +39,7 @@ class NotificationContent(_model_base.Model):
     """The Channel Registration ID for the Business Identifier. Required."""
     to: List[str] = rest_field()
     """The native external platform user identifiers of the recipient. Required."""
-    type: Literal[None] = rest_discriminator(name="type")
+    kind: Literal[None] = rest_discriminator(name="kind")
     """Required. Default value is None."""
 
     @overload
@@ -55,12 +55,12 @@ class NotificationContent(_model_base.Model):
     def __init__(self, mapping: Mapping[str, Any]):
         """
         :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
+        :kind mapping: Mapping[str, Any]
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type: Literal[None] = None
+        self.kind: Literal[None] = None
 
 
 class MediaNotificationContent(NotificationContent, discriminator="image"):
@@ -73,8 +73,8 @@ class MediaNotificationContent(NotificationContent, discriminator="image"):
     :vartype channel_registration_id: str
     :ivar to: The native external platform user identifiers of the recipient. Required.
     :vartype to: list[str]
-    :ivar type: Message notification type is image. Required. Default value is "image".
-    :vartype type: str
+    :ivar kind: Message notification type is image. Required. Default value is "image".
+    :vartype kind: str
     :ivar content: Optional text content.
     :vartype content: str
     :ivar media_uri: A media url for the file. Required if the type is one of the supported media
@@ -82,7 +82,7 @@ class MediaNotificationContent(NotificationContent, discriminator="image"):
     :vartype media_uri: str
     """
 
-    type: Literal["image"] = rest_discriminator(name="type")  # type: ignore
+    kind: Literal["image"] = rest_discriminator(name="kind")  # type: ignore
     """Message notification type is image. Required. Default value is \"image\"."""
     content: Optional[str] = rest_field()
     """Optional text content."""
@@ -110,7 +110,7 @@ class MediaNotificationContent(NotificationContent, discriminator="image"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type: Literal["image"] = "image"
+        self.kind: Literal["image"] = "image"
 
 
 class MessageReceipt(_model_base.Model):
@@ -203,17 +203,17 @@ class MessageTemplateBindings(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar type: Required. Default value is None.
-    :vartype type: str
+    :ivar kind: Required. Default value is None.
+    :vartype kind: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    type: Literal[None] = rest_discriminator(name="type")
+    kind: Literal[None] = rest_discriminator(name="kind")
     """Required. Default value is None."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type: Literal[None] = None
+        self.kind: Literal[None] = None
 
 
 class MessageTemplateValue(_model_base.Model):
@@ -227,14 +227,14 @@ class MessageTemplateValue(_model_base.Model):
 
     :ivar name: Name of the Template value. Required.
     :vartype name: str
-    :ivar type: Required. Default value is None.
-    :vartype type: str
+    :ivar kind: Required. Default value is None.
+    :vartype kind: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
     name: str = rest_field()
     """Name of the Template value. Required."""
-    type: Literal[None] = rest_discriminator(name="type")
+    kind: Literal[None] = rest_discriminator(name="kind")
     """Required. Default value is None."""
 
     @overload
@@ -254,7 +254,7 @@ class MessageTemplateValue(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type: Literal[None] = None
+        self.kind: Literal[None] = None
 
 
 class MessageTemplateDocument(MessageTemplateValue, discriminator="document"):
@@ -264,8 +264,8 @@ class MessageTemplateDocument(MessageTemplateValue, discriminator="document"):
 
     :ivar name: Name of the Template value. Required.
     :vartype name: str
-    :ivar type: Message parameter type is document. Required. Default value is "document".
-    :vartype type: str
+    :ivar kind: Message parameter type is document. Required. Default value is "document".
+    :vartype kind: str
     :ivar url: The (public) URL of the media. Required.
     :vartype url: str
     :ivar caption: The [optional] caption of the media object.
@@ -274,7 +274,7 @@ class MessageTemplateDocument(MessageTemplateValue, discriminator="document"):
     :vartype file_name: str
     """
 
-    type: Literal["document"] = rest_discriminator(name="type")  # type: ignore
+    kind: Literal["document"] = rest_discriminator(name="kind")  # type: ignore
     """Message parameter type is document. Required. Default value is \"document\"."""
     url: str = rest_field()
     """The (public) URL of the media. Required."""
@@ -303,7 +303,7 @@ class MessageTemplateDocument(MessageTemplateValue, discriminator="document"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type: Literal["document"] = "document"
+        self.kind: Literal["document"] = "document"
 
 
 class MessageTemplateImage(MessageTemplateValue, discriminator="image"):
@@ -313,8 +313,8 @@ class MessageTemplateImage(MessageTemplateValue, discriminator="image"):
 
     :ivar name: Name of the Template value. Required.
     :vartype name: str
-    :ivar type: Message parameter type is image. Required. Default value is "image".
-    :vartype type: str
+    :ivar kind: Message parameter type is image. Required. Default value is "image".
+    :vartype kind: str
     :ivar url: The (public) URL of the media. Required.
     :vartype url: str
     :ivar caption: The [optional] caption of the media object.
@@ -323,7 +323,7 @@ class MessageTemplateImage(MessageTemplateValue, discriminator="image"):
     :vartype file_name: str
     """
 
-    type: Literal["image"] = rest_discriminator(name="type")  # type: ignore
+    kind: Literal["image"] = rest_discriminator(name="kind")  # type: ignore
     """Message parameter type is image. Required. Default value is \"image\"."""
     url: str = rest_field()
     """The (public) URL of the media. Required."""
@@ -352,7 +352,7 @@ class MessageTemplateImage(MessageTemplateValue, discriminator="image"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type: Literal["image"] = "image"
+        self.kind: Literal["image"] = "image"
 
 
 class MessageTemplateItem(_model_base.Model):
@@ -372,8 +372,8 @@ class MessageTemplateItem(_model_base.Model):
     :ivar status: The aggregated template status. Required. Known values are: "approved",
      "rejected", "pending", and "paused".
     :vartype status: str or ~azure.communication.messages.models.MessageTemplateStatus
-    :ivar type: Required. Default value is None.
-    :vartype type: str
+    :ivar kind: Required. Default value is None.
+    :vartype kind: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
@@ -384,7 +384,7 @@ class MessageTemplateItem(_model_base.Model):
     status: Union[str, "_models.MessageTemplateStatus"] = rest_field()
     """The aggregated template status. Required. Known values are: \"approved\", \"rejected\",
      \"pending\", and \"paused\"."""
-    type: Literal[None] = rest_discriminator(name="type")
+    kind: Literal[None] = rest_discriminator(name="kind")
     """Required. Default value is None."""
 
     @overload
@@ -405,7 +405,7 @@ class MessageTemplateItem(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type: Literal[None] = None
+        self.kind: Literal[None] = None
 
 
 class MessageTemplateLocation(MessageTemplateValue, discriminator="location"):
@@ -415,8 +415,8 @@ class MessageTemplateLocation(MessageTemplateValue, discriminator="location"):
 
     :ivar name: Name of the Template value. Required.
     :vartype name: str
-    :ivar type: Message parameter type is location. Required. Default value is "location".
-    :vartype type: str
+    :ivar kind: Message parameter type is location. Required. Default value is "location".
+    :vartype kind: str
     :ivar location_name: The [Optional] name of the location.
     :vartype location_name: str
     :ivar address: The [Optional] address of the location.
@@ -427,7 +427,7 @@ class MessageTemplateLocation(MessageTemplateValue, discriminator="location"):
     :vartype longitude: float
     """
 
-    type: Literal["location"] = rest_discriminator(name="type")  # type: ignore
+    kind: Literal["location"] = rest_discriminator(name="kind")  # type: ignore
     """Message parameter type is location. Required. Default value is \"location\"."""
     location_name: Optional[str] = rest_field(name="locationName")
     """The [Optional] name of the location."""
@@ -459,7 +459,7 @@ class MessageTemplateLocation(MessageTemplateValue, discriminator="location"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type: Literal["location"] = "location"
+        self.kind: Literal["location"] = "location"
 
 
 class MessageTemplateQuickAction(MessageTemplateValue, discriminator="quickAction"):
@@ -469,15 +469,15 @@ class MessageTemplateQuickAction(MessageTemplateValue, discriminator="quickActio
 
     :ivar name: Name of the Template value. Required.
     :vartype name: str
-    :ivar type: Message parameter type is quick action. Required. Default value is "quickAction".
-    :vartype type: str
+    :ivar kind: Message parameter type is quick action. Required. Default value is "quickAction".
+    :vartype kind: str
     :ivar text: The [Optional] quick action text.
     :vartype text: str
     :ivar payload: The [Optional] quick action payload.
     :vartype payload: str
     """
 
-    type: Literal["quickAction"] = rest_discriminator(name="type")  # type: ignore
+    kind: Literal["quickAction"] = rest_discriminator(name="kind")  # type: ignore
     """Message parameter type is quick action. Required. Default value is \"quickAction\"."""
     text: Optional[str] = rest_field()
     """The [Optional] quick action text."""
@@ -503,7 +503,7 @@ class MessageTemplateQuickAction(MessageTemplateValue, discriminator="quickActio
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type: Literal["quickAction"] = "quickAction"
+        self.kind: Literal["quickAction"] = "quickAction"
 
 
 class MessageTemplateText(MessageTemplateValue, discriminator="text"):
@@ -513,13 +513,13 @@ class MessageTemplateText(MessageTemplateValue, discriminator="text"):
 
     :ivar name: Name of the Template value. Required.
     :vartype name: str
-    :ivar type: Message parameter type is text. Required. Default value is "text".
-    :vartype type: str
+    :ivar kind: Message parameter type is text. Required. Default value is "text".
+    :vartype kind: str
     :ivar text: The text value. Required.
     :vartype text: str
     """
 
-    type: Literal["text"] = rest_discriminator(name="type")  # type: ignore
+    kind: Literal["text"] = rest_discriminator(name="kind")  # type: ignore
     """Message parameter type is text. Required. Default value is \"text\"."""
     text: str = rest_field()
     """The text value. Required."""
@@ -542,7 +542,7 @@ class MessageTemplateText(MessageTemplateValue, discriminator="text"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type: Literal["text"] = "text"
+        self.kind: Literal["text"] = "text"
 
 
 class MessageTemplateVideo(MessageTemplateValue, discriminator="video"):
@@ -552,8 +552,8 @@ class MessageTemplateVideo(MessageTemplateValue, discriminator="video"):
 
     :ivar name: Name of the Template value. Required.
     :vartype name: str
-    :ivar type: Message parameter type is video. Required. Default value is "video".
-    :vartype type: str
+    :ivar kind: Message parameter type is video. Required. Default value is "video".
+    :vartype kind: str
     :ivar url: The (public) URL of the media. Required.
     :vartype url: str
     :ivar caption: The [optional] caption of the media object.
@@ -562,7 +562,7 @@ class MessageTemplateVideo(MessageTemplateValue, discriminator="video"):
     :vartype file_name: str
     """
 
-    type: Literal["video"] = rest_discriminator(name="type")  # type: ignore
+    kind: Literal["video"] = rest_discriminator(name="kind")  # type: ignore
     """Message parameter type is video. Required. Default value is \"video\"."""
     url: str = rest_field()
     """The (public) URL of the media. Required."""
@@ -591,7 +591,7 @@ class MessageTemplateVideo(MessageTemplateValue, discriminator="video"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type: Literal["video"] = "video"
+        self.kind: Literal["video"] = "video"
 
 
 class SendMessageResult(_model_base.Model):
@@ -635,13 +635,13 @@ class TemplateNotificationContent(NotificationContent, discriminator="template")
     :vartype channel_registration_id: str
     :ivar to: The native external platform user identifiers of the recipient. Required.
     :vartype to: list[str]
-    :ivar type: Message notification type is template. Required. Default value is "template".
-    :vartype type: str
+    :ivar kind: Message notification type is template. Required. Default value is "template".
+    :vartype kind: str
     :ivar template: The template object used to create templates. Required.
     :vartype template: ~azure.communication.messages.models.MessageTemplate
     """
 
-    type: Literal["template"] = rest_discriminator(name="type")  # type: ignore
+    kind: Literal["template"] = rest_discriminator(name="kind")  # type: ignore
     """Message notification type is template. Required. Default value is \"template\"."""
     template: "_models.MessageTemplate" = rest_field()
     """The template object used to create templates. Required."""
@@ -665,7 +665,7 @@ class TemplateNotificationContent(NotificationContent, discriminator="template")
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type: Literal["template"] = "template"
+        self.kind: Literal["template"] = "template"
 
 
 class TextNotificationContent(NotificationContent, discriminator="text"):
@@ -678,13 +678,13 @@ class TextNotificationContent(NotificationContent, discriminator="text"):
     :vartype channel_registration_id: str
     :ivar to: The native external platform user identifiers of the recipient. Required.
     :vartype to: list[str]
-    :ivar type: Message notification type is text. Required. Default value is "text".
-    :vartype type: str
+    :ivar kind: Message notification type is text. Required. Default value is "text".
+    :vartype kind: str
     :ivar content: Message content. Required.
     :vartype content: str
     """
 
-    type: Literal["text"] = rest_discriminator(name="type")  # type: ignore
+    kind: Literal["text"] = rest_discriminator(name="kind")  # type: ignore
     """Message notification type is text. Required. Default value is \"text\"."""
     content: str = rest_field()
     """Message content. Required."""
@@ -708,7 +708,7 @@ class TextNotificationContent(NotificationContent, discriminator="text"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type: Literal["text"] = "text"
+        self.kind: Literal["text"] = "text"
 
 
 class WhatsAppMessageTemplateBindings(MessageTemplateBindings, discriminator="whatsApp"):
@@ -716,8 +716,8 @@ class WhatsAppMessageTemplateBindings(MessageTemplateBindings, discriminator="wh
 
     All required parameters must be populated in order to send to server.
 
-    :ivar type: MessageTemplateBindings is whatsApp. Required. Default value is "whatsApp".
-    :vartype type: str
+    :ivar kind: MessageTemplateBindings is whatsApp. Required. Default value is "whatsApp".
+    :vartype kind: str
     :ivar header: The header template bindings.
     :vartype header:
      list[~azure.communication.messages.models.WhatsAppMessageTemplateBindingsComponent]
@@ -732,7 +732,7 @@ class WhatsAppMessageTemplateBindings(MessageTemplateBindings, discriminator="wh
      list[~azure.communication.messages.models.WhatsAppMessageTemplateBindingsButton]
     """
 
-    type: Literal["whatsApp"] = rest_discriminator(name="type")  # type: ignore
+    kind: Literal["whatsApp"] = rest_discriminator(name="kind")  # type: ignore
     """MessageTemplateBindings is whatsApp. Required. Default value is \"whatsApp\"."""
     header: Optional[List["_models.WhatsAppMessageTemplateBindingsComponent"]] = rest_field()
     """The header template bindings."""
@@ -763,7 +763,7 @@ class WhatsAppMessageTemplateBindings(MessageTemplateBindings, discriminator="wh
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type: Literal["whatsApp"] = "whatsApp"
+        self.kind: Literal["whatsApp"] = "whatsApp"
 
 
 class WhatsAppMessageTemplateBindingsButton(_model_base.Model):
@@ -851,15 +851,15 @@ class WhatsAppMessageTemplateItem(MessageTemplateItem, discriminator="whatsApp")
      This is the payload returned from WhatsApp
      API.
     :vartype content: any
-    :ivar type: Message template response type is whatsApp. Required. Default value is "whatsApp".
-    :vartype type: str
+    :ivar kind: Message template response type is whatsApp. Required. Default value is "whatsApp".
+    :vartype kind: str
     """
 
     content: Optional[Any] = rest_field()
     """WhatsApp platform's template content
      This is the payload returned from WhatsApp
      API."""
-    type: Literal["whatsApp"] = rest_discriminator(name="type")  # type: ignore
+    kind: Literal["whatsApp"] = rest_discriminator(name="kind")  # type: ignore
     """Message template response type is whatsApp. Required. Default value is \"whatsApp\"."""
 
     @overload
@@ -881,4 +881,4 @@ class WhatsAppMessageTemplateItem(MessageTemplateItem, discriminator="whatsApp")
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type: Literal["whatsApp"] = "whatsApp"
+        self.kind: Literal["whatsApp"] = "whatsApp"
