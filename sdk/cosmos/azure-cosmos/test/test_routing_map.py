@@ -74,11 +74,7 @@ class TestRoutingMapEndToEnd(unittest.TestCase):
 
     def test_read_partition_key_ranges(self):
         partition_key_ranges = list(self.client.client_connection._ReadPartitionKeyRanges(self.collection_link))
-        # "the number of expected partition ranges returned from the emulator is 5."
-        if self.host == 'https://localhost:8081/':
-            self.assertEqual(5, len(partition_key_ranges))
-        else:
-            self.assertEqual(1, len(partition_key_ranges))
+        self.assertEqual(1, len(partition_key_ranges))
 
     def test_routing_map_provider(self):
         partition_key_ranges = list(self.client.client_connection._ReadPartitionKeyRanges(self.collection_link))

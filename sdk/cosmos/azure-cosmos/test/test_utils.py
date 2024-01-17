@@ -22,15 +22,12 @@
 import platform
 import unittest
 
-import pytest
-
 import azure.cosmos
 import azure.cosmos._utils as _utils
 import test_config
 from azure.cosmos import CosmosClient
 
 
-@pytest.mark.cosmosEmulator
 class TestsUtils(unittest.TestCase):
     """Utils Tests
     """

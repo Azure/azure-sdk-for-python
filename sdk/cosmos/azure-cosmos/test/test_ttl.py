@@ -29,8 +29,6 @@ import time
 import unittest
 import uuid
 
-import pytest
-
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 import test_config
@@ -38,7 +36,6 @@ from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
 
 
-@pytest.mark.cosmosEmulator
 class TestTimeToLive(unittest.TestCase):
     """TTL Unit Tests.
     """
