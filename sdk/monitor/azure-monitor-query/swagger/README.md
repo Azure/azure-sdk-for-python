@@ -16,6 +16,8 @@ version-tolerant: true
 python3-only: true
 black: true
 clear-output-folder: true
+modelerfour:
+  lenient-model-deduplication: true
 ```
 
 ## Batch execution
@@ -33,7 +35,7 @@ These settings apply only when `--tag=release_query` is specified on the command
 
 ```yaml $(tag) == 'release_query'
 input-file:
-  - https://github.com/Azure/azure-rest-api-specs/blob/21f5332f2dc7437d1446edf240e9a3d4c90c6431/specification/operationalinsights/data-plane/Microsoft.OperationalInsights/stable/2022-10-27/OperationalInsights.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/0373f0edc4414fd402603fac51d0df93f1f70507/specification/operationalinsights/data-plane/Microsoft.OperationalInsights/stable/2022-10-27/OperationalInsights.json
 output-folder: ../azure/monitor/query/_generated
 title: MonitorQueryClient
 description: Azure Monitor Query Python Client
@@ -45,9 +47,9 @@ These settings apply only when `--tag=release_metrics` is specified on the comma
 
 ```yaml $(tag) == 'release_metrics'
 input-file:
-    - https://github.com/Azure/azure-rest-api-specs/blob/21f5332f2dc7437d1446edf240e9a3d4c90c6431/specification/monitor/resource-manager/Microsoft.Insights/stable/2018-01-01/metricDefinitions_API.json
-    - https://github.com/Azure/azure-rest-api-specs/blob/21f5332f2dc7437d1446edf240e9a3d4c90c6431/specification/monitor/resource-manager/Microsoft.Insights/stable/2018-01-01/metrics_API.json
-    - https://github.com/Azure/azure-rest-api-specs/blob/21f5332f2dc7437d1446edf240e9a3d4c90c6431/specification/monitor/resource-manager/Microsoft.Insights/preview/2017-12-01-preview/metricNamespaces_API.json
+    - https://github.com/Azure/azure-rest-api-specs/blob/0373f0edc4414fd402603fac51d0df93f1f70507/specification/monitor/resource-manager/Microsoft.Insights/stable/2023-10-01/metricDefinitions_API.json
+    - https://github.com/Azure/azure-rest-api-specs/blob/0373f0edc4414fd402603fac51d0df93f1f70507/specification/monitor/resource-manager/Microsoft.Insights/stable/2023-10-01/metrics_API.json
+    - https://github.com/Azure/azure-rest-api-specs/blob/0373f0edc4414fd402603fac51d0df93f1f70507/specification/monitor/resource-manager/Microsoft.Insights/preview/2017-12-01-preview/metricNamespaces_API.json
 output-folder: ../azure/monitor/query/_generated/metrics
 title: MonitorMetricsClient
 description: Azure Monitor Metrics Python Client
@@ -59,7 +61,7 @@ These settings apply only when `--tag=release_metrics` is specified on the comma
 
 ```yaml $(tag) == 'release_metrics_batch'
 input-file:
-    - https://github.com/Azure/azure-rest-api-specs/blob/21f5332f2dc7437d1446edf240e9a3d4c90c6431/specification/monitor/data-plane/Microsoft.Insights/preview/2023-05-01-preview/metricBatch.json
+    - https://github.com/Azure/azure-rest-api-specs/blob/0373f0edc4414fd402603fac51d0df93f1f70507/specification/monitor/data-plane/Microsoft.Insights/stable/2023-10-01/metricBatch.json
 output-folder: ../azure/monitor/query/_generated/metrics/batch
 title: MonitorBatchMetricsClient
 description: Azure Monitor Batch Metrics Python Client
@@ -83,6 +85,15 @@ directive:
   where: $.definitions.column
   transform: >
     $.required = ["name", "type"]
+```
+
+### Remove subscription scoped operations
+
+``` yaml
+directive:
+  - remove-operation: MetricDefinitions_ListAtSubscriptionScope
+  - remove-operation: Metrics_ListAtSubscriptionScope
+  - remove-operation: Metrics_ListAtSubscriptionScopePost
 ```
 
 ### Interval adjustments
