@@ -274,7 +274,7 @@ class TestTimeToLive(unittest.TestCase):
 
     def test_document_ttl_misc(self):
         created_collection = self.created_db.create_container_if_not_exists(
-            id='test_ttl_no_defaultTtl' + str(uuid.uuid4()),
+            id='test_ttl_defaultTtl' + str(uuid.uuid4()),
             partition_key=PartitionKey(path='/id', kind='Hash'),
             default_ttl=8
         )

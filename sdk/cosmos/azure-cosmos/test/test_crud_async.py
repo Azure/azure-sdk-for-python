@@ -74,7 +74,7 @@ class TimeoutTransport(AsyncioRequestsTransport):
         return response
 
 
-@pytest.mark.cosmosEmulator
+# @pytest.mark.cosmosEmulator
 class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
     """Python CRUD Tests.
     """
