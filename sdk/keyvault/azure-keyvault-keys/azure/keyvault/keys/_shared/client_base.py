@@ -10,7 +10,6 @@ from urllib.parse import urlparse
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline.policies import HttpLoggingPolicy
-from azure.core.pipeline.transport import HttpTransport
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 
@@ -90,7 +89,6 @@ class KeyVaultClientBase(object):
             if client:
                 # caller provided a configured client -> only models left to initialize
                 self._client = client
-                self._transport: HttpTransport = client._client._pipeline._transport
                 models = kwargs.get("generated_models")
                 self._models = models or _models
                 return
@@ -108,7 +106,6 @@ class KeyVaultClientBase(object):
                 http_logging_policy=http_logging_policy,
                 **kwargs
             )
-            self._transport: HttpTransport = self._client._client._pipeline._transport  # type: ignore[no-redef]
             self._models = _models
         except ValueError as exc:
             raise NotImplementedError(

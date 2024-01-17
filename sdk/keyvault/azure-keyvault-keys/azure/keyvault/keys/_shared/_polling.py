@@ -5,9 +5,10 @@
 import logging
 import threading
 import uuid
-from typing import Any, Callable, Optional
+from typing import Any, Callable, cast, Optional
 
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
+from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpTransport
 from azure.core.polling import PollingMethod, LROPoller, NoPolling
 
@@ -80,8 +81,8 @@ class DeleteRecoverPollingMethod(PollingMethod):
     Similarly, while recovering a deleted resource, Key Vault will respond 404 to GET requests for the non-deleted
     resource; when it responds 2xx, the resource exists in the non-deleted collection, i.e. its recovery is complete.
 
-    :param transport: The Key Vault client's transport being used for the operation.
-    :type transport: HttpTransport
+    :param pipeline_response: The operation's original pipeline response.
+    :type pipeline_response: PipelineResponse
     :param command: A callable to invoke when polling.
     :type command: Callable
     :param final_resource: The final resource returned by the polling operation.
@@ -91,13 +92,13 @@ class DeleteRecoverPollingMethod(PollingMethod):
     """
     def __init__(
             self,
-            transport: HttpTransport,
+            pipeline_response: PipelineResponse,
             command: Callable,
             final_resource: Any,
             finished: bool,
             interval: int = 2
         ) -> None:
-        self._transport = transport
+        self._pipeline_response = pipeline_response
         self._command = command
         self._resource = final_resource
         self._polling_interval = interval
@@ -126,7 +127,8 @@ class DeleteRecoverPollingMethod(PollingMethod):
                 self._update_status()
                 if not self.finished():
                     # We should always ask the client's transport to sleep, instead of sleeping directly
-                    self._transport.sleep(self._polling_interval)
+                    transport: HttpTransport = cast(HttpTransport, self._pipeline_response.context.transport)
+                    transport.sleep(self._polling_interval)
         except Exception as e:
             logger.warning(str(e))
             raise

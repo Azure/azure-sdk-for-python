@@ -3,9 +3,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import logging
-from typing import Any, Callable
+from typing import Any, Callable, cast
 
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
+from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpTransport
 from azure.core.polling import AsyncPollingMethod
 
@@ -23,8 +24,8 @@ class AsyncDeleteRecoverPollingMethod(AsyncPollingMethod):
     Similarly, while recovering a deleted resource, Key Vault will respond 404 to GET requests for the non-deleted
     resource; when it responds 2xx, the resource exists in the non-deleted collection, i.e. its recovery is complete.
 
-    :param transport: The Key Vault client's transport being used for the operation.
-    :type transport: AsyncHttpTransport
+    :param pipeline_response: The operation's original pipeline response.
+    :type pipeline_response: PipelineResponse
     :param command: An awaitable to invoke when polling.
     :type command: Callable
     :param final_resource: The final resource returned by the polling operation.
@@ -35,13 +36,13 @@ class AsyncDeleteRecoverPollingMethod(AsyncPollingMethod):
 
     def __init__(
             self,
-            transport: AsyncHttpTransport,
+            pipeline_response: PipelineResponse,
             command: Callable,
             final_resource: Any,
             finished: bool,
             interval: int = 2
         ) -> None:
-        self._transport = transport
+        self._pipeline_response = pipeline_response
         self._command = command
         self._resource = final_resource
         self._polling_interval = interval
@@ -70,7 +71,8 @@ class AsyncDeleteRecoverPollingMethod(AsyncPollingMethod):
                 await self._update_status()
                 if not self.finished():
                     # We should always ask the client's transport to sleep, instead of sleeping directly
-                    await self._transport.sleep(self._polling_interval)
+                    transport: AsyncHttpTransport = cast(AsyncHttpTransport, self._pipeline_response.context.transport)
+                    await transport.sleep(self._polling_interval)
         except Exception as e:
             logger.warning(str(e))
             raise

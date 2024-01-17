@@ -3,8 +3,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import logging
-from typing import Any, Callable, Optional, Union
+from typing import Any, Callable, cast, Optional, Union
 
+from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpTransport
 from azure.core.polling import AsyncPollingMethod
 
@@ -15,8 +16,10 @@ logger = logging.getLogger(__name__)
 
 
 class CreateCertificatePollerAsync(AsyncPollingMethod):
-    def __init__(self, transport: AsyncHttpTransport, get_certificate_command: Callable, interval: int = 5) -> None:
-        self._transport = transport
+    def __init__(
+            self, pipeline_response: PipelineResponse, get_certificate_command: Callable, interval: int = 5
+        ) -> None:
+        self._pipeline_response = pipeline_response
         self._command: Optional[Callable] = None
         self._resource: Optional[Union[CertificateOperation, KeyVaultCertificate]] = None
         self._pending_certificate_op: Optional[CertificateOperation] = None
@@ -36,7 +39,8 @@ class CreateCertificatePollerAsync(AsyncPollingMethod):
                 await self._update_status()
                 if not self.finished():
                     # We should always ask the client's transport to sleep, instead of sleeping directly
-                    await self._transport.sleep(self._polling_interval)
+                    transport: AsyncHttpTransport = cast(AsyncHttpTransport, self._pipeline_response.context.transport)
+                    await transport.sleep(self._polling_interval)
             operation = self._pending_certificate_op
             if operation and operation.status and operation.status.lower() == "completed":
                 self._resource = await self._get_certificate_command()

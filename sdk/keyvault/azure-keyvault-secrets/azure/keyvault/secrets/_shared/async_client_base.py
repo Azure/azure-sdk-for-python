@@ -6,7 +6,6 @@ from typing import Any, Awaitable
 
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import HttpLoggingPolicy
-from azure.core.pipeline.transport import AsyncHttpTransport
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -39,7 +38,6 @@ class AsyncKeyVaultClientBase(object):
             if client:
                 # caller provided a configured client -> only models left to initialize
                 self._client = client
-                self._transport: AsyncHttpTransport = client._client._pipeline._transport
                 models = kwargs.get("generated_models")
                 self._models = models or _models
                 return
@@ -57,7 +55,6 @@ class AsyncKeyVaultClientBase(object):
                 http_logging_policy=http_logging_policy,
                 **kwargs
             )
-            self._transport: AsyncHttpTransport = self._client._client._pipeline._transport  # type: ignore[no-redef]
             self._models = _models
         except ValueError as exc:
             raise NotImplementedError(
