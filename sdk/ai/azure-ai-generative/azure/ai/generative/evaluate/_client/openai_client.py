@@ -7,6 +7,9 @@ import logging
 from openai import AsyncAzureOpenAI
 from openai.types.chat.chat_completion import ChatCompletion
 
+from azure.ai.generative._user_agent import USER_AGENT
+from azure.ai.generative.constants._common import USER_AGENT_HEADER_KEY
+
 semaphore = asyncio.Semaphore(10)
 
 LOGGER = logging.getLogger(__name__)
@@ -26,6 +29,10 @@ class AzureOpenAIClient:
             azure_endpoint=self._azure_endpoint,
             api_version=self._api_version,
             api_key=self._api_key,
+            default_headers={
+                USER_AGENT_HEADER_KEY: USER_AGENT,
+                "client_operation_source": "evaluate"
+            },
         )
 
     async def bounded_chat_completion(self, messages):
