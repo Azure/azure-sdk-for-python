@@ -117,7 +117,7 @@ class IssueProcess:
                 pk_url_name.add(self.get_valid_relative_readme_folder(contents_url.split('/specification')[1]))
             except Exception as e:
                 continue
-        readme_link = [f'{_SWAGGER_URL}/{item}/resource-manager' for item in pk_url_name]
+        readme_link = [f'{_SWAGGER_URL}/{item}' for item in pk_url_name]
         if len(readme_link) > 1:
             multi_link = ', '.join(readme_link)
             pr = f"{_SWAGGER_PULL}/{pr_number}"
