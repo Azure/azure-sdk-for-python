@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 
 import os
-import glob
 from setuptools import setup, Extension
 
 PACKAGE_NAME = "azure-storage-extensions"
@@ -43,7 +42,7 @@ setup(
     ext_modules=[
         Extension(
             'crc64',
-            glob.glob(os.path.join(package_folder_path, 'crc64', '*.c')),
+            [os.path.join(package_folder_path, "crc64", "crc64module.c")],
             py_limited_api=True
         ),
     ],
