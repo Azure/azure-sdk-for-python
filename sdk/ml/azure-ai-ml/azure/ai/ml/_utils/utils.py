@@ -28,7 +28,7 @@ from uuid import UUID
 
 import isodate
 import pydash
-import yaml
+import yaml  # type: ignore[import-untyped]
 
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType, ManagedServiceIdentity
 from azure.ai.ml._scope_dependent_operations import OperationScope
@@ -76,7 +76,7 @@ def _snake_to_pascal_convert(text: str) -> str:
     return string.capwords(text.replace("_", " ")).replace(" ", "")
 
 
-def snake_to_pascal(text: Optional[str]) -> str:
+def snake_to_pascal(text: Optional[str]) -> Optional[str]:
     """Convert snake name to pascal.
 
     :param text: String to convert
@@ -543,7 +543,7 @@ def is_mlflow_uri(value: Union[PathLike, str]) -> bool:
         return False
 
 
-def validate_ml_flow_folder(path: str, model_type: string) -> None:
+def validate_ml_flow_folder(path: str, model_type: str) -> None:
     """Validate that the path is a valid ml flow folder.
 
     :param path: The path to validate
@@ -1388,7 +1388,7 @@ def get_versioned_base_directory_for_cache() -> Path:
 
 
 # pylint: disable-next=name-too-long
-def get_resource_and_group_name_from_resource_id(armstr: str) -> str:
+def get_resource_and_group_name_from_resource_id(armstr: str) -> Tuple[str, Optional[str]]:
     if armstr.find("/") == -1:
         return armstr, None
     return armstr.split("/")[-1], armstr.split("/")[-5]
