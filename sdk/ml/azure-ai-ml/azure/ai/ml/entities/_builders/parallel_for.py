@@ -241,8 +241,8 @@ class ParallelFor(LoopNode, NodeIOMixin):
                 raise UserErrorException(
                     "Referencing output with type {} is not supported in parallel_for node.".format(output.type)
                 )
-            if isinstance(output, NodeOutput):  # type: ignore
-                output = output._to_job_output()
+            if isinstance(output, NodeOutput):
+                output = output._to_job_output()  # type: ignore
             if isinstance(output, Output):
                 out_dict = output._to_dict()
                 out_dict["type"] = new_type
