@@ -230,7 +230,7 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         )
         phone_number_to_buy = search_poller.result()
         purchase_poller = self.phone_number_client.begin_purchase_phone_numbers(
-            phone_number_to_buy.search_id, consent_to_not_resell_numbers=True, polling=True)
+            phone_number_to_buy.search_id, consentdnr=True, polling=True)
         purchase_poller.result()
         assert purchase_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
 
@@ -257,7 +257,7 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
 
         with pytest.raises(Exception) as ex:
             self.phone_number_client.begin_purchase_phone_numbers(
-                phone_number_to_buy.search_id, consent_to_not_resell_numbers=False, polling=True)
+                phone_number_to_buy.search_id, consentdnr=False, polling=True)
         # purchase_poller.result()
         # assert purchase_poller.status() == PhoneNumberOperationStatus.FAILED.value
         assert is_client_error_status_code(
