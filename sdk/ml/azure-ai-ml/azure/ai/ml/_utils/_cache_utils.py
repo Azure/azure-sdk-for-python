@@ -37,7 +37,7 @@ _YAML_SOURCE_PREFIX = "yaml-source-"
 _CODE_INVOLVED_PREFIX = "code-involved-"
 EXPIRE_TIME_IN_SECONDS = 60 * 60 * 24 * 7  # 7 days
 
-_node_resolution_lock = defaultdict(threading.Lock)
+_node_resolution_lock: Dict = defaultdict(threading.Lock)
 
 
 @dataclass
@@ -102,7 +102,7 @@ class CachedNodeResolver(object):
         resolver: Callable[[Union[Component, str]], str],
         client_key: str,
     ):
-        self._resolver = resolver
+        self._resolver: Callable = resolver
         self._cache: Dict[str, _CacheContent] = {}
         self._nodes_to_resolve: List[BaseNode] = []
 
@@ -295,7 +295,9 @@ class CachedNodeResolver(object):
         def _map_func(_cache_content: _CacheContent):
             _cache_content.arm_id = resolver(_cache_content.component_ref, azureml_type=AzureMLResourceType.COMPONENT)
             if is_on_disk_cache_enabled() and is_private_preview_enabled():
-                self._save_to_on_disk_cache(_cache_content.on_disk_hash, _cache_content.arm_id)
+                on_disk_hash = _cache_content.on_disk_hash if _cache_content.on_disk_hash else ""
+                arm_id = _cache_content.arm_id if _cache_content.arm_id else ""
+                self._save_to_on_disk_cache(on_disk_hash, arm_id)
 
         if (
             len(cache_contents_to_resolve) > 1
@@ -364,7 +366,8 @@ class CachedNodeResolver(object):
         left_cache_contents_to_resolve = []
         # need to deduplicate disk hash first if concurrent resolution is enabled
         for cache_content in cache_contents_to_resolve:
-            cache_content.arm_id = self._load_from_on_disk_cache(cache_content.on_disk_hash)
+            on_disk_hash = cache_content.on_disk_hash if cache_content.on_disk_hash else ""
+            cache_content.arm_id = self._load_from_on_disk_cache(on_disk_hash)
             if not cache_content.arm_id:
                 left_cache_contents_to_resolve.append(cache_content)
 
