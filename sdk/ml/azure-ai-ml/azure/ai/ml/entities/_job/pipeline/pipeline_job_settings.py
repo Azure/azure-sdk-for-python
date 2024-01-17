@@ -39,8 +39,8 @@ class PipelineJobSettings(_AttrDict):
     ) -> None:
         self._init = True
         super().__init__()
-        self.default_compute = default_compute
-        self.default_datastore = default_datastore
+        self.default_compute: Any = default_compute
+        self.default_datastore: Any = default_datastore
         self.continue_on_step_failure = continue_on_step_failure
         self.force_rerun = force_rerun
         self.on_init = kwargs.get("on_init", None)

@@ -228,7 +228,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
         self.files = _component.files if is_spark_component else files
         self.archives = _component.archives if is_spark_component else archives
         self.args = _component.args if is_spark_component else args
-        self.environment = _component.environment if is_spark_component else None
+        self.environment: Any = _component.environment if is_spark_component else None
 
         self.resources = resources
         self.identity = identity

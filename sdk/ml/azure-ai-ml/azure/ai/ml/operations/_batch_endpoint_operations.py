@@ -300,7 +300,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             self._validate_deployment_name(endpoint_name, deployment_name)
 
         if input and isinstance(input, Input):
-            if HTTP_PREFIX not in input.path:
+            if HTTP_PREFIX not in input.path:  # type: ignore
                 self._resolve_input(input, os.getcwd())
             # MFE expects a dictionary as input_data that's why we are using
             # "UriFolder" or "UriFile" as keys depending on the input type
@@ -326,7 +326,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                     isinstance(input_data, Input)
                     and input_data.type
                     not in [InputTypes.NUMBER, InputTypes.BOOLEAN, InputTypes.INTEGER, InputTypes.STRING]
-                    and HTTP_PREFIX not in input_data.path
+                    and HTTP_PREFIX not in input_data.path  # type: ignore
                 ):
                     self._resolve_input(input_data, os.getcwd())
             params_override.append({EndpointYamlFields.BATCH_JOB_INPUT_DATA: inputs})

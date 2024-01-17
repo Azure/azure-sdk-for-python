@@ -99,7 +99,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
 
         self.display_name = display_name
         self.experiment_name = experiment_name
-        self.compute = compute
+        self.compute: Any = compute
         self.services = services
 
     @property

@@ -434,7 +434,7 @@ def get_git_properties() -> Dict[str, str]:
 
 
 def get_job_output_uris_from_dataplane(
-    job_name: str,
+    job_name: Optional[str],
     run_operations: RunOperations,
     dataset_dataplane_operations: DatasetDataplaneOperations,
     model_dataplane_operations: Optional[ModelDataplaneOperations],

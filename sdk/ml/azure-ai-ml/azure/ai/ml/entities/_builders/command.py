@@ -199,7 +199,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         self.identity = identity
         self._distribution = distribution
         self.environment_variables = {} if environment_variables is None else environment_variables
-        self.environment = environment
+        self.environment: Any = environment
         self._resources = resources
         self._services = services
         self.queue_settings = queue_settings

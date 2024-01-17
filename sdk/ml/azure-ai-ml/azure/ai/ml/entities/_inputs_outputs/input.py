@@ -231,7 +231,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         # As an annotation, it is not allowed to initialize the _port_name.
         self._port_name = None
         self.description = description
-        self.path: Optional[str] = None
+        self.path: Any = None
 
         if path is not None and not isinstance(path, str):
             # this logic will make dsl data binding expression working in the same way as yaml
