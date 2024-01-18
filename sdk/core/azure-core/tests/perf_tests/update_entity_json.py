@@ -12,18 +12,8 @@ from azure.core.exceptions import (
     HttpResponseError,
     map_error,
 )
-from azure.storage.blob._generated.operations._block_blob_operations import (
-    build_upload_request
-)
 from azure.data.tables.aio import TableClient
 from ._test_base import _TableTest
-
-import logging
-import sys
-handler = logging.StreamHandler(stream=sys.stdout)
-logger = logging.getLogger('azure')
-logger.setLevel(logging.DEBUG)
-logger.addHandler(handler)
 
 class UpdateEntityJSONTest(_TableTest):
     def __init__(self, arguments):

@@ -22,12 +22,7 @@ class UploadBinaryDataTest(_BlobTest):
         super().__init__(arguments)
         blob_name = "uploadtest"
         self.blob_endpoint = f"{self.account_endpoint}{self.container_name}/{blob_name}"
-        self.error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        print('in init')
 
     async def global_setup(self):
         await super().global_setup()
@@ -65,10 +60,12 @@ class UploadBinaryDataTest(_BlobTest):
                 'x-ms-date': current_time,
             },
         )
-        response = (await self.async_pipeline_client._pipeline.run(
+        print('in run_async')
+        pipeline_response = await self.async_pipeline_client._pipeline.run(
             request,
             stream=False
-        )).http_response
+        )
+        response = pipeline_response.http_response
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
             raise HttpResponseError(response=response)

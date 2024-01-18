@@ -59,7 +59,7 @@ class DownloadBinaryDataTest(_BlobTest):
                     'x-ms-date': current_time,
                 }
             ),
-            stream=False
+            stream=True
         ).http_response
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
