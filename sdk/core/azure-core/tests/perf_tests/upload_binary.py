@@ -5,8 +5,9 @@
 
 from time import time
 from wsgiref.handlers import format_date_time
-from devtools_testutils.perfstress_tests import get_random_bytes, WriteStream
+from devtools_testutils.perfstress_tests import get_random_bytes, RandomStream, AsyncRandomStream
 
+from azure.core.rest import HttpRequest
 from azure.core.exceptions import (
     HttpResponseError,
     map_error,
@@ -22,48 +23,56 @@ class UploadBinaryDataTest(_BlobTest):
         super().__init__(arguments)
         blob_name = "uploadtest"
         self.blob_endpoint = f"{self.account_endpoint}{self.container_name}/{blob_name}"
-        print('in init')
-
-    async def global_setup(self):
-        await super().global_setup()
-        self.data = get_random_bytes(self.args.size)
+        self.upload_stream = RandomStream(self.args.size)
+        self.upload_stream_async = AsyncRandomStream(self.args.size)
 
     def run_sync(self):
+        self.upload_stream.reset()
+        data = self.upload_stream.read(self.args.size)
         current_time = format_date_time(time())
-        request = build_upload_request(
+        request = HttpRequest(
+            method="PUT",
             url=self.blob_endpoint,
-            content=self.data,
-            content_length=self.args.size,
-            content_type='application/octet-stream',
+            params={},
             headers={
-                'x-ms-version': self.api_version,
                 'x-ms-date': current_time,
+                'x-ms-blob-type': 'BlockBlob',
+                'Content-Length': str(self.args.size),
+                'x-ms-version': self.api_version,
+                'Content-Type': 'application/octet-stream',
+                'Accept': 'application/octet-stream',
             },
+            content=data
         )
         response = self.pipeline_client._pipeline.run(
             request,
-            stream=False
+            stream=True
         ).http_response
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
             raise HttpResponseError(response=response)
 
     async def run_async(self):
+        self.upload_stream_async.reset()
+        data = self.upload_stream_async.read(self.args.size)
         current_time = format_date_time(time())
-        request = build_upload_request(
+        request = HttpRequest(
+            method="PUT",
             url=self.blob_endpoint,
-            content=self.data,
-            content_length=self.args.size,
-            content_type='application/octet-stream',
+            params={},
             headers={
-                'x-ms-version': self.api_version,
                 'x-ms-date': current_time,
+                'x-ms-blob-type': 'BlockBlob',
+                'Content-Length': str(self.args.size),
+                'x-ms-version': self.api_version,
+                'Content-Type': 'application/octet-stream',
+                'Accept': 'application/octet-stream',
             },
+            content=data
         )
-        print('in run_async')
         pipeline_response = await self.async_pipeline_client._pipeline.run(
             request,
-            stream=False
+            stream=True
         )
         response = pipeline_response.http_response
         if response.status_code not in [201]:

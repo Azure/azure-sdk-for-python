@@ -5,7 +5,7 @@
 
 from time import time
 from wsgiref.handlers import format_date_time
-from devtools_testutils.perfstress_tests import get_random_bytes
+from devtools_testutils.perfstress_tests import get_random_bytes, WriteStream
 
 from azure.core.exceptions import (
     HttpResponseError,
@@ -61,6 +61,7 @@ class DownloadBinaryDataTest(_BlobTest):
             ),
             stream=True
         ).http_response
+        response.read()
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
             raise HttpResponseError(response=response)
@@ -77,8 +78,9 @@ class DownloadBinaryDataTest(_BlobTest):
                     'x-ms-date': current_time,
                 }
             ),
-            stream=False
+            stream=True
         )).http_response
+        response.read()
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
             raise HttpResponseError(response=response)
