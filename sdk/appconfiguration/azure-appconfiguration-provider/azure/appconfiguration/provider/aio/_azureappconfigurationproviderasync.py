@@ -21,9 +21,10 @@ from typing import (
     Tuple,
     TYPE_CHECKING,
     Union,
+    ValuesView,
 )
 
-from azure.appconfiguration import (  # pylint:disable=no-name-in-module
+from azure.appconfiguration import (  # type: ignore # pylint:disable=no-name-in-module
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
 )
@@ -201,8 +202,8 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     for (key, label), etag in provider._refresh_on.items():
         if not etag:
             try:
-                sentinel = await provider._client.get_configuration_setting(key, label, headers=headers)
-                provider._refresh_on[(key, label)] = sentinel.etag
+                sentinel = await provider._client.get_configuration_setting(key, label, headers=headers)  # type: ignore
+                provider._refresh_on[(key, label)] = sentinel.etag  # type: ignore
             except HttpResponseError as e:
                 if e.status_code == 404:
                     # If the sentinel is not found a refresh should be triggered when it is created.
@@ -211,7 +212,7 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
                         key,
                         label,
                     )
-                    provider._refresh_on[(key, label)] = None
+                    provider._refresh_on[(key, label)] = None # type: ignore
                 else:
                     _delay_failure(start_time)
                     raise e
@@ -244,7 +245,7 @@ def _buildprovider(
         )
         return provider
     provider._client = AzureAppConfigurationClient(
-        endpoint,
+        endpoint,  # type: ignore
         credential,
         user_agent=user_agent,
         retry_total=retry_total,
@@ -318,7 +319,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         self._trim_prefixes = sorted(trim_prefixes, key=len, reverse=True)
 
         refresh_on: List[Tuple[str, str]] = kwargs.pop("refresh_on", None) or []
-        self._refresh_on: Mapping[Tuple[str, str] : Optional[str]] = {_build_sentinel(s): None for s in refresh_on}
+        self._refresh_on: Mapping[Tuple[str, str] : Optional[str]] = {_build_sentinel(s): None for s in refresh_on}  # type:ignore
         self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._on_refresh_success: Optional[Callable] = kwargs.pop("on_refresh_success", None)
         self._on_refresh_error: Optional[Callable[[Exception], None]] = kwargs.pop("on_refresh_error", None)
@@ -350,7 +351,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
             for (key, label), etag in updated_sentinel_keys.items():
                 try:
-                    updated_sentinel = await self._client.get_configuration_setting(
+                    updated_sentinel = await self._client.get_configuration_setting( # type: ignore
                         key=key,
                         label=label,
                         etag=etag,
@@ -381,7 +382,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         except (ServiceRequestError, ServiceResponseError, HttpResponseError) as e:
             # If we get an error we should retry sooner than the next refresh interval
             if self._on_refresh_error:
-                await self._on_refresh_error(e)
+                await self._on_refresh_error(e) # type: ignore
                 return
             raise
         finally:
@@ -522,15 +523,15 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         """
         for client in self._secret_clients.values():
             await client.close()
-        await self._client.close()
+        await self._client.close() # type: ignore
 
     async def __aenter__(self) -> "AzureAppConfigurationProvider":
-        await self._client.__aenter__()
+        await self._client.__aenter__() # type: ignore
         for client in self._secret_clients.values():
             await client.__aenter__()
         return self
 
     async def __aexit__(self, *args) -> None:
-        await self._client.__aexit__(*args)
+        await self._client.__aexit__(*args) # type: ignore
         for client in self._secret_clients.values():
             await client.__aexit__()

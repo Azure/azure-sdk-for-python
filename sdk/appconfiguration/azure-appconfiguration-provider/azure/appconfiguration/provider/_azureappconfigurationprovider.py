@@ -24,7 +24,7 @@ from typing import (
     TYPE_CHECKING,
     Union,
 )
-from azure.appconfiguration import (  # pylint:disable=no-name-in-module
+from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module 
     AzureAppConfigurationClient,
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
@@ -201,8 +201,8 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     for (key, label), etag in provider._refresh_on.items():
         if not etag:
             try:
-                sentinel = provider._client.get_configuration_setting(key, label, headers=headers)
-                provider._refresh_on[(key, label)] = sentinel.etag
+                sentinel = provider._client.get_configuration_setting(key, label, headers=headers) # type:ignore
+                provider._refresh_on[(key, label)] = sentinel.etag  # type:ignore
             except HttpResponseError as e:
                 if e.status_code == 404:
                     # If the sentinel is not found a refresh should be triggered when it is created.
@@ -352,7 +352,7 @@ def _is_json_content_type(content_type: str) -> bool:
 
 def _build_sentinel(setting: Union[str, Tuple[str, str]]) -> Tuple[str, str]:
     try:
-        key, label = setting
+        key, label = setting # type:ignore
     except IndexError:
         key = setting
         label = EMPTY_LABEL
@@ -417,7 +417,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
 
     def __init__(self, **kwargs) -> None:
         self._dict: Dict[str, str] = {}
-        self._trim_prefixes: List[str] = []
         self._client: Optional[AzureAppConfigurationClient] = None
         self._secret_clients: Dict[str, SecretClient] = {}
         self._selects: List[SettingSelector] = kwargs.pop(
@@ -425,10 +424,10 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         )
 
         trim_prefixes: List[str] = kwargs.pop("trim_prefixes", [])
-        self._trim_prefixes = sorted(trim_prefixes, key=len, reverse=True)
+        self._trim_prefixes: List[str] = sorted(trim_prefixes, key=len, reverse=True)
 
         refresh_on: List[Tuple[str, str]] = kwargs.pop("refresh_on", None) or []
-        self._refresh_on: Mapping[Tuple[str, str] : Optional[str]] = {_build_sentinel(s): None for s in refresh_on}
+        self._refresh_on: Mapping[Tuple[str, str] : Optional[str]] = {_build_sentinel(s): None for s in refresh_on} # type:ignore
         self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._on_refresh_success: Optional[Callable] = kwargs.pop("on_refresh_success", None)
         self._on_refresh_error: Optional[Callable[[Exception], None]] = kwargs.pop("on_refresh_error", None)
@@ -460,7 +459,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
             for (key, label), etag in updated_sentinel_keys.items():
                 try:
-                    updated_sentinel = self._client.get_configuration_setting(
+                    updated_sentinel = self._client.get_configuration_setting( # type:ignore
                         key=key,
                         label=label,
                         etag=etag,
@@ -607,7 +606,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         with self._update_lock:
             return copy.deepcopy(list((self._dict.values())))
 
-    def get(self, key: str, default: Optional[str] = None) -> Union[str, JSON]:
+    def get(self, key: str, default: Optional[str] = None) -> Union[str, Mapping[str, Any], None]:
         """
         Returns the value of the specified key. If the key does not exist, returns the default value.
 
@@ -640,15 +639,15 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         """
         for client in self._secret_clients.values():
             client.close()
-        self._client.close()
+        self._client.close() # type: ignore
 
     def __enter__(self) -> "AzureAppConfigurationProvider":
-        self._client.__enter__()
+        self._client.__enter__()  # type: ignore
         for client in self._secret_clients.values():
             client.__enter__()
         return self
 
     def __exit__(self, *args) -> None:
-        self._client.__exit__(*args)
+        self._client.__exit__(*args)  # type: ignore
         for client in self._secret_clients.values():
             client.__exit__()
