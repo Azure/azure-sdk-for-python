@@ -71,6 +71,7 @@ if TYPE_CHECKING:
 
 _FRAME_OFFSET = b"\x02"
 _FRAME_TYPE = b"\x00"
+AQMPSimpleType = Union[bool, float, str, bytes, uuid.UUID, None]
 
 
 def _construct(byte: bytes, construct: bool) -> bytes:
@@ -608,7 +609,7 @@ def encode_described(output: bytearray, value: Tuple[Any, Any], _: bool = None, 
     encode_value(output, value[1], **kwargs)
 
 
-def encode_fields(value: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+def encode_fields(value: Optional[Dict[bytes, Any]]) -> Dict[str, Any]:
     """A mapping from field name to value.
 
     The fields type is a map where the keys are restricted to be of type symbol (this excludes the possibility
@@ -662,7 +663,7 @@ def encode_annotations(value: Optional[Dict[Union[str, bytes], Any]]) -> Dict[st
     return fields
 
 
-def encode_application_properties(value: Optional[Dict[Union[str, bytes], Any]]) -> Dict[Union[str, bytes], Any]:
+def encode_application_properties(value: Optional[Dict[Union[str, bytes], AQMPSimpleType]]) -> Dict[Union[str, bytes], Any]:
     """The application-properties section is a part of the bare message used for structured application data.
 
     <type name="application-properties" class="restricted" source="map" provides="section">
