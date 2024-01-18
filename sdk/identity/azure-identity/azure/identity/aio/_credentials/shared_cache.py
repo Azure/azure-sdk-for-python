@@ -30,7 +30,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     """
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "SharedTokenCacheCredential":
         if self._client:
             await self._client.__aenter__()  # type: ignore
         return self

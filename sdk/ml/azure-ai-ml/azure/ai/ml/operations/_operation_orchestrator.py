@@ -12,7 +12,12 @@ from typing import Any, Optional, Tuple, Union
 from typing_extensions import Protocol
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context, _check_and_upload_path
-from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationsContainer,
+    OperationScope,
+    _ScopeDependentOperations,
+)
 from azure.ai.ml._utils._arm_id_utils import (
     AMLLabelledArmId,
     AMLNamedArmId,
@@ -79,31 +84,31 @@ class OperationOrchestrator(object):
         self._operation_config = operation_config
 
     @property
-    def _datastore_operation(self):
+    def _datastore_operation(self) -> _ScopeDependentOperations:
         return self._operation_container.all_operations[AzureMLResourceType.DATASTORE]
 
     @property
-    def _code_assets(self):
+    def _code_assets(self) -> _ScopeDependentOperations:
         return self._operation_container.all_operations[AzureMLResourceType.CODE]
 
     @property
-    def _model(self):
+    def _model(self) -> _ScopeDependentOperations:
         return self._operation_container.all_operations[AzureMLResourceType.MODEL]
 
     @property
-    def _environments(self):
+    def _environments(self) -> _ScopeDependentOperations:
         return self._operation_container.all_operations[AzureMLResourceType.ENVIRONMENT]
 
     @property
-    def _data(self):
+    def _data(self) -> _ScopeDependentOperations:
         return self._operation_container.all_operations[AzureMLResourceType.DATA]
 
     @property
-    def _component(self):
+    def _component(self) -> _ScopeDependentOperations:
         return self._operation_container.all_operations[AzureMLResourceType.COMPONENT]
 
     @property
-    def _virtual_cluster(self):
+    def _virtual_cluster(self) -> _ScopeDependentOperations:
         return self._operation_container.all_operations[AzureMLResourceType.VIRTUALCLUSTER]
 
     def get_asset_arm_id(
@@ -382,20 +387,20 @@ class OperationOrchestrator(object):
             component._id = self._component.create_or_update(
                 component, is_anonymous=True, show_progress=self._operation_config.show_progress
             ).id
-        return component.id
+        return str(component.id)
 
     def _get_singularity_arm_id_from_full_name(self, singularity: str) -> str:
         match = re.match(SINGULARITY_FULL_NAME_REGEX_FORMAT, singularity)
-        subscription_id = match.group("subscription_id")
-        resource_group_name = match.group("resource_group_name")
-        vc_name = match.group("name")
+        subscription_id = match.group("subscription_id") if match is not None else ""
+        resource_group_name = match.group("resource_group_name") if match is not None else ""
+        vc_name = match.group("name") if match is not None else ""
         arm_id = SINGULARITY_ID_FORMAT.format(subscription_id, resource_group_name, vc_name)
         vc = self._virtual_cluster.get(arm_id)
-        return vc["id"]
+        return str(vc["id"])
 
     def _get_singularity_arm_id_from_short_name(self, singularity: str) -> str:
         match = re.match(SINGULARITY_SHORT_NAME_REGEX_FORMAT, singularity)
-        vc_name = match.group("name")
+        vc_name = match.group("name") if match is not None else ""
         # below list operation can be time-consuming, may need an optimization on this
         match_vcs = [vc for vc in self._virtual_cluster.list() if vc["name"] == vc_name]
         num_match_vc = len(match_vcs)
@@ -410,7 +415,7 @@ class OperationOrchestrator(object):
                 target=ErrorTarget.COMPUTE,
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
-        return match_vcs[0]["id"]
+        return str(match_vcs[0]["id"])
 
     def _resolve_name_version_from_name_label(self, aml_id: str, azureml_type: str) -> Tuple[str, Optional[str]]:
         """Given an AzureML id of the form name@label, resolves the label to the actual ID.
@@ -440,7 +445,7 @@ class OperationOrchestrator(object):
         )
 
     # pylint: disable=unused-argument
-    def resolve_azureml_id(self, arm_id: Optional[str] = None, **kwargs) -> str:
+    def resolve_azureml_id(self, arm_id: Optional[str] = None, **kwargs: Any) -> Optional[str]:
         """This function converts ARM id to name or name:version AzureML id. It parses the ARM id and matches the
         subscription Id, resource group name and workspace_name.
 
@@ -454,7 +459,7 @@ class OperationOrchestrator(object):
 
         if arm_id:
             if not isinstance(arm_id, str):
-                msg = "arm_id cannot be resolved: str expected but got {}".format(type(arm_id))
+                msg = "arm_id cannot be resolved: str expected but got {}".format(type(arm_id))  # type: ignore
                 raise ValidationException(
                     message=msg,
                     no_personal_data_message=msg,
@@ -466,28 +471,30 @@ class OperationOrchestrator(object):
                 if arm_id_obj.is_registry_id:
                     return arm_id
                 if self._match(arm_id_obj):
-                    return VERSIONED_RESOURCE_NAME.format(arm_id_obj.asset_name, arm_id_obj.asset_version)
+                    return str(VERSIONED_RESOURCE_NAME.format(arm_id_obj.asset_name, arm_id_obj.asset_version))
             except ValidationException:
                 pass  # fall back to named arm id
             try:
                 arm_id_obj = AMLLabelledArmId(arm_id)
                 if self._match(arm_id_obj):
-                    return LABELLED_RESOURCE_NAME.format(arm_id_obj.asset_name, arm_id_obj.asset_label)
+                    return str(LABELLED_RESOURCE_NAME.format(arm_id_obj.asset_name, arm_id_obj.asset_label))
             except ValidationException:
                 pass  # fall back to named arm id
             try:
                 arm_id_obj = AMLNamedArmId(arm_id)
                 if self._match(arm_id_obj):
-                    return arm_id_obj.asset_name
+                    return str(arm_id_obj.asset_name)
             except ValidationException:
                 pass  # fall back to be not a ARM_id
         return arm_id
 
     def _match(self, id_: Any) -> bool:
-        return (
-            id_.subscription_id == self._operation_scope.subscription_id
-            and id_.resource_group_name == self._operation_scope.resource_group_name
-            and id_.workspace_name == self._operation_scope.workspace_name
+        return bool(
+            (
+                id_.subscription_id == self._operation_scope.subscription_id
+                and id_.resource_group_name == self._operation_scope.resource_group_name
+                and id_.workspace_name == self._operation_scope.workspace_name
+            )
         )
 
     def _validate_datastore_name(self, datastore_uri: Optional[Union[str, PathLike]]) -> None:
