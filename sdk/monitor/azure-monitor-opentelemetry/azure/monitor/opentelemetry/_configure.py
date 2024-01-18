@@ -93,7 +93,7 @@ def configure_azure_monitor(**kwargs) -> None:
 
 
 def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
-    resource: Resource =  Resource, configurations[RESOURCE_ARG] # type: ignore
+    resource: Resource = configurations[RESOURCE_ARG] # type: ignore
     sampling_ratio = configurations[SAMPLING_RATIO_ARG]
     tracer_provider = TracerProvider(
         sampler=ApplicationInsightsSampler(sampling_ratio=cast(float, sampling_ratio)),
@@ -110,7 +110,7 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
 
 
 def _setup_logging(configurations: Dict[str, ConfigurationValue]):
-    resource: Resource =  Resource, configurations[RESOURCE_ARG] # type: ignore
+    resource: Resource = configurations[RESOURCE_ARG] # type: ignore
     logger_provider = LoggerProvider(resource=resource)
     set_logger_provider(logger_provider)
     log_exporter = AzureMonitorLogExporter(**configurations)
@@ -124,7 +124,7 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
 
 
 def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
-    resource: Resource =  Resource, configurations[RESOURCE_ARG] # type: ignore
+    resource: Resource = configurations[RESOURCE_ARG] # type: ignore
     metric_exporter = AzureMonitorMetricExporter(**configurations)
     reader = PeriodicExportingMetricReader(metric_exporter)
     meter_provider = MeterProvider(
