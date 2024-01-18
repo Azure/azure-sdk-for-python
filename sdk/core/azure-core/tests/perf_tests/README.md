@@ -39,7 +39,7 @@ The tests currently available:
 - `UploadBinaryDataTest` - Puts binary data of `size` in a Storage Blob (corresponds to the `upload_blob` Blob operation).
 - `DownloadBinaryDataTest` - Gets binary data of `size` from a Storage Blob (corresponds to the `download_blob` Blob operation).
 - `UpdateEntityJSONTest` - Puts JSON data of `size` in a Storage Table (corresponds to the `update_entity` Tables operation).
-- `QueryEntityJSONTest` - Gets JSON data of `size` from a Storage Table (corresponds to the `query_entities` Tables operation).
+- `QueryEntitiesJSONTest` - Gets JSON data of `size` from a Storage Table (corresponds to the `query_entities` Tables operation).
 - `ListEntitiesPageableTest` - Gets pageable data from a Storage Table (corresponds to the `list_entities` Tables operation).
 
 ### Common perf command line options

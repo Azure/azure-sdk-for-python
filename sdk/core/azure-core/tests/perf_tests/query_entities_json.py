@@ -15,7 +15,7 @@ from azure.core.exceptions import (
 from azure.data.tables.aio import TableClient
 from ._test_base import _TableTest
 
-class QueryEntityJSONTest(_TableTest):
+class QueryEntitiesJSONTest(_TableTest):
     def __init__(self, arguments):
         super().__init__(arguments)
         self.table_name = f"queryentitytest{randint(1, 1000)}"
