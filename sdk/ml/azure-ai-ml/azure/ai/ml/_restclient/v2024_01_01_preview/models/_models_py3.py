@@ -9,8 +9,9 @@
 import datetime
 from typing import Any, Dict, List, Optional, Union
 
-from azure.core.exceptions import HttpResponseError
 import msrest.serialization
+
+from azure.core.exceptions import HttpResponseError
 
 from ._azure_machine_learning_workspaces_enums import *
 
@@ -1426,6 +1427,73 @@ class AmlUserFeature(msrest.serialization.Model):
         self.description = description
 
 
+class DataReferenceCredential(msrest.serialization.Model):
+    """DataReferenceCredential base class.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: DockerCredential, ManagedIdentityCredential, AnonymousAccessCredential, SASCredential.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar credential_type: Required. [Required] Credential type used to authentication with
+     storage.Constant filled by server. Possible values include: "SAS", "DockerCredentials",
+     "ManagedIdentity", "NoCredentials".
+    :vartype credential_type: str or
+     ~azure.mgmt.machinelearningservices.models.DataReferenceCredentialType
+    """
+
+    _validation = {
+        'credential_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'credential_type': {'key': 'credentialType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'credential_type': {'DockerCredentials': 'DockerCredential', 'ManagedIdentity': 'ManagedIdentityCredential', 'NoCredentials': 'AnonymousAccessCredential', 'SAS': 'SASCredential'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(DataReferenceCredential, self).__init__(**kwargs)
+        self.credential_type = None  # type: Optional[str]
+
+
+class AnonymousAccessCredential(DataReferenceCredential):
+    """Access credential with no credentials.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar credential_type: Required. [Required] Credential type used to authentication with
+     storage.Constant filled by server. Possible values include: "SAS", "DockerCredentials",
+     "ManagedIdentity", "NoCredentials".
+    :vartype credential_type: str or
+     ~azure.mgmt.machinelearningservices.models.DataReferenceCredentialType
+    """
+
+    _validation = {
+        'credential_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'credential_type': {'key': 'credentialType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(AnonymousAccessCredential, self).__init__(**kwargs)
+        self.credential_type = 'NoCredentials'  # type: str
+
+
 class ArmResourceId(msrest.serialization.Model):
     """ARM ResourceId of a resource.
 
@@ -1623,6 +1691,8 @@ class AssetJobInput(msrest.serialization.Model):
     :ivar mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
      "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+    :ivar path_on_compute: Input Asset Delivery Path.
+    :vartype path_on_compute: str
     :ivar uri: Required. [Required] Input Asset URI.
     :vartype uri: str
     """
@@ -1633,6 +1703,7 @@ class AssetJobInput(msrest.serialization.Model):
 
     _attribute_map = {
         'mode': {'key': 'mode', 'type': 'str'},
+        'path_on_compute': {'key': 'pathOnCompute', 'type': 'str'},
         'uri': {'key': 'uri', 'type': 'str'},
     }
 
@@ -1641,17 +1712,21 @@ class AssetJobInput(msrest.serialization.Model):
         *,
         uri: str,
         mode: Optional[Union[str, "InputDeliveryMode"]] = None,
+        path_on_compute: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
          "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+        :keyword path_on_compute: Input Asset Delivery Path.
+        :paramtype path_on_compute: str
         :keyword uri: Required. [Required] Input Asset URI.
         :paramtype uri: str
         """
         super(AssetJobInput, self).__init__(**kwargs)
         self.mode = mode
+        self.path_on_compute = path_on_compute
         self.uri = uri
 
 
@@ -1667,6 +1742,8 @@ class AssetJobOutput(msrest.serialization.Model):
     :ivar mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
      "Direct".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
+    :ivar path_on_compute: Output Asset Delivery Path.
+    :vartype path_on_compute: str
     :ivar uri: Output Asset URI.
     :vartype uri: str
     """
@@ -1676,6 +1753,7 @@ class AssetJobOutput(msrest.serialization.Model):
         'asset_version': {'key': 'assetVersion', 'type': 'str'},
         'auto_delete_setting': {'key': 'autoDeleteSetting', 'type': 'AutoDeleteSetting'},
         'mode': {'key': 'mode', 'type': 'str'},
+        'path_on_compute': {'key': 'pathOnCompute', 'type': 'str'},
         'uri': {'key': 'uri', 'type': 'str'},
     }
 
@@ -1686,6 +1764,7 @@ class AssetJobOutput(msrest.serialization.Model):
         asset_version: Optional[str] = None,
         auto_delete_setting: Optional["AutoDeleteSetting"] = None,
         mode: Optional[Union[str, "OutputDeliveryMode"]] = None,
+        path_on_compute: Optional[str] = None,
         uri: Optional[str] = None,
         **kwargs
     ):
@@ -1699,6 +1778,8 @@ class AssetJobOutput(msrest.serialization.Model):
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
          "Direct".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
+        :keyword path_on_compute: Output Asset Delivery Path.
+        :paramtype path_on_compute: str
         :keyword uri: Output Asset URI.
         :paramtype uri: str
         """
@@ -1707,6 +1788,7 @@ class AssetJobOutput(msrest.serialization.Model):
         self.asset_version = asset_version
         self.auto_delete_setting = auto_delete_setting
         self.mode = mode
+        self.path_on_compute = path_on_compute
         self.uri = uri
 
 
@@ -8800,6 +8882,8 @@ class CustomModelJobInput(JobInput, AssetJobInput):
     :ivar mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
      "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+    :ivar path_on_compute: Input Asset Delivery Path.
+    :vartype path_on_compute: str
     :ivar uri: Required. [Required] Input Asset URI.
     :vartype uri: str
     :ivar description: Description for the input.
@@ -8817,6 +8901,7 @@ class CustomModelJobInput(JobInput, AssetJobInput):
 
     _attribute_map = {
         'mode': {'key': 'mode', 'type': 'str'},
+        'path_on_compute': {'key': 'pathOnCompute', 'type': 'str'},
         'uri': {'key': 'uri', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'job_input_type': {'key': 'jobInputType', 'type': 'str'},
@@ -8827,6 +8912,7 @@ class CustomModelJobInput(JobInput, AssetJobInput):
         *,
         uri: str,
         mode: Optional[Union[str, "InputDeliveryMode"]] = None,
+        path_on_compute: Optional[str] = None,
         description: Optional[str] = None,
         **kwargs
     ):
@@ -8834,13 +8920,16 @@ class CustomModelJobInput(JobInput, AssetJobInput):
         :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
          "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+        :keyword path_on_compute: Input Asset Delivery Path.
+        :paramtype path_on_compute: str
         :keyword uri: Required. [Required] Input Asset URI.
         :paramtype uri: str
         :keyword description: Description for the input.
         :paramtype description: str
         """
-        super(CustomModelJobInput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super(CustomModelJobInput, self).__init__(description=description, mode=mode, path_on_compute=path_on_compute, uri=uri, **kwargs)
         self.mode = mode
+        self.path_on_compute = path_on_compute
         self.uri = uri
         self.job_input_type = 'custom_model'  # type: str
         self.description = description
@@ -8904,6 +8993,8 @@ class CustomModelJobOutput(JobOutput, AssetJobOutput):
     :ivar mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
      "Direct".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
+    :ivar path_on_compute: Output Asset Delivery Path.
+    :vartype path_on_compute: str
     :ivar uri: Output Asset URI.
     :vartype uri: str
     :ivar description: Description for the output.
@@ -8923,6 +9014,7 @@ class CustomModelJobOutput(JobOutput, AssetJobOutput):
         'asset_version': {'key': 'assetVersion', 'type': 'str'},
         'auto_delete_setting': {'key': 'autoDeleteSetting', 'type': 'AutoDeleteSetting'},
         'mode': {'key': 'mode', 'type': 'str'},
+        'path_on_compute': {'key': 'pathOnCompute', 'type': 'str'},
         'uri': {'key': 'uri', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
@@ -8935,6 +9027,7 @@ class CustomModelJobOutput(JobOutput, AssetJobOutput):
         asset_version: Optional[str] = None,
         auto_delete_setting: Optional["AutoDeleteSetting"] = None,
         mode: Optional[Union[str, "OutputDeliveryMode"]] = None,
+        path_on_compute: Optional[str] = None,
         uri: Optional[str] = None,
         description: Optional[str] = None,
         **kwargs
@@ -8949,16 +9042,19 @@ class CustomModelJobOutput(JobOutput, AssetJobOutput):
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
          "Direct".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
+        :keyword path_on_compute: Output Asset Delivery Path.
+        :paramtype path_on_compute: str
         :keyword uri: Output Asset URI.
         :paramtype uri: str
         :keyword description: Description for the output.
         :paramtype description: str
         """
-        super(CustomModelJobOutput, self).__init__(description=description, asset_name=asset_name, asset_version=asset_version, auto_delete_setting=auto_delete_setting, mode=mode, uri=uri, **kwargs)
+        super(CustomModelJobOutput, self).__init__(description=description, asset_name=asset_name, asset_version=asset_version, auto_delete_setting=auto_delete_setting, mode=mode, path_on_compute=path_on_compute, uri=uri, **kwargs)
         self.asset_name = asset_name
         self.asset_version = asset_version
         self.auto_delete_setting = auto_delete_setting
         self.mode = mode
+        self.path_on_compute = path_on_compute
         self.uri = uri
         self.job_output_type = 'custom_model'  # type: str
         self.description = description
@@ -9047,8 +9143,7 @@ class CustomMonitoringSignal(MonitoringSignalBase):
      associated thresholds.
     :vartype metric_thresholds:
      list[~azure.mgmt.machinelearningservices.models.CustomMetricThreshold]
-    :ivar workspace_connection: Required. [Required] A list of metrics to calculate and their
-     associated thresholds.
+    :ivar workspace_connection: A list of metrics to calculate and their associated thresholds.
     :vartype workspace_connection:
      ~azure.mgmt.machinelearningservices.models.MonitoringWorkspaceConnection
     """
@@ -9057,7 +9152,6 @@ class CustomMonitoringSignal(MonitoringSignalBase):
         'signal_type': {'required': True},
         'component_id': {'required': True, 'min_length': 1, 'pattern': r'[a-zA-Z0-9_]'},
         'metric_thresholds': {'required': True},
-        'workspace_connection': {'required': True},
     }
 
     _attribute_map = {
@@ -9076,11 +9170,11 @@ class CustomMonitoringSignal(MonitoringSignalBase):
         *,
         component_id: str,
         metric_thresholds: List["CustomMetricThreshold"],
-        workspace_connection: "MonitoringWorkspaceConnection",
         notification_types: Optional[List[Union[str, "MonitoringNotificationType"]]] = None,
         properties: Optional[Dict[str, str]] = None,
         input_assets: Optional[Dict[str, "MonitoringInputDataBase"]] = None,
         inputs: Optional[Dict[str, "JobInput"]] = None,
+        workspace_connection: Optional["MonitoringWorkspaceConnection"] = None,
         **kwargs
     ):
         """
@@ -9103,8 +9197,7 @@ class CustomMonitoringSignal(MonitoringSignalBase):
          associated thresholds.
         :paramtype metric_thresholds:
          list[~azure.mgmt.machinelearningservices.models.CustomMetricThreshold]
-        :keyword workspace_connection: Required. [Required] A list of metrics to calculate and their
-         associated thresholds.
+        :keyword workspace_connection: A list of metrics to calculate and their associated thresholds.
         :paramtype workspace_connection:
          ~azure.mgmt.machinelearningservices.models.MonitoringWorkspaceConnection
         """
@@ -11035,6 +11128,45 @@ class DeploymentResourceConfiguration(ResourceConfiguration):
         super(DeploymentResourceConfiguration, self).__init__(instance_count=instance_count, instance_type=instance_type, locations=locations, max_instance_count=max_instance_count, properties=properties, **kwargs)
 
 
+class DestinationAsset(msrest.serialization.Model):
+    """Publishing destination registry asset information.
+
+    :ivar destination_name: Destination asset name.
+    :vartype destination_name: str
+    :ivar destination_version: Destination asset version.
+    :vartype destination_version: str
+    :ivar registry_name: Destination registry name.
+    :vartype registry_name: str
+    """
+
+    _attribute_map = {
+        'destination_name': {'key': 'destinationName', 'type': 'str'},
+        'destination_version': {'key': 'destinationVersion', 'type': 'str'},
+        'registry_name': {'key': 'registryName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        destination_name: Optional[str] = None,
+        destination_version: Optional[str] = None,
+        registry_name: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword destination_name: Destination asset name.
+        :paramtype destination_name: str
+        :keyword destination_version: Destination asset version.
+        :paramtype destination_version: str
+        :keyword registry_name: Destination registry name.
+        :paramtype registry_name: str
+        """
+        super(DestinationAsset, self).__init__(**kwargs)
+        self.destination_name = destination_name
+        self.destination_version = destination_version
+        self.registry_name = registry_name
+
+
 class DistributionConfiguration(msrest.serialization.Model):
     """Base definition for job distribution configuration.
 
@@ -11103,6 +11235,51 @@ class Docker(msrest.serialization.Model):
         super(Docker, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.privileged = privileged
+
+
+class DockerCredential(DataReferenceCredential):
+    """Credential for docker with username and password.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar credential_type: Required. [Required] Credential type used to authentication with
+     storage.Constant filled by server. Possible values include: "SAS", "DockerCredentials",
+     "ManagedIdentity", "NoCredentials".
+    :vartype credential_type: str or
+     ~azure.mgmt.machinelearningservices.models.DataReferenceCredentialType
+    :ivar password: DockerCredential user password.
+    :vartype password: str
+    :ivar user_name: DockerCredential user name.
+    :vartype user_name: str
+    """
+
+    _validation = {
+        'credential_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'credential_type': {'key': 'credentialType', 'type': 'str'},
+        'password': {'key': 'password', 'type': 'str'},
+        'user_name': {'key': 'userName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        password: Optional[str] = None,
+        user_name: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword password: DockerCredential user password.
+        :paramtype password: str
+        :keyword user_name: DockerCredential user name.
+        :paramtype user_name: str
+        """
+        super(DockerCredential, self).__init__(**kwargs)
+        self.credential_type = 'DockerCredentials'  # type: str
+        self.password = password
+        self.user_name = user_name
 
 
 class Endpoint(msrest.serialization.Model):
@@ -12021,7 +12198,8 @@ class FeatureAttributionDriftMonitoringSignal(MonitoringSignalBase):
      types.
     :vartype feature_data_type_override: dict[str, str or
      ~azure.mgmt.machinelearningservices.models.MonitoringFeatureDataType]
-    :ivar feature_importance_settings: The settings for computing feature importance.
+    :ivar feature_importance_settings: Required. [Required] The settings for computing feature
+     importance.
     :vartype feature_importance_settings:
      ~azure.mgmt.machinelearningservices.models.FeatureImportanceSettings
     :ivar metric_threshold: Required. [Required] A list of metrics to calculate and their
@@ -12037,6 +12215,7 @@ class FeatureAttributionDriftMonitoringSignal(MonitoringSignalBase):
 
     _validation = {
         'signal_type': {'required': True},
+        'feature_importance_settings': {'required': True},
         'metric_threshold': {'required': True},
         'production_data': {'required': True},
         'reference_data': {'required': True},
@@ -12056,13 +12235,13 @@ class FeatureAttributionDriftMonitoringSignal(MonitoringSignalBase):
     def __init__(
         self,
         *,
+        feature_importance_settings: "FeatureImportanceSettings",
         metric_threshold: "FeatureAttributionMetricThreshold",
         production_data: List["MonitoringInputDataBase"],
         reference_data: "MonitoringInputDataBase",
         notification_types: Optional[List[Union[str, "MonitoringNotificationType"]]] = None,
         properties: Optional[Dict[str, str]] = None,
         feature_data_type_override: Optional[Dict[str, Union[str, "MonitoringFeatureDataType"]]] = None,
-        feature_importance_settings: Optional["FeatureImportanceSettings"] = None,
         **kwargs
     ):
         """
@@ -12075,7 +12254,8 @@ class FeatureAttributionDriftMonitoringSignal(MonitoringSignalBase):
          data types.
         :paramtype feature_data_type_override: dict[str, str or
          ~azure.mgmt.machinelearningservices.models.MonitoringFeatureDataType]
-        :keyword feature_importance_settings: The settings for computing feature importance.
+        :keyword feature_importance_settings: Required. [Required] The settings for computing feature
+         importance.
         :paramtype feature_importance_settings:
          ~azure.mgmt.machinelearningservices.models.FeatureImportanceSettings
         :keyword metric_threshold: Required. [Required] A list of metrics to calculate and their
@@ -14064,6 +14244,104 @@ class GenerationTokenUsageSignal(MonitoringSignalBase):
         self.metric_thresholds = metric_thresholds
         self.production_data = production_data
         self.sampling_rate = sampling_rate
+
+
+class GetBlobReferenceForConsumptionDto(msrest.serialization.Model):
+    """GetBlobReferenceForConsumptionDto.
+
+    :ivar blob_uri: Blob uri, example: https://blob.windows.core.net/Container/Path.
+    :vartype blob_uri: str
+    :ivar credential: Credential info to access storage account.
+    :vartype credential: ~azure.mgmt.machinelearningservices.models.DataReferenceCredential
+    :ivar storage_account_arm_id: The ARM id of the storage account.
+    :vartype storage_account_arm_id: str
+    """
+
+    _attribute_map = {
+        'blob_uri': {'key': 'blobUri', 'type': 'str'},
+        'credential': {'key': 'credential', 'type': 'DataReferenceCredential'},
+        'storage_account_arm_id': {'key': 'storageAccountArmId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        blob_uri: Optional[str] = None,
+        credential: Optional["DataReferenceCredential"] = None,
+        storage_account_arm_id: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword blob_uri: Blob uri, example: https://blob.windows.core.net/Container/Path.
+        :paramtype blob_uri: str
+        :keyword credential: Credential info to access storage account.
+        :paramtype credential: ~azure.mgmt.machinelearningservices.models.DataReferenceCredential
+        :keyword storage_account_arm_id: The ARM id of the storage account.
+        :paramtype storage_account_arm_id: str
+        """
+        super(GetBlobReferenceForConsumptionDto, self).__init__(**kwargs)
+        self.blob_uri = blob_uri
+        self.credential = credential
+        self.storage_account_arm_id = storage_account_arm_id
+
+
+class GetBlobReferenceSASRequestDto(msrest.serialization.Model):
+    """BlobReferenceSASRequest for getBlobReferenceSAS API.
+
+    :ivar asset_id: Id of the asset to be accessed.
+    :vartype asset_id: str
+    :ivar blob_uri: Blob uri of the asset to be accessed.
+    :vartype blob_uri: str
+    """
+
+    _attribute_map = {
+        'asset_id': {'key': 'assetId', 'type': 'str'},
+        'blob_uri': {'key': 'blobUri', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        asset_id: Optional[str] = None,
+        blob_uri: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword asset_id: Id of the asset to be accessed.
+        :paramtype asset_id: str
+        :keyword blob_uri: Blob uri of the asset to be accessed.
+        :paramtype blob_uri: str
+        """
+        super(GetBlobReferenceSASRequestDto, self).__init__(**kwargs)
+        self.asset_id = asset_id
+        self.blob_uri = blob_uri
+
+
+class GetBlobReferenceSASResponseDto(msrest.serialization.Model):
+    """BlobReferenceSASResponse for getBlobReferenceSAS API.
+
+    :ivar blob_reference_for_consumption: Blob reference for consumption details.
+    :vartype blob_reference_for_consumption:
+     ~azure.mgmt.machinelearningservices.models.GetBlobReferenceForConsumptionDto
+    """
+
+    _attribute_map = {
+        'blob_reference_for_consumption': {'key': 'blobReferenceForConsumption', 'type': 'GetBlobReferenceForConsumptionDto'},
+    }
+
+    def __init__(
+        self,
+        *,
+        blob_reference_for_consumption: Optional["GetBlobReferenceForConsumptionDto"] = None,
+        **kwargs
+    ):
+        """
+        :keyword blob_reference_for_consumption: Blob reference for consumption details.
+        :paramtype blob_reference_for_consumption:
+         ~azure.mgmt.machinelearningservices.models.GetBlobReferenceForConsumptionDto
+        """
+        super(GetBlobReferenceSASResponseDto, self).__init__(**kwargs)
+        self.blob_reference_for_consumption = blob_reference_for_consumption
 
 
 class GridSamplingAlgorithm(SamplingAlgorithm):
@@ -17765,7 +18043,7 @@ class InferenceGroupProperties(PropertiesBase):
     :ivar metadata: Metadata for the inference group.
     :vartype metadata: str
     :ivar priority: Priority of the group within the
-     N:Microsoft.MachineLearning.ManagementFrontEnd.Contracts.V20230801Preview.Pools.InferencePools.
+     N:Microsoft.MachineLearning.ManagementFrontEnd.Contracts.V20240101Preview.Pools.InferencePools.
     :vartype priority: int
     :ivar provisioning_state: Provisioning state for the inference group. Possible values include:
      "Creating", "Deleting", "Succeeded", "Failed", "Updating", "Canceled".
@@ -17807,7 +18085,7 @@ class InferenceGroupProperties(PropertiesBase):
         :keyword metadata: Metadata for the inference group.
         :paramtype metadata: str
         :keyword priority: Priority of the group within the
-         N:Microsoft.MachineLearning.ManagementFrontEnd.Contracts.V20230801Preview.Pools.InferencePools.
+         N:Microsoft.MachineLearning.ManagementFrontEnd.Contracts.V20240101Preview.Pools.InferencePools.
         :paramtype priority: int
         """
         super(InferenceGroupProperties, self).__init__(description=description, properties=properties, **kwargs)
@@ -20079,6 +20357,80 @@ class ManagedIdentity(IdentityConfiguration):
         self.resource_id = resource_id
 
 
+class ManagedIdentityCredential(DataReferenceCredential):
+    """Credential for user managed identity.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar credential_type: Required. [Required] Credential type used to authentication with
+     storage.Constant filled by server. Possible values include: "SAS", "DockerCredentials",
+     "ManagedIdentity", "NoCredentials".
+    :vartype credential_type: str or
+     ~azure.mgmt.machinelearningservices.models.DataReferenceCredentialType
+    :ivar managed_identity_type: ManagedIdentityCredential identity type.
+    :vartype managed_identity_type: str
+    :ivar user_managed_identity_client_id: ClientId for the UAMI. For ManagedIdentityType =
+     SystemManaged, this field is null.
+    :vartype user_managed_identity_client_id: str
+    :ivar user_managed_identity_principal_id: PrincipalId for the UAMI. For ManagedIdentityType =
+     SystemManaged, this field is null.
+    :vartype user_managed_identity_principal_id: str
+    :ivar user_managed_identity_resource_id: Full arm scope for the Id. For ManagedIdentityType =
+     SystemManaged, this field is null.
+    :vartype user_managed_identity_resource_id: str
+    :ivar user_managed_identity_tenant_id: TenantId for the UAMI. For ManagedIdentityType =
+     SystemManaged, this field is null.
+    :vartype user_managed_identity_tenant_id: str
+    """
+
+    _validation = {
+        'credential_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'credential_type': {'key': 'credentialType', 'type': 'str'},
+        'managed_identity_type': {'key': 'managedIdentityType', 'type': 'str'},
+        'user_managed_identity_client_id': {'key': 'userManagedIdentityClientId', 'type': 'str'},
+        'user_managed_identity_principal_id': {'key': 'userManagedIdentityPrincipalId', 'type': 'str'},
+        'user_managed_identity_resource_id': {'key': 'userManagedIdentityResourceId', 'type': 'str'},
+        'user_managed_identity_tenant_id': {'key': 'userManagedIdentityTenantId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        managed_identity_type: Optional[str] = None,
+        user_managed_identity_client_id: Optional[str] = None,
+        user_managed_identity_principal_id: Optional[str] = None,
+        user_managed_identity_resource_id: Optional[str] = None,
+        user_managed_identity_tenant_id: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword managed_identity_type: ManagedIdentityCredential identity type.
+        :paramtype managed_identity_type: str
+        :keyword user_managed_identity_client_id: ClientId for the UAMI. For ManagedIdentityType =
+         SystemManaged, this field is null.
+        :paramtype user_managed_identity_client_id: str
+        :keyword user_managed_identity_principal_id: PrincipalId for the UAMI. For ManagedIdentityType
+         = SystemManaged, this field is null.
+        :paramtype user_managed_identity_principal_id: str
+        :keyword user_managed_identity_resource_id: Full arm scope for the Id. For ManagedIdentityType
+         = SystemManaged, this field is null.
+        :paramtype user_managed_identity_resource_id: str
+        :keyword user_managed_identity_tenant_id: TenantId for the UAMI. For ManagedIdentityType =
+         SystemManaged, this field is null.
+        :paramtype user_managed_identity_tenant_id: str
+        """
+        super(ManagedIdentityCredential, self).__init__(**kwargs)
+        self.credential_type = 'ManagedIdentity'  # type: str
+        self.managed_identity_type = managed_identity_type
+        self.user_managed_identity_client_id = user_managed_identity_client_id
+        self.user_managed_identity_principal_id = user_managed_identity_principal_id
+        self.user_managed_identity_resource_id = user_managed_identity_resource_id
+        self.user_managed_identity_tenant_id = user_managed_identity_tenant_id
+
+
 class ManagedOnlineDeployment(OnlineDeploymentProperties):
     """Properties specific to a ManagedOnlineDeployment.
 
@@ -20221,6 +20573,58 @@ class ManagedOnlineDeployment(OnlineDeploymentProperties):
         """
         super(ManagedOnlineDeployment, self).__init__(code_configuration=code_configuration, description=description, environment_id=environment_id, environment_variables=environment_variables, properties=properties, app_insights_enabled=app_insights_enabled, data_collector=data_collector, egress_public_network_access=egress_public_network_access, instance_type=instance_type, liveness_probe=liveness_probe, model=model, model_mount_path=model_mount_path, readiness_probe=readiness_probe, request_settings=request_settings, scale_settings=scale_settings, **kwargs)
         self.endpoint_compute_type = 'Managed'  # type: str
+
+
+class ManagedResourceGroupAssignedIdentities(msrest.serialization.Model):
+    """Details for managed resource group assigned identities.
+
+    :ivar principal_id: Identity principal Id.
+    :vartype principal_id: str
+    """
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        principal_id: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword principal_id: Identity principal Id.
+        :paramtype principal_id: str
+        """
+        super(ManagedResourceGroupAssignedIdentities, self).__init__(**kwargs)
+        self.principal_id = principal_id
+
+
+class ManagedResourceGroupSettings(msrest.serialization.Model):
+    """Managed resource group settings.
+
+    :ivar assigned_identities: List of assigned identities for the managed resource group.
+    :vartype assigned_identities:
+     list[~azure.mgmt.machinelearningservices.models.ManagedResourceGroupAssignedIdentities]
+    """
+
+    _attribute_map = {
+        'assigned_identities': {'key': 'assignedIdentities', 'type': '[ManagedResourceGroupAssignedIdentities]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        assigned_identities: Optional[List["ManagedResourceGroupAssignedIdentities"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword assigned_identities: List of assigned identities for the managed resource group.
+        :paramtype assigned_identities:
+         list[~azure.mgmt.machinelearningservices.models.ManagedResourceGroupAssignedIdentities]
+        """
+        super(ManagedResourceGroupSettings, self).__init__(**kwargs)
+        self.assigned_identities = assigned_identities
 
 
 class ManagedServiceIdentity(msrest.serialization.Model):
@@ -20528,6 +20932,8 @@ class MLFlowModelJobInput(JobInput, AssetJobInput):
     :ivar mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
      "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+    :ivar path_on_compute: Input Asset Delivery Path.
+    :vartype path_on_compute: str
     :ivar uri: Required. [Required] Input Asset URI.
     :vartype uri: str
     :ivar description: Description for the input.
@@ -20545,6 +20951,7 @@ class MLFlowModelJobInput(JobInput, AssetJobInput):
 
     _attribute_map = {
         'mode': {'key': 'mode', 'type': 'str'},
+        'path_on_compute': {'key': 'pathOnCompute', 'type': 'str'},
         'uri': {'key': 'uri', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'job_input_type': {'key': 'jobInputType', 'type': 'str'},
@@ -20555,6 +20962,7 @@ class MLFlowModelJobInput(JobInput, AssetJobInput):
         *,
         uri: str,
         mode: Optional[Union[str, "InputDeliveryMode"]] = None,
+        path_on_compute: Optional[str] = None,
         description: Optional[str] = None,
         **kwargs
     ):
@@ -20562,13 +20970,16 @@ class MLFlowModelJobInput(JobInput, AssetJobInput):
         :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
          "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+        :keyword path_on_compute: Input Asset Delivery Path.
+        :paramtype path_on_compute: str
         :keyword uri: Required. [Required] Input Asset URI.
         :paramtype uri: str
         :keyword description: Description for the input.
         :paramtype description: str
         """
-        super(MLFlowModelJobInput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super(MLFlowModelJobInput, self).__init__(description=description, mode=mode, path_on_compute=path_on_compute, uri=uri, **kwargs)
         self.mode = mode
+        self.path_on_compute = path_on_compute
         self.uri = uri
         self.job_input_type = 'mlflow_model'  # type: str
         self.description = description
@@ -20588,6 +20999,8 @@ class MLFlowModelJobOutput(JobOutput, AssetJobOutput):
     :ivar mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
      "Direct".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
+    :ivar path_on_compute: Output Asset Delivery Path.
+    :vartype path_on_compute: str
     :ivar uri: Output Asset URI.
     :vartype uri: str
     :ivar description: Description for the output.
@@ -20607,6 +21020,7 @@ class MLFlowModelJobOutput(JobOutput, AssetJobOutput):
         'asset_version': {'key': 'assetVersion', 'type': 'str'},
         'auto_delete_setting': {'key': 'autoDeleteSetting', 'type': 'AutoDeleteSetting'},
         'mode': {'key': 'mode', 'type': 'str'},
+        'path_on_compute': {'key': 'pathOnCompute', 'type': 'str'},
         'uri': {'key': 'uri', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
@@ -20619,6 +21033,7 @@ class MLFlowModelJobOutput(JobOutput, AssetJobOutput):
         asset_version: Optional[str] = None,
         auto_delete_setting: Optional["AutoDeleteSetting"] = None,
         mode: Optional[Union[str, "OutputDeliveryMode"]] = None,
+        path_on_compute: Optional[str] = None,
         uri: Optional[str] = None,
         description: Optional[str] = None,
         **kwargs
@@ -20633,16 +21048,19 @@ class MLFlowModelJobOutput(JobOutput, AssetJobOutput):
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
          "Direct".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
+        :keyword path_on_compute: Output Asset Delivery Path.
+        :paramtype path_on_compute: str
         :keyword uri: Output Asset URI.
         :paramtype uri: str
         :keyword description: Description for the output.
         :paramtype description: str
         """
-        super(MLFlowModelJobOutput, self).__init__(description=description, asset_name=asset_name, asset_version=asset_version, auto_delete_setting=auto_delete_setting, mode=mode, uri=uri, **kwargs)
+        super(MLFlowModelJobOutput, self).__init__(description=description, asset_name=asset_name, asset_version=asset_version, auto_delete_setting=auto_delete_setting, mode=mode, path_on_compute=path_on_compute, uri=uri, **kwargs)
         self.asset_name = asset_name
         self.asset_version = asset_version
         self.auto_delete_setting = auto_delete_setting
         self.mode = mode
+        self.path_on_compute = path_on_compute
         self.uri = uri
         self.job_output_type = 'mlflow_model'  # type: str
         self.description = description
@@ -20756,6 +21174,8 @@ class MLTableJobInput(JobInput, AssetJobInput):
     :ivar mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
      "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+    :ivar path_on_compute: Input Asset Delivery Path.
+    :vartype path_on_compute: str
     :ivar uri: Required. [Required] Input Asset URI.
     :vartype uri: str
     :ivar description: Description for the input.
@@ -20773,6 +21193,7 @@ class MLTableJobInput(JobInput, AssetJobInput):
 
     _attribute_map = {
         'mode': {'key': 'mode', 'type': 'str'},
+        'path_on_compute': {'key': 'pathOnCompute', 'type': 'str'},
         'uri': {'key': 'uri', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'job_input_type': {'key': 'jobInputType', 'type': 'str'},
@@ -20783,6 +21204,7 @@ class MLTableJobInput(JobInput, AssetJobInput):
         *,
         uri: str,
         mode: Optional[Union[str, "InputDeliveryMode"]] = None,
+        path_on_compute: Optional[str] = None,
         description: Optional[str] = None,
         **kwargs
     ):
@@ -20790,13 +21212,16 @@ class MLTableJobInput(JobInput, AssetJobInput):
         :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
          "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+        :keyword path_on_compute: Input Asset Delivery Path.
+        :paramtype path_on_compute: str
         :keyword uri: Required. [Required] Input Asset URI.
         :paramtype uri: str
         :keyword description: Description for the input.
         :paramtype description: str
         """
-        super(MLTableJobInput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super(MLTableJobInput, self).__init__(description=description, mode=mode, path_on_compute=path_on_compute, uri=uri, **kwargs)
         self.mode = mode
+        self.path_on_compute = path_on_compute
         self.uri = uri
         self.job_input_type = 'mltable'  # type: str
         self.description = description
@@ -20816,6 +21241,8 @@ class MLTableJobOutput(JobOutput, AssetJobOutput):
     :ivar mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
      "Direct".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
+    :ivar path_on_compute: Output Asset Delivery Path.
+    :vartype path_on_compute: str
     :ivar uri: Output Asset URI.
     :vartype uri: str
     :ivar description: Description for the output.
@@ -20835,6 +21262,7 @@ class MLTableJobOutput(JobOutput, AssetJobOutput):
         'asset_version': {'key': 'assetVersion', 'type': 'str'},
         'auto_delete_setting': {'key': 'autoDeleteSetting', 'type': 'AutoDeleteSetting'},
         'mode': {'key': 'mode', 'type': 'str'},
+        'path_on_compute': {'key': 'pathOnCompute', 'type': 'str'},
         'uri': {'key': 'uri', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
@@ -20847,6 +21275,7 @@ class MLTableJobOutput(JobOutput, AssetJobOutput):
         asset_version: Optional[str] = None,
         auto_delete_setting: Optional["AutoDeleteSetting"] = None,
         mode: Optional[Union[str, "OutputDeliveryMode"]] = None,
+        path_on_compute: Optional[str] = None,
         uri: Optional[str] = None,
         description: Optional[str] = None,
         **kwargs
@@ -20861,16 +21290,19 @@ class MLTableJobOutput(JobOutput, AssetJobOutput):
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
          "Direct".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
+        :keyword path_on_compute: Output Asset Delivery Path.
+        :paramtype path_on_compute: str
         :keyword uri: Output Asset URI.
         :paramtype uri: str
         :keyword description: Description for the output.
         :paramtype description: str
         """
-        super(MLTableJobOutput, self).__init__(description=description, asset_name=asset_name, asset_version=asset_version, auto_delete_setting=auto_delete_setting, mode=mode, uri=uri, **kwargs)
+        super(MLTableJobOutput, self).__init__(description=description, asset_name=asset_name, asset_version=asset_version, auto_delete_setting=auto_delete_setting, mode=mode, path_on_compute=path_on_compute, uri=uri, **kwargs)
         self.asset_name = asset_name
         self.asset_version = asset_version
         self.auto_delete_setting = auto_delete_setting
         self.mode = mode
+        self.path_on_compute = path_on_compute
         self.uri = uri
         self.job_output_type = 'mltable'  # type: str
         self.description = description
@@ -21714,7 +22146,7 @@ class MonitorServerlessSparkCompute(MonitorComputeConfigurationBase):
         'compute_type': {'required': True},
         'compute_identity': {'required': True},
         'instance_type': {'required': True, 'min_length': 1, 'pattern': r'[a-zA-Z0-9_]'},
-        'runtime_version': {'required': True, 'min_length': 1, 'pattern': r'[a-zA-Z0-9_]'},
+        'runtime_version': {'required': True, 'min_length': 1, 'pattern': r'^[0-9]+\.[0-9]+$'},
     }
 
     _attribute_map = {
@@ -25091,6 +25523,9 @@ class Registry(TrackedResource):
     :ivar managed_resource_group: ResourceId of the managed RG if the registry has system created
      resources.
     :vartype managed_resource_group: ~azure.mgmt.machinelearningservices.models.ArmResourceId
+    :ivar managed_resource_group_settings: Managed resource group specific settings.
+    :vartype managed_resource_group_settings:
+     ~azure.mgmt.machinelearningservices.models.ManagedResourceGroupSettings
     :ivar ml_flow_registry_uri: MLFlow Registry URI for the Registry.
     :vartype ml_flow_registry_uri: str
     :ivar registry_private_endpoint_connections: Private endpoint connections info used for pending
@@ -25126,6 +25561,7 @@ class Registry(TrackedResource):
         'discovery_url': {'key': 'properties.discoveryUrl', 'type': 'str'},
         'intellectual_property_publisher': {'key': 'properties.intellectualPropertyPublisher', 'type': 'str'},
         'managed_resource_group': {'key': 'properties.managedResourceGroup', 'type': 'ArmResourceId'},
+        'managed_resource_group_settings': {'key': 'properties.managedResourceGroupSettings', 'type': 'ManagedResourceGroupSettings'},
         'ml_flow_registry_uri': {'key': 'properties.mlFlowRegistryUri', 'type': 'str'},
         'registry_private_endpoint_connections': {'key': 'properties.registryPrivateEndpointConnections', 'type': '[RegistryPrivateEndpointConnection]'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
@@ -25143,6 +25579,7 @@ class Registry(TrackedResource):
         discovery_url: Optional[str] = None,
         intellectual_property_publisher: Optional[str] = None,
         managed_resource_group: Optional["ArmResourceId"] = None,
+        managed_resource_group_settings: Optional["ManagedResourceGroupSettings"] = None,
         ml_flow_registry_uri: Optional[str] = None,
         registry_private_endpoint_connections: Optional[List["RegistryPrivateEndpointConnection"]] = None,
         public_network_access: Optional[str] = None,
@@ -25168,6 +25605,9 @@ class Registry(TrackedResource):
         :keyword managed_resource_group: ResourceId of the managed RG if the registry has system
          created resources.
         :paramtype managed_resource_group: ~azure.mgmt.machinelearningservices.models.ArmResourceId
+        :keyword managed_resource_group_settings: Managed resource group specific settings.
+        :paramtype managed_resource_group_settings:
+         ~azure.mgmt.machinelearningservices.models.ManagedResourceGroupSettings
         :keyword ml_flow_registry_uri: MLFlow Registry URI for the Registry.
         :paramtype ml_flow_registry_uri: str
         :keyword registry_private_endpoint_connections: Private endpoint connections info used for
@@ -25188,6 +25628,7 @@ class Registry(TrackedResource):
         self.discovery_url = discovery_url
         self.intellectual_property_publisher = intellectual_property_publisher
         self.managed_resource_group = managed_resource_group
+        self.managed_resource_group_settings = managed_resource_group_settings
         self.ml_flow_registry_uri = ml_flow_registry_uri
         self.registry_private_endpoint_connections = registry_private_endpoint_connections
         self.public_network_access = public_network_access
@@ -26109,6 +26550,44 @@ class Route(msrest.serialization.Model):
         super(Route, self).__init__(**kwargs)
         self.path = path
         self.port = port
+
+
+class SASCredential(DataReferenceCredential):
+    """Access with full SAS uri.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar credential_type: Required. [Required] Credential type used to authentication with
+     storage.Constant filled by server. Possible values include: "SAS", "DockerCredentials",
+     "ManagedIdentity", "NoCredentials".
+    :vartype credential_type: str or
+     ~azure.mgmt.machinelearningservices.models.DataReferenceCredentialType
+    :ivar sas_uri: Full SAS Uri, including the storage, container/blob path and SAS token.
+    :vartype sas_uri: str
+    """
+
+    _validation = {
+        'credential_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'credential_type': {'key': 'credentialType', 'type': 'str'},
+        'sas_uri': {'key': 'sasUri', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        sas_uri: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword sas_uri: Full SAS Uri, including the storage, container/blob path and SAS token.
+        :paramtype sas_uri: str
+        """
+        super(SASCredential, self).__init__(**kwargs)
+        self.credential_type = 'SAS'  # type: str
+        self.sas_uri = sas_uri
 
 
 class SASCredentialDto(PendingUploadCredentialDto):
@@ -29756,6 +30235,71 @@ class TrialComponent(msrest.serialization.Model):
         self.resources = resources
 
 
+class TriggerOnceRequest(msrest.serialization.Model):
+    """TriggerOnceRequest.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar schedule_time: Required. [Required] Specify the schedule time for trigger once.
+    :vartype schedule_time: str
+    """
+
+    _validation = {
+        'schedule_time': {'required': True, 'min_length': 1, 'pattern': r'[a-zA-Z0-9_]'},
+    }
+
+    _attribute_map = {
+        'schedule_time': {'key': 'scheduleTime', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        schedule_time: str,
+        **kwargs
+    ):
+        """
+        :keyword schedule_time: Required. [Required] Specify the schedule time for trigger once.
+        :paramtype schedule_time: str
+        """
+        super(TriggerOnceRequest, self).__init__(**kwargs)
+        self.schedule_time = schedule_time
+
+
+class TriggerRunSubmissionDto(msrest.serialization.Model):
+    """TriggerRunSubmissionDto.
+
+    :ivar schedule_action_type: Possible values include: "ComputeStartStop", "CreateJob",
+     "InvokeBatchEndpoint", "ImportData", "CreateMonitor", "FeatureStoreMaterialization".
+    :vartype schedule_action_type: str or ~azure.mgmt.machinelearningservices.models.ScheduleType
+    :ivar submission_id:
+    :vartype submission_id: str
+    """
+
+    _attribute_map = {
+        'schedule_action_type': {'key': 'scheduleActionType', 'type': 'str'},
+        'submission_id': {'key': 'submissionId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        schedule_action_type: Optional[Union[str, "ScheduleType"]] = None,
+        submission_id: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword schedule_action_type: Possible values include: "ComputeStartStop", "CreateJob",
+         "InvokeBatchEndpoint", "ImportData", "CreateMonitor", "FeatureStoreMaterialization".
+        :paramtype schedule_action_type: str or ~azure.mgmt.machinelearningservices.models.ScheduleType
+        :keyword submission_id:
+        :paramtype submission_id: str
+        """
+        super(TriggerRunSubmissionDto, self).__init__(**kwargs)
+        self.schedule_action_type = schedule_action_type
+        self.submission_id = submission_id
+
+
 class TritonInferencingServer(InferencingServer):
     """Triton inferencing server configurations.
 
@@ -29802,6 +30346,8 @@ class TritonModelJobInput(JobInput, AssetJobInput):
     :ivar mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
      "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+    :ivar path_on_compute: Input Asset Delivery Path.
+    :vartype path_on_compute: str
     :ivar uri: Required. [Required] Input Asset URI.
     :vartype uri: str
     :ivar description: Description for the input.
@@ -29819,6 +30365,7 @@ class TritonModelJobInput(JobInput, AssetJobInput):
 
     _attribute_map = {
         'mode': {'key': 'mode', 'type': 'str'},
+        'path_on_compute': {'key': 'pathOnCompute', 'type': 'str'},
         'uri': {'key': 'uri', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'job_input_type': {'key': 'jobInputType', 'type': 'str'},
@@ -29829,6 +30376,7 @@ class TritonModelJobInput(JobInput, AssetJobInput):
         *,
         uri: str,
         mode: Optional[Union[str, "InputDeliveryMode"]] = None,
+        path_on_compute: Optional[str] = None,
         description: Optional[str] = None,
         **kwargs
     ):
@@ -29836,13 +30384,16 @@ class TritonModelJobInput(JobInput, AssetJobInput):
         :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
          "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+        :keyword path_on_compute: Input Asset Delivery Path.
+        :paramtype path_on_compute: str
         :keyword uri: Required. [Required] Input Asset URI.
         :paramtype uri: str
         :keyword description: Description for the input.
         :paramtype description: str
         """
-        super(TritonModelJobInput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super(TritonModelJobInput, self).__init__(description=description, mode=mode, path_on_compute=path_on_compute, uri=uri, **kwargs)
         self.mode = mode
+        self.path_on_compute = path_on_compute
         self.uri = uri
         self.job_input_type = 'triton_model'  # type: str
         self.description = description
@@ -29862,6 +30413,8 @@ class TritonModelJobOutput(JobOutput, AssetJobOutput):
     :ivar mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
      "Direct".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
+    :ivar path_on_compute: Output Asset Delivery Path.
+    :vartype path_on_compute: str
     :ivar uri: Output Asset URI.
     :vartype uri: str
     :ivar description: Description for the output.
@@ -29881,6 +30434,7 @@ class TritonModelJobOutput(JobOutput, AssetJobOutput):
         'asset_version': {'key': 'assetVersion', 'type': 'str'},
         'auto_delete_setting': {'key': 'autoDeleteSetting', 'type': 'AutoDeleteSetting'},
         'mode': {'key': 'mode', 'type': 'str'},
+        'path_on_compute': {'key': 'pathOnCompute', 'type': 'str'},
         'uri': {'key': 'uri', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
@@ -29893,6 +30447,7 @@ class TritonModelJobOutput(JobOutput, AssetJobOutput):
         asset_version: Optional[str] = None,
         auto_delete_setting: Optional["AutoDeleteSetting"] = None,
         mode: Optional[Union[str, "OutputDeliveryMode"]] = None,
+        path_on_compute: Optional[str] = None,
         uri: Optional[str] = None,
         description: Optional[str] = None,
         **kwargs
@@ -29907,16 +30462,19 @@ class TritonModelJobOutput(JobOutput, AssetJobOutput):
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
          "Direct".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
+        :keyword path_on_compute: Output Asset Delivery Path.
+        :paramtype path_on_compute: str
         :keyword uri: Output Asset URI.
         :paramtype uri: str
         :keyword description: Description for the output.
         :paramtype description: str
         """
-        super(TritonModelJobOutput, self).__init__(description=description, asset_name=asset_name, asset_version=asset_version, auto_delete_setting=auto_delete_setting, mode=mode, uri=uri, **kwargs)
+        super(TritonModelJobOutput, self).__init__(description=description, asset_name=asset_name, asset_version=asset_version, auto_delete_setting=auto_delete_setting, mode=mode, path_on_compute=path_on_compute, uri=uri, **kwargs)
         self.asset_name = asset_name
         self.asset_version = asset_version
         self.auto_delete_setting = auto_delete_setting
         self.mode = mode
+        self.path_on_compute = path_on_compute
         self.uri = uri
         self.job_output_type = 'triton_model'  # type: str
         self.description = description
@@ -30163,6 +30721,8 @@ class UriFileJobInput(JobInput, AssetJobInput):
     :ivar mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
      "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+    :ivar path_on_compute: Input Asset Delivery Path.
+    :vartype path_on_compute: str
     :ivar uri: Required. [Required] Input Asset URI.
     :vartype uri: str
     :ivar description: Description for the input.
@@ -30180,6 +30740,7 @@ class UriFileJobInput(JobInput, AssetJobInput):
 
     _attribute_map = {
         'mode': {'key': 'mode', 'type': 'str'},
+        'path_on_compute': {'key': 'pathOnCompute', 'type': 'str'},
         'uri': {'key': 'uri', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'job_input_type': {'key': 'jobInputType', 'type': 'str'},
@@ -30190,6 +30751,7 @@ class UriFileJobInput(JobInput, AssetJobInput):
         *,
         uri: str,
         mode: Optional[Union[str, "InputDeliveryMode"]] = None,
+        path_on_compute: Optional[str] = None,
         description: Optional[str] = None,
         **kwargs
     ):
@@ -30197,13 +30759,16 @@ class UriFileJobInput(JobInput, AssetJobInput):
         :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
          "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+        :keyword path_on_compute: Input Asset Delivery Path.
+        :paramtype path_on_compute: str
         :keyword uri: Required. [Required] Input Asset URI.
         :paramtype uri: str
         :keyword description: Description for the input.
         :paramtype description: str
         """
-        super(UriFileJobInput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super(UriFileJobInput, self).__init__(description=description, mode=mode, path_on_compute=path_on_compute, uri=uri, **kwargs)
         self.mode = mode
+        self.path_on_compute = path_on_compute
         self.uri = uri
         self.job_input_type = 'uri_file'  # type: str
         self.description = description
@@ -30223,6 +30788,8 @@ class UriFileJobOutput(JobOutput, AssetJobOutput):
     :ivar mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
      "Direct".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
+    :ivar path_on_compute: Output Asset Delivery Path.
+    :vartype path_on_compute: str
     :ivar uri: Output Asset URI.
     :vartype uri: str
     :ivar description: Description for the output.
@@ -30242,6 +30809,7 @@ class UriFileJobOutput(JobOutput, AssetJobOutput):
         'asset_version': {'key': 'assetVersion', 'type': 'str'},
         'auto_delete_setting': {'key': 'autoDeleteSetting', 'type': 'AutoDeleteSetting'},
         'mode': {'key': 'mode', 'type': 'str'},
+        'path_on_compute': {'key': 'pathOnCompute', 'type': 'str'},
         'uri': {'key': 'uri', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
@@ -30254,6 +30822,7 @@ class UriFileJobOutput(JobOutput, AssetJobOutput):
         asset_version: Optional[str] = None,
         auto_delete_setting: Optional["AutoDeleteSetting"] = None,
         mode: Optional[Union[str, "OutputDeliveryMode"]] = None,
+        path_on_compute: Optional[str] = None,
         uri: Optional[str] = None,
         description: Optional[str] = None,
         **kwargs
@@ -30268,16 +30837,19 @@ class UriFileJobOutput(JobOutput, AssetJobOutput):
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
          "Direct".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
+        :keyword path_on_compute: Output Asset Delivery Path.
+        :paramtype path_on_compute: str
         :keyword uri: Output Asset URI.
         :paramtype uri: str
         :keyword description: Description for the output.
         :paramtype description: str
         """
-        super(UriFileJobOutput, self).__init__(description=description, asset_name=asset_name, asset_version=asset_version, auto_delete_setting=auto_delete_setting, mode=mode, uri=uri, **kwargs)
+        super(UriFileJobOutput, self).__init__(description=description, asset_name=asset_name, asset_version=asset_version, auto_delete_setting=auto_delete_setting, mode=mode, path_on_compute=path_on_compute, uri=uri, **kwargs)
         self.asset_name = asset_name
         self.asset_version = asset_version
         self.auto_delete_setting = auto_delete_setting
         self.mode = mode
+        self.path_on_compute = path_on_compute
         self.uri = uri
         self.job_output_type = 'uri_file'  # type: str
         self.description = description
@@ -30384,6 +30956,8 @@ class UriFolderJobInput(JobInput, AssetJobInput):
     :ivar mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
      "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+    :ivar path_on_compute: Input Asset Delivery Path.
+    :vartype path_on_compute: str
     :ivar uri: Required. [Required] Input Asset URI.
     :vartype uri: str
     :ivar description: Description for the input.
@@ -30401,6 +30975,7 @@ class UriFolderJobInput(JobInput, AssetJobInput):
 
     _attribute_map = {
         'mode': {'key': 'mode', 'type': 'str'},
+        'path_on_compute': {'key': 'pathOnCompute', 'type': 'str'},
         'uri': {'key': 'uri', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'job_input_type': {'key': 'jobInputType', 'type': 'str'},
@@ -30411,6 +30986,7 @@ class UriFolderJobInput(JobInput, AssetJobInput):
         *,
         uri: str,
         mode: Optional[Union[str, "InputDeliveryMode"]] = None,
+        path_on_compute: Optional[str] = None,
         description: Optional[str] = None,
         **kwargs
     ):
@@ -30418,13 +30994,16 @@ class UriFolderJobInput(JobInput, AssetJobInput):
         :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
          "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+        :keyword path_on_compute: Input Asset Delivery Path.
+        :paramtype path_on_compute: str
         :keyword uri: Required. [Required] Input Asset URI.
         :paramtype uri: str
         :keyword description: Description for the input.
         :paramtype description: str
         """
-        super(UriFolderJobInput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super(UriFolderJobInput, self).__init__(description=description, mode=mode, path_on_compute=path_on_compute, uri=uri, **kwargs)
         self.mode = mode
+        self.path_on_compute = path_on_compute
         self.uri = uri
         self.job_input_type = 'uri_folder'  # type: str
         self.description = description
@@ -30444,6 +31023,8 @@ class UriFolderJobOutput(JobOutput, AssetJobOutput):
     :ivar mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
      "Direct".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
+    :ivar path_on_compute: Output Asset Delivery Path.
+    :vartype path_on_compute: str
     :ivar uri: Output Asset URI.
     :vartype uri: str
     :ivar description: Description for the output.
@@ -30463,6 +31044,7 @@ class UriFolderJobOutput(JobOutput, AssetJobOutput):
         'asset_version': {'key': 'assetVersion', 'type': 'str'},
         'auto_delete_setting': {'key': 'autoDeleteSetting', 'type': 'AutoDeleteSetting'},
         'mode': {'key': 'mode', 'type': 'str'},
+        'path_on_compute': {'key': 'pathOnCompute', 'type': 'str'},
         'uri': {'key': 'uri', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
@@ -30475,6 +31057,7 @@ class UriFolderJobOutput(JobOutput, AssetJobOutput):
         asset_version: Optional[str] = None,
         auto_delete_setting: Optional["AutoDeleteSetting"] = None,
         mode: Optional[Union[str, "OutputDeliveryMode"]] = None,
+        path_on_compute: Optional[str] = None,
         uri: Optional[str] = None,
         description: Optional[str] = None,
         **kwargs
@@ -30489,16 +31072,19 @@ class UriFolderJobOutput(JobOutput, AssetJobOutput):
         :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload",
          "Direct".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
+        :keyword path_on_compute: Output Asset Delivery Path.
+        :paramtype path_on_compute: str
         :keyword uri: Output Asset URI.
         :paramtype uri: str
         :keyword description: Description for the output.
         :paramtype description: str
         """
-        super(UriFolderJobOutput, self).__init__(description=description, asset_name=asset_name, asset_version=asset_version, auto_delete_setting=auto_delete_setting, mode=mode, uri=uri, **kwargs)
+        super(UriFolderJobOutput, self).__init__(description=description, asset_name=asset_name, asset_version=asset_version, auto_delete_setting=auto_delete_setting, mode=mode, path_on_compute=path_on_compute, uri=uri, **kwargs)
         self.asset_name = asset_name
         self.asset_version = asset_version
         self.auto_delete_setting = auto_delete_setting
         self.mode = mode
+        self.path_on_compute = path_on_compute
         self.uri = uri
         self.job_output_type = 'uri_folder'  # type: str
         self.description = description

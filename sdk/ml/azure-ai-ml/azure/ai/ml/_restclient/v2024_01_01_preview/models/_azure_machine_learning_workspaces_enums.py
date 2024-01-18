@@ -7,7 +7,9 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
+
 from six import with_metaclass
+
 from azure.core import CaseInsensitiveEnumMeta
 
 
@@ -429,6 +431,15 @@ class DataImportSourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     DATABASE = "database"
     FILE_SYSTEM = "file_system"
+
+class DataReferenceCredentialType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum to determine the DataReference credentials type.
+    """
+
+    SAS = "SAS"
+    DOCKER_CREDENTIALS = "DockerCredentials"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    NO_CREDENTIALS = "NoCredentials"
 
 class DatastoreType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum to determine the datastore contents type.
@@ -1568,6 +1579,15 @@ class ScheduleStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+
+class ScheduleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    COMPUTE_START_STOP = "ComputeStartStop"
+    CREATE_JOB = "CreateJob"
+    INVOKE_BATCH_ENDPOINT = "InvokeBatchEndpoint"
+    IMPORT_DATA = "ImportData"
+    CREATE_MONITOR = "CreateMonitor"
+    FEATURE_STORE_MATERIALIZATION = "FeatureStoreMaterialization"
 
 class SeasonalityMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Forecasting seasonality mode.

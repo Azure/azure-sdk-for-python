@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Awaitable
 
 from msrest import Deserializer, Serializer
 
@@ -16,7 +16,53 @@ from azure.mgmt.core import AsyncARMPipelineClient
 
 from .. import models
 from ._configuration import AzureMachineLearningWorkspacesConfiguration
-from .operations import BatchDeploymentsOperations, BatchEndpointsOperations, CapacityReservationGroupsOperations, CodeContainersOperations, CodeVersionsOperations, ComponentContainersOperations, ComponentVersionsOperations, ComputeOperations, DataContainersOperations, DataVersionsOperations, DatastoresOperations, EnvironmentContainersOperations, EnvironmentVersionsOperations, FeaturesOperations, FeaturesetContainersOperations, FeaturesetVersionsOperations, FeaturestoreEntityContainersOperations, FeaturestoreEntityVersionsOperations, InferenceEndpointsOperations, InferenceGroupsOperations, InferencePoolsOperations, JobsOperations, LabelingJobsOperations, ModelContainersOperations, ModelVersionsOperations, OnlineDeploymentsOperations, OnlineEndpointsOperations, QuotasOperations, RegistriesOperations, RegistryCodeContainersOperations, RegistryCodeVersionsOperations, RegistryComponentContainersOperations, RegistryComponentVersionsOperations, RegistryDataContainersOperations, RegistryDataVersionsOperations, RegistryEnvironmentContainersOperations, RegistryEnvironmentVersionsOperations, RegistryModelContainersOperations, RegistryModelVersionsOperations, SchedulesOperations, ServerlessEndpointsOperations, UsagesOperations, VirtualMachineSizesOperations, WorkspaceFeaturesOperations
+from .operations import (
+    BatchDeploymentsOperations,
+    BatchEndpointsOperations,
+    CapacityReservationGroupsOperations,
+    CodeContainersOperations,
+    CodeVersionsOperations,
+    ComponentContainersOperations,
+    ComponentVersionsOperations,
+    ComputeOperations,
+    DataContainersOperations,
+    DatastoresOperations,
+    DataVersionsOperations,
+    EnvironmentContainersOperations,
+    EnvironmentVersionsOperations,
+    FeaturesetContainersOperations,
+    FeaturesetVersionsOperations,
+    FeaturesOperations,
+    FeaturestoreEntityContainersOperations,
+    FeaturestoreEntityVersionsOperations,
+    InferenceEndpointsOperations,
+    InferenceGroupsOperations,
+    InferencePoolsOperations,
+    JobsOperations,
+    LabelingJobsOperations,
+    ModelContainersOperations,
+    ModelVersionsOperations,
+    OnlineDeploymentsOperations,
+    OnlineEndpointsOperations,
+    QuotasOperations,
+    RegistriesOperations,
+    RegistryCodeContainersOperations,
+    RegistryCodeVersionsOperations,
+    RegistryComponentContainersOperations,
+    RegistryComponentVersionsOperations,
+    RegistryDataContainersOperations,
+    RegistryDataReferencesOperations,
+    RegistryDataVersionsOperations,
+    RegistryEnvironmentContainersOperations,
+    RegistryEnvironmentVersionsOperations,
+    RegistryModelContainersOperations,
+    RegistryModelVersionsOperations,
+    SchedulesOperations,
+    ServerlessEndpointsOperations,
+    UsagesOperations,
+    VirtualMachineSizesOperations,
+    WorkspaceFeaturesOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -60,6 +106,9 @@ class AzureMachineLearningWorkspaces:    # pylint: disable=too-many-instance-att
     :ivar registry_data_versions: RegistryDataVersionsOperations operations
     :vartype registry_data_versions:
      azure.mgmt.machinelearningservices.aio.operations.RegistryDataVersionsOperations
+    :ivar registry_data_references: RegistryDataReferencesOperations operations
+    :vartype registry_data_references:
+     azure.mgmt.machinelearningservices.aio.operations.RegistryDataReferencesOperations
     :ivar registry_environment_containers: RegistryEnvironmentContainersOperations operations
     :vartype registry_environment_containers:
      azure.mgmt.machinelearningservices.aio.operations.RegistryEnvironmentContainersOperations
@@ -189,6 +238,7 @@ class AzureMachineLearningWorkspaces:    # pylint: disable=too-many-instance-att
         self.registry_component_versions = RegistryComponentVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.registry_data_containers = RegistryDataContainersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.registry_data_versions = RegistryDataVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.registry_data_references = RegistryDataReferencesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.registry_environment_containers = RegistryEnvironmentContainersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.registry_environment_versions = RegistryEnvironmentVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.registry_model_containers = RegistryModelContainersOperations(self._client, self._config, self._serialize, self._deserialize)
