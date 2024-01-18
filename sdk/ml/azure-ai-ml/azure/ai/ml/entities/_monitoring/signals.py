@@ -175,7 +175,7 @@ class ProductionData(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        input_data: Input,
+        input_data: Optional[Input] = None,
         data_context: MonitorDatasetContext = None,
         pre_processing_component: str = None,
         data_window: Optional[BaselineDataRange] = None,
@@ -260,7 +260,7 @@ class ReferenceData(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        input_data: Input,
+        input_data: Optional[Input] = None,
         data_context: MonitorDatasetContext = None,
         pre_processing_component: Optional[str] = None,
         target_column_name: Optional[str] = None,
