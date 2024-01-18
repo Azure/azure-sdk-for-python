@@ -183,15 +183,9 @@ def create_package(
 
 
     if setup_parsed.ext_modules:
-
-        if platform.system() == "Darwin":
-            run_logged(
-                [sys.executable, "-m", "cibuildwheel", "--platform", "macos", "--output-dir", dist], prefix="cibuildwheel", cwd=setup_parsed.folder
-            )
-        else:
-            run_logged(
-                [sys.executable, "-m", "cibuildwheel", "--output-dir", dist], prefix="cibuildwheel", cwd=setup_parsed.folder
-            )
+        run_logged(
+            [sys.executable, "-m", "cibuildwheel", "--platform", "macos", "--output-dir", dist], prefix="cibuildwheel", cwd=setup_parsed.folder
+        )
 
     if enable_wheel:
         run_logged(

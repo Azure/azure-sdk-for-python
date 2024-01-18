@@ -12,5 +12,6 @@ breaking = false
 bandit = false
 
 [tool.cibuildwheel]
+archs-macos = "x86_64 arm64"
 build = ["cp38*", "cp39*", "cp310*", "cp311*", "cp312*", "pp39*", "pp310*"]
 skip = ["*-musllinux*"]
