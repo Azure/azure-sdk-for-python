@@ -2101,7 +2101,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 ),
                 operation_responses=final_responses
             )
-        return cast(List[Dict[str, Any]], final_responses)
+        return final_responses
 
     def _Batch(
             self,
