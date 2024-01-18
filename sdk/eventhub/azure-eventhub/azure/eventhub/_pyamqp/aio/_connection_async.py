@@ -664,7 +664,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         except KeyError:
             return True  # TODO: channel error
 
-    async def _process_outgoing_frame(self, channel: int, frame: NamedTuple) -> None:
+    async def _process_outgoing_frame(self, channel: int, frame) -> None:
         """Send an outgoing frame if the connection is in a legal state.
 
         :param int channel: The channel to send the frame on.
