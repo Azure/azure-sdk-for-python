@@ -14,11 +14,8 @@ from typing import Dict, List, Tuple, Any
 
 # Assumes the presence of setuptools
 from pkg_resources import (
-    parse_version,
     parse_requirements,
-    Requirement,
-    WorkingSet,
-    working_set,
+    Requirement
 )
 
 # this assumes the presence of "packaging"
@@ -31,7 +28,7 @@ NEW_REQ_PACKAGES = ["azure-core", "azure-mgmt-core"]
 
 class ParsedSetup:
     """
-    Python version
+    Used to represent a parsed setup.py or pyproject.toml file. One should use `ParsedSetup.from_path` to create new instances.
     """
 
     def __init__(
@@ -68,6 +65,9 @@ class ParsedSetup:
 
     @classmethod
     def from_path(cls, parse_directory_or_file: str):
+        """
+        Creates a new ParsedSetup instance from a path to a setup.py, pyproject.toml (with [project] member), or a directory containing either of those files.
+        """
         (
             name,
             version,
@@ -185,29 +185,11 @@ def read_setup_py_content(setup_filename: str) -> str:
         return content
 
 
-def parse_setup(
-    setup_filename: str,
-) -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], str, List[Extension]]:
+def parse_setup_py(setup_filename: str)  -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], str, List[Extension]]:
     """
-    Used to evaluate a setup.py (or a directory containing a setup.py) and return a tuple containing:
-    (
-        <package-name>,
-        <package_version>,
-        <python_requires>,
-        <requires>,
-        <boolean indicating track1 vs track2>,
-        <parsed setup.py location>,
-        <namespace>,
-        <package_data dict>,
-        <include_package_data bool>,
-        <classifiers>,
-        <keywords>,
-        <ext_packages>,
-        <ext_modules>
-    )
+    Parses the setup() function arguments to get package metadata from a setup.py file.
     """
-    if not setup_filename.endswith("setup.py"):
-        setup_filename = os.path.join(setup_filename, "setup.py")
+
     mock_setup = textwrap.dedent(
         """\
     def setup(*args, **kwargs):
@@ -285,6 +267,88 @@ def parse_setup(
         ext_package,
         ext_modules,
     )
+
+def parse_pyproject(pyproject_filename: str) -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], str, List[Extension]]:
+    project_config = get_pyproject_config(pyproject_filename, "project")
+
+    if project_config:
+        name = project_config.get("name")
+        version = project_config.get("version")
+        python_requires = project_config.get("requires-python")
+        requires = project_config.get("dependencies")
+        is_new_sdk = name in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x)[0] in NEW_REQ_PACKAGES), requires))
+        name_space = name.replace("-", ".")
+        # package_data = project_config.get("package_data", None) todo
+        # include_package_data = project_config.get("include_package_data", None) todo
+        classifiers = project_config.get("classifiers", [])
+        keywords = project_config.get("keywords", [])
+        # ext_package = project_config.get("ext_package", None) todo
+        # ext_modules = project_config.get("ext_modules", []) todo
+
+        return (
+            name,
+            version,
+            python_requires,
+            requires,
+            is_new_sdk,
+            pyproject_filename,
+            name_space,
+            None,
+            None,
+            classifiers,
+            keywords,
+            None,
+            [],
+        )
+
+
+def parse_setup(
+    setup_filename: str,
+):
+    """
+    Used to evaluate a setup.py (or a directory containing a setup.py) and return a tuple containing:
+    (
+        <package-name>,
+        <package_version>,
+        <python_requires>,
+        <requires>,
+        <boolean indicating track1 vs track2>,
+        <parsed setup.py location>,
+        <namespace>,
+        <package_data dict>,
+        <include_package_data bool>,
+        <classifiers>,
+        <keywords>,
+        <ext_packages>,
+        <ext_modules>
+    )
+    """
+    # handle a bare folder arg
+    if os.path.isfolder(setup_filename):
+        pyproject_filename = os.path.join(setup_filename, "pyproject.toml")
+
+        if os.path.exists(pyproject_filename) and get_pyproject_config(pyproject_filename):
+            setup_filename = pyproject_filename
+        else:
+            os.path.join(setup_filename, "setup.py")
+
+    if setup_filename.endswith("pyproject.toml"):
+        return parse_pyproject(setup_filename)
+    else:
+        return parse_setup_py(setup_filename)            
+
+
+def get_pyproject_config(pyproject_file: str, section: str = "project") -> Dict[str, Any]:
+    """
+    Given a pyproject.toml file, returns a dictionary of a target section. Defaults to `project` section.
+    """
+    with open(pyproject_file, "rb") as f:
+        pyproject_dict = toml.load(f)
+
+    if section not in pyproject_dict:
+        return None
+
+    return pyproject_dict[section]
 
 
 def get_install_requires(setup_path: str) -> List[str]:

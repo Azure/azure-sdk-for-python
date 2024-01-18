@@ -203,3 +203,24 @@ setup(
     assert result.ext_modules is not None
     assert len(result.ext_modules) == 1
     assert str(type(result.ext_modules[0])) == "<class 'setuptools.extension.Extension'>"
+
+def test_parse_pyproject():
+    # ensure that we can parse from a folder and a specific file
+    pass
+
+def test_parse_pyproject():
+    # ensure that we can parse from a folder and a specific file
+    pass
+
+def test_parse_setup_py():
+    # ensure that we can parse from a folder and a specific file
+    pass
+
+def test_parse_setup_py():
+    # ensure that we can parse from a folder and a specific file
+    pass
+
+def test_parse_pyproject_extensions():
+    # ensure that we can parse from a folder and a specific file
+    pass
+
