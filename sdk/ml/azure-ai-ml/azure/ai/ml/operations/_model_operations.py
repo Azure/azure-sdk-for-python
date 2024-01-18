@@ -7,7 +7,7 @@
 import re
 from contextlib import contextmanager
 from os import PathLike, path
-from typing import Dict, Iterable, Optional, Union
+from typing import Any, Dict, Generator, Iterable, Optional, Union, cast
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -113,7 +113,7 @@ class ModelOperations(_ScopeDependentOperations):
         self._service_client = service_client
         self._datastore_operation = datastore_operations
         self._all_operations = all_operations
-        self._control_plane_client = kwargs.get("control_plane_client", None)
+        self._control_plane_client: Any = kwargs.get("control_plane_client", None)
         self._workspace_rg = kwargs.pop("workspace_rg", None)
         self._workspace_sub = kwargs.pop("workspace_sub", None)
         self._registry_reference = kwargs.pop("registry_reference", None)
@@ -399,7 +399,7 @@ class ModelOperations(_ScopeDependentOperations):
         name: str,
         version: Optional[str] = None,
         label: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:  # pylint:disable=unused-argument
         """Archive a model asset.
 
@@ -426,7 +426,7 @@ class ModelOperations(_ScopeDependentOperations):
         name: str,
         version: Optional[str] = None,
         label: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:  # pylint:disable=unused-argument
         """Restore an archived model asset.
 
@@ -468,43 +468,51 @@ class ModelOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.Model]
         """
         if name:
-            return (
-                self._model_versions_operation.list(
-                    name=name,
+            return cast(
+                Iterable[Model],
+                (
+                    self._model_versions_operation.list(
+                        name=name,
+                        registry_name=self._registry_name,
+                        cls=lambda objs: [Model._from_rest_object(obj) for obj in objs],
+                        **self._scope_kwargs,
+                    )
+                    if self._registry_name
+                    else self._model_versions_operation.list(
+                        name=name,
+                        workspace_name=self._workspace_name,
+                        cls=lambda objs: [Model._from_rest_object(obj) for obj in objs],
+                        list_view_type=list_view_type,
+                        stage=stage,
+                        **self._scope_kwargs,
+                    )
+                ),
+            )
+
+        return cast(
+            Iterable[Model],
+            (
+                self._model_container_operation.list(
                     registry_name=self._registry_name,
-                    cls=lambda objs: [Model._from_rest_object(obj) for obj in objs],
+                    cls=lambda objs: [Model._from_container_rest_object(obj) for obj in objs],
+                    list_view_type=list_view_type,
                     **self._scope_kwargs,
                 )
                 if self._registry_name
-                else self._model_versions_operation.list(
-                    name=name,
+                else self._model_container_operation.list(
                     workspace_name=self._workspace_name,
-                    cls=lambda objs: [Model._from_rest_object(obj) for obj in objs],
+                    cls=lambda objs: [Model._from_container_rest_object(obj) for obj in objs],
                     list_view_type=list_view_type,
-                    stage=stage,
                     **self._scope_kwargs,
                 )
-            )
-
-        return (
-            self._model_container_operation.list(
-                registry_name=self._registry_name,
-                cls=lambda objs: [Model._from_container_rest_object(obj) for obj in objs],
-                list_view_type=list_view_type,
-                **self._scope_kwargs,
-            )
-            if self._registry_name
-            else self._model_container_operation.list(
-                workspace_name=self._workspace_name,
-                cls=lambda objs: [Model._from_container_rest_object(obj) for obj in objs],
-                list_view_type=list_view_type,
-                **self._scope_kwargs,
-            )
+            ),
         )
 
     @monitor_with_activity(logger, "Model.Share", ActivityType.PUBLICAPI)
     @experimental
-    def share(self, name, version, *, share_with_name, share_with_version, registry_name) -> Model:
+    def share(
+        self, name: str, version: str, *, share_with_name: str, share_with_version: str, registry_name: str
+    ) -> Model:
         """Share a model asset from workspace to registry.
 
         :param name: Name of model asset.
@@ -562,7 +570,7 @@ class ModelOperations(_ScopeDependentOperations):
         return Model._from_rest_object(result)
 
     @contextmanager
-    def _set_registry_client(self, registry_name: str) -> None:
+    def _set_registry_client(self, registry_name: str) -> Generator:
         """Sets the registry client for the model operations.
 
         :param registry_name: Name of the registry.
@@ -591,7 +599,7 @@ class ModelOperations(_ScopeDependentOperations):
 
     @experimental
     @monitor_with_activity(logger, "Model.Package", ActivityType.PUBLICAPI)
-    def package(self, name: str, version: str, package_request: ModelPackage, **kwargs) -> Environment:
+    def package(self, name: str, version: str, package_request: ModelPackage, **kwargs: Any) -> Environment:
         """Package a model asset
 
         :param name: Name of model asset.
@@ -698,7 +706,7 @@ class ModelOperations(_ScopeDependentOperations):
             environment_id = package_out.additional_properties["targetEnvironmentId"]
 
         pattern = r"azureml://locations/(\w+)/workspaces/([\w-]+)/environments/([\w.-]+)/versions/(\d+)"
-        parsed_id = re.search(pattern, environment_id)
+        parsed_id: Any = re.search(pattern, environment_id)
 
         if parsed_id:
             environment_name = parsed_id.group(3)

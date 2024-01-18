@@ -9,8 +9,8 @@ Use the Image Analysis client library to:
 * Get the analysis result
 
 [Product documentation](https://learn.microsoft.com/azure/ai-services/computer-vision/overview-image-analysis?tabs=4-0) 
-| [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/vision/azure-ai-vision-imageanalysis/samples)
-| [Vision Studio](https://portal.vision.cognitive.azure.com/gallery/imageanalysis)
+| [Samples](https://aka.ms/azsdk/image-analysis/samples/python)
+| [Vision Studio](https://aka.ms/vision-studio/image-analysis)
 | [API reference documentation](https://aka.ms/azsdk/image-analysis/ref-docs/python)
 | [Package (Pypi)](https://aka.ms/azsdk/image-analysis/package/pypi)
 | [SDK source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/vision/azure-ai-vision-imageanalysis/azure/ai/vision/imageanalysis)

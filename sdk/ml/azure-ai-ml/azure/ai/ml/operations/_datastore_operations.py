@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Dict, Iterable
+from typing import Dict, Iterable, cast
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -70,16 +70,19 @@ class DatastoreOperations(_ScopeDependentOperations):
                 :caption: List datastore example.
         """
 
-        def _list_helper(datastore_resource, include_secrets: bool):
+        def _list_helper(datastore_resource: Datastore, include_secrets: bool) -> Datastore:
             if include_secrets:
                 self._fetch_and_populate_secret(datastore_resource)
             return Datastore._from_rest_object(datastore_resource)
 
-        return self._operation.list(
-            resource_group_name=self._operation_scope.resource_group_name,
-            workspace_name=self._workspace_name,
-            cls=lambda objs: [_list_helper(obj, include_secrets) for obj in objs],
-            **self._init_kwargs
+        return cast(
+            Iterable[Datastore],
+            self._operation.list(
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                cls=lambda objs: [_list_helper(obj, include_secrets) for obj in objs],
+                **self._init_kwargs
+            ),
         )
 
     @monitor_with_activity(logger, "Datastore.ListSecrets", ActivityType.PUBLICAPI)

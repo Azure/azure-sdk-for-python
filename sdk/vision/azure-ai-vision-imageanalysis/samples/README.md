@@ -5,7 +5,7 @@ languages:
 products:
   - azure
   - azure-computer-vision
-urlFragment: image-analysis-python-samples
+urlFragment: image-analysis-samples
 ---
 
 # Samples for Image Analysis client library for Python
