@@ -199,7 +199,7 @@ class OnlineDeployment(Deployment):
         self._arm_type = ArmConstants.ONLINE_DEPLOYMENT_TYPE
         self.model_mount_path = model_mount_path
         self.instance_type = instance_type
-        self.data_collector = data_collector
+        self.data_collector: Any = data_collector
 
     @property
     def provisioning_state(self) -> Optional[str]:

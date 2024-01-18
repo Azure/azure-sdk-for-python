@@ -461,7 +461,7 @@ def get_job_output_uris_from_dataplane(
     :return: Dictionary mapping user-defined output name to output uri
     :rtype: Dict[str, str]
     """
-    run_metadata: Run = run_operations.get_run_data(job_name).run_metadata
+    run_metadata: Run = run_operations.get_run_data(str(job_name)).run_metadata
     run_outputs: Dict[str, TypedAssetReference] = run_metadata.outputs or {}
 
     # Create a reverse mapping from internal asset id to user-defined output name

@@ -69,7 +69,7 @@ class ParallelTask(RestTranslatableMixin, DictMixin):
         self.program_arguments = program_arguments
         self.model = model
         self.append_row_to = append_row_to
-        self.environment = environment
+        self.environment: Any = environment
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
