@@ -395,7 +395,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             _LOGGER.debug("-> %r", open_frame, extra=self._network_trace_params)
         self._send_frame(0, open_frame)
 
-    def _incoming_open(self, channel: int, frame: Tuple[Any, ... ]) -> None:
+    def _incoming_open(self, channel: int, frame) -> None:
         """Process incoming Open frame to finish the connection negotiation.
 
         The incoming frame format is::
