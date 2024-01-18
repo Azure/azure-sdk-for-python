@@ -671,7 +671,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     @staticmethod
     def iter_next(
-        receiver: "ServiceBusReceiver", wait_time: Optional[int] = None
+        receiver: "ServiceBusReceiver", wait_time: Optional[int] = None, **kwargs
     ) -> "ServiceBusReceivedMessage":
         """
         Used to iterate through received messages.
