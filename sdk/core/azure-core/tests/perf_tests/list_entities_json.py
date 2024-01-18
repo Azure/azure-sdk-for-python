@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from random import randint
 from time import time
 from wsgiref.handlers import format_date_time
 
@@ -21,7 +20,7 @@ from ._test_base import _TableTest
 class ListEntitiesPageableTest(_TableTest):
     def __init__(self, arguments):
         super().__init__(arguments)
-        self.table_name = f"updateentitytest{randint(1, 1000)}"
+        self.table_name = f"updateentitytest"
         self.connection_string = self.get_from_env("AZURE_STORAGE_CONN_STR")
         self.async_table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
         self.url = f"{self.account_endpoint}{self.table_name}()"
@@ -33,7 +32,7 @@ class ListEntitiesPageableTest(_TableTest):
         batch = []
         for row in range(self.args.count):
             entity = self.get_entity(row)
-            batch.append(("create", entity))
+            batch.append(("upsert", entity))
             batch_size += 1
             if batch_size >= 100:
                 await self.async_table_client.submit_transaction(batch)
