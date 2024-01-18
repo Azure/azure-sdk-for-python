@@ -3055,6 +3055,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             is_query_plan=True,
             **kwargs
         )
+        self.last_response_headers = last_response_headers
         return results
 
     def __CheckAndUnifyQueryFormat(self, query_body: Union[str, Dict[str, Any]]) -> Union[str, Dict[str, Any]]:
