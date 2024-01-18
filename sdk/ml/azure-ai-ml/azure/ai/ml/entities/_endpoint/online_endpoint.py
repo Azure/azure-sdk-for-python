@@ -132,8 +132,8 @@ class OnlineEndpoint(Endpoint):
         )
 
         self.identity = identity
-        self.traffic = dict(traffic) if traffic else {}
-        self.mirror_traffic = dict(mirror_traffic) if mirror_traffic else {}
+        self.traffic: Dict = dict(traffic) if traffic else {}
+        self.mirror_traffic: Dict = dict(mirror_traffic) if mirror_traffic else {}
         self.kind = kind
 
     @property

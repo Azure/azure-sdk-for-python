@@ -120,7 +120,7 @@ class DatastoreOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_activity(logger, "Datastore.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, *, include_secrets: bool = False) -> Datastore:
+    def get(self, name: str, *, include_secrets: bool = False) -> Datastore:  # type: ignore
         """Returns information about the datastore referenced by the given name.
 
         :param name: Datastore name
@@ -160,7 +160,7 @@ class DatastoreOperations(_ScopeDependentOperations):
             datastore_resource.properties.credentials.secrets = secrets
 
     @monitor_with_activity(logger, "Datastore.GetDefault", ActivityType.PUBLICAPI)
-    def get_default(self, *, include_secrets: bool = False) -> Datastore:
+    def get_default(self, *, include_secrets: bool = False) -> Datastore:  # type: ignore
         """Returns the workspace's default datastore.
 
         :keyword include_secrets: Include datastore secrets in the returned datastore, defaults to False
@@ -191,7 +191,7 @@ class DatastoreOperations(_ScopeDependentOperations):
             log_and_raise_error(ex)
 
     @monitor_with_activity(logger, "Datastore.CreateOrUpdate", ActivityType.PUBLICAPI)
-    def create_or_update(self, datastore: Datastore) -> Datastore:
+    def create_or_update(self, datastore: Datastore) -> Datastore:  # type: ignore
         """Attaches the passed in datastore to the workspace or updates the datastore if it already exists.
 
         :param datastore: The configuration of the datastore to attach.

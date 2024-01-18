@@ -107,7 +107,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
     @monitor_with_activity(logger, "Workspace.Get", ActivityType.PUBLICAPI)
     @distributed_trace
     # pylint: disable=arguments-renamed
-    def get(self, name: Optional[str] = None, **kwargs: Dict) -> Optional[Workspace]:
+    def get(self, name: Optional[str] = None, **kwargs: Dict) -> Workspace:
         """Get a Workspace by name.
 
         :param name: Name of the workspace.

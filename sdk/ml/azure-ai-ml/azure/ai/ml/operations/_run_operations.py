@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Iterable, Optional, cast
+from typing import Any, Iterable, Optional, cast
 
 from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as RunHistoryServiceClient
 from azure.ai.ml._restclient.runhistory.models import GetRunDataRequest, GetRunDataResult, Run, RunDetails
@@ -44,7 +44,7 @@ class RunOperations(_ScopeDependentOperations):
             run_id,
         )
 
-    def get_run_children(self, run_id: str, **kwargs) -> Iterable[_BaseJob]:
+    def get_run_children(self, run_id: str) -> Iterable[_BaseJob]:
         return cast(
             Iterable[_BaseJob],
             self._operation.get_child(
@@ -52,7 +52,6 @@ class RunOperations(_ScopeDependentOperations):
                 self._resource_group_name,
                 self._workspace_name,
                 run_id,
-                top=kwargs.pop("max_results", None),
                 cls=lambda objs: [self._translate_from_rest_object(obj) for obj in objs],
             ),
         )
@@ -66,7 +65,7 @@ class RunOperations(_ScopeDependentOperations):
         :rtype: Optional[_BaseJob]
         """
         try:
-            from_rest_job = Job._from_rest_object(job_object)
+            from_rest_job: Any = Job._from_rest_object(job_object)
             from_rest_job._id = NAMED_RESOURCE_ID_FORMAT.format(
                 self._subscription_id,
                 self._resource_group_name,

@@ -77,7 +77,7 @@ class ComputeOperations(_ScopeDependentOperations):
                 cls=lambda objs: [
                     Compute._from_rest_object(obj)
                     for obj in objs
-                    if compute_type is None or Compute._from_rest_object(obj).type.lower() == compute_type.lower()
+                    if compute_type is None or str(Compute._from_rest_object(obj).type).lower() == compute_type.lower()
                 ],
             ),
         )
