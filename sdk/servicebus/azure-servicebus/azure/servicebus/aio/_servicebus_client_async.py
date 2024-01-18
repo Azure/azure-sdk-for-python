@@ -342,13 +342,12 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          the client fails to process the message. The default mode is PEEK_LOCK.
         :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
         :keyword Optional[float] max_wait_time:  The timeout in seconds to wait for the first and subsequent
-         messages to arrive after which the receiver will automatically stop receiving. If no messages arrive,
-         and no timeout is specified, this call will not return until the connection is closed.
-         The default value is None, meaning no timeout. If connection errors are occurring due to write timing out,
-         the connection timeout value may need to be adjusted. See the `socket_timeout`
-         optional parameter for more details. If there is session enabled queue or topic and
-         NEXT_AVAILABLE_SESSION is specified, operation will time out after waiting `max_wait_time` seconds to
-         receive a message from any session.
+         messages to arrive, or the total time for the operation to complete. If no messages arrive, and no
+         timeout is specified, this call will not return until the connection is closed. The default value
+         is None, meaning no timeout. On a sesionful queue/topic when NEXT_AVAILABLE_SESSION is specified,
+         this will act as the timeout for connecting to a session. If connection errors are occurring due
+         to write timing out,the connection timeout value may need to be adjusted. See the `socket_timeout`
+         optional parameter for more details.
         :keyword Optional[~azure.servicebus.aio.AutoLockRenewer] auto_lock_renewer: An
          ~azure.servicebus.aio.AutoLockRenewer can be provided such that messages are automatically registered on
          receipt. If the receiver is a session receiver, it will apply to the session instead.
@@ -525,13 +524,12 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          the client fails to process the message. The default mode is PEEK_LOCK.
         :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
         :keyword Optional[float] max_wait_time:  The timeout in seconds to wait for the first and subsequent
-         messages to arrive after which the receiver will automatically stop receiving. If no messages arrive,
-         and no timeout is specified, this call will not return until the connection is closed.
-         The default value is None, meaning no timeout. If connection errors are occurring due to write timing out,
-         the connection timeout value may need to be adjusted. See the `socket_timeout`
-         optional parameter for more details. If there is session enabled queue or topic and
-         NEXT_AVAILABLE_SESSION is specified, operation will time out after waiting `max_wait_time` seconds to
-         receive a message from any session.
+         messages to arrive, or the total time for the operation to complete. If no messages arrive, and no
+         timeout is specified, this call will not return until the connection is closed. The default value
+         is None, meaning no timeout. On a sesionful queue/topic when NEXT_AVAILABLE_SESSION is specified,
+         this will act as the timeout for connecting to a session. If connection errors are occurring due
+         to write timing out,the connection timeout value may need to be adjusted. See the `socket_timeout`
+         optional parameter for more details.
         :keyword Optional[~azure.servicebus.aio.AutoLockRenewer] auto_lock_renewer: An
          ~azure.servicebus.aio.AutoLockRenewer can be provided such that messages are automatically registered on
          receipt. If the receiver is a session receiver, it will apply to the session instead.

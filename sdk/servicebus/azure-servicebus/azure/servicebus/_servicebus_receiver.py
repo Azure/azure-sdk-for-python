@@ -310,9 +310,7 @@ class ServiceBusReceiver(
          messages to arrive, or the total time for the operation to complete. If no messages arrive, and no
          timeout is specified, this call will not return until the connection is closed. The default value
          is None, meaning no timeout. On a sesionful queue/topic when NEXT_AVAILABLE_SESSION is specified,
-         this will act as the timeout for connecting to a session. If connection errors are occurring due
-         to write timing out,the connection timeout value may need to be adjusted. See the `socket_timeout`
-         optional parameter for more details.
+         this will act as the timeout for connecting to a session.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Service Bus service. Default is `TransportType.Amqp`.

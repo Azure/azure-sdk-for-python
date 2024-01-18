@@ -117,8 +117,11 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
      if the client fails to process the message.
      The default mode is PEEK_LOCK.
     :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
-    :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the receiver
-     will automatically stop receiving. The default value is None, meaning no timeout.
+    :keyword Optional[float] max_wait_time:  The timeout in seconds to wait for the first and subsequent
+     messages to arrive, or the total time for the operation to complete. If no messages arrive, and no
+     timeout is specified, this call will not return until the connection is closed. The default value
+     is None, meaning no timeout. On a sesionful queue/topic when NEXT_AVAILABLE_SESSION is specified,
+     this will act as the timeout for connecting to a session.
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the Service Bus service. Default is `TransportType.Amqp`.
@@ -646,10 +649,10 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         :param Optional[int] max_message_count: Maximum number of messages in the batch. Actual number
          returned will depend on prefetch_count size and incoming stream rate.
          Setting to None will fully depend on the prefetch config. The default value is 1.
-        :param Optional[float] max_wait_time: Maximum time to wait in seconds for the first message to arrive.
-         If no messages arrive, and no timeout is specified, this call will not return
-         until the connection is closed. If specified, and no messages arrive within the
-         timeout period, an empty list will be returned.
+        :keyword Optional[float] max_wait_time:  The timeout in seconds to wait for the first and subsequent
+         messages to arrive, or the total time for the operation to complete. If no messages arrive, and no
+         timeout is specified, this call will not return until the connection is closed. The default value
+         is None, meaning no timeout.
         :return: A list of messages received. If no messages are available, this will be an empty list.
         :rtype: list[~azure.servicebus.aio.ServiceBusReceivedMessage]
 
