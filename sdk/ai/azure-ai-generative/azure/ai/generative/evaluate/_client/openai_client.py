@@ -40,7 +40,9 @@ class AzureOpenAIClient:
             try:
                 result = await self._client.with_options(max_retries=5).chat.completions.create(
                     model=self._azure_deployment,
-                    messages=messages
+                    messages=messages,
+                    temperature=0,
+                    seed=0,
                 )
                 return result
             except Exception as ex:

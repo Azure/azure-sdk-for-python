@@ -69,7 +69,8 @@ class CodeMetricHandler(MetricHandler):
                         progress_bar.update(1)
                     except Exception as ex:
                         progress_bar.update(1)
-                        LOGGER.info(f"Error calculating value for {metric_name}, failed with error {str(ex)} : Stack trace : {str(ex.__traceback__)}")
+                        LOGGER.info(
+                            f"Error calculating value for {metric_name}, failed with error {str(ex)} : Stack trace : {str(ex.__traceback__)}")
 
         return metrics_dict
 
@@ -83,6 +84,7 @@ class CodeMetricHandler(MetricHandler):
     def _calculate_metric(self, metric, data, response):
         row_metric_futures = []
         row_metric_result = []
+        row_metric_results = []
         aggregated_metrics = None
 
         with ThreadPoolExecutor(thread_name_prefix="code_metrics_row") as thread_pool:
@@ -93,16 +95,36 @@ class CodeMetricHandler(MetricHandler):
 
             for row_metric_future in row_metric_futures:
                 try:
-                    row_metric_result.append(row_metric_future.result())
+                    row_metric_results.append(row_metric_future.result())
                 except Exception as ex:
-                    LOGGER.info(f"Error calculating value for a row for metric {metric.name} , failed with error {str(ex)} : Stack trace : {str(ex.__traceback__)}")
-                    row_metric_result.append(NaN)
+                    LOGGER.info(
+                        f"Error calculating value for a row for metric {metric.name} , failed with error {str(ex)} : Stack trace : {str(ex.__traceback__)}")
+                    row_metric_results.append(NaN)
+
+            results = {"artifacts": {}, "metrics": {}}
+
+            if isinstance(row_metric_results[0], dict):
+                for key in row_metric_results[0].keys():
+                    results["artifacts"].update({
+                        key: [row[key] for row in row_metric_results]
+                    })
+            else:
+                results["artifacts"].update(
+                    {metric.name: row_metric_results}
+                )
 
         if metric.aggregator:
-            aggregated_metrics = self._submit_method(
-                metric.aggregator, values=row_metric_result, metric_name=metric.name)
-
-        return {
-            "artifacts": {metric.name: row_metric_result},
-            "metrics": aggregated_metrics
-        }
+            try:
+                aggregated_values = self._submit_method(
+                    metric.aggregator,
+                    values=results.get("artifacts").get(metric.name)
+                )
+                results["metrics"].update(
+                    {
+                        f"{key}_{metric.name}": value for key, value in aggregated_values.items()
+                    }
+                )
+            except Exception as ex:
+                LOGGER.info(
+                    f"Error aggregating values for metric {metric.name} , failed with error {str(ex)} : Stack trace : {str(ex.__traceback__)}")
+        return results

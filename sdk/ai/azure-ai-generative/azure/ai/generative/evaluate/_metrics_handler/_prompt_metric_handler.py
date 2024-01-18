@@ -110,10 +110,13 @@ class PromptMetricHandler(MetricHandler):
             })
 
         if metric.aggregator:
+            aggregated_values = metric.aggregator(
+                values=results.get("artifacts").get(metric.name)
+            )
             results["metrics"].update(
-                metric.aggregator(
-                    values=results.get("artifacts").get(metric.name), metric_name=metric.name
-                )
+                {
+                    f"{key}_{metric.name}": value for key, value in aggregated_values.items()
+                }
             )
 
         return results
