@@ -112,7 +112,7 @@ async def query_items_with_continuation_token(container):
     )
 
     item_pages = query_iterable.by_page()
-    first_page = await anext(item_pages)  # cspell:disable-line
+    first_page = await anext(item_pages)  # type: ignore[name-defined]  # cspell:disable-line
     continuation_token = item_pages.continuation_token
 
     # Other code logic where you only need the first page of results would go here
@@ -121,7 +121,7 @@ async def query_items_with_continuation_token(container):
     # access the second page of items
     items_from_continuation = query_iterable.by_page(continuation_token)
     second_page_items_with_continuation = \
-        [item async for item in await anext(items_from_continuation)]  # cspell:disable-line
+        [i async for i in await anext(items_from_continuation)]  # type: ignore[name-defined]  # cspell:disable-line
 
     print('The single items in the second page are {}'.format(second_page_items_with_continuation[0].get("id")))
 
