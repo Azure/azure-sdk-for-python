@@ -15,5 +15,9 @@ bandit = false
 build = ["cp38*", "cp39*", "cp310*", "cp311*", "cp312*", "pp39*", "pp310*"]
 skip = ["*-musllinux*"]
 
+[tool.cibuildwheel.linux]
+
 [tool.cibuildwheel.macos]
 archs = "x86_64 arm64"
+
+[tool.cibuildwheel.windows]
