@@ -215,7 +215,7 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
                         key,
                         label,
                     )
-                    provider._refresh_on[(key, label)] = None # type: ignore
+                    provider._refresh_on[(key, label)] = None  # type: ignore
                 else:
                     _delay_failure(start_time)
                     raise e
@@ -322,10 +322,14 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         self._trim_prefixes = sorted(trim_prefixes, key=len, reverse=True)
 
         refresh_on: List[Tuple[str, str]] = kwargs.pop("refresh_on", None) or []
-        self._refresh_on: Mapping[Tuple[str, str] : Optional[str]] = {_build_sentinel(s): None for s in refresh_on}  # type:ignore
+        self._refresh_on: Mapping[Tuple[str, str] : Optional[str]] = {
+            _build_sentinel(s): None for s in refresh_on
+        }  # type:ignore
         self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._on_refresh_success: Optional[Callable] = kwargs.pop("on_refresh_success", None)
-        self._on_refresh_error: Optional[Union[Callable[[Exception], Awaitable[None]], None]] = kwargs.pop("on_refresh_error", None)
+        self._on_refresh_error: Optional[Union[Callable[[Exception], Awaitable[None]], None]] = kwargs.pop(
+            "on_refresh_error", None
+        )
         self._keyvault_credential = kwargs.pop("keyvault_credential", None)
         self._secret_resolver = kwargs.pop("secret_resolver", None)
         self._keyvault_client_configs = kwargs.pop("keyvault_client_configs", {})
@@ -354,7 +358,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
             for (key, label), etag in updated_sentinel_keys.items():
                 try:
-                    updated_sentinel = await self._client.get_configuration_setting( # type: ignore
+                    updated_sentinel = await self._client.get_configuration_setting(  # type: ignore
                         key=key,
                         label=label,
                         etag=etag,
@@ -464,7 +468,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         """
         return self._dict.__contains__(__x)
 
-    def keys(self) ->KeysView[str]:
+    def keys(self) -> KeysView[str]:
         """
         Returns a list of keys loaded from Azure App Configuration.
 
@@ -526,15 +530,15 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         """
         for client in self._secret_clients.values():
             await client.close()
-        await self._client.close() # type: ignore
+        await self._client.close()  # type: ignore
 
     async def __aenter__(self) -> "AzureAppConfigurationProvider":
-        await self._client.__aenter__() # type: ignore
+        await self._client.__aenter__()  # type: ignore
         for client in self._secret_clients.values():
             await client.__aenter__()
         return self
 
     async def __aexit__(self, *args) -> None:
-        await self._client.__aexit__(*args) # type: ignore
+        await self._client.__aexit__(*args)  # type: ignore
         for client in self._secret_clients.values():
             await client.__aexit__()

@@ -28,7 +28,7 @@ from typing import (
     ItemsView,
     ValuesView,
 )
-from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module 
+from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
     AzureAppConfigurationClient,
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
@@ -205,7 +205,7 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     for (key, label), etag in provider._refresh_on.items():
         if not etag:
             try:
-                sentinel = provider._client.get_configuration_setting(key, label, headers=headers) # type:ignore
+                sentinel = provider._client.get_configuration_setting(key, label, headers=headers)  # type:ignore
                 provider._refresh_on[(key, label)] = sentinel.etag  # type:ignore
             except HttpResponseError as e:
                 if e.status_code == 404:
@@ -356,7 +356,7 @@ def _is_json_content_type(content_type: str) -> bool:
 
 def _build_sentinel(setting: Union[str, Tuple[str, str]]) -> Tuple[str, str]:
     try:
-        key, label = setting # type:ignore
+        key, label = setting  # type:ignore
     except IndexError:
         key = setting
         label = EMPTY_LABEL
@@ -431,7 +431,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         self._trim_prefixes: List[str] = sorted(trim_prefixes, key=len, reverse=True)
 
         refresh_on: List[Tuple[str, str]] = kwargs.pop("refresh_on", None) or []
-        self._refresh_on: Mapping[Tuple[str, str] : Optional[str]] = {_build_sentinel(s): None for s in refresh_on} # type:ignore
+        self._refresh_on: Mapping[Tuple[str, str] : Optional[str]] = {
+            _build_sentinel(s): None for s in refresh_on
+        }  # type:ignore
         self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._on_refresh_success: Optional[Callable] = kwargs.pop("on_refresh_success", None)
         self._on_refresh_error: Optional[Callable[[Exception], None]] = kwargs.pop("on_refresh_error", None)
@@ -463,7 +465,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
             for (key, label), etag in updated_sentinel_keys.items():
                 try:
-                    updated_sentinel = self._client.get_configuration_setting( # type:ignore
+                    updated_sentinel = self._client.get_configuration_setting(  # type:ignore
                         key=key,
                         label=label,
                         etag=etag,
@@ -585,7 +587,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         :rtype: KeysView[str]
         """
         with self._update_lock:
-            return  copy.deepcopy(self._dict).keys()
+            return copy.deepcopy(self._dict).keys()
 
     def items(self) -> ItemsView[str, Union[str, Mapping[str, Any]]]:
         """
@@ -643,7 +645,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         """
         for client in self._secret_clients.values():
             client.close()
-        self._client.close() # type: ignore
+        self._client.close()  # type: ignore
 
     def __enter__(self) -> "AzureAppConfigurationProvider":
         self._client.__enter__()  # type: ignore
