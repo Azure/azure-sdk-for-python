@@ -184,7 +184,7 @@ def create_package(
 
     if setup_parsed.ext_modules:
         run_logged(
-            [sys.executable, "-m", "cibuildwheel", "--platform", "macos", "--output-dir", dist], prefix="cibuildwheel", cwd=setup_parsed.folder
+            [sys.executable, "-m", "cibuildwheel", "--output-dir", dist], prefix="cibuildwheel", cwd=setup_parsed.folder
         )
 
     if enable_wheel:
