@@ -38,8 +38,8 @@ resource_uris = [
 try:
     response = client.query_batch(
         resource_uris,
-        metric_namespace="Microsoft.Storage/storageAccounts",
         metric_names=["Ingress"],
+        metric_namespace="Microsoft.Storage/storageAccounts",
         timespan=timedelta(hours=2),
         granularity=timedelta(minutes=5),
         aggregations=[MetricAggregationType.AVERAGE],
