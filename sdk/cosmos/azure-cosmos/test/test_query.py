@@ -730,6 +730,7 @@ class QueryTest(unittest.TestCase):
         self.assertLessEqual(len(token.encode('utf-8')), 1024)
         self.created_db.delete_container(container)
 
+    @pytest.mark.cosmosLiveTest
     def test_computed_properties_query(self):
         computed_properties = [{'name': "cp_lower", 'query': "SELECT VALUE LOWER(c.db_group) FROM c"},
                                {'name': "cp_power",
@@ -759,8 +760,8 @@ class QueryTest(unittest.TestCase):
 
         # Test 0: Negative test, test if using non-existent computed property
         queried_items = list(
-                created_collection.query_items(query='Select * from c Where c.cp_upper = "GROUP2"',
-                                               partition_key="test"))
+            created_collection.query_items(query='Select * from c Where c.cp_upper = "GROUP2"',
+                                           partition_key="test"))
         self.assertEqual(len(queried_items), 0)
 
         # Test 1: Test first computed property
@@ -792,7 +793,6 @@ class QueryTest(unittest.TestCase):
         queried_items = list(
             created_collection.query_items(query='Select * from c Where c.cp_str_len = 3', partition_key="test"))
         self.assertEqual(len(queried_items), 0)
-
 
     def _MockNextFunction(self):
         if self.count < len(self.payloads):

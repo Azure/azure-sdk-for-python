@@ -269,11 +269,15 @@ class CRUDTests(unittest.TestCase):
 
         self.assertEqual(collection_definition.get('id'), created_collection.id)
 
-        created_collection_properties = created_collection.read()
+        created_collection_properties = created_collection.read(
+            populate_partition_key_range_statistics=True,
+            populate_quota_info=True)
         self.assertEqual(collection_definition.get('partitionKey').get('paths')[0],
                          created_collection_properties['partitionKey']['paths'][0])
         self.assertEqual(collection_definition.get('partitionKey').get('kind'),
                          created_collection_properties['partitionKey']['kind'])
+        self.assertIsNotNone(created_collection_properties.get("statistics"))
+        self.assertIsNotNone(created_db.client_connection.last_response_headers.get("x-ms-resource-usage"))
 
         expected_offer = created_collection.get_throughput()
 
@@ -282,21 +286,6 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(expected_offer.offer_throughput, offer_throughput)
 
         created_db.delete_container(created_collection.id)
-
-    def test_partitioned_collection_quota(self):
-        created_db = self.databaseForTest
-
-        created_collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
-
-        retrieved_collection = created_db.get_container_client(
-            container=created_collection.id
-        )
-
-        retrieved_collection_properties = retrieved_collection.read(
-            populate_partition_key_range_statistics=True,
-            populate_quota_info=True)
-        self.assertIsNotNone(retrieved_collection_properties.get("statistics"))
-        self.assertIsNotNone(created_db.client_connection.last_response_headers.get("x-ms-resource-usage"))
 
     def test_partitioned_collection_partition_key_extraction(self):
         created_db = self.databaseForTest

@@ -10,7 +10,7 @@
       },
       "EmulatorConfig": {
         "Emulator Tests Python 3.8": {
-            "PythonVersion": 3.8,
+            "PythonVersion": "3.8",
             "CoverageArg": "--disablecov",
             "TestSamples": "false",
             "ToxTestEnv": "'whl,sdist'",
@@ -19,7 +19,7 @@
             "Skip.Analyze": "true"
         },
         "Emulator Tests Python 3.9": {
-            "PythonVersion": 3.9,
+            "PythonVersion": "3.9",
             "CoverageArg": "--disablecov",
             "TestSamples": "false",
             "ToxTestEnv": "'whl,sdist'",
@@ -28,7 +28,7 @@
             "Skip.Analyze": "true"
         },
         "Emulator Tests Python 3.10": {
-            "PythonVersion": 3.10,
+            "PythonVersion": "3.10",
             "CoverageArg": "--disablecov",
             "TestSamples": "false",
             "ToxTestEnv": "'whl,sdist'",
@@ -37,7 +37,7 @@
             "Skip.Analyze": "true"
         },
         "Emulator Tests Python 3.11": {
-            "PythonVersion": 3.11,
+            "PythonVersion": "3.11",
             "CoverageArg": "--disablecov",
             "TestSamples": "false",
             "ToxTestEnv": "'whl,sdist'",
@@ -46,7 +46,7 @@
             "Skip.Analyze": "true"
         },
         "Emulator Tests Python 3.12": {
-            "PythonVersion": 3.12,
+            "PythonVersion": "3.12",
             "CoverageArg": "--disablecov",
             "TestSamples": "false",
             "ToxTestEnv": "'whl,sdist'",
