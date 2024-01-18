@@ -13,8 +13,8 @@ SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING = {
 }
 
 TYPE_TO_KWARGS_MAPPING = {
-    constants.QUESTION_ANSWERING: ["questions", "contexts", "y_pred", "y_test"],
-    constants.RAG_EVALUATION: ["y_pred"]
+    "qa": ["questions", "contexts", "y_pred", "y_test"],
+    "rag-evaluation": ["y_pred"]
 }
 
 
@@ -72,6 +72,6 @@ class ChatMetrics:
 
 
 TASK_TYPE_TO_METRICS_MAPPING = {
-    constants.QUESTION_ANSWERING: QaMetrics,
-    constants.RAG_EVALUATION: ChatMetrics
+    "qa": QaMetrics,
+    "rag-evaluation": ChatMetrics
 }
