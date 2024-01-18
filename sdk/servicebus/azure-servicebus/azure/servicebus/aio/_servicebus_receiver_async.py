@@ -263,7 +263,12 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         self._check_live()
         while True:
             try:
-                return await self._do_retryable_operation(self._iter_next, wait_time=wait_time)
+                return await self._do_retryable_operation(
+                    self._iter_next,
+                    wait_time=wait_time,
+                    timeout=self._max_wait_time,
+                    operation_requires_timeout=True
+                )
             except StopAsyncIteration:
                 self._message_iter = None
                 raise

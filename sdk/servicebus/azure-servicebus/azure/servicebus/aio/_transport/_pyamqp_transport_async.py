@@ -240,7 +240,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
 
     @staticmethod
     async def iter_next_async(
-        receiver: "ServiceBusReceiver", wait_time: Optional[int] = None
+        receiver: "ServiceBusReceiver", wait_time: Optional[int] = None, **kwargs
     ) -> "ServiceBusReceivedMessage":
         # pylint: disable=protected-access
         try:
