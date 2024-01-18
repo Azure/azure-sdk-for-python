@@ -21,6 +21,9 @@ from typing import (
     Tuple,
     TYPE_CHECKING,
     Union,
+    Iterator,
+    KeysView,
+    ItemsView,
     ValuesView,
 )
 
@@ -322,7 +325,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         self._refresh_on: Mapping[Tuple[str, str] : Optional[str]] = {_build_sentinel(s): None for s in refresh_on}  # type:ignore
         self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._on_refresh_success: Optional[Callable] = kwargs.pop("on_refresh_success", None)
-        self._on_refresh_error: Optional[Callable[[Exception], None]] = kwargs.pop("on_refresh_error", None)
+        self._on_refresh_error: Optional[Union[Callable[[Exception], Awaitable[None]], None]] = kwargs.pop("on_refresh_error", None)
         self._keyvault_credential = kwargs.pop("keyvault_credential", None)
         self._secret_resolver = kwargs.pop("secret_resolver", None)
         self._keyvault_client_configs = kwargs.pop("keyvault_client_configs", {})
@@ -382,7 +385,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         except (ServiceRequestError, ServiceResponseError, HttpResponseError) as e:
             # If we get an error we should retry sooner than the next refresh interval
             if self._on_refresh_error:
-                await self._on_refresh_error(e) # type: ignore
+                await self._on_refresh_error(e)
                 return
             raise
         finally:
@@ -448,7 +451,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         """
         return self._dict[key]
 
-    def __iter__(self) -> Iterable[str]:
+    def __iter__(self) -> Iterator[str]:
         return self._dict.__iter__()
 
     def __len__(self) -> int:
@@ -461,37 +464,37 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         """
         return self._dict.__contains__(__x)
 
-    def keys(self) -> Iterable[str]:
+    def keys(self) ->KeysView[str]:
         """
         Returns a list of keys loaded from Azure App Configuration.
 
         :return: A list of keys loaded from Azure App Configuration.
-        :rtype: Iterable[str]
+        :rtype: KeysView[str]
         """
-        return list(self._dict.keys())
+        return copy.deepcopy(self._dict).keys()
 
-    def items(self) -> Iterable[Tuple[str, Union[str, JSON]]]:
+    def items(self) -> ItemsView[str, Union[str, Mapping[str, Any]]]:
         """
         Returns a set-like object of key-value pairs loaded from Azure App Configuration. Any values that are Key Vault
          references will be resolved.
 
         :return: A set-like object of key-value pairs loaded from Azure App Configuration.
-        :rtype: Iterable[Tuple[str, Union[str, JSON]]]
+        :rtype: ItemsView[str, Union[str, Mapping[str, Any]]]
         """
-        return copy.deepcopy(self._dict.items())
+        return copy.deepcopy(self._dict).items()
 
-    def values(self) -> Iterable[Union[str, JSON]]:
+    def values(self) -> ValuesView[Union[str, Mapping[str, Any]]]:
         """
         Returns a list of values loaded from Azure App Configuration. Any values that are Key Vault references will be
         resolved.
 
         :return: A list of values loaded from Azure App Configuration. The values are either Strings or JSON objects,
         based on there content type.
-        :rtype: Iterable[[str], [JSON]]
+        :rtype: ValuesView[Union[str, Mapping[str, Any]]]
         """
-        return copy.deepcopy(list((self._dict.values())))
+        return copy.deepcopy(self._dict).values()
 
-    def get(self, key: str, default: Optional[str] = None) -> Union[str, JSON]:
+    def get(self, key: str, default: Optional[str] = None) -> Union[str, Mapping[str, Any], None]:
         """
         Returns the value of the specified key. If the key does not exist, returns the default value.
 
@@ -501,7 +504,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         :return: The value of the specified key.
         :rtype: Union[str, JSON]
         """
-        return copy.deepcopy(self._dict.get(key, default))
+        return copy.deepcopy(self._dict).get(key, default)
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, AzureAppConfigurationProvider):
