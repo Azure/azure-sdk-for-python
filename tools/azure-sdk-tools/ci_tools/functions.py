@@ -28,8 +28,7 @@ MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "azure-ai-anomalydetector",
 ]
 
-NO_TESTS_ALLOWED = [
-]
+NO_TESTS_ALLOWED = []
 
 
 META_PACKAGES = ["azure", "azure-mgmt", "azure-keyvault"]
@@ -432,6 +431,7 @@ def pip_install(requirements: List[str], include_dependencies: bool = True, pyth
 
     return True
 
+
 def pip_uninstall(requirements: List[str], python_executable: str) -> bool:
     """
     Attempts to invoke an install operation using the invoking python's pip. Empty requirements are auto-success.
@@ -501,7 +501,7 @@ def pytest(args: [], cwd: str = None, python_executable: str = None) -> bool:
         result = subprocess.run(commands, cwd=cwd)
     else:
         result = subprocess.run(commands)
-    
+
     return result.returncode == 0
 
 

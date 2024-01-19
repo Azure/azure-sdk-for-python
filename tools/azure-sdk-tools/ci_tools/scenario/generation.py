@@ -153,7 +153,12 @@ def create_package_and_install(
 
                         additional_downloaded_reqs = [
                             os.path.abspath(os.path.join(tmp_dl_folder, pth)) for pth in os.listdir(tmp_dl_folder)
-                        ] + [get_package_from_repo_or_folder(package_name, os.path.join(target_package.folder, ".tmp_whl_dir")) for package_name in non_present_reqs]
+                        ] + [
+                            get_package_from_repo_or_folder(
+                                package_name, os.path.join(target_package.folder, ".tmp_whl_dir")
+                            )
+                            for package_name in non_present_reqs
+                        ]
 
             commands = [python_exe, "-m", "pip", "install", built_pkg_path]
             commands.extend(additional_downloaded_reqs)
