@@ -31,7 +31,7 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
         self,
         rule_id: str,
         stream_name: str,
-        logs: Union[List[JSON], IO],
+        logs: Union[List[JSON], IO[bytes]],
         *,
         on_error: Optional[Callable[[LogsUploadError], Awaitable[None]]] = None,
         **kwargs: Any

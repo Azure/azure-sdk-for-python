@@ -14,13 +14,6 @@
 # /scripts/
 # /tools/
 
-################
-# Automation
-################
-
-# Git Hub integration and bot rules
-/.github/                                                            @jsquire @ronniegeraghty
-
 ###########
 # SDK
 ###########
@@ -621,7 +614,7 @@
 #/<NotInRepo>/          @romahamu @omzevall
 
 # ServiceLabel: %Image Analysis %Service Attention
-/sdk/vision/azure-ai-vision-imageanalysis/          @dargilco @rhurey
+#/<NotInRepo>/          @dargilco @rhurey
 
 # ServiceLabel: %Import Export %Service Attention
 #/<NotInRepo>/          @madhurinms
@@ -750,7 +743,7 @@
 #/<NotInRepo>/          @sunilagarwal @lfittl-msft @sr-msft @niklarin
 
 # ServiceLabel: %Recovery Services Backup %Service Attention
-#/<NotInRepo>/          @pvrk @adityabalaji-msft @Daya-Patil
+#/<NotInRepo>/          @Daya-Patil
 
 # ServiceLabel: %Recovery Services Site-Recovery %Service Attention
 #/<NotInRepo>/          @Sharmistha-Rai

@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- Changed property name from `items` to `items_property` in model `DocumentFieldSchema` and `DocumentList`.
+
 ### Bugs Fixed
 
 ### Other Changes

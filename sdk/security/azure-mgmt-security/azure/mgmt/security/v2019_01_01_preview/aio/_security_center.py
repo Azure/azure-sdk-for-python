@@ -32,6 +32,12 @@ if TYPE_CHECKING:
 class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
     """API spec for Microsoft.Security (Azure Security Center) resource provider.
 
+    :ivar alerts_suppression_rules: AlertsSuppressionRulesOperations operations
+    :vartype alerts_suppression_rules:
+     azure.mgmt.security.v2019_01_01_preview.aio.operations.AlertsSuppressionRulesOperations
+    :ivar automations: AutomationsOperations operations
+    :vartype automations:
+     azure.mgmt.security.v2019_01_01_preview.aio.operations.AutomationsOperations
     :ivar regulatory_compliance_standards: RegulatoryComplianceStandardsOperations operations
     :vartype regulatory_compliance_standards:
      azure.mgmt.security.v2019_01_01_preview.aio.operations.RegulatoryComplianceStandardsOperations
@@ -44,12 +50,6 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
     :ivar sub_assessments: SubAssessmentsOperations operations
     :vartype sub_assessments:
      azure.mgmt.security.v2019_01_01_preview.aio.operations.SubAssessmentsOperations
-    :ivar automations: AutomationsOperations operations
-    :vartype automations:
-     azure.mgmt.security.v2019_01_01_preview.aio.operations.AutomationsOperations
-    :ivar alerts_suppression_rules: AlertsSuppressionRulesOperations operations
-    :vartype alerts_suppression_rules:
-     azure.mgmt.security.v2019_01_01_preview.aio.operations.AlertsSuppressionRulesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Azure subscription ID. Required.
@@ -75,19 +75,23 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
+        self.alerts_suppression_rules = AlertsSuppressionRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2019-01-01-preview"
+        )
+        self.automations = AutomationsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2019-01-01-preview"
+        )
         self.regulatory_compliance_standards = RegulatoryComplianceStandardsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2019-01-01-preview"
         )
         self.regulatory_compliance_controls = RegulatoryComplianceControlsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2019-01-01-preview"
         )
         self.regulatory_compliance_assessments = RegulatoryComplianceAssessmentsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2019-01-01-preview"
         )
-        self.sub_assessments = SubAssessmentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.automations = AutomationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.alerts_suppression_rules = AlertsSuppressionRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+        self.sub_assessments = SubAssessmentsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2019-01-01-preview"
         )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:

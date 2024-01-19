@@ -85,7 +85,7 @@ async def query_entities(parent, entity_type, id = None):
         raise
     if id == None:
         return entities
-    if len(entities) == 1:
+    if entities and len(entities) == 1:
         return entities[0]
     return None
 

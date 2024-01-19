@@ -1,14 +1,10 @@
 # Release History
 
-## 1.29.7 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 1.29.7 (2024-01-18)
 
 ### Other Changes
+
+- Removed dependency on `anyio`.  #33282
 
 ## 1.29.6 (2023-12-14)
 
