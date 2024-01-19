@@ -26,19 +26,39 @@ class CustomIterator(PageIterator):
             continuation_token=kwargs.get("continuation_token"),
         )
         self._command = command
+        self.results_per_page = kwargs.get("results_per_page")
 
     def _get_next_cb(self, continuation_token, **kwargs):  # pylint: disable=inconsistent-return-statements
-        return self._command()
+        if not continuation_token:
+            next_partition_key = None
+            next_row_key = None
+        else:
+            next_partition_key = continuation_token.get("PartitionKey")
+            next_row_key = continuation_token.get("RowKey")
+
+        return self._command(
+            top=self.results_per_page,
+            next_partition_key=next_partition_key,
+            next_row_key=next_row_key
+        )
 
     def _extract_data_cb(self, response):
-        return None, response.json()['value']
+        next_entity = None
+        if response.headers and (
+            NEXT_PARTITION_KEY in response.headers or NEXT_ROW_KEY in response.headers):
+            next_entity = {
+                "PartitionKey": response.headers[NEXT_PARTITION_KEY],
+                "RowKey": response.headers[NEXT_ROW_KEY]
+            }
+
+        return next_entity or None, response.json()['value']
 
 
 class AsyncCustomIterator(AsyncPageIterator):
     def __init__(
             self,
             command,
-            max_results=None,
+            results_per_page=None,
             continuation_token=None,
         ):
         super(AsyncCustomIterator, self).__init__(
@@ -47,9 +67,28 @@ class AsyncCustomIterator(AsyncPageIterator):
             continuation_token=continuation_token or ""
         )
         self._command = command
+        self.results_per_page = results_per_page
 
-    async def _get_next_cb(self, continuation_token):
-        return await self._command() 
+    async def _get_next_cb(self, continuation_token, **kwargs):  # pylint: disable=inconsistent-return-statements
+        if not continuation_token:
+            next_partition_key = None
+            next_row_key = None
+        else:
+            next_partition_key = continuation_token.get("PartitionKey")
+            next_row_key = continuation_token.get("RowKey")
+
+        return await self._command(
+            top=self.results_per_page,
+            next_partition_key=next_partition_key,
+            next_row_key=next_row_key
+        )
 
     async def _extract_data_cb(self, response):
-        return None, response.json()['value']
+        next_entity = None
+        if response.headers and (
+            NEXT_PARTITION_KEY in response.headers or NEXT_ROW_KEY in response.headers):
+            next_entity = {
+                "PartitionKey": response.headers[NEXT_PARTITION_KEY],
+                "RowKey": response.headers[NEXT_ROW_KEY]
+            }
+        return next_entity or None, response.json()['value']

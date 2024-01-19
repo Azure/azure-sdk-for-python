@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 from time import time
 from wsgiref.handlers import format_date_time
+from urllib.parse import quote
 
 from azure.core.rest import HttpRequest
 from azure.core.exceptions import (
@@ -16,14 +17,17 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.data.tables.aio import TableClient
 from .custom_iterator import CustomIterator, AsyncCustomIterator
 from ._test_base import _TableTest
+from random import randint
+
 
 class ListEntitiesPageableTest(_TableTest):
     def __init__(self, arguments):
         super().__init__(arguments)
-        self.table_name = f"updateentitytest"
+        self.table_name = f"updateentitytest{randint(1,1000)}"
         self.connection_string = self.get_from_env("AZURE_STORAGE_CONN_STR")
         self.async_table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
         self.url = f"{self.account_endpoint}{self.table_name}()"
+        self.times = {"0": 0}
 
     async def global_setup(self):
         await super().global_setup()
@@ -41,12 +45,20 @@ class ListEntitiesPageableTest(_TableTest):
         if batch_size:
             await self.async_table_client.submit_transaction(batch)
 
-    def _get_list_entities(self, **kwargs):
+    def _get_list_entities(self, *, top=None, next_partition_key=None, next_row_key=None, **kwargs):
         current_time = format_date_time(time())
+        params = {}
+        if top:
+            params['$top'] = top
+        if next_partition_key:
+            params['NextPartitionKey'] = quote(next_partition_key)
+        if next_row_key:
+            params['NextRowKey'] = quote(next_row_key)
+        
         request = HttpRequest(
             method="GET",
             url=self.url,
-            params={},
+            params=params,
             headers={
                 'x-ms-version': self.api_version,
                 'DataServiceVersion': self.data_service_version,
@@ -55,28 +67,28 @@ class ListEntitiesPageableTest(_TableTest):
             },
         )
         response = self.pipeline_client._pipeline.run(
-            request,
+            request
         ).http_response
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
             raise HttpResponseError(response=response)
-
+        
         return response
 
-    async def _get_list_entities_async(self, **kwargs):
+    async def _get_list_entities_async(self, *, top=None, next_partition_key=None, next_row_key=None, **kwargs):
         current_time = format_date_time(time())
-        list_entities_params = {}
-        if kwargs.get("top"):
-            list_entities_params['$top'] = kwargs.get("top")
-        if kwargs.get("next_partition_key"):
-            list_entities_params['NextPartitionKey'] = kwargs.get("next_partition_key")
-        if kwargs.get("next_row_key"):
-            list_entities_params['NextRowKey'] = kwargs.get("next_row_key")
+        params = {}
+        if top:
+            params['$top'] = top
+        if next_partition_key:
+            params['NextPartitionKey'] = quote(next_partition_key)
+        if next_row_key:
+            params['NextRowKey'] = quote(next_row_key)
         
         request = HttpRequest(
             method="GET",
             url=self.url,
-            params=list_entities_params,
+            params=params,
             headers={
                 'x-ms-version': self.api_version,
                 'DataServiceVersion': self.data_service_version,
@@ -85,25 +97,27 @@ class ListEntitiesPageableTest(_TableTest):
             },
         )
         response = (await self.async_pipeline_client._pipeline.run(
-            request,
+            request
         )).http_response
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
             raise HttpResponseError(response=response)
-
+        
         return response
 
     def run_sync(self):
         for _ in ItemPaged(
             self._get_list_entities,
             page_iterator_class=CustomIterator,
+            results_per_page=self.args.results_per_page,
         ):
-            pass
+            pass    
 
     async def run_async(self):
         async for _ in AsyncItemPaged(
             self._get_list_entities_async,
             page_iterator_class=AsyncCustomIterator,
+            results_per_page=self.args.results_per_page,
         ):
             pass
 
@@ -118,6 +132,12 @@ class ListEntitiesPageableTest(_TableTest):
     @staticmethod
     def add_arguments(parser):
         super(ListEntitiesPageableTest, ListEntitiesPageableTest).add_arguments(parser)
-        #parser.add_argument('--max-results', nargs='?', type=str, help='Max results to return.  Default is None.', default=None)
-        parser.add_argument('-c', '--count', nargs='?', type=int, help='Number of blobs to list. Defaults to 100', default=100)
-
+        parser.add_argument(
+            '--results-per-page',
+            nargs='?',
+            type=int,
+            help="""Max number of entities to list per page. """
+            """Default is None, which will return all possible results per page.""",
+            default=None
+        )
+        parser.add_argument('-c', '--count', nargs='?', type=int, help='Number of table entities to list. Defaults to 100', default=100)

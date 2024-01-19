@@ -5,15 +5,12 @@
 
 from time import time
 from wsgiref.handlers import format_date_time
-from devtools_testutils.perfstress_tests import get_random_bytes, RandomStream, AsyncRandomStream
+from devtools_testutils.perfstress_tests import RandomStream, AsyncRandomStream
 
 from azure.core.rest import HttpRequest
 from azure.core.exceptions import (
     HttpResponseError,
     map_error,
-)
-from azure.storage.blob._generated.operations._block_blob_operations import (
-    build_upload_request
 )
 from ._test_base import _BlobTest
 

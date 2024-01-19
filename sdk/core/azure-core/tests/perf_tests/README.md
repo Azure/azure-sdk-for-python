@@ -17,7 +17,6 @@ AZURE_STORAGE_ACCOUNT_KEY=<the Storage account key>
 
 ```cmd
 (env) ~/azure-core> pip install -r dev_requirements.txt
-(env) ~/azure-core> pip install -r test_requirements.txt
 (env) ~/azure-core> pip install .
 ```
 
@@ -58,18 +57,21 @@ The options that are available for all Core perf tests:
 
 - `--transport` - By default, uses AiohttpTransport ("aiohttp") for async. By default, uses RequestsTransport ("requests") for sync. All options:
   - For async:
-    - "aiohttp": AiohttpTransport (default)
-    - "requests": AsyncioRequestsTransport
+    - `"aiohttp"`: AiohttpTransport (default)
+    - `"requests"`: AsyncioRequestsTransport
   - For sync:
-    - "requests": RequestsTransport (default)
+    - `"requests"`: RequestsTransport (default)
 - `--size=10240` - Size of request content (in bytes). Defaults to 10240. (Not used by `ListEntitiesPageableTest`.)
 
-#### Additional DownloadPageableTest command line options
+#### Additional ListEntitiesPageableTest command line options
+
 The options that are additionally available for `ListEntitiesPageableTest`:
 
-- `--count=100` - Number of blobs to list. Defaults to 100.
+- `--count=100` - Number of table entities to list. Defaults to 100.
+- `--results-per-page=None` - Maximum number of entities to list per page. Default is None, which will return all possible results per page.
 
 ## Example command
+
 ```cmd
 (env) ~/azure-core> perfstress DownloadBinaryDataTest --transport requests --size=20480 --parallel=2
 ```
