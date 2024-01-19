@@ -41,7 +41,9 @@ class LocalCodeHandler(BaseHandler):
             
             prediction_data.append(fn_output)
             # When input and output have a common key, value in output overrides value in input
-            input_output_data.append(input.update(fn_output))
+            input_output = dict(input)
+            input_output.update(fn_output)
+            input_output_data.append(input_output)
 
 
         self._prediction_data = pd.DataFrame(prediction_data)

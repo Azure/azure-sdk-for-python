@@ -6,6 +6,7 @@ import json
 import pathlib
 import re
 import shutil
+import time
 from pathlib import Path
 from typing import Optional, Dict, List
 import pandas as pd
@@ -36,7 +37,7 @@ def df_to_dict_list(df, extra_kwargs: Dict = None):
 
 
 def run_pf_flow_with_dict_list(flow_path, data: List[Dict], flow_params=None):
-    from prmptflow import PFClient
+    from promptflow import PFClient
 
     with tempfile.TemporaryDirectory() as tmpdir:
         tmp_path = os.path.join(tmpdir, "test_data.jsonl")
@@ -54,6 +55,17 @@ def run_pf_flow_with_dict_list(flow_path, data: List[Dict], flow_params=None):
             data=tmp_path,
             **flow_params
         )
+
+def wait_for_pf_run_to_complete(run_name):
+    from promptflow import PFClient
+    from promptflow._sdk._constants import RunStatus
+
+    pf_client = PFClient()
+    while True:
+        status = pf_client.runs.get(run_name).status
+        if status in [RunStatus.COMPLETED, RunStatus.FAILED, RunStatus.CANCELED]:
+            break
+        time.sleep(2)
 
 def _has_column(data, column_name):
     if data is None:

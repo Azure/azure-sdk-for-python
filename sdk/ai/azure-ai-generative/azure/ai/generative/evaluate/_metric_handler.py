@@ -11,7 +11,7 @@ from promptflow.entities import AzureOpenAIConnection, OpenAIConnection
 
 from azure.ai.generative.evaluate._constants import TYPE_TO_KWARGS_MAPPING
 from azure.ai.generative.evaluate._constants import TASK_TYPE_TO_METRICS_MAPPING
-from ._utils import run_pf_flow_with_dict_list, df_to_dict_list
+from ._utils import run_pf_flow_with_dict_list, df_to_dict_list, wait_for_pf_run_to_complete
 
 class MetricHandler(object):
 
@@ -79,13 +79,13 @@ class MetricHandler(object):
         else:
             return self.input_output_data
 
-    def calculate_metrics(self):
+    def calculate_metrics(self) -> str:
 
         metrics_calculation_data = self._get_data_for_pf()
 
         metrics = self.metrics if self.metrics is not None else TASK_TYPE_TO_METRICS_MAPPING[self.task_type].DEFAULT_LIST
         
-        dict_list = df_to_dict_list(metrics_calculation_data, {"metrics": metrics}) # The PF eval template expects metrics names to be passed in as a input parameter 
+        dict_list = df_to_dict_list(metrics_calculation_data, {"metrics": ','.join(metrics)}) # The PF eval template expects metrics names to be passed in as a input parameter 
         
         flow_path = path.join(path.dirname(__file__), "pf_templates", "built_in_metrics")
 
@@ -110,15 +110,14 @@ class MetricHandler(object):
             )
         pf_client.connections.create_or_update(connection)
         
-        
         connection_override = {
             "connection": conn_name,
             "deployment_name": deployment_id,
         }
         nodes_list = ["gpt_coherence", "gpt_similarity", "gpt_relevance", "gpt_fluency", "gpt_groundedness"]
 
-        pf_run = run_pf_flow_with_dict_list(flow_path, dict_list, connections={node: connection_override for node in nodes_list})
+        pf_run = run_pf_flow_with_dict_list(flow_path, dict_list, flow_params={"connections": {node: connection_override for node in nodes_list}})
 
-        result_df = pf_client.get_details(pf_run.name)
+        wait_for_pf_run_to_complete(pf_run.name)
 
-        return result_df
+        return pf_run.name

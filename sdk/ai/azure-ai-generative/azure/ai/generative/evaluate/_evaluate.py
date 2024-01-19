@@ -374,6 +374,15 @@ def _evaluate(
 
         if metrics_results.get("metrics"):
             _log_metrics(run_id=run.info.run_id, metrics=metrics_results.get("metrics"))
+        pf_run_name = metrics_handler.calculate_metrics()
+
+        from promptflow import PFClient
+        pf_client = PFClient()
+
+        result = pf_client.get_details(pf_run_name, all_results=True)
+        metrics = pf_client.get_metrics(pf_run_name)
+
+        _log_metrics(run_id=run.info.run_id, metrics=metrics)
 
         with tempfile.TemporaryDirectory() as tmpdir:
             for param_name, param_value in kwargs.get("params_dict", {}).items():
@@ -404,6 +413,7 @@ def _evaluate(
             eval_artifact_df = _get_instance_table(metrics_results, task_type, asset_handler).to_json(orient="records",
                                                                                                       lines=True,
                                                                                                       force_ascii=False)
+            # eval_artifact_df = result.to_json(orient="records", lines=True, force_ascii=False)
             tmp_path = os.path.join(tmpdir, "eval_results.jsonl")
 
             with open(tmp_path, "w", encoding="utf-8") as f:
@@ -420,7 +430,11 @@ def _evaluate(
                 _copy_artifact(tmp_path, output_path)
 
     evaluation_result = EvaluationResult(
+<<<<<<< HEAD
         metrics_summary=metrics_results.get("metrics"),
+=======
+        metrics_summary=metrics,
+>>>>>>> c272382bd1 (e2e works)
         artifacts={
             "eval_results.jsonl": f"runs:/{run.info.run_id}/eval_results.jsonl"
         },
