@@ -48,8 +48,3 @@ class BaseHandler(metaclass=abc.ABCMeta):
         Abstract method to generated prediction data.
         Should be implemented by all subclasses.
         """
-
-    def get_test_data_as_jsonl(self):
-        if self.params_dict:
-            return self.test_data.assign(**self.params_dict).to_dict("records")
-        return self.test_data.to_dict("records")

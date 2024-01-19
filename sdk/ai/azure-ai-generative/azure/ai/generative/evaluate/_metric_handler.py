@@ -2,25 +2,22 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import copy
-import logging
-from concurrent.futures.thread import ThreadPoolExecutor
+import pandas as pd
 
-from numpy import NaN
-from tqdm import tqdm
+from os import path
+from typing import Dict
+from promptflow import PFClient
 
 from azure.ai.generative.evaluate._constants import TYPE_TO_KWARGS_MAPPING
 from azure.ai.generative.evaluate._constants import TASK_TYPE_TO_METRICS_MAPPING
-from azure.ai.generative.evaluate.metrics._custom_metric import CodeMetric
-
-LOGGER = logging.getLogger(__name__)
-
+from ._utils import run_pf_flow_with_dict_list, df_to_dict_list
 
 class MetricHandler(object):
 
     def __init__(
             self,
             task_type,
-            prediction_data,
+            prediction_data: pd.DataFrame,
             test_data,
             truth_data=None,
             prediction_data_column_name=None,
@@ -28,6 +25,7 @@ class MetricHandler(object):
             metrics_mapping=None,
             metrics=None,
             type_to_kwargs=None,
+            data_mapping: Dict=None,
     ):
         self.task_type = task_type
         self.prediction_data = prediction_data
@@ -39,6 +37,7 @@ class MetricHandler(object):
         self._metrics_mapping_to_log = {}
         self.metrics = metrics
         self._type_to_kwargs = type_to_kwargs if type_to_kwargs is not None else TYPE_TO_KWARGS_MAPPING[self.task_type]
+        self.data_mapping = data_mapping
 
     def _get_data_for_metrics(self):
         metrics_mapping = copy.deepcopy(self.metrics_mapping)
@@ -69,32 +68,26 @@ class MetricHandler(object):
         self._metrics_mapping_to_log = metrics_mapping_to_log
 
         return metrics_data
+    
+    def _get_data_for_pf(self) -> pd.DataFrame:
+        if self.data_mapping:
+            rename_map = {v: k for k, v in self.data_mapping.items()}
+            return self.prediction_data.rename(columns=rename_map)
+        else:
+            return self.prediction_data
 
     def calculate_metrics(self):
-        LOGGER.info(f"Calculating builtin metrics : {[metric for metric in self.metrics]}")
-        from azureml.metrics import compute_metrics
 
-        metrics_calculation_data = self._get_data_for_metrics()
+        metrics_calculation_data = self._get_data_for_pf()
 
-        metrics = self.metrics if self.metrics is not None else TASK_TYPE_TO_METRICS_MAPPING[
-            self.task_type].DEFAULT_LIST
+        metrics = self.metrics if self.metrics is not None else TASK_TYPE_TO_METRICS_MAPPING[self.task_type].DEFAULT_LIST
+        
+        dict_list = df_to_dict_list(metrics_calculation_data, {"metrics": metrics}) # The PF eval template expects metrics names to be passed in as a input parameter 
+        
+        flow_path = path.join(path.dirname(__file__), "pf_templates", "built_in_metrics")
+        pf_run = run_pf_flow_with_dict_list(flow_path, dict_list)
 
-        metrics_value = compute_metrics(
-            metrics=metrics,
-            task_type=self.task_type,
-            use_chat_completion_api=True,
-            openai_params=self.metrics_mapping["openai_params"],
-            **metrics_calculation_data,
-        )
+        pf_client = PFClient()
+        result_df = pf_client.get_details(pf_run.name)
 
-        if self.task_type == "custom-prompt-metric":
-            for metric_value in metrics_value:
-                print(metric_value)
-
-        return metrics_value
-
-
-
-
-
-
+        return result_df

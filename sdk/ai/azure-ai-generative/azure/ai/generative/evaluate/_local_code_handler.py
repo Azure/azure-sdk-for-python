@@ -5,6 +5,7 @@
 import logging
 
 from azure.ai.generative.evaluate._base_handler import BaseHandler
+from ._utils import df_to_dict_list
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +26,7 @@ class LocalCodeHandler(BaseHandler):
     def generate_prediction_data(self):
         # TODO: Check if this is the right place for this logic
         prediction_data = []
-        test_data = self.get_test_data_as_jsonl()
+        test_data = df_to_dict_list(self.test_data, self.params_dict)
 
         import inspect
         is_asset_async = False
@@ -35,7 +36,10 @@ class LocalCodeHandler(BaseHandler):
 
         for d in test_data:
             prediction_data.append(
-                asyncio.run(self.asset(**d)) if is_asset_async else self.asset(**d)
+                {
+                    **d,
+                    "answer": asyncio.run(self.asset(**d)) if is_asset_async else self.asset(**d)
+                }
             )
 
         

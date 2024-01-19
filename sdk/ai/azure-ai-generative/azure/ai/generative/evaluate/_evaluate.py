@@ -289,6 +289,17 @@ def _evaluate(
         )
 
         metrics_results = {"artifacts": {}, "metrics": {}}
+        # metrics_handler = MetricHandler(
+        #     task_type=SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING[task_type],
+        #     metrics=metrics,
+        #     prediction_data=asset_handler.prediction_data,
+        #     truth_data=asset_handler.ground_truth,
+        #     test_data=asset_handler.test_data,
+        #     metrics_mapping=metrics_config,
+        #     prediction_data_column_name=prediction_data if isinstance(prediction_data, str) else None,
+        #     ground_truth_column_name=truth_data if isinstance(truth_data, str) else None,
+        #     data_mapping=data_mapping
+        # )
 
         if metrics is None:
             metrics = SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING[task_type].DEFAULT_LIST
