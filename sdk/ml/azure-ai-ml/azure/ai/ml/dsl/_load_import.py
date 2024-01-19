@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, Callable, cast
+from typing import Any, Callable
 
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._builders import Command
@@ -41,4 +41,5 @@ def to_component(*, job: ComponentTranslatableMixin, **kwargs: Any) -> Callable[
 
     # set default base path as "./". Because if code path is relative path and base path is None, will raise error when
     # get arm id of Code
-    return cast(Callable, job._to_component(context={BASE_PATH_CONTEXT_KEY: Path("./")}))
+    res: Callable = job._to_component(context={BASE_PATH_CONTEXT_KEY: Path("./")})
+    return res

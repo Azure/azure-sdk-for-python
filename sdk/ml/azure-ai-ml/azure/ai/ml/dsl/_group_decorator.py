@@ -7,7 +7,7 @@
 # Attribute on customized group class to mark a value type as a group of inputs/outputs.
 import _thread
 import functools
-from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union, cast
+from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union
 
 from azure.ai.ml import Input, Output
 from azure.ai.ml.constants._component import IOConstants
@@ -190,7 +190,8 @@ def group(_cls: Type[T]) -> Type[T]:
         txt = f"def __create_fn__({local_vars}):\n{txt}\n return {name}"
         ns: Dict = {}
         exec(txt, globals, ns)  # pylint: disable=exec-used # nosec
-        return cast(Callable, ns["__create_fn__"](**locals))
+        res: Callable = ns["__create_fn__"](**locals)
+        return res
 
     def _create_init_fn(  # pylint: disable=unused-argument
         cls: Type[T], fields: Dict[str, Union[Annotation, Input, Output]]
@@ -282,7 +283,8 @@ def group(_cls: Type[T]) -> Type[T]:
 
             return wrapper
 
-        return cast(Callable, _recursive_repr(fn))
+        res: Callable = _recursive_repr(fn)
+        return res
 
     def _process_class(cls: Type[T], all_fields: Dict[str, Union[Annotation, Input, Output]]) -> Type[T]:
         setattr(cls, "__init__", _create_init_fn(cls, all_fields))
