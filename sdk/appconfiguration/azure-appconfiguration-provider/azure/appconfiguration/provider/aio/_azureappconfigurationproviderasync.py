@@ -25,6 +25,7 @@ from typing import (
     ItemsView,
     ValuesView,
     TypeVar,
+    cast,
 )
 
 from azure.appconfiguration import (  # type: ignore # pylint:disable=no-name-in-module
@@ -303,7 +304,7 @@ async def _resolve_keyvault_reference(
         ).value
         if secret_value is not None:
             secret_value = ""
-        return secret_value
+        return cast(str, secret_value)
 
     if provider._secret_resolver:
         resolved = provider._secret_resolver(config.secret_id)
