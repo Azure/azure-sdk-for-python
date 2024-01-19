@@ -268,13 +268,7 @@ def is_required_version_on_pypi(package_name, spec):
     return versions
 
 
-def get_package_from_repo(pkg_name: str, repo_root: str = None, optional_wheel_dir: str = None) -> ParsedSetup:
-    if optional_wheel_dir:
-        # find the prebuilt wheel
-        pass
-
-        # if we do have it prebuilt, return it, otherwise, continue on to the repo find
-    
+def get_package_from_repo(pkg_name: str, repo_root: str = None) -> ParsedSetup:
     root_dir = discover_repo_root(repo_root)
 
     glob_path = os.path.join(root_dir, "sdk", "*", pkg_name, "setup.py")
@@ -286,6 +280,27 @@ def get_package_from_repo(pkg_name: str, repo_root: str = None, optional_wheel_d
         return parsed_setup
 
     return None
+
+
+def get_package_from_repo_or_folder(req: str, prebuilt_wheel_dir: str = None) -> str:
+    """Takes a package name and a possible prebuilt wheel directory. Attempts to resolve a wheel that matches the package name, and if it can't,
+    attempts to find the package within the repo to install directly from path on disk.
+
+    During a CI build, it is preferred that the package is installed from a prebuilt wheel directory, as multiple CI environments attempting to install the relative
+    req can cause inconsistent installation issues during parallel tox environment execution.
+    """
+
+    local_package = get_package_from_repo(req)
+
+    if prebuilt_wheel_dir and os.path.exists(prebuilt_wheel_dir):
+        prebuilt_package = discover_prebuilt_package(prebuilt_wheel_dir, local_package.setup_filename, "wheel")
+        if prebuilt_package:
+            # return the first package found, there should only be a single one matching given that our prebuilt wheel directory
+            # is populated by the replacement of dev_reqs.txt with the prebuilt wheels
+            # ref tox_harness replace_dev_reqs() calls
+            return prebuilt_package[0]
+
+    return local_package.folder
 
 
 def get_version_from_repo(pkg_name: str, repo_root: str = None) -> str:

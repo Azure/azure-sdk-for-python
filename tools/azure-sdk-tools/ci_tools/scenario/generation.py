@@ -16,7 +16,7 @@ from ci_tools.functions import (
 )
 from ci_tools.build import cleanup_build_artifacts, create_package
 from ci_tools.parsing import ParsedSetup, parse_require
-from ci_tools.functions import get_package_from_repo, find_whl, get_pip_list_output, pytest
+from ci_tools.functions import get_package_from_repo_or_folder, find_whl, get_pip_list_output, pytest
 from .managed_virtual_env import ManagedVirtualEnv
 
 
@@ -70,6 +70,8 @@ def create_package_and_install(
     discovered_packages = discover_packages(
         setup_py_path, distribution_directory, target_setup, package_type, force_create
     )
+
+    target_package = ParsedSetup.from_path(setup_py_path)
 
     if skip_install:
         logging.info("Flag to skip install whl is passed. Skipping package installation")
@@ -151,7 +153,7 @@ def create_package_and_install(
 
                         additional_downloaded_reqs = [
                             os.path.abspath(os.path.join(tmp_dl_folder, pth)) for pth in os.listdir(tmp_dl_folder)
-                        ] + [get_package_from_repo(relative_req).folder for relative_req in non_present_reqs]
+                        ] + [get_package_from_repo_or_folder(package_name, os.path.join(target_package.folder, ".tmp_whl_dir")) for package_name in non_present_reqs]
 
             commands = [python_exe, "-m", "pip", "install", built_pkg_path]
             commands.extend(additional_downloaded_reqs)
