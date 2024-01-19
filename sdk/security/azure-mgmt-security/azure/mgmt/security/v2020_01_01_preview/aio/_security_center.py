@@ -15,7 +15,7 @@ from azure.mgmt.core import AsyncARMPipelineClient
 from .. import models as _models
 from ..._serialization import Deserializer, Serializer
 from ._configuration import SecurityCenterConfiguration
-from .operations import ConnectorsOperations
+from .operations import ConnectorsOperations, SecurityContactsOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -28,6 +28,9 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
     :ivar connectors: ConnectorsOperations operations
     :vartype connectors:
      azure.mgmt.security.v2020_01_01_preview.aio.operations.ConnectorsOperations
+    :ivar security_contacts: SecurityContactsOperations operations
+    :vartype security_contacts:
+     azure.mgmt.security.v2020_01_01_preview.aio.operations.SecurityContactsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Azure subscription ID. Required.
@@ -53,7 +56,12 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.connectors = ConnectorsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.connectors = ConnectorsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2020-01-01-preview"
+        )
+        self.security_contacts = SecurityContactsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2020-01-01-preview"
+        )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
