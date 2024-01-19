@@ -654,7 +654,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         :param Optional[int] max_message_count: Maximum number of messages in the batch. Actual number
          returned will depend on prefetch_count size and incoming stream rate.
          Setting to None will fully depend on the prefetch config. The default value is 1.
-        :keyword Optional[float] max_wait_time:  DEPRECATED. Please use the max_wait_time
+        :param Optional[float] max_wait_time: DEPRECATED - Please use the max_wait_time
          on the ServiceBusReceiver. The timeout in seconds to wait for the first and
          subsequent messages to arrive, or the total time for the operation to complete.
          If no messages arrive, and no timeout is specified, this call will not return
