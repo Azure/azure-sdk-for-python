@@ -290,7 +290,7 @@ def _buildprovider(
             **kwargs
         )
         return provider
-    elif endpoint is not None and credential is not None:
+    if endpoint is not None and credential is not None:
         provider._client = AzureAppConfigurationClient(
             endpoint,
             credential,
@@ -299,9 +299,8 @@ def _buildprovider(
             retry_backoff_max=retry_backoff_max,
             **kwargs
         )
-    else:
-        raise ValueError("Please pass either endpoint and credential, or a connection string.")
-    return provider
+        return provider
+    raise ValueError("Please pass either endpoint and credential, or a connection string.")
 
 
 def _resolve_keyvault_reference(
