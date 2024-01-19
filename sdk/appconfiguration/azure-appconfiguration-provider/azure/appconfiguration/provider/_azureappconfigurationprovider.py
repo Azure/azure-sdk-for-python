@@ -289,14 +289,17 @@ def _buildprovider(
             **kwargs
         )
         return provider
-    provider._client = AzureAppConfigurationClient(
-        endpoint,
-        credential,
-        user_agent=user_agent,
-        retry_total=retry_total,
-        retry_backoff_max=retry_backoff_max,
-        **kwargs
-    )
+    elif endpoint is not None and credential is not None:
+        provider._client = AzureAppConfigurationClient(
+            endpoint,
+            credential,
+            user_agent=user_agent,
+            retry_total=retry_total,
+            retry_backoff_max=retry_backoff_max,
+            **kwargs
+        )
+    else:
+        raise ValueError("Please pass either endpoint and credential, or a connection string.")
     return provider
 
 
@@ -330,7 +333,10 @@ def _resolve_keyvault_reference(
         provider._secret_clients[vault_url] = referenced_client
 
     if referenced_client:
-        return referenced_client.get_secret(keyvault_identifier.name, version=keyvault_identifier.version).value
+        secret_value = referenced_client.get_secret(keyvault_identifier.name, version=keyvault_identifier.version).value
+        if secret_value is not None:
+            secret_value = ""
+        return secret_value
 
     if provider._secret_resolver:
         return provider._secret_resolver(config.secret_id)
