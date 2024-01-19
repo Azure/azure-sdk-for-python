@@ -145,7 +145,7 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
         assert layout.pages[0].barcodes[0].kind == "Code39"
         assert layout.pages[0].barcodes[0].polygon
         assert layout.pages[0].barcodes[0].confidence > 0.8
-    
+
     @skip_flaky_test
     @DocumentIntelligencePreparer()
     @recorded_by_proxy_async
@@ -153,23 +153,21 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
         client = DocumentIntelligenceClient(
             documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key)
         )
-        assert client._config.polling_interval ==  5
-        
+        assert client._config.polling_interval == 5
+
         client = DocumentIntelligenceClient(
             documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key), polling_interval=7
         )
-        assert client._config.polling_interval ==  7
+        assert client._config.polling_interval == 7
         async with client:
             poller = await client.begin_analyze_document(
-                "prebuilt-receipt",
-                AnalyzeDocumentRequest(url_source=self.receipt_url_jpg),
-                polling_interval=6
+                "prebuilt-receipt", AnalyzeDocumentRequest(url_source=self.receipt_url_jpg), polling_interval=6
             )
             await poller.wait()
-            assert poller._polling_method._timeout ==  6
+            assert poller._polling_method._timeout == 6
             poller2 = await client.begin_analyze_document(
                 "prebuilt-receipt",
                 AnalyzeDocumentRequest(url_source=self.receipt_url_jpg),
             )
             await poller2.wait()
-            assert poller2._polling_method._timeout ==  7  # goes back to client default
+            assert poller2._polling_method._timeout == 7  # goes back to client default

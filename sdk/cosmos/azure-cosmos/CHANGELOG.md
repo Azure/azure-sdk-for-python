@@ -1,8 +1,11 @@
 ## Release History
 
 ### 4.5.2b4 (Unreleased)
+This version and all future versions will require Python 3.8+.
 
 #### Features Added
+* Added **preview** support for Computed Properties on Python SDK (Must be enabled on the account level before it can be used). See [PR 33626](https://github.com/Azure/azure-sdk-for-python/pull/33626).
+
 #### Breaking Changes
 
 #### Bugs Fixed

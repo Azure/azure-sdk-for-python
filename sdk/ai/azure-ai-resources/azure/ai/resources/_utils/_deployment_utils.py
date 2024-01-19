@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import json
-from typing import Any, Tuple
+from typing import Any, Dict, Tuple, Optional, List
 
 from azure.ai.ml.entities import Model
 
@@ -99,7 +99,7 @@ def get_empty_deployment_arm_template():
 
 def get_default_allowed_instance_type_for_hugging_face(
     model_details: Model, credential: Any
-) -> Tuple[str, str]:
+) -> Tuple[Optional[Any], List[Any]]:
     hf_engines = model_details.properties.get("skuBasedEngineIds", None)
     deployment_config = model_details.properties.get("modelDeploymentConfig", None)
     default_instance_type = None
@@ -136,11 +136,11 @@ def get_default_allowed_instance_type_for_hugging_face(
 
 
 def parse_deployment_config(deployment_config: str):
-    deployment_config = json.loads(deployment_config)
-    allowed_instance_types = deployment_config["PipelineMetadata"][
+    deployment_config_dict: Dict[str, Any] = json.loads(deployment_config)
+    allowed_instance_types = deployment_config_dict["PipelineMetadata"][
         "PipelineDefinition"
     ]["ec"]["AllowedInstanceTypes"]
-    default_instance_type = deployment_config["PipelineMetadata"]["PipelineDefinition"][
+    default_instance_type = deployment_config_dict["PipelineMetadata"]["PipelineDefinition"][
         "ec"
     ]["DefaultInstanceType"]
 

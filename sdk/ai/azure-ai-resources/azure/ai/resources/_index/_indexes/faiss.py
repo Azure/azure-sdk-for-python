@@ -6,7 +6,7 @@ import json
 import os
 from pathlib import Path
 from types import ModuleType
-from typing import Any, Callable, Dict, List, Tuple
+from typing import Any, Callable, Dict, List, Tuple, Union
 
 import numpy as np
 from azure.ai.resources._index._docstore import FileBasedDocstore
@@ -147,7 +147,7 @@ class FaissAndDocStore:
         docs_and_scores = self.similarity_search_with_score(query, k, **kwargs)
         return [doc for doc, _ in docs_and_scores]
 
-    def save(self, output_path: str):
+    def save(self, output_path: Union[str, Path]):
         """Write index and docstore to output_path."""
         output_path = Path(output_path)
         output_path.mkdir(exist_ok=True, parents=True)
