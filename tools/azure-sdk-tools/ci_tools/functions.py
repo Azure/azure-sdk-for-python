@@ -315,7 +315,7 @@ def get_base_version(pkg_name: str) -> str:
         exit(1)
 
 
-def process_requires(setup_py_path: str):
+def process_requires(setup_py_path: str, is_dev_build: bool = False):
     """
     This method processes a setup.py's package requirements to verify if all required packages are available on PyPI.
     If any azure sdk package is not available on PyPI then requirement will be updated to refer to the sdk "dev_identifier".
@@ -335,7 +335,7 @@ def process_requires(setup_py_path: str):
         pkg_name = req.key
         spec = SpecifierSet(str(req).replace(pkg_name, ""))
 
-        if not is_required_version_on_pypi(pkg_name, spec):
+        if not is_required_version_on_pypi(pkg_name, spec) or is_dev_build:
             old_req = str(req)
             version = get_version_from_repo(pkg_name)
             base_version = get_base_version(pkg_name)
