@@ -1249,7 +1249,8 @@
     {
       "filename": "sdk/ai/azure-ai-generative/**",
       "words": [
-        "tqdm"
+        "tqdm",
+        "genai"
       ]
     },
     {
