@@ -289,6 +289,11 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
                 :dedent: 4
                 :caption: Getting the properties for a file.
         """
+        upn = kwargs.pop('upn', None)
+        if upn:
+            headers = kwargs.pop('headers', {})
+            headers['x-ms-upn'] = str(upn)
+            kwargs['headers'] = headers
         return await self._get_path_properties(cls=deserialize_file_properties, **kwargs)  # pylint: disable=protected-access
 
     @distributed_trace_async
