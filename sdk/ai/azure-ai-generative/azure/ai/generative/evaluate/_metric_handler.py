@@ -7,6 +7,7 @@ import pandas as pd
 from os import path
 from typing import Dict
 from promptflow import PFClient
+from promptflow.entities import AzureOpenAIConnection, OpenAIConnection
 
 from azure.ai.generative.evaluate._constants import TYPE_TO_KWARGS_MAPPING
 from azure.ai.generative.evaluate._constants import TASK_TYPE_TO_METRICS_MAPPING
@@ -18,6 +19,7 @@ class MetricHandler(object):
             self,
             task_type,
             prediction_data: pd.DataFrame,
+            input_output_data: pd.DataFrame,
             test_data,
             truth_data=None,
             prediction_data_column_name=None,
@@ -29,6 +31,7 @@ class MetricHandler(object):
     ):
         self.task_type = task_type
         self.prediction_data = prediction_data
+        self.input_output_data = input_output_data
         self.truth_data = truth_data
         self.test_data = test_data
         self.metrics_mapping = metrics_mapping
@@ -72,9 +75,9 @@ class MetricHandler(object):
     def _get_data_for_pf(self) -> pd.DataFrame:
         if self.data_mapping:
             rename_map = {v: k for k, v in self.data_mapping.items()}
-            return self.prediction_data.rename(columns=rename_map)
+            return self.input_output_data.rename(columns=rename_map)
         else:
-            return self.prediction_data
+            return self.input_output_data
 
     def calculate_metrics(self):
 
@@ -85,9 +88,37 @@ class MetricHandler(object):
         dict_list = df_to_dict_list(metrics_calculation_data, {"metrics": metrics}) # The PF eval template expects metrics names to be passed in as a input parameter 
         
         flow_path = path.join(path.dirname(__file__), "pf_templates", "built_in_metrics")
-        pf_run = run_pf_flow_with_dict_list(flow_path, dict_list)
 
         pf_client = PFClient()
+
+        openai_config = self.metrics_mapping["openai_params"]
+        conn_name = "openai_connection"
+        deployment_id = openai_config["deployment_id"]
+        if not openai_config["api_type"] or openai_config["api_type"] == "azure":
+
+            connection = AzureOpenAIConnection(
+                name=conn_name,
+                api_key=openai_config["api_key"],
+                api_base=openai_config["api_base"],
+                api_type="azure",
+                api_version=openai_config["api_version"],
+            )
+        else:
+            connection = OpenAIConnection(
+                name=conn_name,
+                api_key=openai_config["api_key"],
+            )
+        pf_client.connections.create_or_update(connection)
+        
+        
+        connection_override = {
+            "connection": conn_name,
+            "deployment_name": deployment_id,
+        }
+        nodes_list = ["gpt_coherence", "gpt_similarity", "gpt_relevance", "gpt_fluency", "gpt_groundedness"]
+
+        pf_run = run_pf_flow_with_dict_list(flow_path, dict_list, connections={node: connection_override for node in nodes_list})
+
         result_df = pf_client.get_details(pf_run.name)
 
         return result_df

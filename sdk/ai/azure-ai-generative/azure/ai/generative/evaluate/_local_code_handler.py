@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 import logging
+import pandas as pd
 
 from azure.ai.generative.evaluate._base_handler import BaseHandler
 from ._utils import df_to_dict_list
@@ -23,9 +24,9 @@ class LocalCodeHandler(BaseHandler):
             **kwargs
         )
 
-    def generate_prediction_data(self):
-        # TODO: Check if this is the right place for this logic
+    def execute_target(self):
         prediction_data = []
+        input_output_data = []
         test_data = df_to_dict_list(self.test_data, self.params_dict)
 
         import inspect
@@ -34,13 +35,14 @@ class LocalCodeHandler(BaseHandler):
             is_asset_async = True
             import asyncio
 
-        for d in test_data:
-            prediction_data.append(
-                {
-                    **d,
-                    "answer": asyncio.run(self.asset(**d)) if is_asset_async else self.asset(**d)
-                }
-            )
+        for input in test_data:
+            # The assumption here is target function returns a dict with output keys
+            fn_output = asyncio.run(self.asset(**input)) if is_asset_async else self.asset(**input) 
+            
+            prediction_data.append(fn_output)
+            # When input and output have a common key, value in output overrides value in input
+            input_output_data.append(input.update(fn_output))
 
-        
-        return prediction_data
+
+        self._prediction_data = pd.DataFrame(prediction_data)
+        self._input_output_data = pd.DataFrame(input_output_data)

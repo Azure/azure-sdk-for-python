@@ -9,6 +9,7 @@ class BaseHandler(metaclass=abc.ABCMeta):
 
     def __init__(self, asset, test_data, prediction_data=None, ground_truth=None, **kwargs):
         self._prediction_data = None
+        self._input_output_data = None
         self.asset = asset
 
         test_data_df = pd.DataFrame(test_data)
@@ -33,18 +34,22 @@ class BaseHandler(metaclass=abc.ABCMeta):
     @property
     def prediction_data(self):
         if self._prediction_data is None:
-            prediction_data = self.generate_prediction_data()
-            prediction_data_df = pd.DataFrame(prediction_data)
-            self._prediction_data = prediction_data_df
+            self.execute_target()
         return self._prediction_data
+
+    @property
+    def input_output_data(self):
+        if self._input_output_data is None:
+            self.execute_target()
+        return self._input_output_data
 
     @property
     def ground_truth(self):
         return self._ground_truth
 
     @abc.abstractmethod
-    def generate_prediction_data(self):
+    def execute_target(self):
         """
-        Abstract method to generated prediction data.
+        Abstract method to generated prediction data and input output data.
         Should be implemented by all subclasses.
         """
