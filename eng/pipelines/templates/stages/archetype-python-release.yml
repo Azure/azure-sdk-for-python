@@ -47,6 +47,12 @@ stages:
                           ServiceName: ${{parameters.ServiceDirectory}}
                           ForRelease: true
 
+                    - template: /eng/common/pipelines/templates/steps/verify-restapi-spec-location.yml
+                      parameters:
+                        PackageName: ${{artifact.name}}
+                        ServiceDirectory: ${{parameters.ServiceDirectory}}
+                        ArtifactLocation: $(Pipeline.Workspace)/${{parameters.ArtifactName}}
+
                     - task: PythonScript@0
                       displayName: Verify CI enabled
                       condition: succeeded()
