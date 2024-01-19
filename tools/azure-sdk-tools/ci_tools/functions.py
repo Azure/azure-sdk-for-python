@@ -297,7 +297,7 @@ def get_package_from_repo_or_folder(req: str, prebuilt_wheel_dir: str = None) ->
             # return the first package found, there should only be a single one matching given that our prebuilt wheel directory
             # is populated by the replacement of dev_reqs.txt with the prebuilt wheels
             # ref tox_harness replace_dev_reqs() calls
-            return prebuilt_package[0]
+            return os.path.join(prebuilt_wheel_dir, prebuilt_package[0])
 
     return local_package.folder
 
