@@ -24,9 +24,6 @@ from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
 )
-from azure.ai.ml._restclient.workspace_dataplane import (
-    AzureMachineLearningWorkspaces as ServiceClientWorkspaceDataplane,
-)
 from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
@@ -39,6 +36,10 @@ from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWork
 
 # Same object, but was renamed starting in v2023_08_01_preview
 from azure.ai.ml._restclient.v2023_10_01 import AzureMachineLearningServices as ServiceClient102023
+from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient0124Preview
+from azure.ai.ml._restclient.workspace_dataplane import (
+    AzureMachineLearningWorkspaces as ServiceClientWorkspaceDataplane,
+)
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
 from azure.ai.ml._user_agent import USER_AGENT
@@ -344,6 +345,13 @@ class MLClient:
             **kwargs,
         )
 
+        self._service_client_01_2024_preview = ServiceClient0124Preview(
+            credential=self._credential,
+            subscription_id=self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
         # A general purpose, user-configurable pipeline for making
         # http requests
         self._requests_pipeline = HttpPipeline(**kwargs)
@@ -554,7 +562,7 @@ class MLClient:
         self._components = ComponentOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_10_2022,
+            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_01_2024_preview,
             self._operation_container,
             self._preflight,
             **ops_kwargs,
@@ -568,14 +576,14 @@ class MLClient:
             self._credential,
             _service_client_kwargs=kwargs,
             requests_pipeline=self._requests_pipeline,
-            service_client_08_2023_preview=self._service_client_08_2023_preview,
+            service_client_01_2024_preview=self._service_client_01_2024_preview,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.JOB, self._jobs)
         self._schedules = ScheduleOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_06_2023_preview,
+            self._service_client_01_2024_preview,
             self._operation_container,
             self._credential,
             _service_client_kwargs=kwargs,
