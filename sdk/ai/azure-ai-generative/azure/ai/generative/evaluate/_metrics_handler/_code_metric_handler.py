@@ -51,13 +51,15 @@ class CodeMetricHandler(MetricHandler):
         LOGGER.info(f"Calculating code metrics : {[metric.name for metric in self.metrics]}")
         metrics_dict = {"artifacts": {}, "metrics": {}}
         metric_results_futures = {}
+        test_data_as_dict = self.test_data.to_dict('records')
+        prediction_data_as_dict = self.prediction_data.to_dict('records') if self.prediction_data is not None else None
         with tqdm.tqdm(total=len(self.metrics)) as progress_bar:
             with ThreadPoolExecutor(thread_name_prefix="code_metrics") as thread_pool:
                 for metric in self.metrics:
                     metric_values = []
                     metric_results_futures.update({metric.name: thread_pool.submit(
-                        self._calculate_metric, metric, self.test_data.to_dict('records'),
-                        self.prediction_data.to_dict('records') if self.prediction_data is not None else None
+                        self._calculate_metric, metric, test_data_as_dict,
+                        prediction_data_as_dict
                     )})
 
                 for metric_name, metric_result_future in metric_results_futures.items():

@@ -32,7 +32,7 @@ from azure.ai.generative.evaluate._evaluation_result import EvaluationResult
 from ._metrics_handler._prompt_metric_handler import PromptMetricHandler
 
 from ._utils import _write_properties_to_run_history
-from .metrics._custom_metric import CodeMetric, PromptMetric
+from .metrics._custom_metric import CodeMetric, PromptMetric, Metric as GenAIMetric
 
 LOGGER = logging.getLogger(__name__)
 
@@ -101,6 +101,28 @@ def _log_metrics(run_id, metrics):
             for key, value in metrics.items()
         ],
     )
+
+
+def _validate_metrics(metrics, task_type):
+    genai_metrics = []
+    builtin_metrics =[]
+    unknown_metrics = []
+
+    for metric in metrics:
+        if isinstance(metric, GenAIMetric):
+            genai_metrics.append(metric.name)
+        elif isinstance(metric, str) and metric in SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING[task_type].SUPPORTED_LIST:
+            builtin_metrics.append(metric)
+        else:
+            unknown_metrics.append(metric)
+
+    if len(unknown_metrics) > 0:
+        raise Exception("Unsupported metric found in the list")
+
+    # if len(set(genai_metrics) & set(builtin_metrics)) > 0:
+    if len(genai_metrics) != len(set(genai_metrics)) or len(builtin_metrics) != len(set(builtin_metrics))\
+            or (len(set(genai_metrics) & set(builtin_metrics)) > 0):
+        raise Exception("Duplicate metric name found. Metric names should be unique")
 
 
 @distributed_trace
@@ -271,7 +293,9 @@ def _evaluate(
         if metrics is None:
             metrics = SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING[task_type].DEFAULT_LIST
 
-        inbuilt_metrics = [metric for metric in metrics if not isinstance(metric, (PromptMetric, CodeMetric))]
+        _validate_metrics(metrics, task_type)
+
+        inbuilt_metrics = [metric for metric in metrics if not isinstance(metric, GenAIMetric)]
         custom_prompt_metrics = [metric for metric in metrics if isinstance(metric, PromptMetric)]
         code_metrics = [metric for metric in metrics if isinstance(metric, CodeMetric)]
 
