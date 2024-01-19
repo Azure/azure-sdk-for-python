@@ -80,7 +80,7 @@ class DownloadBinaryDataTest(_BlobTest):
             ),
             stream=True
         )).http_response
-        response.read()
+        await response.read()
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
             raise HttpResponseError(response=response)

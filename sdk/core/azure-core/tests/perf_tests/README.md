@@ -6,11 +6,15 @@ In order to run the performance tests, the `devtools_testutils` package must be 
 The following environment variables will need to be set for the tests to access the live resources:
 
 ```
-AZURE_STORAGE_CONTAINER_SAS_URL=<the URI of the Storage container>
 AZURE_STORAGE_CONN_STR=<the connection string to the Storage account>
 AZURE_STORAGE_ACCOUNT_NAME=<the Storage account name>
-AZURE_STORAGE_CONTAINER_NAME=<the container name>
 AZURE_STORAGE_ACCOUNT_KEY=<the Storage account key>
+
+AZURE_STORAGE_CONTAINER_NAME=<the container name>
+AZURE_STORAGE_BLOBS_ENDPOINT=<The Storage Blobs endpoint in the format 'https://{storageAccountName}.blob.core.windows.net'>
+
+AZURE_STORAGE_TABLE_NAME=<The name to use for the Storage Table>
+AZURE_STORAGE_TABLES_ENDPOINT=<The Storage Tables endpoint in the format 'https://{storageAccountName}.table.core.windows.net'>
 ```
 
 ### Setup for perf test runs
@@ -61,6 +65,7 @@ The options that are available for all Core perf tests:
     - `"requests"`: AsyncioRequestsTransport
   - For sync:
     - `"requests"`: RequestsTransport (default)
+- `--aad` - Flag to pass in to use Azure Active Directory as the authentication. By default, set to False.
 - `--size=10240` - Size of request content (in bytes). Defaults to 10240. (Not used by `ListEntitiesPageableTest`.)
 
 #### Additional ListEntitiesPageableTest command line options
@@ -73,5 +78,5 @@ The options that are additionally available for `ListEntitiesPageableTest`:
 ## Example command
 
 ```cmd
-(env) ~/azure-core> perfstress DownloadBinaryDataTest --transport requests --size=20480 --parallel=2
+(env) ~/azure-core> perfstress DownloadBinaryDataTest --aad --transport requests --size=20480 --parallel=2
 ```

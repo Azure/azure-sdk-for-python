@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+import os
 import uuid
 import ast
 
@@ -33,8 +34,9 @@ from azure.core.pipeline.policies import (
     SensitiveHeaderCleanupPolicy,
     AsyncRetryPolicy,
     AsyncRedirectPolicy,
+    BearerTokenCredentialPolicy,
+    AsyncBearerTokenCredentialPolicy,
 )
-from azure.core.configuration import Configuration
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -42,6 +44,8 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceNotModifiedError,
 )
+from azure.identity import ClientSecretCredential
+from azure.identity.aio import ClientSecretCredential as AsyncClientSecretCredential
 
 from azure.storage.blob._shared.authentication import SharedKeyCredentialPolicy as BlobSharedKeyCredentialPolicy
 from azure.data.tables._authentication import SharedKeyCredentialPolicy as TableSharedKeyCredentialPolicy
@@ -57,30 +61,10 @@ class _ServiceTest(PerfStressTest):
         self.account_key = self.get_from_env("AZURE_STORAGE_ACCOUNT_KEY")
         async_transport_types = {"aiohttp": AioHttpTransport, "requests": AsyncioRequestsTransport}
         sync_transport_types = {"requests": RequestsTransport}
-        self.custom_policies = {
-            "UserAgentPolicy": UserAgentPolicy,
-            "HeadersPolicy": HeadersPolicy,
-            "ProxyPolicy": ProxyPolicy,
-            "NetworkTraceLoggingPolicy": NetworkTraceLoggingPolicy,
-            "HttpLoggingPolicy": HttpLoggingPolicy,
-            "RetryPolicy": RetryPolicy if self.args.sync else AsyncRetryPolicy,
-            "CustomHookPolicy": CustomHookPolicy,
-            "RedirectPolicy": RedirectPolicy if self.args.sync else AsyncRedirectPolicy,
-            "ContentDecodePolicy": ContentDecodePolicy,
-            "DistributedTracingPolicy": DistributedTracingPolicy,
-        }
-        self.async_default_policies = [
-            UserAgentPolicy(),
-            HeadersPolicy(),
-            ProxyPolicy(),
-            NetworkTraceLoggingPolicy(),
-            HttpLoggingPolicy(),
-            AsyncRetryPolicy(),
-            CustomHookPolicy(),
-            AsyncRedirectPolicy(),
-            ContentDecodePolicy(),
-            DistributedTracingPolicy(),
-        ]
+        self.tenant_id = os.environ["CORE_TENANT_ID"]
+        self.client_id = os.environ["CORE_CLIENT_ID"]
+        self.client_secret = os.environ["CORE_CLIENT_SECRET"]
+        self.storage_scope = 'https://storage.azure.com/.default'
 
         # defaults transports
         self.sync_transport = RequestsTransport
@@ -250,6 +234,37 @@ class _ServiceTest(PerfStressTest):
             self.account_endpoint, pipeline=async_pipeline
         )
 
+    def _set_auth_policies(self):
+        if not self.args.aad:
+            # if tables, create table credential policy, else blob policy
+            if "tables" in self.sdk_moniker:
+                self.sync_auth_policy = TableSharedKeyCredentialPolicy(
+                    AzureNamedKeyCredential(self.account_name, self.account_key)
+                )
+                self.async_auth_policy = self.sync_auth_policy
+            else:
+                self.sync_auth_policy = BlobSharedKeyCredentialPolicy(self.account_name, self.account_key)
+                self.async_auth_policy = self.sync_auth_policy
+        else:
+            sync_credential = ClientSecretCredential(
+                self.tenant_id,
+                self.client_id,
+                self.client_secret
+            )
+            self.sync_auth_policy = BearerTokenCredentialPolicy(
+                sync_credential,
+                self.storage_scope
+            )
+            async_credential = AsyncClientSecretCredential(
+                self.tenant_id,
+                self.client_id,
+                self.client_secret
+            )
+            self.async_auth_policy = AsyncBearerTokenCredentialPolicy(
+                async_credential,
+                self.storage_scope
+            )
+
     @staticmethod
     def add_arguments(parser):
         super(_ServiceTest, _ServiceTest).add_arguments(parser)
@@ -275,6 +290,7 @@ class _ServiceTest(PerfStressTest):
                             type=str,
                         help="""String dict of keyword args to pass to the ContentDecodePolicy if used, such as '{"response_encoding": <encoding_str>}'.""",
                             default=None)
+        parser.add_argument('--aad', action='store_true', help='Use AAD authentication instead of shared key.')
 
 class _BlobTest(_ServiceTest):
     container_name = "perfstress-" + str(uuid.uuid4())
@@ -285,12 +301,10 @@ class _BlobTest(_ServiceTest):
         self.container_name = self.get_from_env("AZURE_STORAGE_CONTAINER_NAME")
         self.api_version = "2021-12-02"
         self.sdk_moniker = f"storage-blob/{self.api_version}"
-        self.pipeline_client = self._build_sync_pipeline_client(
-            BlobSharedKeyCredentialPolicy(self.account_name, self.account_key)
-        )
-        self.async_pipeline_client = self._build_async_pipeline_client(
-            BlobSharedKeyCredentialPolicy(self.account_name, self.account_key)
-        )
+
+        self._set_auth_policies()
+        self.pipeline_client = self._build_sync_pipeline_client(self.sync_auth_policy)
+        self.async_pipeline_client = self._build_async_pipeline_client(self.async_auth_policy)
 
     async def close(self):
         self.pipeline_client.close()
@@ -306,16 +320,13 @@ class _TableTest(_ServiceTest):
         self.api_version = '2019-02-02'
         self.data_service_version = '3.0'
         self.sdk_moniker = f"tables/{self.api_version}"
+        self._set_auth_policies()
 
         self.pipeline_client = self._build_sync_pipeline_client(
-            TableSharedKeyCredentialPolicy(
-                AzureNamedKeyCredential(self.account_name, self.account_key)
-            )
+            self.sync_auth_policy
         )
         self.async_pipeline_client = self._build_async_pipeline_client(
-            TableSharedKeyCredentialPolicy(
-                AzureNamedKeyCredential(self.account_name, self.account_key)
-            )
+            self.async_auth_policy
         )
 
     def get_base_entity(self, pk, rk, size):
