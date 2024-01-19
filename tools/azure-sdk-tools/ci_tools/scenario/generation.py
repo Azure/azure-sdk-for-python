@@ -116,6 +116,7 @@ def create_package_and_install(
                         addition_necessary = True
                         # get all installed packages
                         installed_pkgs = get_pip_list_output(python_exe)
+                        logging.info("Installed packages: {}".format(installed_pkgs))
 
                         # parse the specifier
                         req_name, req_specifier = parse_require(req)
@@ -343,7 +344,9 @@ def prepare_and_test_optional(mapped_args: argparse.Namespace) -> int:
 
         if mapped_args.optional:
             if env_name != mapped_args.optional:
-                logging.info(f"{env_name} does not match targeted environment {mapped_args.optional}, skipping this environment.")
+                logging.info(
+                    f"{env_name} does not match targeted environment {mapped_args.optional}, skipping this environment."
+                )
                 continue
 
         environment_exe = prepare_environment(mapped_args.target, mapped_args.temp_dir, env_name)

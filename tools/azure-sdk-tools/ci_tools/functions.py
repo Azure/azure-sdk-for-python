@@ -268,7 +268,13 @@ def is_required_version_on_pypi(package_name, spec):
     return versions
 
 
-def get_package_from_repo(pkg_name: str, repo_root: str = None) -> ParsedSetup:
+def get_package_from_repo(pkg_name: str, repo_root: str = None, optional_wheel_dir: str = None) -> ParsedSetup:
+    if optional_wheel_dir:
+        # find the prebuilt wheel
+        pass
+
+        # if we do have it prebuilt, return it, otherwise, continue on to the repo find
+    
     root_dir = discover_repo_root(repo_root)
 
     glob_path = os.path.join(root_dir, "sdk", "*", pkg_name, "setup.py")
