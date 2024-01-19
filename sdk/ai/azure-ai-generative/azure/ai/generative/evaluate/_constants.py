@@ -75,3 +75,8 @@ TASK_TYPE_TO_METRICS_MAPPING = {
     "qa": QaMetrics,
     "rag-evaluation": ChatMetrics
 }
+
+SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING = {
+    QA: QaMetrics,
+    CHAT: ChatMetrics
+}
