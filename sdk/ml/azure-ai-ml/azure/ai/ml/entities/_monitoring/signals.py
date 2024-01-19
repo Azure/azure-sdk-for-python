@@ -5,7 +5,7 @@
 # pylint: disable=protected-access, too-many-lines
 
 import datetime
-from typing import Any, Dict, List, Optional, Union, cast
+from typing import Any, Dict, List, Optional, Union
 
 import isodate
 from typing_extensions import Literal
@@ -380,24 +380,33 @@ class MonitoringSignal(RestTranslatableMixin):
     @classmethod
     def _from_rest_object(  # pylint: disable=too-many-return-statements
         cls, obj: RestMonitoringSignalBase
-    ) -> Optional["MonitoringSignal"]:
-        res: Optional["MonitoringSignal"] = None
+    ) -> Optional[
+        Union[
+            "DataDriftSignal",
+            "DataQualitySignal",
+            "PredictionDriftSignal",
+            "ModelPerformanceSignal",
+            "FeatureAttributionDriftSignal",
+            "CustomMonitoringSignal",
+            "GenerationSafetyQualitySignal",
+        ]
+    ]:
         if obj.signal_type == MonitoringSignalType.DATA_DRIFT:
-            res = DataDriftSignal._from_rest_object(obj)
-        elif obj.signal_type == MonitoringSignalType.DATA_QUALITY:
-            res = DataQualitySignal._from_rest_object(obj)
-        elif obj.signal_type == MonitoringSignalType.PREDICTION_DRIFT:
-            res = PredictionDriftSignal._from_rest_object(obj)
-        elif obj.signal_type == "ModelPerformanceSignalBase":
-            res = ModelPerformanceSignal._from_rest_object(obj)
-        elif obj.signal_type == MonitoringSignalType.FEATURE_ATTRIBUTION_DRIFT:
-            res = cast(MonitoringSignal, FeatureAttributionDriftSignal._from_rest_object(obj))
-        elif obj.signal_type == MonitoringSignalType.CUSTOM:
-            res = cast(MonitoringSignal, CustomMonitoringSignal._from_rest_object(obj))
-        elif obj.signal_type == MonitoringSignalType.GENERATION_SAFETY_QUALITY:
-            res = cast(MonitoringSignal, GenerationSafetyQualitySignal._from_rest_object(obj))
+            return DataDriftSignal._from_rest_object(obj)
+        if obj.signal_type == MonitoringSignalType.DATA_QUALITY:
+            return DataQualitySignal._from_rest_object(obj)
+        if obj.signal_type == MonitoringSignalType.PREDICTION_DRIFT:
+            return PredictionDriftSignal._from_rest_object(obj)
+        if obj.signal_type == "ModelPerformanceSignalBase":
+            return ModelPerformanceSignal._from_rest_object(obj)
+        if obj.signal_type == MonitoringSignalType.FEATURE_ATTRIBUTION_DRIFT:
+            return FeatureAttributionDriftSignal._from_rest_object(obj)
+        if obj.signal_type == MonitoringSignalType.CUSTOM:
+            return CustomMonitoringSignal._from_rest_object(obj)
+        if obj.signal_type == MonitoringSignalType.GENERATION_SAFETY_QUALITY:
+            return GenerationSafetyQualitySignal._from_rest_object(obj)
 
-        return res
+        return None
 
 
 @experimental
