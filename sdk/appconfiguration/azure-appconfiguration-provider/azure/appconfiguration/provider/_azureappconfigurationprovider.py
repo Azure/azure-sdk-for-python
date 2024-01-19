@@ -26,6 +26,7 @@ from typing import (
     KeysView,
     ItemsView,
     ValuesView,
+    TypeVar,
 )
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
     AzureAppConfigurationClient,
@@ -52,8 +53,8 @@ from ._user_agent import USER_AGENT
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
-JSON = Union[str, Mapping[str, Any]]  # pylint: disable=unsubscriptable-object
-
+JSON = Mapping[str, Any]  # pylint: disable=unsubscriptable-object
+_T = TypeVar("_T")
 logger = logging.getLogger(__name__)
 
 min_uptime = 5
@@ -66,6 +67,9 @@ def load(
     *,
     selects: Optional[List[SettingSelector]] = None,
     trim_prefixes: Optional[List[str]] = None,
+    keyvault_credential: Optional["TokenCredential"] = None,
+    keyvault_client_configs: Optional[Mapping[str, JSON]] = None,
+    secret_resolver: Optional[Callable[[str], str]] = None,
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
     refresh_on: Optional[List[Tuple[str, str]]] = None,
     refresh_interval: int = 30,
@@ -112,6 +116,9 @@ def load(
     connection_string: str,
     selects: Optional[List[SettingSelector]] = None,
     trim_prefixes: Optional[List[str]] = None,
+    keyvault_credential: Optional["TokenCredential"] = None,
+    keyvault_client_configs: Optional[Mapping[str, JSON]] = None,
+    secret_resolver: Optional[Callable[[str], str]] = None,
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
     refresh_on: Optional[List[Tuple[str, str]]] = None,
     refresh_interval: int = 30,
@@ -430,9 +437,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         self._trim_prefixes: List[str] = sorted(trim_prefixes, key=len, reverse=True)
 
         refresh_on: List[Tuple[str, str]] = kwargs.pop("refresh_on", None) or []
-        self._refresh_on: Mapping[Tuple[str, str], Optional[str]] = {
-            _build_sentinel(s): None for s in refresh_on
-        }  
+        self._refresh_on: Mapping[Tuple[str, str], Optional[str]] = {_build_sentinel(s): None for s in refresh_on}
         self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._on_refresh_success: Optional[Callable] = kwargs.pop("on_refresh_success", None)
         self._on_refresh_error: Optional[Callable[[Exception], None]] = kwargs.pop("on_refresh_error", None)
@@ -558,7 +563,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 return config.value
         return config.value
 
-    def __getitem__(self, key: str) -> str:
+    def __getitem__(self, key: str) -> Any:
         # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         """
         Returns the value of the specified key.
@@ -605,13 +610,21 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         resolved.
 
         :return: A list of values loaded from Azure App Configuration. The values are either Strings or JSON objects,
-        based on there content type.
+         based on there content type.
         :rtype: ValuesView[Union[str, Mapping[str, Any]]]
         """
         with self._update_lock:
             return copy.deepcopy((self._dict)).values()
 
-    def get(self, key: str, default: Optional[str] = None) -> Union[str, Mapping[str, Any], None]:
+    @overload
+    def get(self, key: str, default: None = None) -> Union[str, JSON, None]:
+        ...
+
+    @overload
+    def get(self, key: str, default: Union[str, JSON, _T]) -> Union[str, JSON, _T]:  # pylint: disable=signature-differs
+        ...
+
+    def get(self, key: str, default: Optional[Union[str, JSON, _T]] = None) -> Union[str, JSON, _T, None]:
         """
         Returns the value of the specified key. If the key does not exist, returns the default value.
 
