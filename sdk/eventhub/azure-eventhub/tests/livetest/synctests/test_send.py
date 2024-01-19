@@ -575,6 +575,18 @@ def test_send_long_wait(connstr_receivers, keep_alive, uamqp_transport):
 
         time.sleep(200)
 
-        for producer in client._producers["all-partitions"]:
-            assert producer.closed == False
+        assert client._producers["all-partitions"].closed == False
+        client.send_event(EventData("Single Event"))
+
+@pytest.mark.parametrize("keep_alive", [5, 30])
+@pytest.mark.liveTest
+def test_send_long_wait_idle_timeout(connstr_receivers, keep_alive, uamqp_transport):
+    connection_str, receivers = connstr_receivers
+    client = EventHubProducerClient.from_connection_string(connection_str, keep_alive=keep_alive, idle_timeout=10, uamqp_transport=uamqp_transport)
+    with client:
+        client.send_event(EventData("Single Message"))
+
+        time.sleep(200)
+
+        assert client._producers["all-partitions"].closed == False
         client.send_event(EventData("Single Event"))
