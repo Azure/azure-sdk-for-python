@@ -24,6 +24,7 @@ from typing import (
     KeysView,
     ItemsView,
     ValuesView,
+    TypeVar,
 )
 
 from azure.appconfiguration import (  # type: ignore # pylint:disable=no-name-in-module
@@ -54,7 +55,8 @@ from .._user_agent import USER_AGENT
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
-JSON = Union[str, Mapping[str, Any]]  # pylint: disable=unsubscriptable-object
+JSON = Mapping[str, Any]  # pylint: disable=unsubscriptable-object
+_T = TypeVar("_T")
 
 
 @overload
@@ -64,6 +66,9 @@ async def load(
     *,
     selects: Optional[List[SettingSelector]] = None,
     trim_prefixes: Optional[List[str]] = None,
+    keyvault_credential: Optional["AsyncTokenCredential"] = None,
+    keyvault_client_configs: Optional[Mapping[str, JSON]] = None,
+    secret_resolver: Optional[Callable[[str], str]] = None,
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
     refresh_on: Optional[List[Tuple[str, str]]] = None,
     refresh_interval: int = 30,
@@ -110,6 +115,9 @@ async def load(
     connection_string: str,
     selects: Optional[List[SettingSelector]] = None,
     trim_prefixes: Optional[List[str]] = None,
+    keyvault_credential: Optional["AsyncTokenCredential"] = None,
+    keyvault_client_configs: Optional[Mapping[str, JSON]] = None,
+    secret_resolver: Optional[Callable[[str], str]] = None,
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
     refresh_on: Optional[List[Tuple[str, str]]] = None,
     refresh_interval: int = 30,
@@ -447,7 +455,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 return config.value
         return config.value
 
-    def __getitem__(self, key: str) -> str:
+    def __getitem__(self, key: str) -> Any:
         # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         """
         Returns the value of the specified key.
@@ -492,12 +500,20 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         resolved.
 
         :return: A list of values loaded from Azure App Configuration. The values are either Strings or JSON objects,
-        based on there content type.
+         based on there content type.
         :rtype: ValuesView[Union[str, Mapping[str, Any]]]
         """
         return copy.deepcopy(self._dict).values()
 
-    def get(self, key: str, default: Optional[str] = None) -> Union[str, Mapping[str, Any], None]:
+    @overload
+    def get(self, key: str, default: None = None) -> Union[str, JSON, None]:
+        ...
+
+    @overload
+    def get(self, key: str, default: Union[str, JSON, _T]) -> Union[str, JSON, _T]:  # pylint: disable=signature-differs
+        ...
+
+    def get(self, key: str, default: Optional[Union[str, JSON, _T]] = None) -> Union[str, JSON, _T, None]:
         """
         Returns the value of the specified key. If the key does not exist, returns the default value.
 
