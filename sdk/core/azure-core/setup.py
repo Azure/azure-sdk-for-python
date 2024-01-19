@@ -69,7 +69,6 @@ setup(
     },
     python_requires=">=3.7",
     install_requires=[
-        "anyio>=3.0,<5.0",
         "requests>=2.21.0",
         "six>=1.11.0",
         "typing-extensions>=4.6.0",

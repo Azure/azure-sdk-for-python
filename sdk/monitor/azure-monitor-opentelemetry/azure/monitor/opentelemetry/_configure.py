@@ -3,8 +3,6 @@
 # Licensed under the MIT License. See License in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import os
-
 from logging import getLogger
 from typing import Dict, cast
 
@@ -16,11 +14,11 @@ from opentelemetry.instrumentation.instrumentor import ( # type: ignore
     BaseInstrumentor,
 )
 from opentelemetry.metrics import set_meter_provider
-from opentelemetry.sdk.environment_variables import OTEL_EXPERIMENTAL_RESOURCE_DETECTORS
 from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
+from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.trace import get_tracer_provider, set_tracer_provider
@@ -30,13 +28,12 @@ from azure.core.settings import settings
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 from azure.monitor.opentelemetry._constants import (
     _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES,
-    _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME,
     _AZURE_SDK_INSTRUMENTATION_NAME,
-    _AZURE_VM_RESOURCE_DETECTOR_NAME,
     DISABLE_LOGGING_ARG,
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
     LOGGER_NAME_ARG,
+    RESOURCE_ARG,
     SAMPLING_RATIO_ARG,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
@@ -49,12 +46,6 @@ from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-err
 from azure.monitor.opentelemetry._util.configurations import (
     _get_configurations,
     _is_instrumentation_enabled,
-)
-
-
-_SUPPORTED_RESOURCE_DETECTORS = (
-    _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME,
-    _AZURE_VM_RESOURCE_DETECTOR_NAME,
 )
 
 _logger = getLogger(__name__)
@@ -83,9 +74,6 @@ def configure_azure_monitor(**kwargs) -> None:
     disable_logging = configurations[DISABLE_LOGGING_ARG]
     disable_metrics = configurations[DISABLE_METRICS_ARG]
 
-    # Setup resources
-    _setup_resources()
-
     # Setup tracing pipeline
     if not disable_tracing:
         _setup_tracing(configurations)
@@ -103,17 +91,13 @@ def configure_azure_monitor(**kwargs) -> None:
     # instanstiated in the other setup steps
     _setup_instrumentations(configurations)
 
-def _setup_resources():
-    os.environ.setdefault(
-        OTEL_EXPERIMENTAL_RESOURCE_DETECTORS,
-        ",".join(_SUPPORTED_RESOURCE_DETECTORS)
-    )
-
 
 def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
+    resource: Resource = configurations[RESOURCE_ARG] # type: ignore
     sampling_ratio = configurations[SAMPLING_RATIO_ARG]
     tracer_provider = TracerProvider(
         sampler=ApplicationInsightsSampler(sampling_ratio=cast(float, sampling_ratio)),
+        resource=resource
     )
     set_tracer_provider(tracer_provider)
     trace_exporter = AzureMonitorTraceExporter(**configurations)
@@ -126,7 +110,8 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
 
 
 def _setup_logging(configurations: Dict[str, ConfigurationValue]):
-    logger_provider = LoggerProvider()
+    resource: Resource = configurations[RESOURCE_ARG] # type: ignore
+    logger_provider = LoggerProvider(resource=resource)
     set_logger_provider(logger_provider)
     log_exporter = AzureMonitorLogExporter(**configurations)
     log_record_processor = BatchLogRecordProcessor(
@@ -134,15 +119,17 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     )
     get_logger_provider().add_log_record_processor(log_record_processor) # type: ignore
     handler = LoggingHandler(logger_provider=get_logger_provider())
-    logger_name = configurations[LOGGER_NAME_ARG] # type: ignore
+    logger_name: str = configurations[LOGGER_NAME_ARG] # type: ignore
     getLogger(logger_name).addHandler(handler)
 
 
 def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
+    resource: Resource = configurations[RESOURCE_ARG] # type: ignore
     metric_exporter = AzureMonitorMetricExporter(**configurations)
     reader = PeriodicExportingMetricReader(metric_exporter)
     meter_provider = MeterProvider(
         metric_readers=[reader],
+        resource=resource
     )
     set_meter_provider(meter_provider)
 

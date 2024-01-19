@@ -1,5 +1,17 @@
 # Release History
 
+## 1.1.0b4 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Verifies that the `refresh_interval`` is at least 1 second.
+
+### Other Changes
+
 ## 1.1.0b3 (2023-12-19)
 
 ### Features Added

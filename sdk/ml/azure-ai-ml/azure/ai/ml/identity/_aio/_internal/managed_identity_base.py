@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import abc
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Any, Optional, cast
 
 from ..._exceptions import CredentialUnavailableError
 from . import AsyncContextManager
@@ -11,32 +11,30 @@ from .get_token_mixin import GetTokenMixin
 from .managed_identity_client import AsyncManagedIdentityClient
 
 if TYPE_CHECKING:
-    from typing import Any, Optional
-
     from azure.core.credentials import AccessToken
 
 
 class AsyncManagedIdentityBase(AsyncContextManager, GetTokenMixin):
     """Base class for internal credentials using AsyncManagedIdentityClient."""
 
-    def __init__(self, **kwargs: "Any") -> None:
+    def __init__(self, **kwargs: Any) -> None:
         super().__init__()
         self._client = self.get_client(**kwargs)
 
     @abc.abstractmethod
-    def get_client(self, **kwargs: "Any") -> "Optional[AsyncManagedIdentityClient]":
+    def get_client(self, **kwargs: Any) -> "Optional[AsyncManagedIdentityClient]":
         pass
 
     @abc.abstractmethod
     def get_unavailable_message(self) -> str:
         pass
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "AsyncManagedIdentityBase":
         if self._client:
             await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *args: Any) -> None:
         if self._client:
             await self._client.__aexit__(*args)
 

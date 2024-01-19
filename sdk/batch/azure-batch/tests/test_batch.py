@@ -28,7 +28,7 @@ from devtools_testutils import (
 from devtools_testutils.fake_credentials import BATCH_TEST_PASSWORD
 
 
-AZURE_LOCATION = 'eastasia'
+AZURE_LOCATION = 'eastus'
 BATCH_ENVIRONMENT = None  # Set this to None if testing against prod
 BATCH_RESOURCE = 'https://batch.core.windows.net/'
 DEFAULT_VM_SIZE = 'standard_d2_v2'
@@ -318,6 +318,63 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert response is None
         vmextension_pool = client.pool.get(test_vmextension_pool.id)
         assert vmextension_pool.virtual_machine_configuration.extensions[0].enable_automatic_upgrade
+
+        # Test Create Pool with Trusted Launch security type
+        test_trustedlaunch_pool = models.PoolAddParameter(
+            id=self.get_resource_name('batch_trustedlaunch_'),
+            vm_size='standard_d2s_v3',
+            virtual_machine_configuration=models.VirtualMachineConfiguration(
+                image_reference=models.ImageReference(
+                    publisher='Canonical',
+                    offer='UbuntuServer',
+                    sku='18.04-LTS'
+                ),
+                node_agent_sku_id='batch.node.ubuntu 18.04',
+                security_profile=models.SecurityProfile(
+                    security_type=models.SecurityTypes.trusted_launch,
+                    encryption_at_host=True,
+                    uefi_settings=models.UefiSettings(
+                        secure_boot_enabled=True,
+                        v_tpm_enabled=True
+                    )
+                )
+            )
+        )
+        response = client.pool.add(test_trustedlaunch_pool)
+        assert response is None
+        trustedlaunch_pool = client.pool.get(test_trustedlaunch_pool.id)
+        security_prof = trustedlaunch_pool.virtual_machine_configuration.security_profile
+        assert security_prof.security_type == "trustedLaunch"
+        assert security_prof.encryption_at_host is True
+        assert security_prof.uefi_settings.secure_boot_enabled is True
+        assert security_prof.uefi_settings.v_tpm_enabled is True
+
+        # Test Create Pool with custom OS Disk configuration
+        test_osdisk_pool = models.PoolAddParameter(
+            id=self.get_resource_name('batch_osdisk_'),
+            vm_size=DEFAULT_VM_SIZE,
+            virtual_machine_configuration=models.VirtualMachineConfiguration(
+                image_reference=models.ImageReference(
+                    publisher='Canonical',
+                    offer='UbuntuServer',
+                    sku='18.04-LTS'
+                ),
+                node_agent_sku_id='batch.node.ubuntu 18.04',
+                os_disk=models.OSDisk(
+                    caching=models.CachingType.read_only,
+                    managed_disk=models.ManagedDisk(
+                        storage_account_type=models.StorageAccountType.premium_lrs,
+                    ),
+                    disk_size_gb=10
+                )
+            )
+        )
+        response = client.pool.add(test_osdisk_pool)
+        assert response is None
+        osdisk_pool = client.pool.get(test_osdisk_pool.id)
+        assert osdisk_pool.virtual_machine_configuration.os_disk.caching == "readonly"
+        assert osdisk_pool.virtual_machine_configuration.os_disk.managed_disk.storage_account_type == "premium_lrs"
+        assert osdisk_pool.virtual_machine_configuration.os_disk.disk_size_gb == 10
 
         # Test List Pools without Filters
         pools = list(client.pool.list())

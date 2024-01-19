@@ -23,7 +23,7 @@ These code samples show common scenario operations with the Azure Container Regi
 |[sample_set_get_image.py][set_get_image] ([sample_set_get_image_async.py][set_get_image_async]) | Set and get a manifest, and upload and download a blob to and from a repository |
 
 ### Prerequisites
-* Python 3.7 or later is required to use this package.
+* Python 3.8 or later is required to use this package.
 * You need an [Azure subscription][azure_sub] and a [Container Registry account][container_registry_docs] to use this package.
 
 ## Setup

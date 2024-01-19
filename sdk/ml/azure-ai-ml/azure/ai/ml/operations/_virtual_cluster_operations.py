@@ -2,10 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict, Iterable, Optional
-
-from azure.core.credentials import TokenCredential
-from azure.core.tracing.decorator import distributed_trace
+from typing import Dict, Iterable, Optional, cast
 
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
@@ -28,6 +25,8 @@ from azure.ai.ml._utils.azure_resource_utils import (
 from azure.ai.ml.constants._common import AZUREML_RESOURCE_PROVIDER, LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT, Scope
 from azure.ai.ml.entities import Job
 from azure.ai.ml.exceptions import UserErrorException, ValidationException
+from azure.core.credentials import TokenCredential
+from azure.core.tracing.decorator import distributed_trace
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
@@ -84,7 +83,10 @@ class VirtualClusterOperations:
             raise UserErrorException(message=message, no_personal_data_message=message)
 
         try:
-            return get_virtual_clusters_from_subscriptions(self._credentials, subscription_list=subscription_list)
+            return cast(
+                Iterable[Dict],
+                get_virtual_clusters_from_subscriptions(self._credentials, subscription_list=subscription_list),
+            )
         except ImportError as e:
             raise UserErrorException(
                 message="Met ImportError when trying to list virtual clusters. "
@@ -105,8 +107,10 @@ class VirtualClusterOperations:
         """
 
         def make_id(entity_type: str) -> str:
-            return LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT.format(
-                self._subscription_id, self._resource_group_name, AZUREML_RESOURCE_PROVIDER, entity_type, name
+            return str(
+                LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT.format(
+                    self._subscription_id, self._resource_group_name, AZUREML_RESOURCE_PROVIDER, entity_type, name
+                )
             )
 
         # List of virtual cluster ids to match
@@ -126,9 +130,12 @@ class VirtualClusterOperations:
         index_entities_request = IndexEntitiesRequest(filters=filters, order=order)
 
         # cspell:ignore entites
-        return self._index_service.index_entities.get_entites_cross_region(
-            body=CrossRegionIndexEntitiesRequest(index_entities_request=index_entities_request),
-            cls=lambda objs: [index_entity_response_to_job(obj) for obj in objs],
+        return cast(
+            Iterable[Job],
+            self._index_service.index_entities.get_entites_cross_region(
+                body=CrossRegionIndexEntitiesRequest(index_entities_request=index_entities_request),
+                cls=lambda objs: [index_entity_response_to_job(obj) for obj in objs],
+            ),
         )
 
     @distributed_trace
@@ -149,13 +156,19 @@ class VirtualClusterOperations:
             arm_id = AzureResourceId(name)
             sub_id = arm_id.subscription_id
 
-            return get_generic_resource_by_id(
-                arm_id=name, credential=self._credentials, subscription_id=sub_id, api_version="2021-03-01-preview"
+            return cast(
+                Dict,
+                get_generic_resource_by_id(
+                    arm_id=name, credential=self._credentials, subscription_id=sub_id, api_version="2021-03-01-preview"
+                ),
             )
         except ValidationException:
-            return get_virtual_cluster_by_name(
-                name=name,
-                resource_group=self._resource_group_name,
-                subscription_id=self._subscription_id,
-                credential=self._credentials,
+            return cast(
+                Dict,
+                get_virtual_cluster_by_name(
+                    name=name,
+                    resource_group=self._resource_group_name,
+                    subscription_id=self._subscription_id,
+                    credential=self._credentials,
+                ),
             )

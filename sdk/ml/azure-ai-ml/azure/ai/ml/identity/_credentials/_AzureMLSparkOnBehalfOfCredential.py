@@ -5,7 +5,7 @@
 
 import functools
 import os
-from typing import Optional
+from typing import Any, Optional
 
 from azure.core.pipeline.transport import HttpRequest
 
@@ -14,7 +14,7 @@ from .._internal.managed_identity_client import ManagedIdentityClient
 
 
 class _AzureMLSparkOnBehalfOfCredential(ManagedIdentityBase):
-    def get_client(self, **kwargs) -> Optional[ManagedIdentityClient]:
+    def get_client(self, **kwargs: Any) -> Optional[ManagedIdentityClient]:
         client_args = _get_client_args(**kwargs)
         if client_args:
             return ManagedIdentityClient(**client_args)
@@ -24,7 +24,7 @@ class _AzureMLSparkOnBehalfOfCredential(ManagedIdentityBase):
         return "AzureML Spark On Behalf of credentials not available in this environment"
 
 
-def _get_client_args(**kwargs) -> Optional[dict]:
+def _get_client_args(**kwargs: Any) -> Optional[dict]:
     # Override default settings if provided via arguments
     if len(kwargs) > 0:
         env_key_from_kwargs = [
@@ -80,7 +80,7 @@ def _get_client_args(**kwargs) -> Optional[dict]:
     )
 
 
-def _get_request(url, resource) -> HttpRequest:
+def _get_request(url: str, resource: Any) -> HttpRequest:
     obo_access_token = os.environ.get("AZUREML_OBO_CANARY_TOKEN")
     experiment_name = os.environ.get("AZUREML_ARM_PROJECT_NAME")
     run_id = os.environ.get("AZUREML_RUN_ID")

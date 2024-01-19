@@ -50,6 +50,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
@@ -66,7 +67,7 @@ setup(
     python_requires="<4.0,>=3.8",
     install_requires=[
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
-        "azure-ai-ml>=1.12.0",
+        "azure-ai-ml>=1.13.0",
         "mlflow-skinny<3",
         "opencensus-ext-logging<=0.1.1",
         "azure-mgmt-resource<23.0.0,>=22.0.0",
