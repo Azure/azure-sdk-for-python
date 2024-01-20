@@ -8,7 +8,7 @@ import pytest
 import pathlib
 import uuid
 from devtools_testutils import AzureRecordedTestCase
-from conftest import WHISPER_AZURE, OPENAI, WHISPER_ALL, configure, TTS_OPENAI
+from conftest import WHISPER_AZURE, OPENAI, WHISPER_ALL, configure, TTS_OPENAI, TTS_AZURE, TTS_AZURE_AD
 
 audio_test_file = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./assets/hello.m4a"))
 audio_long_test_file = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./assets/wikipediaOcelot.wav"))
@@ -215,7 +215,7 @@ class TestAudio(AzureRecordedTestCase):
         assert result.text == "Hello"
 
     @configure
-    @pytest.mark.parametrize("api_type", [TTS_OPENAI])
+    @pytest.mark.parametrize("api_type", [TTS_OPENAI, TTS_AZURE, TTS_AZURE_AD])
     def test_tts(self, client, azure_openai_creds, api_type, **kwargs):
 
         speech_file_path = pathlib.Path(__file__).parent / f"{uuid.uuid4()}.mp3"
@@ -225,27 +225,27 @@ class TestAudio(AzureRecordedTestCase):
                 input="The quick brown fox jumped over the lazy dog.",
                 **kwargs,
             )
-            response.stream_to_file(speech_file_path)
+            assert response.encoding
+            assert response.content
+            assert response.text
+            response.write_to_file(speech_file_path)
         finally:
             os.remove(speech_file_path)
 
     @configure
-    @pytest.mark.parametrize("api_type", [TTS_OPENAI])
-    def test_tts_hd(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type", [TTS_OPENAI, TTS_AZURE])
+    def test_tts_hd_streaming(self, client, azure_openai_creds, api_type, **kwargs):
 
-        speech_file_path = pathlib.Path(__file__).parent / f"{uuid.uuid4()}.mp3"
-        try:
-            response = client.audio.speech.create(
-                voice="echo",
-                input="The quick brown fox jumped over the lazy dog.",
-                model="tts-1-hd"
-            )
-            response.stream_to_file(speech_file_path)
-        finally:
-            os.remove(speech_file_path)
+        with client.audio.speech.with_streaming_response.create(
+            voice="echo",
+            input="The quick brown fox jumped over the lazy dog.",
+            model="tts-1-hd"
+        ) as response:
+            response.read()
+
 
     @configure
-    @pytest.mark.parametrize("api_type", [TTS_OPENAI])
+    @pytest.mark.parametrize("api_type", [TTS_OPENAI, TTS_AZURE])
     def test_tts_response_format(self, client, azure_openai_creds, api_type, **kwargs):
 
         speech_file_path = pathlib.Path(__file__).parent / f"{uuid.uuid4()}.flac"
@@ -256,12 +256,15 @@ class TestAudio(AzureRecordedTestCase):
                 response_format="flac",
                 **kwargs
             )
-            response.stream_to_file(speech_file_path)
+            assert response.encoding
+            assert response.content
+            assert response.text
+            response.stream_to_file(speech_file_path)  # deprecated
         finally:
             os.remove(speech_file_path)
 
     @configure
-    @pytest.mark.parametrize("api_type", [TTS_OPENAI])
+    @pytest.mark.parametrize("api_type", [TTS_OPENAI, TTS_AZURE])
     def test_tts_speed(self, client, azure_openai_creds, api_type, **kwargs):
 
         speech_file_path = pathlib.Path(__file__).parent / f"{uuid.uuid4()}.mp3"
@@ -272,6 +275,9 @@ class TestAudio(AzureRecordedTestCase):
                 speed=3.0,
                 **kwargs
             )
-            response.stream_to_file(speech_file_path)
+            assert response.encoding
+            assert response.content
+            assert response.text
+            response.write_to_file(speech_file_path)
         finally:
             os.remove(speech_file_path)
