@@ -62,9 +62,14 @@ def configure_azure_monitor(**kwargs) -> None:
     :paramtype credential: ~azure.core.credentials.TokenCredential or None
     :keyword bool disable_offline_storage: Boolean value to determine whether to disable storing failed
      telemetry records for retry. Defaults to `False`.
+    :keyword str logger_name: The name of the Python logger that telemetry will be collected.
+    :keyword dict instrumentation_options: A nested dictionary that determines which instrumentations
+     to enable or disable.  Instrumentations are referred to by their Library Names. For example,
+     `{"azure_sdk": {"enabled": False}, "flask": {"enabled": False}, "django": {"enabled": True}}`
+     will disable Azure Core Tracing and the Flask instrumentation but leave Django and the other default
+     instrumentations enabled.
     :keyword str storage_directory: Storage directory in which to store retry files. Defaults to
      `<tempfile.gettempdir()>/Microsoft/AzureMonitor/opentelemetry-python-<your-instrumentation-key>`.
-    :keyword str logger_name: The name of the Python logger that telemetry will be collected.
     :rtype: None
     """
 

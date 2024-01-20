@@ -16,6 +16,8 @@
 
 - Update to OTel SKD/API 1.21
     ([#33864](https://github.com/Azure/azure-sdk-for-python/pull/33864))
+- Update Django sample
+    ([#33834](https://github.com/Azure/azure-sdk-for-python/pull/33834))
 
 ## 1.0.0b20 (2024-01-04)
 
