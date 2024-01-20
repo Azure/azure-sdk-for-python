@@ -767,6 +767,21 @@ class TestStorageShare(StorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy
+    def test_list_shares_enable_snapshot_virtual_directory_access(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        share = self._create_share(enable_snapshot_virtual_directory_access=False)
+
+        # Act
+        share_props = share.get_share_properties()
+
+        # Assert
+        self._delete_shares()
+
+    @FileSharePreparer()
+    @recorded_by_proxy
     def test_list_shares_no_options_for_premium_account(self, **kwargs):
         premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
         premium_storage_file_account_key = kwargs.pop("premium_storage_file_account_key")
