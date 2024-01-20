@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import os
+import zlib
 import pytest
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import DecodeError
@@ -121,7 +122,6 @@ async def test_compress_compressed_no_header(http_request):
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_decompress_plain_header(http_request):
     # expect error
-    import zlib
 
     account_name = "coretests"
     account_url = "https://{}.blob.core.windows.net".format(account_name)
@@ -198,7 +198,7 @@ async def test_compress_compressed_no_header_offline(port, http_request):
             assert False
         except UnicodeDecodeError:
             pass  
-        
+       
               
 @pytest.mark.live_test_only
 @pytest.mark.asyncio
@@ -222,3 +222,126 @@ async def test_compress_compressed_header(http_request):
             assert False
         except UnicodeDecodeError:
             pass
+
+
+                
+@pytest.mark.asyncio
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_decompress_plain_no_header_offline(port, http_request):
+    # expect plain text
+    client = AsyncPipelineClient("")
+    async with client:
+        request = http_request(method="GET", url="http://localhost:{}/streams/string".format(port))
+        pipeline_response = await client._pipeline.run(request, stream=True)
+        response = pipeline_response.http_response
+        data = response.stream_download(client._pipeline, decompress=True)
+        content = b""
+        async for d in data:
+            content += d
+        decoded = content.decode("utf-8")
+        assert decoded == "test"
+
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_compress_plain_header_offline(port, http_request):
+    # expect plain text
+    client = AsyncPipelineClient("")
+    async with client:
+        request = http_request(method="GET", url="http://localhost:{}/streams/plain_header".format(port))
+        pipeline_response = await client._pipeline.run(request,stream=True)
+        response = pipeline_response.http_response
+        data = response.stream_download(client._pipeline,decompress=False)
+        content = b""
+        async for d in data:
+            content += d
+        decoded = content.decode("utf-8")
+        assert decoded == "test" 
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_decompress_compressed_no_header_offline(port, http_request):
+    # expect compressed text
+    client = AsyncPipelineClient("")
+    async with client:
+        request = http_request(method='GET',url="http://localhost:{}/streams/compressed_no_header".format(port))
+        pipeline_response = await client._pipeline.run(request,stream=True)
+        response = pipeline_response.http_response
+        data = response.stream_download(client._pipeline,decompress=True)
+        content = b""
+        async for d in data:
+            content += d
+        with pytest.raises(UnicodeDecodeError):
+            content.decode("utf-8")
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_compress_compressed_header_offline(port, http_request):
+    # expect compressed text
+    client = AsyncPipelineClient("")
+    async with client:
+        request = http_request(method='GET',url="http://localhost:{}/streams/compressed_header".format(port))
+        pipeline_response = await client._pipeline.run(request,stream=True)
+        response = pipeline_response.http_response
+        data = response.stream_download(client._pipeline,decompress=False)
+        content = b""
+        async for d in data:
+            content += d
+        with pytest.raises(UnicodeDecodeError):
+            content.decode("utf-8")         
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_decompress_plain_header_offline(port, http_request):
+    # expect error
+    client = AsyncPipelineClient("")
+    async with client:
+        request = http_request(method="GET", url="http://localhost:{}/streams/compressed".format(port))
+        pipeline_response = await client._pipeline.run(request,stream=True)
+        response = pipeline_response.http_response
+        print(f"this is the pipeline respone {response}")
+        data = response.stream_download(client._pipeline,decompress=True)
+        try:
+            content = b""
+            async for d in data:
+                content += d
+            assert False
+        except (zlib.error, DecodeError):
+            pass
+ 
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_compress_plain_no_header_offline(port, http_request):
+    client = AsyncPipelineClient("")
+    async with client:
+        request = http_request(method="GET", url="http://localhost:{}/streams/string".format(port))
+        pipeline_response = await client._pipeline.run(request,stream=True)
+        response = pipeline_response.http_response
+        data = response.stream_download(client._pipeline,decompress=False)
+        content = b""
+        async for d in data:
+            content += d
+        decoded = content.decode("utf-8")
+        assert decoded == "test"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_decompress_compressed_header_offline(port, http_request):
+    # expect compressed text
+    client = AsyncPipelineClient("")
+    async with client:
+        request = http_request(method='GET',url="http://localhost:{}/streams/decompress_header".format(port))
+        pipeline_response = await client._pipeline.run(request, stream=True)
+        response = pipeline_response.http_response
+        data = response.stream_download(client._pipeline , decompress=True)
+        content = b""
+        async for d in data:
+            content += d
+        decoded = content.decode("utf-8")
+        assert decoded == "test"  
