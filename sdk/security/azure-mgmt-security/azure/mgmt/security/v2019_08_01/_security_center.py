@@ -74,19 +74,19 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.device_security_groups = DeviceSecurityGroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2019-08-01"
         )
         self.iot_security_solution_analytics = IotSecuritySolutionAnalyticsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2019-08-01"
         )
         self.iot_security_solutions_analytics_aggregated_alert = IotSecuritySolutionsAnalyticsAggregatedAlertOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2019-08-01"
         )
         self.iot_security_solutions_analytics_recommendation = IotSecuritySolutionsAnalyticsRecommendationOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2019-08-01"
         )
         self.iot_security_solution = IotSecuritySolutionOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2019-08-01"
         )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:

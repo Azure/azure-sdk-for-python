@@ -36,7 +36,7 @@ async def sample_copy_model_to(custom_model_id):
     import uuid
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceAdministrationClient
-    from azure.ai.documentintelligence.models import AuthorizeCopyRequest
+    from azure.ai.documentintelligence.models import AuthorizeCopyRequest, DocumentModelDetails
 
     source_endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     source_key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -50,11 +50,11 @@ async def sample_copy_model_to(custom_model_id):
     async with target_client:
         target_auth = await target_client.authorize_model_copy(
             AuthorizeCopyRequest(
-                model_id=str(uuid.uuid4()), # target model ID
+                model_id=str(uuid.uuid4()),  # target model ID
                 description="copied model",
             )
         )
-    
+
     source_client = DocumentIntelligenceAdministrationClient(
         endpoint=source_endpoint, credential=AzureKeyCredential(source_key)
     )
@@ -63,20 +63,22 @@ async def sample_copy_model_to(custom_model_id):
             model_id=source_model_id,
             copy_to_request=target_auth,
         )
-        copied_over_model = await poller.result()
+        copied_over_model: DocumentModelDetails = await poller.result()
 
     print(f"Model ID: {copied_over_model.model_id}")
     print(f"Description: {copied_over_model.description}")
     print(f"Model created on: {copied_over_model.created_date_time}")
     print(f"Model expires on: {copied_over_model.expiration_date_time}")
     print("Doc types the model can recognize:")
-    for name, doc_type in copied_over_model.doc_types.items():
-        print(f"Doc Type: '{name}' which has the following fields:")
-        for field_name, field in doc_type.field_schema.items():
-            print(
-                f"Field: '{field_name}' has type '{field['type']}' and confidence score "
-                f"{doc_type.field_confidence[field_name]}"
-            )
+    if copied_over_model.doc_types:
+        for name, doc_type in copied_over_model.doc_types.items():
+            print(f"Doc Type: '{name}' which has the following fields:")
+            for field_name, field in doc_type.field_schema.items():
+                if doc_type.field_confidence:
+                    print(
+                        f"Field: '{field_name}' has type '{field['type']}' and confidence score "
+                        f"{doc_type.field_confidence[field_name]}"
+                    )
     # [END begin_copy_document_model_to]
 
 

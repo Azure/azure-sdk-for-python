@@ -59,12 +59,14 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.api_collection = APICollectionOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.api_collection = APICollectionOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2022-11-20-preview"
+        )
         self.api_collection_onboarding = APICollectionOnboardingOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-11-20-preview"
         )
         self.api_collection_offboarding = APICollectionOffboardingOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-11-20-preview"
         )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:

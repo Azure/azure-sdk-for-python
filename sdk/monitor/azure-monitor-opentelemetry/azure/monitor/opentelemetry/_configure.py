@@ -18,6 +18,7 @@ from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
+from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.trace import get_tracer_provider, set_tracer_provider
@@ -92,7 +93,7 @@ def configure_azure_monitor(**kwargs) -> None:
 
 
 def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
-    resource = configurations[RESOURCE_ARG] # type: ignore
+    resource: Resource = configurations[RESOURCE_ARG] # type: ignore
     sampling_ratio = configurations[SAMPLING_RATIO_ARG]
     tracer_provider = TracerProvider(
         sampler=ApplicationInsightsSampler(sampling_ratio=cast(float, sampling_ratio)),
@@ -109,7 +110,7 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
 
 
 def _setup_logging(configurations: Dict[str, ConfigurationValue]):
-    resource = configurations[RESOURCE_ARG] # type: ignore
+    resource: Resource = configurations[RESOURCE_ARG] # type: ignore
     logger_provider = LoggerProvider(resource=resource)
     set_logger_provider(logger_provider)
     log_exporter = AzureMonitorLogExporter(**configurations)
@@ -118,12 +119,12 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     )
     get_logger_provider().add_log_record_processor(log_record_processor) # type: ignore
     handler = LoggingHandler(logger_provider=get_logger_provider())
-    logger_name = configurations[LOGGER_NAME_ARG] # type: ignore
+    logger_name: str = configurations[LOGGER_NAME_ARG] # type: ignore
     getLogger(logger_name).addHandler(handler)
 
 
 def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
-    resource = configurations[RESOURCE_ARG] # type: ignore
+    resource: Resource = configurations[RESOURCE_ARG] # type: ignore
     metric_exporter = AzureMonitorMetricExporter(**configurations)
     reader = PeriodicExportingMetricReader(metric_exporter)
     meter_provider = MeterProvider(

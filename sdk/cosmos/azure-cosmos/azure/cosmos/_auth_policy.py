@@ -3,12 +3,13 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from typing import TypeVar, Any, MutableMapping
+from typing import TypeVar, Any, MutableMapping, cast
 
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest
 from azure.core.rest import HttpRequest
+from azure.core.credentials import AccessToken
 
 from .http_constants import HttpHeaders
 
@@ -34,7 +35,8 @@ class CosmosBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
         :param ~azure.core.pipeline.PipelineRequest request: the request
         """
         super().on_request(request)
-        self._update_headers(request.http_request.headers, self._token.token)
+        # The None-check for self._token is done in the parent on_request
+        self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)
 
     def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs: Any) -> None:
         """Acquire a token from the credential and authorize the request with it.
@@ -46,4 +48,5 @@ class CosmosBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
         :param str scopes: required scopes of authentication
         """
         super().authorize_request(request, *scopes, **kwargs)
-        self._update_headers(request.http_request.headers, self._token.token)
+        # The None-check for self._token is done in the parent authorize_request
+        self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)
