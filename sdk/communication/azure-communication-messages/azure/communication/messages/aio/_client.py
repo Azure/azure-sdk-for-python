@@ -7,9 +7,10 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING, Union
 
 from azure.core import AsyncPipelineClient
+from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
@@ -21,50 +22,44 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-
-class NotificationMessagesClient(
-    NotificationMessagesClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class NotificationMessagesClient(NotificationMessagesClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """NotificationMessagesClient.
 
     :param endpoint: The communication resource, for example
      https://my-resource.communication.azure.com. Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :param credential: Credential needed for the client to connect to Azure. Is either a
+     TokenCredential type or a AzureKeyCredential type. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential or
+     ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: The API version to use for this operation. Default value is "2024-02-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, **kwargs: Any) -> None:
-        _endpoint = "{endpoint}"
-        self._config = NotificationMessagesClientConfiguration(endpoint=endpoint, **kwargs)
-        _policies = kwargs.pop("policies", None)
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union["AsyncTokenCredential", AzureKeyCredential],
+        **kwargs: Any
+    ) -> None:
+        _endpoint = '{endpoint}'
+        self._config = NotificationMessagesClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        _policies = kwargs.pop('policies', None)
         if _policies is None:
-            _policies = [
-                policies.RequestIdPolicy(**kwargs),
-                self._config.headers_policy,
-                self._config.user_agent_policy,
-                self._config.proxy_policy,
-                policies.ContentDecodePolicy(**kwargs),
-                self._config.redirect_policy,
-                self._config.retry_policy,
-                self._config.authentication_policy,
-                self._config.custom_hook_policy,
-                self._config.logging_policy,
-                policies.DistributedTracingPolicy(**kwargs),
-                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
-                self._config.http_logging_policy,
-            ]
+            _policies = [policies.RequestIdPolicy(**kwargs),self._config.headers_policy,self._config.user_agent_policy,self._config.proxy_policy,policies.ContentDecodePolicy(**kwargs),self._config.redirect_policy,self._config.retry_policy,self._config.authentication_policy,self._config.custom_hook_policy,self._config.logging_policy,policies.DistributedTracingPolicy(**kwargs),policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,self._config.http_logging_policy]
         self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
+
     def send_request(
-        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+        self,
+        request: HttpRequest, *, stream: bool = False,
+        **kwargs: Any
     ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
@@ -85,7 +80,7 @@ class NotificationMessagesClient(
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
@@ -100,49 +95,44 @@ class NotificationMessagesClient(
 
     async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)
-
-
 class MessageTemplateClient(MessageTemplateClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """MessageTemplateClient.
 
     :param endpoint: The communication resource, for example
      https://my-resource.communication.azure.com. Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :param credential: Credential needed for the client to connect to Azure. Is either a
+     TokenCredential type or a AzureKeyCredential type. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential or
+     ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: The API version to use for this operation. Default value is "2024-02-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, **kwargs: Any) -> None:
-        _endpoint = "{endpoint}"
-        self._config = MessageTemplateClientConfiguration(endpoint=endpoint, **kwargs)
-        _policies = kwargs.pop("policies", None)
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union["AsyncTokenCredential", AzureKeyCredential],
+        **kwargs: Any
+    ) -> None:
+        _endpoint = '{endpoint}'
+        self._config = MessageTemplateClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        _policies = kwargs.pop('policies', None)
         if _policies is None:
-            _policies = [
-                policies.RequestIdPolicy(**kwargs),
-                self._config.headers_policy,
-                self._config.user_agent_policy,
-                self._config.proxy_policy,
-                policies.ContentDecodePolicy(**kwargs),
-                self._config.redirect_policy,
-                self._config.retry_policy,
-                self._config.authentication_policy,
-                self._config.custom_hook_policy,
-                self._config.logging_policy,
-                policies.DistributedTracingPolicy(**kwargs),
-                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
-                self._config.http_logging_policy,
-            ]
+            _policies = [policies.RequestIdPolicy(**kwargs),self._config.headers_policy,self._config.user_agent_policy,self._config.proxy_policy,policies.ContentDecodePolicy(**kwargs),self._config.redirect_policy,self._config.retry_policy,self._config.authentication_policy,self._config.custom_hook_policy,self._config.logging_policy,policies.DistributedTracingPolicy(**kwargs),policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,self._config.http_logging_policy]
         self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
+
     def send_request(
-        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+        self,
+        request: HttpRequest, *, stream: bool = False,
+        **kwargs: Any
     ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
@@ -163,7 +153,7 @@ class MessageTemplateClient(MessageTemplateClientOperationsMixin):  # pylint: di
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

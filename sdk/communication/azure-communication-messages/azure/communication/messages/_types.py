@@ -8,5 +8,4 @@
 # --------------------------------------------------------------------------
 
 from typing import Literal, Union
-
 RepeatabilityResult = Union[Literal["accepted"], Literal["rejected"]]

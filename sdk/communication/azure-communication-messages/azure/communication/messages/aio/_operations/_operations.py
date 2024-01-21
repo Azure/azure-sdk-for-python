@@ -13,14 +13,7 @@ from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, TypeV
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import (
-    ClientAuthenticationError,
-    HttpResponseError,
-    ResourceExistsError,
-    ResourceNotFoundError,
-    ResourceNotModifiedError,
-    map_error,
-)
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, ResourceNotModifiedError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
@@ -29,26 +22,28 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._model_base import SdkJSONEncoder, _deserialize
-from ..._operations._operations import (
-    build_message_template_get_templates_request,
-    build_notification_messages_get_media_request,
-    build_notification_messages_send_request,
-)
+from ..._operations._operations import build_message_template_get_templates_request, build_notification_messages_download_media_request, build_notification_messages_send_request
 from .._vendor import MessageTemplateClientMixinABC, NotificationMessagesClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
-T = TypeVar("T")
+JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
+T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
+class NotificationMessagesClientOperationsMixin(   # pylint: disable=name-too-long
+    NotificationMessagesClientMixinABC
+):
 
-class NotificationMessagesClientOperationsMixin(NotificationMessagesClientMixinABC):  # pylint: disable=name-too-long
     @overload
     async def send(
-        self, body: _models.NotificationContent, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        body: _models.NotificationContent,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.SendMessageResult:
         # pylint: disable=line-too-long
         """Sends a notification message from Business to User.
@@ -164,7 +159,11 @@ class NotificationMessagesClientOperationsMixin(NotificationMessagesClientMixinA
 
     @overload
     async def send(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.SendMessageResult:
         """Sends a notification message from Business to User.
 
@@ -196,7 +195,11 @@ class NotificationMessagesClientOperationsMixin(NotificationMessagesClientMixinA
 
     @overload
     async def send(
-        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.SendMessageResult:
         """Sends a notification message from Business to User.
 
@@ -226,9 +229,12 @@ class NotificationMessagesClientOperationsMixin(NotificationMessagesClientMixinA
                 }
         """
 
+
     @distributed_trace_async
     async def send(
-        self, body: Union[_models.NotificationContent, JSON, IO[bytes]], **kwargs: Any
+        self,
+        body: Union[_models.NotificationContent, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.SendMessageResult:
         # pylint: disable=line-too-long
         """Sends a notification message from Business to User.
@@ -342,18 +348,17 @@ class NotificationMessagesClientOperationsMixin(NotificationMessagesClientMixinA
                 }
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.SendMessageResult] = kwargs.pop("cls", None)
+        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
+        cls: ClsType[_models.SendMessageResult] = kwargs.pop(
+            'cls', None
+        )
 
         content_type = content_type or "application/json"
         _content = None
@@ -370,43 +375,50 @@ class NotificationMessagesClientOperationsMixin(NotificationMessagesClientMixinA
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                await  response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers["Repeatability-Result"] = self._deserialize(
-            "str", response.headers.get("Repeatability-Result")
-        )
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
+        response_headers['Repeatability-Result']=self._deserialize('str', response.headers.get('Repeatability-Result'))
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.SendMessageResult, response.json())
+            deserialized = _deserialize(
+                _models.SendMessageResult,
+                response.json()
+            )
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers) # type: ignore
 
         return deserialized  # type: ignore
 
+
+
     @distributed_trace_async
-    async def _get_media(self, id: str, **kwargs: Any) -> bytes:
+    async def download_media(
+        self,
+        id: str,
+        **kwargs: Any
+    ) -> bytes:
         """Download the Media payload from a User to Business message.
 
         :param id: The stream ID. Required.
@@ -418,59 +430,66 @@ class NotificationMessagesClientOperationsMixin(NotificationMessagesClientMixinA
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[bytes] = kwargs.pop("cls", None)
+        cls: ClsType[bytes] = kwargs.pop(
+            'cls', None
+        )
 
-        _request = build_notification_messages_get_media_request(
+        
+        _request = build_notification_messages_download_media_request(
             id=id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", True)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                await  response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
 
         await response.read()
         deserialized = response.content
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers) # type: ignore
 
         return deserialized  # type: ignore
 
 
-class MessageTemplateClientOperationsMixin(MessageTemplateClientMixinABC):
+class MessageTemplateClientOperationsMixin( 
+    MessageTemplateClientMixinABC
+):
+
     @distributed_trace
-    def get_templates(self, channel_id: str, **kwargs: Any) -> AsyncIterable["_models.MessageTemplateItem"]:
+    def get_templates(
+        self,
+        channel_id: str,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.MessageTemplateItem"]:
         # pylint: disable=line-too-long
         """List all templates for given ACS channel.
 
@@ -503,19 +522,17 @@ class MessageTemplateClientOperationsMixin(MessageTemplateClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.MessageTemplateItem]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.MessageTemplateItem]] = kwargs.pop(
+            'cls', None
+        )
 
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 _request = build_message_template_get_templates_request(
                     channel_id=channel_id,
                     api_version=self._config.api_version,
@@ -523,29 +540,19 @@ class MessageTemplateClientOperationsMixin(MessageTemplateClientMixinABC):
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
                 _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
+                _next_request_params = case_insensitive_dict({
+                    key: [urllib.parse.quote(v) for v in value]    for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()})
                 _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -555,7 +562,7 @@ class MessageTemplateClientOperationsMixin(MessageTemplateClientMixinABC):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.MessageTemplateItem], deserialized["value"])
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
+                list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
@@ -563,16 +570,22 @@ class MessageTemplateClientOperationsMixin(MessageTemplateClientMixinABC):
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+                _request,
+                stream=_stream,
+                **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 if _stream:
-                    await response.read()  # Load the body in memory and close the socket
+                    await  response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+

@@ -322,9 +322,17 @@ def _get_type_alias_type(module_name: str, alias_name: str):
 
 
 def _get_model(module_name: str, model_name: str):
-    models = {k: v for k, v in sys.modules[module_name].__dict__.items() if isinstance(v, type)}
+    models = {
+        k: v
+        for k, v in sys.modules[module_name].__dict__.items()
+        if isinstance(v, type)
+    }
     module_end = module_name.rsplit(".", 1)[0]
-    models.update({k: v for k, v in sys.modules[module_end].__dict__.items() if isinstance(v, type)})
+    models.update({
+        k: v
+        for k, v in sys.modules[module_end].__dict__.items()
+        if isinstance(v, type)
+    })
     if isinstance(model_name, str):
         model_name = model_name.split(".")[-1]
     if model_name not in models:
@@ -528,9 +536,7 @@ class Model(_MyMutableMapping):
     @classmethod
     def _get_discriminator(cls, exist_discriminators) -> typing.Optional[str]:
         for v in cls.__dict__.values():
-            if (
-                isinstance(v, _RestField) and v._is_discriminator and v._rest_name not in exist_discriminators
-            ):  # pylint: disable=protected-access
+            if isinstance(v, _RestField) and v._is_discriminator and v._rest_name not in exist_discriminators:  # pylint: disable=protected-access
                 return v._rest_name  # pylint: disable=protected-access
         return None
 
@@ -540,7 +546,9 @@ class Model(_MyMutableMapping):
             return cls(data)
         discriminator = cls._get_discriminator(exist_discriminators)
         exist_discriminators.append(discriminator)
-        mapped_cls = cls.__mapping__.get(data.get(discriminator), cls)  # pylint: disable=no-member
+        mapped_cls = cls.__mapping__.get(
+            data.get(discriminator), cls
+        )  # pylint: disable=no-member
         if mapped_cls == cls:
             return cls(data)
         return mapped_cls._deserialize(data, exist_discriminators)  # pylint: disable=protected-access
@@ -567,9 +575,15 @@ class Model(_MyMutableMapping):
         if v is None or isinstance(v, _Null):
             return None
         if isinstance(v, (list, tuple, set)):
-            return [Model._as_dict_value(x, exclude_readonly=exclude_readonly) for x in v]
+            return [
+                Model._as_dict_value(x, exclude_readonly=exclude_readonly)
+                for x in v
+            ]
         if isinstance(v, dict):
-            return {dk: Model._as_dict_value(dv, exclude_readonly=exclude_readonly) for dk, dv in v.items()}
+            return {
+                dk: Model._as_dict_value(dv, exclude_readonly=exclude_readonly)
+                for dk, dv in v.items()
+            }
         return v.as_dict(exclude_readonly=exclude_readonly) if hasattr(v, "as_dict") else v
 
 
@@ -655,7 +669,10 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, 
             ):
                 if obj is None:
                     return obj
-                return {k: _deserialize(value_deserializer, v, module) for k, v in obj.items()}
+                return {
+                    k: _deserialize(value_deserializer, v, module)
+                    for k, v in obj.items()
+                }
 
             return functools.partial(
                 _deserialize_dict,

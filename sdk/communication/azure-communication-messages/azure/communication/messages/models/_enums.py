@@ -10,8 +10,34 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class CommunicationMessagesChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the communication messages channel.
+    """
+
+    WHATS_APP = "whatsApp"
+    """The WhatsApp communication messages channel type."""
+
+class CommunicationMessageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of message. Supports text, image, template.
+    """
+
+    TEXT = "text"
+    """Text message type."""
+    IMAGE = "image"
+    """Image message type."""
+    TEMPLATE = "template"
+    """Template message type."""
+
+class MessageTemplateBindingsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the message template.
+    """
+
+    WHATS_APP = "whatsApp"
+    """The WhatsApp template type."""
+
 class MessageTemplateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The aggregated template status."""
+    """The aggregated template status.
+    """
 
     APPROVED = "approved"
     """Message template is approved."""
@@ -22,9 +48,26 @@ class MessageTemplateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PAUSED = "paused"
     """Message template is paused."""
 
+class MessageTemplateValueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the template parameter.
+    """
+
+    TEXT = "text"
+    """The text template parameter type."""
+    IMAGE = "image"
+    """The image template parameter type."""
+    DOCUMENT = "document"
+    """The document template parameter type."""
+    VIDEO = "video"
+    """The video template parameter type."""
+    LOCATION = "location"
+    """The location template parameter type."""
+    QUICK_ACTION = "quickAction"
+    """The quick action template parameter type."""
 
 class WhatsAppMessageButtonSubType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The WhatsApp button sub type."""
+    """The WhatsApp button sub type.
+    """
 
     QUICK_REPLY = "quickReply"
     """The WhatsApp button sub type is quick reply."""

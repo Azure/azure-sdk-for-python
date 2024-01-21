@@ -62,10 +62,11 @@ class NotificationMessagesClient(NotificationMessagesClientGenerated):
             raise ValueError("Invalid URL: {}".format(endpoint))
 
         self._endpoint = endpoint
-        self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
+        self._credential = credential
         self._authentication_policy = HMACCredentialsPolicy(endpoint, credential.key)
+        self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         super().__init__(
-            self._endpoint, authentication_policy=self._authentication_policy, api_version=self._api_version, **kwargs
+            self._endpoint, self._credential, authentication_policy=self._authentication_policy, api_version=self._api_version, **kwargs
         )
 
     @classmethod
@@ -75,7 +76,8 @@ class NotificationMessagesClient(NotificationMessagesClientGenerated):
         
         """
         endpoint, access_key = parse_connection_str(conn_str)
-        return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
+        breakpoint
+        return cls(endpoint, AzureKeyCredential(key=access_key), **kwargs)
 
 
 class MessageTemplateClient(MessageTemplateClientGenerated):
@@ -115,9 +117,8 @@ class MessageTemplateClient(MessageTemplateClientGenerated):
 
         self._endpoint = endpoint
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
-        self._authentication_policy = HMACCredentialsPolicy(endpoint, credential.key)
         super().__init__(
-            self._endpoint, authentication_policy=self._authentication_policy, api_version=self._api_version, **kwargs
+            self._endpoint, credential, api_version=self._api_version, **kwargs
         )
 
     @classmethod

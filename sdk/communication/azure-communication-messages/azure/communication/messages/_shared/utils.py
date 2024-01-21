@@ -48,7 +48,7 @@ def parse_connection_str(conn_str):
     else:
         host = str(endpoint)
 
-    return host, str(shared_access_key)
+    return host, shared_access_key
 
 
 def get_current_utc_time():
