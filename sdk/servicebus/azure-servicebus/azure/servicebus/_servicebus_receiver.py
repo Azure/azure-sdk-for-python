@@ -863,7 +863,7 @@ class ServiceBusReceiver(
         enqueued_time_older_than_utc: datetime.datetime = None,
         timeout: Optional[float] = None,
         **kwargs: Any,
-    ) -> List[ServiceBusReceivedMessage]:
+    ) -> int:
         """  """
         if kwargs:
             warnings.warn(f"Unsupported keyword args: {kwargs}")
@@ -872,14 +872,22 @@ class ServiceBusReceiver(
             raise ValueError("The timeout must be greater than 0.")
         if not enqueued_time_older_than_utc:
             enqueued_time_older_than_utc = 0
+        # TODO: Client side validation?
+        if self._receive_mode!=ServiceBusReceiveMode.RECEIVE_AND_DELETE:
+            raise ValueError("receive mode must be RECEIVE_AND_DELETE")
         if int(max_message_count) < 0:
             raise ValueError("max_message_count must be 1 or greater.")
 
         self._open()
+        amqp_receive_mode = self._amqp_transport.ServiceBusToAMQPReceiveModeMap[self._receive_mode]
+        try:
+            receive_mode = cast(Enum, amqp_receive_mode).value
+        except AttributeError:
+            receive_mode = int(amqp_receive_mode)
         message = {
-            MGMT_REQUEST_ENQUEUED_TIME_UTC: self._amqp_transport.AMQP_LONG_VALUE(enqueued_time_older_than_utc),
-            # MGMT_REQUEST_ENQUEUED_TIME_UTC: enqueued_time_older_than_utc,
+            MGMT_REQUEST_ENQUEUED_TIME_UTC: enqueued_time_older_than_utc,
             MGMT_REQUEST_MAX_MESSAGE_COUNT: max_message_count,
+            MGMT_REQUEST_RECEIVER_SETTLE_MODE: self._amqp_transport.AMQP_UINT_VALUE(receive_mode),
         }
 
         self._populate_message_properties(message)
