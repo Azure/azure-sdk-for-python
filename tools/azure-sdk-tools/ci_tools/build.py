@@ -156,7 +156,7 @@ def build_packages(
         dist_dir = os.path.join(distribution_directory, package_name_in_artifacts)
 
         if is_dev_build:
-            process_requires(package_root)
+            process_requires(package_root, True)
 
             new_version = get_dev_version(setup_parsed.version, build_id)
 
