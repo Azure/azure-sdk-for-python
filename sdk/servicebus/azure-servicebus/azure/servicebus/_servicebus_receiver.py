@@ -885,7 +885,6 @@ class ServiceBusReceiver(
         message = {
             MGMT_REQUEST_ENQUEUED_TIME_UTC: enqueued_time_older_than_utc,
             MGMT_REQUEST_MAX_MESSAGE_COUNT: max_message_count,
-            # MGMT_REQUEST_RECEIVER_SETTLE_MODE: self._amqp_transport.AMQP_UINT_VALUE(0),
         }
 
         self._populate_message_properties(message)
