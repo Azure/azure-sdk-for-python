@@ -80,11 +80,11 @@ class UserProxy:
         :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
-        self._properties, last_response_headers = self.client_connection.ReadUser(user_link=self.user_link,
-                                                                                  options=request_options, **kwargs)
-        if response_hook:
-            response_hook(last_response_headers, self._properties)
+        self._properties = self.client_connection.ReadUser(
+            user_link=self.user_link,
+            options=request_options,
+            **kwargs
+        )
         return self._properties
 
     @distributed_trace
@@ -101,7 +101,11 @@ class UserProxy:
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
-        result = self.client_connection.ReadPermissions(user_link=self.user_link, options=feed_options, **kwargs)
+        result = self.client_connection.ReadPermissions(
+            user_link=self.user_link,
+            options=feed_options,
+            response_hook=response_hook,
+            **kwargs)
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
@@ -135,6 +139,7 @@ class UserProxy:
             user_link=self.user_link,
             query=query if parameters is None else dict(query=query, parameters=parameters),
             options=feed_options,
+            response_hook=response_hook,
             **kwargs
         )
 
@@ -160,15 +165,11 @@ class UserProxy:
         :rtype: Dict[str, Any]
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
-
-        permission_resp, last_response_headers = self.client_connection.ReadPermission(
-            permission_link=self._get_permission_link(permission), options=request_options, **kwargs
+        permission_resp = self.client_connection.ReadPermission(
+            permission_link=self._get_permission_link(permission),
+            options=request_options,
+            **kwargs
         )
-
-        if response_hook:
-            response_hook(last_response_headers, permission_resp)
-
         return Permission(
             id=permission_resp["id"],
             user_link=self.user_link,
@@ -190,15 +191,12 @@ class UserProxy:
         :rtype: Dict[str, Any]
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
-
-        permission, last_response_headers = self.client_connection.CreatePermission(
-            user_link=self.user_link, permission=body, options=request_options, **kwargs
+        permission = self.client_connection.CreatePermission(
+            user_link=self.user_link,
+            permission=body,
+            options=request_options,
+            **kwargs
         )
-
-        if response_hook:
-            response_hook(last_response_headers, permission)
-
         return Permission(
             id=permission["id"],
             user_link=self.user_link,
@@ -221,15 +219,9 @@ class UserProxy:
         :rtype: Dict[str, Any]
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
-
-        permission, last_response_headers = self.client_connection.UpsertPermission(
+        permission = self.client_connection.UpsertPermission(
             user_link=self.user_link, permission=body, options=request_options, **kwargs
         )
-
-        if response_hook:
-            response_hook(last_response_headers, permission)
-
         return Permission(
             id=permission["id"],
             user_link=self.user_link,
@@ -260,15 +252,12 @@ class UserProxy:
         :rtype: Dict[str, Any]
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
-
-        permission_resp, last_response_headers = self.client_connection.ReplacePermission(
-            permission_link=self._get_permission_link(permission), permission=body, options=request_options, **kwargs
+        permission_resp = self.client_connection.ReplacePermission(
+            permission_link=self._get_permission_link(permission),
+            permission=body,
+            options=request_options,
+            **kwargs
         )
-
-        if response_hook:
-            response_hook(last_response_headers, permission_resp)
-
         return Permission(
             id=permission_resp["id"],
             user_link=self.user_link,
@@ -296,9 +285,6 @@ class UserProxy:
         :rtype: None
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
-        last_response_headers = self.client_connection.DeletePermission(
+        self.client_connection.DeletePermission(
             permission_link=self._get_permission_link(permission), options=request_options, **kwargs
         )
-        if response_hook:
-            response_hook(last_response_headers, None)
