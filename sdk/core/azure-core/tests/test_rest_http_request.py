@@ -516,23 +516,22 @@ def test_stream_input():
 
 @pytest.fixture
 def filebytes():
-    return open("/Users/isabellacai/Desktop/github/azure-sdk-for-python/sdk/core/azure-core/empty.py", "rb")
+    file_path = os.path.join(os.path.dirname(__file__), "./conftest.py")
+    return open(file_path, "rb")
 
 def test_multipart_bytes(filebytes):
     request = HttpRequest("POST", url="http://example.org", files={"file": filebytes})
 
-    assert request.content == {"file": ("empty.py", filebytes, "application/octet-stream")}
+    assert request.content == {"file": ("conftest.py", filebytes, "application/octet-stream")}
     
 
-def test_multipart_filename_and_bytes():
-    filebytes = open("/Users/isabellacai/Desktop/github/azure-sdk-for-python/sdk/core/azure-core/empty.py", "rb")
+def test_multipart_filename_and_bytes(filebytes):
     files = ("specifiedFileName", filebytes)
     request = HttpRequest("POST", url="http://example.org", files={"file": files})
 
     assert request.content == {"file": ("specifiedFileName", filebytes, "application/octet-stream")}
 
-def test_multipart_filename_and_bytes_and_content_type():
-    filebytes = open("/Users/isabellacai/Desktop/github/azure-sdk-for-python/sdk/core/azure-core/empty.py", "rb")
+def test_multipart_filename_and_bytes_and_content_type(filebytes):
     files = ("specifiedFileName", filebytes, "application/json")
     request = HttpRequest("POST", url="http://example.org", files={"file": files})
 
