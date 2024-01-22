@@ -2420,7 +2420,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self,
         offer_link: str,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Reads an offer.
         :param str offer_link:
             The link to the offer.
