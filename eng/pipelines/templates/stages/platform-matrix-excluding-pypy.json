@@ -31,7 +31,7 @@
         "Ubuntu2004_3120": {
           "OSVmImage": "MMSUbuntu20.04",
           "Pool": "azsdk-pool-mms-ubuntu-2004-general",
-          "PythonVersion": "3.12.0",
+          "PythonVersion": "3.12",
           "CoverageArg": "--disablecov",
           "TestSamples": "false"
         }
