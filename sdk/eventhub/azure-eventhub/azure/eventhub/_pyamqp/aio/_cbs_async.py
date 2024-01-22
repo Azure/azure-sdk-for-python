@@ -168,21 +168,20 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
 
     async def _update_status(self):
         if self.auth_state in (CbsAuthState.OK, CbsAuthState.REFRESH_REQUIRED):
-            if self._expires_on is not None and self._refresh_window is not None:
-                is_expired, is_refresh_required = check_expiration_and_refresh_status(
-                    self._expires_on, self._refresh_window
-                )
-                _LOGGER.debug(
-                    "CBS status check: state == %r, expired == %r, refresh required == %r",
-                    self.auth_state,
-                    is_expired,
-                    is_refresh_required,
-                    extra=self._network_trace_params
-                )
-                if is_expired:
-                    self.auth_state = CbsAuthState.EXPIRED
-                elif is_refresh_required:
-                    self.auth_state = CbsAuthState.REFRESH_REQUIRED
+            is_expired, is_refresh_required = check_expiration_and_refresh_status(
+                self._expires_on, self._refresh_window
+            )
+            _LOGGER.debug(
+                "CBS status check: state == %r, expired == %r, refresh required == %r",
+                self.auth_state,
+                is_expired,
+                is_refresh_required,
+                extra=self._network_trace_params
+            )
+            if is_expired:
+                self.auth_state = CbsAuthState.EXPIRED
+            elif is_refresh_required:
+                self.auth_state = CbsAuthState.REFRESH_REQUIRED
         elif self.auth_state == CbsAuthState.IN_PROGRESS:
             _LOGGER.debug(
                 "CBS update in progress. Token put time: %r",
@@ -235,10 +234,14 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
             self._token = access_token.token.decode()
         elif isinstance(access_token.token, str):
             self._token = access_token.token
+        else:
+            raise ValueError("Token must be either bytes or string.")
         if isinstance(self._auth.token_type, bytes):
             token_type = self._auth.token_type.decode()
         elif isinstance(self._auth.token_type, str):
             token_type = self._auth.token_type
+        else:
+            raise ValueError("Token type must be either bytes or string.")
 
         self._token_put_time = int(utc_now().timestamp())
         if self._token and token_type:

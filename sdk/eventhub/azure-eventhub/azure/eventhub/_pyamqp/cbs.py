@@ -67,6 +67,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
             status_description_field=b"status-description",
         )
 
+        # FIXME: probably can remove the None check as it should fail callable too
         if not auth.get_token or not callable(auth.get_token): # type: ignore
             raise ValueError("get_token must be a callable object.")
 
@@ -192,21 +193,20 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
         if (
             self.auth_state in (CbsAuthState.OK, CbsAuthState.REFRESH_REQUIRED)
         ):
-            if self._expires_on is not None and self._refresh_window is not None:
-                is_expired, is_refresh_required = check_expiration_and_refresh_status(
-                    self._expires_on, self._refresh_window
-                )
-                _LOGGER.debug(
-                    "CBS status check: state == %r, expired == %r, refresh required == %r",
-                    self.auth_state,
-                    is_expired,
-                    is_refresh_required,
-                    extra=self._network_trace_params
-                )
-                if is_expired:
-                    self.auth_state = CbsAuthState.EXPIRED
-                elif is_refresh_required:
-                    self.auth_state = CbsAuthState.REFRESH_REQUIRED
+            is_expired, is_refresh_required = check_expiration_and_refresh_status(
+                self._expires_on, self._refresh_window # type: ignore
+            )
+            _LOGGER.debug(
+                "CBS status check: state == %r, expired == %r, refresh required == %r",
+                self.auth_state,
+                is_expired,
+                is_refresh_required,
+                extra=self._network_trace_params
+            )
+            if is_expired:
+                self.auth_state = CbsAuthState.EXPIRED
+            elif is_refresh_required:
+                self.auth_state = CbsAuthState.REFRESH_REQUIRED
         elif self.auth_state == CbsAuthState.IN_PROGRESS:
             _LOGGER.debug(
                 "CBS update in progress. Token put time: %r",
@@ -262,10 +262,14 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
             self._token = access_token.token.decode()
         elif isinstance(access_token.token, str):
             self._token = access_token.token
+        else:
+            raise ValueError("Token must be a string or bytes.")
         if isinstance(self._auth.token_type, bytes):
             token_type = self._auth.token_type.decode()
         elif isinstance(self._auth.token_type, str):
             token_type = self._auth.token_type
+        else:
+            raise ValueError("Token type must be a string or bytes.")
 
         self._token_put_time = int(utc_now().timestamp())
         if self._token and token_type:

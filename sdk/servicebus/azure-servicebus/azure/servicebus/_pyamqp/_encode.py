@@ -112,7 +112,7 @@ def encode_boolean(
 
 def encode_ubyte(
     output: bytearray, value: Union[int, bytes], with_constructor: bool = True, **kwargs: Any
-):
+) -> None:
     """
     <encoding code="0x50" category="fixed" width="1" label="8-bit unsigned integer"/>
 
@@ -206,7 +206,7 @@ def encode_ulong(output: bytearray, value: int, with_constructor: bool = True, u
 
 def encode_byte(
     output: bytearray, value: int, with_constructor: bool = True, **kwargs: Any
-):
+) -> None:
     """
     <encoding code="0x51" category="fixed" width="1" label="8-bit two's-complement integer"/>
 
@@ -663,7 +663,9 @@ def encode_annotations(value: Optional[Dict[Union[str, bytes], Any]]) -> Dict[st
     return fields
 
 
-def encode_application_properties(value: Optional[Dict[Union[str, bytes], AQMPSimpleType]]) -> Dict[Union[str, bytes], Any]:
+def encode_application_properties(
+        value: Optional[Dict[Union[str, bytes], AQMPSimpleType]]
+    ) -> Dict[Union[str, bytes], Any]:
     """The application-properties section is a part of the bare message used for structured application data.
 
     <type name="application-properties" class="restricted" source="map" provides="section">

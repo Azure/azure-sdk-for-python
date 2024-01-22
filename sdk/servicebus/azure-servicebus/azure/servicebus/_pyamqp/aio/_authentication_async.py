@@ -108,7 +108,7 @@ class JWTTokenAuthAsync(_CBSAuthAsync):
         :type get_token: callable object
         :param token_type: The type field of the token request.
          Default value is `"jwt"`.
-        :type token_type: str
+        :type token_type: str or bytes
 
         """
         super().__init__(uri, audience, token_type, get_token)

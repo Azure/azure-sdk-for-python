@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, Optional, Union, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 import uuid
 import logging
 
@@ -36,7 +36,7 @@ class Link:  # pylint: disable=too-many-instance-attributes
             handle: int,
             name: Optional[str] = None,
             role: bool = Role.Receiver,
-            **kwargs
+            **kwargs: Any
         ) -> None:
         self.state = LinkState.DETACHED
         self.name = name or str(uuid.uuid4())
@@ -100,7 +100,7 @@ class Link:  # pylint: disable=too-many-instance-attributes
         self._is_closed = False
         self._on_link_state_change = kwargs.get("on_link_state_change")
         self._on_attach = kwargs.get("on_attach")
-        self._error: Optional[Union[AMQPLinkRedirect, AMQPLinkError]] = None
+        self._error = None
 
     async def __aenter__(self) -> "Link":
         await self.attach()
