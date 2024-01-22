@@ -70,7 +70,9 @@ class TestDatastoreOperations:
 
     def test_mount_without_rslex(self, mock_from_rest, mock_datastore_operation: DatastoreOperations):
         with pytest.raises(Exception) as e:
-            mock_datastore_operation.mount("azureml://datastores/random_name", "/tmp/mount/random-local-path-for-datastore/")
+            mock_datastore_operation.mount(
+                "azureml://datastores/random_name", "/tmp/mount/random-local-path-for-datastore/"
+            )
         assert "pip install azure-ai-ml[mount]" in str(e.value)
 
     def test_get_default(self, mock_from_rest, mock_datastore_operation: DatastoreOperations):
