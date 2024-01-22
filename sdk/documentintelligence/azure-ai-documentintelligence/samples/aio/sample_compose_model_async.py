@@ -47,6 +47,7 @@ async def sample_compose_model():
         ComposeDocumentModelRequest,
         ComponentDocumentModelDetails,
         DocumentBuildMode,
+        DocumentModelDetails,
     )
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
@@ -89,10 +90,10 @@ async def sample_compose_model():
                 description="Purchase order-Office Cleaning Supplies",
             )
         )
-        supplies_model = await supplies_poller.result()
-        equipment_model = await equipment_poller.result()
-        furniture_model = await furniture_poller.result()
-        cleaning_supplies_model = await cleaning_supplies_poller.result()
+        supplies_model: DocumentModelDetails = await supplies_poller.result()
+        equipment_model: DocumentModelDetails = await equipment_poller.result()
+        furniture_model: DocumentModelDetails = await furniture_poller.result()
+        cleaning_supplies_model: DocumentModelDetails = await cleaning_supplies_poller.result()
 
         poller = await document_intelligence_admin_client.begin_compose_model(
             ComposeDocumentModelRequest(
@@ -106,21 +107,23 @@ async def sample_compose_model():
                 description="Office Supplies Composed Model",
             ),
         )
-        model = await poller.result()
+        model: DocumentModelDetails = await poller.result()
 
     print("Office Supplies Composed Model Info:")
     print(f"Model ID: {model.model_id}")
     print(f"Description: {model.description}")
     print(f"Model created on: {model.created_date_time}")
     print(f"Model expires on: {model.expiration_date_time}")
-    print("Doc types the model can recognize:")
-    for name, doc_type in model.doc_types.items():
-        print(f"Doc Type: '{name}' which has the following fields:")
-        for field_name, field in doc_type.field_schema.items():
-            print(
-                f"Field: '{field_name}' has type '{field['type']}' and confidence score "
-                f"{doc_type.field_confidence[field_name]}"
-            )
+    if model.doc_types:
+        print("Doc types the model can recognize:")
+        for name, doc_type in model.doc_types.items():
+            print(f"Doc Type: '{name}' which has the following fields:")
+            if doc_type.field_confidence:
+                for field_name, field in doc_type.field_schema.items():
+                    print(
+                        f"Field: '{field_name}' has type '{field['type']}' and confidence score "
+                        f"{doc_type.field_confidence[field_name]}"
+                    )
     # [END composed_model]
 
 

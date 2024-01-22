@@ -5,7 +5,7 @@
 import json
 import urllib
 import logging
-from typing import Optional
+from typing import Dict, Optional, Union
 from aiohttp import ClientTimeout
 from aiohttp_retry import RetryClient
 
@@ -73,6 +73,7 @@ async def azure_cognitive_services_caption(
     }
 
     # Add image either as url or upload it in binary
+    body: Union[str, bytes]
     if image_url is not None:
         body = json.dumps({"url": image_url})
     elif image_data is not None:
@@ -89,8 +90,7 @@ async def azure_cognitive_services_caption(
         timeout=ClientTimeout(total=timeout)
     ) as response:
         if response.status == 200:
-            response_data = await response.text()
-            response_data = json.loads(str(response_data))
+            response_data: Dict = json.loads(str(await response.text()))
 
             return build_description(response_data, tag_confidence_thresh)
 

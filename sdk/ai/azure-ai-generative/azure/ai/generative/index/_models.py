@@ -5,15 +5,26 @@
 import copy
 import json
 import os
-from typing import Optional
+from typing import Dict, Optional, Union
 
 from azure.core.credentials import TokenCredential
+from azure.ai.generative.constants._common import USER_AGENT_HEADER_KEY
 from azure.ai.generative.index._utils.connections import (
     connection_to_credential,
     get_connection_by_id_v2,
     get_connection_credential,
 )
 from azure.ai.generative.index._utils.logging import get_logger
+from azure.ai.generative._user_agent import USER_AGENT
+
+try:
+    from azure.ai.resources.entities import BaseConnection
+except Exception:
+    BaseConnection = None
+try:
+    from azure.ai.ml.entities import WorkspaceConnection
+except Exception:
+    WorkspaceConnection = None
 
 logger = get_logger(__name__)
 
@@ -34,7 +45,7 @@ def parse_model_uri(uri: str, **kwargs) -> dict:
         config = {**split_details(details), **config}
         config["kind"] = "open_ai"
         if "endpoint" in config:
-            if ".openai." in config["endpoint"] or ".api.cognitive." in config["endpoint"]:
+            if ".openai." in config["endpoint"] or ".api.cognitive." in config["endpoint"] or ".cognitiveservices." in config["endpoint"]:
                 config["api_base"] = config["endpoint"].rstrip("/")
             else:
                 config["api_base"] = f"https://{config['endpoint']}.openai.azure.com"
@@ -58,7 +69,7 @@ def parse_model_uri(uri: str, **kwargs) -> dict:
     return config
 
 
-def init_open_ai_from_config(config: dict, credential: Optional[TokenCredential]) -> dict:
+def init_open_ai_from_config(config: dict, credential: Optional[TokenCredential]) -> Dict:
     """Initialize an OpenAI model from a configuration dictionary."""
     import openai
 
@@ -83,11 +94,12 @@ def init_open_ai_from_config(config: dict, credential: Optional[TokenCredential]
                 connection = get_connection_by_id_v2(connection_id, credential=credential)
                 # Only change base, version, and type in AOAI case
                 if hasattr(connection, "type"):
-                    if connection.type == "azure_open_ai":
-                        config["api_base"] = connection.target
-                        connection_metadata = connection.metadata
-                        config["api_version"] = connection.metadata.get("apiVersion", connection_metadata.get("ApiVersion", "2023-07-01-preview"))
-                        config["api_type"] = connection.metadata.get("apiType", connection_metadata.get("ApiType", "azure")).lower()
+                    connection_obj: Union[WorkspaceConnection, BaseConnection] = connection
+                    if connection_obj.type == "azure_open_ai":
+                        config["api_base"] = connection_obj.target
+                        connection_metadata = connection_obj.metadata
+                        config["api_version"] = connection_obj.metadata.get("apiVersion", connection_metadata.get("ApiVersion", "2023-07-01-preview"))
+                        config["api_type"] = connection_obj.metadata.get("apiType", connection_metadata.get("ApiType", "azure")).lower()
                 elif isinstance(connection, dict) and connection.get("properties", {}).get("category", None) == "AzureOpenAI":
                     config["api_base"] = connection.get("properties", {}).get("target")
                     connection_metadata = connection.get("properties", {}).get("metadata", {})
@@ -111,9 +123,9 @@ def init_open_ai_from_config(config: dict, credential: Optional[TokenCredential]
                     credential = get_connection_credential(new_args)
 
             if hasattr(credential, "key"):
-                config["api_key"] = credential.key
+                config["api_key"] = credential.key  # type: ignore[union-attr]
             else:
-                config["api_key"] = credential.get_token("https://cognitiveservices.azure.com/.default").token
+                config["api_key"] = credential.get_token("https://cognitiveservices.azure.com/.default").token  # type: ignore[union-attr]
                 config["api_type"] = "azure_ad"
     except Exception as e:
         if "OPENAI_API_KEY" in os.environ:
@@ -147,7 +159,7 @@ def init_llm(model_config: dict, **kwargs):
     if model_config.get("stop") is not None:
         model_kwargs["stop"] = model_config.get("stop")
     if model_config.get("kind") == "open_ai" and model_config.get("api_type") == "azure":
-        model_config = init_open_ai_from_config(model_config)
+        model_config = init_open_ai_from_config(model_config, credential=None)
         if model_config["model"].startswith("gpt-3.5-turbo") or model_config["model"].startswith("gpt-35-turbo") or model_config["model"].startswith("gpt-4"):
             logger.info(f"Initializing AzureChatOpenAI with model {model_config['model']} with kwargs: {model_kwargs}")
 
@@ -161,6 +173,7 @@ def init_llm(model_config: dict, **kwargs):
                 openai_api_type=model_config.get("api_type"),
                 openai_api_version=model_config.get("api_version"),
                 max_retries=model_config.get("max_retries", 3),
+                default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
                 **kwargs
             )  # type: ignore
             if model_config.get("temperature", None) is not None:
@@ -175,18 +188,20 @@ def init_llm(model_config: dict, **kwargs):
                 model_kwargs=model_kwargs,
                 openai_api_key=model_config.get("api_key"),
                 max_retries=model_config.get("max_retries", 3),
+                default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
                 **kwargs
             )  # type: ignore
             if model_config.get("temperature", None) is not None:
                 llm.temperature = model_config.get("temperature")
     elif model_config.get("kind") == "open_ai" and model_config.get("api_type") == "open_ai":
         logger.info(f"Initializing OpenAI with model {model_config['model']} with kwargs: {model_kwargs}")
-        model_config = init_open_ai_from_config(model_config)
+        model_config = init_open_ai_from_config(model_config, credential=None)
         llm = ChatOpenAI(
             model=model_config["model"],
             max_tokens=model_config.get("max_tokens"),
             model_kwargs=model_kwargs,
             openai_api_key=model_config.get("api_key"),
+            default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
             **kwargs
         )  # type: ignore
         if model_config.get("temperature", None) is not None:

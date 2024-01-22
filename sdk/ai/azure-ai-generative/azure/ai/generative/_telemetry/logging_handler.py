@@ -9,6 +9,7 @@
 import logging
 import platform
 import traceback
+from typing import Union, Dict
 import os
 
 from opencensus.ext.azure.log_exporter import AzureLogHandler
@@ -45,7 +46,7 @@ class ActivityLogger:
         self.package_logger: logging.Logger = logging.getLogger(GEN_AI_INTERNAL_LOGGER_NAMESPACE + name)
         self.package_logger.propagate = False
         self.module_logger = logging.getLogger(name)
-        self.custom_dimensions = {}
+        self.custom_dimensions: Dict[str, Union[str, Dict]] = {}
 
     def update_info(self) -> None:
         self.package_logger.addHandler(get_appinsights_log_handler(USER_AGENT))

@@ -792,7 +792,12 @@
         "racwd",
         "rrggbb",
         "UPCA",
-        "UPCE"
+        "UPCE",
+        "mros",
+        "Nify",
+        "deserializers",
+        "ctxt",
+        "wday"
       ]
     },
     {
@@ -1242,6 +1247,13 @@
       ]
     },
     {
+      "filename": "sdk/ai/azure-ai-generative/**",
+      "words": [
+        "tqdm",
+        "genai"
+      ]
+    },
+    {
       "filename": "sdk/attestation/azure-security-attestation/tests/conftest.py",
       "words":[
         "sharedwus"
@@ -1657,6 +1669,16 @@
         "wday",
         "JSONify",
         "Nify"
+      ]
+    },
+    {
+      "filename": "sdk/vision/azure-ai-vision-imageanalysis/azure/ai/vision/imageanalysis/**/*.py",
+      "words": [
+        "mros",
+        "Nify",
+        "deserializers",
+        "ctxt",
+        "wday"
       ]
     },
     {

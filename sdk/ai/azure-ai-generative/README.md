@@ -6,9 +6,9 @@ The Azure AI Generative package is part of the Azure AI SDK for Python and conta
 | [Package (PyPI)][ai_pypi]
 | [API reference documentation][ai_ref_docs]
 | [Product documentation][product_documentation]
-| [Samples][ml_samples]
+| [Samples][generative_samples]
 
-This package has been tested with Python 3.7, 3.8, 3.9 and 3.10.
+This package has been tested with Python 3.8, 3.9, 3.10, 3.11 and 3.12.
 
 For a more complete set of Azure libraries, see https://aka.ms/azsdk/python/all.
 

@@ -24,14 +24,14 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         client_id: str,
-        client_credential: Optional[Union[str, Dict]] = None,
+        client_credential: Optional[Union[str, Dict[str, str]]] = None,
         *,
         additionally_allowed_tenants: Optional[List[str]] = None,
         authority: Optional[str] = None,
         disable_instance_discovery: Optional[bool] = None,
         tenant_id: Optional[str] = None,
         enable_support_logging: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         self._instance_discovery = None if disable_instance_discovery is None else not disable_instance_discovery
         self._authority = normalize_authority(authority) if authority else get_default_authority()
@@ -55,11 +55,11 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
 
         super(MsalCredential, self).__init__()
 
-    def __enter__(self):
+    def __enter__(self) -> "MsalCredential":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self._client.__exit__(*args)
 
     def close(self) -> None:
