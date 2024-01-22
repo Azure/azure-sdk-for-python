@@ -852,11 +852,6 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             raise ValueError("max_message_count must be 1 or greater.")
 
         await self._open()
-        amqp_receive_mode = self._amqp_transport.ServiceBusToAMQPReceiveModeMap[self._receive_mode]
-        try:
-            receive_mode = cast(Enum, amqp_receive_mode).value
-        except AttributeError:
-            receive_mode = int(amqp_receive_mode)
         message = {
             MGMT_REQUEST_ENQUEUED_TIME_UTC: enqueued_time_older_than_utc,
             MGMT_REQUEST_MAX_MESSAGE_COUNT: max_message_count,
