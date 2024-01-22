@@ -83,7 +83,9 @@ def batch_delete_op(  # pylint: disable=inconsistent-return-statements
     )
 
     if status_code == 200:
-        return message
+        return message.value[b'message-count']
+    if status_code in [202, 204]:
+        return []
 
     amqp_transport.handle_amqp_mgmt_error( # pylint: disable=protected-access
         _LOGGER, "Batch Delete failed.", condition, description, status_code
