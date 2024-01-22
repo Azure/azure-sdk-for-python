@@ -5,6 +5,8 @@
 # pylint: disable=protected-access,no-value-for-parameter
 
 import os
+import time
+import uuid
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Dict, Generator, Iterable, List, Optional, Union, cast
@@ -23,6 +25,8 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 )
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023_preview
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType
+from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024_preview
+from azure.ai.ml._restclient.v2024_01_01_preview.models import ComputeInstanceDataMount
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -108,6 +112,7 @@ class DataOperations(_ScopeDependentOperations):
         operation_scope: OperationScope,
         operation_config: OperationConfig,
         service_client: Union[ServiceClient042023_preview, ServiceClient102021Dataplane],
+        service_client_012024_preview: ServiceClient012024_preview,
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
@@ -116,6 +121,7 @@ class DataOperations(_ScopeDependentOperations):
         self._operation = service_client.data_versions
         self._container_operation = service_client.data_containers
         self._datastore_operation = datastore_operations
+        self._compute_operation = service_client_012024_preview.compute
         self._service_client = service_client
         self._init_kwargs = kwargs
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
@@ -737,6 +743,95 @@ class DataOperations(_ScopeDependentOperations):
 
         with self._set_registry_client(registry_name):
             return self.create_or_update(data_ref)
+
+    @monitor_with_activity(logger, "data.Mount", ActivityType.PUBLICAPI)
+    @experimental
+    def mount(
+        self,
+        path: str,
+        mount_point: str = None,
+        mode: str = "ro_mount",
+        debug: bool = False,
+        persistent: bool = False,
+        **_kwargs,
+    ) -> None:
+        """Mount a data asset to a local path, so that you can access data inside it
+        under a local path with any tools of your choice.
+
+        :param path: The data asset path to mount, in the form of `azureml:<name>` or `azureml:<name>:<version>`.
+        :type path: str
+        :param mount_point: A local path used as mount point.
+        :type mount_point: str
+        :param mode: Mount mode. Only `ro_mount` (read-only) is supported for data asset mount.
+        :type mode: str
+        :param debug: Whether to enable verbose logging.
+        :type debug: bool
+        :param persistent: Whether to persist the mount after reboot. Applies only when running on Compute Instance,
+                where the 'CI_NAME' environment variable is set."
+        :type persistent: bool
+        :return: None
+        """
+
+        assert mode in ["ro_mount", "rw_mount"], "mode should be either `ro_mount` or `rw_mount`"
+        read_only = mode == "ro_mount"
+        assert read_only, "read-write mount for data asset is not supported yet"
+
+        ci_name = os.environ.get("CI_NAME")
+        assert not persistent or (
+            persistent and ci_name is not None
+        ), "persistent mount is only supported on Compute Instance, where the 'CI_NAME' environment variable is set."
+
+        try:
+            from azureml.dataprep import rslex_fuse_subprocess_wrapper
+        except ImportError as exc:
+            raise Exception(
+                "Mount operations requires package azureml-dataprep-rslex installed. "
+                + "You can install it with Azure ML SDK with `pip install azure-ai-ml[mount]`."
+            ) from exc
+
+        uri = rslex_fuse_subprocess_wrapper.build_data_asset_uri(
+            self._operation_scope._subscription_id, self._resource_group_name, self._workspace_name, path
+        )
+        if persistent and ci_name is not None:
+            mount_name = f"unified_mount_{str(uuid.uuid4()).replace('-', '')}"
+            self._compute_operation.update_data_mounts(
+                self._resource_group_name,
+                self._workspace_name,
+                ci_name,
+                [
+                    ComputeInstanceDataMount(
+                        source=uri,
+                        source_type="URI",
+                        mount_name=mount_name,
+                        mount_action="Mount",
+                        mount_path=mount_point or "",
+                    )
+                ],
+                api_version="2021-01-01",
+            )
+            print(f"Mount requested [name: {mount_name}]. Waiting for completion ...")
+            while True:
+                compute = self._compute_operation.get(self._resource_group_name, self._workspace_name, ci_name)
+                mounts = compute.properties.properties.data_mounts
+                try:
+                    mount = [mount for mount in mounts if mount.mount_name == mount_name][0]
+                    if mount.mount_state == "Mounted":
+                        print(f"Mounted [name: {mount_name}].")
+                        break
+                    if mount.mount_state == "MountRequested":
+                        pass
+                    elif mount.mount_state == "MountFailed":
+                        raise Exception(f"Mount failed [name: {mount_name}]: {mount.error}")
+                    else:
+                        raise Exception(f"Got unexpected mount state [name: {mount_name}]: {mount.mount_state}")
+                except IndexError:
+                    pass
+                time.sleep(5)
+
+        else:
+            rslex_fuse_subprocess_wrapper.start_fuse_mount_subprocess(
+                uri, mount_point, read_only, debug, credential=self._operation._config.credential
+            )
 
     @contextmanager
     # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
