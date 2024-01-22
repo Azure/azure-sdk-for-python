@@ -81,14 +81,9 @@ def batch_delete_op(  # pylint: disable=inconsistent-return-statements
     condition = message.application_properties.get(
         MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
     )
+
     if status_code == 200:
-        return message
-        # return amqp_transport.parse_received_message(
-        #     message,
-        #     message_type=ServiceBusReceivedMessage,
-        #     receiver=receiver,
-        #     is_peeked_message=True
-        #     )
+        return message.value[b'message-count']
     if status_code in [202, 204]:
         return []
 

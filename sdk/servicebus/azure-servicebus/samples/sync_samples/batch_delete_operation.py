@@ -13,7 +13,7 @@ import os
 import sys
 import datetime
 import logging
-from azure.servicebus import ServiceBusClient, ServiceBusMessage
+from azure.servicebus import ServiceBusClient, ServiceBusMessage, ServiceBusReceiveMode
 
 
 CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
@@ -28,20 +28,21 @@ def send_single_message(sender):
     message = ServiceBusMessage("Single Message")
     sender.send_messages(message)
 
-servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR, logging_enable=True, retry_total=1)
+servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR, retry_total=1)
 with servicebus_client:
     sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
     with sender:
         send_single_message(sender)
+        
+        send_single_message(sender)
+        send_single_message(sender)
         time = datetime.datetime.utcnow()
-        send_single_message(sender)
-        send_single_message(sender)
 
     print("Send message is done.")
 
-    receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)
+    receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE)
     with receiver:
-        received_msgs = receiver.delete_batch_messages(max_message_count=1, enqueued_time_older_than_utc=time)
-        # rece = receiver.peek_messages(max_message_count=1)
+        received_msgs = receiver.delete_batch_messages(max_message_count=100, enqueued_time_older_than_utc=time)
+        print(received_msgs)
 
     print("Receive is done.")
