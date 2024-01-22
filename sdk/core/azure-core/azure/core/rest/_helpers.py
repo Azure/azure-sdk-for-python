@@ -103,9 +103,21 @@ def set_urlencoded_body(data, has_files):
         default_headers["Content-Type"] = "application/x-www-form-urlencoded"
     return default_headers, body
 
+FileContent = Union[IO[bytes], bytes, str]
+FileTypes = Union[
+    # file (or bytes)
+    FileContent,
+    # (filename, file (or bytes))
+    Tuple[Optional[str], FileContent],
+    # (filename, file (or bytes), content_type)
+    Tuple[Optional[str], FileContent, Optional[str]],
+    # (filename, file (or bytes), content_type, headers)
+    Tuple[Optional[str], FileContent, Optional[str], Mapping[str, str]],
+]
 
-def set_multipart_body(files):
-    formatted_files = {f: _format_data_helper(d) for f, d in files.items() if d is not None}
+def set_multipart_body(data: Dict[str, Any], files: Union[Mapping[str, FileTypes], Sequence[Tuple[str, FileTypes]]]):
+    file_items = files.items() if isinstance(files, Mapping) else files
+    formatted_files = {f: _format_data_helper(d) for f, d in file_items if d is not None}
     return {}, formatted_files
 
 

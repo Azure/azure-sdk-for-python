@@ -514,6 +514,31 @@ def test_stream_input():
     data_stream = Stream(length=4)
     HttpRequest(method="PUT", url="http://www.example.com", content=data_stream)  # ensure we can make this HttpRequest
 
+@pytest.fixture
+def filebytes():
+    return open("/Users/isabellacai/Desktop/github/azure-sdk-for-python/sdk/core/azure-core/empty.py", "rb")
+
+def test_multipart_bytes(filebytes):
+    request = HttpRequest("POST", url="http://example.org", files={"file": filebytes})
+
+    assert request.content == {"file": ("empty.py", filebytes, "application/octet-stream")}
+    
+
+def test_multipart_filename_and_bytes():
+    filebytes = open("/Users/isabellacai/Desktop/github/azure-sdk-for-python/sdk/core/azure-core/empty.py", "rb")
+    files = ("specifiedFileName", filebytes)
+    request = HttpRequest("POST", url="http://example.org", files={"file": files})
+
+    assert request.content == {"file": ("specifiedFileName", filebytes, "application/octet-stream")}
+
+def test_multipart_filename_and_bytes_and_content_type():
+    filebytes = open("/Users/isabellacai/Desktop/github/azure-sdk-for-python/sdk/core/azure-core/empty.py", "rb")
+    files = ("specifiedFileName", filebytes, "application/json")
+    request = HttpRequest("POST", url="http://example.org", files={"file": files})
+
+    assert request.content == {"file": ("specifiedFileName", filebytes, "application/json")}
+
+
 
 # NOTE: For files, we don't allow list of tuples yet, just dict. Will uncomment when we add this capability
 # def test_multipart_multiple_files_single_input_content():

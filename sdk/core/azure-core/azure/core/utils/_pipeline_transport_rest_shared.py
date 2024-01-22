@@ -23,6 +23,7 @@ from typing import (
     Iterator,
     List,
     Sequence,
+    Dict,
 )
 from http.client import HTTPConnection
 from urllib.parse import urlparse
@@ -344,16 +345,31 @@ def _format_data_helper(data: Union[str, IO]) -> Union[Tuple[None, str], Tuple[O
     :rtype: tuple[str, IO, str] or tuple[None, str]
     :return: A tuple of (data name, data IO, "application/octet-stream") or (None, data str)
     """
-    if hasattr(data, "read"):
+    content_type = "application/octet-stream" # default content type
+    filename: Optional[str] = None
+    if isinstance(data, tuple):
+        if len(data) == 2:
+            # Filename and file bytes are included
+            filename, file_bytes = data
+        elif len(data) == 3:
+            # Filename, file object, and content_type are included
+            filename, file_bytes, content_type = data
+        else:
+            raise ValueError(
+                "Unexpected data format. Expected file, or tuple of (filename, file_bytes) or "
+                "(filename, file_bytes, content_type)."
+            )
+    else:
+        # here we just get the file content
         data = cast(IO, data)
-        data_name = None
         try:
             if data.name[0] != "<" and data.name[-1] != ">":
-                data_name = os.path.basename(data.name)
+                filename = os.path.basename(data.name)
         except (AttributeError, TypeError):
             pass
-        return (data_name, data, "application/octet-stream")
-    return (None, cast(str, data))
+        file_bytes = data
+
+    return (filename, file_bytes, content_type)
 
 
 def _aiohttp_body_helper(
