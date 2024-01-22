@@ -878,7 +878,7 @@ class ServiceBusReceiver(
 
         self._open()
         message = {
-            MGMT_REQUEST_ENQUEUED_TIME_UTC: enqueued_time_older_than_utc,
+            MGMT_REQUEST_ENQUEUED_TIME_UTC: self._amqp_transport.AMQP_TIMESTAMP_VALUE(enqueued_time_older_than_utc),
             MGMT_REQUEST_MAX_MESSAGE_COUNT: max_message_count,
         }
 
@@ -891,11 +891,6 @@ class ServiceBusReceiver(
         links = get_receive_links(messages)
         with receive_trace_context_manager(self, span_name=SPAN_NAME_PEEK, links=links, start_time=start_time):
             return messages
-
-
-
-
-
 
     def complete_message(self, message: ServiceBusReceivedMessage) -> None:
         """Complete the message.
