@@ -898,7 +898,7 @@ class ServiceBusReceiver(
         )
         links = get_receive_links(messages)
         with receive_trace_context_manager(self, span_name=SPAN_NAME_PEEK, links=links, start_time=start_time):
-            return messages
+            return messages.value[b'message-count']
 
 
 
