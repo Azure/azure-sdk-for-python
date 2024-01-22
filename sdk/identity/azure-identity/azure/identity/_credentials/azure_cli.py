@@ -9,7 +9,6 @@ import re
 import shutil
 import subprocess
 import sys
-import time
 from typing import List, Optional, Any, Dict
 
 from azure.core.credentials import AccessToken
