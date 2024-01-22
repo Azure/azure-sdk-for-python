@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added support for parsing the `expires_on` field returned by the `az` CLI in `AzureCliCredential`. ([#33947](https://github.com/Azure/azure-sdk-for-python/issues/33947))
+
 ### Breaking Changes
 
 ### Bugs Fixed
