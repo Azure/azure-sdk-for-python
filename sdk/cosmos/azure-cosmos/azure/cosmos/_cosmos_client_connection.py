@@ -2483,12 +2483,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return: The Database Account.
         :rtype: documents.DatabaseAccount
         """
+        response_hook = kwargs.pop("response_hook", None)
         if url_connection is None:
             url_connection = self.url_connection
 
         headers = base.GetHeaders(self, self.default_headers, "get", "", "", "", {})
         request_params = RequestObject("databaseaccount", documents._OperationType.Read, url_connection)
-        result, self.last_response_headers = self.__Get("", request_params, headers, **kwargs)
+        result, last_response_headers = self.__Get("", request_params, headers, **kwargs)
+        self.last_response_headers = last_response_headers
         database_account = DatabaseAccount()
         database_account.DatabasesLink = "/dbs/"
         database_account.MediaLink = "/media/"
@@ -2515,6 +2517,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.UseMultipleWriteLocations = (
                 self.connection_policy.UseMultipleWriteLocations and database_account._EnableMultipleWritableLocations
         )
+        if response_hook:
+            response_hook(last_response_headers, result)
         return database_account
 
     def Create(

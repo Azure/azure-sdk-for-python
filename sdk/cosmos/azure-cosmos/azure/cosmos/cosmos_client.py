@@ -278,7 +278,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 :name: create_database
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
@@ -287,10 +286,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             request_options["populateQueryMetrics"] = populate_query_metrics
 
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
-        result, last_response_headers = self.client_connection.CreateDatabase(database=dict(id=id),
-                                                                              options=request_options, **kwargs)
-        if response_hook:
-            response_hook(last_response_headers)
+        result = self.client_connection.CreateDatabase(database=dict(id=id), options=request_options, **kwargs)
         return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
 
     @distributed_trace
@@ -462,7 +458,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :rtype: None
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
@@ -471,9 +466,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             request_options["populateQueryMetrics"] = populate_query_metrics
 
         database_link = _get_database_link(database)
-        last_response_headers = self.client_connection.DeleteDatabase(database_link, options=request_options, **kwargs)
-        if response_hook:
-            response_hook(last_response_headers)
+        self.client_connection.DeleteDatabase(database_link, options=request_options, **kwargs)
 
     @distributed_trace
     def get_database_account(self, **kwargs) -> DatabaseAccount:
@@ -483,8 +476,4 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
         :rtype: ~azure.cosmos.DatabaseAccount
         """
-        response_hook = kwargs.pop('response_hook', None)
-        result = self.client_connection.GetDatabaseAccount(**kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers)
-        return result
+        return self.client_connection.GetDatabaseAccount(**kwargs)
