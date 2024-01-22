@@ -463,8 +463,9 @@ def adjust_blob_size_for_encryption(size: int, encryption_data: Optional[_Encryp
     :return: The new blob size.
     :rtype: int
     """
-    if is_encryption_v2(encryption_data):
-        if encryption_data is not None and encryption_data.encrypted_region_info is not None:
+    if (encryption_data is not None and
+        encryption_data.encrypted_region_info is not None and
+        is_encryption_v2(encryption_data)):
             nonce_length = encryption_data.encrypted_region_info.nonce_length
             data_length = encryption_data.encrypted_region_info.data_length
             tag_length = encryption_data.encrypted_region_info.tag_length

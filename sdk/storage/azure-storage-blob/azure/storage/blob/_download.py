@@ -83,18 +83,18 @@ def process_content(data: Any, start_offset: int, end_offset: int, encryption: D
 class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
-        client: "BlobOperations" = None,  # type: ignore [assignment]
-        non_empty_ranges: Optional[List[Dict[str, Any]]] = None,
-        total_size: int = None,  # type: ignore [assignment]
-        chunk_size: int = None,  # type: ignore [assignment]
-        current_progress: int = None,  # type: ignore [assignment]
-        start_range: int = None,  # type: ignore [assignment]
-        end_range: int = None,  # type: ignore [assignment]
-        validate_content: bool = None,  # type: ignore [assignment]
+        client: "BlobOperations",
+        total_size: int,
+        chunk_size: int,
+        current_progress: int,
+        start_range: int,
+        end_range: int,
+        validate_content: bool,
+        encryption_options: Dict[str, Any],
+        encryption_data: Optional["_EncryptionData"] = None,
         stream = None,
         parallel: Optional[int] = None,
-        encryption_options: Dict[str, Any] = None,  # type: ignore [assignment]
-        encryption_data: Optional["_EncryptionData"] = None,
+        non_empty_ranges: Optional[List[Dict[str, Any]]] = None,
         progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
         **kwargs: Any
     ) -> None:
@@ -163,7 +163,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
         if self.progress_hook:
             self.progress_hook(self.progress_total, self.total_size)
 
-    def _write_to_stream(self, chunk_data, chunk_start: int) -> None:
+    def _write_to_stream(self, chunk_data: bytes, chunk_start: int) -> None:
         if self.stream_lock:
             with self.stream_lock:  # pylint: disable=not-context-manager
                 self.stream.seek(self.stream_start + (chunk_start - self.start_index))
@@ -261,7 +261,7 @@ class _ChunkIterator(object):
     def __len__(self) -> int:
         return self.size
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[bytes]:
         return self
 
     # Iterate through responses.
@@ -598,7 +598,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         :returns:
             The requested data as bytes or a string if encoding was specified. If
             the return value is empty, there is no more data to read.
-        :rtype: Any
+        :rtype: T
         """
         if size == -1:
             return self.readall()
