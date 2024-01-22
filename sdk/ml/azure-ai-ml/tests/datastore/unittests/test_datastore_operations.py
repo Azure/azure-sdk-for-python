@@ -1,3 +1,4 @@
+import os
 from typing import Callable
 from unittest.mock import Mock, patch
 
@@ -68,12 +69,42 @@ class TestDatastoreOperations:
         mock_datastore_operation.create_or_update(ds)
         mock_datastore_operation._operation.create_or_update.assert_called_once()
 
-    def test_mount_without_rslex(self, mock_from_rest, mock_datastore_operation: DatastoreOperations):
-        with pytest.raises(Exception) as e:
-            mock_datastore_operation.mount(
-                "azureml://datastores/random_name", "/tmp/mount/random-local-path-for-datastore/"
+    def test_mount_persistent(
+        self,
+        mock_from_rest,
+        mock_datastore_operation: DatastoreOperations,
+    ):
+        mock_datastore_operation._compute_operation.get.return_value = Mock(
+            properties=Mock(
+                properties=Mock(data_mounts=[Mock(mount_name="unified_mount_random_uuid", mount_state="Mounted")])
             )
-        assert "pip install azure-ai-ml[mount]" in str(e.value)
+        )
+        with patch("uuid.uuid4", return_value="random_uuid"), patch(
+            "azureml.dataprep.rslex_fuse_subprocess_wrapper.build_datastore_uri"
+        ) as mock_build_uri, patch.dict(os.environ, {"CI_NAME": "random_ci"}):
+            mock_datastore_operation.mount(
+                path="azureml://datastores/random_name",
+                mount_point="/tmp/mount/random-local-path-for-datastore/",
+                persistent=True,
+            )
+            mock_build_uri.assert_called_once()
+            mock_datastore_operation._compute_operation.update_data_mounts.assert_called_once()
+
+    def test_mount_non_persistent(
+        self,
+        mock_from_rest,
+        mock_datastore_operation: DatastoreOperations,
+    ):
+        with patch("azureml.dataprep.rslex_fuse_subprocess_wrapper.build_datastore_uri") as mock_build_uri, patch(
+            "azureml.dataprep.rslex_fuse_subprocess_wrapper.start_fuse_mount_subprocess"
+        ) as mock_start_subprocess:
+            mock_datastore_operation.mount(
+                path="azureml://datastores/random_name",
+                mount_point="/tmp/mount/random-local-path-for-datastore/",
+                persistent=False,
+            )
+            mock_build_uri.assert_called_once()
+            mock_start_subprocess.assert_called_once()
 
     def test_get_default(self, mock_from_rest, mock_datastore_operation: DatastoreOperations):
         mock_datastore_operation.get_default()

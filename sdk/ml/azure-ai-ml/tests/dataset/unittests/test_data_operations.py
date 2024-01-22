@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from typing import Callable, Iterable
 from unittest.mock import Mock, patch
@@ -577,10 +578,37 @@ class TestDataOperations:
                 blob_uri=None,
             )
 
-    def test_mount_without_rslex(
+    def test_mount_persistent(
         self,
         mock_data_operations: DataOperations,
     ):
-        with pytest.raises(Exception) as e:
-            mock_data_operations.mount("azureml:random_name:random_version", "/tmp/mount/random-local-path-for-data/")
-        assert "pip install azure-ai-ml[mount]" in str(e.value)
+        mock_data_operations._compute_operation.get.return_value = Mock(
+            properties=Mock(
+                properties=Mock(data_mounts=[Mock(mount_name="unified_mount_random_uuid", mount_state="Mounted")])
+            )
+        )
+        with patch("uuid.uuid4", return_value="random_uuid"), patch(
+            "azureml.dataprep.rslex_fuse_subprocess_wrapper.build_data_asset_uri"
+        ) as mock_build_uri, patch.dict(os.environ, {"CI_NAME": "random_ci"}):
+            mock_data_operations.mount(
+                path="azureml:random_name:random_version",
+                mount_point="/tmp/mount/random-local-path-for-data/",
+                persistent=True,
+            )
+            mock_build_uri.assert_called_once()
+            mock_data_operations._compute_operation.update_data_mounts.assert_called_once()
+
+    def test_mount_non_persistent(
+        self,
+        mock_data_operations: DataOperations,
+    ):
+        with patch("azureml.dataprep.rslex_fuse_subprocess_wrapper.build_data_asset_uri") as mock_build_uri, patch(
+            "azureml.dataprep.rslex_fuse_subprocess_wrapper.start_fuse_mount_subprocess"
+        ) as mock_start_subprocess:
+            mock_data_operations.mount(
+                path="azureml:random_name:random_version",
+                mount_point="/tmp/mount/random-local-path-for-data/",
+                persistent=False,
+            )
+            mock_build_uri.assert_called_once()
+            mock_start_subprocess.assert_called_once()
