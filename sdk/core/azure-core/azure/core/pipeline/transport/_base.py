@@ -30,6 +30,7 @@ import json
 import logging
 import time
 import copy
+from socket import socket
 from urllib.parse import urlparse
 import xml.etree.ElementTree as ET
 
@@ -42,6 +43,7 @@ from typing import (
     Mapping,
     Optional,
     Tuple,
+    Iterable,
     Iterator,
     Type,
     Dict,
@@ -50,6 +52,7 @@ from typing import (
     MutableMapping,
     ContextManager,
     TYPE_CHECKING,
+    cast,
 )
 
 from http.client import HTTPResponse as _HTTPResponse
@@ -208,7 +211,10 @@ class HttpRequest:
         self.headers: MutableMapping[str, str] = case_insensitive_dict(headers)
         self.files: Optional[Any] = files
         self.data: Optional[DataType] = data
-        self.multipart_mixed_info: Optional[Tuple[Sequence[Any], Sequence[Any], Optional[str], Dict[str, Any]]] = None
+        # (requests, policies, boundary, kwargs)
+        self.multipart_mixed_info: Optional[
+            Tuple[Sequence["HttpRequest"], Sequence[Any], Optional[str], Dict[str, Any]]
+        ] = None
 
     def __repr__(self) -> str:
         return "<HttpRequest [{}], url: '{}'>".format(self.method, self.url)
@@ -355,7 +361,7 @@ class HttpRequest:
     def set_multipart_mixed(
         self,
         *requests: "HttpRequest",
-        policies: Optional[List[SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]]] = None,
+        policies: Optional[List[SansIOHTTPPolicy[HttpRequest, HTTPResponseType]]] = None,
         boundary: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
@@ -375,10 +381,9 @@ class HttpRequest:
         :keyword list[SansIOHTTPPolicy] policies: SansIOPolicy to apply at preparation time
         :keyword str boundary: Optional boundary
         """
-        policies = policies or []
         self.multipart_mixed_info = (
             requests,
-            policies,
+            policies or [],
             boundary,
             kwargs,
         )
@@ -466,9 +471,9 @@ class _HttpResponseBase:
     def _decode_parts(
         self,
         message: Message,
-        http_response_type: Type["_HttpResponseBase"],
+        http_response_type: Type[HTTPResponseType],
         requests: Sequence[HttpRequest],
-    ) -> List["HttpResponse"]:
+    ) -> List[HTTPResponseType]:
         """Rebuild an HTTP response from pure string.
 
         :param ~email.message.Message message: The HTTP message as an email object
@@ -479,9 +484,7 @@ class _HttpResponseBase:
         """
         return _decode_parts_helper(self, message, http_response_type, requests, _deserialize_response)
 
-    def _get_raw_parts(
-        self, http_response_type: Optional[Type["_HttpResponseBase"]] = None
-    ) -> Iterator["HttpResponse"]:
+    def _get_raw_parts(self, http_response_type: Optional[Type[HTTPResponseType]] = None) -> List[HTTPResponseType]:
         """Assuming this body is multipart, return the iterator or parts.
 
         If parts are application/http use http_response_type or HttpClientTransportResponse
@@ -491,7 +494,11 @@ class _HttpResponseBase:
         :rtype: iterator[HttpResponse]
         :return: The iterator of HttpResponse
         """
-        return _get_raw_parts_helper(self, http_response_type or HttpClientTransportResponse)
+        # FIXME I'm unclear why the cast is needed TBH.
+        final_type: Type[HTTPResponseType] = http_response_type or cast(
+            Type[HTTPResponseType], HttpClientTransportResponse
+        )
+        return _get_raw_parts_helper(self, final_type)
 
     def raise_for_status(self) -> None:
         """Raises an HttpResponseError if the response has an error status code.
@@ -519,7 +526,7 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
         """
         raise NotImplementedError("stream_download is not implemented.")
 
-    def parts(self) -> Iterator["HttpResponse"]:
+    def parts(self) -> Iterable["HttpResponse"]:
         """Assuming the content-type is multipart/mixed, will return the parts as an iterator.
 
         :rtype: iterator[HttpResponse]
@@ -569,7 +576,9 @@ def _deserialize_response(http_response_as_bytes, http_request, http_response_ty
     :rtype: HttpResponse
     :return: The HTTP response from those low-level bytes.
     """
-    local_socket = BytesIOSocket(http_response_as_bytes)
+    # Duck type a socket, so HTTPResponse can parse those bytes
+    # If someone finds a way to get an HTTPResponse from bytes in a less hacky way, please update this code
+    local_socket = cast(socket, BytesIOSocket(http_response_as_bytes))
     response = _HTTPResponse(local_socket, method=http_request.method)
     response.begin()
     return http_response_type(http_request, response)

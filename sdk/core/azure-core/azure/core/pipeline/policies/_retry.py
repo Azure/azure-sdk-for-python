@@ -301,6 +301,9 @@ class RetryPolicyBase:
             if response:
                 settings["status"] -= 1
                 if hasattr(response, "http_request") and hasattr(response, "http_response"):
+                    # The only type that has both "http_request" and "http_response" is PipelineResponse
+                    # The shield test is not smart enough here, so casting for mypy
+                    response = cast(PipelineResponse[HTTPRequestType, AllHttpResponseType], response)
                     settings["history"].append(
                         RequestHistory(response.http_request, http_response=response.http_response)
                     )

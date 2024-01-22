@@ -26,7 +26,17 @@
 from collections.abc import AsyncIterator
 import functools
 import logging
-from typing import Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload, Type, MutableMapping
+from typing import (
+    Any,
+    Optional,
+    AsyncIterator as AsyncIteratorType,
+    TYPE_CHECKING,
+    cast,
+    overload,
+    Type,
+    MutableMapping,
+    Union,
+)
 from types import TracebackType
 from urllib3.exceptions import (
     ProtocolError,
@@ -207,9 +217,9 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
         :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
-    async def send(
+    async def send(  # pylint:disable=invalid-overridden-method
         self, request, *, proxies: Optional[MutableMapping[str, str]] = None, **kwargs: Any
-    ):  # pylint:disable=invalid-overridden-method
+    ) -> Union[AsyncHttpResponse, "RestAsyncHttpResponse"]:
         """Send the request using this HTTP sender.
 
         :param request: The HttpRequest
@@ -220,6 +230,9 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
         :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
+        # Type narrowing doesn't work with "open()""
+        session: requests.Session = cast(requests.Session, self.session)
+
         trio_limiter = kwargs.get("trio_limiter", None)
         response = None
         error: Optional[AzureErrorUnion] = None
@@ -228,7 +241,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
             try:
                 response = await trio.to_thread.run_sync(
                     functools.partial(
-                        self.session.request,
+                        session.request,
                         request.method,
                         request.url,
                         headers=request.headers,
@@ -246,7 +259,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
             except AttributeError:  # trio < 0.12.1
                 response = await trio.run_sync_in_worker_thread(  # type: ignore # pylint: disable=no-member
                     functools.partial(
-                        self.session.request,
+                        session.request,
                         request.method,
                         request.url,
                         headers=request.headers,
@@ -261,7 +274,10 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
                     ),
                     limiter=trio_limiter,
                 )
-            response.raw.enforce_content_length = True
+            # It's unclear why mypy needs a cast without None here,
+            # as the try/except makes sure response is not None
+            # Type narrowing with try/except is not perfect.
+            cast(requests.Response, response).raw.enforce_content_length = True
 
         except (
             NewConnectionError,

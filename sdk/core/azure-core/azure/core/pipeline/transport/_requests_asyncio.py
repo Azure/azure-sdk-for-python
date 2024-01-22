@@ -34,6 +34,7 @@ from typing import (
     Union,
     TYPE_CHECKING,
     overload,
+    cast,
     Type,
     MutableMapping,
 )
@@ -156,6 +157,9 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
+        # Type narrowing doesn't work with "open()""
+        session: requests.Session = cast(requests.Session, self.session)
+
         loop = kwargs.get("loop", _get_running_loop())
         response = None
         error: Optional[AzureErrorUnion] = None
@@ -164,7 +168,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
             response = await loop.run_in_executor(
                 None,
                 functools.partial(
-                    self.session.request,
+                    session.request,
                     request.method,
                     request.url,
                     headers=request.headers,

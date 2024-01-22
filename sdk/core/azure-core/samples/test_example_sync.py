@@ -23,7 +23,7 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Iterable, MutableSequence, Union
+from typing import Iterable, List, Union
 from azure.core.pipeline import Pipeline
 from azure.core import PipelineClient
 from azure.core.rest import HttpRequest, HttpResponse
@@ -129,7 +129,7 @@ def test_example_no_redirects():
 def test_example_retry_policy():
     url = "https://bing.com"
 
-    policies: MutableSequence[Union[HTTPPolicy, SansIOHTTPPolicy]] = [UserAgentPolicy("myuseragent"), RedirectPolicy()]
+    policies: List[Union[HTTPPolicy, SansIOHTTPPolicy]] = [UserAgentPolicy("myuseragent"), RedirectPolicy()]
 
     # [START retry_policy]
     from azure.core.pipeline.policies import RetryPolicy

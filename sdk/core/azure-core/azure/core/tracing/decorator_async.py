@@ -30,7 +30,7 @@ import functools
 from typing import Awaitable, Callable, Any, TypeVar, overload, Optional
 from typing_extensions import ParamSpec
 from .common import change_context, get_function_and_class_name
-from . import SpanKind as _SpanKind
+from . import SpanKind as _SpanKind, AbstractSpan
 from ..settings import settings
 
 P = ParamSpec("P")
@@ -68,9 +68,11 @@ def distributed_trace_async(  # pylint:disable=function-redefined
 
     def decorator(func: Callable[P, Awaitable[T]]) -> Callable[P, Awaitable[T]]:
         @functools.wraps(func)
-        async def wrapper_use_tracer(*args: Any, **kwargs: Any) -> T:
-            merge_span = kwargs.pop("merge_span", False)
-            passed_in_parent = kwargs.pop("parent_span", None)
+        async def wrapper_use_tracer(*args: P.args, **kwargs: P.kwargs) -> T:
+            # mypy/pyright don't know the type of the kwargs passed to the function
+            # and PEP612 do not allow definition of additional kwargs when using ParamSpec
+            merge_span: bool = kwargs.pop("merge_span", False)  # type: ignore
+            passed_in_parent: Optional[AbstractSpan] = kwargs.pop("parent_span", None)  # type: ignore
 
             span_impl_type = settings.tracing_implementation()
             if span_impl_type is None:

@@ -23,7 +23,7 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Iterable, MutableSequence, Union
+from typing import Iterable, List, Union
 import pytest
 from azure.core.pipeline import AsyncPipeline
 from azure.core import AsyncPipelineClient
@@ -161,7 +161,7 @@ async def test_example_async_redirect_policy():
 async def test_example_async_retry_policy():
     url = "https://bing.com"
     request = HttpRequest("GET", "https://bing.com")
-    policies: MutableSequence[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = [
+    policies: List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = [
         UserAgentPolicy("myuseragent"),
         AsyncRedirectPolicy(),
     ]

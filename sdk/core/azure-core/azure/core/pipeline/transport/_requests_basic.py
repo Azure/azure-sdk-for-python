@@ -23,8 +23,9 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from __future__ import annotations
 import logging
-from typing import Iterator, Optional, Union, TypeVar, overload, cast, TYPE_CHECKING, MutableMapping
+from typing import Iterator, Optional, Union, overload, cast, Tuple, TYPE_CHECKING, MutableMapping
 from urllib3.util.retry import Retry
 from urllib3.exceptions import (
     DecodeError as CoreDecodeError,
@@ -55,6 +56,10 @@ from .._tools import (
 if TYPE_CHECKING:
     from ...rest import HttpRequest as RestHttpRequest, HttpResponse as RestHttpResponse
 
+    # We need a transport to define a pipeline, this "if" avoid a circular import
+    from azure.core.pipeline import Pipeline
+
+
 AzureErrorUnion = Union[
     ServiceRequestError,
     ServiceResponseError,
@@ -62,7 +67,6 @@ AzureErrorUnion = Union[
     HttpResponseError,
 ]
 
-PipelineType = TypeVar("PipelineType")
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -206,7 +210,7 @@ class StreamDownloadGenerator:
 class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
     """Streaming of data from the response."""
 
-    def stream_download(self, pipeline: PipelineType, **kwargs) -> Iterator[bytes]:
+    def stream_download(self, pipeline: Pipeline[HttpRequest, "HttpResponse"], **kwargs) -> Iterator[bytes]:
         """Generator for streaming request body data.
 
         :param pipeline: The pipeline object
@@ -276,8 +280,6 @@ class RequestsTransport(HttpTransport):
         if not self.session and self._session_owner:
             self.session = requests.Session()
             self._init_session(self.session)
-        # pyright has trouble to understand that self.session is not None, since we raised at worst in the init
-        self.session = cast(requests.Session, self.session)
 
     def close(self):
         if self._session_owner and self.session:
@@ -318,7 +320,7 @@ class RequestsTransport(HttpTransport):
         request: Union[HttpRequest, "RestHttpRequest"],
         *,
         proxies: Optional[MutableMapping[str, str]] = None,
-        **kwargs
+        **kwargs,
     ) -> Union[HttpResponse, "RestHttpResponse"]:
         """Send request object according to configuration.
 
@@ -330,11 +332,16 @@ class RequestsTransport(HttpTransport):
         :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
+        # Type narrowing doesn't work with "open()""
+        session: requests.Session = cast(requests.Session, self.session)
+
         response = None
         error: Optional[AzureErrorUnion] = None
 
         try:
-            connection_timeout = kwargs.pop("connection_timeout", self.connection_config.timeout)
+            connection_timeout: Union[float, Tuple[float, float], Tuple[float, None]] = kwargs.pop(
+                "connection_timeout", self.connection_config.timeout
+            )
 
             if isinstance(connection_timeout, tuple):
                 if "read_timeout" in kwargs:
@@ -344,7 +351,7 @@ class RequestsTransport(HttpTransport):
             else:
                 read_timeout = kwargs.pop("read_timeout", self.connection_config.read_timeout)
                 timeout = (connection_timeout, read_timeout)
-            response = self.session.request(  # type: ignore
+            response = session.request(
                 request.method,
                 request.url,
                 headers=request.headers,
@@ -355,7 +362,7 @@ class RequestsTransport(HttpTransport):
                 cert=kwargs.pop("connection_cert", self.connection_config.cert),
                 allow_redirects=False,
                 proxies=proxies,
-                **kwargs
+                **kwargs,
             )
             response.raw.enforce_content_length = True
 
