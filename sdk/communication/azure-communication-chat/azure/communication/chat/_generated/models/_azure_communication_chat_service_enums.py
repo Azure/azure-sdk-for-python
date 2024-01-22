@@ -14,6 +14,7 @@ class ChatAttachmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of attachment."""
 
     IMAGE = "image"
+    FILE = "file"
 
 
 class ChatMessageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

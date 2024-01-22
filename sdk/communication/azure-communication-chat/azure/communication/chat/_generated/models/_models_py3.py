@@ -73,7 +73,7 @@ class ChatAttachment(_serialization.Model):
 
     :ivar id: Id of the attachment. Required.
     :vartype id: str
-    :ivar attachment_type: The type of attachment. Required. "image"
+    :ivar attachment_type: The type of attachment. Required. Known values are: "image" and "file".
     :vartype attachment_type: str or ~azure.communication.chat.models.ChatAttachmentType
     :ivar name: The name of the attachment content.
     :vartype name: str
@@ -109,7 +109,8 @@ class ChatAttachment(_serialization.Model):
         """
         :keyword id: Id of the attachment. Required.
         :paramtype id: str
-        :keyword attachment_type: The type of attachment. Required. "image"
+        :keyword attachment_type: The type of attachment. Required. Known values are: "image" and
+         "file".
         :paramtype attachment_type: str or ~azure.communication.chat.models.ChatAttachmentType
         :keyword name: The name of the attachment content.
         :paramtype name: str

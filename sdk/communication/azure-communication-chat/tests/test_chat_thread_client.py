@@ -191,6 +191,12 @@ class TestChatThreadClient(unittest.TestCase):
                                     "name": "name.png",
                                     "url": "https://endpoint/threads/chatThreadId/images/imageId/views/original",
                                     "previewUrl": "https://endpoint/threads/chatThreadId/images/imageId/views/preview",
+                                },
+                                {
+                                    "id": "id",
+                                    "attachmentType": "file",
+                                    "name": "name.pdf",
+                                    "previewUrl": "https://contoso.sharepoint.com/teams/TeamName/DocumentLibrary/FileName",
                                 }
                             ]
                         },
@@ -218,8 +224,9 @@ class TestChatThreadClient(unittest.TestCase):
         assert message.type == ChatMessageType.TEXT
         assert message.metadata["tags"] == "tag"
         assert len(message.content.participants) > 0
-        assert len(message.content.attachments) > 0
+        assert len(message.content.attachments) == 2
         assert message.content.attachments[0].attachment_type == "image"
+        assert message.content.attachments[1].attachment_type == "file"
 
     def test_list_messages(self):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
