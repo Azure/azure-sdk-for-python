@@ -769,7 +769,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        share = await self._create_share(enable_snapshot_virtual_directory_access=False)
+        share = await self._create_share(protocols="NFS", enable_snapshot_virtual_directory_access=False)
 
         # Act
         share_props = await share.get_share_properties()
