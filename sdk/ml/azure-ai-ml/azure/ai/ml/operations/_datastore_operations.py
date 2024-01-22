@@ -271,10 +271,11 @@ class DatastoreOperations(_ScopeDependentOperations):
 
         try:
             from azureml.dataprep import rslex_fuse_subprocess_wrapper
-        except ImportError:
+        except ImportError as exc:
             raise Exception(
-                "Mount operations requires package azureml-dataprep-rslex installed. You can install it with Azure ML SDK with `pip install azure-ai-ml[mount]`."
-            )
+                "Mount operations requires package azureml-dataprep-rslex installed. " +
+                "You can install it with Azure ML SDK with `pip install azure-ai-ml[mount]`."
+            ) from exc
 
         uri = rslex_fuse_subprocess_wrapper.build_datastore_uri(
             self._operation_scope._subscription_id, self._resource_group_name, self._workspace_name, path
