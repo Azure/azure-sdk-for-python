@@ -3103,6 +3103,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
     @BlobPreparer()
     @recorded_by_proxy
     def test_header_metadata_sort_in_upload_blob(self, **kwargs):
+        # This test will fail for InvalidMetadata, but that means we aren't hitting the string-to-sign sort error
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -3116,10 +3117,22 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         blob_client = container_client.get_blob_client('blob1')
 
         # Hand-picked metadata examples as Python & service don't sort '_' with the same weight
-        metadata = {'a0': 'a', 'a1': 'a', 'a2': 'a', 'a3': 'a', 'a4': 'a', 'a5': 'a', 'a6': 'a', 'a7': 'a', 'a8': 'a',
-                    'a9': 'a', '_': 'a', '_a': 'a', 'a_': 'a', '__': 'a', '_a_': 'a', 'b': 'a', 'c': 'a', 'y': 'a',
-                    'z': 'z_', '_z': 'a', '_F': 'a', 'F': 'a', 'F_': 'a', '_F_': 'a', '__F': 'a', '__a': 'a', 'a__': 'a'
-                    }
+        metadata = {
+            'test': 'val',
+            'test-': 'val',
+            'test--': 'val',
+            'test-_': 'val',
+            'test_-': 'val',
+            'test__': 'val',
+            'test-a': 'val',
+            'test-A': 'val',
+            'test-_A': 'val',
+            'test_a': 'val',
+            'test_Z': 'val',
+            'test_a_': 'val',
+            'test_a-': 'val',
+            'test_a-_': 'val',
+        }
 
         # Act
         blob_client.upload_blob(data, length=len(data), metadata=metadata)

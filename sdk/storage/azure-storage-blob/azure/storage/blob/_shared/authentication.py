@@ -6,6 +6,7 @@
 
 import logging
 import re
+from functools import cmp_to_key
 from typing import List, Tuple
 from urllib.parse import unquote, urlparse
 
@@ -34,10 +35,50 @@ def _wrap_exception(ex, desired_type):
         msg = ex.args[0]
     return desired_type(msg)
 
+def first_pass_transform(string):
+    ret = ""
+    for c in string:
+        if c != '-':
+            ret += '\x00' if c == '_' else c
+    return ret
+
+def second_pass_transform(string):
+    ret = ""
+    for c in string:
+        if c == '-':
+            ret += '\x7f'
+        else:
+            ret += c
+    return ret
+
+def custom_compare_function(lhs, rhs):
+    # First transform
+    lhs_transformed = first_pass_transform(lhs)
+    rhs_transformed = first_pass_transform(rhs)
+    if lhs_transformed != rhs_transformed:
+        if lhs_transformed < rhs_transformed:
+            return -1
+        elif lhs_transformed > rhs_transformed:
+            return 1
+        else:
+            pass
+
+    # Second transform
+    lhs_transformed_2 = second_pass_transform(lhs)
+    rhs_transformed_2 = second_pass_transform(rhs)
+    if lhs_transformed_2 != rhs_transformed_2:
+        if lhs_transformed_2 < rhs_transformed_2:
+            return -1
+        elif lhs_transformed_2 > rhs_transformed_2:
+            return 1
+        else:
+            pass
+    return 0
+
 # This method attempts to emulate the sorting done by the service
 def _storage_header_sort(input_headers: List[Tuple[str, str]]) -> List[Tuple[str, str]]:
     # Define the custom alphabet for weights
-    custom_weights = "-!#$%&*.^_|~+\"\'(),/`~0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]abcdefghijklmnopqrstuvwxyz{}"
+    # custom_weights = "-!#$%&*.^_|~+\"\'(),/`~0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]abcdefghijklmnopqrstuvwxyz{}"
 
     # Build dict of tuples and list of keys
     header_dict = {}
@@ -48,13 +89,13 @@ def _storage_header_sort(input_headers: List[Tuple[str, str]]) -> List[Tuple[str
 
     # Sort according to custom defined weights
     try:
-        header_keys = sorted(header_keys, key=lambda word: [custom_weights.index(c) for c in word])
+        sorted_header_keys = sorted(header_keys, key=cmp_to_key(custom_compare_function))
     except ValueError as exc:
         raise ValueError("Illegal character encountered when sorting headers.") from exc
 
     # Build list of sorted tuples
     sorted_headers = []
-    for key in header_keys:
+    for key in sorted_header_keys:
         sorted_headers.append((key, header_dict.pop(key)))
     return sorted_headers
 
