@@ -10,6 +10,7 @@ from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
+from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._serialization import Deserializer, Serializer
@@ -22,28 +23,48 @@ if TYPE_CHECKING:
 
 
 class BatchClient(BatchClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
-    """A client for issuing REST requests to the Azure Batch service.
+    """Azure Batch provides Cloud-scale job scheduling and compute management.
 
+    :param endpoint: Batch account endpoint (for example:
+     https://batchaccount.eastus2.batch.azure.com). Required.
+    :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword endpoint: Service host. Required.
-    :paramtype endpoint: str
     :keyword api_version: The API version to use for this operation. Default value is
      "2023-05-01.17.0". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, credential: "AsyncTokenCredential", *, endpoint: str, **kwargs: Any) -> None:
-        self._config = BatchClientConfiguration(credential=credential, **kwargs)
-        self._client: AsyncPipelineClient = AsyncPipelineClient(
-            base_url=endpoint, config=self._config, request_id_header_name="client-request-id", **kwargs
-        )
+    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+        _endpoint = "{endpoint}"
+        self._config = BatchClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        kwargs["request_id_header_name"] = "client-request-id"
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-    def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
+    def send_request(
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -62,8 +83,12 @@ class BatchClient(BatchClientOperationsMixin):  # pylint: disable=client-accepts
         """
 
         request_copy = deepcopy(request)
-        request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:
         await self._client.close()

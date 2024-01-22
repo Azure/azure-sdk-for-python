@@ -31,6 +31,8 @@ class BatchClientMixinABC(ABC):
 def quote_etag(etag: Optional[str]) -> Optional[str]:
     if not etag or etag == "*":
         return etag
+    if etag.startswith("W/"):
+        return etag
     if etag.startswith('"') and etag.endswith('"'):
         return etag
     if etag.startswith("'") and etag.endswith("'"):

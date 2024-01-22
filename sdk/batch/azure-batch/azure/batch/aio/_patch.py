@@ -32,14 +32,19 @@ class BatchClient(GenerateBatchClient):
      alpha-numeric characters or underscore.
     :type hub: str
     :param credentials: Credential needed for the client to connect to Azure.
-    :type credentials: ~azure.identity.ClientSecretCredential, ~azure.core.credentials.AzureNamedKeyCredential, 
+    :type credentials: ~azure.identity.ClientSecretCredential, ~azure.core.credentials.AzureNamedKeyCredential,
      or ~azure.identity.TokenCredentials
     :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: Union[ClientSecretCredential, AzureNamedKeyCredential, TokenCredential], **kwargs):
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[ClientSecretCredential, AzureNamedKeyCredential, TokenCredential],
+        **kwargs
+    ):
         super().__init__(
             endpoint=endpoint,
             credential=credential,
@@ -51,7 +56,6 @@ class BatchClient(GenerateBatchClient):
         if isinstance(credential, AzureNamedKeyCredential):
             return BatchSharedKeyAuthPolicy(credential)
         return None
-
 
 
 def patch_sdk():
