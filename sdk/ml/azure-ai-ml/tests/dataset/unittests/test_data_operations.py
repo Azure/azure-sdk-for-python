@@ -579,5 +579,5 @@ class TestDataOperations:
 
     def test_mount_without_rslex(self, mock_data_operations: DataOperations,):
         with pytest.raises(Exception) as e:
-            mock_data_operations.mount("azureml:random_name:random_version", "/random/local/path")
+            mock_data_operations.mount("azureml:random_name:random_version", "/tmp/mount/random-local-path-for-data/")
         assert "pip install azure-ai-ml[mount]" in str(e.value)
