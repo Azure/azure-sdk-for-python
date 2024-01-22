@@ -1025,12 +1025,15 @@ class ProtectedItem(_serialization.Model):  # pylint: disable=too-many-instance-
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     """
 
     _validation = {
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1052,6 +1055,7 @@ class ProtectedItem(_serialization.Model):  # pylint: disable=too-many-instance-
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
     }
 
     _subtype_map = {
@@ -1144,6 +1148,7 @@ class ProtectedItem(_serialization.Model):  # pylint: disable=too-many-instance-
         self.is_archive_enabled = is_archive_enabled
         self.policy_name = policy_name
         self.soft_delete_retention_period_in_days = soft_delete_retention_period_in_days
+        self.vault_id = None
 
 
 class AzureFileshareProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attributes
@@ -1202,6 +1207,8 @@ class AzureFileshareProtectedItem(ProtectedItem):  # pylint: disable=too-many-in
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     :ivar friendly_name: Friendly name of the fileshare represented by this backup item.
     :vartype friendly_name: str
     :ivar protection_status: Backup status of this backup item.
@@ -1227,6 +1234,7 @@ class AzureFileshareProtectedItem(ProtectedItem):  # pylint: disable=too-many-in
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1248,6 +1256,7 @@ class AzureFileshareProtectedItem(ProtectedItem):  # pylint: disable=too-many-in
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "protection_status": {"key": "protectionStatus", "type": "str"},
         "protection_state": {"key": "protectionState", "type": "str"},
@@ -2344,6 +2353,8 @@ class AzureIaaSVMProtectedItem(ProtectedItem):  # pylint: disable=too-many-insta
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     :ivar friendly_name: Friendly name of the VM represented by this backup item.
     :vartype friendly_name: str
     :ivar virtual_machine_id: Fully qualified ARM ID of the virtual machine represented by this
@@ -2384,6 +2395,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem):  # pylint: disable=too-many-insta
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
         "friendly_name": {"readonly": True},
         "virtual_machine_id": {"readonly": True},
         "health_status": {"readonly": True},
@@ -2410,6 +2422,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem):  # pylint: disable=too-many-insta
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "virtual_machine_id": {"key": "virtualMachineId", "type": "str"},
         "protection_status": {"key": "protectionStatus", "type": "str"},
@@ -2607,6 +2620,8 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylin
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     :ivar friendly_name: Friendly name of the VM represented by this backup item.
     :vartype friendly_name: str
     :ivar virtual_machine_id: Fully qualified ARM ID of the virtual machine represented by this
@@ -2647,6 +2662,7 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylin
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
         "friendly_name": {"readonly": True},
         "virtual_machine_id": {"readonly": True},
         "health_status": {"readonly": True},
@@ -2673,6 +2689,7 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylin
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "virtual_machine_id": {"key": "virtualMachineId", "type": "str"},
         "protection_status": {"key": "protectionStatus", "type": "str"},
@@ -3054,6 +3071,8 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylint: disa
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     :ivar friendly_name: Friendly name of the VM represented by this backup item.
     :vartype friendly_name: str
     :ivar virtual_machine_id: Fully qualified ARM ID of the virtual machine represented by this
@@ -3094,6 +3113,7 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylint: disa
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
         "friendly_name": {"readonly": True},
         "virtual_machine_id": {"readonly": True},
         "health_status": {"readonly": True},
@@ -3120,6 +3140,7 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylint: disa
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "virtual_machine_id": {"key": "virtualMachineId", "type": "str"},
         "protection_status": {"key": "protectionStatus", "type": "str"},
@@ -4754,6 +4775,8 @@ class AzureSqlProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     :ivar protected_item_data_id: Internal ID of a backup item. Used by Azure SQL Backup engine to
      contact Recovery Services.
     :vartype protected_item_data_id: str
@@ -4771,6 +4794,7 @@ class AzureSqlProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
     }
 
     _attribute_map = {
@@ -4792,6 +4816,7 @@ class AzureSqlProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
         "protected_item_data_id": {"key": "protectedItemDataId", "type": "str"},
         "protection_state": {"key": "protectionState", "type": "str"},
         "extended_info": {"key": "extendedInfo", "type": "AzureSqlProtectedItemExtendedInfo"},
@@ -6179,6 +6204,8 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):  # pylint: disable=too-many-i
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     :ivar friendly_name: Friendly name of the DB represented by this backup item.
     :vartype friendly_name: str
     :ivar server_name: Host/Cluster Name for instance or AG.
@@ -6226,6 +6253,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):  # pylint: disable=too-many-i
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
         "friendly_name": {"readonly": True},
         "protection_status": {"readonly": True},
     }
@@ -6249,6 +6277,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):  # pylint: disable=too-many-i
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "server_name": {"key": "serverName", "type": "str"},
         "parent_name": {"key": "parentName", "type": "str"},
@@ -6639,6 +6668,8 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     :ivar friendly_name: Friendly name of the DB represented by this backup item.
     :vartype friendly_name: str
     :ivar server_name: Host/Cluster Name for instance or AG.
@@ -6686,6 +6717,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
         "friendly_name": {"readonly": True},
         "protection_status": {"readonly": True},
     }
@@ -6709,6 +6741,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "server_name": {"key": "serverName", "type": "str"},
         "parent_name": {"key": "parentName", "type": "str"},
@@ -7384,6 +7417,8 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     :ivar friendly_name: Friendly name of the DB represented by this backup item.
     :vartype friendly_name: str
     :ivar server_name: Host/Cluster Name for instance or AG.
@@ -7431,6 +7466,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
         "friendly_name": {"readonly": True},
         "protection_status": {"readonly": True},
     }
@@ -7454,6 +7490,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "server_name": {"key": "serverName", "type": "str"},
         "parent_name": {"key": "parentName", "type": "str"},
@@ -7897,6 +7934,8 @@ class AzureVmWorkloadSAPHanaDBInstanceProtectedItem(
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     :ivar friendly_name: Friendly name of the DB represented by this backup item.
     :vartype friendly_name: str
     :ivar server_name: Host/Cluster Name for instance or AG.
@@ -7944,6 +7983,7 @@ class AzureVmWorkloadSAPHanaDBInstanceProtectedItem(
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
         "friendly_name": {"readonly": True},
         "protection_status": {"readonly": True},
     }
@@ -7967,6 +8007,7 @@ class AzureVmWorkloadSAPHanaDBInstanceProtectedItem(
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "server_name": {"key": "serverName", "type": "str"},
         "parent_name": {"key": "parentName", "type": "str"},
@@ -8820,6 +8861,8 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     :ivar friendly_name: Friendly name of the DB represented by this backup item.
     :vartype friendly_name: str
     :ivar server_name: Host/Cluster Name for instance or AG.
@@ -8867,6 +8910,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
         "friendly_name": {"readonly": True},
         "protection_status": {"readonly": True},
     }
@@ -8890,6 +8934,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "server_name": {"key": "serverName", "type": "str"},
         "parent_name": {"key": "parentName", "type": "str"},
@@ -12697,7 +12742,7 @@ class BackupStatusRequest(_serialization.Model):
         self.po_logical_name = po_logical_name
 
 
-class BackupStatusResponse(_serialization.Model):
+class BackupStatusResponse(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """BackupStatus response.
 
     :ivar protection_status: Specifies whether the container is registered or not. Known values
@@ -12723,6 +12768,12 @@ class BackupStatusResponse(_serialization.Model):
     :vartype policy_name: str
     :ivar registration_status: Container registration status.
     :vartype registration_status: str
+    :ivar protected_items_count: Number of protected items.
+    :vartype protected_items_count: int
+    :ivar acquire_storage_account_lock: Specifies whether the storage account lock has been
+     acquired or not. Known values are: "Acquire" and "NotAcquire".
+    :vartype acquire_storage_account_lock: str or
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.AcquireStorageAccountLock
     """
 
     _attribute_map = {
@@ -12735,6 +12786,8 @@ class BackupStatusResponse(_serialization.Model):
         "error_message": {"key": "errorMessage", "type": "str"},
         "policy_name": {"key": "policyName", "type": "str"},
         "registration_status": {"key": "registrationStatus", "type": "str"},
+        "protected_items_count": {"key": "protectedItemsCount", "type": "int"},
+        "acquire_storage_account_lock": {"key": "acquireStorageAccountLock", "type": "str"},
     }
 
     def __init__(
@@ -12749,6 +12802,8 @@ class BackupStatusResponse(_serialization.Model):
         error_message: Optional[str] = None,
         policy_name: Optional[str] = None,
         registration_status: Optional[str] = None,
+        protected_items_count: Optional[int] = None,
+        acquire_storage_account_lock: Optional[Union[str, "_models.AcquireStorageAccountLock"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -12775,6 +12830,12 @@ class BackupStatusResponse(_serialization.Model):
         :paramtype policy_name: str
         :keyword registration_status: Container registration status.
         :paramtype registration_status: str
+        :keyword protected_items_count: Number of protected items.
+        :paramtype protected_items_count: int
+        :keyword acquire_storage_account_lock: Specifies whether the storage account lock has been
+         acquired or not. Known values are: "Acquire" and "NotAcquire".
+        :paramtype acquire_storage_account_lock: str or
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.AcquireStorageAccountLock
         """
         super().__init__(**kwargs)
         self.protection_status = protection_status
@@ -12786,6 +12847,8 @@ class BackupStatusResponse(_serialization.Model):
         self.error_message = error_message
         self.policy_name = policy_name
         self.registration_status = registration_status
+        self.protected_items_count = protected_items_count
+        self.acquire_storage_account_lock = acquire_storage_account_lock
 
 
 class BEKDetails(_serialization.Model):
@@ -14331,6 +14394,8 @@ class DPMProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attr
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     :ivar friendly_name: Friendly name of the managed item.
     :vartype friendly_name: str
     :ivar backup_engine_name: Backup Management server protecting this backup item.
@@ -14349,6 +14414,7 @@ class DPMProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attr
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
     }
 
     _attribute_map = {
@@ -14370,6 +14436,7 @@ class DPMProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attr
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "backup_engine_name": {"key": "backupEngineName", "type": "str"},
         "protection_state": {"key": "protectionState", "type": "str"},
@@ -15059,6 +15126,8 @@ class GenericProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     :ivar friendly_name: Friendly name of the container.
     :vartype friendly_name: str
     :ivar policy_state: Indicates consistency of policy object and policy applied to this backup
@@ -15082,6 +15151,7 @@ class GenericProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
     }
 
     _attribute_map = {
@@ -15103,6 +15173,7 @@ class GenericProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "policy_state": {"key": "policyState", "type": "str"},
         "protection_state": {"key": "protectionState", "type": "str"},
@@ -15570,6 +15641,10 @@ class IaasVMRecoveryPoint(RecoveryPoint):  # pylint: disable=too-many-instance-a
     :ivar is_private_access_enabled_on_any_disk: This flag denotes if any of the disks in the VM
      are using Private access network setting.
     :vartype is_private_access_enabled_on_any_disk: bool
+    :ivar extended_location: Extended location of the VM recovery point,
+     should be null if VM is in public cloud.
+    :vartype extended_location:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.ExtendedLocation
     """
 
     _validation = {
@@ -15602,6 +15677,7 @@ class IaasVMRecoveryPoint(RecoveryPoint):  # pylint: disable=too-many-instance-a
         "security_type": {"key": "securityType", "type": "str"},
         "recovery_point_properties": {"key": "recoveryPointProperties", "type": "RecoveryPointProperties"},
         "is_private_access_enabled_on_any_disk": {"key": "isPrivateAccessEnabledOnAnyDisk", "type": "bool"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
     }
 
     def __init__(
@@ -15625,6 +15701,7 @@ class IaasVMRecoveryPoint(RecoveryPoint):  # pylint: disable=too-many-instance-a
         security_type: Optional[str] = None,
         recovery_point_properties: Optional["_models.RecoveryPointProperties"] = None,
         is_private_access_enabled_on_any_disk: Optional[bool] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -15675,6 +15752,10 @@ class IaasVMRecoveryPoint(RecoveryPoint):  # pylint: disable=too-many-instance-a
         :keyword is_private_access_enabled_on_any_disk: This flag denotes if any of the disks in the VM
          are using Private access network setting.
         :paramtype is_private_access_enabled_on_any_disk: bool
+        :keyword extended_location: Extended location of the VM recovery point,
+         should be null if VM is in public cloud.
+        :paramtype extended_location:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.ExtendedLocation
         """
         super().__init__(**kwargs)
         self.object_type: str = "IaasVMRecoveryPoint"
@@ -15696,6 +15777,7 @@ class IaasVMRecoveryPoint(RecoveryPoint):  # pylint: disable=too-many-instance-a
         self.security_type = security_type
         self.recovery_point_properties = recovery_point_properties
         self.is_private_access_enabled_on_any_disk = is_private_access_enabled_on_any_disk
+        self.extended_location = extended_location
 
 
 class IaasVMRestoreRequest(RestoreRequest):  # pylint: disable=too-many-instance-attributes
@@ -17327,6 +17409,8 @@ class MabFileFolderProtectedItem(ProtectedItem):  # pylint: disable=too-many-ins
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
     :ivar friendly_name: Friendly name of this backup item.
     :vartype friendly_name: str
     :ivar computer_name: Name of the computer associated with this backup item.
@@ -17348,6 +17432,7 @@ class MabFileFolderProtectedItem(ProtectedItem):  # pylint: disable=too-many-ins
         "protected_item_type": {"required": True},
         "backup_management_type": {"readonly": True},
         "workload_type": {"readonly": True},
+        "vault_id": {"readonly": True},
     }
 
     _attribute_map = {
@@ -17369,6 +17454,7 @@ class MabFileFolderProtectedItem(ProtectedItem):  # pylint: disable=too-many-ins
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "vault_id": {"key": "vaultId", "type": "str"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "computer_name": {"key": "computerName", "type": "str"},
         "last_backup_status": {"key": "lastBackupStatus", "type": "str"},

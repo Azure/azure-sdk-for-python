@@ -43,6 +43,7 @@ from .partition_key import _Empty, _Undefined
 
 if TYPE_CHECKING:
     from ._cosmos_client_connection import CosmosClientConnection
+    from .aio._cosmos_client_connection_async import CosmosClientConnection as AsyncClientConnection
 
 
 _COMMON_OPTIONS = {
@@ -107,7 +108,7 @@ def build_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
-        cosmos_client_connection: "CosmosClientConnection",
+        cosmos_client_connection: Union["CosmosClientConnection", "AsyncClientConnection"],
         default_headers: Mapping[str, Any],
         verb: str,
         path: str,

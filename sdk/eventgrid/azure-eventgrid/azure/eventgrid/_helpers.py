@@ -8,10 +8,7 @@ import hashlib
 import hmac
 import base64
 
-try:
-    from urllib.parse import quote
-except ImportError:
-    from urllib2 import quote  # type: ignore
+from urllib.parse import quote
 
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
@@ -27,8 +24,13 @@ from ._generated.models import (
 if TYPE_CHECKING:
     from datetime import datetime
 
-def generate_sas(endpoint, shared_access_key, expiration_date_utc, **kwargs):
-    # type: (str, str, datetime, Any) -> str
+def generate_sas(
+    endpoint: str,
+    shared_access_key: str,
+    expiration_date_utc: "datetime",
+    *,
+    api_version: str = constants.DEFAULT_API_VERSION,
+) -> str:
     """Helper method to generate shared access signature given hostname, key, and expiration date.
     :param str endpoint: The topic endpoint to send the events to.
         Similar to <YOUR-TOPIC-NAME>.<YOUR-REGION-NAME>-1.eventgrid.azure.net
@@ -50,7 +52,7 @@ def generate_sas(endpoint, shared_access_key, expiration_date_utc, **kwargs):
             :caption: Generate a shared access signature.
     """
     full_endpoint = "{}?apiVersion={}".format(
-        endpoint, kwargs.get("api_version", constants.DEFAULT_API_VERSION)
+        endpoint, api_version
     )
     encoded_resource = quote(full_endpoint, safe=constants.SAFE_ENCODE)
     encoded_expiration_utc = quote(str(expiration_date_utc), safe=constants.SAFE_ENCODE)

@@ -37,6 +37,7 @@ def analyze_identity_documents():
 
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence import DocumentIntelligenceClient
+    from azure.ai.documentintelligence.models import AnalyzeResult
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -46,39 +47,43 @@ def analyze_identity_documents():
         poller = document_intelligence_client.begin_analyze_document(
             "prebuilt-idDocument", analyze_request=f, content_type="application/octet-stream"
         )
-    id_documents = poller.result()
+    id_documents: AnalyzeResult = poller.result()
 
-    for idx, id_document in enumerate(id_documents.documents):
-        print(f"--------Analyzing ID document #{idx + 1}--------")
-        first_name = id_document.fields.get("FirstName")
-        if first_name:
-            print(f"First Name: {first_name.get('valueString')} has confidence: {first_name.confidence}")
-        last_name = id_document.fields.get("LastName")
-        if last_name:
-            print(f"Last Name: {last_name.get('valueString')} has confidence: {last_name.confidence}")
-        document_number = id_document.fields.get("DocumentNumber")
-        if document_number:
-            print(f"Document Number: {document_number.get('valueString')} has confidence: {document_number.confidence}")
-        dob = id_document.fields.get("DateOfBirth")
-        if dob:
-            print(f"Date of Birth: {dob.get('valueDate')} has confidence: {dob.confidence}")
-        doe = id_document.fields.get("DateOfExpiration")
-        if doe:
-            print(f"Date of Expiration: {doe.get('valueDate')} has confidence: {doe.confidence}")
-        sex = id_document.fields.get("Sex")
-        if sex:
-            print(f"Sex: {sex.get('valueString')} has confidence: {sex.confidence}")
-        address = id_document.fields.get("Address")
-        if address:
-            print(f"Address: {address.get('valueString')} has confidence: {address.confidence}")
-        country_region = id_document.fields.get("CountryRegion")
-        if country_region:
-            print(
-                f"Country/Region: {country_region.get('valueCountryRegion')} has confidence: {country_region.confidence}"
-            )
-        region = id_document.fields.get("Region")
-        if region:
-            print(f"Region: {region.get('valueString')} has confidence: {region.confidence}")
+    if id_documents.documents:
+        for idx, id_document in enumerate(id_documents.documents):
+            print(f"--------Analyzing ID document #{idx + 1}--------")
+            if id_document.fields:
+                first_name = id_document.fields.get("FirstName")
+                if first_name:
+                    print(f"First Name: {first_name.get('valueString')} has confidence: {first_name.confidence}")
+                last_name = id_document.fields.get("LastName")
+                if last_name:
+                    print(f"Last Name: {last_name.get('valueString')} has confidence: {last_name.confidence}")
+                document_number = id_document.fields.get("DocumentNumber")
+                if document_number:
+                    print(
+                        f"Document Number: {document_number.get('valueString')} has confidence: {document_number.confidence}"
+                    )
+                dob = id_document.fields.get("DateOfBirth")
+                if dob:
+                    print(f"Date of Birth: {dob.get('valueDate')} has confidence: {dob.confidence}")
+                doe = id_document.fields.get("DateOfExpiration")
+                if doe:
+                    print(f"Date of Expiration: {doe.get('valueDate')} has confidence: {doe.confidence}")
+                sex = id_document.fields.get("Sex")
+                if sex:
+                    print(f"Sex: {sex.get('valueString')} has confidence: {sex.confidence}")
+                address = id_document.fields.get("Address")
+                if address:
+                    print(f"Address: {address.get('valueString')} has confidence: {address.confidence}")
+                country_region = id_document.fields.get("CountryRegion")
+                if country_region:
+                    print(
+                        f"Country/Region: {country_region.get('valueCountryRegion')} has confidence: {country_region.confidence}"
+                    )
+                region = id_document.fields.get("Region")
+                if region:
+                    print(f"Region: {region.get('valueString')} has confidence: {region.confidence}")
 
 
 if __name__ == "__main__":

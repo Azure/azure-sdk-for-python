@@ -93,11 +93,11 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     :paramtype inputs: dict
     :keyword outputs: Mapping of output data bindings used in the job.
     :paramtype outputs: dict[str, ~azure.ai.ml.Output]
-    :keyword sampling_algorithm: The hyperparameter sampling algorithm to use over the `search_space`.
-        Defaults to "random".
+    :keyword sampling_algorithm: The hyperparameter sampling algorithm to use over the `search_space`. Defaults to
+        "random".
     :paramtype sampling_algorithm: str
-    :keyword search_space: Dictionary of the hyperparameter search space. The key is the name of the
-        hyperparameter and the value is the parameter expression.
+    :keyword search_space: Dictionary of the hyperparameter search space. The key is the name of the hyperparameter
+        and the value is the parameter expression.
     :paramtype search_space: Dict
     :keyword objective: Metric to optimize for.
     :paramtype objective: Objective
@@ -105,7 +105,12 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     :paramtype compute: str
     :keyword trial: The job configuration for each trial. Each trial will be provided with a different combination
         of hyperparameter values that the system samples from the search_space.
-    :paramtype trial: Union[~azure.ai.ml.entities.CommandJob, ~azure.ai.ml.entities.CommandComponent]
+
+    :paramtype trial: Union[
+        ~azure.ai.ml.entities.CommandJob,
+        ~azure.ai.ml.entities.CommandComponent
+
+    ]
     :keyword early_termination: The early termination policy to use. A trial job is canceled
         when the criteria of the specified policy are met. If omitted, no early termination policy will be applied.
     :paramtype early_termination:  Union[
@@ -120,6 +125,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     :paramtype resources: Optional[Union[~azure.ai.ml.entities.ResourceConfiguration]
     :keyword kwargs: A dictionary of additional configuration parameters.
     :paramtype kwargs: dict
+
 
     .. admonition:: Example:
 

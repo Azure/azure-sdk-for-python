@@ -26,6 +26,9 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
 )
+from azure.monitor.opentelemetry.exporter._constants import (
+    _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
+)
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     get_statsbeat_shutdown,
     get_statsbeat_custom_events_feature_set,
@@ -40,7 +43,6 @@ _DEFAULT_TRACE_ID = 0
 
 __all__ = ["AzureMonitorLogExporter"]
 
-_APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE = "APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE"
 
 class AzureMonitorLogExporter(BaseExporter, LogExporter):
     """Azure Monitor Log exporter for OpenTelemetry."""
