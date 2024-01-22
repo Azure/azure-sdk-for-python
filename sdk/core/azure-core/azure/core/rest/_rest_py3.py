@@ -153,7 +153,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
             default_headers, self._data = set_json_body(json)
             return default_headers
         if files:
-            default_headers, self._files = set_multipart_body(data or {}, files)
+            default_headers, self._files = set_multipart_body(files)
         if data:
             default_headers, self._data = set_urlencoded_body(data, has_files=bool(files))
         return default_headers
