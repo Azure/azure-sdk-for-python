@@ -731,6 +731,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert len(token.encode('utf-8')) <= 1024
         await self.created_db.delete_container(container)
 
+    @pytest.mark.cosmosLiveTest
     async def test_computed_properties_query(self):
         computed_properties = [{'name': "cp_lower", 'query': "SELECT VALUE LOWER(c.db_group) FROM c"},
                                {'name': "cp_power",
