@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import copy
+from hmac import new
 import json
 import os
 import shutil
@@ -161,8 +162,20 @@ def evaluate(
     if model_config:
         metrics_config.update({"openai_params": model_config})
 
+
     if data_mapping:
-        metrics_config.update(data_mapping)
+        import warnings
+
+        new_data_mapping = dict(data_mapping)
+        if "y_pred" in new_data_mapping:
+            warnings.warn("y_pred is deprecated, please use \"answer\" instead")
+            value = data_mapping.pop("y_pred")
+            new_data_mapping.update({"answer": value})
+        if "y_test" in new_data_mapping:
+            warnings.warn("y_test is deprecated, please use \"ground_truth\" instead")
+            value = data_mapping.pop("y_test")
+            new_data_mapping.update({"ground_truth": value})
+        data_mapping = new_data_mapping
 
     sweep_args = kwargs.pop("sweep_args", None)
     if sweep_args:
@@ -225,11 +238,8 @@ def _evaluate(
         test_data = data
         _data_is_file = False
 
-    if "y_pred" in data_mapping:
-        prediction_data = data_mapping.get("y_pred")
-
-    # if target is None and prediction_data is None:
-    #     raise Exception("target and prediction data cannot be null")
+    if "answer" in data_mapping:
+        prediction_data = data_mapping.get("answer")
 
     if task_type not in SUPPORTED_TASK_TYPE:
         raise Exception(f"task type {task_type} is not supported")
@@ -255,7 +265,6 @@ def _evaluate(
 
         asset_handler = asset_handler_class(
             asset=target,
-            prediction_data=prediction_data,
             test_data=test_data,
             metrics_config=metrics_config,
             **kwargs

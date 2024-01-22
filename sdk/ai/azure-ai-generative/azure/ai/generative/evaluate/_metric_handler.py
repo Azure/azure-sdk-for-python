@@ -78,11 +78,28 @@ class MetricHandler(object):
 
         import time
 
-        start = time.time()
         pf_run = run_pf_flow_with_dict_list(flow_path, dict_list, flow_params={"connections": {node: connection_override for node in nodes_list}})
         wait_for_pf_run_to_complete(pf_run.name)
-        end = time.time()
 
-        print(f"Time taken for PF run: {end - start}")
+        result_df = pf_client.get_details(pf_run.name, all_results=True)
+        result_metrics = pf_client.get_metrics(pf_run.name)
 
-        return pf_run.name
+        # Drop input columns
+        input_columns = [col for col in result_df.columns if col.startswith("inputs.")]
+        result_df.drop(input_columns, axis=1, inplace=True)
+
+        # Rename output columns. E.g. outputs.answer -> answer
+        output_columns = [col for col in result_df.columns if col.startswith("outputs.")]
+        column_mapping.update({col: col.replace("outputs.", "") for col in output_columns})
+        result_df.rename(columns=column_mapping, inplace=True)
+
+        artifacts = []
+        for col in result_df.columns:
+            artifacts.append({
+                col : result_df[col].tolist()
+            })
+
+        return {
+            "metrics": result_metrics,
+            "artifacts": artifacts
+        }
