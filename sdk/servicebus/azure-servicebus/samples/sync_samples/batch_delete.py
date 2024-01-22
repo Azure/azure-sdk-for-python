@@ -33,7 +33,6 @@ with servicebus_client:
     sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
     with sender:
         send_single_message(sender)
-        
         send_single_message(sender)
         send_single_message(sender)
         time = datetime.datetime.utcnow()
