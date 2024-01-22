@@ -860,7 +860,7 @@ class ServiceBusReceiver(
         self,
         max_message_count: int = 1,
         *,
-        enqueued_time_older_than_utc: datetime.datetime = None,
+        enqueued_time_older_than_utc: datetime.datetime = datetime.datetime.utcnow(),
         timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> int:
@@ -870,8 +870,6 @@ class ServiceBusReceiver(
         self._check_live()
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
-        if not enqueued_time_older_than_utc:
-            enqueued_time_older_than_utc = 0
         # TODO: Client side validation?
         if self._receive_mode!=ServiceBusReceiveMode.RECEIVE_AND_DELETE:
             raise ValueError("receive mode must be RECEIVE_AND_DELETE")
@@ -887,7 +885,7 @@ class ServiceBusReceiver(
         message = {
             MGMT_REQUEST_ENQUEUED_TIME_UTC: enqueued_time_older_than_utc,
             MGMT_REQUEST_MAX_MESSAGE_COUNT: max_message_count,
-            MGMT_REQUEST_RECEIVER_SETTLE_MODE: self._amqp_transport.AMQP_UINT_VALUE(receive_mode),
+            # MGMT_REQUEST_RECEIVER_SETTLE_MODE: self._amqp_transport.AMQP_UINT_VALUE(0),
         }
 
         self._populate_message_properties(message)
@@ -898,7 +896,7 @@ class ServiceBusReceiver(
         )
         links = get_receive_links(messages)
         with receive_trace_context_manager(self, span_name=SPAN_NAME_PEEK, links=links, start_time=start_time):
-            return messages.value[b'message-count']
+            return messages
 
 
 
