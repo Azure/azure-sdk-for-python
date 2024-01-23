@@ -749,7 +749,7 @@ class DataOperations(_ScopeDependentOperations):
     def mount(
         self,
         path: str,
-        mount_point: str = None,
+        mount_point: Optional[str] = None,
         mode: str = "ro_mount",
         debug: bool = False,
         persistent: bool = False,

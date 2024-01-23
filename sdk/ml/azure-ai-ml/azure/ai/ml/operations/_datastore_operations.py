@@ -6,7 +6,7 @@
 
 import time
 import uuid
-from typing import Dict, Iterable, cast
+from typing import Dict, Iterable, Optional, cast
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -236,7 +236,7 @@ class DatastoreOperations(_ScopeDependentOperations):
     def mount(
         self,
         path: str,
-        mount_point: str = None,
+        mount_point: Optional[str] = None,
         mode: str = "ro_mount",
         debug: bool = False,
         persistent: bool = False,
