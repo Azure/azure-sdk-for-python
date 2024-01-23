@@ -244,7 +244,7 @@ class CodegenTestPR:
 
     @property
     def readme_python_md_path(self)-> Path:
-        return self.readme_md_path.replace("readme.md", "readme.python.md")
+        return Path(str(self.readme_md_path).replace("readme.md", "readme.python.md"))
 
     # Use the template to update readme and setup by packaging_tools
     @return_origin_path
