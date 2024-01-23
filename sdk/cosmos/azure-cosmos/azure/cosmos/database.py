@@ -143,9 +143,10 @@ class DatabaseProxy(object):
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
 
-        return self.client_connection.ReadDatabase(
+        self._properties = self.client_connection.ReadDatabase(
             database_link, options=request_options, **kwargs
         )
+        return self._properties
 
     @distributed_trace
     def create_container(  # pylint:disable=docstring-missing-param
