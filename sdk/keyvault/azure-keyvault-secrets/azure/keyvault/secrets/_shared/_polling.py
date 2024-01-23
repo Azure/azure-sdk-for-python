@@ -3,20 +3,17 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import logging
-import time
 import threading
 import uuid
-from typing import TYPE_CHECKING
+from typing import Any, Callable, cast, Optional
 
-from azure.core.polling import PollingMethod, LROPoller, NoPolling
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
+from azure.core.pipeline import PipelineResponse
+from azure.core.pipeline.transport import HttpTransport
+from azure.core.polling import PollingMethod, LROPoller, NoPolling
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.common import with_current_context
-
-if TYPE_CHECKING:
-    # pylint: disable=ungrouped-imports
-    from typing import Any, Callable, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +42,7 @@ class KeyVaultOperationPoller(LROPoller):
         return self._polling_method.resource()
 
     @distributed_trace
-    def wait(self, timeout: "Optional[float]" = None) -> None:
+    def wait(self, timeout: Optional[float] = None) -> None:
         """Wait on the long running operation for a number of seconds.
 
         You can check if this call has ended with timeout with the "done()" method.
@@ -84,6 +81,8 @@ class DeleteRecoverPollingMethod(PollingMethod):
     Similarly, while recovering a deleted resource, Key Vault will respond 404 to GET requests for the non-deleted
     resource; when it responds 2xx, the resource exists in the non-deleted collection, i.e. its recovery is complete.
 
+    :param pipeline_response: The operation's original pipeline response.
+    :type pipeline_response: PipelineResponse
     :param command: A callable to invoke when polling.
     :type command: Callable
     :param final_resource: The final resource returned by the polling operation.
@@ -91,7 +90,15 @@ class DeleteRecoverPollingMethod(PollingMethod):
     :param bool finished: Whether or not the polling operation is completed.
     :param int interval: The polling interval, in seconds.
     """
-    def __init__(self, command: "Callable", final_resource: "Any", finished: bool, interval: int = 2) -> None:
+    def __init__(
+            self,
+            pipeline_response: PipelineResponse,
+            command: Callable,
+            final_resource: Any,
+            finished: bool,
+            interval: int = 2
+        ) -> None:
+        self._pipeline_response = pipeline_response
         self._command = command
         self._resource = final_resource
         self._polling_interval = interval
@@ -111,7 +118,7 @@ class DeleteRecoverPollingMethod(PollingMethod):
             else:
                 raise
 
-    def initialize(self, client: "Any", initial_response: "Any", deserialization_callback: "Callable") -> None:
+    def initialize(self, client: Any, initial_response: Any, deserialization_callback: Callable) -> None:
         pass
 
     def run(self) -> None:
@@ -119,7 +126,9 @@ class DeleteRecoverPollingMethod(PollingMethod):
             while not self.finished():
                 self._update_status()
                 if not self.finished():
-                    time.sleep(self._polling_interval)
+                    # We should always ask the client's transport to sleep, instead of sleeping directly
+                    transport: HttpTransport = cast(HttpTransport, self._pipeline_response.context.transport)
+                    transport.sleep(self._polling_interval)
         except Exception as e:
             logger.warning(str(e))
             raise
@@ -127,7 +136,7 @@ class DeleteRecoverPollingMethod(PollingMethod):
     def finished(self) -> bool:
         return self._finished
 
-    def resource(self) -> "Any":
+    def resource(self) -> Any:
         return self._resource
 
     def status(self) -> str:
