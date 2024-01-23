@@ -3252,7 +3252,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             partition_key_definition = self.partition_key_definition_cache.get(collection_link)
         # Else read the collection from backend and add it to the cache
         else:
-            collection, _ = self.ReadContainer(collection_link)
+            collection = self.ReadContainer(collection_link)
             partition_key_definition = collection.get("partitionKey")
             self.partition_key_definition_cache[collection_link] = partition_key_definition
         return partition_key_definition
