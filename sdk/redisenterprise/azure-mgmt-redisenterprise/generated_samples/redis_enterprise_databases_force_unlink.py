@@ -29,7 +29,7 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.databases.begin_force_unlink(
+    client.databases.begin_force_unlink(
         resource_group_name="rg1",
         cluster_name="cache1",
         database_name="default",
@@ -39,9 +39,8 @@ def main():
             ]
         },
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/preview/2023-03-01-preview/examples/RedisEnterpriseDatabasesForceUnlink.json
+# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/stable/2023-11-01/examples/RedisEnterpriseDatabasesForceUnlink.json
 if __name__ == "__main__":
     main()
