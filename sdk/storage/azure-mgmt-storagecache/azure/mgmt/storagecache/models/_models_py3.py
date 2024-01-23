@@ -172,6 +172,8 @@ class AmlFilesystem(TrackedResource):  # pylint: disable=too-many-instance-attri
      ~azure.mgmt.storagecache.models.AmlFilesystemPropertiesMaintenanceWindow
     :ivar hsm: Hydration and archive settings and status.
     :vartype hsm: ~azure.mgmt.storagecache.models.AmlFilesystemPropertiesHsm
+    :ivar root_squash_settings: Specifies root squash settings of the AML file system.
+    :vartype root_squash_settings: ~azure.mgmt.storagecache.models.AmlFilesystemRootSquashSettings
     """
 
     _validation = {
@@ -208,6 +210,7 @@ class AmlFilesystem(TrackedResource):  # pylint: disable=too-many-instance-attri
             "type": "AmlFilesystemPropertiesMaintenanceWindow",
         },
         "hsm": {"key": "properties.hsm", "type": "AmlFilesystemPropertiesHsm"},
+        "root_squash_settings": {"key": "properties.rootSquashSettings", "type": "AmlFilesystemRootSquashSettings"},
     }
 
     def __init__(
@@ -223,6 +226,7 @@ class AmlFilesystem(TrackedResource):  # pylint: disable=too-many-instance-attri
         encryption_settings: Optional["_models.AmlFilesystemEncryptionSettings"] = None,
         maintenance_window: Optional["_models.AmlFilesystemPropertiesMaintenanceWindow"] = None,
         hsm: Optional["_models.AmlFilesystemPropertiesHsm"] = None,
+        root_squash_settings: Optional["_models.AmlFilesystemRootSquashSettings"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -250,6 +254,9 @@ class AmlFilesystem(TrackedResource):  # pylint: disable=too-many-instance-attri
          ~azure.mgmt.storagecache.models.AmlFilesystemPropertiesMaintenanceWindow
         :keyword hsm: Hydration and archive settings and status.
         :paramtype hsm: ~azure.mgmt.storagecache.models.AmlFilesystemPropertiesHsm
+        :keyword root_squash_settings: Specifies root squash settings of the AML file system.
+        :paramtype root_squash_settings:
+         ~azure.mgmt.storagecache.models.AmlFilesystemRootSquashSettings
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
@@ -264,6 +271,7 @@ class AmlFilesystem(TrackedResource):  # pylint: disable=too-many-instance-attri
         self.encryption_settings = encryption_settings
         self.maintenance_window = maintenance_window
         self.hsm = hsm
+        self.root_squash_settings = root_squash_settings
 
 
 class AmlFilesystemArchive(_serialization.Model):
@@ -740,6 +748,72 @@ class AmlFilesystemPropertiesMaintenanceWindow(_serialization.Model):
         self.time_of_day_utc = time_of_day_utc
 
 
+class AmlFilesystemRootSquashSettings(_serialization.Model):
+    """AML file system squash settings.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar mode: Squash mode of the AML file system. 'All': User and Group IDs on files will be
+     squashed to the provided values for all users on non-trusted systems. 'RootOnly': User and
+     Group IDs on files will be squashed to provided values for solely the root user on non-trusted
+     systems. 'None': No squashing of User and Group IDs is performed for any users on any systems.
+     Known values are: "None", "RootOnly", and "All".
+    :vartype mode: str or ~azure.mgmt.storagecache.models.AmlFilesystemSquashMode
+    :ivar no_squash_nid_lists: Semicolon separated NID IP Address list(s) to be added to the
+     TrustedSystems.
+    :vartype no_squash_nid_lists: str
+    :ivar squash_uid: User ID to squash to.
+    :vartype squash_uid: int
+    :ivar squash_gid: Group ID to squash to.
+    :vartype squash_gid: int
+    :ivar status: AML file system squash status.
+    :vartype status: str
+    """
+
+    _validation = {
+        "status": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "mode": {"key": "mode", "type": "str"},
+        "no_squash_nid_lists": {"key": "noSquashNidLists", "type": "str"},
+        "squash_uid": {"key": "squashUID", "type": "int"},
+        "squash_gid": {"key": "squashGID", "type": "int"},
+        "status": {"key": "status", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        mode: Optional[Union[str, "_models.AmlFilesystemSquashMode"]] = None,
+        no_squash_nid_lists: Optional[str] = None,
+        squash_uid: Optional[int] = None,
+        squash_gid: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword mode: Squash mode of the AML file system. 'All': User and Group IDs on files will be
+         squashed to the provided values for all users on non-trusted systems. 'RootOnly': User and
+         Group IDs on files will be squashed to provided values for solely the root user on non-trusted
+         systems. 'None': No squashing of User and Group IDs is performed for any users on any systems.
+         Known values are: "None", "RootOnly", and "All".
+        :paramtype mode: str or ~azure.mgmt.storagecache.models.AmlFilesystemSquashMode
+        :keyword no_squash_nid_lists: Semicolon separated NID IP Address list(s) to be added to the
+         TrustedSystems.
+        :paramtype no_squash_nid_lists: str
+        :keyword squash_uid: User ID to squash to.
+        :paramtype squash_uid: int
+        :keyword squash_gid: Group ID to squash to.
+        :paramtype squash_gid: int
+        """
+        super().__init__(**kwargs)
+        self.mode = mode
+        self.no_squash_nid_lists = no_squash_nid_lists
+        self.squash_uid = squash_uid
+        self.squash_gid = squash_gid
+        self.status = None
+
+
 class AmlFilesystemsListResult(_serialization.Model):
     """Result of the request to list AML file systems. It contains a list of AML file systems and a
     URL link to get the next set of results.
@@ -827,6 +901,8 @@ class AmlFilesystemUpdate(_serialization.Model):
     :ivar maintenance_window: Start time of a 30-minute weekly maintenance window.
     :vartype maintenance_window:
      ~azure.mgmt.storagecache.models.AmlFilesystemUpdatePropertiesMaintenanceWindow
+    :ivar root_squash_settings: Specifies root squash settings of the AML file system.
+    :vartype root_squash_settings: ~azure.mgmt.storagecache.models.AmlFilesystemRootSquashSettings
     """
 
     _attribute_map = {
@@ -836,6 +912,7 @@ class AmlFilesystemUpdate(_serialization.Model):
             "key": "properties.maintenanceWindow",
             "type": "AmlFilesystemUpdatePropertiesMaintenanceWindow",
         },
+        "root_squash_settings": {"key": "properties.rootSquashSettings", "type": "AmlFilesystemRootSquashSettings"},
     }
 
     def __init__(
@@ -844,6 +921,7 @@ class AmlFilesystemUpdate(_serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         encryption_settings: Optional["_models.AmlFilesystemEncryptionSettings"] = None,
         maintenance_window: Optional["_models.AmlFilesystemUpdatePropertiesMaintenanceWindow"] = None,
+        root_squash_settings: Optional["_models.AmlFilesystemRootSquashSettings"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -854,11 +932,15 @@ class AmlFilesystemUpdate(_serialization.Model):
         :keyword maintenance_window: Start time of a 30-minute weekly maintenance window.
         :paramtype maintenance_window:
          ~azure.mgmt.storagecache.models.AmlFilesystemUpdatePropertiesMaintenanceWindow
+        :keyword root_squash_settings: Specifies root squash settings of the AML file system.
+        :paramtype root_squash_settings:
+         ~azure.mgmt.storagecache.models.AmlFilesystemRootSquashSettings
         """
         super().__init__(**kwargs)
         self.tags = tags
         self.encryption_settings = encryption_settings
         self.maintenance_window = maintenance_window
+        self.root_squash_settings = root_squash_settings
 
 
 class AmlFilesystemUpdatePropertiesMaintenanceWindow(_serialization.Model):
