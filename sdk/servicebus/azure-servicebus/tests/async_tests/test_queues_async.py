@@ -2833,3 +2833,34 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                         )                
                 for message in received_deferred_msg:
                     assert message.state == ServiceBusMessageState.DEFERRED
+
+    @pytest.mark.asyncio
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
+    async def test_message_deleted_async(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
+        async with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, uamqp_transport=uamqp_transport) as sb_client:
+
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            for i in range(10):
+                message = ServiceBusMessage("message no. {}".format(i))
+                await sender.send_messages(message)
+
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE)
+            number_deleted_messages = 0
+            async with receiver:
+                number_deleted_messages = await receiver.delete_batch_messages(max_message_count=10, enqueued_time_older_than_utc=datetime.utcnow())
+            assert number_deleted_messages == 10
+
+            receiver_peek = sb_client.get_queue_receiver(servicebus_queue.name)
+            async with receiver_peek:
+                assert await receiver_peek.delete_batch_messages() == 0
+
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE)
+            async with receiver:
+                assert await receiver_peek.delete_batch_messages() == 0
