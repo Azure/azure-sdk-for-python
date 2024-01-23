@@ -74,6 +74,7 @@ steps:
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
     displayName: 'Generate Packages'
     condition: succeededOrFailed()
+    timeoutInMinutes: 80
     env:
       CIBW_BUILD_VERBOSITY: 3
 
