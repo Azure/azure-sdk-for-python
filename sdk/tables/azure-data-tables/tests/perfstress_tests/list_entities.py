@@ -6,6 +6,7 @@ import uuid
 
 from ._base import _TableTest, get_base_entity
 
+
 class ListEntitiesTest(_TableTest):
     def __init__(self, arguments):
         super().__init__(arguments)
