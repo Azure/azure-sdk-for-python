@@ -21,25 +21,26 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._operations import build_list_request
+from ...operations._location_based_capability_set_operations import build_get_request, build_list_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class Operations:
+class LocationBasedCapabilitySetOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.rdbms.mysql_flexibleservers.aio.MySQLManagementClient`'s
-        :attr:`operations` attribute.
+        :attr:`location_based_capability_set` attribute.
     """
 
     models = _models
@@ -52,20 +53,22 @@ class Operations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.Operation"]:
-        """Lists all of the available REST API operations.
+    def list(self, location_name: str, **kwargs: Any) -> AsyncIterable["_models.Capability"]:
+        """Get capabilities at specified location in a given subscription.
 
+        :param location_name: The name of the location. Required.
+        :type location_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either Operation or the result of cls(response)
+        :return: An iterator like instance of either Capability or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.rdbms.mysql_flexibleservers.models.Operation]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.rdbms.mysql_flexibleservers.models.Capability]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
-        cls: ClsType[_models.OperationListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.CapabilitySetsList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -79,6 +82,8 @@ class Operations:
             if not next_link:
 
                 request = build_list_request(
+                    location_name=location_name,
+                    subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=self.list.metadata["url"],
                     headers=_headers,
@@ -95,7 +100,7 @@ class Operations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("OperationListResult", pipeline_response)
+            deserialized = self._deserialize("CapabilitySetsList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -119,4 +124,68 @@ class Operations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/providers/Microsoft.DBforMySQL/operations"}
+    list.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.DBforMySQL/locations/{locationName}/capabilitySets"
+    }
+
+    @distributed_trace_async
+    async def get(self, location_name: str, capability_set_name: str = "default", **kwargs: Any) -> _models.Capability:
+        """Get capabilities at specified location in a given subscription.
+
+        :param location_name: The name of the location. Required.
+        :type location_name: str
+        :param capability_set_name: Name of capability set. Default value is "default".
+        :type capability_set_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: Capability or the result of cls(response)
+        :rtype: ~azure.mgmt.rdbms.mysql_flexibleservers.models.Capability
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
+        cls: ClsType[_models.Capability] = kwargs.pop("cls", None)
+
+        request = build_get_request(
+            location_name=location_name,
+            subscription_id=self._config.subscription_id,
+            capability_set_name=capability_set_name,
+            api_version=api_version,
+            template_url=self.get.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("Capability", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.DBforMySQL/locations/{locationName}/capabilitySets/{capabilitySetName}"
+    }
