@@ -16,6 +16,7 @@ from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import MySQLManagementClientConfiguration
 from .operations import (
+    AdvancedThreatProtectionSettingsOperations,
     AzureADAdministratorsOperations,
     BackupAndExportOperations,
     BackupsOperations,
@@ -27,7 +28,9 @@ from .operations import (
     FirewallRulesOperations,
     GetPrivateDnsZoneSuffixOperations,
     LocationBasedCapabilitiesOperations,
+    LocationBasedCapabilitySetOperations,
     LogFilesOperations,
+    OperationResultsOperations,
     Operations,
     ReplicasOperations,
     ServersMigrationOperations,
@@ -72,6 +75,9 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
     :ivar location_based_capabilities: LocationBasedCapabilitiesOperations operations
     :vartype location_based_capabilities:
      azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.LocationBasedCapabilitiesOperations
+    :ivar location_based_capability_set: LocationBasedCapabilitySetOperations operations
+    :vartype location_based_capability_set:
+     azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.LocationBasedCapabilitySetOperations
     :ivar check_virtual_network_subnet_usage: CheckVirtualNetworkSubnetUsageOperations operations
     :vartype check_virtual_network_subnet_usage:
      azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.CheckVirtualNetworkSubnetUsageOperations
@@ -82,11 +88,18 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
      operations
     :vartype check_name_availability_without_location:
      azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.CheckNameAvailabilityWithoutLocationOperations
+    :ivar operation_results: OperationResultsOperations operations
+    :vartype operation_results:
+     azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.OperationResultsOperations
     :ivar get_private_dns_zone_suffix: GetPrivateDnsZoneSuffixOperations operations
     :vartype get_private_dns_zone_suffix:
      azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.GetPrivateDnsZoneSuffixOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.Operations
+    :ivar advanced_threat_protection_settings: AdvancedThreatProtectionSettingsOperations
+     operations
+    :vartype advanced_threat_protection_settings:
+     azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.AdvancedThreatProtectionSettingsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -132,6 +145,9 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
         self.location_based_capabilities = LocationBasedCapabilitiesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.location_based_capability_set = LocationBasedCapabilitySetOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.check_virtual_network_subnet_usage = CheckVirtualNetworkSubnetUsageOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -141,10 +157,16 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
         self.check_name_availability_without_location = CheckNameAvailabilityWithoutLocationOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.operation_results = OperationResultsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.get_private_dns_zone_suffix = GetPrivateDnsZoneSuffixOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.advanced_threat_protection_settings = AdvancedThreatProtectionSettingsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.

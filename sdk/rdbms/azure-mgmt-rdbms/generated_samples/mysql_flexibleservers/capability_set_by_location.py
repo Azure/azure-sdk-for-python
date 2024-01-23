@@ -14,7 +14,7 @@ from azure.mgmt.rdbms.mysql_flexibleservers import MySQLManagementClient
     pip install azure-identity
     pip install azure-mgmt-rdbms
 # USAGE
-    python server_reset_gtid.py
+    python capability_set_by_location.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +29,12 @@ def main():
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
-    client.servers.begin_reset_gtid(
-        resource_group_name="TestGroup",
-        server_name="testserver",
-        parameters={"gtidSet": "4aff5b51-97ba-11ed-a955-002248036acc:1-16"},
-    ).result()
+    response = client.location_based_capability_set.get(
+        location_name="WestUS",
+    )
+    print(response)
 
 
-# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2023-10-01-preview/examples/ServerResetGtid.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/ServiceOperations/preview/2023-06-01-preview/examples/CapabilitySetByLocation.json
 if __name__ == "__main__":
     main()
