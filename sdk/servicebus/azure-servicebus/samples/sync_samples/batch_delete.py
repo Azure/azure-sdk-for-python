@@ -11,7 +11,7 @@ Example to show sending message(s) to a Service Bus Queue.
 
 import os
 import sys
-import datetime
+from datetime import datetime, timezone
 import logging
 from azure.servicebus import ServiceBusClient, ServiceBusMessage, ServiceBusReceiveMode
 
@@ -32,10 +32,12 @@ servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_
 with servicebus_client:
     sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
     with sender:
+        
+        
         send_single_message(sender)
         send_single_message(sender)
         send_single_message(sender)
-        time = datetime.datetime.utcnow()
+        time = datetime.now(timezone.utc)
 
     print("Send message is done.")
 
