@@ -222,6 +222,7 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
     def recover_data_from_signature(
         self, signature: bytes, padding: AsymmetricPadding, algorithm: Optional[HashAlgorithm]
     ) -> bytes:
+        # pylint: disable=line-too-long
         """Recovers the signed data from the signature. Only supported with `cryptography` version 3.3 and above.
 
         This function uses the `cryptography` library's implementation.
