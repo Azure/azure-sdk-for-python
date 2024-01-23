@@ -12,7 +12,7 @@ Example to show sending message(s) to a Service Bus Queue.
 import os
 import sys
 import asyncio
-import datetime
+from datetime import datetime, timezone
 import logging
 from azure.servicebus.aio import ServiceBusClient
 from azure.servicebus import ServiceBusMessage, ServiceBusReceiveMode
@@ -38,7 +38,7 @@ async def run():
             await send_single_message(sender)
             await send_single_message(sender)
             await send_single_message(sender)
-            time = datetime.datetime.utcnow()
+            time = datetime.now(timezone.utc)
 
         print("Send message is done.")
 
