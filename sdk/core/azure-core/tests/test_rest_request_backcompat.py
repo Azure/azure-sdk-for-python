@@ -304,7 +304,12 @@ def test_request_formdata_body_files(old_request, new_request):
     new_request.set_formdata_body({"fileName": "hello.jpg"})
 
     assert old_request.data == new_request.data == None
-    assert old_request.files == new_request.files == new_request.content == {"fileName": (None, "hello.jpg", "application/octet-stream")}
+    assert (
+        old_request.files
+        == new_request.files
+        == new_request.content
+        == {"fileName": (None, "hello.jpg", "application/octet-stream")}
+    )
 
     # we don't set any multipart headers with boundaries
     # we rely on the transport to boundary calculating
