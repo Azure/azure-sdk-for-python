@@ -1495,6 +1495,30 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         trigger_id = base.GetResourceIdOrFullNameFromLink(trigger_link)
         return self.Read(path, "triggers", trigger_id, None, options, **kwargs)
 
+    def UpsertTrigger(
+        self,
+        collection_link: str,
+        trigger: Dict[str, Any],
+        options: Optional[Mapping[str, Any]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
+        """Upserts a trigger in a collection.
+        :param str collection_link:
+            The link to the document collection.
+        :param dict trigger:
+        :param dict options:
+            The request options for the request.
+        :return:
+            The upserted Trigger.
+        :rtype:
+            dict
+        """
+        if options is None:
+            options = {}
+
+        collection_id, path, trigger = self._GetContainerIdWithPathForTrigger(collection_link, trigger)
+        return self.Upsert(trigger, path, "triggers", collection_id, None, options, **kwargs)
+
     def ReadUserDefinedFunctions(
         self,
         collection_link: str,

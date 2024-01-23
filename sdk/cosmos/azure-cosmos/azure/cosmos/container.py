@@ -680,9 +680,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options["partitionKey"] = self._set_partition_key(partition_key)
         request_options["disableAutomaticIdGeneration"] = True
 
-        result = self.client_connection.Batch(
+        return self.client_connection.Batch(
             collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)
-        return cast(List[Dict[str, Any]], result)
 
     @distributed_trace
     def delete_item(  # pylint:disable=docstring-missing-param
