@@ -130,6 +130,7 @@ class DatabaseProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: A dict representing the database properties.
         :rtype: Dict[Str, Any]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database couldn't be retrieved.
         """

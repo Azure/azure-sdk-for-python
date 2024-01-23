@@ -809,7 +809,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 message="Could not find Offer for container " + self.container_link)
         new_throughput_properties = throughput_properties[0].copy()
         _replace_throughput(throughput=throughput, new_throughput_properties=new_throughput_properties)
-        data, last_response_headers = self.client_connection.ReplaceOffer(
+        data = self.client_connection.ReplaceOffer(
             offer_link=throughput_properties[0]["_self"], offer=throughput_properties[0], **kwargs)
 
         return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
