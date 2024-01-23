@@ -59,7 +59,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
         if 'data' in result:
             return result.get('data')
         if 'fatal' in result:
-            error = self._error_cls(
+            error = self._error_cls(  # type: ignore [operator]
                 error=result['name'],
                 is_fatal=result['fatal'],
                 description=result['description'],

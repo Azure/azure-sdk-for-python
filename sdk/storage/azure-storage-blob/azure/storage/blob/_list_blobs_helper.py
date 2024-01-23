@@ -241,7 +241,7 @@ class BlobPrefix(ItemPaged, DictMixin):
     options include "primary" and "secondary"."""
     current_page: Optional[List[BlobProperties]]
     """The current page of listed results."""
-    delimiter: Optional[str]
+    delimiter: str
     """A delimiting character used for hierarchy listing."""
     command: Callable
     """Function to retrieve the next page of items."""
@@ -254,7 +254,7 @@ class BlobPrefix(ItemPaged, DictMixin):
         self.prefix = kwargs.get('prefix')
         self.results_per_page = kwargs.get('results_per_page')
         self.container = kwargs.get('container')
-        self.delimiter = kwargs.get('delimiter')
+        self.delimiter = kwargs.get('delimiter', '/')
         self.location_mode = kwargs.get('location_mode')
 
 
