@@ -537,6 +537,10 @@ def test_multipart_filename_and_bytes_and_content_type(filebytes):
 
     assert request.content == {"file": ("specifiedFileName", filebytes, "application/json")}
 
+def test_incorrect_tuple_entry(filebytes):
+    files = ("specifiedFileName", filebytes, "application/json", "extra")
+    with pytest.raises(ValueError):
+        HttpRequest("POST", url="http://example.org", files={"file": files})
 
 
 # NOTE: For files, we don't allow list of tuples yet, just dict. Will uncomment when we add this capability

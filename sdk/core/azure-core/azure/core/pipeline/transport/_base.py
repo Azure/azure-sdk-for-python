@@ -54,8 +54,6 @@ from typing import (
 
 from http.client import HTTPResponse as _HTTPResponse
 
-from black import FileContent
-
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from ...utils._utils import case_insensitive_dict
@@ -78,6 +76,7 @@ DataType = Union[bytes, str, Dict[str, Union[str, int]]]
 if TYPE_CHECKING:
     # We need a transport to define a pipeline, this "if" avoid a circular import
     from azure.core.pipeline import Pipeline
+    from azure.core.rest._helpers import FileContent
 
 _LOGGER = logging.getLogger(__name__)
 
