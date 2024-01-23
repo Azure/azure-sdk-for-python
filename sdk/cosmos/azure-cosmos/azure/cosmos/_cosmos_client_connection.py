@@ -1963,7 +1963,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         operations: List[Dict[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    ) -> Dict[str, Any]:
         """Patches a document and returns it.
 
         :param str document_link: The link to the document.
@@ -1976,6 +1976,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             dict
 
         """
+        response_hook = kwargs.pop("response_hook", None)
         path = base.GetPathFromLink(document_link)
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         resource_type = "docs"
@@ -1994,7 +1995,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # update session for request mutates data on server side
         self._UpdateSessionIfRequired(headers, result, last_response_headers)
-        return result, last_response_headers
+        if response_hook:
+            response_hook(last_response_headers, result)
+        return result
 
     def Batch(
         self,
@@ -2015,6 +2018,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             list
 
         """
+        response_hook = kwargs.pop("response_hook", None)
         if options is None:
             options = {}
 
@@ -2053,6 +2057,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 ),
                 operation_responses=final_responses
             )
+        if response_hook:
+            response_hook(last_response_headers, final_responses)
         return final_responses
 
     def _Batch(
@@ -2103,7 +2109,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> None:
         """Exposes an API to delete all items with a single partition key without the user having
          to explicitly call delete on each record in the partition key.
 
@@ -2116,6 +2122,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :rtype:
             None
         """
+        response_hook = kwargs.pop("response_hook", None)
         if options is None:
             options = {}
 
@@ -2133,7 +2140,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             **kwargs
         )
         self.last_response_headers = last_response_headers
-        return last_response_headers
+        if response_hook:
+            response_hook(last_response_headers, None)
 
     def ReplaceTrigger(
         self,

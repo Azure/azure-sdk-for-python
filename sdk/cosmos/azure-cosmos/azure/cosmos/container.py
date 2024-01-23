@@ -153,7 +153,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
@@ -164,11 +163,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if populate_quota_info is not None:
             request_options["populateQuotaInfo"] = populate_quota_info
         collection_link = self.container_link
-        self._properties, last_response_headers = self.client_connection.ReadContainer(
+        self._properties = self.client_connection.ReadContainer(
             collection_link, options=request_options, **kwargs
         )
-        if response_hook:
-            response_hook(last_response_headers, self._properties)
         return self._properties
 
     @distributed_trace
@@ -211,7 +208,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         doc_link = self._get_document_link(item)
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
 
         if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
@@ -229,11 +225,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
-        result, last_response_headers = self.client_connection.ReadItem(document_link=doc_link,
-                                                                        options=request_options, **kwargs)
-        if response_hook:
-            response_hook(last_response_headers, result)
-        return result
+        return self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
 
     @distributed_trace
     def read_all_items(  # pylint:disable=docstring-missing-param
@@ -494,7 +486,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         item_link = self._get_document_link(item)
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         request_options["disableAutomaticIdGeneration"] = True
         if populate_query_metrics is not None:
             warnings.warn(
@@ -507,12 +498,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
 
-        result, last_response_headers = self.client_connection.ReplaceItem(
+        return self.client_connection.ReplaceItem(
             document_link=item_link, new_document=body, options=request_options, **kwargs
         )
-        if response_hook:
-            response_hook(last_response_headers, result)
-        return result
 
     @distributed_trace
     def upsert_item(  # pylint:disable=docstring-missing-param
@@ -546,7 +534,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: Dict[str, Any]
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         request_options["disableAutomaticIdGeneration"] = True
         if populate_query_metrics is not None:
             warnings.warn(
@@ -559,15 +546,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
 
-        result, last_response_headers = self.client_connection.UpsertItem(
+        return self.client_connection.UpsertItem(
             database_or_container_link=self.container_link,
             document=body,
             options=request_options,
             **kwargs
         )
-        if response_hook:
-            response_hook(last_response_headers, result)
-        return result
 
     @distributed_trace
     def create_item(  # pylint:disable=docstring-missing-param
@@ -606,7 +590,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: Dict[str, Any]
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
 
         request_options["disableAutomaticIdGeneration"] = not kwargs.pop('enable_automatic_id_generation', False)
         if populate_query_metrics:
@@ -622,12 +605,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if indexing_directive is not None:
             request_options["indexingDirective"] = indexing_directive
 
-        result, last_response_headers = self.client_connection.CreateItem(
-            database_or_container_link=self.container_link, document=body, options=request_options, **kwargs
-        )
-        if response_hook:
-            response_hook(last_response_headers, result)
-        return result
+        return self.client_connection.CreateItem(
+            database_or_container_link=self.container_link, document=body, options=request_options, **kwargs)
 
     @distributed_trace
     def patch_item(
@@ -662,7 +641,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         request_options["disableAutomaticIdGeneration"] = True
         request_options["partitionKey"] = self._set_partition_key(partition_key)
         filter_predicate = kwargs.pop("filter_predicate", None)
@@ -670,11 +648,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["filterPredicate"] = filter_predicate
 
         item_link = self._get_document_link(item)
-        result, last_response_headers = self.client_connection.PatchItem(
+        return self.client_connection.PatchItem(
             document_link=item_link, operations=patch_operations, options=request_options, **kwargs)
-        if response_hook:
-            response_hook(last_response_headers, result)
-        return result
 
     @distributed_trace
     def execute_item_batch(
@@ -703,13 +678,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         request_options = build_options(kwargs)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
-        response_hook = kwargs.pop('response_hook', None)
         request_options["disableAutomaticIdGeneration"] = True
 
-        result, last_response_headers = self.client_connection.Batch(
+        result = self.client_connection.Batch(
             collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)
-        if response_hook:
-            response_hook(last_response_headers, result)
         return cast(List[Dict[str, Any]], result)
 
     @distributed_trace
@@ -743,7 +715,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: None
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
         if populate_query_metrics is not None:
@@ -758,10 +729,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["postTriggerInclude"] = post_trigger_include
 
         document_link = self._get_document_link(item)
-        last_response_headers = self.client_connection.DeleteItem(document_link=document_link,
-                                                                  options=request_options, **kwargs)
-        if response_hook:
-            response_hook(last_response_headers, None)
+        self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
 
     @distributed_trace
     def read_offer(self, **kwargs: Any) -> Offer:
@@ -828,7 +796,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             or the throughput properties could not be updated.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
-        response_hook = kwargs.pop('response_hook', None)
         properties = self._get_properties()
         link = properties["_self"]
         query_spec = {
@@ -845,8 +812,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         data, last_response_headers = self.client_connection.ReplaceOffer(
             offer_link=throughput_properties[0]["_self"], offer=throughput_properties[0], **kwargs)
 
-        if response_hook:
-            response_hook(last_response_headers, data)
         return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
 
     @distributed_trace
@@ -937,16 +902,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: Dict[str, Any]
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
 
-        result, last_response_headers = self.client_connection.ReadConflict(
+        return self.client_connection.ReadConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
         )
-        if response_hook:
-            response_hook(last_response_headers, result)
-        return result
 
     @distributed_trace
     def delete_conflict(
@@ -969,15 +930,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: None
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
 
-        last_response_headers = self.client_connection.DeleteConflict(
+        self.client_connection.DeleteConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
         )
-        if response_hook:
-            response_hook(last_response_headers, None)
 
     @distributed_trace
     def delete_all_items_by_partition_key(
@@ -1003,11 +961,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: None
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         # regardless if partition key is valid we set it as invalid partition keys are set to a default empty value
         request_options["partitionKey"] = self._set_partition_key(partition_key)
 
-        last_response_headers = self.client_connection.DeleteAllItemsByPartitionKey(
+        self.client_connection.DeleteAllItemsByPartitionKey(
             collection_link=self.container_link, options=request_options, **kwargs)
-        if response_hook:
-            response_hook(last_response_headers, None)
