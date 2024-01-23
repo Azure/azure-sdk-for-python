@@ -71,7 +71,7 @@ class ControlFlowNode(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, AB
         """Register this node in current pipeline component builder by adding self to a global stack."""
         from azure.ai.ml.dsl._pipeline_component_builder import _add_component_to_current_definition_builder
 
-        _add_component_to_current_definition_builder(self)
+        _add_component_to_current_definition_builder(self)  # type: ignore[arg-type]
 
     @classmethod
     def _create_validation_error(cls, message: str, no_personal_data_message: str) -> ValidationException:

@@ -64,7 +64,7 @@ def do_while(
     """
     do_while_node = DoWhile(
         body=body,
-        condition=condition,
+        condition=condition,  # type: ignore[arg-type]
         mapping=mapping,
         _from_component_func=True,
     )
@@ -91,8 +91,8 @@ def do_while(
                 single_input.type = inferred_type
                 # update node corresponding component input
                 input_name = single_input._meta.name
-                body.component.inputs[input_name]._is_inferred_optional = True
-                body.component.inputs[input_name].type = inferred_type
+                body.component.inputs[input_name]._is_inferred_optional = True  # type: ignore[union-attr]
+                body.component.inputs[input_name].type = inferred_type  # type: ignore[union-attr]
 
     # when mapping is a dictionary, infer and update for dynamic input
     if isinstance(mapping, dict):
