@@ -99,7 +99,7 @@ class PhoneNumbersClient(object):
     def begin_purchase_phone_numbers(
             self,
             search_id,  # type: str
-            consentdnr=False, # type: bool
+            consent_dnr=False, # type: bool
             **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -107,7 +107,7 @@ class PhoneNumbersClient(object):
 
         :param search_id: The search id.
         :type search_id: str
-        :param consent_to_not_resell_numbers/consentdnr: The consent Provided To Not Resell Phone Numbers.
+        :param consent_to_not_resell_numbers/consent_dnr: The consent provided to not resell phone numbers.
         :type consent_to_not_resell_numbers: bool
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
@@ -119,7 +119,7 @@ class PhoneNumbersClient(object):
         """
         purchase_request = PhoneNumberPurchaseRequest(
             search_id=search_id,
-            consent_to_not_resell_numbers=consentdnr
+            consent_to_not_resell_numbers=consent_dnr
             )
 
         polling_interval = kwargs.pop(
