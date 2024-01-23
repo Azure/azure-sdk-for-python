@@ -54,6 +54,8 @@ from typing import (
 
 from http.client import HTTPResponse as _HTTPResponse
 
+from black import FileContent
+
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from ...utils._utils import case_insensitive_dict
@@ -249,7 +251,7 @@ class HttpRequest:
         self.data = value
 
     @staticmethod
-    def _format_data(data: Union[str, IO]) -> Union[Tuple[None, str], Tuple[Optional[str], IO, str]]:
+    def _format_data(data: Union[str, IO]) -> Union[Tuple[None, str], Tuple[Optional[str], FileContent, str]]:
         """Format field data according to whether it is a stream or
         a string for a form-data request.
 

@@ -66,9 +66,8 @@ PrimitiveData = Optional[Union[str, int, float, bool]]
 ParamsType = Mapping[str, Union[PrimitiveData, Sequence[PrimitiveData]]]
 
 FileContent = Union[str, bytes, IO[str], IO[bytes]]
-FileType = Tuple[Optional[str], FileContent]
 
-FilesType = Union[
+FileType = Union[
     # file (or bytes)
     FileContent,
     # (filename, file (or bytes))
@@ -76,6 +75,8 @@ FilesType = Union[
     # (filename, file (or bytes), content_type)
     Tuple[Optional[str], FileContent, Optional[str]],
 ]
+
+FilesType = Union[Mapping[str, FileType], Sequence[Tuple[str, FileType]]]
 
 ContentTypeBase = Union[str, bytes, Iterable[bytes]]
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
@@ -110,7 +111,8 @@ def set_urlencoded_body(data, has_files):
         default_headers["Content-Type"] = "application/x-www-form-urlencoded"
     return default_headers, body
 
-def set_multipart_body(files: Union[Mapping[str, FilesType], Sequence[Tuple[str, FilesType]]]):
+
+def set_multipart_body(files: FilesType):
     file_items = files.items() if isinstance(files, Mapping) else files
     formatted_files = {f: _format_data_helper(d) for f, d in file_items if d is not None}
     return {}, formatted_files
