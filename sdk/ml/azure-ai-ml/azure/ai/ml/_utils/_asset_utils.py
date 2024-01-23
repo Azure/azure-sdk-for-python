@@ -70,6 +70,8 @@ from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 if TYPE_CHECKING:
     from azure.ai.ml.operations import ComponentOperations, DataOperations, EnvironmentOperations, ModelOperations
 
+hash_type = type(hashlib.md5())  # nosec
+
 module_logger = logging.getLogger(__name__)
 
 
@@ -241,8 +243,8 @@ def _parse_name_version(
 
 
 def _get_file_hash(
-    filename: Union[str, os.PathLike], _hash: hashlib._Hash  # pylint: disable=no-member
-) -> hashlib._Hash:  # pylint: disable=no-member
+    filename: Union[str, os.PathLike], _hash: hash_type  # pylint: disable=no-member
+) -> hash_type:  # pylint: disable=no-member
     with open(str(filename), "rb") as f:
         for chunk in iter(lambda: f.read(CHUNK_SIZE), b""):
             _hash.update(chunk)
@@ -250,8 +252,8 @@ def _get_file_hash(
 
 
 def _get_dir_hash(
-    directory: Union[str, os.PathLike], _hash: hashlib._Hash, ignore_file: IgnoreFile  # pylint: disable=no-member
-) -> hashlib._Hash:  # pylint: disable=no-member
+    directory: Union[str, os.PathLike], _hash: hash_type, ignore_file: IgnoreFile  # pylint: disable=no-member
+) -> hash_type:  # pylint: disable=no-member
     dir_contents = Path(directory).iterdir()
     sorted_contents = sorted(dir_contents, key=lambda path: str(path).lower())
     for path in sorted_contents:
