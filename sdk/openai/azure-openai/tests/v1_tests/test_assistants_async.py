@@ -8,24 +8,25 @@ import time
 import pytest
 import pathlib
 from devtools_testutils import AzureRecordedTestCase
-from conftest import AZURE, OPENAI, ALL, ASST_AZURE, configure
+from conftest import AZURE, OPENAI, ALL, ASST_AZURE, configure_async
 
 TIMEOUT = 300
 
-class TestAssistants(AzureRecordedTestCase):
+class TestAssistantsAsync(AzureRecordedTestCase):
 
-    @configure
+    @configure_async
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [ASST_AZURE])
-    def test_assistants_crud(self, client, azure_openai_creds, api_type, **kwargs):
+    async def test_assistants_crud(self, client_async, azure_openai_creds, api_type, **kwargs):
 
-        assistant = client.beta.assistants.create(
+        assistant = await client_async.beta.assistants.create(
             name="python test",
             instructions="You are a personal math tutor. Write and run code to answer math questions.",
             tools=[{"type": "code_interpreter"}],
             model="gpt-4-1106-preview",
         )
         try:
-            retrieved_assistant = client.beta.assistants.retrieve(
+            retrieved_assistant = await client_async.beta.assistants.retrieve(
                 assistant_id=assistant.id,
             )
             assert retrieved_assistant.id == assistant.id
@@ -39,41 +40,42 @@ class TestAssistants(AzureRecordedTestCase):
             assert retrieved_assistant.file_ids == assistant.file_ids
             assert retrieved_assistant.object == assistant.object
 
-            list_assistants = client.beta.assistants.list()
-            for asst in list_assistants:
+            list_assistants = client_async.beta.assistants.list()
+            async for asst in list_assistants:
                 assert asst.id
 
-            modify_assistant = client.beta.assistants.update(
+            modify_assistant = await client_async.beta.assistants.update(
                 assistant_id=assistant.id,
                 metadata={"key": "value"}
             )
             assert modify_assistant.metadata == {"key": "value"}
         finally:
-            delete_assistant = client.beta.assistants.delete(
+            delete_assistant = await client_async.beta.assistants.delete(
                 assistant_id=assistant.id
             )
             assert delete_assistant.id == assistant.id
             assert delete_assistant.deleted is True
 
-    @configure
+    @configure_async
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [ASST_AZURE])
-    def test_assistants_files_crud(self, client, azure_openai_creds, api_type, **kwargs):
+    async def test_assistants_files_crud(self, client_async, azure_openai_creds, api_type, **kwargs):
         with open("test.txt", "w") as f:
             f.write("test")
 
         path = pathlib.Path("test.txt")
 
-        file1 = client.files.create(
+        file1 = await client_async.files.create(
             file=open(path, "rb"),
             purpose="assistants"
         )
 
-        file2 = client.files.create(
+        file2 = await client_async.files.create(
             file=open(path, "rb"),
             purpose="assistants"
         )
 
-        assistant = client.beta.assistants.create(
+        assistant = await client_async.beta.assistants.create(
             name="python test",
             instructions="You are a personal math tutor. Write and run code to answer math questions.",
             tools=[{"type": "code_interpreter"}],
@@ -82,12 +84,12 @@ class TestAssistants(AzureRecordedTestCase):
         )
         assert assistant.file_ids == [file1.id]
         try:
-            created_assistant_file = client.beta.assistants.files.create(
+            created_assistant_file = await client_async.beta.assistants.files.create(
                 assistant_id=assistant.id,
                 file_id=file2.id
             )
 
-            retrieved_assistant_file = client.beta.assistants.files.retrieve(
+            retrieved_assistant_file = await client_async.beta.assistants.files.retrieve(
                 assistant_id=assistant.id,
                 file_id=file2.id
             )
@@ -96,30 +98,31 @@ class TestAssistants(AzureRecordedTestCase):
             assert retrieved_assistant_file.created_at == created_assistant_file.created_at
             assert retrieved_assistant_file.assistant_id == created_assistant_file.assistant_id
 
-            list_assistants_files = client.beta.assistants.files.list(
+            list_assistants_files = client_async.beta.assistants.files.list(
                 assistant_id=assistant.id
             )
-            for asst_file in list_assistants_files:
+            async for asst_file in list_assistants_files:
                 assert asst_file.id
 
-            delete_assistant_file = client.beta.assistants.files.delete(
+            delete_assistant_file = await client_async.beta.assistants.files.delete(
                 assistant_id=assistant.id,
                 file_id=file2.id
             )
             assert delete_assistant_file.id == retrieved_assistant_file.id
             assert delete_assistant_file.deleted is True
         finally:
-            delete_assistant = client.beta.assistants.delete(
+            delete_assistant = await client_async.beta.assistants.delete(
                 assistant_id=assistant.id
             )
             assert delete_assistant.id == assistant.id
             assert delete_assistant.deleted is True
             os.remove(path)
 
-    @configure
+    @configure_async
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [ASST_AZURE])
-    def test_assistants_threads_crud(self, client, azure_openai_creds, api_type, **kwargs):
-        thread = client.beta.threads.create(
+    async def test_assistants_threads_crud(self, client_async, azure_openai_creds, api_type, **kwargs):
+        thread = await client_async.beta.threads.create(
             messages=[
                 {
                     "role": "user",
@@ -130,7 +133,7 @@ class TestAssistants(AzureRecordedTestCase):
         )
 
         try:
-            retrieved_thread = client.beta.threads.retrieve(
+            retrieved_thread = await client_async.beta.threads.retrieve(
                 thread_id=thread.id,
             )
             assert retrieved_thread.id == thread.id
@@ -138,33 +141,34 @@ class TestAssistants(AzureRecordedTestCase):
             assert retrieved_thread.created_at == thread.created_at
             assert retrieved_thread.metadata == thread.metadata
 
-            updated_thread = client.beta.threads.update(
+            updated_thread = await client_async.beta.threads.update(
                 thread_id=thread.id,
                 metadata={"key": "updated"}
             )
             assert updated_thread.metadata == {"key": "updated"}
 
         finally:
-            delete_thread = client.beta.threads.delete(
+            delete_thread = await client_async.beta.threads.delete(
                 thread_id=thread.id
             )
             assert delete_thread.id == thread.id
             assert delete_thread.deleted is True
 
-    @configure
+    @configure_async
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [ASST_AZURE])
-    def test_assistants_messages_crud(self, client, azure_openai_creds, api_type, **kwargs):
+    async def test_assistants_messages_crud(self, client_async, azure_openai_creds, api_type, **kwargs):
         with open("test.txt", "w") as f:
             f.write("test")
 
         path = pathlib.Path("test.txt")
 
-        file = client.files.create(
+        file = await client_async.files.create(
             file=open(path, "rb"),
             purpose="assistants"
         )
 
-        thread = client.beta.threads.create(
+        thread = await client_async.beta.threads.create(
             messages=[
                 {
                     "role": "user",
@@ -174,7 +178,7 @@ class TestAssistants(AzureRecordedTestCase):
             metadata={"key": "value"},
         )
 
-        message = client.beta.threads.messages.create(
+        message = await client_async.beta.threads.messages.create(
             thread_id=thread.id,
             role="user",
             content="what is 2+2?",
@@ -183,7 +187,7 @@ class TestAssistants(AzureRecordedTestCase):
         )
 
         try:
-            retrieved_message = client.beta.threads.messages.retrieve(
+            retrieved_message = await client_async.beta.threads.messages.retrieve(
                 thread_id=thread.id,
                 message_id=message.id
             )
@@ -195,7 +199,7 @@ class TestAssistants(AzureRecordedTestCase):
             assert retrieved_message.role == message.role
             assert retrieved_message.content == message.content
 
-            retrieved_message_file = client.beta.threads.messages.files.retrieve(
+            retrieved_message_file = await client_async.beta.threads.messages.files.retrieve(
                 thread_id=thread.id,
                 message_id=message.id,
                 file_id=file.id
@@ -204,20 +208,20 @@ class TestAssistants(AzureRecordedTestCase):
             assert retrieved_message_file.message_id
             assert retrieved_message_file.created_at
 
-            list_messages = client.beta.threads.messages.list(
+            list_messages = client_async.beta.threads.messages.list(
                 thread_id=thread.id
             )
-            for msg in list_messages:
+            async for msg in list_messages:
                 assert msg.id
 
-            list_message_files = client.beta.threads.messages.files.list(
+            list_message_files = client_async.beta.threads.messages.files.list(
                 thread_id=thread.id,
                 message_id=message.id
             )
-            for msg_file in list_message_files:
+            async for msg_file in list_message_files:
                 assert msg_file.id
 
-            modify_message = client.beta.threads.messages.update(
+            modify_message = await client_async.beta.threads.messages.update(
                 thread_id=thread.id,
                 message_id=message.id,
                 metadata={"math": "updated"}
@@ -225,17 +229,18 @@ class TestAssistants(AzureRecordedTestCase):
             assert modify_message.metadata == {"math": "updated"}
 
         finally:
-            delete_thread = client.beta.threads.delete(
+            delete_thread = await client_async.beta.threads.delete(
                 thread_id=thread.id
             )
             assert delete_thread.id == thread.id
             assert delete_thread.deleted is True
             os.remove(path)
 
-    @configure
+    @configure_async
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [ASST_AZURE])
-    def test_assistants_runs_code(self, client, azure_openai_creds, api_type, **kwargs):
-        assistant = client.beta.assistants.create(
+    async def test_assistants_runs_code(self, client_async, azure_openai_creds, api_type, **kwargs):
+        assistant = await client_async.beta.assistants.create(
             name="python test",
             instructions="You are a personal math tutor. Write and run code to answer math questions.",
             tools=[{"type": "code_interpreter"}],
@@ -243,22 +248,22 @@ class TestAssistants(AzureRecordedTestCase):
         )
 
         try:
-            thread = client.beta.threads.create()
+            thread = await client_async.beta.threads.create()
 
-            message = client.beta.threads.messages.create(
+            message = await client_async.beta.threads.messages.create(
                 thread_id=thread.id,
                 role="user",
                 content="I need to solve the equation `3x + 11 = 14`. Can you help me?",
             )
 
-            run = client.beta.threads.runs.create(
+            run = await client_async.beta.threads.runs.create(
                 thread_id=thread.id,
                 assistant_id=assistant.id,
                 instructions="Please address the user as Jane Doe.",
                 # additional_instructions="After solving each equation, say 'Isn't math fun?'",
             )
 
-            run = client.beta.threads.runs.update(
+            run = await client_async.beta.threads.runs.update(
                 thread_id=thread.id,
                 run_id=run.id,
                 metadata={"user": "user123"}
@@ -271,12 +276,12 @@ class TestAssistants(AzureRecordedTestCase):
                 if time.time() - start_time > TIMEOUT:
                     raise TimeoutError("Run timed out")
 
-                run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
+                run = await client_async.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
 
                 if run.status == "completed":
-                    messages = client.beta.threads.messages.list(thread_id=thread.id)
+                    messages = client_async.beta.threads.messages.list(thread_id=thread.id)
 
-                    for message in messages:
+                    async for message in messages:
                         assert message.content[0].type == "text"
                         assert message.content[0].text.value
 
@@ -285,33 +290,34 @@ class TestAssistants(AzureRecordedTestCase):
                     time.sleep(5)
 
         finally:
-            delete_assistant = client.beta.assistants.delete(
+            delete_assistant = await client_async.beta.assistants.delete(
                 assistant_id=assistant.id
             )
             assert delete_assistant.id == assistant.id
             assert delete_assistant.deleted is True
 
-            delete_thread = client.beta.threads.delete(
+            delete_thread = await client_async.beta.threads.delete(
                 thread_id=thread.id
             )
             assert delete_thread.id == thread.id
             assert delete_thread.deleted is True
 
     @pytest.mark.skip("Azure retrieval not working yet")
-    @configure
+    @configure_async
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [ASST_AZURE])
-    def test_assistants_runs_retrieval(self, client, azure_openai_creds, api_type, **kwargs):
+    async def test_assistants_runs_retrieval(self, client_async, azure_openai_creds, api_type, **kwargs):
         with open("policy.txt", "w") as f:
             f.write("Contoso company policy requires that all employees take at least 10 vacation days a year.")
 
         path = pathlib.Path("policy.txt")
 
-        file = client.files.create(
+        file = await client_async.files.create(
             file=open(path, "rb"),
             purpose="assistants"
         )
 
-        assistant = client.beta.assistants.create(
+        assistant = await client_async.beta.assistants.create(
             name="python test",
             instructions="You help answer questions about Contoso company policy.",
             tools=[{"type": "retrieval"}],
@@ -320,7 +326,7 @@ class TestAssistants(AzureRecordedTestCase):
         )
 
         try:
-            run = client.beta.threads.create_and_run(
+            run = await client_async.beta.threads.create_and_run(
                 assistant_id=assistant.id,
                 thread={
                     "messages": [
@@ -335,12 +341,12 @@ class TestAssistants(AzureRecordedTestCase):
                 if time.time() - start_time > TIMEOUT:
                     raise TimeoutError("Run timed out")
 
-                run = client.beta.threads.runs.retrieve(thread_id=run.thread_id, run_id=run.id)
+                run = await client_async.beta.threads.runs.retrieve(thread_id=run.thread_id, run_id=run.id)
 
                 if run.status == "completed":
-                    messages = client.beta.threads.messages.list(thread_id=run.thread_id)
+                    messages = client_async.beta.threads.messages.list(thread_id=run.thread_id)
 
-                    for message in messages:
+                    async for message in messages:
                         assert message.content[0].type == "text"
                         assert message.content[0].text.value
 
@@ -349,13 +355,13 @@ class TestAssistants(AzureRecordedTestCase):
                 time.sleep(5)
 
         finally:
-            delete_assistant = client.beta.assistants.delete(
+            delete_assistant = await client_async.beta.assistants.delete(
                 assistant_id=assistant.id
             )
             assert delete_assistant.id == assistant.id
             assert delete_assistant.deleted is True
 
-            delete_thread = client.beta.threads.delete(
+            delete_thread = await client_async.beta.threads.delete(
                 thread_id=run.thread_id
             )
             assert delete_thread.id
@@ -363,10 +369,11 @@ class TestAssistants(AzureRecordedTestCase):
             
             os.remove(path)
 
-    @configure
+    @configure_async
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [ASST_AZURE])
-    def test_assistants_runs_functions(self, client, azure_openai_creds, api_type, **kwargs):
-        assistant = client.beta.assistants.create(
+    async def test_assistants_runs_functions(self, client_async, azure_openai_creds, api_type, **kwargs):
+        assistant = await client_async.beta.assistants.create(
             name="python test",
             instructions="You help answer questions about the weather.",
             tools=[
@@ -397,7 +404,7 @@ class TestAssistants(AzureRecordedTestCase):
         )
 
         try:
-            run = client.beta.threads.create_and_run(
+            run = await client_async.beta.threads.create_and_run(
                 assistant_id=assistant.id,
                 thread={
                     "messages": [
@@ -411,10 +418,10 @@ class TestAssistants(AzureRecordedTestCase):
                 if time.time() - start_time > TIMEOUT:
                     raise TimeoutError("Run timed out")
 
-                run = client.beta.threads.runs.retrieve(thread_id=run.thread_id, run_id=run.id)
+                run = await client_async.beta.threads.runs.retrieve(thread_id=run.thread_id, run_id=run.id)
 
                 if run.status == "requires_action":
-                    run = client.beta.threads.runs.submit_tool_outputs(
+                    run = await client_async.beta.threads.runs.submit_tool_outputs(
                         thread_id=run.thread_id,
                         run_id=run.id,
                         tool_outputs=[
@@ -426,9 +433,9 @@ class TestAssistants(AzureRecordedTestCase):
                     )
 
                 if run.status == "completed":
-                    messages = client.beta.threads.messages.list(thread_id=run.thread_id)
+                    messages = client_async.beta.threads.messages.list(thread_id=run.thread_id)
 
-                    for message in messages:
+                    async for message in messages:
                         assert message.content[0].type == "text"
                         assert message.content[0].text.value
 
@@ -436,8 +443,8 @@ class TestAssistants(AzureRecordedTestCase):
 
                 time.sleep(5)
 
-            runs = client.beta.threads.runs.list(thread_id=run.thread_id)
-            for r in runs:
+            runs = client_async.beta.threads.runs.list(thread_id=run.thread_id)
+            async for r in runs:
                 assert r.id == run.id
                 assert r.thread_id == run.thread_id
                 assert r.assistant_id == run.assistant_id
@@ -446,11 +453,11 @@ class TestAssistants(AzureRecordedTestCase):
                 assert r.tools == run.tools
                 assert r.metadata == run.metadata
 
-                run_steps = client.beta.threads.runs.steps.list(
+                run_steps = client_async.beta.threads.runs.steps.list(
                     thread_id=run.thread_id,
                     run_id=r.id
                 )
-                retrieved_step = client.beta.threads.runs.steps.retrieve(
+                retrieved_step = await client_async.beta.threads.runs.steps.retrieve(
                     thread_id=run.thread_id,
                     run_id=r.id,
                     step_id=run_steps.data[0].id
@@ -464,29 +471,14 @@ class TestAssistants(AzureRecordedTestCase):
                 assert retrieved_step.step_details
 
         finally:
-            delete_assistant = client.beta.assistants.delete(
+            delete_assistant = await client_async.beta.assistants.delete(
                 assistant_id=assistant.id
             )
             assert delete_assistant.id == assistant.id
             assert delete_assistant.deleted is True
 
-            delete_thread = client.beta.threads.delete(
+            delete_thread = await client_async.beta.threads.delete(
                 thread_id=run.thread_id
             )
             assert delete_thread.id
             assert delete_thread.deleted is True
-
-    @configure
-    @pytest.mark.parametrize("api_type", [ASST_AZURE])
-    def test_langchain(self, client, azure_openai_creds, api_type, **kwargs):
-        from langchain.agents.openai_assistant import OpenAIAssistantRunnable
-
-        interpreter_assistant = OpenAIAssistantRunnable.create_assistant(
-            name="langchain assistant",
-            instructions="You are a personal math tutor. Write and run code to answer math questions.",
-            tools=[{"type": "code_interpreter"}],
-            model="gpt-4-1106-preview",
-            client=client
-        )
-        output = interpreter_assistant.invoke({"content": "What's 10 - 4 raised to the 2.7"})
-        print(output)
