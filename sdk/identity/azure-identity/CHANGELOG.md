@@ -4,8 +4,6 @@
 
 ### Features Added
 
-- Added support for parsing the `expires_on` field returned by the `az` CLI in `AzureCliCredential`. ([#33947](https://github.com/Azure/azure-sdk-for-python/issues/33947))
-
 ### Breaking Changes
 
 ### Bugs Fixed
@@ -14,6 +12,8 @@
 - `ManagedIdentityCredential` is more lenient with the error message it matches when falling through to the next credential in the chain in the case that Docker Desktop returns a 403 response when attempting to access the IMDS endpoint. ([#33928](https://github.com/Azure/azure-sdk-for-python/pull/33928))
 
 ### Other Changes
+
+- `AzureCliCredential` utilizes the new `expires_on` property returned by `az` CLI versions >= 2.54.0 to determine token expiration. ([#33947](https://github.com/Azure/azure-sdk-for-python/issues/33947))
 
 ## 1.15.0 (2023-10-26)
 
