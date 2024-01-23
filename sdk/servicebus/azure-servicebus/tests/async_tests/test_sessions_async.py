@@ -1207,3 +1207,41 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
                 async for msg in receiver:
                     pass
             assert time.time() - start_time2 > 65 # Default service timeout value is 65 seconds
+
+    @pytest.mark.asyncio
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
+    async def test_session_delete_messages_async(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_topic=None, servicebus_subscription=None, **kwargs):
+        async with ServiceBusClient.from_connection_string(
+                servicebus_namespace_connection_string,
+                logging_enable=False, uamqp_transport=uamqp_transport
+        ) as sb_client:
+            async with sb_client.get_topic_sender(topic_name=servicebus_topic.name) as sender:
+                message = ServiceBusMessage(b"Sample topic message", session_id='test_session')
+                await sender.send_messages(message)
+                await sender.send_messages(message)
+
+            async with sb_client.get_subscription_receiver(
+                topic_name=servicebus_topic.name,
+                subscription_name=servicebus_subscription.name,
+                session_id='test_session',
+                max_wait_time=5,
+                receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE
+            ) as receiver:
+                number_deleted_messages = await receiver.delete_batch_messages()
+            assert number_deleted_messages == 1
+
+            async with sb_client.get_subscription_receiver(
+                topic_name=servicebus_topic.name,
+                subscription_name=servicebus_subscription.name,
+                session_id=NEXT_AVAILABLE_SESSION,
+                max_wait_time=5,
+                receive_mode=ServiceBusReceiveMode.PEEK_LOCK
+            ) as receiver:
+                number_deleted_messages = await receiver.delete_batch_messages()
+            assert number_deleted_messages == 1
