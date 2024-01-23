@@ -11,7 +11,7 @@ Example to show sending message(s) to a Service Bus Queue.
 
 import os
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from azure.servicebus import ServiceBusClient, ServiceBusMessage, ServiceBusReceiveMode
 
 
@@ -22,16 +22,14 @@ def send_single_message(sender, i):
     message = ServiceBusMessage(f"Single Message {i}")
     sender.send_messages(message)
 
-servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR, uamqp_transport=True)
+servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR, uamqp_transport=False)
 with servicebus_client:
     sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
     with sender:
         send_single_message(sender, 1)
         send_single_message(sender, 2)
         send_single_message(sender, 3)
-        print(f"All messages sent before {datetime.now(timezone.utc)}")
-
-    print("Send message is done.")
+    print(f"All messages sent before {datetime.now(timezone.utc)}")
 
     receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE)
     with receiver:
@@ -41,8 +39,13 @@ with servicebus_client:
         for msg in peeked_msgs:
             print(f"Message peeked has enqueued time of {msg.enqueued_time_utc}")
 
-        print(f"Deleting messages that are older than {datetime.now(timezone.utc)}")
-        deleted_msgs = receiver.delete_batch_messages(max_message_count=10, enqueued_time_older_than_utc=datetime.now(timezone.utc))
+        # Deleting Messages
+        new_time = datetime.now(timezone.utc) + timedelta(hours=10)
+        print(f"Deleting messages that are older than {new_time}")
+        deleted_msgs = receiver.delete_batch_messages(
+            max_message_count=10,
+            enqueued_time_older_than_utc=new_time
+        )
         print(f"{deleted_msgs} messages deleted.")
 
         # Try to peek after deleting

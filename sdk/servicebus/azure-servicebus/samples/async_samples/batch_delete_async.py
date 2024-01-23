@@ -11,7 +11,7 @@ Example to show sending message(s) to a Service Bus Queue.
 
 import os
 import asyncio
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from azure.servicebus.aio import ServiceBusClient
 from azure.servicebus import ServiceBusMessage, ServiceBusReceiveMode
 
@@ -31,7 +31,7 @@ async def run():
             await send_single_message(sender, 1)
             await send_single_message(sender, 2)
             await send_single_message(sender, 3)
-            print(f"All messages sent before {datetime.now(timezone.utc)}")
+        print(f"All messages sent before {datetime.now(timezone.utc)}")
 
 
         receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE)
@@ -42,8 +42,13 @@ async def run():
             for msg in peeked_msgs:
                 print(f"Message peeked has enqueued time of {msg.enqueued_time_utc}")
 
-            print(f"Deleting messages that are older than {datetime.now(timezone.utc)}")
-            deleted_msgs = await receiver.delete_batch_messages(max_message_count=10, enqueued_time_older_than_utc=datetime.now(timezone.utc))
+            # Deleting Messages
+            new_time = datetime.now(timezone.utc) + timedelta(hours=10)
+            print(f"Deleting messages that are older than {new_time}")
+            deleted_msgs = await receiver.delete_batch_messages(
+                max_message_count=10,
+                enqueued_time_older_than_utc=new_time
+            )
             print(f"{deleted_msgs} messages deleted.")
 
             # Try to peek after deleting
