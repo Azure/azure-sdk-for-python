@@ -440,7 +440,8 @@ class PipelineExpression(PipelineExpressionMixin):
         # TODO: check if there is pipeline input we cannot know its type (missing in `PipelineComponentBuilder.inputs`)?
         from azure.ai.ml.dsl._pipeline_component_builder import _definition_builder_stack
 
-        pipeline_inputs = _definition_builder_stack.top().inputs
+        res = _definition_builder_stack.top()
+        pipeline_inputs = res.inputs if res is not None else {}
         postfix: List[str] = []
         inputs: Dict[str, ExpressionInput] = {}
         postfix, inputs = PipelineExpression._handle_operand(operand1, postfix, inputs, pipeline_inputs)

@@ -164,6 +164,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         """
 
         @pipeline(
+            func=None,
             name="Scatter gather",
             description="It includes all steps that need to be executed in silo and aggregation",
         )
@@ -241,7 +242,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             res: PipelineJob = executed_aggregation_component.outputs
             return res
 
-        @pipeline(name="Scatter gather graph")
+        @pipeline(func=None, name="Scatter gather graph")
         # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
         def create_scatter_gather_graph() -> PipelineJob:
             """
@@ -268,11 +269,11 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                 }
 
             do_while(
-                body=scatter_gather_body,
+                body=scatter_gather_body,  # type: ignore[arg-type]
                 mapping=do_while_mapping,
                 max_iteration_count=self.max_iterations,
             )
-            res_scatter: PipelineJob = scatter_gather_body.outputs
+            res_scatter: PipelineJob = scatter_gather_body.outputs  # type: ignore[assignment]
             return res_scatter
 
         res: PipelineJob = create_scatter_gather_graph()
