@@ -25,8 +25,6 @@ servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_
 with servicebus_client:
     sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
     with sender:
-        
-        
         send_single_message(sender)
         send_single_message(sender)
         send_single_message(sender)
