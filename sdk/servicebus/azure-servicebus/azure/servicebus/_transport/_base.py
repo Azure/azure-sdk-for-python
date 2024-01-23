@@ -36,7 +36,6 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     AMQP_LONG_VALUE: Callable
     AMQP_ARRAY_VALUE: Callable
     AMQP_UINT_VALUE: Callable
-    AMQP_TIMESTAMP_VALUE: Callable
 
     @staticmethod
     @abstractmethod
