@@ -8,7 +8,7 @@ from contextlib import contextmanager
 from types import CodeType, FrameType, FunctionType, MethodType
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 
-from azure.ai.ml._utils.utils import is_private_preview_enabled
+from azure.ai.ml._utils.utils import is_bytecode_optimization_enabled
 
 logger = logging.getLogger(__name__)
 
@@ -110,53 +110,56 @@ class PersistentLocalsFunctionProfilerBuilder(PersistentLocalsFunctionBuilder):
         return outputs, _locals
 
 
+class PersistentLocalsFunction(object):
+    def __init__(
+        self,
+        _func,
+        *,
+        _self: Optional[Any] = None,
+        skip_locals: Optional[List[str]] = None,
+    ):
+        """
+        :param _func: The function to be wrapped.
+        :param _self: If original func is a method, _self should be provided, which is the instance of the method.
+        :param skip_locals: A list of local variables to skip when saving the locals.
+        """
+        self._locals = {}
+        self._self = _self
+        # make function an instance method
+        self._func = MethodType(_func, self)
+        self._skip_locals = skip_locals
+
+    def __call__(__self, *args, **kwargs):  # pylint: disable=no-self-argument
+        # Use __self in case self is also passed as a named argument in kwargs
+        __self._locals.clear()
+        try:
+            if __self._self:
+                return __self._func(__self._self, *args, **kwargs)  # pylint: disable=not-callable
+            return __self._func(*args, **kwargs)  # pylint: disable=not-callable
+        finally:
+            # always pop skip locals even if exception is raised in user code
+            if __self._skip_locals is not None:
+                for skip_local in __self._skip_locals:
+                    __self._locals.pop(skip_local, None)
+
+    @property
+    def locals(self):
+        return self._locals
+
+
+def _source_template_func(mock_arg):
+    return mock_arg
+
+
+def _target_template_func(__self, mock_arg):
+    try:
+        return mock_arg
+    finally:
+        __self._locals = locals().copy()  # pylint: disable=protected-access
+
+
 try:
     from bytecode import Bytecode, Instr, Label
-
-    class PersistentLocalsFunction(object):
-        def __init__(
-            self,
-            _func,
-            *,
-            _self: Optional[Any] = None,
-            skip_locals: Optional[List[str]] = None,
-        ):
-            """
-            :param _func: The function to be wrapped.
-            :param _self: If original func is a method, _self should be provided, which is the instance of the method.
-            :param skip_locals: A list of local variables to skip when saving the locals.
-            """
-            self._locals = {}
-            self._self = _self
-            # make function an instance method
-            self._func = MethodType(_func, self)
-            self._skip_locals = skip_locals
-
-        def __call__(__self, *args, **kwargs):  # pylint: disable=no-self-argument
-            # Use __self in case self is also passed as a named argument in kwargs
-            __self._locals.clear()
-            try:
-                if __self._self:
-                    return __self._func(__self._self, *args, **kwargs)  # pylint: disable=not-callable
-                return __self._func(*args, **kwargs)  # pylint: disable=not-callable
-            finally:
-                # always pop skip locals even if exception is raised in user code
-                if __self._skip_locals is not None:
-                    for skip_local in __self._skip_locals:
-                        __self._locals.pop(skip_local, None)
-
-        @property
-        def locals(self):
-            return self._locals
-
-    def _source_template_func(mock_arg):
-        return mock_arg
-
-    def _target_template_func(__self, mock_arg):
-        try:
-            return mock_arg
-        finally:
-            __self._locals = locals().copy()  # pylint: disable=protected-access
 
     class PersistentLocalsFunctionBytecodeBuilder(PersistentLocalsFunctionBuilder):
         _template_separators = []
@@ -450,7 +453,7 @@ except ImportError:
 
 
 def _get_persistent_locals_builder() -> PersistentLocalsFunctionBuilder:
-    if is_private_preview_enabled():
+    if is_bytecode_optimization_enabled():
         return PersistentLocalsFunctionBytecodeBuilder()
     return PersistentLocalsFunctionProfilerBuilder()
 

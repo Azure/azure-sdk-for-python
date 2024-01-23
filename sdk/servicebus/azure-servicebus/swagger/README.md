@@ -19,3 +19,28 @@ clear-output-folder: true
 python: true
 models-mode: msrest
 ```
+
+### Python Customizations
+```yaml
+directive:
+    - from: swagger-document
+      where: $.definitions.NamespacePropertiesEntry.properties.title
+      transform: >
+        $["type"] = "string";
+    - from: swagger-document
+      where: $.definitions.QueueDescriptionEntry.properties.title
+      transform: >
+        $["type"] = "string";
+    - from: swagger-document
+      where: $.definitions.TopicDescriptionEntry.properties.title
+      transform: >
+        $["type"] = "string";
+    - from: swagger-document
+      where: $.definitions.SubscriptionDescriptionEntry.properties.title
+      transform: >
+        $["type"] = "string";
+    - from: swagger-document
+      where: $.definitions.RuleDescriptionEntry.properties.title
+      transform: >
+        $["type"] = "string";
+```

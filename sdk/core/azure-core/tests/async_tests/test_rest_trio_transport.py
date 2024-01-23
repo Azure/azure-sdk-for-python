@@ -6,7 +6,7 @@
 from azure.core.pipeline.transport import TrioRequestsTransport
 from azure.core.rest import HttpRequest
 from azure.core.rest._requests_trio import RestTrioRequestsTransportResponse
-from rest_client_async import AsyncTestRestClient
+from rest_client_async import AsyncMockRestClient
 from utils import readonly_checks
 import pytest
 
@@ -14,7 +14,7 @@ import pytest
 @pytest.fixture
 async def client(port):
     async with TrioRequestsTransport() as transport:
-        async with AsyncTestRestClient(port, transport=transport) as client:
+        async with AsyncMockRestClient(port, transport=transport) as client:
             yield client
 
 

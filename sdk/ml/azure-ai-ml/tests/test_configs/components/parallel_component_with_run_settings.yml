@@ -1,0 +1,39 @@
+$schema: https://azuremlschemas.azureedge.net/latest/parallelComponent.schema.json
+# Metadata
+name: sample_parallel_component
+type: parallel
+display_name: parallel (multi thread)
+version: 1
+description: This is an example
+is_deterministic: true
+
+# Interface
+inputs:
+  input_directory:
+    type: uri_folder
+    mode: ro_mount
+outputs:
+  output_directory:
+    type: uri_folder
+    mode: rw_mount
+
+retry_settings:
+  timeout: 12345
+  max_retries: 9
+resources:
+  instance_count: 1
+max_concurrency_per_instance: 16
+mini_batch_size: "1MB"
+mini_batch_error_threshold: 0
+logging_level: "DEBUG"
+input_data: ${{inputs.input_directory}}
+
+task:
+  # Command, code, and environment
+  type: run_function
+  code: ./
+  entry_script: ./parallel.py
+  environment:
+    image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04:20230628.v1
+  program_arguments: >-
+    --input_directory ${{inputs.input_directory}}

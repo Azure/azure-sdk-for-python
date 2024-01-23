@@ -11,6 +11,12 @@ from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs.
+    """
+
+    INTERNAL = "Internal"
+
 class AllocationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Allocation state of the compute. Possible values are: steady - Indicates that the compute is
     not resizing. There are no changes to the number of compute nodes in the compute in progress. A
@@ -41,6 +47,12 @@ class AssetProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum))
     CREATING = "Creating"
     UPDATING = "Updating"
     DELETING = "Deleting"
+
+class AuthMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum to determine endpoint authentication mode.
+    """
+
+    AAD = "AAD"
 
 class AutoDeleteCondition(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -319,6 +331,26 @@ class ComputePowerAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     START = "Start"
     STOP = "Stop"
 
+class ComputeRecurrenceFrequency(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum to describe the frequency of a compute recurrence schedule
+    """
+
+    #: Minute frequency.
+    MINUTE = "Minute"
+    #: Hour frequency.
+    HOUR = "Hour"
+    #: Day frequency.
+    DAY = "Day"
+    #: Week frequency.
+    WEEK = "Week"
+    #: Month frequency.
+    MONTH = "Month"
+
+class ComputeTriggerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    RECURRENCE = "Recurrence"
+    CRON = "Cron"
+
 class ComputeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of compute
     """
@@ -333,6 +365,25 @@ class ComputeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DATABRICKS = "Databricks"
     DATA_LAKE_ANALYTICS = "DataLakeAnalytics"
     SYNAPSE_SPARK = "SynapseSpark"
+
+class ComputeWeekDay(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum of weekday
+    """
+
+    #: Monday weekday.
+    MONDAY = "Monday"
+    #: Tuesday weekday.
+    TUESDAY = "Tuesday"
+    #: Wednesday weekday.
+    WEDNESDAY = "Wednesday"
+    #: Thursday weekday.
+    THURSDAY = "Thursday"
+    #: Friday weekday.
+    FRIDAY = "Friday"
+    #: Saturday weekday.
+    SATURDAY = "Saturday"
+    #: Sunday weekday.
+    SUNDAY = "Sunday"
 
 class ConnectionAuthType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Authentication type of the connection target
@@ -571,6 +622,15 @@ class FeatureDataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DATETIME = "Datetime"
     BOOLEAN = "Boolean"
 
+class FeatureImportanceMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The mode of operation for computing feature importance.
+    """
+
+    #: Disables computing feature importance within a signal.
+    DISABLED = "Disabled"
+    #: Enables computing feature importance within a signal.
+    ENABLED = "Enabled"
+
 class FeatureLags(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Flag for generating lags for the numeric features.
     """
@@ -710,7 +770,7 @@ class GenerationSafetyQualityMetric(with_metaclass(CaseInsensitiveEnumMeta, str,
     ACCEPTABLE_RELEVANCE_SCORE_PER_INSTANCE = "AcceptableRelevanceScorePerInstance"
     AGGREGATED_RELEVANCE_PASS_RATE = "AggregatedRelevancePassRate"
 
-class GenerationTokenStatisticsMetric(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class GenerationTokenUsageMetric(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Generation token statistics metric enum.
     """
 
@@ -742,7 +802,7 @@ class ImageAnnotationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
 class ImageType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of the image. Possible values are: docker - For docker images. azureml - For AzureML
-    images
+    Environment images (custom and curated)
     """
 
     DOCKER = "docker"
@@ -1046,13 +1106,6 @@ class MonitorComputeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: Serverless Spark compute.
     SERVERLESS_SPARK = "ServerlessSpark"
 
-class MonitoringAlertNotificationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
-    #: Settings for Azure Monitor based alerting.
-    AZURE_MONITOR = "AzureMonitor"
-    #: Settings for AML email notifications.
-    EMAIL = "Email"
-
 class MonitoringFeatureDataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     #: Used for features of numerical data type.
@@ -1075,8 +1128,8 @@ class MonitoringInputDataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
 
     #: An input data with a fixed window size.
     STATIC = "Static"
-    #: An input data which trailing relatively to the monitor's current run.
-    TRAILING = "Trailing"
+    #: An input data which rolls relatively to the monitor's current run time.
+    ROLLING = "Rolling"
     #: An input data with tabular format which doesn't require preprocessing.
     FIXED = "Fixed"
 
@@ -1087,12 +1140,13 @@ class MonitoringModelType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: A model trained for regressions tasks.
     REGRESSION = "Regression"
 
-class MonitoringNotificationMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class MonitoringNotificationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
-    #: Disabled notifications will not produce emails/metrics leveraged for alerting.
-    DISABLED = "Disabled"
-    #: Enabled notification will produce emails/metrics leveraged for alerting.
-    ENABLED = "Enabled"
+    #: Enables email notifications through AML notifications.
+    AML_NOTIFICATION = "AmlNotification"
+    #: Enables notifications through Azure Monitor by posting metrics to the workspace's Azure Monitor
+    #: instance.
+    AZURE_MONITOR = "AzureMonitor"
 
 class MonitoringSignalType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -1289,6 +1343,15 @@ class OrderString(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     UPDATED_AT_DESC = "UpdatedAtDesc"
     UPDATED_AT_ASC = "UpdatedAtAsc"
 
+class Origin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
+    logs UX. Default value is "user,system"
+    """
+
+    USER = "user"
+    SYSTEM = "system"
+    USER_SYSTEM = "user,system"
+
 class OsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Compute OS Type
     """
@@ -1349,6 +1412,17 @@ class PendingUploadType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     NONE = "None"
     TEMPORARY_BLOB_REFERENCE = "TemporaryBlobReference"
+
+class PoolProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """State of pool related resources provisioning.
+    """
+
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    UPDATING = "Updating"
+    CANCELED = "Canceled"
 
 class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The current provisioning state.
@@ -1627,6 +1701,11 @@ class SecretsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SERVICE_PRINCIPAL = "ServicePrincipal"
     KERBEROS_PASSWORD = "KerberosPassword"
     KERBEROS_KEYTAB = "KerberosKeytab"
+
+class ServerlessInferenceEndpointAuthMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    KEY = "Key"
+    AAD = "AAD"
 
 class ServiceDataAccessAuthIdentity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 

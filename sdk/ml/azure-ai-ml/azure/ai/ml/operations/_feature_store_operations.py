@@ -4,15 +4,17 @@
 
 # pylint: disable=protected-access
 
+import re
 import uuid
-from typing import Dict, Iterable, Optional
+from typing import Any, Dict, Iterable, Optional, cast
 
 from marshmallow import ValidationError
 
-from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
-from azure.ai.ml._restclient.v2023_06_01_preview.models import ManagedNetworkProvisionOptions
+from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedNetworkProvisionOptions
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import ManagedServiceIdentityType
@@ -31,6 +33,7 @@ from azure.ai.ml.entities._feature_store._constants import (
     ONLINE_MATERIALIZATION_STORE_TYPE,
     ONLINE_STORE_CONNECTION_CATEGORY,
     ONLINE_STORE_CONNECTION_NAME,
+    STORE_REGEX_PATTERN,
 )
 from azure.ai.ml.entities._feature_store.feature_store import FeatureStore
 from azure.ai.ml.entities._feature_store.materialization_store import MaterializationStore
@@ -57,7 +60,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient062023Preview,
+        service_client: ServiceClient082023Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
@@ -87,24 +90,30 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         """
 
         if scope == Scope.SUBSCRIPTION:
-            return self._operation.list_by_subscription(
+            return cast(
+                Iterable[FeatureStore],
+                self._operation.list_by_subscription(
+                    cls=lambda objs: [
+                        FeatureStore._from_rest_object(filterObj)
+                        for filterObj in filter(lambda ws: ws.kind.lower() == FEATURE_STORE_KIND, objs)
+                    ],
+                ),
+            )
+        return cast(
+            Iterable[FeatureStore],
+            self._operation.list_by_resource_group(
+                self._resource_group_name,
                 cls=lambda objs: [
                     FeatureStore._from_rest_object(filterObj)
                     for filterObj in filter(lambda ws: ws.kind.lower() == FEATURE_STORE_KIND, objs)
                 ],
-            )
-        return self._operation.list_by_resource_group(
-            self._resource_group_name,
-            cls=lambda objs: [
-                FeatureStore._from_rest_object(filterObj)
-                for filterObj in filter(lambda ws: ws.kind.lower() == FEATURE_STORE_KIND, objs)
-            ],
+            ),
         )
 
     @distributed_trace
     @monitor_with_activity(logger, "FeatureStore.Get", ActivityType.PUBLICAPI)
     # pylint: disable=arguments-renamed
-    def get(self, name: str, **kwargs: Dict) -> FeatureStore:
+    def get(self, name: str, **kwargs: Any) -> FeatureStore:
         """Get a feature store by name.
 
         :param name: Name of the feature store.
@@ -225,7 +234,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             else None
         )
 
-        def get_callback():
+        def get_callback() -> FeatureStore:
             return self.get(feature_store.name)
 
         return super().begin_create(
@@ -249,7 +258,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         *,
         grant_materialization_permissions: bool = True,
         update_dependent_resources: bool = False,
-        **kwargs: Dict,
+        **kwargs: Any,
     ) -> LROPoller[FeatureStore]:
         """Update friendly name, description, online store connection, offline store connection, materialization
             identities or tags of a feature store.
@@ -315,8 +324,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             update_offline_store_role_assignment = True
             update_online_store_role_assignment = True
 
-        if offline_store and offline_store.type != OFFLINE_MATERIALIZATION_STORE_TYPE:
-            raise ValidationError("offline store type should be azure_data_lake_gen2")
+        self._validate_offline_store(offline_store=offline_store)
 
         if (
             rest_workspace_obj.feature_store_settings
@@ -446,7 +454,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
                 user_assigned_identities=[materialization_identity],
             )
 
-        def deserialize_callback(rest_obj):
+        def deserialize_callback(rest_obj: Any) -> FeatureStore:
             return self.get(rest_obj.name, rest_workspace_obj=rest_obj)
 
         return super().begin_update(
@@ -471,7 +479,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
     @distributed_trace
     @monitor_with_activity(logger, "FeatureStore.BeginDelete", ActivityType.PUBLICAPI)
-    def begin_delete(self, name: str, *, delete_dependent_resources: bool = False, **kwargs: Dict) -> LROPoller[None]:
+    def begin_delete(self, name: str, *, delete_dependent_resources: bool = False, **kwargs: Any) -> LROPoller[None]:
         """Delete a FeatureStore.
 
         :param name: Name of the FeatureStore
@@ -494,12 +502,13 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
     @distributed_trace
     @monitor_with_activity(logger, "FeatureStore.BeginProvisionNetwork", ActivityType.PUBLICAPI)
+    @experimental
     def begin_provision_network(
         self,
         *,
         feature_store_name: Optional[str] = None,
         include_spark: Optional[bool] = False,
-        **kwargs,
+        **kwargs: Any,
     ) -> LROPoller[ManagedNetworkProvisionStatus]:
         """Triggers the feature store to provision the managed network. Specifying spark enabled
         as true prepares the feature store managed network for supporting Spark.
@@ -521,3 +530,10 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         )
         module_logger.info("Provision network request initiated for feature store: %s\n", workspace_name)
         return poller
+
+    def _validate_offline_store(self, offline_store: MaterializationStore) -> None:
+        store_regex = re.compile(STORE_REGEX_PATTERN)
+        if offline_store and store_regex.match(offline_store.target) is None:
+            raise ValidationError(f"Invalid AzureML offlinestore target ARM Id {offline_store.target}")
+        if offline_store and offline_store.type != OFFLINE_MATERIALIZATION_STORE_TYPE:
+            raise ValidationError("offline store type should be azure_data_lake_gen2")

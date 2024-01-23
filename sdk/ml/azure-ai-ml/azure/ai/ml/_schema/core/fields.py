@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,protected-access
+# pylint: disable=unused-argument,protected-access,too-many-lines
 
 import copy
 import logging
@@ -230,6 +230,8 @@ class NodeBindingStr(DataBindingStr):
 
 
 class DateTimeStr(fields.Str):
+    """A string represents a datetime in ISO8601 format."""
+
     def _jsonschema_type_mapping(self):
         schema = {"type": "string"}
         if self.name is not None:
@@ -252,6 +254,8 @@ class DateTimeStr(fields.Str):
 
 
 class ArmStr(Field):
+    """A string represents an ARM ID for some AzureML resource."""
+
     def __init__(self, **kwargs):
         self.azureml_type = kwargs.pop("azureml_type", None)
         self.pattern = kwargs.pop("pattern", r"^azureml:.+")
@@ -304,6 +308,8 @@ class ArmStr(Field):
 
 
 class ArmVersionedStr(ArmStr):
+    """A string represents an ARM ID for some AzureML resource with version."""
+
     def __init__(self, **kwargs):
         self.allow_default_version = kwargs.pop("allow_default_version", False)
         super().__init__(**kwargs)
@@ -342,6 +348,8 @@ class ArmVersionedStr(ArmStr):
 
 
 class FileRefField(Field):
+    """A string represents a file reference in pipeline job, e.g.: file:./my_file.txt, file:../my_file.txt,"""
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -420,6 +428,8 @@ class NestedField(Nested):
 # inputs = UnionField([fields.List(NestedField(DataSchema)), NestedField(DataSchema)])
 # inputs = UnionField([NestedField(DataSchema), fields.List(NestedField(DataSchema))])
 class UnionField(fields.Field):
+    """A field that can be one of multiple types."""
+
     def __init__(self, union_fields: List[fields.Field], is_strict=False, **kwargs):
         super().__init__(**kwargs)
         try:
@@ -588,6 +598,7 @@ class TypeSensitiveUnionField(UnionField):
                 message={self.type_field_name: f"Value {value_type!r} passed is not in set {self.allowed_types}"},
                 field_name=attr,
             )
+        filtered_messages = []
         # if value has type field and its value match at least 1 allowed value, raise first matched
         for error in e.messages:
             # for non-nested schema, their error message will be {"_schema": ["xxx"]}
@@ -595,10 +606,15 @@ class TypeSensitiveUnionField(UnionField):
                 continue
             # for nested schema, type field won't be within error only if type field value is matched
             # then return first matched error message
-            if self.type_field_name not in error:
-                return ValidationError(message=error, field_name=attr)
-        # shouldn't reach here
-        return e
+            if self.type_field_name in error:
+                continue
+            filtered_messages.append(error)
+
+        if len(filtered_messages) == 0:
+            # shouldn't happen
+            return e
+        # TODO: consider if we should keep all filtered messages
+        return ValidationError(message=filtered_messages[0], field_name=attr)
 
     def _serialize(self, value, attr, obj, **kwargs):
         union_fields = self._union_fields[:]
@@ -687,6 +703,13 @@ def CodeField(**kwargs) -> Field:
 
 
 def EnvironmentField(*, extra_fields: List[Field] = None, **kwargs):
+    """Function to return a union field for environment.
+
+    :param extra_fields: extra fields to be added to the union field
+    :paramtype extra_fields: List[Field]
+    :return: The environment field
+    :rtype: Field
+    """
     extra_fields = extra_fields or []
     # local import to avoid circular dependency
     from azure.ai.ml._schema.assets.environment import AnonymousEnvironmentSchema
@@ -703,6 +726,11 @@ def EnvironmentField(*, extra_fields: List[Field] = None, **kwargs):
 
 
 def DistributionField(**kwargs):
+    """Function to return a union field for distribution.
+
+    :return: The distribution field
+    :rtype: Field
+    """
     from azure.ai.ml._schema.job.distribution import (
         MPIDistributionSchema,
         PyTorchDistributionSchema,
@@ -721,6 +749,11 @@ def DistributionField(**kwargs):
 
 
 def PrimitiveValueField(**kwargs):
+    """Function to return a union field for primitive value.
+
+    :return: The primitive value field
+    :rtype: Field
+    """
     return UnionField(
         [
             # Note: order matters here - to make sure value parsed correctly.
@@ -743,6 +776,10 @@ def PrimitiveValueField(**kwargs):
 
 
 class VersionField(Field):
+    """A string represents a version, e.g.: 1, 1.0, 1.0.0.
+    Will always convert to string to ensure that "1.0" won't be converted to 1.
+    """
+
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
@@ -762,7 +799,40 @@ class VersionField(Field):
         raise Exception(f"Type {type(value)} is not supported for version.")
 
 
+class NumberVersionField(VersionField):
+    """A string represents a version, e.g.: 1, 1.0, 1.0.0.
+    Will always convert to string to ensure that "1.0" won't be converted to 1.
+    """
+
+    default_error_messages = {
+        "max_version": "Version {input} is greater than or equal to upper bound {bound}.",
+        "min_version": "Version {input} is smaller than lower bound {bound}.",
+        "invalid": "Number version must be integers concatenated by '.', like 1.0.1.",
+    }
+
+    def __init__(self, *args, upper_bound: Optional[str] = None, lower_bound: Optional[str] = None, **kwargs) -> None:
+        self._upper = None if upper_bound is None else self._version_to_tuple(upper_bound)
+        self._lower = None if lower_bound is None else self._version_to_tuple(lower_bound)
+        super().__init__(*args, **kwargs)
+
+    def _version_to_tuple(self, value: str):
+        try:
+            return tuple(int(v) for v in str(value).split("."))
+        except ValueError as e:
+            raise self.make_error("invalid") from e
+
+    def _validate(self, value):
+        super()._validate(value)
+        value_tuple = self._version_to_tuple(value)
+        if self._upper is not None and value_tuple >= self._upper:
+            raise self.make_error("max_version", input=value, bound=self._upper)
+        if self._lower is not None and value_tuple < self._lower:
+            raise self.make_error("min_version", input=value, bound=self._lower)
+
+
 class DumpableIntegerField(fields.Integer):
+    """A int field that cannot serialize other type of values to int if self.strict."""
+
     def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[typing.Union[str, _T]]:
         if self.strict and not isinstance(value, int):
             # this implementation can serialize bool to bool
@@ -771,6 +841,8 @@ class DumpableIntegerField(fields.Integer):
 
 
 class DumpableFloatField(fields.Float):
+    """A float field that cannot serialize other type of values to float if self.strict."""
+
     def __init__(
         self,
         *,
@@ -792,6 +864,8 @@ class DumpableFloatField(fields.Float):
 
 
 class DumpableStringField(fields.String):
+    """A string field that cannot serialize other type of values to string if self.strict."""
+
     def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[typing.Union[str, _T]]:
         if not isinstance(value, str):
             raise ValidationError("Given value is not a string")
@@ -833,6 +907,8 @@ class ExperimentalField(fields.Field):
 
 
 class RegistryStr(Field):
+    """A string represents a registry ID for some AzureML resource."""
+
     def __init__(self, **kwargs):
         self.azureml_type = kwargs.pop("azureml_type", None)
         super().__init__(**kwargs)
@@ -866,6 +942,8 @@ class RegistryStr(Field):
 
 
 class InternalRegistryStr(RegistryStr):
+    """A string represents a registry ID for some internal AzureML resource."""
+
     def _jsonschema_type_mapping(self):
         schema = super()._jsonschema_type_mapping()
         schema["pattern"] = "^azureml://feeds/.*"
@@ -878,6 +956,8 @@ class InternalRegistryStr(RegistryStr):
 
 
 class PythonFuncNameStr(fields.Str):
+    """A string represents a python function name."""
+
     @abstractmethod
     def _get_field_name(self) -> str:
         """Returns field name, used for error message."""
@@ -901,6 +981,8 @@ class PythonFuncNameStr(fields.Str):
 
 
 class PipelineNodeNameStr(fields.Str):
+    """A string represents a pipeline node name."""
+
     @abstractmethod
     def _get_field_name(self) -> str:
         """Returns field name, used for error message."""
@@ -923,6 +1005,8 @@ class PipelineNodeNameStr(fields.Str):
 
 
 class GitStr(fields.Str):
+    """A string represents a git path."""
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 

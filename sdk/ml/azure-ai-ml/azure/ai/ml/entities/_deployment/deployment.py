@@ -12,7 +12,6 @@ from typing import IO, Any, AnyStr, Dict, Optional, Union
 from azure.ai.ml._restclient.v2022_05_01.models import OnlineDeploymentData
 from azure.ai.ml._restclient.v2022_02_01_preview.models import BatchDeploymentData
 from azure.ai.ml._utils.utils import dump_yaml_to_file
-from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.exceptions import (
@@ -133,27 +132,42 @@ class Deployment(Resource, RestTranslatableMixin):
 
     @property
     def type(self) -> str:
+        """
+        Type of deployment.
+
+        :rtype: str
+        """
         return self._type
 
     @property
     def code_path(self) -> Union[str, PathLike]:
+        """
+        The code directory containing the scoring script.
+
+        :rtype: Union[str, PathLike]
+        """
         return self.code_configuration.code if self.code_configuration and self.code_configuration.code else None
 
     @code_path.setter
     def code_path(self, value: Union[str, PathLike]) -> None:
         if not self.code_configuration:
-            self.code_configuration = ResourceConfiguration()
+            self.code_configuration = CodeConfiguration()
 
         self.code_configuration.code = value
 
     @property
     def scoring_script(self) -> Union[str, PathLike]:
+        """
+        The scoring script file path relative to the code directory.
+
+        :rtype: Union[str, PathLike]
+        """
         return self.code_configuration.scoring_script if self.code_configuration else None
 
     @scoring_script.setter
     def scoring_script(self, value: Union[str, PathLike]) -> None:
         if not self.code_configuration:
-            self.code_configuration = ResourceConfiguration()
+            self.code_configuration = CodeConfiguration()
 
         self.code_configuration.scoring_script = value
 

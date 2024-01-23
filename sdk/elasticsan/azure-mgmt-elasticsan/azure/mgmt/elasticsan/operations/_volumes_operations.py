@@ -30,7 +30,7 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -50,7 +50,7 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -85,7 +85,7 @@ def build_create_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -109,7 +109,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -144,7 +144,7 @@ def build_update_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -163,12 +163,15 @@ def build_delete_request(
     volume_group_name: str,
     volume_name: str,
     subscription_id: str,
+    *,
+    x_ms_delete_snapshots: Optional[Union[str, _models.XMsDeleteSnapshots]] = None,
+    x_ms_force_delete: Optional[Union[str, _models.XMsForceDelete]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -202,12 +205,16 @@ def build_delete_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    if x_ms_delete_snapshots is not None:
+        _headers["x-ms-delete-snapshots"] = _SERIALIZER.header("x_ms_delete_snapshots", x_ms_delete_snapshots, "str")
+    if x_ms_force_delete is not None:
+        _headers["x-ms-force-delete"] = _SERIALIZER.header("x_ms_force_delete", x_ms_force_delete, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
@@ -224,7 +231,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -258,7 +265,7 @@ def build_get_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -275,7 +282,7 @@ def build_list_by_volume_group_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -306,7 +313,7 @@ def build_list_by_volume_group_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -835,7 +842,14 @@ class VolumesOperations:
     }
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, elastic_san_name: str, volume_group_name: str, volume_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        elastic_san_name: str,
+        volume_group_name: str,
+        volume_name: str,
+        x_ms_delete_snapshots: Optional[Union[str, _models.XMsDeleteSnapshots]] = None,
+        x_ms_force_delete: Optional[Union[str, _models.XMsForceDelete]] = None,
+        **kwargs: Any
     ) -> None:
         error_map = {
             401: ClientAuthenticationError,
@@ -857,6 +871,8 @@ class VolumesOperations:
             volume_group_name=volume_group_name,
             volume_name=volume_name,
             subscription_id=self._config.subscription_id,
+            x_ms_delete_snapshots=x_ms_delete_snapshots,
+            x_ms_force_delete=x_ms_force_delete,
             api_version=api_version,
             template_url=self._delete_initial.metadata["url"],
             headers=_headers,
@@ -890,7 +906,14 @@ class VolumesOperations:
 
     @distributed_trace
     def begin_delete(
-        self, resource_group_name: str, elastic_san_name: str, volume_group_name: str, volume_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        elastic_san_name: str,
+        volume_group_name: str,
+        volume_name: str,
+        x_ms_delete_snapshots: Optional[Union[str, _models.XMsDeleteSnapshots]] = None,
+        x_ms_force_delete: Optional[Union[str, _models.XMsForceDelete]] = None,
+        **kwargs: Any
     ) -> LROPoller[None]:
         """Delete an Volume.
 
@@ -903,6 +926,14 @@ class VolumesOperations:
         :type volume_group_name: str
         :param volume_name: The name of the Volume. Required.
         :type volume_name: str
+        :param x_ms_delete_snapshots: Optional, used to delete snapshots under volume. Allowed value
+         are only true or false. Default value is false. Known values are: "true" and "false". Default
+         value is None.
+        :type x_ms_delete_snapshots: str or ~azure.mgmt.elasticsan.models.XMsDeleteSnapshots
+        :param x_ms_force_delete: Optional, used to delete volume if active sessions present. Allowed
+         value are only true or false. Default value is false. Known values are: "true" and "false".
+         Default value is None.
+        :type x_ms_force_delete: str or ~azure.mgmt.elasticsan.models.XMsForceDelete
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -929,6 +960,8 @@ class VolumesOperations:
                 elastic_san_name=elastic_san_name,
                 volume_group_name=volume_group_name,
                 volume_name=volume_name,
+                x_ms_delete_snapshots=x_ms_delete_snapshots,
+                x_ms_force_delete=x_ms_force_delete,
                 api_version=api_version,
                 cls=lambda x, y, z: x,
                 headers=_headers,

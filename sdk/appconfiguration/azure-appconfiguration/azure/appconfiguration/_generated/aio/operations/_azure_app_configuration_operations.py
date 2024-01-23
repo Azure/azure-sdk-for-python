@@ -102,23 +102,22 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_get_keys_request(
+                _request = build_get_keys_request(
                     name=name,
                     after=after,
                     accept_datetime=accept_datetime,
                     sync_token=self._config.sync_token,
                     api_version=api_version,
-                    template_url=self.get_keys.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -130,18 +129,18 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("KeyListResult", pipeline_response)
@@ -151,11 +150,11 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -167,8 +166,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    get_keys.metadata = {"url": "/keys"}
 
     @distributed_trace_async
     async def check_keys(  # pylint: disable=inconsistent-return-statements
@@ -209,25 +206,24 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_check_keys_request(
+        _request = build_check_keys_request(
             name=name,
             after=after,
             accept_datetime=accept_datetime,
             sync_token=self._config.sync_token,
             api_version=api_version,
-            template_url=self.check_keys.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -240,9 +236,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         response_headers["Sync-Token"] = self._deserialize("str", response.headers.get("Sync-Token"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    check_keys.metadata = {"url": "/keys"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def get_key_values(
@@ -253,6 +247,8 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         accept_datetime: Optional[str] = None,
         select: Optional[List[Union[str, _models.KeyValueFields]]] = None,
         snapshot: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.KeyValue"]:
         """Gets a list of key-values.
@@ -275,6 +271,12 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param snapshot: A filter used get key-values for a snapshot. The value should be the name of
          the snapshot. Not valid when used with 'key' and 'label' filters. Default value is None.
         :type snapshot: str
+        :param if_match: Used to perform an operation only if the targeted resource's etag matches the
+         value provided. Default value is None.
+        :type if_match: str
+        :param if_none_match: Used to perform an operation only if the targeted resource's etag does
+         not match the value provided. Default value is None.
+        :type if_none_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KeyValue or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.appconfiguration.models.KeyValue]
@@ -297,26 +299,27 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_get_key_values_request(
+                _request = build_get_key_values_request(
                     key=key,
                     label=label,
                     after=after,
                     accept_datetime=accept_datetime,
                     select=select,
                     snapshot=snapshot,
+                    if_match=if_match,
+                    if_none_match=if_none_match,
                     sync_token=self._config.sync_token,
                     api_version=api_version,
-                    template_url=self.get_key_values.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -328,18 +331,18 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("KeyValueListResult", pipeline_response)
@@ -349,11 +352,11 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -366,8 +369,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
 
         return AsyncItemPaged(get_next, extract_data)
 
-    get_key_values.metadata = {"url": "/kv"}
-
     @distributed_trace_async
     async def check_key_values(  # pylint: disable=inconsistent-return-statements
         self,
@@ -377,6 +378,8 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         accept_datetime: Optional[str] = None,
         select: Optional[List[Union[str, _models.KeyValueFields]]] = None,
         snapshot: Optional[str] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Requests the headers and status of the given resource.
@@ -399,6 +402,12 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param snapshot: A filter used get key-values for a snapshot. Not valid when used with 'key'
          and 'label' filters. Default value is None.
         :type snapshot: str
+        :param if_match: Used to perform an operation only if the targeted resource's etag matches the
+         value provided. Default value is None.
+        :type if_match: str
+        :param if_none_match: Used to perform an operation only if the targeted resource's etag does
+         not match the value provided. Default value is None.
+        :type if_none_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -418,28 +427,29 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_check_key_values_request(
+        _request = build_check_key_values_request(
             key=key,
             label=label,
             after=after,
             accept_datetime=accept_datetime,
             select=select,
             snapshot=snapshot,
+            if_match=if_match,
+            if_none_match=if_none_match,
             sync_token=self._config.sync_token,
             api_version=api_version,
-            template_url=self.check_key_values.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -450,11 +460,10 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
 
         response_headers = {}
         response_headers["Sync-Token"] = self._deserialize("str", response.headers.get("Sync-Token"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    check_key_values.metadata = {"url": "/kv"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def get_key_value(
@@ -506,7 +515,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.KeyValue] = kwargs.pop("cls", None)
 
-        request = build_get_key_value_request(
+        _request = build_get_key_value_request(
             key=key,
             label=label,
             accept_datetime=accept_datetime,
@@ -515,19 +524,18 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             select=select,
             sync_token=self._config.sync_token,
             api_version=api_version,
-            template_url=self.get_key_value.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -544,11 +552,9 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         deserialized = self._deserialize("KeyValue", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    get_key_value.metadata = {"url": "/kv/{key}"}
+        return deserialized  # type: ignore
 
     @overload
     async def put_key_value(
@@ -690,7 +696,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             else:
                 _json = None
 
-        request = build_put_key_value_request(
+        _request = build_put_key_value_request(
             key=key,
             label=label,
             if_match=if_match,
@@ -700,19 +706,18 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.put_key_value.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -729,11 +734,9 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         deserialized = self._deserialize("KeyValue", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    put_key_value.metadata = {"url": "/kv/{key}"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def delete_key_value(
@@ -769,25 +772,24 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[Optional[_models.KeyValue]] = kwargs.pop("cls", None)
 
-        request = build_delete_key_value_request(
+        _request = build_delete_key_value_request(
             key=key,
             label=label,
             if_match=if_match,
             sync_token=self._config.sync_token,
             api_version=api_version,
-            template_url=self.delete_key_value.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -809,11 +811,9 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             response_headers["Sync-Token"] = self._deserialize("str", response.headers.get("Sync-Token"))
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    delete_key_value.metadata = {"url": "/kv/{key}"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def check_key_value(  # pylint: disable=inconsistent-return-statements
@@ -865,7 +865,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_check_key_value_request(
+        _request = build_check_key_value_request(
             key=key,
             label=label,
             accept_datetime=accept_datetime,
@@ -874,19 +874,18 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             select=select,
             sync_token=self._config.sync_token,
             api_version=api_version,
-            template_url=self.check_key_value.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -900,9 +899,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    check_key_value.metadata = {"url": "/kv/{key}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def get_snapshots(
@@ -950,24 +947,23 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_get_snapshots_request(
+                _request = build_get_snapshots_request(
                     name=name,
                     after=after,
                     select=select,
                     status=status,
                     sync_token=self._config.sync_token,
                     api_version=api_version,
-                    template_url=self.get_snapshots.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -979,18 +975,18 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("SnapshotListResult", pipeline_response)
@@ -1000,11 +996,11 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1016,8 +1012,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    get_snapshots.metadata = {"url": "/snapshots"}
 
     @distributed_trace_async
     async def check_snapshots(  # pylint: disable=inconsistent-return-statements
@@ -1049,23 +1043,22 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_check_snapshots_request(
+        _request = build_check_snapshots_request(
             after=after,
             sync_token=self._config.sync_token,
             api_version=api_version,
-            template_url=self.check_snapshots.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1078,9 +1071,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         response_headers["Sync-Token"] = self._deserialize("str", response.headers.get("Sync-Token"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    check_snapshots.metadata = {"url": "/snapshots"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def get_snapshot(
@@ -1125,26 +1116,25 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.Snapshot] = kwargs.pop("cls", None)
 
-        request = build_get_snapshot_request(
+        _request = build_get_snapshot_request(
             name=name,
             if_match=if_match,
             if_none_match=if_none_match,
             select=select,
             sync_token=self._config.sync_token,
             api_version=api_version,
-            template_url=self.get_snapshot.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1162,11 +1152,9 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         deserialized = self._deserialize("Snapshot", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    get_snapshot.metadata = {"url": "/snapshots/{name}"}
+        return deserialized  # type: ignore
 
     async def _create_snapshot_initial(
         self, name: str, entity: Union[_models.Snapshot, IO], **kwargs: Any
@@ -1194,26 +1182,25 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         else:
             _json = self._serialize.body(entity, "Snapshot")
 
-        request = build_create_snapshot_request(
+        _request = build_create_snapshot_request(
             name=name,
             sync_token=self._config.sync_token,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_snapshot_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1232,11 +1219,9 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         deserialized = self._deserialize("Snapshot", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _create_snapshot_initial.metadata = {"url": "/snapshots/{name}"}
+        return deserialized  # type: ignore
 
     @overload
     async def begin_create_snapshot(
@@ -1360,7 +1345,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
 
             deserialized = self._deserialize("Snapshot", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -1377,15 +1362,15 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.Snapshot].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_snapshot.metadata = {"url": "/snapshots/{name}"}
+        return AsyncLROPoller[_models.Snapshot](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @overload
     async def update_snapshot(
@@ -1447,7 +1432,8 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
          not match the value provided. Default value is None.
         :type if_none_match: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Known values are: 'application/json', 'application/merge-patch+json'. Default value is
+         "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Snapshot or the result of cls(response)
@@ -1479,8 +1465,8 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         :param if_none_match: Used to perform an operation only if the targeted resource's etag does
          not match the value provided. Default value is None.
         :type if_none_match: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
+         'application/merge-patch+json'. Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Snapshot or the result of cls(response)
@@ -1510,7 +1496,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         else:
             _json = self._serialize.body(entity, "SnapshotUpdateParameters")
 
-        request = build_update_snapshot_request(
+        _request = build_update_snapshot_request(
             name=name,
             if_match=if_match,
             if_none_match=if_none_match,
@@ -1519,19 +1505,18 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update_snapshot.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1549,11 +1534,9 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         deserialized = self._deserialize("Snapshot", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    update_snapshot.metadata = {"url": "/snapshots/{name}"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def check_snapshot(  # pylint: disable=inconsistent-return-statements
@@ -1590,25 +1573,24 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_check_snapshot_request(
+        _request = build_check_snapshot_request(
             name=name,
             if_match=if_match,
             if_none_match=if_none_match,
             sync_token=self._config.sync_token,
             api_version=api_version,
-            template_url=self.check_snapshot.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1623,9 +1605,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         response_headers["Link"] = self._deserialize("str", response.headers.get("Link"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    check_snapshot.metadata = {"url": "/snapshots/{name}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def get_labels(
@@ -1673,24 +1653,23 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_get_labels_request(
+                _request = build_get_labels_request(
                     name=name,
                     after=after,
                     accept_datetime=accept_datetime,
                     select=select,
                     sync_token=self._config.sync_token,
                     api_version=api_version,
-                    template_url=self.get_labels.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -1702,18 +1681,18 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("LabelListResult", pipeline_response)
@@ -1723,11 +1702,11 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1739,8 +1718,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    get_labels.metadata = {"url": "/labels"}
 
     @distributed_trace_async
     async def check_labels(  # pylint: disable=inconsistent-return-statements
@@ -1785,26 +1762,25 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_check_labels_request(
+        _request = build_check_labels_request(
             name=name,
             after=after,
             accept_datetime=accept_datetime,
             select=select,
             sync_token=self._config.sync_token,
             api_version=api_version,
-            template_url=self.check_labels.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1817,9 +1793,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         response_headers["Sync-Token"] = self._deserialize("str", response.headers.get("Sync-Token"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    check_labels.metadata = {"url": "/labels"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def put_lock(
@@ -1863,26 +1837,25 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.KeyValue] = kwargs.pop("cls", None)
 
-        request = build_put_lock_request(
+        _request = build_put_lock_request(
             key=key,
             label=label,
             if_match=if_match,
             if_none_match=if_none_match,
             sync_token=self._config.sync_token,
             api_version=api_version,
-            template_url=self.put_lock.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1899,11 +1872,9 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         deserialized = self._deserialize("KeyValue", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    put_lock.metadata = {"url": "/locks/{key}"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def delete_lock(
@@ -1947,26 +1918,25 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.KeyValue] = kwargs.pop("cls", None)
 
-        request = build_delete_lock_request(
+        _request = build_delete_lock_request(
             key=key,
             label=label,
             if_match=if_match,
             if_none_match=if_none_match,
             sync_token=self._config.sync_token,
             api_version=api_version,
-            template_url=self.delete_lock.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1983,11 +1953,9 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         deserialized = self._deserialize("KeyValue", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    delete_lock.metadata = {"url": "/locks/{key}"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get_revisions(
@@ -2038,7 +2006,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_get_revisions_request(
+                _request = build_get_revisions_request(
                     key=key,
                     label=label,
                     after=after,
@@ -2046,17 +2014,16 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
                     select=select,
                     sync_token=self._config.sync_token,
                     api_version=api_version,
-                    template_url=self.get_revisions.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -2068,18 +2035,18 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("KeyValueListResult", pipeline_response)
@@ -2089,11 +2056,11 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2105,8 +2072,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    get_revisions.metadata = {"url": "/revisions"}
 
     @distributed_trace_async
     async def check_revisions(  # pylint: disable=inconsistent-return-statements
@@ -2154,7 +2119,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_check_revisions_request(
+        _request = build_check_revisions_request(
             key=key,
             label=label,
             after=after,
@@ -2162,19 +2127,18 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
             select=select,
             sync_token=self._config.sync_token,
             api_version=api_version,
-            template_url=self.check_revisions.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2185,11 +2149,10 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
 
         response_headers = {}
         response_headers["Sync-Token"] = self._deserialize("str", response.headers.get("Sync-Token"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    check_revisions.metadata = {"url": "/revisions"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def get_operation_details(self, snapshot: str, **kwargs: Any) -> _models.OperationDetails:
@@ -2218,22 +2181,21 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.OperationDetails] = kwargs.pop("cls", None)
 
-        request = build_get_operation_details_request(
+        _request = build_get_operation_details_request(
             snapshot=snapshot,
             api_version=api_version,
-            template_url=self.get_operation_details.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2246,8 +2208,6 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # py
         deserialized = self._deserialize("OperationDetails", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_operation_details.metadata = {"url": "/operations"}
+        return deserialized  # type: ignore

@@ -32,7 +32,7 @@ class MetricsBatchQueryClient:  # pylint: disable=client-accepts-api-version-key
         will be assumed. Defaults to 'https://metrics.monitor.azure.com'.
     """
 
-    def __init__(self, credential: AsyncTokenCredential, endpoint: str, **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: AsyncTokenCredential, **kwargs: Any) -> None:
         self._endpoint = endpoint
         if not self._endpoint.startswith("https://") and not self._endpoint.startswith("http://"):
             self._endpoint = "https://" + self._endpoint
@@ -45,14 +45,14 @@ class MetricsBatchQueryClient:  # pylint: disable=client-accepts-api-version-key
         self._client = MonitorBatchMetricsClient(
             credential=credential, endpoint=self._endpoint, authentication_policy=authentication_policy, **kwargs
         )
-        self._batch_metrics_op = self._client.metrics
+        self._batch_metrics_op = self._client.metrics_batch
 
     @distributed_trace_async
     async def query_batch(
         self,
         resource_uris: Sequence[str],
-        metric_namespace: str,
         metric_names: Sequence[str],
+        metric_namespace: str,
         *,
         timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]] = None,
         granularity: Optional[timedelta] = None,
@@ -60,16 +60,17 @@ class MetricsBatchQueryClient:  # pylint: disable=client-accepts-api-version-key
         max_results: Optional[int] = None,
         order_by: Optional[str] = None,
         filter: Optional[str] = None,
+        roll_up_by: Optional[str] = None,
         **kwargs: Any
     ) -> List[MetricsQueryResult]:
         """Lists the metric values for multiple resources.
 
         :param resource_uris: A list of resource URIs to query metrics for. Required.
         :type resource_uris: list[str]
-        :param metric_namespace: Metric namespace that contains the requested metric names. Required.
-        :type metric_namespace: str
         :param metric_names: The names of the metrics (comma separated) to retrieve. Required.
         :type metric_names: list[str]
+        :param metric_namespace: Metric namespace that contains the requested metric names. Required.
+        :type metric_namespace: str
         :keyword timespan: The timespan for which to query the data. This can be a timedelta,
             a timedelta and a start datetime, or a start datetime/end datetime.
         :paramtype timespan: Optional[Union[~datetime.timedelta, tuple[~datetime.datetime, ~datetime.timedelta],
@@ -98,6 +99,11 @@ class MetricsBatchQueryClient:  # pylint: disable=client-accepts-api-version-key
             **$filter= "dim (test) 3 eq 'dim3 (test) val'"** use **$filter= "dim
             %2528test%2529 3 eq 'dim3 %2528test%2529 val'"**. Default value is None.
         :paramtype filter: str
+        :keyword roll_up_by: Dimension name(s) to rollup results by. For example if you only want to see
+            metric values with a filter like 'City eq Seattle or City eq Tacoma' but don't want to see
+            separate values for each city, you can specify 'City' to see the results for Seattle
+            and Tacoma rolled up into one timeseries. Default value is None.
+        :paramtype roll_up_by: str
         :return: A list of MetricsQueryResult objects.
         :rtype: list[~azure.monitor.query.MetricsQueryResult]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -133,6 +139,7 @@ class MetricsBatchQueryClient:  # pylint: disable=client-accepts-api-version-key
             top=max_results,
             orderby=order_by,
             filter=filter,
+            rollupby=roll_up_by,  # cspell:ignore rollupby
             **kwargs
         )
 

@@ -65,7 +65,7 @@ You can use `configure_azure_monitor` to set up instrumentation for your app to 
 You can configure further with [OpenTelemetry environment variables][ot_env_vars] such as:
 | Environment Variable | Description |
 |-------------|----------------------|
-| [OTEL_SERVICE_NAME][opentelemetry_spec_service_name], [OTEL_RESOURCE_ATTRIBUTES][opentelemetry_spec_resource_attributes] | Specifies the OpenTelemetry [resource][opentelemetry_spec_resource] associated with your application. |
+| [OTEL_SERVICE_NAME][ot_spec_service_name], [OTEL_RESOURCE_ATTRIBUTES][ot_spec_resource_attributes] | Specifies the OpenTelemetry [Resource][ot_spec_resource] associated with your application. |
 | `OTEL_LOGS_EXPORTER` | If set to `None`, disables collection and export of logging telemetry. |
 | `OTEL_METRICS_EXPORTER` | If set to `None`, disables collection and export of metric telemetry. |
 | `OTEL_TRACES_EXPORTER` | If set to `None`, disables collection and export of distributed tracing telemetry. |
@@ -73,6 +73,7 @@ You can configure further with [OpenTelemetry environment variables][ot_env_vars
 | `OTEL_BSP_SCHEDULE_DELAY` | Specifies the distributed tracing export interval in milliseconds. Defaults to 5000. |
 | `OTEL_TRACES_SAMPLER_ARG` | Specifies the ratio of distributed tracing telemetry to be [sampled][application_insights_sampling]. Accepted values are in the range [0,1]. Defaults to 1.0, meaning no telemetry is sampled out. |
 | `OTEL_PYTHON_DISABLED_INSTRUMENTATIONS` | Specifies which of the supported instrumentations to disable. Disabled instrumentations will not be instrumented as part of `configure_azure_monitor`. However, they can still be manually instrumented with `instrument()` directly. Accepts a comma-separated list of lowercase [Library Names](#officially-supported-instrumentations). For example, set to `"psycopg2,fastapi"` to disable the Psycopg2 and FastAPI instrumentations. Defaults to an empty list, enabling all supported instrumentations. |
+| `OTEL_EXPERIMENTAL_RESOURCE_DETECTORS` | An experimental OpenTelemetry environment variable used to specify Resource Detectors to be used to generate Resource Attributes. This is an experimental feature and the name of this variable and its behavior can change in a non-backwards compatible way. Defaults to "azure_app_service,azure_vm" to enable the [Azure Resource Detectors][ot_resource_detector_azure] for Azure App Service and Azure VM. To add or remove specific resource detectors, set the environment variable accordingly. See the [OpenTelemetry Python Resource Detector Documentation][ot_python_resource_detectors] for more. |
 
 #### Azure monitor OpenTelemetry Exporter configurations
 
@@ -82,7 +83,7 @@ You can pass Azure monitor OpenTelemetry exporter configuration parameters direc
 ...
 configure_azure_monitor(
    connection_string="<your-connection-string>",
-   disable_offline_storage=True, 
+   disable_offline_storage=True,
 )
 ...
 ```
@@ -90,6 +91,85 @@ configure_azure_monitor(
 ### Examples
 
 Samples are available [here][samples] to demonstrate how to utilize the above configuration options.
+
+### Monitoring in Azure Functions
+
+#### Trace correlation
+
+Tracked incoming requests coming into your Python application hosted in Azure Functions will not be automatically correlated with telemetry being tracked within it. You can manually achieve trace correlation by extract the `TraceContext` directly as shown below:
+
+```python
+
+import azure.functions as func
+
+from azure.monitor.opentelemetry import configure_azure_monitor
+from opentelemetry import trace
+from opentelemetry.propagate import extract
+
+# Configure Azure monitor collection telemetry pipeline
+configure_azure_monitor()
+
+def main(req: func.HttpRequest, context) -> func.HttpResponse:
+   ...
+   # Store current TraceContext in dictionary format
+   carrier = {
+      "traceparent": context.trace_context.Traceparent,
+      "tracestate": context.trace_context.Tracestate,
+   }
+   tracer = trace.get_tracer(__name__)
+   # Start a span using the current context
+   with tracer.start_as_current_span(
+      "http_trigger_span",
+      context=extract(carrier),
+   ):
+      ...
+
+```
+
+#### Logging issues
+
+The Azure Functions worker itself sends logging telemetry itself without the use of the azure monitor sdk (the call to `configure_azure_monitor()`). This will cause you to possibly experience duplicate telemetry entries when sending logging telemetry. Our recommendation to customers is to use solely the SDK as it will allow much more rich telemetry and features than using the built in one provided by the Azure Functions worker. You can turn off the Azure Functions telemetry logger by clearing the list of handlers of your logger.
+
+```python
+...
+root_logger = logging.getLogger()
+for handler in root_logger.handlers[:]:
+    root_logger.removeHandler(handler)
+...
+```
+
+Be sure to call the above BEFORE any loggers or the call to `configure_azure_monitor()` is setup.
+
+You may also disable logging through [Azure Functions configuration](https://learn.microsoft.com/azure/azure-functions/configure-monitoring?tabs=v2#configure-log-levels).
+
+v2.x+
+```
+...
+{
+  "logging": {
+    ...
+    "logLevel": {
+      "default": "None",
+      ...
+    }
+  }
+}
+...
+```
+
+v1.x
+```
+...
+{
+  "logger": {
+    "categoryFilter": {
+      "defaultLevel": "None",
+      ...
+    }
+  }
+}
+...
+```
 
 ## Troubleshooting
 
@@ -151,10 +231,12 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [ot_instrumentation_urllib]: https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation/opentelemetry-instrumentation-urllib3
 [ot_instrumentation_urllib3]: https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation/opentelemetry-instrumentation-urllib3
 [ot_instrumentation_urllib3_version]: https://github.com/open-telemetry/opentelemetry-python-contrib/blob/main/instrumentation/opentelemetry-instrumentation-urllib3/src/opentelemetry/instrumentation/urllib3/package.py#L16
-[opentelemetry_spec_resource]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/resource/sdk.md#resource-sdk
-[opentelemetry_spec_resource_attributes]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/resource/sdk.md#specifying-resource-information-via-an-environment-variable
-[opentelemetry_spec_service_name]: https://github.com/open-telemetry/opentelemetry-specification/tree/main/specification/resource/semantic_conventions#semantic-attributes-with-sdk-provided-default-value
-[opentelemetry_spec_view]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk.md#view
+[ot_python_resource_detectors]: https://opentelemetry-python.readthedocs.io/en/latest/sdk/environment_variables.html#opentelemetry.sdk.environment_variables.OTEL_EXPERIMENTAL_RESOURCE_DETECTORS
+[ot_resource_detector_azure]: https://pypi.org/project/opentelemetry_resource_detector_azure/
+[ot_spec_resource]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/resource/sdk.md#resource-sdk
+[ot_spec_resource_attributes]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/resource/sdk.md#specifying-resource-information-via-an-environment-variable
+[ot_spec_service_name]: https://github.com/open-telemetry/semantic-conventions/blob/main/docs/resource/README.md#service
+[ot_spec_view]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk.md#view
 [pip]: https://pypi.org/project/pip/
 [pypi_django]: https://pypi.org/project/Django/
 [pypi_fastapi]: https://pypi.org/project/fastapi/

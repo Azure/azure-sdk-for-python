@@ -13,13 +13,20 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.pipeline.policies import ContentDecodePolicy
 
 # the functions we patch
-from azure.core.pipeline.transport import RequestsTransport
-
-# the trimming function to clean up incoming arguments to the test function we are wrapping
-from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
+try:
+    from azure.core.pipeline.transport import RequestsTransport
+except:
+    pass
 
 from .config import PROXY_URL
-from .helpers import get_http_client, get_test_id, is_live, is_live_and_not_recording, set_recording_id
+from .helpers import (
+    get_http_client,
+    get_test_id,
+    is_live,
+    is_live_and_not_recording,
+    set_recording_id,
+    trim_kwargs_from_test_function,  # to clean up incoming arguments to the test function we are wrapping
+)
 from .proxy_startup import discovered_roots
 from urllib3.exceptions import HTTPError
 import json

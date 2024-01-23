@@ -15,14 +15,13 @@ from azure.cognitiveservices.vision.face import FaceClient
 from azure.cognitiveservices.vision.face.models import Gender
 from msrest.authentication import CognitiveServicesCredentials
 
-from azure_devtools.scenario_tests import ReplayableTest, AzureTestError
-
+from devtools_testutils import AzureRecordedTestCase, AzureTestError
 from devtools_testutils import mgmt_settings_fake as fake_settings
 
 CWD = dirname(realpath(__file__))
 
-class FaceTest(ReplayableTest):
-    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['Ocp-Apim-Subscription-Key']
+class FaceTest(AzureRecordedTestCase):
+    #FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['Ocp-Apim-Subscription-Key']
 
     def __init__(self, method_name):
         self._fake_settings, self._real_settings = self._load_settings()

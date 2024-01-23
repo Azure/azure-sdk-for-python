@@ -20,7 +20,7 @@ Blob storage is ideal for:
 ## Getting started
 
 ### Prerequisites
-* Python 3.7 or later is required to use this package. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+* Python 3.8 or later is required to use this package. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
 [Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to use this package.
 
@@ -229,7 +229,7 @@ container_client = ContainerClient.from_connection_string(conn_str="<connection_
 container_client.create_container()
 ```
 
-Use the async client to upload a blob
+Use the async client to create a container
 
 ```python
 from azure.storage.blob.aio import ContainerClient

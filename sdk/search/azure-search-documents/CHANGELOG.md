@@ -1,5 +1,79 @@
 # Release History
 
+## 11.5.0b1 (Unreleased)
+
+### Features Added
+
+- Added `semantic_query` for `Search` method.
+- Added back alias operations to `SearchIndexClient`
+- Added back `query_language`, `query_speller`, `semantic_fields` and `debug` for `Search` method.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed the issue that we added unexpected `retrievable` property for `SearchField`.
+
+### Other Changes
+
+## 11.4.0 (2023-10-13)
+
+### Features Added
+
+- Added new models:
+  - `VectorSearchAlgorithmMetric`
+  - `IndexProjectionMode`
+  - `SearchIndexerIndexProjections`
+  - `SearchIndexerIndexProjectionSelector`
+  - `SearchIndexerIndexProjectionsParameters`
+  - `BlobIndexerDataToExtract`
+  - `BlobIndexerImageAction`
+  - `BlobIndexerParsingMode`
+  - `CharFilterName`
+  - `CustomEntity`
+  - `CustomEntityAlias`
+  - `DataChangeDetectionPolicy`
+  - `DataDeletionDetectionPolicy`
+  - `DefaultCognitiveServicesAccount`
+  - `HighWaterMarkChangeDetectionPolicy`
+  - `HnswAlgorithmConfiguration`
+  - `IndexerExecutionResult`
+  - `IndexingParameters`
+  - `IndexingParametersConfiguration`
+  - `IndexingSchedule`
+  - `LexicalAnalyzerName`
+  - `LexicalTokenizerName`
+  - `PIIDetectionSkill`
+  - `PIIDetectionSkillMaskingMode`
+  - `ScoringProfile`
+  - `SemanticSearch`
+- Added `index_projections` support for `SearchIndexerSkillset`
+
+### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 11.3.0.
+> Only code written against a beta version such as 11.4.0b11 may be affected.
+
+- Renamed `AnswerResult` to `QueryAnswerResult` and `CaptionResult` to `QueryCaptionResult`.
+- Renamed `SemanticErrorHandling` to `SemanticErrorMode`.
+- Renamed `RawVectorQuery` to `VectorizedQuery`.
+- Renamed `ExhaustiveKnnVectorSearchAlgorithmConfiguration` to `ExhaustiveKnnAlgorithmConfiguration`.
+- Renamed `PrioritizedFields` to `SemanticPrioritizedFields`.
+- Renamed `query_caption_highlight` to `query_caption_highlight_enabled`.
+- `query_language` and `query_speller` are not available for `Search` method in this stable release.
+- `alias` operations are not available in this stable release.
+
+### Other Changes
+
+- Used API version "2023-11-01".
+
+## 11.4.0b11 (2023-10-11)
+
+### Features Added
+
+- Added `vector_filter_mode` support for `Search` method.
+- Exposed `VectorizableTextQuery` in `azure.search.document.models`.
+
 ## 11.4.0b10 (2023-10-10)
 
 ### Breaking Changes

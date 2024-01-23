@@ -1,7 +1,6 @@
 import os
 from devtools_testutils.aio import recorded_by_proxy_async
 import pytest
-from _shared.testcase import BodyReplacerProcessor
 from _shared.utils import (
     async_create_token_credential,
     get_header_policy,
@@ -16,7 +15,6 @@ from azure.communication.phonenumbers import (
 )
 from azure.communication.phonenumbers._generated.models import PhoneNumberOperationStatus
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
-from phone_number_helper import PhoneNumberUriReplacer, PhoneNumberResponseReplacerProcessor
 from phone_numbers_testcase import PhoneNumbersTestCase
 
 SKIP_PURCHASE_PHONE_NUMBER_TESTS = True
@@ -327,8 +325,13 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
                 "US", PhoneNumberType.TOLL_FREE, assignment_type=PhoneNumberAssignmentType.APPLICATION)
             items = []
             async for item in area_codes:
-                items.append(item)
-        assert len(items) > 0
+                items.append(item.area_code)
+        
+        expected_area_codes = { "888", "877", "866", "855", "844", "800", "833", "88" }
+        for area_code in items:
+            assert area_code in expected_area_codes
+
+        assert area_codes is not None
 
     @recorded_by_proxy_async
     async def test_list_toll_free_area_codes(self):
@@ -337,8 +340,13 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
                 "US", PhoneNumberType.TOLL_FREE, assignment_type=PhoneNumberAssignmentType.APPLICATION)
             items = []
             async for item in area_codes:
-                items.append(item)
-        assert len(items) > 0
+                items.append(item.area_code)
+        
+        expected_area_codes = { "888", "877", "866", "855", "844", "800", "833", "88" }
+        for area_code in items:
+            assert area_code in expected_area_codes
+        
+        assert area_codes is not None
 
     @recorded_by_proxy_async
     async def test_list_geographic_area_codes_with_managed_identity(self):

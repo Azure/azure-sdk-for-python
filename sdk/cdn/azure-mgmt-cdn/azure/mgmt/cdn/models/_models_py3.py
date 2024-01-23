@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -37,7 +37,7 @@ class ActivatedResourceReference(_serialization.Model):
         "is_active": {"key": "isActive", "type": "bool"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -76,7 +76,7 @@ class Resource(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -86,7 +86,8 @@ class Resource(_serialization.Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
+    """The resource model definition for a ARM proxy resource. It will have everything other than
+    required location and tags.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -114,13 +115,14 @@ class ProxyResource(Resource):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
 
 
 class AFDDomain(ProxyResource):  # pylint: disable=too-many-instance-attributes
-    """Friendly domain name mapping to the endpoint hostname that the customer provides for branding purposes, e.g. www.contoso.com.
+    """Friendly domain name mapping to the endpoint hostname that the customer provides for branding
+    purposes, e.g. www.contoso.com.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -156,6 +158,8 @@ class AFDDomain(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :vartype domain_validation_state: str or ~azure.mgmt.cdn.models.DomainValidationState
     :ivar host_name: The host name of the domain. Must be a domain name.
     :vartype host_name: str
+    :ivar extended_properties: Key-Value pair representing migration properties for domains.
+    :vartype extended_properties: dict[str, str]
     :ivar validation_properties: Values the customer needs to validate domain ownership.
     :vartype validation_properties: ~azure.mgmt.cdn.models.DomainValidationProperties
     """
@@ -188,6 +192,7 @@ class AFDDomain(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "deployment_status": {"key": "properties.deploymentStatus", "type": "str"},
         "domain_validation_state": {"key": "properties.domainValidationState", "type": "str"},
         "host_name": {"key": "properties.hostName", "type": "str"},
+        "extended_properties": {"key": "properties.extendedProperties", "type": "{str}"},
         "validation_properties": {"key": "properties.validationProperties", "type": "DomainValidationProperties"},
     }
 
@@ -198,8 +203,9 @@ class AFDDomain(ProxyResource):  # pylint: disable=too-many-instance-attributes
         azure_dns_zone: Optional["_models.ResourceReference"] = None,
         pre_validated_custom_domain_resource_id: Optional["_models.ResourceReference"] = None,
         host_name: Optional[str] = None,
-        **kwargs
-    ):
+        extended_properties: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tls_settings: The configuration specifying how to enable HTTPS for the domain - using
          AzureFrontDoor managed certificate or user's own certificate. If not specified, enabling ssl
@@ -212,6 +218,8 @@ class AFDDomain(ProxyResource):  # pylint: disable=too-many-instance-attributes
         :paramtype pre_validated_custom_domain_resource_id: ~azure.mgmt.cdn.models.ResourceReference
         :keyword host_name: The host name of the domain. Must be a domain name.
         :paramtype host_name: str
+        :keyword extended_properties: Key-Value pair representing migration properties for domains.
+        :paramtype extended_properties: dict[str, str]
         """
         super().__init__(**kwargs)
         self.profile_name = None
@@ -222,6 +230,7 @@ class AFDDomain(ProxyResource):  # pylint: disable=too-many-instance-attributes
         self.deployment_status = None
         self.domain_validation_state = None
         self.host_name = host_name
+        self.extended_properties = extended_properties
         self.validation_properties = None
 
 
@@ -256,8 +265,8 @@ class AFDDomainHttpsParameters(_serialization.Model):
         certificate_type: Union[str, "_models.AfdCertificateType"],
         minimum_tls_version: Optional[Union[str, "_models.AfdMinimumTlsVersion"]] = None,
         secret: Optional["_models.ResourceReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword certificate_type: Defines the source of the SSL certificate. Required. Known values
          are: "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
@@ -275,7 +284,8 @@ class AFDDomainHttpsParameters(_serialization.Model):
 
 
 class AFDDomainListResult(_serialization.Model):
-    """Result of the request to list domains. It contains a list of domain objects and a URL link to get the next set of results.
+    """Result of the request to list domains. It contains a list of domain objects and a URL link to
+    get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -294,7 +304,7 @@ class AFDDomainListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of domain objects if there are any.
         :paramtype next_link: str
@@ -327,7 +337,7 @@ class AFDStateProperties(_serialization.Model):
         "deployment_status": {"key": "deploymentStatus", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.provisioning_state = None
@@ -372,8 +382,8 @@ class AFDDomainUpdatePropertiesParameters(_serialization.Model):
         tls_settings: Optional["_models.AFDDomainHttpsParameters"] = None,
         azure_dns_zone: Optional["_models.ResourceReference"] = None,
         pre_validated_custom_domain_resource_id: Optional["_models.ResourceReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tls_settings: The configuration specifying how to enable HTTPS for the domain - using
          AzureFrontDoor managed certificate or user's own certificate. If not specified, enabling ssl
@@ -423,6 +433,8 @@ class AFDDomainProperties(AFDDomainUpdatePropertiesParameters, AFDStatePropertie
     :vartype domain_validation_state: str or ~azure.mgmt.cdn.models.DomainValidationState
     :ivar host_name: The host name of the domain. Must be a domain name. Required.
     :vartype host_name: str
+    :ivar extended_properties: Key-Value pair representing migration properties for domains.
+    :vartype extended_properties: dict[str, str]
     :ivar validation_properties: Values the customer needs to validate domain ownership.
     :vartype validation_properties: ~azure.mgmt.cdn.models.DomainValidationProperties
     """
@@ -448,6 +460,7 @@ class AFDDomainProperties(AFDDomainUpdatePropertiesParameters, AFDStatePropertie
         },
         "domain_validation_state": {"key": "domainValidationState", "type": "str"},
         "host_name": {"key": "hostName", "type": "str"},
+        "extended_properties": {"key": "extendedProperties", "type": "{str}"},
         "validation_properties": {"key": "validationProperties", "type": "DomainValidationProperties"},
     }
 
@@ -458,8 +471,9 @@ class AFDDomainProperties(AFDDomainUpdatePropertiesParameters, AFDStatePropertie
         tls_settings: Optional["_models.AFDDomainHttpsParameters"] = None,
         azure_dns_zone: Optional["_models.ResourceReference"] = None,
         pre_validated_custom_domain_resource_id: Optional["_models.ResourceReference"] = None,
-        **kwargs
-    ):
+        extended_properties: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tls_settings: The configuration specifying how to enable HTTPS for the domain - using
          AzureFrontDoor managed certificate or user's own certificate. If not specified, enabling ssl
@@ -472,6 +486,8 @@ class AFDDomainProperties(AFDDomainUpdatePropertiesParameters, AFDStatePropertie
         :paramtype pre_validated_custom_domain_resource_id: ~azure.mgmt.cdn.models.ResourceReference
         :keyword host_name: The host name of the domain. Must be a domain name. Required.
         :paramtype host_name: str
+        :keyword extended_properties: Key-Value pair representing migration properties for domains.
+        :paramtype extended_properties: dict[str, str]
         """
         super().__init__(
             tls_settings=tls_settings,
@@ -483,6 +499,7 @@ class AFDDomainProperties(AFDDomainUpdatePropertiesParameters, AFDStatePropertie
         self.deployment_status = None
         self.domain_validation_state = None
         self.host_name = host_name
+        self.extended_properties = extended_properties
         self.validation_properties = None
         self.profile_name = None
         self.tls_settings = tls_settings
@@ -528,8 +545,8 @@ class AFDDomainUpdateParameters(_serialization.Model):
         tls_settings: Optional["_models.AFDDomainHttpsParameters"] = None,
         azure_dns_zone: Optional["_models.ResourceReference"] = None,
         pre_validated_custom_domain_resource_id: Optional["_models.ResourceReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tls_settings: The configuration specifying how to enable HTTPS for the domain - using
          AzureFrontDoor managed certificate or user's own certificate. If not specified, enabling ssl
@@ -586,7 +603,7 @@ class TrackedResource(Resource):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -599,7 +616,9 @@ class TrackedResource(Resource):
 
 
 class AFDEndpoint(TrackedResource):  # pylint: disable=too-many-instance-attributes
-    """CDN endpoint is the entity within a CDN profile containing configuration information such as origin, protocol, content caching and delivery behavior. The AzureFrontDoor endpoint uses the URL format :code:`<endpointname>`.azureedge.net.
+    """Azure Front Door endpoint is the entity within a Azure Front Door profile containing
+    configuration information such as origin, protocol, content caching and delivery behavior. The
+    AzureFrontDoor endpoint uses the URL format :code:`<endpointname>`.azureedge.net.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -677,8 +696,8 @@ class AFDEndpoint(TrackedResource):  # pylint: disable=too-many-instance-attribu
         auto_generated_domain_name_label_scope: Optional[
             Union[str, "_models.AutoGeneratedDomainNameLabelScope"]
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -703,7 +722,8 @@ class AFDEndpoint(TrackedResource):  # pylint: disable=too-many-instance-attribu
 
 
 class AFDEndpointListResult(_serialization.Model):
-    """Result of the request to list endpoints. It contains a list of endpoint objects and a URL link to get the next set of results.
+    """Result of the request to list endpoints. It contains a list of endpoint objects and a URL link
+    to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -722,7 +742,7 @@ class AFDEndpointListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of endpoint objects if there is any.
         :paramtype next_link: str
@@ -753,7 +773,7 @@ class AFDEndpointPropertiesUpdateParameters(_serialization.Model):
         "enabled_state": {"key": "enabledState", "type": "str"},
     }
 
-    def __init__(self, *, enabled_state: Optional[Union[str, "_models.EnabledState"]] = None, **kwargs):
+    def __init__(self, *, enabled_state: Optional[Union[str, "_models.EnabledState"]] = None, **kwargs: Any) -> None:
         """
         :keyword enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
          'Disabled'. Known values are: "Enabled" and "Disabled".
@@ -813,8 +833,8 @@ class AFDEndpointProperties(AFDEndpointPropertiesUpdateParameters, AFDStatePrope
         auto_generated_domain_name_label_scope: Optional[
             Union[str, "_models.AutoGeneratedDomainNameLabelScope"]
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
          'Disabled'. Known values are: "Enabled" and "Disabled".
@@ -863,8 +883,8 @@ class AFDEndpointUpdateParameters(_serialization.Model):
         *,
         tags: Optional[Dict[str, str]] = None,
         enabled_state: Optional[Union[str, "_models.EnabledState"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Endpoint tags.
         :paramtype tags: dict[str, str]
@@ -879,7 +899,8 @@ class AFDEndpointUpdateParameters(_serialization.Model):
 
 
 class AfdErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.cdn.models.ErrorDetail
@@ -889,7 +910,7 @@ class AfdErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.cdn.models.ErrorDetail
@@ -899,7 +920,9 @@ class AfdErrorResponse(_serialization.Model):
 
 
 class AFDOrigin(ProxyResource):  # pylint: disable=too-many-instance-attributes
-    """CDN origin is the source of the content being delivered via CDN. When the edge nodes represented by an endpoint do not have the requested content cached, they attempt to fetch it from one or more of the configured origins.
+    """Azure Front Door origin is the source of the content being delivered via Azure Front Door. When
+    the edge nodes represented by an endpoint do not have the requested content cached, they
+    attempt to fetch it from one or more of the configured origins.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -923,8 +946,8 @@ class AFDOrigin(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :ivar https_port: The value of the HTTPS port. Must be between 1 and 65535.
     :vartype https_port: int
     :ivar origin_host_header: The host header value sent to the origin with each request. If you
-     leave this blank, the request hostname determines this value. Azure CDN origins, such as Web
-     Apps, Blob Storage, and Cloud Services require this host header value to match the origin
+     leave this blank, the request hostname determines this value. Azure Front Door origins, such as
+     Web Apps, Blob Storage, and Cloud Services require this host header value to match the origin
      hostname by default. This overrides the host header defined at Endpoint.
     :vartype origin_host_header: str
     :ivar priority: Priority of origin in given origin group for load balancing. Higher priorities
@@ -994,16 +1017,16 @@ class AFDOrigin(ProxyResource):  # pylint: disable=too-many-instance-attributes
         *,
         azure_origin: Optional["_models.ResourceReference"] = None,
         host_name: Optional[str] = None,
-        http_port: Optional[int] = None,
-        https_port: Optional[int] = None,
+        http_port: int = 80,
+        https_port: int = 443,
         origin_host_header: Optional[str] = None,
         priority: Optional[int] = None,
         weight: Optional[int] = None,
         shared_private_link_resource: Optional["_models.SharedPrivateLinkResourceProperties"] = None,
         enabled_state: Optional[Union[str, "_models.EnabledState"]] = None,
         enforce_certificate_name_check: bool = True,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword azure_origin: Resource reference to the Azure origin resource.
         :paramtype azure_origin: ~azure.mgmt.cdn.models.ResourceReference
@@ -1015,8 +1038,8 @@ class AFDOrigin(ProxyResource):  # pylint: disable=too-many-instance-attributes
         :keyword https_port: The value of the HTTPS port. Must be between 1 and 65535.
         :paramtype https_port: int
         :keyword origin_host_header: The host header value sent to the origin with each request. If you
-         leave this blank, the request hostname determines this value. Azure CDN origins, such as Web
-         Apps, Blob Storage, and Cloud Services require this host header value to match the origin
+         leave this blank, the request hostname determines this value. Azure Front Door origins, such as
+         Web Apps, Blob Storage, and Cloud Services require this host header value to match the origin
          hostname by default. This overrides the host header defined at Endpoint.
         :paramtype origin_host_header: str
         :keyword priority: Priority of origin in given origin group for load balancing. Higher
@@ -1055,7 +1078,8 @@ class AFDOrigin(ProxyResource):  # pylint: disable=too-many-instance-attributes
 
 
 class AFDOriginGroup(ProxyResource):  # pylint: disable=too-many-instance-attributes
-    """AFDOrigin group comprising of origins is used for load balancing to origins when the content cannot be served from CDN.
+    """AFDOrigin group comprising of origins is used for load balancing to origins when the content
+    cannot be served from Azure Front Door.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1127,8 +1151,8 @@ class AFDOriginGroup(ProxyResource):  # pylint: disable=too-many-instance-attrib
         health_probe_settings: Optional["_models.HealthProbeParameters"] = None,
         traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: Optional[int] = None,
         session_affinity_state: Optional[Union[str, "_models.EnabledState"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword load_balancing_settings: Load balancing settings for a backend pool.
         :paramtype load_balancing_settings: ~azure.mgmt.cdn.models.LoadBalancingSettingsParameters
@@ -1156,11 +1180,12 @@ class AFDOriginGroup(ProxyResource):  # pylint: disable=too-many-instance-attrib
 
 
 class AFDOriginGroupListResult(_serialization.Model):
-    """Result of the request to list origin groups. It contains a list of origin groups objects and a URL link to get the next set of results.
+    """Result of the request to list origin groups. It contains a list of origin groups objects and a
+    URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: List of CDN origin groups within an endpoint.
+    :ivar value: List of Azure Front Door origin groups within an Azure Front Door endpoint.
     :vartype value: list[~azure.mgmt.cdn.models.AFDOriginGroup]
     :ivar next_link: URL to get the next set of origin objects if there are any.
     :vartype next_link: str
@@ -1175,7 +1200,7 @@ class AFDOriginGroupListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of origin objects if there are any.
         :paramtype next_link: str
@@ -1229,8 +1254,8 @@ class AFDOriginGroupUpdatePropertiesParameters(_serialization.Model):
         health_probe_settings: Optional["_models.HealthProbeParameters"] = None,
         traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: Optional[int] = None,
         session_affinity_state: Optional[Union[str, "_models.EnabledState"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword load_balancing_settings: Load balancing settings for a backend pool.
         :paramtype load_balancing_settings: ~azure.mgmt.cdn.models.LoadBalancingSettingsParameters
@@ -1309,8 +1334,8 @@ class AFDOriginGroupProperties(AFDOriginGroupUpdatePropertiesParameters, AFDStat
         health_probe_settings: Optional["_models.HealthProbeParameters"] = None,
         traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: Optional[int] = None,
         session_affinity_state: Optional[Union[str, "_models.EnabledState"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword load_balancing_settings: Load balancing settings for a backend pool.
         :paramtype load_balancing_settings: ~azure.mgmt.cdn.models.LoadBalancingSettingsParameters
@@ -1390,8 +1415,8 @@ class AFDOriginGroupUpdateParameters(_serialization.Model):
         health_probe_settings: Optional["_models.HealthProbeParameters"] = None,
         traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: Optional[int] = None,
         session_affinity_state: Optional[Union[str, "_models.EnabledState"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword load_balancing_settings: Load balancing settings for a backend pool.
         :paramtype load_balancing_settings: ~azure.mgmt.cdn.models.LoadBalancingSettingsParameters
@@ -1417,11 +1442,12 @@ class AFDOriginGroupUpdateParameters(_serialization.Model):
 
 
 class AFDOriginListResult(_serialization.Model):
-    """Result of the request to list origins. It contains a list of origin objects and a URL link to get the next set of results.
+    """Result of the request to list origins. It contains a list of origin objects and a URL link to
+    get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: List of CDN origins within an endpoint.
+    :ivar value: List of Azure Front Door origins within an Azure Front Door endpoint.
     :vartype value: list[~azure.mgmt.cdn.models.AFDOrigin]
     :ivar next_link: URL to get the next set of origin objects if there are any.
     :vartype next_link: str
@@ -1436,7 +1462,7 @@ class AFDOriginListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of origin objects if there are any.
         :paramtype next_link: str
@@ -1463,8 +1489,8 @@ class AFDOriginUpdatePropertiesParameters(_serialization.Model):  # pylint: disa
     :ivar https_port: The value of the HTTPS port. Must be between 1 and 65535.
     :vartype https_port: int
     :ivar origin_host_header: The host header value sent to the origin with each request. If you
-     leave this blank, the request hostname determines this value. Azure CDN origins, such as Web
-     Apps, Blob Storage, and Cloud Services require this host header value to match the origin
+     leave this blank, the request hostname determines this value. Azure Front Door origins, such as
+     Web Apps, Blob Storage, and Cloud Services require this host header value to match the origin
      hostname by default. This overrides the host header defined at Endpoint.
     :vartype origin_host_header: str
     :ivar priority: Priority of origin in given origin group for load balancing. Higher priorities
@@ -1516,16 +1542,16 @@ class AFDOriginUpdatePropertiesParameters(_serialization.Model):  # pylint: disa
         *,
         azure_origin: Optional["_models.ResourceReference"] = None,
         host_name: Optional[str] = None,
-        http_port: Optional[int] = None,
-        https_port: Optional[int] = None,
+        http_port: int = 80,
+        https_port: int = 443,
         origin_host_header: Optional[str] = None,
         priority: Optional[int] = None,
         weight: Optional[int] = None,
         shared_private_link_resource: Optional["_models.SharedPrivateLinkResourceProperties"] = None,
         enabled_state: Optional[Union[str, "_models.EnabledState"]] = None,
         enforce_certificate_name_check: bool = True,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword azure_origin: Resource reference to the Azure origin resource.
         :paramtype azure_origin: ~azure.mgmt.cdn.models.ResourceReference
@@ -1537,8 +1563,8 @@ class AFDOriginUpdatePropertiesParameters(_serialization.Model):  # pylint: disa
         :keyword https_port: The value of the HTTPS port. Must be between 1 and 65535.
         :paramtype https_port: int
         :keyword origin_host_header: The host header value sent to the origin with each request. If you
-         leave this blank, the request hostname determines this value. Azure CDN origins, such as Web
-         Apps, Blob Storage, and Cloud Services require this host header value to match the origin
+         leave this blank, the request hostname determines this value. Azure Front Door origins, such as
+         Web Apps, Blob Storage, and Cloud Services require this host header value to match the origin
          hostname by default. This overrides the host header defined at Endpoint.
         :paramtype origin_host_header: str
         :keyword priority: Priority of origin in given origin group for load balancing. Higher
@@ -1599,8 +1625,8 @@ class AFDOriginProperties(
     :ivar https_port: The value of the HTTPS port. Must be between 1 and 65535.
     :vartype https_port: int
     :ivar origin_host_header: The host header value sent to the origin with each request. If you
-     leave this blank, the request hostname determines this value. Azure CDN origins, such as Web
-     Apps, Blob Storage, and Cloud Services require this host header value to match the origin
+     leave this blank, the request hostname determines this value. Azure Front Door origins, such as
+     Web Apps, Blob Storage, and Cloud Services require this host header value to match the origin
      hostname by default. This overrides the host header defined at Endpoint.
     :vartype origin_host_header: str
     :ivar priority: Priority of origin in given origin group for load balancing. Higher priorities
@@ -1656,16 +1682,16 @@ class AFDOriginProperties(
         *,
         azure_origin: Optional["_models.ResourceReference"] = None,
         host_name: Optional[str] = None,
-        http_port: Optional[int] = None,
-        https_port: Optional[int] = None,
+        http_port: int = 80,
+        https_port: int = 443,
         origin_host_header: Optional[str] = None,
         priority: Optional[int] = None,
         weight: Optional[int] = None,
         shared_private_link_resource: Optional["_models.SharedPrivateLinkResourceProperties"] = None,
         enabled_state: Optional[Union[str, "_models.EnabledState"]] = None,
         enforce_certificate_name_check: bool = True,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword azure_origin: Resource reference to the Azure origin resource.
         :paramtype azure_origin: ~azure.mgmt.cdn.models.ResourceReference
@@ -1677,8 +1703,8 @@ class AFDOriginProperties(
         :keyword https_port: The value of the HTTPS port. Must be between 1 and 65535.
         :paramtype https_port: int
         :keyword origin_host_header: The host header value sent to the origin with each request. If you
-         leave this blank, the request hostname determines this value. Azure CDN origins, such as Web
-         Apps, Blob Storage, and Cloud Services require this host header value to match the origin
+         leave this blank, the request hostname determines this value. Azure Front Door origins, such as
+         Web Apps, Blob Storage, and Cloud Services require this host header value to match the origin
          hostname by default. This overrides the host header defined at Endpoint.
         :paramtype origin_host_header: str
         :keyword priority: Priority of origin in given origin group for load balancing. Higher
@@ -1745,8 +1771,8 @@ class AFDOriginUpdateParameters(_serialization.Model):  # pylint: disable=too-ma
     :ivar https_port: The value of the HTTPS port. Must be between 1 and 65535.
     :vartype https_port: int
     :ivar origin_host_header: The host header value sent to the origin with each request. If you
-     leave this blank, the request hostname determines this value. Azure CDN origins, such as Web
-     Apps, Blob Storage, and Cloud Services require this host header value to match the origin
+     leave this blank, the request hostname determines this value. Azure Front Door origins, such as
+     Web Apps, Blob Storage, and Cloud Services require this host header value to match the origin
      hostname by default. This overrides the host header defined at Endpoint.
     :vartype origin_host_header: str
     :ivar priority: Priority of origin in given origin group for load balancing. Higher priorities
@@ -1798,16 +1824,16 @@ class AFDOriginUpdateParameters(_serialization.Model):  # pylint: disable=too-ma
         *,
         azure_origin: Optional["_models.ResourceReference"] = None,
         host_name: Optional[str] = None,
-        http_port: Optional[int] = None,
-        https_port: Optional[int] = None,
+        http_port: int = 80,
+        https_port: int = 443,
         origin_host_header: Optional[str] = None,
         priority: Optional[int] = None,
         weight: Optional[int] = None,
         shared_private_link_resource: Optional["_models.SharedPrivateLinkResourceProperties"] = None,
         enabled_state: Optional[Union[str, "_models.EnabledState"]] = None,
         enforce_certificate_name_check: bool = True,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword azure_origin: Resource reference to the Azure origin resource.
         :paramtype azure_origin: ~azure.mgmt.cdn.models.ResourceReference
@@ -1819,8 +1845,8 @@ class AFDOriginUpdateParameters(_serialization.Model):  # pylint: disable=too-ma
         :keyword https_port: The value of the HTTPS port. Must be between 1 and 65535.
         :paramtype https_port: int
         :keyword origin_host_header: The host header value sent to the origin with each request. If you
-         leave this blank, the request hostname determines this value. Azure CDN origins, such as Web
-         Apps, Blob Storage, and Cloud Services require this host header value to match the origin
+         leave this blank, the request hostname determines this value. Azure Front Door origins, such as
+         Web Apps, Blob Storage, and Cloud Services require this host header value to match the origin
          hostname by default. This overrides the host header defined at Endpoint.
         :paramtype origin_host_header: str
         :keyword priority: Priority of origin in given origin group for load balancing. Higher
@@ -1877,7 +1903,7 @@ class AfdPurgeParameters(_serialization.Model):
         "domains": {"key": "domains", "type": "[str]"},
     }
 
-    def __init__(self, *, content_paths: List[str], domains: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, content_paths: List[str], domains: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword content_paths: The path to the content to be purged. Can describe a file path or a
          wild card directory. Required.
@@ -1891,7 +1917,8 @@ class AfdPurgeParameters(_serialization.Model):
 
 
 class AfdRouteCacheConfiguration(_serialization.Model):
-    """Caching settings for a caching-type route. To disable caching, do not provide a cacheConfiguration object.
+    """Caching settings for a caching-type route. To disable caching, do not provide a
+    cacheConfiguration object.
 
     :ivar query_string_caching_behavior: Defines how Frontdoor caches requests that include query
      strings. You can ignore any query strings when caching, ignore specific query strings, cache
@@ -1918,8 +1945,8 @@ class AfdRouteCacheConfiguration(_serialization.Model):
         query_string_caching_behavior: Optional[Union[str, "_models.AfdQueryStringCachingBehavior"]] = None,
         query_parameters: Optional[str] = None,
         compression_settings: Optional["_models.CompressionSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword query_string_caching_behavior: Defines how Frontdoor caches requests that include
          query strings. You can ignore any query strings when caching, ignore specific query strings,
@@ -1964,7 +1991,7 @@ class Certificate(_serialization.Model):
         "expiration_date": {"key": "expirationDate", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[Union[str, "_models.SecretType"]] = None, **kwargs):
+    def __init__(self, *, type: Optional[Union[str, "_models.SecretType"]] = None, **kwargs: Any) -> None:
         """
         :keyword type: The type of the secret resource. Known values are: "UrlSigningKey",
          "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
@@ -1977,7 +2004,8 @@ class Certificate(_serialization.Model):
 
 
 class AzureFirstPartyManagedCertificate(Certificate):
-    """Azure FirstParty Managed Certificate provided by other first party resource providers to enable HTTPS.
+    """Azure FirstParty Managed Certificate provided by other first party resource providers to enable
+    HTTPS.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2001,7 +2029,7 @@ class AzureFirstPartyManagedCertificate(Certificate):
         "expiration_date": {"key": "expirationDate", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[Union[str, "_models.SecretType"]] = None, **kwargs):
+    def __init__(self, *, type: Optional[Union[str, "_models.SecretType"]] = None, **kwargs: Any) -> None:
         """
         :keyword type: The type of the secret resource. Known values are: "UrlSigningKey",
          "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
@@ -2041,38 +2069,76 @@ class SecretParameters(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
 
 
 class AzureFirstPartyManagedCertificateParameters(SecretParameters):
-    """Azure FirstParty Managed Certificate provided by other first party resource providers to enable HTTPS.
+    """Azure FirstParty Managed Certificate provided by other first party resource providers to enable
+    HTTPS.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar type: The type of the secret resource. Required. Known values are: "UrlSigningKey",
      "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
     :vartype type: str or ~azure.mgmt.cdn.models.SecretType
+    :ivar secret_source: Resource reference to the Azure Key Vault certificate. Expected to be in
+     format of
+     /subscriptions/{​​​​​​​​​subscriptionId}​​​​​​​​​/resourceGroups/{​​​​​​​​​resourceGroupName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/providers/Microsoft.KeyVault/vaults/{vaultName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/secrets/{certificateName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​.
+    :vartype secret_source: ~azure.mgmt.cdn.models.ResourceReference
+    :ivar subject: Subject name in the certificate.
+    :vartype subject: str
+    :ivar expiration_date: Certificate expiration date.
+    :vartype expiration_date: str
+    :ivar certificate_authority: Certificate issuing authority.
+    :vartype certificate_authority: str
+    :ivar subject_alternative_names: The list of SANs.
+    :vartype subject_alternative_names: list[str]
+    :ivar thumbprint: Certificate thumbprint.
+    :vartype thumbprint: str
     """
 
     _validation = {
         "type": {"required": True},
+        "secret_source": {"readonly": True},
+        "subject": {"readonly": True},
+        "expiration_date": {"readonly": True},
+        "certificate_authority": {"readonly": True},
+        "thumbprint": {"readonly": True},
     }
 
     _attribute_map = {
         "type": {"key": "type", "type": "str"},
+        "secret_source": {"key": "secretSource", "type": "ResourceReference"},
+        "subject": {"key": "subject", "type": "str"},
+        "expiration_date": {"key": "expirationDate", "type": "str"},
+        "certificate_authority": {"key": "certificateAuthority", "type": "str"},
+        "subject_alternative_names": {"key": "subjectAlternativeNames", "type": "[str]"},
+        "thumbprint": {"key": "thumbprint", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
-        """ """
+    def __init__(self, *, subject_alternative_names: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword subject_alternative_names: The list of SANs.
+        :paramtype subject_alternative_names: list[str]
+        """
         super().__init__(**kwargs)
-        self.type = "AzureFirstPartyManagedCertificate"  # type: str
+        self.type: str = "AzureFirstPartyManagedCertificate"
+        self.secret_source = None
+        self.subject = None
+        self.expiration_date = None
+        self.certificate_authority = None
+        self.subject_alternative_names = subject_alternative_names
+        self.thumbprint = None
 
 
 class CacheConfiguration(_serialization.Model):
-    """Caching settings for a caching-type route. To disable caching, do not provide a cacheConfiguration object.
+    """Caching settings for a caching-type route. To disable caching, do not provide a
+    cacheConfiguration object.
 
     :ivar query_string_caching_behavior: Defines how Frontdoor caches requests that include query
      strings. You can ignore any query strings when caching, ignore specific query strings, cache
@@ -2112,8 +2178,8 @@ class CacheConfiguration(_serialization.Model):
         is_compression_enabled: Optional[Union[str, "_models.RuleIsCompressionEnabled"]] = None,
         cache_behavior: Optional[Union[str, "_models.RuleCacheBehavior"]] = None,
         cache_duration: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword query_string_caching_behavior: Defines how Frontdoor caches requests that include
          query strings. You can ignore any query strings when caching, ignore specific query strings,
@@ -2181,8 +2247,8 @@ class CacheExpirationActionParameters(_serialization.Model):
         cache_behavior: Union[str, "_models.CacheBehavior"],
         cache_type: Union[str, "_models.CacheType"],
         cache_duration: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "DeliveryRuleCacheExpirationActionParameters"
         :paramtype type_name: str or ~azure.mgmt.cdn.models.CacheExpirationActionParametersTypeName
@@ -2233,8 +2299,8 @@ class CacheKeyQueryStringActionParameters(_serialization.Model):
         type_name: Union[str, "_models.CacheKeyQueryStringActionParametersTypeName"],
         query_string_behavior: Union[str, "_models.QueryStringBehavior"],
         query_parameters: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "DeliveryRuleCacheKeyQueryStringBehaviorActionParameters"
         :paramtype type_name: str or ~azure.mgmt.cdn.models.CacheKeyQueryStringActionParametersTypeName
@@ -2248,6 +2314,80 @@ class CacheKeyQueryStringActionParameters(_serialization.Model):
         self.type_name = type_name
         self.query_string_behavior = query_string_behavior
         self.query_parameters = query_parameters
+
+
+class CanMigrateParameters(_serialization.Model):
+    """Request body for CanMigrate operation.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar classic_resource_reference: Resource reference of the classic cdn profile or classic
+     frontdoor that need to be migrated. Required.
+    :vartype classic_resource_reference: ~azure.mgmt.cdn.models.ResourceReference
+    """
+
+    _validation = {
+        "classic_resource_reference": {"required": True},
+    }
+
+    _attribute_map = {
+        "classic_resource_reference": {"key": "classicResourceReference", "type": "ResourceReference"},
+    }
+
+    def __init__(self, *, classic_resource_reference: "_models.ResourceReference", **kwargs: Any) -> None:
+        """
+        :keyword classic_resource_reference: Resource reference of the classic cdn profile or classic
+         frontdoor that need to be migrated. Required.
+        :paramtype classic_resource_reference: ~azure.mgmt.cdn.models.ResourceReference
+        """
+        super().__init__(**kwargs)
+        self.classic_resource_reference = classic_resource_reference
+
+
+class CanMigrateResult(_serialization.Model):
+    """Result for canMigrate operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar can_migrate: Flag that says if the profile can be migrated.
+    :vartype can_migrate: bool
+    :ivar default_sku: Recommended sku for the migration. Known values are:
+     "Standard_AzureFrontDoor" and "Premium_AzureFrontDoor".
+    :vartype default_sku: str or ~azure.mgmt.cdn.models.CanMigrateDefaultSku
+    :ivar errors:
+    :vartype errors: list[~azure.mgmt.cdn.models.MigrationErrorType]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "can_migrate": {"readonly": True},
+        "default_sku": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "can_migrate": {"key": "properties.canMigrate", "type": "bool"},
+        "default_sku": {"key": "properties.defaultSku", "type": "str"},
+        "errors": {"key": "properties.errors", "type": "[MigrationErrorType]"},
+    }
+
+    def __init__(self, *, errors: Optional[List["_models.MigrationErrorType"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword errors:
+        :paramtype errors: list[~azure.mgmt.cdn.models.MigrationErrorType]
+        """
+        super().__init__(**kwargs)
+        self.id = None
+        self.type = None
+        self.can_migrate = None
+        self.default_sku = None
+        self.errors = errors
 
 
 class CdnCertificateSourceParameters(_serialization.Model):
@@ -2277,8 +2417,8 @@ class CdnCertificateSourceParameters(_serialization.Model):
         *,
         type_name: Union[str, "_models.CdnCertificateSourceParametersTypeName"],
         certificate_type: Union[str, "_models.CertificateType"],
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "CdnCertificateSourceParameters"
         :paramtype type_name: str or ~azure.mgmt.cdn.models.CdnCertificateSourceParametersTypeName
@@ -2302,7 +2442,7 @@ class CdnEndpoint(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: ARM Resource ID string.
         :paramtype id: str
@@ -2350,8 +2490,8 @@ class CustomDomainHttpsParameters(_serialization.Model):
         *,
         protocol_type: Union[str, "_models.ProtocolType"],
         minimum_tls_version: Optional[Union[str, "_models.MinimumTlsVersion"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword protocol_type: Defines the TLS extension protocol that is used for secure delivery.
          Required. Known values are: "ServerNameIndication" and "IPBased".
@@ -2361,7 +2501,7 @@ class CustomDomainHttpsParameters(_serialization.Model):
         :paramtype minimum_tls_version: str or ~azure.mgmt.cdn.models.MinimumTlsVersion
         """
         super().__init__(**kwargs)
-        self.certificate_source = None  # type: Optional[str]
+        self.certificate_source: Optional[str] = None
         self.protocol_type = protocol_type
         self.minimum_tls_version = minimum_tls_version
 
@@ -2407,8 +2547,8 @@ class CdnManagedHttpsParameters(CustomDomainHttpsParameters):
         protocol_type: Union[str, "_models.ProtocolType"],
         certificate_source_parameters: "_models.CdnCertificateSourceParameters",
         minimum_tls_version: Optional[Union[str, "_models.MinimumTlsVersion"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword protocol_type: Defines the TLS extension protocol that is used for secure delivery.
          Required. Known values are: "ServerNameIndication" and "IPBased".
@@ -2421,7 +2561,7 @@ class CdnManagedHttpsParameters(CustomDomainHttpsParameters):
         :paramtype certificate_source_parameters: ~azure.mgmt.cdn.models.CdnCertificateSourceParameters
         """
         super().__init__(protocol_type=protocol_type, minimum_tls_version=minimum_tls_version, **kwargs)
-        self.certificate_source = "Cdn"  # type: str
+        self.certificate_source: str = "Cdn"
         self.certificate_source_parameters = certificate_source_parameters
 
 
@@ -2460,6 +2600,9 @@ class CdnWebApplicationFirewallPolicy(TrackedResource):  # pylint: disable=too-m
     :ivar endpoint_links: Describes Azure CDN endpoints associated with this Web Application
      Firewall policy.
     :vartype endpoint_links: list[~azure.mgmt.cdn.models.CdnEndpoint]
+    :ivar extended_properties: Key-Value pair representing additional properties for Web
+     Application Firewall policy.
+    :vartype extended_properties: dict[str, str]
     :ivar provisioning_state: Provisioning state of the WebApplicationFirewallPolicy. Known values
      are: "Creating", "Succeeded", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.cdn.models.ProvisioningState
@@ -2494,6 +2637,7 @@ class CdnWebApplicationFirewallPolicy(TrackedResource):  # pylint: disable=too-m
         "custom_rules": {"key": "properties.customRules", "type": "CustomRuleList"},
         "managed_rules": {"key": "properties.managedRules", "type": "ManagedRuleSetList"},
         "endpoint_links": {"key": "properties.endpointLinks", "type": "[CdnEndpoint]"},
+        "extended_properties": {"key": "properties.extendedProperties", "type": "{str}"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "resource_state": {"key": "properties.resourceState", "type": "str"},
     }
@@ -2509,8 +2653,9 @@ class CdnWebApplicationFirewallPolicy(TrackedResource):  # pylint: disable=too-m
         rate_limit_rules: Optional["_models.RateLimitRuleList"] = None,
         custom_rules: Optional["_models.CustomRuleList"] = None,
         managed_rules: Optional["_models.ManagedRuleSetList"] = None,
-        **kwargs
-    ):
+        extended_properties: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -2529,6 +2674,9 @@ class CdnWebApplicationFirewallPolicy(TrackedResource):  # pylint: disable=too-m
         :paramtype custom_rules: ~azure.mgmt.cdn.models.CustomRuleList
         :keyword managed_rules: Describes managed rules inside the policy.
         :paramtype managed_rules: ~azure.mgmt.cdn.models.ManagedRuleSetList
+        :keyword extended_properties: Key-Value pair representing additional properties for Web
+         Application Firewall policy.
+        :paramtype extended_properties: dict[str, str]
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.etag = etag
@@ -2538,12 +2686,14 @@ class CdnWebApplicationFirewallPolicy(TrackedResource):  # pylint: disable=too-m
         self.custom_rules = custom_rules
         self.managed_rules = managed_rules
         self.endpoint_links = None
+        self.extended_properties = extended_properties
         self.provisioning_state = None
         self.resource_state = None
 
 
 class CdnWebApplicationFirewallPolicyList(_serialization.Model):
-    """Defines a list of WebApplicationFirewallPolicies for Azure CDN. It contains a list of WebApplicationFirewallPolicy objects and a URL link to get the next set of results.
+    """Defines a list of WebApplicationFirewallPolicies for Azure CDN. It contains a list of
+    WebApplicationFirewallPolicy objects and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2563,7 +2713,7 @@ class CdnWebApplicationFirewallPolicyList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of WebApplicationFirewallPolicy objects if there
          are any.
@@ -2585,7 +2735,7 @@ class CdnWebApplicationFirewallPolicyPatchParameters(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: CdnWebApplicationFirewallPolicy tags.
         :paramtype tags: dict[str, str]
@@ -2630,8 +2780,8 @@ class CheckEndpointNameAvailabilityInput(_serialization.Model):
         auto_generated_domain_name_label_scope: Optional[
             Union[str, "_models.AutoGeneratedDomainNameLabelScope"]
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The resource name to validate. Required.
         :paramtype name: str
@@ -2681,7 +2831,7 @@ class CheckEndpointNameAvailabilityOutput(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name_available = None
@@ -2707,7 +2857,7 @@ class CheckHostNameAvailabilityInput(_serialization.Model):
         "host_name": {"key": "hostName", "type": "str"},
     }
 
-    def __init__(self, *, host_name: str, **kwargs):
+    def __init__(self, *, host_name: str, **kwargs: Any) -> None:
         """
         :keyword host_name: The host name to validate. Required.
         :paramtype host_name: str
@@ -2738,7 +2888,7 @@ class CheckNameAvailabilityInput(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, name: str, type: Union[str, "_models.ResourceType"], **kwargs):
+    def __init__(self, *, name: str, type: Union[str, "_models.ResourceType"], **kwargs: Any) -> None:
         """
         :keyword name: The resource name to validate. Required.
         :paramtype name: str
@@ -2776,7 +2926,7 @@ class CheckNameAvailabilityOutput(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name_available = None
@@ -2798,7 +2948,9 @@ class CidrIpAddress(_serialization.Model):
         "prefix_length": {"key": "prefixLength", "type": "int"},
     }
 
-    def __init__(self, *, base_ip_address: Optional[str] = None, prefix_length: Optional[int] = None, **kwargs):
+    def __init__(
+        self, *, base_ip_address: Optional[str] = None, prefix_length: Optional[int] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword base_ip_address: Ip address itself.
         :paramtype base_ip_address: str
@@ -2847,11 +2999,11 @@ class ClientPortMatchConditionParameters(_serialization.Model):
         *,
         type_name: Union[str, "_models.ClientPortMatchConditionParametersTypeName"],
         operator: Union[str, "_models.ClientPortOperator"],
-        negate_condition: Optional[bool] = None,
+        negate_condition: bool = False,
         match_values: Optional[List[str]] = None,
         transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "DeliveryRuleClientPortConditionParameters"
         :paramtype type_name: str or ~azure.mgmt.cdn.models.ClientPortMatchConditionParametersTypeName
@@ -2888,7 +3040,9 @@ class Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesD
         "value": {"key": "value", "type": "float"},
     }
 
-    def __init__(self, *, date_time: Optional[datetime.datetime] = None, value: Optional[float] = None, **kwargs):
+    def __init__(
+        self, *, date_time: Optional[datetime.datetime] = None, value: Optional[float] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword date_time:
         :paramtype date_time: ~datetime.datetime
@@ -2914,7 +3068,9 @@ class Components1Gs0LlpSchemasMetricsresponsePropertiesSeriesItemsPropertiesData
         "value": {"key": "value", "type": "float"},
     }
 
-    def __init__(self, *, date_time: Optional[datetime.datetime] = None, value: Optional[float] = None, **kwargs):
+    def __init__(
+        self, *, date_time: Optional[datetime.datetime] = None, value: Optional[float] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword date_time:
         :paramtype date_time: ~datetime.datetime
@@ -2944,8 +3100,13 @@ class ComponentsKpo1PjSchemasWafrankingsresponsePropertiesDataItemsPropertiesMet
     }
 
     def __init__(
-        self, *, metric: Optional[str] = None, value: Optional[int] = None, percentage: Optional[float] = None, **kwargs
-    ):
+        self,
+        *,
+        metric: Optional[str] = None,
+        value: Optional[int] = None,
+        percentage: Optional[float] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword metric:
         :paramtype metric: str
@@ -2983,8 +3144,8 @@ class CompressionSettings(_serialization.Model):
         *,
         content_types_to_compress: Optional[List[str]] = None,
         is_compression_enabled: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword content_types_to_compress: List of content types on which compression applies. The
          value should be a valid MIME type.
@@ -3020,8 +3181,8 @@ class ContinentsResponse(_serialization.Model):
         *,
         continents: Optional[List["_models.ContinentsResponseContinentsItem"]] = None,
         country_or_regions: Optional[List["_models.ContinentsResponseCountryOrRegionsItem"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword continents:
         :paramtype continents: list[~azure.mgmt.cdn.models.ContinentsResponseContinentsItem]
@@ -3045,7 +3206,7 @@ class ContinentsResponseContinentsItem(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id:
         :paramtype id: str
@@ -3073,8 +3234,8 @@ class ContinentsResponseCountryOrRegionsItem(_serialization.Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         continent_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id:
         :paramtype id: str
@@ -3127,11 +3288,11 @@ class CookiesMatchConditionParameters(_serialization.Model):
         type_name: Union[str, "_models.CookiesMatchConditionParametersTypeName"],
         operator: Union[str, "_models.CookiesOperator"],
         selector: Optional[str] = None,
-        negate_condition: Optional[bool] = None,
+        negate_condition: bool = False,
         match_values: Optional[List[str]] = None,
         transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "DeliveryRuleCookiesConditionParameters"
         :paramtype type_name: str or ~azure.mgmt.cdn.models.CookiesMatchConditionParametersTypeName
@@ -3158,7 +3319,8 @@ class CookiesMatchConditionParameters(_serialization.Model):
 
 
 class CustomDomain(ProxyResource):  # pylint: disable=too-many-instance-attributes
-    """Friendly domain name mapping to the endpoint hostname that the customer provides for branding purposes, e.g. www.contoso.com.
+    """Friendly domain name mapping to the endpoint hostname that the customer provides for branding
+    purposes, e.g. www.contoso.com.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3229,8 +3391,8 @@ class CustomDomain(ProxyResource):  # pylint: disable=too-many-instance-attribut
         host_name: Optional[str] = None,
         custom_https_parameters: Optional["_models.CustomDomainHttpsParameters"] = None,
         validation_data: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword host_name: The host name of the custom domain. Must be a domain name.
         :paramtype host_name: str
@@ -3252,7 +3414,8 @@ class CustomDomain(ProxyResource):  # pylint: disable=too-many-instance-attribut
 
 
 class CustomDomainListResult(_serialization.Model):
-    """Result of the request to list custom domains. It contains a list of custom domain objects and a URL link to get the next set of results.
+    """Result of the request to list custom domains. It contains a list of custom domain objects and a
+    URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3271,7 +3434,7 @@ class CustomDomainListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of custom domain objects if there are any.
         :paramtype next_link: str
@@ -3292,7 +3455,7 @@ class CustomDomainParameters(_serialization.Model):
         "host_name": {"key": "properties.hostName", "type": "str"},
     }
 
-    def __init__(self, *, host_name: Optional[str] = None, **kwargs):
+    def __init__(self, *, host_name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword host_name: The host name of the custom domain. Must be a domain name.
         :paramtype host_name: str
@@ -3356,8 +3519,8 @@ class CustomerCertificate(Certificate):
         secret_version: Optional[str] = None,
         use_latest_version: Optional[bool] = None,
         subject_alternative_names: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The type of the secret resource. Known values are: "UrlSigningKey",
          "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
@@ -3441,8 +3604,8 @@ class CustomerCertificateParameters(SecretParameters):
         secret_version: Optional[str] = None,
         use_latest_version: Optional[bool] = None,
         subject_alternative_names: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword secret_source: Resource reference to the Azure Key Vault certificate. Expected to be
          in format of
@@ -3457,7 +3620,7 @@ class CustomerCertificateParameters(SecretParameters):
         :paramtype subject_alternative_names: list[str]
         """
         super().__init__(**kwargs)
-        self.type = "CustomerCertificate"  # type: str
+        self.type: str = "CustomerCertificate"
         self.secret_source = secret_source
         self.secret_version = secret_version
         self.use_latest_version = use_latest_version
@@ -3511,8 +3674,8 @@ class CustomRule(_serialization.Model):
         match_conditions: List["_models.MatchCondition"],
         action: Union[str, "_models.ActionType"],
         enabled_state: Optional[Union[str, "_models.CustomRuleEnabledState"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Defines the name of the custom rule. Required.
         :paramtype name: str
@@ -3547,7 +3710,7 @@ class CustomRuleList(_serialization.Model):
         "rules": {"key": "rules", "type": "[CustomRule]"},
     }
 
-    def __init__(self, *, rules: Optional[List["_models.CustomRule"]] = None, **kwargs):
+    def __init__(self, *, rules: Optional[List["_models.CustomRule"]] = None, **kwargs: Any) -> None:
         """
         :keyword rules: List of rules.
         :paramtype rules: list[~azure.mgmt.cdn.models.CustomRule]
@@ -3581,7 +3744,9 @@ class DeepCreatedCustomDomain(_serialization.Model):
         "validation_data": {"key": "properties.validationData", "type": "str"},
     }
 
-    def __init__(self, *, name: str, host_name: Optional[str] = None, validation_data: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, name: str, host_name: Optional[str] = None, validation_data: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: Custom domain name. Required.
         :paramtype name: str
@@ -3686,8 +3851,8 @@ class DeepCreatedOrigin(_serialization.Model):  # pylint: disable=too-many-insta
         private_link_resource_id: Optional[str] = None,
         private_link_location: Optional[str] = None,
         private_link_approval_message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Origin name which must be unique within the endpoint. Required.
         :paramtype name: str
@@ -3743,7 +3908,8 @@ class DeepCreatedOrigin(_serialization.Model):  # pylint: disable=too-many-insta
 
 
 class DeepCreatedOriginGroup(_serialization.Model):
-    """The origin group for CDN content which is added when creating a CDN endpoint. Traffic is sent to the origins within the origin group based on origin health.
+    """The origin group for CDN content which is added when creating a CDN endpoint. Traffic is sent
+    to the origins within the origin group based on origin health.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -3794,8 +3960,8 @@ class DeepCreatedOriginGroup(_serialization.Model):
         response_based_origin_error_detection_settings: Optional[
             "_models.ResponseBasedOriginErrorDetectionParameters"
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Origin group name which must be unique within the endpoint. Required.
         :paramtype name: str
@@ -3862,8 +4028,8 @@ class DeliveryRule(_serialization.Model):
         actions: List["_models.DeliveryRuleAction"],
         name: Optional[str] = None,
         conditions: Optional[List["_models.DeliveryRuleCondition"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the rule.
         :paramtype name: str
@@ -3925,10 +4091,10 @@ class DeliveryRuleAction(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None  # type: Optional[str]
+        self.name: Optional[str] = None
 
 
 class DeliveryRuleCacheExpirationAction(DeliveryRuleAction):
@@ -3955,13 +4121,13 @@ class DeliveryRuleCacheExpirationAction(DeliveryRuleAction):
         "parameters": {"key": "parameters", "type": "CacheExpirationActionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.CacheExpirationActionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.CacheExpirationActionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the action. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.CacheExpirationActionParameters
         """
         super().__init__(**kwargs)
-        self.name = "CacheExpiration"  # type: str
+        self.name: str = "CacheExpiration"
         self.parameters = parameters
 
 
@@ -3989,13 +4155,13 @@ class DeliveryRuleCacheKeyQueryStringAction(DeliveryRuleAction):
         "parameters": {"key": "parameters", "type": "CacheKeyQueryStringActionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.CacheKeyQueryStringActionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.CacheKeyQueryStringActionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the action. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.CacheKeyQueryStringActionParameters
         """
         super().__init__(**kwargs)
-        self.name = "CacheKeyQueryString"  # type: str
+        self.name: str = "CacheKeyQueryString"
         self.parameters = parameters
 
 
@@ -4054,10 +4220,10 @@ class DeliveryRuleCondition(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None  # type: Optional[str]
+        self.name: Optional[str] = None
 
 
 class DeliveryRuleClientPortCondition(DeliveryRuleCondition):
@@ -4084,13 +4250,13 @@ class DeliveryRuleClientPortCondition(DeliveryRuleCondition):
         "parameters": {"key": "parameters", "type": "ClientPortMatchConditionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.ClientPortMatchConditionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.ClientPortMatchConditionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.ClientPortMatchConditionParameters
         """
         super().__init__(**kwargs)
-        self.name = "ClientPort"  # type: str
+        self.name: str = "ClientPort"
         self.parameters = parameters
 
 
@@ -4118,13 +4284,13 @@ class DeliveryRuleCookiesCondition(DeliveryRuleCondition):
         "parameters": {"key": "parameters", "type": "CookiesMatchConditionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.CookiesMatchConditionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.CookiesMatchConditionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.CookiesMatchConditionParameters
         """
         super().__init__(**kwargs)
-        self.name = "Cookies"  # type: str
+        self.name: str = "Cookies"
         self.parameters = parameters
 
 
@@ -4152,13 +4318,13 @@ class DeliveryRuleHostNameCondition(DeliveryRuleCondition):
         "parameters": {"key": "parameters", "type": "HostNameMatchConditionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.HostNameMatchConditionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.HostNameMatchConditionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.HostNameMatchConditionParameters
         """
         super().__init__(**kwargs)
-        self.name = "HostName"  # type: str
+        self.name: str = "HostName"
         self.parameters = parameters
 
 
@@ -4186,13 +4352,13 @@ class DeliveryRuleHttpVersionCondition(DeliveryRuleCondition):
         "parameters": {"key": "parameters", "type": "HttpVersionMatchConditionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.HttpVersionMatchConditionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.HttpVersionMatchConditionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.HttpVersionMatchConditionParameters
         """
         super().__init__(**kwargs)
-        self.name = "HttpVersion"  # type: str
+        self.name: str = "HttpVersion"
         self.parameters = parameters
 
 
@@ -4220,13 +4386,13 @@ class DeliveryRuleIsDeviceCondition(DeliveryRuleCondition):
         "parameters": {"key": "parameters", "type": "IsDeviceMatchConditionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.IsDeviceMatchConditionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.IsDeviceMatchConditionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.IsDeviceMatchConditionParameters
         """
         super().__init__(**kwargs)
-        self.name = "IsDevice"  # type: str
+        self.name: str = "IsDevice"
         self.parameters = parameters
 
 
@@ -4254,13 +4420,13 @@ class DeliveryRulePostArgsCondition(DeliveryRuleCondition):
         "parameters": {"key": "parameters", "type": "PostArgsMatchConditionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.PostArgsMatchConditionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.PostArgsMatchConditionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.PostArgsMatchConditionParameters
         """
         super().__init__(**kwargs)
-        self.name = "PostArgs"  # type: str
+        self.name: str = "PostArgs"
         self.parameters = parameters
 
 
@@ -4288,13 +4454,13 @@ class DeliveryRuleQueryStringCondition(DeliveryRuleCondition):
         "parameters": {"key": "parameters", "type": "QueryStringMatchConditionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.QueryStringMatchConditionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.QueryStringMatchConditionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.QueryStringMatchConditionParameters
         """
         super().__init__(**kwargs)
-        self.name = "QueryString"  # type: str
+        self.name: str = "QueryString"
         self.parameters = parameters
 
 
@@ -4322,13 +4488,13 @@ class DeliveryRuleRemoteAddressCondition(DeliveryRuleCondition):
         "parameters": {"key": "parameters", "type": "RemoteAddressMatchConditionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.RemoteAddressMatchConditionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.RemoteAddressMatchConditionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.RemoteAddressMatchConditionParameters
         """
         super().__init__(**kwargs)
-        self.name = "RemoteAddress"  # type: str
+        self.name: str = "RemoteAddress"
         self.parameters = parameters
 
 
@@ -4356,13 +4522,13 @@ class DeliveryRuleRequestBodyCondition(DeliveryRuleCondition):
         "parameters": {"key": "parameters", "type": "RequestBodyMatchConditionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.RequestBodyMatchConditionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.RequestBodyMatchConditionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.RequestBodyMatchConditionParameters
         """
         super().__init__(**kwargs)
-        self.name = "RequestBody"  # type: str
+        self.name: str = "RequestBody"
         self.parameters = parameters
 
 
@@ -4390,13 +4556,13 @@ class DeliveryRuleRequestHeaderAction(DeliveryRuleAction):
         "parameters": {"key": "parameters", "type": "HeaderActionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.HeaderActionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.HeaderActionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the action. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.HeaderActionParameters
         """
         super().__init__(**kwargs)
-        self.name = "ModifyRequestHeader"  # type: str
+        self.name: str = "ModifyRequestHeader"
         self.parameters = parameters
 
 
@@ -4424,13 +4590,13 @@ class DeliveryRuleRequestHeaderCondition(DeliveryRuleCondition):
         "parameters": {"key": "parameters", "type": "RequestHeaderMatchConditionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.RequestHeaderMatchConditionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.RequestHeaderMatchConditionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.RequestHeaderMatchConditionParameters
         """
         super().__init__(**kwargs)
-        self.name = "RequestHeader"  # type: str
+        self.name: str = "RequestHeader"
         self.parameters = parameters
 
 
@@ -4458,13 +4624,13 @@ class DeliveryRuleRequestMethodCondition(DeliveryRuleCondition):
         "parameters": {"key": "parameters", "type": "RequestMethodMatchConditionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.RequestMethodMatchConditionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.RequestMethodMatchConditionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.RequestMethodMatchConditionParameters
         """
         super().__init__(**kwargs)
-        self.name = "RequestMethod"  # type: str
+        self.name: str = "RequestMethod"
         self.parameters = parameters
 
 
@@ -4492,13 +4658,13 @@ class DeliveryRuleRequestSchemeCondition(DeliveryRuleCondition):
         "parameters": {"key": "parameters", "type": "RequestSchemeMatchConditionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.RequestSchemeMatchConditionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.RequestSchemeMatchConditionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.RequestSchemeMatchConditionParameters
         """
         super().__init__(**kwargs)
-        self.name = "RequestScheme"  # type: str
+        self.name: str = "RequestScheme"
         self.parameters = parameters
 
 
@@ -4526,13 +4692,13 @@ class DeliveryRuleRequestUriCondition(DeliveryRuleCondition):
         "parameters": {"key": "parameters", "type": "RequestUriMatchConditionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.RequestUriMatchConditionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.RequestUriMatchConditionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.RequestUriMatchConditionParameters
         """
         super().__init__(**kwargs)
-        self.name = "RequestUri"  # type: str
+        self.name: str = "RequestUri"
         self.parameters = parameters
 
 
@@ -4560,18 +4726,19 @@ class DeliveryRuleResponseHeaderAction(DeliveryRuleAction):
         "parameters": {"key": "parameters", "type": "HeaderActionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.HeaderActionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.HeaderActionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the action. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.HeaderActionParameters
         """
         super().__init__(**kwargs)
-        self.name = "ModifyResponseHeader"  # type: str
+        self.name: str = "ModifyResponseHeader"
         self.parameters = parameters
 
 
 class DeliveryRuleRouteConfigurationOverrideAction(DeliveryRuleAction):
-    """Defines the route configuration override action for the delivery rule. Only applicable to Frontdoor Standard/Premium Profiles.
+    """Defines the route configuration override action for the delivery rule. Only applicable to
+    Frontdoor Standard/Premium Profiles.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -4594,13 +4761,13 @@ class DeliveryRuleRouteConfigurationOverrideAction(DeliveryRuleAction):
         "parameters": {"key": "parameters", "type": "RouteConfigurationOverrideActionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.RouteConfigurationOverrideActionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.RouteConfigurationOverrideActionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the action. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.RouteConfigurationOverrideActionParameters
         """
         super().__init__(**kwargs)
-        self.name = "RouteConfigurationOverride"  # type: str
+        self.name: str = "RouteConfigurationOverride"
         self.parameters = parameters
 
 
@@ -4628,13 +4795,13 @@ class DeliveryRuleServerPortCondition(DeliveryRuleCondition):
         "parameters": {"key": "parameters", "type": "ServerPortMatchConditionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.ServerPortMatchConditionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.ServerPortMatchConditionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.ServerPortMatchConditionParameters
         """
         super().__init__(**kwargs)
-        self.name = "ServerPort"  # type: str
+        self.name: str = "ServerPort"
         self.parameters = parameters
 
 
@@ -4662,13 +4829,13 @@ class DeliveryRuleSocketAddrCondition(DeliveryRuleCondition):
         "parameters": {"key": "parameters", "type": "SocketAddrMatchConditionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.SocketAddrMatchConditionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.SocketAddrMatchConditionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.SocketAddrMatchConditionParameters
         """
         super().__init__(**kwargs)
-        self.name = "SocketAddr"  # type: str
+        self.name: str = "SocketAddr"
         self.parameters = parameters
 
 
@@ -4696,13 +4863,13 @@ class DeliveryRuleSslProtocolCondition(DeliveryRuleCondition):
         "parameters": {"key": "parameters", "type": "SslProtocolMatchConditionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.SslProtocolMatchConditionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.SslProtocolMatchConditionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.SslProtocolMatchConditionParameters
         """
         super().__init__(**kwargs)
-        self.name = "SslProtocol"  # type: str
+        self.name: str = "SslProtocol"
         self.parameters = parameters
 
 
@@ -4730,13 +4897,13 @@ class DeliveryRuleUrlFileExtensionCondition(DeliveryRuleCondition):
         "parameters": {"key": "parameters", "type": "UrlFileExtensionMatchConditionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.UrlFileExtensionMatchConditionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.UrlFileExtensionMatchConditionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.UrlFileExtensionMatchConditionParameters
         """
         super().__init__(**kwargs)
-        self.name = "UrlFileExtension"  # type: str
+        self.name: str = "UrlFileExtension"
         self.parameters = parameters
 
 
@@ -4764,13 +4931,13 @@ class DeliveryRuleUrlFileNameCondition(DeliveryRuleCondition):
         "parameters": {"key": "parameters", "type": "UrlFileNameMatchConditionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.UrlFileNameMatchConditionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.UrlFileNameMatchConditionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.UrlFileNameMatchConditionParameters
         """
         super().__init__(**kwargs)
-        self.name = "UrlFileName"  # type: str
+        self.name: str = "UrlFileName"
         self.parameters = parameters
 
 
@@ -4798,13 +4965,13 @@ class DeliveryRuleUrlPathCondition(DeliveryRuleCondition):
         "parameters": {"key": "parameters", "type": "UrlPathMatchConditionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.UrlPathMatchConditionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.UrlPathMatchConditionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.UrlPathMatchConditionParameters
         """
         super().__init__(**kwargs)
-        self.name = "UrlPath"  # type: str
+        self.name: str = "UrlPath"
         self.parameters = parameters
 
 
@@ -4831,8 +4998,8 @@ class DimensionProperties(_serialization.Model):
         name: Optional[str] = None,
         display_name: Optional[str] = None,
         internal_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of dimension.
         :paramtype name: str
@@ -4868,7 +5035,7 @@ class DomainValidationProperties(_serialization.Model):
         "expiration_date": {"key": "expirationDate", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.validation_token = None
@@ -4907,7 +5074,7 @@ class EdgeNode(ProxyResource):
         "ip_address_groups": {"key": "properties.ipAddressGroups", "type": "[IpAddressGroup]"},
     }
 
-    def __init__(self, *, ip_address_groups: Optional[List["_models.IpAddressGroup"]] = None, **kwargs):
+    def __init__(self, *, ip_address_groups: Optional[List["_models.IpAddressGroup"]] = None, **kwargs: Any) -> None:
         """
         :keyword ip_address_groups: List of ip address groups.
         :paramtype ip_address_groups: list[~azure.mgmt.cdn.models.IpAddressGroup]
@@ -4917,7 +5084,8 @@ class EdgeNode(ProxyResource):
 
 
 class EdgenodeResult(_serialization.Model):
-    """Result of the request to list CDN edgenodes. It contains a list of ip address group and a URL link to get the next set of results.
+    """Result of the request to list CDN edgenodes. It contains a list of ip address group and a URL
+    link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4936,7 +5104,7 @@ class EdgenodeResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of edgenode list results if there are any.
         :paramtype next_link: str
@@ -4947,7 +5115,9 @@ class EdgenodeResult(_serialization.Model):
 
 
 class Endpoint(TrackedResource):  # pylint: disable=too-many-instance-attributes
-    """CDN endpoint is the entity within a CDN profile containing configuration information such as origin, protocol, content caching and delivery behavior. The CDN endpoint uses the URL format :code:`<endpointname>`.azureedge.net.
+    """CDN endpoint is the entity within a CDN profile containing configuration information such as
+    origin, protocol, content caching and delivery behavior. The CDN endpoint uses the URL format
+    :code:`<endpointname>`.azureedge.net.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -5092,8 +5262,8 @@ class Endpoint(TrackedResource):  # pylint: disable=too-many-instance-attributes
         content_types_to_compress: Optional[List[str]] = None,
         origin_host_header: Optional[str] = None,
         is_compression_enabled: Optional[bool] = None,
-        is_http_allowed: Optional[bool] = None,
-        is_https_allowed: Optional[bool] = None,
+        is_http_allowed: bool = True,
+        is_https_allowed: bool = True,
         query_string_caching_behavior: Optional[Union[str, "_models.QueryStringCachingBehavior"]] = None,
         optimization_type: Optional[Union[str, "_models.OptimizationType"]] = None,
         probe_path: Optional[str] = None,
@@ -5106,8 +5276,8 @@ class Endpoint(TrackedResource):  # pylint: disable=too-many-instance-attributes
         ] = None,
         origins: Optional[List["_models.DeepCreatedOrigin"]] = None,
         origin_groups: Optional[List["_models.DeepCreatedOriginGroup"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -5197,7 +5367,8 @@ class Endpoint(TrackedResource):  # pylint: disable=too-many-instance-attributes
 
 
 class EndpointListResult(_serialization.Model):
-    """Result of the request to list endpoints. It contains a list of endpoint objects and a URL link to get the next set of results.
+    """Result of the request to list endpoints. It contains a list of endpoint objects and a URL link
+    to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -5216,7 +5387,7 @@ class EndpointListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of endpoint objects if there is any.
         :paramtype next_link: str
@@ -5311,8 +5482,8 @@ class EndpointPropertiesUpdateParameters(_serialization.Model):  # pylint: disab
         content_types_to_compress: Optional[List[str]] = None,
         origin_host_header: Optional[str] = None,
         is_compression_enabled: Optional[bool] = None,
-        is_http_allowed: Optional[bool] = None,
-        is_https_allowed: Optional[bool] = None,
+        is_http_allowed: bool = True,
+        is_https_allowed: bool = True,
         query_string_caching_behavior: Optional[Union[str, "_models.QueryStringCachingBehavior"]] = None,
         optimization_type: Optional[Union[str, "_models.OptimizationType"]] = None,
         probe_path: Optional[str] = None,
@@ -5323,8 +5494,8 @@ class EndpointPropertiesUpdateParameters(_serialization.Model):  # pylint: disab
         web_application_firewall_policy_link: Optional[
             "_models.EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink"
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword origin_path: A directory path on the origin that CDN can use to retrieve content from,
          e.g. contoso.cloudapp.net/originpath.
@@ -5518,8 +5689,8 @@ class EndpointProperties(EndpointPropertiesUpdateParameters):  # pylint: disable
         content_types_to_compress: Optional[List[str]] = None,
         origin_host_header: Optional[str] = None,
         is_compression_enabled: Optional[bool] = None,
-        is_http_allowed: Optional[bool] = None,
-        is_https_allowed: Optional[bool] = None,
+        is_http_allowed: bool = True,
+        is_https_allowed: bool = True,
         query_string_caching_behavior: Optional[Union[str, "_models.QueryStringCachingBehavior"]] = None,
         optimization_type: Optional[Union[str, "_models.OptimizationType"]] = None,
         probe_path: Optional[str] = None,
@@ -5531,8 +5702,8 @@ class EndpointProperties(EndpointPropertiesUpdateParameters):  # pylint: disable
             "_models.EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink"
         ] = None,
         origin_groups: Optional[List["_models.DeepCreatedOriginGroup"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword origin_path: A directory path on the origin that CDN can use to retrieve content from,
          e.g. contoso.cloudapp.net/originpath.
@@ -5639,7 +5810,9 @@ class EndpointPropertiesUpdateParametersDeliveryPolicy(_serialization.Model):
         "rules": {"key": "rules", "type": "[DeliveryRule]"},
     }
 
-    def __init__(self, *, rules: List["_models.DeliveryRule"], description: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, rules: List["_models.DeliveryRule"], description: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword description: User-friendly description of the policy.
         :paramtype description: str
@@ -5662,7 +5835,7 @@ class EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink(_serial
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -5763,8 +5936,8 @@ class EndpointUpdateParameters(_serialization.Model):  # pylint: disable=too-man
         content_types_to_compress: Optional[List[str]] = None,
         origin_host_header: Optional[str] = None,
         is_compression_enabled: Optional[bool] = None,
-        is_http_allowed: Optional[bool] = None,
-        is_https_allowed: Optional[bool] = None,
+        is_http_allowed: bool = True,
+        is_https_allowed: bool = True,
         query_string_caching_behavior: Optional[Union[str, "_models.QueryStringCachingBehavior"]] = None,
         optimization_type: Optional[Union[str, "_models.OptimizationType"]] = None,
         probe_path: Optional[str] = None,
@@ -5775,8 +5948,8 @@ class EndpointUpdateParameters(_serialization.Model):  # pylint: disable=too-man
         web_application_firewall_policy_link: Optional[
             "_models.EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink"
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Endpoint tags.
         :paramtype tags: dict[str, str]
@@ -5874,7 +6047,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -5914,7 +6087,7 @@ class ErrorDetail(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -5925,7 +6098,8 @@ class ErrorDetail(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Error response indicates Azure Front Door Standard or Azure Front Door Premium or CDN service is not able to process the incoming request. The reason is provided in the error message.
+    """Error response indicates Azure Front Door Standard or Azure Front Door Premium or CDN service
+    is not able to process the incoming request. The reason is provided in the error message.
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.cdn.models.ErrorDetail
@@ -5935,7 +6109,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.cdn.models.ErrorDetail
@@ -5973,8 +6147,13 @@ class GeoFilter(_serialization.Model):
     }
 
     def __init__(
-        self, *, relative_path: str, action: Union[str, "_models.GeoFilterActions"], country_codes: List[str], **kwargs
-    ):
+        self,
+        *,
+        relative_path: str,
+        action: Union[str, "_models.GeoFilterActions"],
+        country_codes: List[str],
+        **kwargs: Any
+    ) -> None:
         """
         :keyword relative_path: Relative path applicable to geo filter. (e.g. '/mypictures',
          '/mypicture/kitty.jpg', and etc.). Required.
@@ -6028,8 +6207,8 @@ class HeaderActionParameters(_serialization.Model):
         header_action: Union[str, "_models.HeaderAction"],
         header_name: str,
         value: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "DeliveryRuleHeaderActionParameters"
         :paramtype type_name: str or ~azure.mgmt.cdn.models.HeaderActionParametersTypeName
@@ -6082,8 +6261,8 @@ class HealthProbeParameters(_serialization.Model):
         probe_request_type: Optional[Union[str, "_models.HealthProbeRequestType"]] = None,
         probe_protocol: Optional[Union[str, "_models.ProbeProtocol"]] = None,
         probe_interval_in_seconds: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword probe_path: The path relative to the origin that is used to determine the health of
          the origin.
@@ -6142,11 +6321,11 @@ class HostNameMatchConditionParameters(_serialization.Model):
         *,
         type_name: Union[str, "_models.HostNameMatchConditionParametersTypeName"],
         operator: Union[str, "_models.HostNameOperator"],
-        negate_condition: Optional[bool] = None,
+        negate_condition: bool = False,
         match_values: Optional[List[str]] = None,
         transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "DeliveryRuleHostNameConditionParameters"
         :paramtype type_name: str or ~azure.mgmt.cdn.models.HostNameMatchConditionParametersTypeName
@@ -6188,7 +6367,7 @@ class HttpErrorRangeParameters(_serialization.Model):
         "end": {"key": "end", "type": "int"},
     }
 
-    def __init__(self, *, begin: Optional[int] = None, end: Optional[int] = None, **kwargs):
+    def __init__(self, *, begin: Optional[int] = None, end: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword begin: The inclusive start of the http status code range.
         :paramtype begin: int
@@ -6235,11 +6414,11 @@ class HttpVersionMatchConditionParameters(_serialization.Model):
         *,
         type_name: Union[str, "_models.HttpVersionMatchConditionParametersTypeName"],
         operator: Union[str, "_models.HttpVersionOperator"],
-        negate_condition: Optional[bool] = None,
+        negate_condition: bool = False,
         match_values: Optional[List[str]] = None,
         transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "DeliveryRuleHttpVersionConditionParameters"
         :paramtype type_name: str or ~azure.mgmt.cdn.models.HttpVersionMatchConditionParametersTypeName
@@ -6283,8 +6462,8 @@ class IpAddressGroup(_serialization.Model):
         delivery_region: Optional[str] = None,
         ipv4_addresses: Optional[List["_models.CidrIpAddress"]] = None,
         ipv6_addresses: Optional[List["_models.CidrIpAddress"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword delivery_region: The delivery region of the ip address group.
         :paramtype delivery_region: str
@@ -6335,11 +6514,11 @@ class IsDeviceMatchConditionParameters(_serialization.Model):
         *,
         type_name: Union[str, "_models.IsDeviceMatchConditionParametersTypeName"],
         operator: Union[str, "_models.IsDeviceOperator"],
-        negate_condition: Optional[bool] = None,
+        negate_condition: bool = False,
         match_values: Optional[List[Union[str, "_models.IsDeviceMatchConditionParametersMatchValuesItem"]]] = None,
         transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "DeliveryRuleIsDeviceConditionParameters"
         :paramtype type_name: str or ~azure.mgmt.cdn.models.IsDeviceMatchConditionParametersTypeName
@@ -6421,8 +6600,8 @@ class KeyVaultCertificateSourceParameters(_serialization.Model):
         update_rule: Union[str, "_models.UpdateRule"],
         delete_rule: Union[str, "_models.DeleteRule"],
         secret_version: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "KeyVaultCertificateSourceParameters"
         :paramtype type_name: str or ~azure.mgmt.cdn.models.KeyVaultCertificateSourceParametersTypeName
@@ -6504,8 +6683,8 @@ class KeyVaultSigningKeyParameters(_serialization.Model):
         vault_name: str,
         secret_name: str,
         secret_version: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "KeyVaultSigningKeyParameters"
         :paramtype type_name: str or ~azure.mgmt.cdn.models.KeyVaultSigningKeyParametersTypeName
@@ -6556,8 +6735,8 @@ class LoadBalancingSettingsParameters(_serialization.Model):
         sample_size: Optional[int] = None,
         successful_samples_required: Optional[int] = None,
         additional_latency_in_milliseconds: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sample_size: The number of samples to consider for load balancing decisions.
         :paramtype sample_size: int
@@ -6592,7 +6771,7 @@ class LoadParameters(_serialization.Model):
         "content_paths": {"key": "contentPaths", "type": "[str]"},
     }
 
-    def __init__(self, *, content_paths: List[str], **kwargs):
+    def __init__(self, *, content_paths: List[str], **kwargs: Any) -> None:
         """
         :keyword content_paths: The path to the content to be loaded. Path should be a relative file
          URL of the origin. Required.
@@ -6629,8 +6808,8 @@ class LogSpecification(_serialization.Model):
         display_name: Optional[str] = None,
         blob_duration: Optional[str] = None,
         log_filter_pattern: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of log specification.
         :paramtype name: str
@@ -6673,7 +6852,7 @@ class ManagedCertificate(Certificate):
         "expiration_date": {"key": "expirationDate", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[Union[str, "_models.SecretType"]] = None, **kwargs):
+    def __init__(self, *, type: Optional[Union[str, "_models.SecretType"]] = None, **kwargs: Any) -> None:
         """
         :keyword type: The type of the secret resource. Known values are: "UrlSigningKey",
          "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
@@ -6710,10 +6889,10 @@ class ManagedCertificateParameters(SecretParameters):
         "expiration_date": {"key": "expirationDate", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = "ManagedCertificate"  # type: str
+        self.type: str = "ManagedCertificate"
         self.subject = None
         self.expiration_date = None
 
@@ -6739,7 +6918,7 @@ class ManagedRuleDefinition(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.rule_id = None
@@ -6771,7 +6950,7 @@ class ManagedRuleGroupDefinition(_serialization.Model):
         "rules": {"key": "rules", "type": "[ManagedRuleDefinition]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.rule_group_name = None
@@ -6801,7 +6980,9 @@ class ManagedRuleGroupOverride(_serialization.Model):
         "rules": {"key": "rules", "type": "[ManagedRuleOverride]"},
     }
 
-    def __init__(self, *, rule_group_name: str, rules: Optional[List["_models.ManagedRuleOverride"]] = None, **kwargs):
+    def __init__(
+        self, *, rule_group_name: str, rules: Optional[List["_models.ManagedRuleOverride"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword rule_group_name: Describes the managed rule group within the rule set to override.
          Required.
@@ -6846,8 +7027,8 @@ class ManagedRuleOverride(_serialization.Model):
         rule_id: str,
         enabled_state: Optional[Union[str, "_models.ManagedRuleEnabledState"]] = None,
         action: Optional[Union[str, "_models.ActionType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword rule_id: Identifier for the managed rule. Required.
         :paramtype rule_id: str
@@ -6900,8 +7081,8 @@ class ManagedRuleSet(_serialization.Model):
         rule_set_version: str,
         anomaly_score: Optional[int] = None,
         rule_group_overrides: Optional[List["_models.ManagedRuleGroupOverride"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword rule_set_type: Defines the rule set type to use. Required.
         :paramtype rule_set_type: str
@@ -6969,7 +7150,7 @@ class ManagedRuleSetDefinition(Resource):
         "rule_groups": {"key": "properties.ruleGroups", "type": "[ManagedRuleGroupDefinition]"},
     }
 
-    def __init__(self, *, sku: Optional["_models.Sku"] = None, **kwargs):
+    def __init__(self, *, sku: Optional["_models.Sku"] = None, **kwargs: Any) -> None:
         """
         :keyword sku: The pricing tier (defines a CDN provider, feature list and rate) of the
          CdnWebApplicationFirewallPolicy.
@@ -7003,7 +7184,7 @@ class ManagedRuleSetDefinitionList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to retrieve next set of managed rule set definitions.
         :paramtype next_link: str
@@ -7024,13 +7205,75 @@ class ManagedRuleSetList(_serialization.Model):
         "managed_rule_sets": {"key": "managedRuleSets", "type": "[ManagedRuleSet]"},
     }
 
-    def __init__(self, *, managed_rule_sets: Optional[List["_models.ManagedRuleSet"]] = None, **kwargs):
+    def __init__(self, *, managed_rule_sets: Optional[List["_models.ManagedRuleSet"]] = None, **kwargs: Any) -> None:
         """
         :keyword managed_rule_sets: List of rule sets.
         :paramtype managed_rule_sets: list[~azure.mgmt.cdn.models.ManagedRuleSet]
         """
         super().__init__(**kwargs)
         self.managed_rule_sets = managed_rule_sets
+
+
+class ManagedServiceIdentity(_serialization.Model):
+    """Managed service identity (system assigned and/or user assigned identities).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: Type of managed service identity (where both SystemAssigned and UserAssigned types
+     are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
+     "SystemAssigned, UserAssigned".
+    :vartype type: str or ~azure.mgmt.cdn.models.ManagedServiceIdentityType
+    :ivar user_assigned_identities: The set of user assigned identities associated with the
+     resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+     The dictionary values can be empty objects ({}) in requests.
+    :vartype user_assigned_identities: dict[str, ~azure.mgmt.cdn.models.UserAssignedIdentity]
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.ManagedServiceIdentityType"],
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: Type of managed service identity (where both SystemAssigned and UserAssigned
+         types are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
+         "SystemAssigned, UserAssigned".
+        :paramtype type: str or ~azure.mgmt.cdn.models.ManagedServiceIdentityType
+        :keyword user_assigned_identities: The set of user assigned identities associated with the
+         resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+         The dictionary values can be empty objects ({}) in requests.
+        :paramtype user_assigned_identities: dict[str, ~azure.mgmt.cdn.models.UserAssignedIdentity]
+        """
+        super().__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
 
 
 class MatchCondition(_serialization.Model):
@@ -7081,8 +7324,8 @@ class MatchCondition(_serialization.Model):
         selector: Optional[str] = None,
         negate_condition: Optional[bool] = None,
         transforms: Optional[List[Union[str, "_models.TransformType"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword match_variable: Match variable to compare against. Required. Known values are:
          "RemoteAddr", "SocketAddr", "RequestMethod", "RequestHeader", "RequestUri", "QueryString",
@@ -7125,7 +7368,7 @@ class MetricAvailability(_serialization.Model):
         "blob_duration": {"key": "blobDuration", "type": "str"},
     }
 
-    def __init__(self, *, time_grain: Optional[str] = None, blob_duration: Optional[str] = None, **kwargs):
+    def __init__(self, *, time_grain: Optional[str] = None, blob_duration: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword time_grain:
         :paramtype time_grain: str
@@ -7193,8 +7436,8 @@ class MetricSpecification(_serialization.Model):  # pylint: disable=too-many-ins
         fill_gap_with_zero: Optional[bool] = None,
         metric_filter_pattern: Optional[str] = None,
         is_internal: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of metric specification.
         :paramtype name: str
@@ -7242,7 +7485,7 @@ class MetricsResponse(_serialization.Model):
     :ivar date_time_end:
     :vartype date_time_end: ~datetime.datetime
     :ivar granularity: Known values are: "PT5M", "PT1H", and "P1D".
-    :vartype granularity: str or ~azure.mgmt.cdn.models.MetricsResponseGranularity
+    :vartype granularity: str or ~azure.mgmt.cdn.models.MetricsGranularity
     :ivar series:
     :vartype series: list[~azure.mgmt.cdn.models.MetricsResponseSeriesItem]
     """
@@ -7259,17 +7502,17 @@ class MetricsResponse(_serialization.Model):
         *,
         date_time_begin: Optional[datetime.datetime] = None,
         date_time_end: Optional[datetime.datetime] = None,
-        granularity: Optional[Union[str, "_models.MetricsResponseGranularity"]] = None,
+        granularity: Optional[Union[str, "_models.MetricsGranularity"]] = None,
         series: Optional[List["_models.MetricsResponseSeriesItem"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword date_time_begin:
         :paramtype date_time_begin: ~datetime.datetime
         :keyword date_time_end:
         :paramtype date_time_end: ~datetime.datetime
         :keyword granularity: Known values are: "PT5M", "PT1H", and "P1D".
-        :paramtype granularity: str or ~azure.mgmt.cdn.models.MetricsResponseGranularity
+        :paramtype granularity: str or ~azure.mgmt.cdn.models.MetricsGranularity
         :keyword series:
         :paramtype series: list[~azure.mgmt.cdn.models.MetricsResponseSeriesItem]
         """
@@ -7286,7 +7529,7 @@ class MetricsResponseSeriesItem(_serialization.Model):
     :ivar metric:
     :vartype metric: str
     :ivar unit: Known values are: "count", "bytes", "bitsPerSecond", and "milliSeconds".
-    :vartype unit: str or ~azure.mgmt.cdn.models.MetricsResponseSeriesItemUnit
+    :vartype unit: str or ~azure.mgmt.cdn.models.MetricsSeriesUnit
     :ivar groups:
     :vartype groups: list[~azure.mgmt.cdn.models.MetricsResponseSeriesPropertiesItemsItem]
     :ivar data:
@@ -7308,18 +7551,18 @@ class MetricsResponseSeriesItem(_serialization.Model):
         self,
         *,
         metric: Optional[str] = None,
-        unit: Optional[Union[str, "_models.MetricsResponseSeriesItemUnit"]] = None,
+        unit: Optional[Union[str, "_models.MetricsSeriesUnit"]] = None,
         groups: Optional[List["_models.MetricsResponseSeriesPropertiesItemsItem"]] = None,
         data: Optional[
             List["_models.Components1Gs0LlpSchemasMetricsresponsePropertiesSeriesItemsPropertiesDataItems"]
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword metric:
         :paramtype metric: str
         :keyword unit: Known values are: "count", "bytes", "bitsPerSecond", and "milliSeconds".
-        :paramtype unit: str or ~azure.mgmt.cdn.models.MetricsResponseSeriesItemUnit
+        :paramtype unit: str or ~azure.mgmt.cdn.models.MetricsSeriesUnit
         :keyword groups:
         :paramtype groups: list[~azure.mgmt.cdn.models.MetricsResponseSeriesPropertiesItemsItem]
         :keyword data:
@@ -7347,7 +7590,7 @@ class MetricsResponseSeriesPropertiesItemsItem(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name:
         :paramtype name: str
@@ -7357,6 +7600,173 @@ class MetricsResponseSeriesPropertiesItemsItem(_serialization.Model):
         super().__init__(**kwargs)
         self.name = name
         self.value = value
+
+
+class MigrateResult(_serialization.Model):
+    """Result for migrate operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar migrated_profile_resource_id: Arm resource id of the migrated profile.
+    :vartype migrated_profile_resource_id: ~azure.mgmt.cdn.models.ResourceReference
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "migrated_profile_resource_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "migrated_profile_resource_id": {"key": "properties.migratedProfileResourceId", "type": "ResourceReference"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id = None
+        self.type = None
+        self.migrated_profile_resource_id = None
+
+
+class MigrationErrorType(_serialization.Model):
+    """Error response indicates CDN service is not able to process the incoming request. The reason is
+    provided in the error message.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar resource_name: Resource which has the problem.
+    :vartype resource_name: str
+    :ivar error_message: Error message indicating why the operation failed.
+    :vartype error_message: str
+    :ivar next_steps: Describes what needs to be done to fix the problem.
+    :vartype next_steps: str
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "resource_name": {"readonly": True},
+        "error_message": {"readonly": True},
+        "next_steps": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "resource_name": {"key": "resourceName", "type": "str"},
+        "error_message": {"key": "errorMessage", "type": "str"},
+        "next_steps": {"key": "nextSteps", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code = None
+        self.resource_name = None
+        self.error_message = None
+        self.next_steps = None
+
+
+class MigrationParameters(_serialization.Model):
+    """Request body for Migrate operation.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar sku: Sku for the migration. Required.
+    :vartype sku: ~azure.mgmt.cdn.models.Sku
+    :ivar classic_resource_reference: Resource reference of the classic cdn profile or classic
+     frontdoor that need to be migrated. Required.
+    :vartype classic_resource_reference: ~azure.mgmt.cdn.models.ResourceReference
+    :ivar profile_name: Name of the new profile that need to be created. Required.
+    :vartype profile_name: str
+    :ivar migration_web_application_firewall_mappings: Waf mapping for the migrated profile.
+    :vartype migration_web_application_firewall_mappings:
+     list[~azure.mgmt.cdn.models.MigrationWebApplicationFirewallMapping]
+    """
+
+    _validation = {
+        "sku": {"required": True},
+        "classic_resource_reference": {"required": True},
+        "profile_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "sku": {"key": "sku", "type": "Sku"},
+        "classic_resource_reference": {"key": "classicResourceReference", "type": "ResourceReference"},
+        "profile_name": {"key": "profileName", "type": "str"},
+        "migration_web_application_firewall_mappings": {
+            "key": "migrationWebApplicationFirewallMappings",
+            "type": "[MigrationWebApplicationFirewallMapping]",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        sku: "_models.Sku",
+        classic_resource_reference: "_models.ResourceReference",
+        profile_name: str,
+        migration_web_application_firewall_mappings: Optional[
+            List["_models.MigrationWebApplicationFirewallMapping"]
+        ] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword sku: Sku for the migration. Required.
+        :paramtype sku: ~azure.mgmt.cdn.models.Sku
+        :keyword classic_resource_reference: Resource reference of the classic cdn profile or classic
+         frontdoor that need to be migrated. Required.
+        :paramtype classic_resource_reference: ~azure.mgmt.cdn.models.ResourceReference
+        :keyword profile_name: Name of the new profile that need to be created. Required.
+        :paramtype profile_name: str
+        :keyword migration_web_application_firewall_mappings: Waf mapping for the migrated profile.
+        :paramtype migration_web_application_firewall_mappings:
+         list[~azure.mgmt.cdn.models.MigrationWebApplicationFirewallMapping]
+        """
+        super().__init__(**kwargs)
+        self.sku = sku
+        self.classic_resource_reference = classic_resource_reference
+        self.profile_name = profile_name
+        self.migration_web_application_firewall_mappings = migration_web_application_firewall_mappings
+
+
+class MigrationWebApplicationFirewallMapping(_serialization.Model):
+    """Web Application Firewall Mapping.
+
+    :ivar migrated_from: Migration From Waf policy.
+    :vartype migrated_from: ~azure.mgmt.cdn.models.ResourceReference
+    :ivar migrated_to: Migration to Waf policy.
+    :vartype migrated_to: ~azure.mgmt.cdn.models.ResourceReference
+    """
+
+    _attribute_map = {
+        "migrated_from": {"key": "migratedFrom", "type": "ResourceReference"},
+        "migrated_to": {"key": "migratedTo", "type": "ResourceReference"},
+    }
+
+    def __init__(
+        self,
+        *,
+        migrated_from: Optional["_models.ResourceReference"] = None,
+        migrated_to: Optional["_models.ResourceReference"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword migrated_from: Migration From Waf policy.
+        :paramtype migrated_from: ~azure.mgmt.cdn.models.ResourceReference
+        :keyword migrated_to: Migration to Waf policy.
+        :paramtype migrated_to: ~azure.mgmt.cdn.models.ResourceReference
+        """
+        super().__init__(**kwargs)
+        self.migrated_from = migrated_from
+        self.migrated_to = migrated_to
 
 
 class Operation(_serialization.Model):
@@ -7395,8 +7805,8 @@ class Operation(_serialization.Model):
         is_data_action: Optional[bool] = None,
         display: Optional["_models.OperationDisplay"] = None,
         service_specification: Optional["_models.ServiceSpecification"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_data_action: Indicates whether the operation is a data action.
         :paramtype is_data_action: bool
@@ -7442,7 +7852,7 @@ class OperationDisplay(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.provider = None
@@ -7452,7 +7862,8 @@ class OperationDisplay(_serialization.Model):
 
 
 class OperationsListResult(_serialization.Model):
-    """Result of the request to list CDN operations. It contains a list of operations and a URL link to get the next set of results.
+    """Result of the request to list CDN operations. It contains a list of operations and a URL link
+    to get the next set of results.
 
     :ivar value: List of CDN operations supported by the CDN resource provider.
     :vartype value: list[~azure.mgmt.cdn.models.Operation]
@@ -7465,7 +7876,9 @@ class OperationsListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of CDN operations supported by the CDN resource provider.
         :paramtype value: list[~azure.mgmt.cdn.models.Operation]
@@ -7478,7 +7891,9 @@ class OperationsListResult(_serialization.Model):
 
 
 class Origin(ProxyResource):  # pylint: disable=too-many-instance-attributes
-    """CDN origin is the source of the content being delivered via CDN. When the edge nodes represented by an endpoint do not have the requested content cached, they attempt to fetch it from one or more of the configured origins.
+    """CDN origin is the source of the content being delivered via CDN. When the edge nodes
+    represented by an endpoint do not have the requested content cached, they attempt to fetch it
+    from one or more of the configured origins.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -7583,8 +7998,8 @@ class Origin(ProxyResource):  # pylint: disable=too-many-instance-attributes
         private_link_resource_id: Optional[str] = None,
         private_link_location: Optional[str] = None,
         private_link_approval_message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword host_name: The address of the origin. Domain names, IPv4 addresses, and IPv6 addresses
          are supported.This should be unique across all origins in an endpoint.
@@ -7638,7 +8053,8 @@ class Origin(ProxyResource):  # pylint: disable=too-many-instance-attributes
 
 
 class OriginGroup(ProxyResource):
-    """Origin group comprising of origins is used for load balancing to origins when the content cannot be served from CDN.
+    """Origin group comprising of origins is used for load balancing to origins when the content
+    cannot be served from CDN.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -7710,8 +8126,8 @@ class OriginGroup(ProxyResource):
         response_based_origin_error_detection_settings: Optional[
             "_models.ResponseBasedOriginErrorDetectionParameters"
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword health_probe_settings: Health probe settings to the origin that is used to determine
          the health of the origin.
@@ -7740,7 +8156,8 @@ class OriginGroup(ProxyResource):
 
 
 class OriginGroupListResult(_serialization.Model):
-    """Result of the request to list origin groups. It contains a list of origin groups objects and a URL link to get the next set of results.
+    """Result of the request to list origin groups. It contains a list of origin groups objects and a
+    URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -7759,7 +8176,7 @@ class OriginGroupListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of origin objects if there are any.
         :paramtype next_link: str
@@ -7790,8 +8207,8 @@ class OriginGroupOverride(_serialization.Model):
         *,
         origin_group: Optional["_models.ResourceReference"] = None,
         forwarding_protocol: Optional[Union[str, "_models.ForwardingProtocol"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword origin_group: defines the OriginGroup that would override the DefaultOriginGroup on
          route.
@@ -7829,13 +8246,13 @@ class OriginGroupOverrideAction(DeliveryRuleAction):
         "parameters": {"key": "parameters", "type": "OriginGroupOverrideActionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.OriginGroupOverrideActionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.OriginGroupOverrideActionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the action. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.OriginGroupOverrideActionParameters
         """
         super().__init__(**kwargs)
-        self.name = "OriginGroupOverride"  # type: str
+        self.name: str = "OriginGroupOverride"
         self.parameters = parameters
 
 
@@ -7866,8 +8283,8 @@ class OriginGroupOverrideActionParameters(_serialization.Model):
         *,
         type_name: Union[str, "_models.OriginGroupOverrideActionParametersTypeName"],
         origin_group: "_models.ResourceReference",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "DeliveryRuleOriginGroupOverrideActionParameters"
         :paramtype type_name: str or ~azure.mgmt.cdn.models.OriginGroupOverrideActionParametersTypeName
@@ -7925,8 +8342,8 @@ class OriginGroupUpdatePropertiesParameters(_serialization.Model):
         response_based_origin_error_detection_settings: Optional[
             "_models.ResponseBasedOriginErrorDetectionParameters"
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword health_probe_settings: Health probe settings to the origin that is used to determine
          the health of the origin.
@@ -8009,8 +8426,8 @@ class OriginGroupProperties(OriginGroupUpdatePropertiesParameters):
         response_based_origin_error_detection_settings: Optional[
             "_models.ResponseBasedOriginErrorDetectionParameters"
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword health_probe_settings: Health probe settings to the origin that is used to determine
          the health of the origin.
@@ -8083,8 +8500,8 @@ class OriginGroupUpdateParameters(_serialization.Model):
         response_based_origin_error_detection_settings: Optional[
             "_models.ResponseBasedOriginErrorDetectionParameters"
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword health_probe_settings: Health probe settings to the origin that is used to determine
          the health of the origin.
@@ -8111,7 +8528,8 @@ class OriginGroupUpdateParameters(_serialization.Model):
 
 
 class OriginListResult(_serialization.Model):
-    """Result of the request to list origins. It contains a list of origin objects and a URL link to get the next set of results.
+    """Result of the request to list origins. It contains a list of origin objects and a URL link to
+    get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -8130,7 +8548,7 @@ class OriginListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of origin objects if there are any.
         :paramtype next_link: str
@@ -8213,8 +8631,8 @@ class OriginUpdatePropertiesParameters(_serialization.Model):  # pylint: disable
         private_link_resource_id: Optional[str] = None,
         private_link_location: Optional[str] = None,
         private_link_approval_message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword host_name: The address of the origin. Domain names, IPv4 addresses, and IPv6 addresses
          are supported.This should be unique across all origins in an endpoint.
@@ -8354,8 +8772,8 @@ class OriginProperties(OriginUpdatePropertiesParameters):  # pylint: disable=too
         private_link_resource_id: Optional[str] = None,
         private_link_location: Optional[str] = None,
         private_link_approval_message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword host_name: The address of the origin. Domain names, IPv4 addresses, and IPv6 addresses
          are supported.This should be unique across all origins in an endpoint.
@@ -8483,8 +8901,8 @@ class OriginUpdateParameters(_serialization.Model):  # pylint: disable=too-many-
         private_link_resource_id: Optional[str] = None,
         private_link_location: Optional[str] = None,
         private_link_approval_message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword host_name: The address of the origin. Domain names, IPv4 addresses, and IPv6 addresses
          are supported.This should be unique across all origins in an endpoint.
@@ -8580,8 +8998,8 @@ class PolicySettings(_serialization.Model):
             Union[int, "_models.PolicySettingsDefaultCustomBlockResponseStatusCode"]
         ] = None,
         default_custom_block_response_body: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled_state: describes if the policy is in enabled state or disabled state. Known
          values are: "Disabled" and "Enabled".
@@ -8650,11 +9068,11 @@ class PostArgsMatchConditionParameters(_serialization.Model):
         type_name: Union[str, "_models.PostArgsMatchConditionParametersTypeName"],
         operator: Union[str, "_models.PostArgsOperator"],
         selector: Optional[str] = None,
-        negate_condition: Optional[bool] = None,
+        negate_condition: bool = False,
         match_values: Optional[List[str]] = None,
         transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "DeliveryRulePostArgsConditionParameters"
         :paramtype type_name: str or ~azure.mgmt.cdn.models.PostArgsMatchConditionParametersTypeName
@@ -8705,12 +9123,17 @@ class Profile(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :ivar kind: Kind of the profile. Used by portal to differentiate traditional CDN profile and
      new AFD profile.
     :vartype kind: str
+    :ivar identity: Managed service identity (system assigned and/or user assigned identities).
+    :vartype identity: ~azure.mgmt.cdn.models.ManagedServiceIdentity
     :ivar resource_state: Resource status of the profile. Known values are: "Creating", "Active",
-     "Deleting", and "Disabled".
+     "Deleting", "Disabled", "Migrating", "Migrated", "PendingMigrationCommit",
+     "CommittingMigration", and "AbortingMigration".
     :vartype resource_state: str or ~azure.mgmt.cdn.models.ProfileResourceState
     :ivar provisioning_state: Provisioning status of the profile. Known values are: "Succeeded",
      "Failed", "Updating", "Deleting", and "Creating".
     :vartype provisioning_state: str or ~azure.mgmt.cdn.models.ProfileProvisioningState
+    :ivar extended_properties: Key-Value pair representing additional properties for profiles.
+    :vartype extended_properties: dict[str, str]
     :ivar front_door_id: The Id of the frontdoor.
     :vartype front_door_id: str
     :ivar origin_response_timeout_seconds: Send and receive timeout on forwarding request to the
@@ -8728,6 +9151,7 @@ class Profile(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "kind": {"readonly": True},
         "resource_state": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "extended_properties": {"readonly": True},
         "front_door_id": {"readonly": True},
         "origin_response_timeout_seconds": {"minimum": 16},
     }
@@ -8741,8 +9165,10 @@ class Profile(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "tags": {"key": "tags", "type": "{str}"},
         "sku": {"key": "sku", "type": "Sku"},
         "kind": {"key": "kind", "type": "str"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "resource_state": {"key": "properties.resourceState", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "extended_properties": {"key": "properties.extendedProperties", "type": "{str}"},
         "front_door_id": {"key": "properties.frontDoorId", "type": "str"},
         "origin_response_timeout_seconds": {"key": "properties.originResponseTimeoutSeconds", "type": "int"},
     }
@@ -8753,9 +9179,10 @@ class Profile(TrackedResource):  # pylint: disable=too-many-instance-attributes
         location: str,
         sku: "_models.Sku",
         tags: Optional[Dict[str, str]] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         origin_response_timeout_seconds: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -8764,6 +9191,8 @@ class Profile(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :keyword sku: The pricing tier (defines Azure Front Door Standard or Premium or a CDN provider,
          feature list and rate) of the profile. Required.
         :paramtype sku: ~azure.mgmt.cdn.models.Sku
+        :keyword identity: Managed service identity (system assigned and/or user assigned identities).
+        :paramtype identity: ~azure.mgmt.cdn.models.ManagedServiceIdentity
         :keyword origin_response_timeout_seconds: Send and receive timeout on forwarding request to the
          origin. When timeout is reached, the request fails and returns.
         :paramtype origin_response_timeout_seconds: int
@@ -8771,14 +9200,52 @@ class Profile(TrackedResource):  # pylint: disable=too-many-instance-attributes
         super().__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.kind = None
+        self.identity = identity
         self.resource_state = None
         self.provisioning_state = None
+        self.extended_properties = None
         self.front_door_id = None
         self.origin_response_timeout_seconds = origin_response_timeout_seconds
 
 
+class ProfileChangeSkuWafMapping(_serialization.Model):
+    """Parameters required for profile upgrade.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar security_policy_name: The security policy name. Required.
+    :vartype security_policy_name: str
+    :ivar change_to_waf_policy: The new waf resource for the security policy to use. Required.
+    :vartype change_to_waf_policy: ~azure.mgmt.cdn.models.ResourceReference
+    """
+
+    _validation = {
+        "security_policy_name": {"required": True},
+        "change_to_waf_policy": {"required": True},
+    }
+
+    _attribute_map = {
+        "security_policy_name": {"key": "securityPolicyName", "type": "str"},
+        "change_to_waf_policy": {"key": "changeToWafPolicy", "type": "ResourceReference"},
+    }
+
+    def __init__(
+        self, *, security_policy_name: str, change_to_waf_policy: "_models.ResourceReference", **kwargs: Any
+    ) -> None:
+        """
+        :keyword security_policy_name: The security policy name. Required.
+        :paramtype security_policy_name: str
+        :keyword change_to_waf_policy: The new waf resource for the security policy to use. Required.
+        :paramtype change_to_waf_policy: ~azure.mgmt.cdn.models.ResourceReference
+        """
+        super().__init__(**kwargs)
+        self.security_policy_name = security_policy_name
+        self.change_to_waf_policy = change_to_waf_policy
+
+
 class ProfileListResult(_serialization.Model):
-    """Result of the request to list profiles. It contains a list of profile objects and a URL link to get the next set of results.
+    """Result of the request to list profiles. It contains a list of profile objects and a URL link to
+    get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -8797,7 +9264,7 @@ class ProfileListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of profile objects if there are any.
         :paramtype next_link: str
@@ -8812,6 +9279,8 @@ class ProfileUpdateParameters(_serialization.Model):
 
     :ivar tags: Profile tags.
     :vartype tags: dict[str, str]
+    :ivar identity: Managed service identity (system assigned and/or user assigned identities).
+    :vartype identity: ~azure.mgmt.cdn.models.ManagedServiceIdentity
     :ivar origin_response_timeout_seconds: Send and receive timeout on forwarding request to the
      origin. When timeout is reached, the request fails and returns.
     :vartype origin_response_timeout_seconds: int
@@ -8823,22 +9292,59 @@ class ProfileUpdateParameters(_serialization.Model):
 
     _attribute_map = {
         "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "origin_response_timeout_seconds": {"key": "properties.originResponseTimeoutSeconds", "type": "int"},
     }
 
     def __init__(
-        self, *, tags: Optional[Dict[str, str]] = None, origin_response_timeout_seconds: Optional[int] = None, **kwargs
-    ):
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+        origin_response_timeout_seconds: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Profile tags.
         :paramtype tags: dict[str, str]
+        :keyword identity: Managed service identity (system assigned and/or user assigned identities).
+        :paramtype identity: ~azure.mgmt.cdn.models.ManagedServiceIdentity
         :keyword origin_response_timeout_seconds: Send and receive timeout on forwarding request to the
          origin. When timeout is reached, the request fails and returns.
         :paramtype origin_response_timeout_seconds: int
         """
         super().__init__(**kwargs)
         self.tags = tags
+        self.identity = identity
         self.origin_response_timeout_seconds = origin_response_timeout_seconds
+
+
+class ProfileUpgradeParameters(_serialization.Model):
+    """Parameters required for profile upgrade.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar waf_mapping_list: Web Application Firewall (WAF) and security policy mapping for the
+     profile upgrade. Required.
+    :vartype waf_mapping_list: list[~azure.mgmt.cdn.models.ProfileChangeSkuWafMapping]
+    """
+
+    _validation = {
+        "waf_mapping_list": {"required": True},
+    }
+
+    _attribute_map = {
+        "waf_mapping_list": {"key": "wafMappingList", "type": "[ProfileChangeSkuWafMapping]"},
+    }
+
+    def __init__(self, *, waf_mapping_list: List["_models.ProfileChangeSkuWafMapping"], **kwargs: Any) -> None:
+        """
+        :keyword waf_mapping_list: Web Application Firewall (WAF) and security policy mapping for the
+         profile upgrade. Required.
+        :paramtype waf_mapping_list: list[~azure.mgmt.cdn.models.ProfileChangeSkuWafMapping]
+        """
+        super().__init__(**kwargs)
+        self.waf_mapping_list = waf_mapping_list
 
 
 class PurgeParameters(_serialization.Model):
@@ -8859,7 +9365,7 @@ class PurgeParameters(_serialization.Model):
         "content_paths": {"key": "contentPaths", "type": "[str]"},
     }
 
-    def __init__(self, *, content_paths: List[str], **kwargs):
+    def __init__(self, *, content_paths: List[str], **kwargs: Any) -> None:
         """
         :keyword content_paths: The path to the content to be purged. Can describe a file path or a
          wild card directory. Required.
@@ -8906,11 +9412,11 @@ class QueryStringMatchConditionParameters(_serialization.Model):
         *,
         type_name: Union[str, "_models.QueryStringMatchConditionParametersTypeName"],
         operator: Union[str, "_models.QueryStringOperator"],
-        negate_condition: Optional[bool] = None,
+        negate_condition: bool = False,
         match_values: Optional[List[str]] = None,
         transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "DeliveryRuleQueryStringConditionParameters"
         :paramtype type_name: str or ~azure.mgmt.cdn.models.QueryStringMatchConditionParametersTypeName
@@ -8956,8 +9462,8 @@ class RankingsResponse(_serialization.Model):
         date_time_begin: Optional[datetime.datetime] = None,
         date_time_end: Optional[datetime.datetime] = None,
         tables: Optional[List["_models.RankingsResponseTablesItem"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword date_time_begin:
         :paramtype date_time_begin: ~datetime.datetime
@@ -8991,8 +9497,8 @@ class RankingsResponseTablesItem(_serialization.Model):
         *,
         ranking: Optional[str] = None,
         data: Optional[List["_models.RankingsResponseTablesPropertiesItemsItem"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword ranking:
         :paramtype ranking: str
@@ -9023,8 +9529,8 @@ class RankingsResponseTablesPropertiesItemsItem(_serialization.Model):
         *,
         name: Optional[str] = None,
         metrics: Optional[List["_models.RankingsResponseTablesPropertiesItemsMetricsItem"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name:
         :paramtype name: str
@@ -9055,8 +9561,13 @@ class RankingsResponseTablesPropertiesItemsMetricsItem(_serialization.Model):
     }
 
     def __init__(
-        self, *, metric: Optional[str] = None, value: Optional[int] = None, percentage: Optional[float] = None, **kwargs
-    ):
+        self,
+        *,
+        metric: Optional[str] = None,
+        value: Optional[int] = None,
+        percentage: Optional[float] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword metric:
         :paramtype metric: str
@@ -9125,8 +9636,8 @@ class RateLimitRule(CustomRule):
         rate_limit_threshold: int,
         rate_limit_duration_in_minutes: int,
         enabled_state: Optional[Union[str, "_models.CustomRuleEnabledState"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Defines the name of the custom rule. Required.
         :paramtype name: str
@@ -9170,7 +9681,7 @@ class RateLimitRuleList(_serialization.Model):
         "rules": {"key": "rules", "type": "[RateLimitRule]"},
     }
 
-    def __init__(self, *, rules: Optional[List["_models.RateLimitRule"]] = None, **kwargs):
+    def __init__(self, *, rules: Optional[List["_models.RateLimitRule"]] = None, **kwargs: Any) -> None:
         """
         :keyword rules: List of rules.
         :paramtype rules: list[~azure.mgmt.cdn.models.RateLimitRule]
@@ -9217,11 +9728,11 @@ class RemoteAddressMatchConditionParameters(_serialization.Model):
         *,
         type_name: Union[str, "_models.RemoteAddressMatchConditionParametersTypeName"],
         operator: Union[str, "_models.RemoteAddressOperator"],
-        negate_condition: Optional[bool] = None,
+        negate_condition: bool = False,
         match_values: Optional[List[str]] = None,
         transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "DeliveryRuleRemoteAddressConditionParameters"
         :paramtype type_name: str or
@@ -9283,11 +9794,11 @@ class RequestBodyMatchConditionParameters(_serialization.Model):
         *,
         type_name: Union[str, "_models.RequestBodyMatchConditionParametersTypeName"],
         operator: Union[str, "_models.RequestBodyOperator"],
-        negate_condition: Optional[bool] = None,
+        negate_condition: bool = False,
         match_values: Optional[List[str]] = None,
         transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "DeliveryRuleRequestBodyConditionParameters"
         :paramtype type_name: str or ~azure.mgmt.cdn.models.RequestBodyMatchConditionParametersTypeName
@@ -9351,11 +9862,11 @@ class RequestHeaderMatchConditionParameters(_serialization.Model):
         type_name: Union[str, "_models.RequestHeaderMatchConditionParametersTypeName"],
         operator: Union[str, "_models.RequestHeaderOperator"],
         selector: Optional[str] = None,
-        negate_condition: Optional[bool] = None,
+        negate_condition: bool = False,
         match_values: Optional[List[str]] = None,
         transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "DeliveryRuleRequestHeaderConditionParameters"
         :paramtype type_name: str or
@@ -9418,11 +9929,11 @@ class RequestMethodMatchConditionParameters(_serialization.Model):
         *,
         type_name: Union[str, "_models.RequestMethodMatchConditionParametersTypeName"],
         operator: Union[str, "_models.RequestMethodOperator"],
-        negate_condition: Optional[bool] = None,
+        negate_condition: bool = False,
         transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
         match_values: Optional[List[Union[str, "_models.RequestMethodMatchConditionParametersMatchValuesItem"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "DeliveryRuleRequestMethodConditionParameters"
         :paramtype type_name: str or
@@ -9481,11 +9992,11 @@ class RequestSchemeMatchConditionParameters(_serialization.Model):
         *,
         type_name: Union[str, "_models.RequestSchemeMatchConditionParametersTypeName"],
         operator: Union[str, "_models.RequestSchemeMatchConditionParametersOperator"],
-        negate_condition: Optional[bool] = None,
+        negate_condition: bool = False,
         transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
         match_values: Optional[List[Union[str, "_models.RequestSchemeMatchConditionParametersMatchValuesItem"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "DeliveryRuleRequestSchemeConditionParameters"
         :paramtype type_name: str or
@@ -9546,11 +10057,11 @@ class RequestUriMatchConditionParameters(_serialization.Model):
         *,
         type_name: Union[str, "_models.RequestUriMatchConditionParametersTypeName"],
         operator: Union[str, "_models.RequestUriOperator"],
-        negate_condition: Optional[bool] = None,
+        negate_condition: bool = False,
         match_values: Optional[List[str]] = None,
         transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "DeliveryRuleRequestUriConditionParameters"
         :paramtype type_name: str or ~azure.mgmt.cdn.models.RequestUriMatchConditionParametersTypeName
@@ -9584,7 +10095,7 @@ class ResourceReference(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -9612,8 +10123,8 @@ class ResourcesResponse(_serialization.Model):
         *,
         endpoints: Optional[List["_models.ResourcesResponseEndpointsItem"]] = None,
         custom_domains: Optional[List["_models.ResourcesResponseCustomDomainsItem"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword endpoints:
         :paramtype endpoints: list[~azure.mgmt.cdn.models.ResourcesResponseEndpointsItem]
@@ -9652,8 +10163,8 @@ class ResourcesResponseCustomDomainsItem(_serialization.Model):
         name: Optional[str] = None,
         endpoint_id: Optional[str] = None,
         history: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id:
         :paramtype id: str
@@ -9699,8 +10210,8 @@ class ResourcesResponseEndpointsItem(_serialization.Model):
         name: Optional[str] = None,
         history: Optional[bool] = None,
         custom_domains: Optional[List["_models.ResourcesResponseEndpointsPropertiesItemsItem"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id:
         :paramtype id: str
@@ -9746,8 +10257,8 @@ class ResourcesResponseEndpointsPropertiesItemsItem(_serialization.Model):
         name: Optional[str] = None,
         endpoint_id: Optional[str] = None,
         history: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id:
         :paramtype id: str
@@ -9794,7 +10305,7 @@ class ResourceUsage(_serialization.Model):
         "limit": {"key": "limit", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.resource_type = None
@@ -9823,7 +10334,7 @@ class ResourceUsageListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of custom domain objects if there are any.
         :paramtype next_link: str
@@ -9834,7 +10345,8 @@ class ResourceUsageListResult(_serialization.Model):
 
 
 class ResponseBasedOriginErrorDetectionParameters(_serialization.Model):
-    """The JSON object that contains the properties to determine origin health using real requests/responses.
+    """The JSON object that contains the properties to determine origin health using real
+    requests/responses.
 
     :ivar response_based_detected_error_types: Type of response errors for real user requests for
      which origin will be deemed unhealthy. Known values are: "None", "TcpErrorsOnly", and
@@ -9868,8 +10380,8 @@ class ResponseBasedOriginErrorDetectionParameters(_serialization.Model):
         response_based_detected_error_types: Optional[Union[str, "_models.ResponseBasedDetectedErrorTypes"]] = None,
         response_based_failover_threshold_percentage: Optional[int] = None,
         http_error_ranges: Optional[List["_models.HttpErrorRangeParameters"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword response_based_detected_error_types: Type of response errors for real user requests
          for which origin will be deemed unhealthy. Known values are: "None", "TcpErrorsOnly", and
@@ -9979,15 +10491,15 @@ class Route(ProxyResource):  # pylint: disable=too-many-instance-attributes
         origin_group: Optional["_models.ResourceReference"] = None,
         origin_path: Optional[str] = None,
         rule_sets: Optional[List["_models.ResourceReference"]] = None,
-        supported_protocols: Optional[List[Union[str, "_models.AFDEndpointProtocols"]]] = None,
+        supported_protocols: List[Union[str, "_models.AFDEndpointProtocols"]] = ["Http", "Https"],
         patterns_to_match: Optional[List[str]] = None,
         cache_configuration: Optional["_models.AfdRouteCacheConfiguration"] = None,
         forwarding_protocol: Optional[Union[str, "_models.ForwardingProtocol"]] = None,
-        link_to_default_domain: Optional[Union[str, "_models.LinkToDefaultDomain"]] = None,
-        https_redirect: Optional[Union[str, "_models.HttpsRedirect"]] = None,
+        link_to_default_domain: Union[str, "_models.LinkToDefaultDomain"] = "Disabled",
+        https_redirect: Union[str, "_models.HttpsRedirect"] = "Disabled",
         enabled_state: Optional[Union[str, "_models.EnabledState"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword custom_domains: Domains referenced by this endpoint.
         :paramtype custom_domains: list[~azure.mgmt.cdn.models.ActivatedResourceReference]
@@ -10068,8 +10580,8 @@ class RouteConfigurationOverrideActionParameters(_serialization.Model):
         type_name: Union[str, "_models.RouteConfigurationOverrideActionParametersTypeName"],
         origin_group_override: Optional["_models.OriginGroupOverride"] = None,
         cache_configuration: Optional["_models.CacheConfiguration"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "DeliveryRuleRouteConfigurationOverrideActionParameters"
         :paramtype type_name: str or
@@ -10088,7 +10600,8 @@ class RouteConfigurationOverrideActionParameters(_serialization.Model):
 
 
 class RouteListResult(_serialization.Model):
-    """Result of the request to list routes. It contains a list of route objects and a URL link to get the next set of results.
+    """Result of the request to list routes. It contains a list of route objects and a URL link to get
+    the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -10107,7 +10620,7 @@ class RouteListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of route objects if there are any.
         :paramtype next_link: str
@@ -10181,15 +10694,15 @@ class RouteUpdatePropertiesParameters(_serialization.Model):  # pylint: disable=
         origin_group: Optional["_models.ResourceReference"] = None,
         origin_path: Optional[str] = None,
         rule_sets: Optional[List["_models.ResourceReference"]] = None,
-        supported_protocols: Optional[List[Union[str, "_models.AFDEndpointProtocols"]]] = None,
+        supported_protocols: List[Union[str, "_models.AFDEndpointProtocols"]] = ["Http", "Https"],
         patterns_to_match: Optional[List[str]] = None,
         cache_configuration: Optional["_models.AfdRouteCacheConfiguration"] = None,
         forwarding_protocol: Optional[Union[str, "_models.ForwardingProtocol"]] = None,
-        link_to_default_domain: Optional[Union[str, "_models.LinkToDefaultDomain"]] = None,
-        https_redirect: Optional[Union[str, "_models.HttpsRedirect"]] = None,
+        link_to_default_domain: Union[str, "_models.LinkToDefaultDomain"] = "Disabled",
+        https_redirect: Union[str, "_models.HttpsRedirect"] = "Disabled",
         enabled_state: Optional[Union[str, "_models.EnabledState"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword custom_domains: Domains referenced by this endpoint.
         :paramtype custom_domains: list[~azure.mgmt.cdn.models.ActivatedResourceReference]
@@ -10312,15 +10825,15 @@ class RouteProperties(
         origin_group: Optional["_models.ResourceReference"] = None,
         origin_path: Optional[str] = None,
         rule_sets: Optional[List["_models.ResourceReference"]] = None,
-        supported_protocols: Optional[List[Union[str, "_models.AFDEndpointProtocols"]]] = None,
+        supported_protocols: List[Union[str, "_models.AFDEndpointProtocols"]] = ["Http", "Https"],
         patterns_to_match: Optional[List[str]] = None,
         cache_configuration: Optional["_models.AfdRouteCacheConfiguration"] = None,
         forwarding_protocol: Optional[Union[str, "_models.ForwardingProtocol"]] = None,
-        link_to_default_domain: Optional[Union[str, "_models.LinkToDefaultDomain"]] = None,
-        https_redirect: Optional[Union[str, "_models.HttpsRedirect"]] = None,
+        link_to_default_domain: Union[str, "_models.LinkToDefaultDomain"] = "Disabled",
+        https_redirect: Union[str, "_models.HttpsRedirect"] = "Disabled",
         enabled_state: Optional[Union[str, "_models.EnabledState"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword custom_domains: Domains referenced by this endpoint.
         :paramtype custom_domains: list[~azure.mgmt.cdn.models.ActivatedResourceReference]
@@ -10446,15 +10959,15 @@ class RouteUpdateParameters(_serialization.Model):  # pylint: disable=too-many-i
         origin_group: Optional["_models.ResourceReference"] = None,
         origin_path: Optional[str] = None,
         rule_sets: Optional[List["_models.ResourceReference"]] = None,
-        supported_protocols: Optional[List[Union[str, "_models.AFDEndpointProtocols"]]] = None,
+        supported_protocols: List[Union[str, "_models.AFDEndpointProtocols"]] = ["Http", "Https"],
         patterns_to_match: Optional[List[str]] = None,
         cache_configuration: Optional["_models.AfdRouteCacheConfiguration"] = None,
         forwarding_protocol: Optional[Union[str, "_models.ForwardingProtocol"]] = None,
-        link_to_default_domain: Optional[Union[str, "_models.LinkToDefaultDomain"]] = None,
-        https_redirect: Optional[Union[str, "_models.HttpsRedirect"]] = None,
+        link_to_default_domain: Union[str, "_models.LinkToDefaultDomain"] = "Disabled",
+        https_redirect: Union[str, "_models.HttpsRedirect"] = "Disabled",
         enabled_state: Optional[Union[str, "_models.EnabledState"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword custom_domains: Domains referenced by this endpoint.
         :paramtype custom_domains: list[~azure.mgmt.cdn.models.ActivatedResourceReference]
@@ -10528,7 +11041,7 @@ class Rule(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :vartype actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
     :ivar match_processing_behavior: If this rule is a match should the rules engine continue
      running the remaining rules or stop. If not present, defaults to Continue. Known values are:
-     "Continue" and "Stop".
+     "Continue", "Stop", and "Continue".
     :vartype match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
     :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
      "Updating", "Deleting", and "Creating".
@@ -10568,9 +11081,9 @@ class Rule(ProxyResource):  # pylint: disable=too-many-instance-attributes
         order: Optional[int] = None,
         conditions: Optional[List["_models.DeliveryRuleCondition"]] = None,
         actions: Optional[List["_models.DeliveryRuleAction"]] = None,
-        match_processing_behavior: Optional[Union[str, "_models.MatchProcessingBehavior"]] = None,
-        **kwargs
-    ):
+        match_processing_behavior: Union[str, "_models.MatchProcessingBehavior"] = "Continue",
+        **kwargs: Any
+    ) -> None:
         """
         :keyword order: The order in which the rules are applied for the endpoint. Possible values
          {0,1,2,3,………}. A rule with a lesser order will be applied before a rule with a greater order.
@@ -10584,7 +11097,7 @@ class Rule(ProxyResource):  # pylint: disable=too-many-instance-attributes
         :paramtype actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
         :keyword match_processing_behavior: If this rule is a match should the rules engine continue
          running the remaining rules or stop. If not present, defaults to Continue. Known values are:
-         "Continue" and "Stop".
+         "Continue", "Stop", and "Continue".
         :paramtype match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
         """
         super().__init__(**kwargs)
@@ -10598,7 +11111,8 @@ class Rule(ProxyResource):  # pylint: disable=too-many-instance-attributes
 
 
 class RuleListResult(_serialization.Model):
-    """Result of the request to list rules. It contains a list of rule objects and a URL link to get the next set of results.
+    """Result of the request to list rules. It contains a list of rule objects and a URL link to get
+    the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -10617,7 +11131,7 @@ class RuleListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of rule objects if there are any.
         :paramtype next_link: str
@@ -10646,7 +11160,7 @@ class RuleUpdatePropertiesParameters(_serialization.Model):
     :vartype actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
     :ivar match_processing_behavior: If this rule is a match should the rules engine continue
      running the remaining rules or stop. If not present, defaults to Continue. Known values are:
-     "Continue" and "Stop".
+     "Continue", "Stop", and "Continue".
     :vartype match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
     """
 
@@ -10668,9 +11182,9 @@ class RuleUpdatePropertiesParameters(_serialization.Model):
         order: Optional[int] = None,
         conditions: Optional[List["_models.DeliveryRuleCondition"]] = None,
         actions: Optional[List["_models.DeliveryRuleAction"]] = None,
-        match_processing_behavior: Optional[Union[str, "_models.MatchProcessingBehavior"]] = None,
-        **kwargs
-    ):
+        match_processing_behavior: Union[str, "_models.MatchProcessingBehavior"] = "Continue",
+        **kwargs: Any
+    ) -> None:
         """
         :keyword order: The order in which the rules are applied for the endpoint. Possible values
          {0,1,2,3,………}. A rule with a lesser order will be applied before a rule with a greater order.
@@ -10684,7 +11198,7 @@ class RuleUpdatePropertiesParameters(_serialization.Model):
         :paramtype actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
         :keyword match_processing_behavior: If this rule is a match should the rules engine continue
          running the remaining rules or stop. If not present, defaults to Continue. Known values are:
-         "Continue" and "Stop".
+         "Continue", "Stop", and "Continue".
         :paramtype match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
         """
         super().__init__(**kwargs)
@@ -10720,7 +11234,7 @@ class RuleProperties(RuleUpdatePropertiesParameters, AFDStateProperties):
     :vartype actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
     :ivar match_processing_behavior: If this rule is a match should the rules engine continue
      running the remaining rules or stop. If not present, defaults to Continue. Known values are:
-     "Continue" and "Stop".
+     "Continue", "Stop", and "Continue".
     :vartype match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
     """
 
@@ -10746,9 +11260,9 @@ class RuleProperties(RuleUpdatePropertiesParameters, AFDStateProperties):
         order: Optional[int] = None,
         conditions: Optional[List["_models.DeliveryRuleCondition"]] = None,
         actions: Optional[List["_models.DeliveryRuleAction"]] = None,
-        match_processing_behavior: Optional[Union[str, "_models.MatchProcessingBehavior"]] = None,
-        **kwargs
-    ):
+        match_processing_behavior: Union[str, "_models.MatchProcessingBehavior"] = "Continue",
+        **kwargs: Any
+    ) -> None:
         """
         :keyword order: The order in which the rules are applied for the endpoint. Possible values
          {0,1,2,3,………}. A rule with a lesser order will be applied before a rule with a greater order.
@@ -10762,7 +11276,7 @@ class RuleProperties(RuleUpdatePropertiesParameters, AFDStateProperties):
         :paramtype actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
         :keyword match_processing_behavior: If this rule is a match should the rules engine continue
          running the remaining rules or stop. If not present, defaults to Continue. Known values are:
-         "Continue" and "Stop".
+         "Continue", "Stop", and "Continue".
         :paramtype match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
         """
         super().__init__(
@@ -10824,7 +11338,7 @@ class RuleSet(ProxyResource):
         "profile_name": {"key": "properties.profileName", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.provisioning_state = None
@@ -10833,7 +11347,8 @@ class RuleSet(ProxyResource):
 
 
 class RuleSetListResult(_serialization.Model):
-    """Result of the request to list rule sets. It contains a list of rule set objects and a URL link to get the next set of results.
+    """Result of the request to list rule sets. It contains a list of rule set objects and a URL link
+    to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -10852,7 +11367,7 @@ class RuleSetListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of rule set objects if there are any.
         :paramtype next_link: str
@@ -10889,7 +11404,7 @@ class RuleSetProperties(AFDStateProperties):
         "profile_name": {"key": "profileName", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.profile_name = None
@@ -10914,7 +11429,7 @@ class RuleUpdateParameters(_serialization.Model):
     :vartype actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
     :ivar match_processing_behavior: If this rule is a match should the rules engine continue
      running the remaining rules or stop. If not present, defaults to Continue. Known values are:
-     "Continue" and "Stop".
+     "Continue", "Stop", and "Continue".
     :vartype match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
     """
 
@@ -10936,9 +11451,9 @@ class RuleUpdateParameters(_serialization.Model):
         order: Optional[int] = None,
         conditions: Optional[List["_models.DeliveryRuleCondition"]] = None,
         actions: Optional[List["_models.DeliveryRuleAction"]] = None,
-        match_processing_behavior: Optional[Union[str, "_models.MatchProcessingBehavior"]] = None,
-        **kwargs
-    ):
+        match_processing_behavior: Union[str, "_models.MatchProcessingBehavior"] = "Continue",
+        **kwargs: Any
+    ) -> None:
         """
         :keyword order: The order in which the rules are applied for the endpoint. Possible values
          {0,1,2,3,………}. A rule with a lesser order will be applied before a rule with a greater order.
@@ -10952,7 +11467,7 @@ class RuleUpdateParameters(_serialization.Model):
         :paramtype actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
         :keyword match_processing_behavior: If this rule is a match should the rules engine continue
          running the remaining rules or stop. If not present, defaults to Continue. Known values are:
-         "Continue" and "Stop".
+         "Continue", "Stop", and "Continue".
         :paramtype match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
         """
         super().__init__(**kwargs)
@@ -11009,7 +11524,7 @@ class Secret(ProxyResource):
         "parameters": {"key": "properties.parameters", "type": "SecretParameters"},
     }
 
-    def __init__(self, *, parameters: Optional["_models.SecretParameters"] = None, **kwargs):
+    def __init__(self, *, parameters: Optional["_models.SecretParameters"] = None, **kwargs: Any) -> None:
         """
         :keyword parameters: object which contains secret parameters.
         :paramtype parameters: ~azure.mgmt.cdn.models.SecretParameters
@@ -11022,7 +11537,8 @@ class Secret(ProxyResource):
 
 
 class SecretListResult(_serialization.Model):
-    """Result of the request to list secrets. It contains a list of Secret objects and a URL link to get the next set of results.
+    """Result of the request to list secrets. It contains a list of Secret objects and a URL link to
+    get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -11041,7 +11557,7 @@ class SecretListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of Secret objects if there are any.
         :paramtype next_link: str
@@ -11081,7 +11597,7 @@ class SecretProperties(AFDStateProperties):
         "parameters": {"key": "parameters", "type": "SecretParameters"},
     }
 
-    def __init__(self, *, parameters: Optional["_models.SecretParameters"] = None, **kwargs):
+    def __init__(self, *, parameters: Optional["_models.SecretParameters"] = None, **kwargs: Any) -> None:
         """
         :keyword parameters: object which contains secret parameters.
         :paramtype parameters: ~azure.mgmt.cdn.models.SecretParameters
@@ -11137,7 +11653,9 @@ class SecurityPolicy(ProxyResource):
         "parameters": {"key": "properties.parameters", "type": "SecurityPolicyPropertiesParameters"},
     }
 
-    def __init__(self, *, parameters: Optional["_models.SecurityPolicyPropertiesParameters"] = None, **kwargs):
+    def __init__(
+        self, *, parameters: Optional["_models.SecurityPolicyPropertiesParameters"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword parameters: object which contains security policy parameters.
         :paramtype parameters: ~azure.mgmt.cdn.models.SecurityPolicyPropertiesParameters
@@ -11150,7 +11668,8 @@ class SecurityPolicy(ProxyResource):
 
 
 class SecurityPolicyListResult(_serialization.Model):
-    """Result of the request to list security policies. It contains a list of security policy objects and a URL link to get the next set of results.
+    """Result of the request to list security policies. It contains a list of security policy objects
+    and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -11169,7 +11688,7 @@ class SecurityPolicyListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of security policy objects if there is any.
         :paramtype next_link: str
@@ -11209,7 +11728,9 @@ class SecurityPolicyProperties(AFDStateProperties):
         "parameters": {"key": "parameters", "type": "SecurityPolicyPropertiesParameters"},
     }
 
-    def __init__(self, *, parameters: Optional["_models.SecurityPolicyPropertiesParameters"] = None, **kwargs):
+    def __init__(
+        self, *, parameters: Optional["_models.SecurityPolicyPropertiesParameters"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword parameters: object which contains security policy parameters.
         :paramtype parameters: ~azure.mgmt.cdn.models.SecurityPolicyPropertiesParameters
@@ -11241,10 +11762,10 @@ class SecurityPolicyPropertiesParameters(_serialization.Model):
 
     _subtype_map = {"type": {"WebApplicationFirewall": "SecurityPolicyWebApplicationFirewallParameters"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
 
 
 class SecurityPolicyUpdateParameters(_serialization.Model):
@@ -11258,7 +11779,9 @@ class SecurityPolicyUpdateParameters(_serialization.Model):
         "parameters": {"key": "properties.parameters", "type": "SecurityPolicyPropertiesParameters"},
     }
 
-    def __init__(self, *, parameters: Optional["_models.SecurityPolicyPropertiesParameters"] = None, **kwargs):
+    def __init__(
+        self, *, parameters: Optional["_models.SecurityPolicyPropertiesParameters"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword parameters: object which contains security policy parameters.
         :paramtype parameters: ~azure.mgmt.cdn.models.SecurityPolicyPropertiesParameters
@@ -11286,8 +11809,8 @@ class SecurityPolicyWebApplicationFirewallAssociation(_serialization.Model):
         *,
         domains: Optional[List["_models.ActivatedResourceReference"]] = None,
         patterns_to_match: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword domains: List of domains.
         :paramtype domains: list[~azure.mgmt.cdn.models.ActivatedResourceReference]
@@ -11328,8 +11851,8 @@ class SecurityPolicyWebApplicationFirewallParameters(SecurityPolicyPropertiesPar
         *,
         waf_policy: Optional["_models.ResourceReference"] = None,
         associations: Optional[List["_models.SecurityPolicyWebApplicationFirewallAssociation"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword waf_policy: Resource ID.
         :paramtype waf_policy: ~azure.mgmt.cdn.models.ResourceReference
@@ -11338,7 +11861,7 @@ class SecurityPolicyWebApplicationFirewallParameters(SecurityPolicyPropertiesPar
          list[~azure.mgmt.cdn.models.SecurityPolicyWebApplicationFirewallAssociation]
         """
         super().__init__(**kwargs)
-        self.type = "WebApplicationFirewall"  # type: str
+        self.type: str = "WebApplicationFirewall"
         self.waf_policy = waf_policy
         self.associations = associations
 
@@ -11380,11 +11903,11 @@ class ServerPortMatchConditionParameters(_serialization.Model):
         *,
         type_name: Union[str, "_models.ServerPortMatchConditionParametersTypeName"],
         operator: Union[str, "_models.ServerPortOperator"],
-        negate_condition: Optional[bool] = None,
+        negate_condition: bool = False,
         match_values: Optional[List[str]] = None,
         transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "DeliveryRuleServerPortConditionParameters"
         :paramtype type_name: str or ~azure.mgmt.cdn.models.ServerPortMatchConditionParametersTypeName
@@ -11426,8 +11949,8 @@ class ServiceSpecification(_serialization.Model):
         *,
         log_specifications: Optional[List["_models.LogSpecification"]] = None,
         metric_specifications: Optional[List["_models.MetricSpecification"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword log_specifications: Log specifications of operation.
         :paramtype log_specifications: list[~azure.mgmt.cdn.models.LogSpecification]
@@ -11440,7 +11963,8 @@ class ServiceSpecification(_serialization.Model):
 
 
 class SharedPrivateLinkResourceProperties(_serialization.Model):
-    """Describes the properties of an existing Shared Private Link Resource to use when connecting to a private origin.
+    """Describes the properties of an existing Shared Private Link Resource to use when connecting to
+    a private origin.
 
     :ivar private_link: The resource id of the resource the shared private link resource is for.
     :vartype private_link: ~azure.mgmt.cdn.models.ResourceReference
@@ -11474,8 +11998,8 @@ class SharedPrivateLinkResourceProperties(_serialization.Model):
         group_id: Optional[str] = None,
         request_message: Optional[str] = None,
         status: Optional[Union[str, "_models.SharedPrivateLinkResourceStatus"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_link: The resource id of the resource the shared private link resource is for.
         :paramtype private_link: ~azure.mgmt.cdn.models.ResourceReference
@@ -11505,29 +12029,35 @@ class Sku(_serialization.Model):
     Premium_Verizon = The SKU name for a Premium Verizon CDN profile.
     Custom_Verizon = The SKU name for a Custom Verizon CDN profile.
     Standard_Akamai = The SKU name for an Akamai CDN profile.
-    Standard_ChinaCdn = The SKU name for a China CDN profile for VOD, Web and download scenarios using GB based billing model.
+    Standard_ChinaCdn = The SKU name for a China CDN profile for VOD, Web and download scenarios
+    using GB based billing model.
     Standard_Microsoft = The SKU name for a Standard Microsoft CDN profile.
     Standard_AzureFrontDoor =  The SKU name for an Azure Front Door Standard profile.
     Premium_AzureFrontDoor = The SKU name for an Azure Front Door Premium profile.
-    Standard_955BandWidth_ChinaCdn = The SKU name for a China CDN profile for VOD, Web and download scenarios using 95-5 peak bandwidth billing model.
-    Standard_AvgBandWidth_ChinaCdn = The SKU name for a China CDN profile for VOD, Web and download scenarios using monthly average peak bandwidth billing model.
-    StandardPlus_ChinaCdn = The SKU name for a China CDN profile for live-streaming using GB based billing model.
-    StandardPlus_955BandWidth_ChinaCdn = The SKU name for a China CDN live-streaming profile using 95-5 peak bandwidth billing model.
-    StandardPlus_AvgBandWidth_ChinaCdn = The SKU name for a China CDN live-streaming profile using monthly average peak bandwidth billing model.
+    Standard_955BandWidth_ChinaCdn = The SKU name for a China CDN profile for VOD, Web and download
+    scenarios using 95-5 peak bandwidth billing model.
+    Standard_AvgBandWidth_ChinaCdn = The SKU name for a China CDN profile for VOD, Web and download
+    scenarios using monthly average peak bandwidth billing model.
+    StandardPlus_ChinaCdn = The SKU name for a China CDN profile for live-streaming using GB based
+    billing model.
+    StandardPlus_955BandWidth_ChinaCdn = The SKU name for a China CDN live-streaming profile using
+    95-5 peak bandwidth billing model.
+    StandardPlus_AvgBandWidth_ChinaCdn = The SKU name for a China CDN live-streaming profile using
+    monthly average peak bandwidth billing model.
 
-        :ivar name: Name of the pricing tier. Known values are: "Standard_Verizon", "Premium_Verizon",
-         "Custom_Verizon", "Standard_Akamai", "Standard_ChinaCdn", "Standard_Microsoft",
-         "Standard_AzureFrontDoor", "Premium_AzureFrontDoor", "Standard_955BandWidth_ChinaCdn",
-         "Standard_AvgBandWidth_ChinaCdn", "StandardPlus_ChinaCdn",
-         "StandardPlus_955BandWidth_ChinaCdn", and "StandardPlus_AvgBandWidth_ChinaCdn".
-        :vartype name: str or ~azure.mgmt.cdn.models.SkuName
+    :ivar name: Name of the pricing tier. Known values are: "Standard_Verizon", "Premium_Verizon",
+     "Custom_Verizon", "Standard_Akamai", "Standard_ChinaCdn", "Standard_Microsoft",
+     "Standard_AzureFrontDoor", "Premium_AzureFrontDoor", "Standard_955BandWidth_ChinaCdn",
+     "Standard_AvgBandWidth_ChinaCdn", "StandardPlus_ChinaCdn",
+     "StandardPlus_955BandWidth_ChinaCdn", and "StandardPlus_AvgBandWidth_ChinaCdn".
+    :vartype name: str or ~azure.mgmt.cdn.models.SkuName
     """
 
     _attribute_map = {
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[Union[str, "_models.SkuName"]] = None, **kwargs):
+    def __init__(self, *, name: Optional[Union[str, "_models.SkuName"]] = None, **kwargs: Any) -> None:
         """
         :keyword name: Name of the pricing tier. Known values are: "Standard_Verizon",
          "Premium_Verizon", "Custom_Verizon", "Standard_Akamai", "Standard_ChinaCdn",
@@ -11576,11 +12106,11 @@ class SocketAddrMatchConditionParameters(_serialization.Model):
         *,
         type_name: Union[str, "_models.SocketAddrMatchConditionParametersTypeName"],
         operator: Union[str, "_models.SocketAddrOperator"],
-        negate_condition: Optional[bool] = None,
+        negate_condition: bool = False,
         match_values: Optional[List[str]] = None,
         transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "DeliveryRuleSocketAddrConditionParameters"
         :paramtype type_name: str or ~azure.mgmt.cdn.models.SocketAddrMatchConditionParametersTypeName
@@ -11637,11 +12167,11 @@ class SslProtocolMatchConditionParameters(_serialization.Model):
         *,
         type_name: Union[str, "_models.SslProtocolMatchConditionParametersTypeName"],
         operator: Union[str, "_models.SslProtocolOperator"],
-        negate_condition: Optional[bool] = None,
+        negate_condition: bool = False,
         match_values: Optional[List[Union[str, "_models.SslProtocol"]]] = None,
         transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "DeliveryRuleSslProtocolConditionParameters"
         :paramtype type_name: str or ~azure.mgmt.cdn.models.SslProtocolMatchConditionParametersTypeName
@@ -11679,7 +12209,7 @@ class SsoUri(_serialization.Model):
         "sso_uri_value": {"key": "ssoUriValue", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.sso_uri_value = None
@@ -11702,7 +12232,7 @@ class SupportedOptimizationTypesListResult(_serialization.Model):
         "supported_optimization_types": {"key": "supportedOptimizationTypes", "type": "[str]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.supported_optimization_types = None
@@ -11745,8 +12275,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.IdentityType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: An identifier for the identity that created the resource.
         :paramtype created_by: str
@@ -11810,11 +12340,11 @@ class UrlFileExtensionMatchConditionParameters(_serialization.Model):
         *,
         type_name: Union[str, "_models.UrlFileExtensionMatchConditionParametersTypeName"],
         operator: Union[str, "_models.UrlFileExtensionOperator"],
-        negate_condition: Optional[bool] = None,
+        negate_condition: bool = False,
         match_values: Optional[List[str]] = None,
         transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "DeliveryRuleUrlFileExtensionMatchConditionParameters"
         :paramtype type_name: str or
@@ -11875,11 +12405,11 @@ class UrlFileNameMatchConditionParameters(_serialization.Model):
         *,
         type_name: Union[str, "_models.UrlFileNameMatchConditionParametersTypeName"],
         operator: Union[str, "_models.UrlFileNameOperator"],
-        negate_condition: Optional[bool] = None,
+        negate_condition: bool = False,
         match_values: Optional[List[str]] = None,
         transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "DeliveryRuleUrlFilenameConditionParameters"
         :paramtype type_name: str or ~azure.mgmt.cdn.models.UrlFileNameMatchConditionParametersTypeName
@@ -11939,11 +12469,11 @@ class UrlPathMatchConditionParameters(_serialization.Model):
         *,
         type_name: Union[str, "_models.UrlPathMatchConditionParametersTypeName"],
         operator: Union[str, "_models.UrlPathOperator"],
-        negate_condition: Optional[bool] = None,
+        negate_condition: bool = False,
         match_values: Optional[List[str]] = None,
         transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "DeliveryRuleUrlPathMatchConditionParameters"
         :paramtype type_name: str or ~azure.mgmt.cdn.models.UrlPathMatchConditionParametersTypeName
@@ -11990,13 +12520,13 @@ class UrlRedirectAction(DeliveryRuleAction):
         "parameters": {"key": "parameters", "type": "UrlRedirectActionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.UrlRedirectActionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.UrlRedirectActionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the action. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.UrlRedirectActionParameters
         """
         super().__init__(**kwargs)
-        self.name = "UrlRedirect"  # type: str
+        self.name: str = "UrlRedirect"
         self.parameters = parameters
 
 
@@ -12054,8 +12584,8 @@ class UrlRedirectActionParameters(_serialization.Model):
         custom_hostname: Optional[str] = None,
         custom_query_string: Optional[str] = None,
         custom_fragment: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "DeliveryRuleUrlRedirectActionParameters"
         :paramtype type_name: str or ~azure.mgmt.cdn.models.UrlRedirectActionParametersTypeName
@@ -12114,13 +12644,13 @@ class UrlRewriteAction(DeliveryRuleAction):
         "parameters": {"key": "parameters", "type": "UrlRewriteActionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.UrlRewriteActionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.UrlRewriteActionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the action. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.UrlRewriteActionParameters
         """
         super().__init__(**kwargs)
-        self.name = "UrlRewrite"  # type: str
+        self.name: str = "UrlRewrite"
         self.parameters = parameters
 
 
@@ -12161,8 +12691,8 @@ class UrlRewriteActionParameters(_serialization.Model):
         source_pattern: str,
         destination: str,
         preserve_unmatched_path: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "DeliveryRuleUrlRewriteActionParameters"
         :paramtype type_name: str or ~azure.mgmt.cdn.models.UrlRewriteActionParametersTypeName
@@ -12206,13 +12736,13 @@ class UrlSigningAction(DeliveryRuleAction):
         "parameters": {"key": "parameters", "type": "UrlSigningActionParameters"},
     }
 
-    def __init__(self, *, parameters: "_models.UrlSigningActionParameters", **kwargs):
+    def __init__(self, *, parameters: "_models.UrlSigningActionParameters", **kwargs: Any) -> None:
         """
         :keyword parameters: Defines the parameters for the action. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.UrlSigningActionParameters
         """
         super().__init__(**kwargs)
-        self.name = "UrlSigning"  # type: str
+        self.name: str = "UrlSigning"
         self.parameters = parameters
 
 
@@ -12246,8 +12776,8 @@ class UrlSigningActionParameters(_serialization.Model):
         type_name: Union[str, "_models.UrlSigningActionParametersTypeName"],
         algorithm: Optional[Union[str, "_models.Algorithm"]] = None,
         parameter_name_override: Optional[List["_models.UrlSigningParamIdentifier"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_name: Required. "DeliveryRuleUrlSigningActionParameters"
         :paramtype type_name: str or ~azure.mgmt.cdn.models.UrlSigningActionParametersTypeName
@@ -12286,7 +12816,9 @@ class UrlSigningKey(_serialization.Model):
         "key_source_parameters": {"key": "keySourceParameters", "type": "KeyVaultSigningKeyParameters"},
     }
 
-    def __init__(self, *, key_id: str, key_source_parameters: "_models.KeyVaultSigningKeyParameters", **kwargs):
+    def __init__(
+        self, *, key_id: str, key_source_parameters: "_models.KeyVaultSigningKeyParameters", **kwargs: Any
+    ) -> None:
         """
         :keyword key_id: Defines the customer defined key Id. This id will exist in the incoming
          request to indicate the key used to form the hash. Required.
@@ -12334,8 +12866,13 @@ class UrlSigningKeyParameters(SecretParameters):
     }
 
     def __init__(
-        self, *, key_id: str, secret_source: "_models.ResourceReference", secret_version: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        key_id: str,
+        secret_source: "_models.ResourceReference",
+        secret_version: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_id: Defines the customer defined key Id. This id will exist in the incoming
          request to indicate the key used to form the hash. Required.
@@ -12349,7 +12886,7 @@ class UrlSigningKeyParameters(SecretParameters):
         :paramtype secret_version: str
         """
         super().__init__(**kwargs)
-        self.type = "UrlSigningKey"  # type: str
+        self.type: str = "UrlSigningKey"
         self.key_id = key_id
         self.secret_source = secret_source
         self.secret_version = secret_version
@@ -12377,7 +12914,9 @@ class UrlSigningParamIdentifier(_serialization.Model):
         "param_name": {"key": "paramName", "type": "str"},
     }
 
-    def __init__(self, *, param_indicator: Union[str, "_models.ParamIndicator"], param_name: str, **kwargs):
+    def __init__(
+        self, *, param_indicator: Union[str, "_models.ParamIndicator"], param_name: str, **kwargs: Any
+    ) -> None:
         """
         :keyword param_indicator: Indicates the purpose of the parameter. Required. Known values are:
          "Expires", "KeyId", and "Signature".
@@ -12432,8 +12971,8 @@ class Usage(_serialization.Model):
         current_value: int,
         limit: int,
         name: "_models.UsageName",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword unit: An enum describing the unit of measurement. Required. "Count"
         :paramtype unit: str or ~azure.mgmt.cdn.models.UsageUnit
@@ -12466,7 +13005,7 @@ class UsageName(_serialization.Model):
         "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: A string describing the resource name.
         :paramtype value: str
@@ -12492,7 +13031,9 @@ class UsagesListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Usage"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Usage"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of resource usages.
         :paramtype value: list[~azure.mgmt.cdn.models.Usage]
@@ -12502,6 +13043,34 @@ class UsagesListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
+
+
+class UserAssignedIdentity(_serialization.Model):
+    """User assigned identity properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal ID of the assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
 
 
 class UserManagedHttpsParameters(CustomDomainHttpsParameters):
@@ -12546,8 +13115,8 @@ class UserManagedHttpsParameters(CustomDomainHttpsParameters):
         protocol_type: Union[str, "_models.ProtocolType"],
         certificate_source_parameters: "_models.KeyVaultCertificateSourceParameters",
         minimum_tls_version: Optional[Union[str, "_models.MinimumTlsVersion"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword protocol_type: Defines the TLS extension protocol that is used for secure delivery.
          Required. Known values are: "ServerNameIndication" and "IPBased".
@@ -12561,7 +13130,7 @@ class UserManagedHttpsParameters(CustomDomainHttpsParameters):
          ~azure.mgmt.cdn.models.KeyVaultCertificateSourceParameters
         """
         super().__init__(protocol_type=protocol_type, minimum_tls_version=minimum_tls_version, **kwargs)
-        self.certificate_source = "AzureKeyVault"  # type: str
+        self.certificate_source: str = "AzureKeyVault"
         self.certificate_source_parameters = certificate_source_parameters
 
 
@@ -12582,7 +13151,7 @@ class ValidateCustomDomainInput(_serialization.Model):
         "host_name": {"key": "hostName", "type": "str"},
     }
 
-    def __init__(self, *, host_name: str, **kwargs):
+    def __init__(self, *, host_name: str, **kwargs: Any) -> None:
         """
         :keyword host_name: The host name of the custom domain. Must be a domain name. Required.
         :paramtype host_name: str
@@ -12616,7 +13185,7 @@ class ValidateCustomDomainOutput(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.custom_domain_validated = None
@@ -12641,7 +13210,7 @@ class ValidateProbeInput(_serialization.Model):
         "probe_url": {"key": "probeURL", "type": "str"},
     }
 
-    def __init__(self, *, probe_url: str, **kwargs):
+    def __init__(self, *, probe_url: str, **kwargs: Any) -> None:
         """
         :keyword probe_url: The probe URL to validate. Required.
         :paramtype probe_url: str
@@ -12675,7 +13244,7 @@ class ValidateProbeOutput(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.is_valid = None
@@ -12717,8 +13286,8 @@ class ValidateSecretInput(_serialization.Model):
         secret_type: Union[str, "_models.SecretType"],
         secret_source: "_models.ResourceReference",
         secret_version: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword secret_type: The secret type. Required. Known values are: "UrlSigningKey",
          "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
@@ -12753,8 +13322,8 @@ class ValidateSecretOutput(_serialization.Model):
     }
 
     def __init__(
-        self, *, status: Optional[Union[str, "_models.Status"]] = None, message: Optional[str] = None, **kwargs
-    ):
+        self, *, status: Optional[Union[str, "_models.Status"]] = None, message: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword status: The validation status. Known values are: "Valid", "Invalid", "AccessDenied",
          and "CertificateExpired".
@@ -12784,7 +13353,7 @@ class ValidationToken(_serialization.Model):
         "token": {"key": "token", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.token = None
@@ -12798,7 +13367,7 @@ class WafMetricsResponse(_serialization.Model):
     :ivar date_time_end:
     :vartype date_time_end: ~datetime.datetime
     :ivar granularity: Known values are: "PT5M", "PT1H", and "P1D".
-    :vartype granularity: str or ~azure.mgmt.cdn.models.WafMetricsResponseGranularity
+    :vartype granularity: str or ~azure.mgmt.cdn.models.WafMetricsGranularity
     :ivar series:
     :vartype series: list[~azure.mgmt.cdn.models.WafMetricsResponseSeriesItem]
     """
@@ -12815,17 +13384,17 @@ class WafMetricsResponse(_serialization.Model):
         *,
         date_time_begin: Optional[datetime.datetime] = None,
         date_time_end: Optional[datetime.datetime] = None,
-        granularity: Optional[Union[str, "_models.WafMetricsResponseGranularity"]] = None,
+        granularity: Optional[Union[str, "_models.WafMetricsGranularity"]] = None,
         series: Optional[List["_models.WafMetricsResponseSeriesItem"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword date_time_begin:
         :paramtype date_time_begin: ~datetime.datetime
         :keyword date_time_end:
         :paramtype date_time_end: ~datetime.datetime
         :keyword granularity: Known values are: "PT5M", "PT1H", and "P1D".
-        :paramtype granularity: str or ~azure.mgmt.cdn.models.WafMetricsResponseGranularity
+        :paramtype granularity: str or ~azure.mgmt.cdn.models.WafMetricsGranularity
         :keyword series:
         :paramtype series: list[~azure.mgmt.cdn.models.WafMetricsResponseSeriesItem]
         """
@@ -12842,7 +13411,7 @@ class WafMetricsResponseSeriesItem(_serialization.Model):
     :ivar metric:
     :vartype metric: str
     :ivar unit: "count"
-    :vartype unit: str or ~azure.mgmt.cdn.models.WafMetricsResponseSeriesItemUnit
+    :vartype unit: str or ~azure.mgmt.cdn.models.WafMetricsSeriesUnit
     :ivar groups:
     :vartype groups: list[~azure.mgmt.cdn.models.WafMetricsResponseSeriesPropertiesItemsItem]
     :ivar data:
@@ -12864,18 +13433,18 @@ class WafMetricsResponseSeriesItem(_serialization.Model):
         self,
         *,
         metric: Optional[str] = None,
-        unit: Optional[Union[str, "_models.WafMetricsResponseSeriesItemUnit"]] = None,
+        unit: Optional[Union[str, "_models.WafMetricsSeriesUnit"]] = None,
         groups: Optional[List["_models.WafMetricsResponseSeriesPropertiesItemsItem"]] = None,
         data: Optional[
             List["_models.Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesDataItems"]
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword metric:
         :paramtype metric: str
         :keyword unit: "count"
-        :paramtype unit: str or ~azure.mgmt.cdn.models.WafMetricsResponseSeriesItemUnit
+        :paramtype unit: str or ~azure.mgmt.cdn.models.WafMetricsSeriesUnit
         :keyword groups:
         :paramtype groups: list[~azure.mgmt.cdn.models.WafMetricsResponseSeriesPropertiesItemsItem]
         :keyword data:
@@ -12903,7 +13472,7 @@ class WafMetricsResponseSeriesPropertiesItemsItem(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name:
         :paramtype name: str
@@ -12942,8 +13511,8 @@ class WafRankingsResponse(_serialization.Model):
         date_time_end: Optional[datetime.datetime] = None,
         groups: Optional[List[str]] = None,
         data: Optional[List["_models.WafRankingsResponseDataItem"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword date_time_begin:
         :paramtype date_time_begin: ~datetime.datetime
@@ -12986,8 +13555,8 @@ class WafRankingsResponseDataItem(_serialization.Model):
         metrics: Optional[
             List["_models.ComponentsKpo1PjSchemasWafrankingsresponsePropertiesDataItemsPropertiesMetricsItems"]
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword group_values:
         :paramtype group_values: list[str]

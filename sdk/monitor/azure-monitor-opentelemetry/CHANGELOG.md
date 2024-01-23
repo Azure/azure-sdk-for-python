@@ -1,20 +1,42 @@
 # Release History
 
-## 1.0.1 (Unreleased)
+## 1.2.0 (2024-01-18)
 
-- Add message ids for AppLens
-    ([#32195](https://github.com/Azure/azure-sdk-for-python/pull/32195))
+### Other Changes
+
+- Implement distro detection for statsbeat feature
+    ([#33761](https://github.com/Azure/azure-sdk-for-python/pull/33761))
+- Fix siteName in diagnostic logging
+    ([#33808](https://github.com/Azure/azure-sdk-for-python/pull/33808))
+- Update min dependency versions opentelemetry-resource-detector-azure~=0.1.1, exporter~=1.0.0b21, OTel SDK/API~= 1.21
+    ([#33866](https://github.com/Azure/azure-sdk-for-python/pull/33866))
+
+## 1.1.1 (2023-12-04)
+
+### Features Added
+
+- Add App Service Resource Detector to Auto-Instrumentation.
+    ([#33340](https://github.com/Azure/azure-sdk-for-python/pull/33340))
+- Default Resource Detector environment variable to enable configuration.
+    ([#33305](https://github.com/Azure/azure-sdk-for-python/pull/33305))
+    ([#33373](https://github.com/Azure/azure-sdk-for-python/pull/33373))
+    ([#33390](https://github.com/Azure/azure-sdk-for-python/pull/33390))
+
+## 1.1.0 (2023-11-08)
 
 ### Features Added
 
 - Add ability to specify which logger to export telemetry for via `logger_name` configuration
     ([#32192](https://github.com/Azure/azure-sdk-for-python/pull/32192))
-
-### Breaking Changes
+- Add message ids for AppLens
+    ([#32195](https://github.com/Azure/azure-sdk-for-python/pull/32195))
+- Allow OTEL_PYTHON_DISABLED_INSTRUMENTATIONS functionality for Azure Core Tracing in Auto-instrumentation
+    ([#32331](https://github.com/Azure/azure-sdk-for-python/pull/32331))
 
 ### Bugs Fixed
 
-### Other Changes
+- Updated django samples with clearly artificial secret key
+    ([#32698](https://github.com/Azure/azure-sdk-for-python/pull/32698))
 
 ## 1.0.0 (2023-09-12)
 

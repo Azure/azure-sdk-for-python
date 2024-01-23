@@ -16,7 +16,7 @@ from azure.mgmt.core import AsyncARMPipelineClient
 
 from .. import models
 from ._configuration import AzureMachineLearningWorkspacesConfiguration
-from .operations import BatchDeploymentsOperations, BatchEndpointsOperations, CodeContainersOperations, CodeVersionsOperations, ComponentContainersOperations, ComponentVersionsOperations, ComputeOperations, DataContainersOperations, DataVersionsOperations, DatastoresOperations, EnvironmentContainersOperations, EnvironmentVersionsOperations, FeaturesOperations, FeaturesetContainersOperations, FeaturesetVersionsOperations, FeaturestoreEntityContainersOperations, FeaturestoreEntityVersionsOperations, JobsOperations, LabelingJobsOperations, ManagedNetworkProvisionsOperations, ManagedNetworkSettingsRuleOperations, ModelContainersOperations, ModelVersionsOperations, OnlineDeploymentsOperations, OnlineEndpointsOperations, Operations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, QuotasOperations, RegistriesOperations, RegistryCodeContainersOperations, RegistryCodeVersionsOperations, RegistryComponentContainersOperations, RegistryComponentVersionsOperations, RegistryDataContainersOperations, RegistryDataVersionsOperations, RegistryEnvironmentContainersOperations, RegistryEnvironmentVersionsOperations, RegistryModelContainersOperations, RegistryModelVersionsOperations, SchedulesOperations, ServerlessEndpointsOperations, UsagesOperations, VirtualMachineSizesOperations, WorkspaceConnectionsOperations, WorkspaceFeaturesOperations, WorkspacesOperations
+from .operations import BatchDeploymentsOperations, BatchEndpointsOperations, CapacityReservationGroupsOperations, CodeContainersOperations, CodeVersionsOperations, ComponentContainersOperations, ComponentVersionsOperations, ComputeOperations, DataContainersOperations, DataVersionsOperations, DatastoresOperations, EnvironmentContainersOperations, EnvironmentVersionsOperations, FeaturesOperations, FeaturesetContainersOperations, FeaturesetVersionsOperations, FeaturestoreEntityContainersOperations, FeaturestoreEntityVersionsOperations, InferenceEndpointsOperations, InferenceGroupsOperations, InferencePoolsOperations, JobsOperations, LabelingJobsOperations, ManagedNetworkProvisionsOperations, ManagedNetworkSettingsRuleOperations, ModelContainersOperations, ModelVersionsOperations, OnlineDeploymentsOperations, OnlineEndpointsOperations, Operations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, QuotasOperations, RegistriesOperations, RegistryCodeContainersOperations, RegistryCodeVersionsOperations, RegistryComponentContainersOperations, RegistryComponentVersionsOperations, RegistryDataContainersOperations, RegistryDataVersionsOperations, RegistryEnvironmentContainersOperations, RegistryEnvironmentVersionsOperations, RegistryModelContainersOperations, RegistryModelVersionsOperations, SchedulesOperations, ServerlessEndpointsOperations, UsagesOperations, VirtualMachineSizesOperations, WorkspaceConnectionsOperations, WorkspaceFeaturesOperations, WorkspacesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,6 +39,9 @@ class AzureMachineLearningWorkspaces:    # pylint: disable=too-many-instance-att
     :ivar workspace_features: WorkspaceFeaturesOperations operations
     :vartype workspace_features:
      azure.mgmt.machinelearningservices.aio.operations.WorkspaceFeaturesOperations
+    :ivar capacity_reservation_groups: CapacityReservationGroupsOperations operations
+    :vartype capacity_reservation_groups:
+     azure.mgmt.machinelearningservices.aio.operations.CapacityReservationGroupsOperations
     :ivar registry_code_containers: RegistryCodeContainersOperations operations
     :vartype registry_code_containers:
      azure.mgmt.machinelearningservices.aio.operations.RegistryCodeContainersOperations
@@ -115,6 +118,15 @@ class AzureMachineLearningWorkspaces:    # pylint: disable=too-many-instance-att
     :ivar featurestore_entity_versions: FeaturestoreEntityVersionsOperations operations
     :vartype featurestore_entity_versions:
      azure.mgmt.machinelearningservices.aio.operations.FeaturestoreEntityVersionsOperations
+    :ivar inference_pools: InferencePoolsOperations operations
+    :vartype inference_pools:
+     azure.mgmt.machinelearningservices.aio.operations.InferencePoolsOperations
+    :ivar inference_endpoints: InferenceEndpointsOperations operations
+    :vartype inference_endpoints:
+     azure.mgmt.machinelearningservices.aio.operations.InferenceEndpointsOperations
+    :ivar inference_groups: InferenceGroupsOperations operations
+    :vartype inference_groups:
+     azure.mgmt.machinelearningservices.aio.operations.InferenceGroupsOperations
     :ivar jobs: JobsOperations operations
     :vartype jobs: azure.mgmt.machinelearningservices.aio.operations.JobsOperations
     :ivar labeling_jobs: LabelingJobsOperations operations
@@ -189,6 +201,7 @@ class AzureMachineLearningWorkspaces:    # pylint: disable=too-many-instance-att
         self.compute = ComputeOperations(self._client, self._config, self._serialize, self._deserialize)
         self.registries = RegistriesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.workspace_features = WorkspaceFeaturesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.capacity_reservation_groups = CapacityReservationGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.registry_code_containers = RegistryCodeContainersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.registry_code_versions = RegistryCodeVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.registry_component_containers = RegistryComponentContainersOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -215,6 +228,9 @@ class AzureMachineLearningWorkspaces:    # pylint: disable=too-many-instance-att
         self.featureset_versions = FeaturesetVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.featurestore_entity_containers = FeaturestoreEntityContainersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.featurestore_entity_versions = FeaturestoreEntityVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.inference_pools = InferencePoolsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.inference_endpoints = InferenceEndpointsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.inference_groups = InferenceGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.jobs = JobsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.labeling_jobs = LabelingJobsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.model_containers = ModelContainersOperations(self._client, self._config, self._serialize, self._deserialize)

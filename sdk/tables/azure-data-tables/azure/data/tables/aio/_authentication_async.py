@@ -111,5 +111,5 @@ def _configure_credential(
     if isinstance(credential, AzureNamedKeyCredential):
         return SharedKeyCredentialPolicy(credential)
     if credential is not None:
-        raise TypeError(f"Unsupported credential: {credential}")
+        raise TypeError(f"Unsupported credential: {type(credential)}")
     return None

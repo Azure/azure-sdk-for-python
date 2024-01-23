@@ -7,8 +7,9 @@
 import json
 import os
 import re
+import uuid
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional, cast
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -53,7 +54,7 @@ from azure.ai.ml.entities import BatchEndpoint, BatchJob
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationErrorType, ValidationException
 from azure.core.credentials import TokenCredential
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ServiceRequestError, ServiceResponseError
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
@@ -94,7 +95,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         service_client_05_2022: ServiceClient052022,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
-        **kwargs: Dict,
+        **kwargs: Any,
     ):
         super(BatchEndpointOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
@@ -109,7 +110,9 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
     @property
     def _datastore_operations(self) -> "DatastoreOperations":
-        return self._all_operations.all_operations[AzureMLResourceType.DATASTORE]
+        from azure.ai.ml.operations import DatastoreOperations
+
+        return cast(DatastoreOperations, self._all_operations.all_operations[AzureMLResourceType.DATASTORE])
 
     @distributed_trace
     @monitor_with_activity(logger, "BatchEndpoint.List", ActivityType.PUBLICAPI)
@@ -249,13 +252,13 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "BatchEndpoint.Invoke", ActivityType.PUBLICAPI)
-    def invoke(
+    def invoke(  # pylint: disable=too-many-locals, too-many-branches, too-many-statements
         self,
         endpoint_name: str,
         *,
         deployment_name: Optional[str] = None,
         inputs: Optional[Dict[str, Input]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> BatchJob:
         """Invokes the batch endpoint with the provided payload.
 
@@ -290,6 +293,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         outputs = kwargs.get("outputs", None)
         job_name = kwargs.get("job_name", None)
         params_override = kwargs.get("params_override", None) or []
+        experiment_name = kwargs.get("experiment_name", None)
         input = kwargs.get("input", None)  # pylint: disable=redefined-builtin
         # Until this bug is resolved https://msdata.visualstudio.com/Vienna/_workitems/edit/1446538
         if deployment_name:
@@ -327,10 +331,17 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                     self._resolve_input(input_data, os.getcwd())
             params_override.append({EndpointYamlFields.BATCH_JOB_INPUT_DATA: inputs})
 
+        properties = {}
+
         if outputs:
             params_override.append({EndpointYamlFields.BATCH_JOB_OUTPUT_DATA: outputs})
         if job_name:
             params_override.append({EndpointYamlFields.BATCH_JOB_NAME: job_name})
+        if experiment_name:
+            properties["experimentName"] = experiment_name
+
+        if properties:
+            params_override.append({EndpointYamlFields.BATCH_JOB_PROPERTIES: properties})
 
         # Batch job doesn't have a python class, loading a rest object using params override
         context = {
@@ -365,17 +376,28 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         headers = EndpointInvokeFields.DEFAULT_HEADER
         ml_audience_scopes = _resource_to_scopes(_get_aml_resource_id_from_metadata())
         module_logger.debug("ml_audience_scopes used: `%s`\n", ml_audience_scopes)
-        key = self._credentials.get_token(*ml_audience_scopes).token
+        key = self._credentials.get_token(*ml_audience_scopes).token if self._credentials is not None else ""
         headers[EndpointInvokeFields.AUTHORIZATION] = f"Bearer {key}"
+        headers[EndpointInvokeFields.REPEATABILITY_REQUEST_ID] = str(uuid.uuid4())
 
         if deployment_name:
             headers[EndpointInvokeFields.MODEL_DEPLOYMENT] = deployment_name
 
-        response = self._requests_pipeline.post(
-            endpoint.properties.scoring_uri,
-            json=request,
-            headers=headers,
-        )
+        retry_attempts = 0
+        while retry_attempts < 5:
+            try:
+                response = self._requests_pipeline.post(
+                    endpoint.properties.scoring_uri,
+                    json=request,
+                    headers=headers,
+                )
+            except (ServiceRequestError, ServiceResponseError):
+                retry_attempts += 1
+                continue
+            break
+        if retry_attempts == 5:
+            retry_msg = "Max retry attempts reached while trying to connect to server. Please check connection and invoke again."  # pylint: disable=line-too-long
+            raise MlException(message=retry_msg, no_personal_data_message=retry_msg, target=ErrorTarget.BATCH_ENDPOINT)
         validate_response(response)
         batch_job = json.loads(response.text())
         return BatchJobResource.deserialize(batch_job)
@@ -417,9 +439,11 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             return list(result)
 
     def _get_workspace_location(self) -> str:
-        return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
+        return str(
+            self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
+        )
 
-    def _validate_deployment_name(self, endpoint_name, deployment_name):
+    def _validate_deployment_name(self, endpoint_name: str, deployment_name: str) -> None:
         deployments_list = self._batch_deployment_operation.list(
             endpoint_name=endpoint_name,
             resource_group_name=self._resource_group_name,

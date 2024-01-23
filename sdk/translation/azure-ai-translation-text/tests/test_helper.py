@@ -3,7 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-class TestHelper():
+
+class TestHelper:
     def distance(self, s1, s2, n1, n2):
         if n1 == 0:
             return n2
@@ -14,9 +15,11 @@ class TestHelper():
         if s1[n1 - 1] == s2[n2 - 1]:
             return self.distance(s1, s2, n1 - 1, n2 - 1)
 
-        nums = [self.distance(s1, s2, n1, n2 - 1),
-                self.distance(s1, s2, n1 - 1, n2),
-                self.distance(s1, s2, n1 - 1, n2 - 1)]
+        nums = [
+            self.distance(s1, s2, n1, n2 - 1),
+            self.distance(s1, s2, n1 - 1, n2),
+            self.distance(s1, s2, n1 - 1, n2 - 1),
+        ]
         return 1 + min(nums)
 
     def edit_distance(self, s1, s2):

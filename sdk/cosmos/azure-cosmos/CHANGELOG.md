@@ -1,12 +1,36 @@
 ## Release History
 
-### 4.5.2 (Unreleased)
+### 4.5.2b4 (Unreleased)
+This version and all future versions will require Python 3.8+.
 
 #### Features Added
+* Added **preview** support for Computed Properties on Python SDK (Must be enabled on the account level before it can be used). See [PR 33626](https://github.com/Azure/azure-sdk-for-python/pull/33626).
 
 #### Breaking Changes
 
 #### Bugs Fixed
+
+#### Other Changes
+
+### 4.5.2b3 (2023-11-10)
+
+#### Features Added
+* Added support for capturing Index Metrics in query operations. See [PR 33034](https://github.com/Azure/azure-sdk-for-python/pull/33034)
+
+### 4.5.2b2 (2023-10-31)
+
+#### Features Added
+* Added support for Transactional Batch. See [PR 32508](https://github.com/Azure/azure-sdk-for-python/pull/32508).
+* Added **preview** support for Priority Based Throttling/Priority Based Execution (Must be enabled at the account level before it can be used). See [PR 32441](https://github.com/Azure/azure-sdk-for-python/pull/32441/).
+
+### 4.5.2b1 (2023-10-17)
+
+#### Features Added
+* Added support for Hierarchical Partitioning, also known as Subpartitioning. See [PR 31121](https://github.com/Azure/azure-sdk-for-python/pull/31121).
+
+#### Bugs Fixed
+* Small fix to the `offer_throughput` option in the async client's `create_database_if_not_exists` method, which was previously misspelled as `offerThroughput`.
+See [PR 32076](https://github.com/Azure/azure-sdk-for-python/pull/32076).
 
 #### Other Changes
 * Marked the outdated `diagnostics.py` file for deprecation since we now recommend the use of our `CosmosHttpLoggingPolicy` for diagnostics.

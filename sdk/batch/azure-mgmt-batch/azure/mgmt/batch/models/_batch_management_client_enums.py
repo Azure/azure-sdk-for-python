@@ -39,7 +39,7 @@ class AuthenticationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SHARED_KEY = "SharedKey"
     """The authentication mode using shared keys."""
     AAD = "AAD"
-    """The authentication mode using Azure Active Directory."""
+    """The authentication mode using Microsoft Entra ID."""
     TASK_AUTHENTICATION_TOKEN = "TaskAuthenticationToken"
     """The authentication mode using task authentication tokens."""
 
@@ -436,9 +436,11 @@ class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The storage account type for use in creating data disks."""
+    """The storage account type for use in creating data disks or OS disk."""
 
     STANDARD_LRS = "Standard_LRS"
-    """The data disk should use standard locally redundant storage."""
+    """The data disk / OS disk should use standard locally redundant storage."""
     PREMIUM_LRS = "Premium_LRS"
-    """The data disk should use premium locally redundant storage."""
+    """The data disk / OS disk should use premium locally redundant storage."""
+    STANDARD_SSD_LRS = "StandardSSD_LRS"
+    """The data disk / OS disk should use standard SSD locally redundant storage."""

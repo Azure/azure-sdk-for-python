@@ -6,72 +6,104 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models_py3 import ChatTranscriptDetails
+from ._models_py3 import ChatTranscriptsListResult
 from ._models_py3 import CheckNameAvailabilityInput
 from ._models_py3 import CheckNameAvailabilityOutput
 from ._models_py3 import CommunicationDetails
 from ._models_py3 import CommunicationsListResult
 from ._models_py3 import ContactProfile
-from ._models_py3 import ExceptionResponse
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
+from ._models_py3 import FileDetails
+from ._models_py3 import FileWorkspaceDetails
+from ._models_py3 import FilesListResult
+from ._models_py3 import MessageProperties
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationsListResult
 from ._models_py3 import ProblemClassification
 from ._models_py3 import ProblemClassificationsListResult
+from ._models_py3 import ProxyResource
 from ._models_py3 import QuotaChangeRequest
 from ._models_py3 import QuotaTicketDetails
+from ._models_py3 import Resource
+from ._models_py3 import SecondaryConsent
+from ._models_py3 import SecondaryConsentEnabled
 from ._models_py3 import Service
-from ._models_py3 import ServiceError
-from ._models_py3 import ServiceErrorDetail
 from ._models_py3 import ServiceLevelAgreement
 from ._models_py3 import ServicesListResult
 from ._models_py3 import SupportEngineer
 from ._models_py3 import SupportTicketDetails
 from ._models_py3 import SupportTicketsListResult
+from ._models_py3 import SystemData
 from ._models_py3 import TechnicalTicketDetails
 from ._models_py3 import UpdateContactProfile
 from ._models_py3 import UpdateSupportTicket
+from ._models_py3 import UploadFile
 
 from ._microsoft_support_enums import CommunicationDirection
 from ._microsoft_support_enums import CommunicationType
+from ._microsoft_support_enums import Consent
+from ._microsoft_support_enums import CreatedByType
 from ._microsoft_support_enums import PreferredContactMethod
 from ._microsoft_support_enums import SeverityLevel
 from ._microsoft_support_enums import Status
+from ._microsoft_support_enums import TranscriptContentType
 from ._microsoft_support_enums import Type
+from ._microsoft_support_enums import UserConsent
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "ChatTranscriptDetails",
+    "ChatTranscriptsListResult",
     "CheckNameAvailabilityInput",
     "CheckNameAvailabilityOutput",
     "CommunicationDetails",
     "CommunicationsListResult",
     "ContactProfile",
-    "ExceptionResponse",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
+    "FileDetails",
+    "FileWorkspaceDetails",
+    "FilesListResult",
+    "MessageProperties",
     "Operation",
     "OperationDisplay",
     "OperationsListResult",
     "ProblemClassification",
     "ProblemClassificationsListResult",
+    "ProxyResource",
     "QuotaChangeRequest",
     "QuotaTicketDetails",
+    "Resource",
+    "SecondaryConsent",
+    "SecondaryConsentEnabled",
     "Service",
-    "ServiceError",
-    "ServiceErrorDetail",
     "ServiceLevelAgreement",
     "ServicesListResult",
     "SupportEngineer",
     "SupportTicketDetails",
     "SupportTicketsListResult",
+    "SystemData",
     "TechnicalTicketDetails",
     "UpdateContactProfile",
     "UpdateSupportTicket",
+    "UploadFile",
     "CommunicationDirection",
     "CommunicationType",
+    "Consent",
+    "CreatedByType",
     "PreferredContactMethod",
     "SeverityLevel",
     "Status",
+    "TranscriptContentType",
     "Type",
+    "UserConsent",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

@@ -34,7 +34,7 @@ from ...operations._log_analytics_operations import (
     build_get_waf_log_analytics_metrics_request,
     build_get_waf_log_analytics_rankings_request,
 )
-from .._vendor import MixinABC
+from .._vendor import CdnManagementClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -116,8 +116,8 @@ class LogAnalyticsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MetricsResponse]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.MetricsResponse] = kwargs.pop("cls", None)
 
         request = build_get_log_analytics_metrics_request(
             resource_group_name=resource_group_name,
@@ -138,10 +138,11 @@ class LogAnalyticsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -158,7 +159,9 @@ class LogAnalyticsOperations:
 
         return deserialized
 
-    get_log_analytics_metrics.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getLogAnalyticsMetrics"}  # type: ignore
+    get_log_analytics_metrics.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getLogAnalyticsMetrics"
+    }
 
     @distributed_trace_async
     async def get_log_analytics_rankings(
@@ -208,8 +211,8 @@ class LogAnalyticsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RankingsResponse]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.RankingsResponse] = kwargs.pop("cls", None)
 
         request = build_get_log_analytics_rankings_request(
             resource_group_name=resource_group_name,
@@ -227,10 +230,11 @@ class LogAnalyticsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -247,7 +251,9 @@ class LogAnalyticsOperations:
 
         return deserialized
 
-    get_log_analytics_rankings.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getLogAnalyticsRankings"}  # type: ignore
+    get_log_analytics_rankings.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getLogAnalyticsRankings"
+    }
 
     @distributed_trace_async
     async def get_log_analytics_locations(
@@ -276,8 +282,8 @@ class LogAnalyticsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ContinentsResponse]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.ContinentsResponse] = kwargs.pop("cls", None)
 
         request = build_get_log_analytics_locations_request(
             resource_group_name=resource_group_name,
@@ -289,10 +295,11 @@ class LogAnalyticsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -309,7 +316,9 @@ class LogAnalyticsOperations:
 
         return deserialized
 
-    get_log_analytics_locations.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getLogAnalyticsLocations"}  # type: ignore
+    get_log_analytics_locations.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getLogAnalyticsLocations"
+    }
 
     @distributed_trace_async
     async def get_log_analytics_resources(
@@ -338,8 +347,8 @@ class LogAnalyticsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ResourcesResponse]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.ResourcesResponse] = kwargs.pop("cls", None)
 
         request = build_get_log_analytics_resources_request(
             resource_group_name=resource_group_name,
@@ -351,10 +360,11 @@ class LogAnalyticsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -371,7 +381,9 @@ class LogAnalyticsOperations:
 
         return deserialized
 
-    get_log_analytics_resources.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getLogAnalyticsResources"}  # type: ignore
+    get_log_analytics_resources.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getLogAnalyticsResources"
+    }
 
     @distributed_trace_async
     async def get_waf_log_analytics_metrics(
@@ -424,8 +436,8 @@ class LogAnalyticsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.WafMetricsResponse]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.WafMetricsResponse] = kwargs.pop("cls", None)
 
         request = build_get_waf_log_analytics_metrics_request(
             resource_group_name=resource_group_name,
@@ -444,10 +456,11 @@ class LogAnalyticsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -464,7 +477,9 @@ class LogAnalyticsOperations:
 
         return deserialized
 
-    get_waf_log_analytics_metrics.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getWafLogAnalyticsMetrics"}  # type: ignore
+    get_waf_log_analytics_metrics.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getWafLogAnalyticsMetrics"
+    }
 
     @distributed_trace_async
     async def get_waf_log_analytics_rankings(
@@ -517,8 +532,8 @@ class LogAnalyticsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.WafRankingsResponse]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.WafRankingsResponse] = kwargs.pop("cls", None)
 
         request = build_get_waf_log_analytics_rankings_request(
             resource_group_name=resource_group_name,
@@ -537,10 +552,11 @@ class LogAnalyticsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -557,4 +573,6 @@ class LogAnalyticsOperations:
 
         return deserialized
 
-    get_waf_log_analytics_rankings.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getWafLogAnalyticsRankings"}  # type: ignore
+    get_waf_log_analytics_rankings.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getWafLogAnalyticsRankings"
+    }

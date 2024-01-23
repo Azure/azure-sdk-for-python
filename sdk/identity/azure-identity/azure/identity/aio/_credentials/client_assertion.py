@@ -21,7 +21,7 @@ class ClientAssertionCredential(AsyncContextManager, GetTokenMixin):
         acquires a new token.
     :paramtype func: Callable[[], str]
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example
+    :keyword str authority: Authority of a Microsoft Entra endpoint, for example
         "login.microsoftonline.com", the authority for Azure Public Cloud (which is the default).
         :class:`~azure.identity.AzureAuthorityHosts` defines authorities for other clouds.
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
@@ -40,10 +40,22 @@ class ClientAssertionCredential(AsyncContextManager, GetTokenMixin):
 
     def __init__(self, tenant_id: str, client_id: str, func: Callable[[], str], **kwargs: Any) -> None:
         self._func = func
-        self._client = AadClient(tenant_id, client_id, **kwargs)
+        authority = kwargs.pop("authority", None)
+        cache = kwargs.pop("cache", None)
+        cae_cache = kwargs.pop("cae_cache", None)
+        additionally_allowed_tenants = kwargs.pop("additionally_allowed_tenants", None)
+        self._client = AadClient(
+            tenant_id,
+            client_id,
+            authority=authority,
+            cache=cache,
+            cae_cache=cae_cache,
+            additionally_allowed_tenants=additionally_allowed_tenants,
+            **kwargs
+        )
         super().__init__(**kwargs)
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "ClientAssertionCredential":
         await self._client.__aenter__()
         return self
 

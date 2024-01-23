@@ -27,7 +27,7 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -50,7 +50,7 @@ def build_create_or_update_request(kql_script_name: str, **kwargs: Any) -> HttpR
         "kqlScriptName": _SERIALIZER.url("kql_script_name", kql_script_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -76,7 +76,7 @@ def build_get_by_name_request(kql_script_name: str, **kwargs: Any) -> HttpReques
         "kqlScriptName": _SERIALIZER.url("kql_script_name", kql_script_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -100,7 +100,7 @@ def build_delete_by_name_request(kql_script_name: str, **kwargs: Any) -> HttpReq
         "kqlScriptName": _SERIALIZER.url("kql_script_name", kql_script_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -125,7 +125,7 @@ def build_rename_request(kql_script_name: str, **kwargs: Any) -> HttpRequest:
         "kqlScriptName": _SERIALIZER.url("kql_script_name", kql_script_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -183,25 +183,24 @@ class KqlScriptOperations:
         else:
             _json = self._serialize.body(kql_script, "KqlScriptResource")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             kql_script_name=kql_script_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -216,11 +215,9 @@ class KqlScriptOperations:
             deserialized = self._deserialize("KqlScriptResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _create_or_update_initial.metadata = {"url": "/kqlScripts/{kqlScriptName}"}
+        return deserialized  # type: ignore
 
     @overload
     def begin_create_or_update(
@@ -332,7 +329,7 @@ class KqlScriptOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("KqlScriptResource", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -355,8 +352,6 @@ class KqlScriptOperations:
                 deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {"url": "/kqlScripts/{kqlScriptName}"}
 
     @distributed_trace
     def get_by_name(self, kql_script_name: str, **kwargs: Any) -> _models.KqlScriptResource:
@@ -383,22 +378,21 @@ class KqlScriptOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
         cls: ClsType[_models.KqlScriptResource] = kwargs.pop("cls", None)
 
-        request = build_get_by_name_request(
+        _request = build_get_by_name_request(
             kql_script_name=kql_script_name,
             api_version=api_version,
-            template_url=self.get_by_name.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -411,11 +405,9 @@ class KqlScriptOperations:
         deserialized = self._deserialize("KqlScriptResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_by_name.metadata = {"url": "/kqlScripts/{kqlScriptName}"}
+        return deserialized  # type: ignore
 
     def _delete_by_name_initial(  # pylint: disable=inconsistent-return-statements
         self, kql_script_name: str, **kwargs: Any
@@ -434,22 +426,21 @@ class KqlScriptOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_by_name_request(
+        _request = build_delete_by_name_request(
             kql_script_name=kql_script_name,
             api_version=api_version,
-            template_url=self._delete_by_name_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -460,9 +451,7 @@ class KqlScriptOperations:
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_by_name_initial.metadata = {"url": "/kqlScripts/{kqlScriptName}"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_delete_by_name(self, kql_script_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -503,7 +492,7 @@ class KqlScriptOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -526,8 +515,6 @@ class KqlScriptOperations:
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete_by_name.metadata = {"url": "/kqlScripts/{kqlScriptName}"}
-
     def _rename_initial(  # pylint: disable=inconsistent-return-statements
         self, kql_script_name: str, new_name: Optional[str] = None, **kwargs: Any
     ) -> None:
@@ -549,24 +536,23 @@ class KqlScriptOperations:
         _rename_request = _models.ArtifactRenameRequest(new_name=new_name)
         _json = self._serialize.body(_rename_request, "ArtifactRenameRequest")
 
-        request = build_rename_request(
+        _request = build_rename_request(
             kql_script_name=kql_script_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._rename_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -577,9 +563,7 @@ class KqlScriptOperations:
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _rename_initial.metadata = {"url": "/kqlScripts/{kqlScriptName}/rename"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_rename(self, kql_script_name: str, new_name: Optional[str] = None, **kwargs: Any) -> LROPoller[None]:
@@ -625,7 +609,7 @@ class KqlScriptOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -647,5 +631,3 @@ class KqlScriptOperations:
                 deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_rename.metadata = {"url": "/kqlScripts/{kqlScriptName}/rename"}

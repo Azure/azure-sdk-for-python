@@ -20,15 +20,23 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 class ImageSweepSettings(RestTranslatableMixin):
     """Sweep settings for all AutoML Image Verticals.
 
-    :param sampling_algorithm: Required. [Required] Type of the hyperparameter sampling
+    :keyword sampling_algorithm: Required. Type of the hyperparameter sampling.
         algorithms. Possible values include: "Grid", "Random", "Bayesian".
-    :type sampling_algorithm: Union[str, ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.GRID,
+    :paramtype sampling_algorithm: Union[str, ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.GRID,
         ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.BAYESIAN,
         ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.RANDOM]
-    :param early_termination: Type of early termination policy.
-    :type early_termination: Union[~azure.mgmt.machinelearningservices.models.BanditPolicy,
+    :keyword early_termination: Type of early termination policy.
+    :paramtype early_termination: Union[~azure.mgmt.machinelearningservices.models.BanditPolicy,
         ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
         ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_automl_image.py
+            :start-after: [START automl.automl_image_job.image_sweep_settings]
+            :end-before: [END automl.automl_image_job.image_sweep_settings]
+            :language: python
+            :dedent: 8
+            :caption: Defining the sweep settings for an automl image job.
     """
 
     def __init__(

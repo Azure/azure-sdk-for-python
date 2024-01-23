@@ -24,6 +24,7 @@ if TYPE_CHECKING:
     from .aio._servicebus_receiver_async import (
         ServiceBusReceiver as ServiceBusReceiverAsync,
     )
+    from .exceptions import AutoLockRenewFailed, AutoLockRenewTimeout
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -40,7 +41,7 @@ class BaseSession(object):
         self._session_start = None
         self._locked_until_utc: Optional[datetime.datetime] = None
         self._lock_lost = False
-        self.auto_renew_error = None
+        self.auto_renew_error: Optional[Union[AutoLockRenewFailed, AutoLockRenewTimeout]] = None
 
     @property
     def _lock_expired(self) -> bool:

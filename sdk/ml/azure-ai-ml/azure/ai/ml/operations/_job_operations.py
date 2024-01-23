@@ -7,9 +7,10 @@ import json
 import os.path
 from os import PathLike
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, List, Optional, Set, Union, cast
 
 import jwt
+from marshmallow import ValidationError
 
 from azure.ai.ml._artifacts._artifact_utilities import (
     _upload_and_generate_remote_uri,
@@ -27,9 +28,9 @@ from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspac
 from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as ServiceClientRunHistory
 from azure.ai.ml._restclient.runhistory.models import Run
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobType as RestJobType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType, UserIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, ListViewType, UserIdentity
+from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase as JobBase_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -95,7 +96,6 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
-from .._utils._experimental import experimental
 from ..constants._component import ComponentSource
 from ..entities._builders.control_flow_node import ControlFlowNode
 from ..entities._job.pipeline._io import InputOutputBase, PipelineInput, _GroupAttrDict
@@ -163,9 +163,9 @@ class JobOperations(_ScopeDependentOperations):
         self._all_operations = all_operations
         self._stream_logs_until_completion = stream_logs_until_completion
         # Dataplane service clients are lazily created as they are needed
-        self._runs_operations_client = None
-        self._dataset_dataplane_operations_client = None
-        self._model_dataplane_operations_client = None
+        self._runs_operations_client: Optional[RunOperations] = None
+        self._dataset_dataplane_operations_client: Optional[DatasetDataplaneOperations] = None
+        self._model_dataplane_operations_client: Optional[ModelDataplaneOperations] = None
         # Kwargs to propagate to dataplane service clients
         self._service_client_kwargs = kwargs.pop("_service_client_kwargs", {})
         self._api_base_url = None
@@ -175,31 +175,41 @@ class JobOperations(_ScopeDependentOperations):
             self._all_operations, self._operation_scope, self._operation_config
         )  # pylint: disable=line-too-long
 
+        self.service_client_08_2023_preview = kwargs.pop("service_client_08_2023_preview", None)
         self._kwargs = kwargs
 
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
 
     @property
     def _component_operations(self) -> ComponentOperations:
-        return self._all_operations.get_operation(
-            AzureMLResourceType.COMPONENT, lambda x: isinstance(x, ComponentOperations)
+        return cast(
+            ComponentOperations,
+            self._all_operations.get_operation(
+                AzureMLResourceType.COMPONENT, lambda x: isinstance(x, ComponentOperations)
+            ),
         )
 
     @property
     def _compute_operations(self) -> ComputeOperations:
-        return self._all_operations.get_operation(
-            AzureMLResourceType.COMPUTE, lambda x: isinstance(x, ComputeOperations)
+        return cast(
+            ComputeOperations,
+            self._all_operations.get_operation(AzureMLResourceType.COMPUTE, lambda x: isinstance(x, ComputeOperations)),
         )
 
     @property
     def _virtual_cluster_operations(self) -> VirtualClusterOperations:
-        return self._all_operations.get_operation(
-            AzureMLResourceType.VIRTUALCLUSTER, lambda x: isinstance(x, VirtualClusterOperations)
+        return cast(
+            VirtualClusterOperations,
+            self._all_operations.get_operation(
+                AzureMLResourceType.VIRTUALCLUSTER, lambda x: isinstance(x, VirtualClusterOperations)
+            ),
         )
 
     @property
     def _datastore_operations(self) -> "DatastoreOperations":
-        return self._all_operations.all_operations[AzureMLResourceType.DATASTORE]
+        from azure.ai.ml.operations import DatastoreOperations
+
+        return cast(DatastoreOperations, self._all_operations.all_operations[AzureMLResourceType.DATASTORE])
 
     @property
     def _runs_operations(self) -> RunOperations:
@@ -239,7 +249,7 @@ class JobOperations(_ScopeDependentOperations):
         return self._model_dataplane_operations_client
 
     @property
-    def _api_url(self):
+    def _api_url(self) -> Any:
         if not self._api_base_url:
             self._api_base_url = self._get_workspace_url(url_key=API_URL_KEY)
         return self._api_base_url
@@ -251,7 +261,7 @@ class JobOperations(_ScopeDependentOperations):
         *,
         parent_job_name: Optional[str] = None,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
-        **kwargs,
+        **kwargs: Any,
     ) -> Iterable[Job]:
         """Lists jobs in the workspace.
 
@@ -277,20 +287,24 @@ class JobOperations(_ScopeDependentOperations):
 
         schedule_defined = kwargs.pop("schedule_defined", None)
         scheduled_job_name = kwargs.pop("scheduled_job_name", None)
+        max_results = kwargs.pop("max_results", None)
 
         if parent_job_name:
             parent_job = self.get(parent_job_name)
-            return self._runs_operations.get_run_children(parent_job.name)
+            return self._runs_operations.get_run_children(parent_job.name, max_results=max_results)
 
-        return self._operation_2023_02_preview.list(
-            self._operation_scope.resource_group_name,
-            self._workspace_name,
-            cls=lambda objs: [self._handle_rest_errors(obj) for obj in objs],
-            list_view_type=list_view_type,
-            scheduled=schedule_defined,
-            schedule_id=scheduled_job_name,
-            **self._kwargs,
-            **kwargs,
+        return cast(
+            Iterable[Job],
+            self._operation_2023_02_preview.list(
+                self._operation_scope.resource_group_name,
+                self._workspace_name,
+                cls=lambda objs: [self._handle_rest_errors(obj) for obj in objs],
+                list_view_type=list_view_type,
+                scheduled=schedule_defined,
+                schedule_id=scheduled_job_name,
+                **self._kwargs,
+                **kwargs,
+            ),
         )
 
     def _handle_rest_errors(self, job_object: Union[JobBase, Run]) -> Optional[Job]:
@@ -345,7 +359,7 @@ class JobOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(logger, "Job.ShowServices", ActivityType.PUBLICAPI)
-    def show_services(self, name: str, node_index: int = 0) -> Dict[str, ServiceInstance]:
+    def show_services(self, name: str, node_index: int = 0) -> Optional[Dict]:
         """Gets services associated with a job's node.
 
         :param name: The name of the job.
@@ -377,7 +391,7 @@ class JobOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "Job.Cancel", ActivityType.PUBLICAPI)
-    def begin_cancel(self, name: str, **kwargs) -> LROPoller[None]:
+    def begin_cancel(self, name: str, **kwargs: Any) -> LROPoller[None]:
         """Cancels a job.
 
         :param name: The name of the job.
@@ -420,7 +434,7 @@ class JobOperations(_ScopeDependentOperations):
             results.append(result)
         return results
 
-    def _try_get_compute_arm_id(self, compute: Union[Compute, str]):
+    def _try_get_compute_arm_id(self, compute: Union[Compute, str]) -> Optional[Union[Compute, str]]:
         # pylint: disable=too-many-return-statements
         # TODO: Remove in PuP with native import job/component type support in MFE/Designer
         # DataFactory 'clusterless' job
@@ -466,9 +480,8 @@ class JobOperations(_ScopeDependentOperations):
         return None
 
     @distributed_trace
-    @experimental
     @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.PUBLICAPI)
-    def validate(self, job: Job, *, raise_on_failure: bool = False, **kwargs) -> ValidationResult:
+    def validate(self, job: Job, *, raise_on_failure: bool = False, **kwargs: Any) -> ValidationResult:
         """Validates a Job object before submitting to the service. Anonymous assets may be created if there are inline
         defined entities such as Component, Environment, and Code. Only pipeline jobs are supported for validation
         currently.
@@ -493,7 +506,7 @@ class JobOperations(_ScopeDependentOperations):
 
     @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.INTERNALCALL)
     def _validate(
-        self, job: Job, *, raise_on_failure: bool = False, **kwargs  # pylint:disable=unused-argument
+        self, job: Job, *, raise_on_failure: bool = False, **kwargs: Any  # pylint:disable=unused-argument
     ) -> ValidationResult:
         """Implementation of validate.
 
@@ -527,7 +540,7 @@ class JobOperations(_ScopeDependentOperations):
 
         if not isinstance(job, PathAwareSchemaValidatableMixin):
 
-            def error_func(msg, no_personal_data_msg):
+            def error_func(msg: str, no_personal_data_msg: str) -> ValidationException:
                 return ValidationException(
                     message=msg,
                     no_personal_data_message=no_personal_data_msg,
@@ -572,7 +585,7 @@ class JobOperations(_ScopeDependentOperations):
         tags: Optional[dict] = None,
         experiment_name: Optional[str] = None,
         skip_validation: bool = False,
-        **kwargs,
+        **kwargs: Any,
     ) -> Job:
         """Creates or updates a job. If entities such as Environment or Code are defined inline, they'll be created
         together with the job.
@@ -617,111 +630,117 @@ class JobOperations(_ScopeDependentOperations):
                 :dedent: 8
                 :caption: Creating a new job and then updating its compute.
         """
+        if isinstance(job, BaseNode) and not (
+            isinstance(job, (Command, Spark))
+        ):  # Command/Spark objects can be used directly
+            job = job._to_job()
+
+        # Set job properties before submission
+        if description is not None:
+            job.description = description
+        if compute is not None:
+            job.compute = compute
+        if tags is not None:
+            job.tags = tags
+        if experiment_name is not None:
+            job.experiment_name = experiment_name
+
+        if job.compute == LOCAL_COMPUTE_TARGET:
+            job.environment_variables[COMMON_RUNTIME_ENV_VAR] = "true"
+
+        # TODO: why we put log logic here instead of inside self._validate()?
         try:
-            if isinstance(job, BaseNode) and not (
-                isinstance(job, (Command, Spark))
-            ):  # Command/Spark objects can be used directly
-                job = job._to_job()
-
-            # Set job properties before submission
-            if description is not None:
-                job.description = description
-            if compute is not None:
-                job.compute = compute
-            if tags is not None:
-                job.tags = tags
-            if experiment_name is not None:
-                job.experiment_name = experiment_name
-
-            if job.compute == LOCAL_COMPUTE_TARGET:
-                job.environment_variables[COMMON_RUNTIME_ENV_VAR] = "true"
-
             if not skip_validation:
                 self._validate(job, raise_on_failure=True)
 
             # Create all dependent resources
             self._resolve_arm_id_or_upload_dependencies(job)
+        except (ValidationException, ValidationError) as ex:  # pylint: disable=broad-except
+            log_and_raise_error(ex)
 
-            git_props = get_git_properties()
-            # Do not add git props if they already exist in job properties.
-            # This is for update specifically-- if the user switches branches and tries to update
-            # their job, the request will fail since the git props will be repopulated.
-            # MFE does not allow existing properties to be updated, only for new props to be added
-            if not any(prop_name in job.properties for prop_name in git_props):
-                job.properties = {**job.properties, **git_props}
-            rest_job_resource = to_rest_job_object(job)
+        git_props = get_git_properties()
+        # Do not add git props if they already exist in job properties.
+        # This is for update specifically-- if the user switches branches and tries to update
+        # their job, the request will fail since the git props will be repopulated.
+        # MFE does not allow existing properties to be updated, only for new props to be added
+        if not any(prop_name in job.properties for prop_name in git_props):
+            job.properties = {**job.properties, **git_props}
+        rest_job_resource = to_rest_job_object(job)
 
-            # Make a copy of self._kwargs instead of contaminate the original one
-            kwargs = dict(**self._kwargs)
-            # set headers with user aml token if job is a pipeline or has a user identity setting
-            if (rest_job_resource.properties.job_type == RestJobType.PIPELINE) or (
-                hasattr(rest_job_resource.properties, "identity")
-                and (isinstance(rest_job_resource.properties.identity, UserIdentity))
-            ):
-                self._set_headers_with_user_aml_token(kwargs)
+        # Make a copy of self._kwargs instead of contaminate the original one
+        kwargs = dict(**self._kwargs)
+        # set headers with user aml token if job is a pipeline or has a user identity setting
+        if (rest_job_resource.properties.job_type == RestJobType.PIPELINE) or (
+            hasattr(rest_job_resource.properties, "identity")
+            and (isinstance(rest_job_resource.properties.identity, UserIdentity))
+        ):
+            self._set_headers_with_user_aml_token(kwargs)
 
-            result = self._operation_2023_02_preview.create_or_update(
-                id=rest_job_resource.name,  # type: ignore
-                resource_group_name=self._operation_scope.resource_group_name,
-                workspace_name=self._workspace_name,
-                body=rest_job_resource,
-                **kwargs,
+        result = self._create_or_update_with_different_version_api(rest_job_resource=rest_job_resource, **kwargs)
+
+        if is_local_run(result):
+            ws_base_url = self._all_operations.all_operations[
+                AzureMLResourceType.WORKSPACE
+            ]._operation._client._base_url
+            snapshot_id = start_run_if_local(
+                result,
+                self._credential,
+                ws_base_url,
+                self._requests_pipeline,
             )
-
-            if is_local_run(result):
-                ws_base_url = self._all_operations.all_operations[
-                    AzureMLResourceType.WORKSPACE
-                ]._operation._client._base_url
-                snapshot_id = start_run_if_local(
-                    result,
-                    self._credential,
-                    ws_base_url,
-                    self._requests_pipeline,
-                )
-                # in case of local run, the first create/update call to MFE returns the
-                # request for submitting to ES. Once we request to ES and start the run, we
-                # need to put the same body to MFE to append user tags etc.
-                job_object = self._get_job(rest_job_resource.name)
-                if result.properties.tags is not None:
-                    for tag_name, tag_value in rest_job_resource.properties.tags.items():
-                        job_object.properties.tags[tag_name] = tag_value
-                if result.properties.properties is not None:
-                    for (
-                        prop_name,
-                        prop_value,
-                    ) in rest_job_resource.properties.properties.items():
-                        job_object.properties.properties[prop_name] = prop_value
-                if snapshot_id is not None:
-                    job_object.properties.properties["ContentSnapshotId"] = snapshot_id
-
-                result = self._operation_2023_02_preview.create_or_update(
-                    id=rest_job_resource.name,  # type: ignore
-                    resource_group_name=self._operation_scope.resource_group_name,
-                    workspace_name=self._workspace_name,
-                    body=job_object,
-                    **kwargs,
-                )
-            return self._resolve_azureml_id(Job._from_rest_object(result))
-        except Exception as ex:  # pylint: disable=broad-except
-            from marshmallow.exceptions import ValidationError as SchemaValidationError
-
-            if isinstance(ex, (ValidationException, SchemaValidationError)):
-                log_and_raise_error(ex)
+            # in case of local run, the first create/update call to MFE returns the
+            # request for submitting to ES. Once we request to ES and start the run, we
+            # need to put the same body to MFE to append user tags etc.
+            if rest_job_resource.properties.job_type == RestJobType.PIPELINE:
+                job_object = self._get_job_2308(rest_job_resource.name)
             else:
-                raise ex
+                job_object = self._get_job(rest_job_resource.name)
+            if result.properties.tags is not None:
+                for tag_name, tag_value in rest_job_resource.properties.tags.items():
+                    job_object.properties.tags[tag_name] = tag_value
+            if result.properties.properties is not None:
+                for (
+                    prop_name,
+                    prop_value,
+                ) in rest_job_resource.properties.properties.items():
+                    job_object.properties.properties[prop_name] = prop_value
+            if snapshot_id is not None:
+                job_object.properties.properties["ContentSnapshotId"] = snapshot_id
 
-    def _archive_or_restore(self, name: str, is_archived: bool):
+            result = self._create_or_update_with_different_version_api(rest_job_resource=job_object, **kwargs)
+
+        return self._resolve_azureml_id(Job._from_rest_object(result))
+
+    def _create_or_update_with_different_version_api(  # pylint: disable=name-too-long
+        self, rest_job_resource: JobBase, **kwargs: Any
+    ) -> JobBase:
+        service_client_operation = self._operation_2023_02_preview
+        # Upgrade api from 2023-04-01-preview to 2023-08-01 for pipeline job
+        if rest_job_resource.properties.job_type == RestJobType.PIPELINE:
+            service_client_operation = self.service_client_08_2023_preview.jobs
+
+        if rest_job_resource.properties.job_type == RestJobType.SWEEP:
+            service_client_operation = self.service_client_08_2023_preview.jobs
+
+        result = service_client_operation.create_or_update(
+            id=rest_job_resource.name,
+            resource_group_name=self._operation_scope.resource_group_name,
+            workspace_name=self._workspace_name,
+            body=rest_job_resource,
+            **kwargs,
+        )
+
+        return result
+
+    def _archive_or_restore(self, name: str, is_archived: bool) -> None:
         job_object = self._get_job(name)
+        if job_object.properties.job_type == RestJobType.PIPELINE:
+            job_object = self._get_job_2308(name)
         if _is_pipeline_child_job(job_object):
             raise PipelineChildJobError(job_id=job_object.id)
         job_object.properties.is_archived = is_archived
 
-        self._operation_2023_02_preview.create_or_update(
-            id=job_object.name,
-            resource_group_name=self._operation_scope.resource_group_name,
-            workspace_name=self._workspace_name,
-            body=job_object,
-        )
+        self._create_or_update_with_different_version_api(rest_job_resource=job_object)
 
     @distributed_trace
     @monitor_with_telemetry_mixin(logger, "Job.Archive", ActivityType.PUBLICAPI)
@@ -857,7 +876,7 @@ class JobOperations(_ScopeDependentOperations):
         artifact_directory_name = "artifacts"
         output_directory_name = "named-outputs"
 
-        def log_missing_uri(what: str):
+        def log_missing_uri(what: str) -> None:
             module_logger.debug(
                 'Could not download %s for job "%s" (job status: %s)', what, job_details.name, job_details.status
             )
@@ -947,7 +966,11 @@ class JobOperations(_ScopeDependentOperations):
             output_names=output_names,
         )
 
-        missing_outputs = (output_names or set()).difference(outputs.keys())
+        missing_outputs: Set = set()
+        if output_names is not None:
+            missing_outputs = set(output_names).difference(outputs.keys())
+        else:
+            missing_outputs = set().difference(outputs.keys())
 
         # Include default artifact store in outputs
         if (not output_names) or DEFAULT_ARTIFACT_STORE_OUTPUT_NAME in missing_outputs:
@@ -1003,7 +1026,18 @@ class JobOperations(_ScopeDependentOperations):
             **self._kwargs,
         )
 
-    def _get_workspace_url(self, url_key="history"):
+    # Upgrade api from 2023-04-01-preview to 2023-08-01 for pipeline job
+    # We can remove this function once `_get_job` function has also been upgraded to 2023-08-01 api
+    def _get_job_2308(self, name: str) -> JobBase_2308:
+        service_client_operation = self.service_client_08_2023_preview.jobs
+        return service_client_operation.get(
+            id=name,
+            resource_group_name=self._operation_scope.resource_group_name,
+            workspace_name=self._workspace_name,
+            **self._kwargs,
+        )
+
+    def _get_workspace_url(self, url_key: str = "history") -> Any:
         discovery_url = (
             self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
             .get(self._operation_scope.workspace_name)
@@ -1105,7 +1139,7 @@ class JobOperations(_ScopeDependentOperations):
         except Exception:  # pylint: disable=broad-except
             return resolver(target, azureml_type=AzureMLResourceType.COMPUTE)
 
-    def _resolve_job_inputs(self, entries: Iterable[Union[Input, str, bool, int, float]], base_path: str):
+    def _resolve_job_inputs(self, entries: Iterable[Union[Input, str, bool, int, float]], base_path: str) -> None:
         """resolve job inputs as ARM id or remote url.
 
         :param entries: An iterable of job inputs
@@ -1134,10 +1168,11 @@ class JobOperations(_ScopeDependentOperations):
             if isinstance(item, _GroupAttrDict):
                 input_values.extend(item.flatten(group_parameter_name=key))
             else:
-                # skip resolving inferred optional input without path (in do-while + dynamic input case)
-                if isinstance(item._data, Input) and not item._data.path and item._meta._is_inferred_optional:
-                    continue
-                input_values.append(item._data)
+                if not isinstance(item, (str, bool, int, float)):
+                    # skip resolving inferred optional input without path (in do-while + dynamic input case)
+                    if isinstance(item._data, Input) and not item._data.path and item._meta._is_inferred_optional:
+                        continue
+                    input_values.append(item._data)
         return input_values
 
     def _resolve_job_input(self, entry: Union[Input, str, bool, int, float], base_path: str) -> None:
@@ -1254,7 +1289,7 @@ class JobOperations(_ScopeDependentOperations):
             # If the job object doesn't have "inputs" attribute, we don't need to resolve. E.g. AutoML jobs
             pass
 
-    def _resolve_arm_id_or_azureml_id(self, job: Job, resolver: _AssetResolver) -> Job:
+    def _resolve_arm_id_or_azureml_id(self, job: Job, resolver: Union[Callable, _AssetResolver]) -> Job:
         """Resolve arm_id for a given job.
 
 
@@ -1504,7 +1539,7 @@ class JobOperations(_ScopeDependentOperations):
         except Exception:  # pylint: disable=broad-except
             module_logger.info("Proceeding with no tenant id appended to studio URL\n")
 
-    def _set_headers_with_user_aml_token(self, kwargs) -> Dict[str, str]:
+    def _set_headers_with_user_aml_token(self, kwargs: Any) -> None:
         aml_resource_id = _get_aml_resource_id_from_metadata()
         azure_ml_scopes = _resource_to_scopes(aml_resource_id)
         module_logger.debug("azure_ml_scopes used: `%s`\n", azure_ml_scopes)

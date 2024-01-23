@@ -27,14 +27,14 @@ class SelfHelpMgmtClientConfiguration(Configuration):  # pylint: disable=too-man
 
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: Api Version. Default value is "2023-06-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-09-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         super(SelfHelpMgmtClientConfiguration, self).__init__(**kwargs)
-        api_version: str = kwargs.pop("api_version", "2023-06-01")
+        api_version: str = kwargs.pop("api_version", "2023-09-01-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

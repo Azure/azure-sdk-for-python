@@ -31,43 +31,63 @@ from azure.developer.devcenter import DevCenterClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
+"""
+FILE: create_environment_sample.py
+
+DESCRIPTION:
+    This sample demonstrates how to create and delete Environments using python DevCenterClient. For this sample,
+    you must have previously configured a DevCenter, Project, Catalog, and Environment Type. More details 
+    on how to configure those requirements at https://learn.microsoft.com/azure/deployment-environments/
+
+USAGE:
+    python create_environment_sample.py
+
+    Set the environment variables with your own values before running the sample:
+    1) DEVCENTER_ENDPOINT - the endpoint for your devcenter
+"""
+
 def main():
-    logging.basicConfig(level=logging.DEBUG)
-    LOG = logging.getLogger()
 
     # Set the values of the dev center endpoint, client ID, and client secret of the AAD application as environment variables:
     # DEVCENTER_ENDPOINT, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
     try:
         endpoint = os.environ["DEVCENTER_ENDPOINT"]
     except KeyError:
-        LOG.error("Missing environment variable 'DEVCENTER_ENDPOINT' - please set it before running the example")
-        exit()
+        raise ValueError("Missing environment variable 'DEVCENTER_ENDPOINT' - please set it before running the example")
 
     # Build a client through AAD
     client = DevCenterClient(endpoint, credential=DefaultAzureCredential())
 
     # Fetch control plane resource dependencies
-    target_project_name = list(client.dev_center.list_projects(top=1))[0]['name']
-    target_catalog_name = list(client.environments.list_catalog_items(target_project_name, top=1))[0]['catalogName']
-    target_catalog_item_name = list(client.environments.list_catalog_items(target_project_name, top=1))[0]['name']
-    target_environment_type_name = list(client.environments.list_environment_types(target_project_name, top=1))[0]['name']
+    target_project_name = list(client.list_projects(top=1))[0]["name"]
+    target_catalog_name = list(client.list_catalogs(target_project_name, top=1))[0]["name"]
+    target_environment_definition_name = list(
+        client.list_environment_definitions_by_catalog(
+            target_project_name, target_catalog_name, top=1
+        )
+    )[0]["name"]
+    target_environment_type_name = list(
+        client.list_environment_types(target_project_name, top=1)
+    )[0]["name"]
 
     # Stand up a new environment
-    create_response = client.environments.begin_create_or_update_environment(target_project_name,
-                                                       "Dev_Environment",
-                                                       {
-                                                        "catalogName": target_catalog_name,
-                                                        "catalogItemName": target_catalog_item_name,
-                                                        "environmentType": target_environment_type_name
-                                                       })
+    environment = {
+        "catalogName": target_catalog_name,
+        "environmentDefinitionName": target_environment_definition_name,
+        "environmentType": target_environment_type_name,
+    }
+
+    create_response = client.begin_create_or_update_environment(
+        target_project_name, "me", "DevTestEnv", environment
+    )
     environment_result = create_response.result()
 
-    LOG.info(f"Provisioned environment with status {environment_result['provisioningState']}.")
+    print(f"Provisioned environment with status {environment_result['provisioningState']}.")
 
     # Tear down the environment when finished
-    delete_response = client.environments.begin_delete_environment(target_project_name, "Dev_Environment")
-    delete_response.wait()
-    LOG.info("Completed deletion for the environment.")
+    delete_response = client.begin_delete_environment(target_project_name, "me", "DevTestEnv")
+    delete_result = delete_response.result()
+    print(f"Completed deletion for the environment with status {delete_result['status']}")
 
 
 if __name__ == "__main__":

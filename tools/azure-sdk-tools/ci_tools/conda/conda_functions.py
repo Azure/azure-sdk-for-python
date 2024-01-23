@@ -24,7 +24,7 @@ from shutil import rmtree
 from typing import List, Any
 from subprocess import check_call
 from ci_tools.variables import discover_repo_root, in_ci
-from ci_tools.functions import unzip_file_to_directory
+from ci_tools.functions import unzip_file_to_directory, cleanup_directory
 from ci_tools.build import create_package
 from subprocess import check_call, CalledProcessError, check_output
 
@@ -119,20 +119,6 @@ def get_pkgs_from_build_directory(build_directory: str, artifact_name: str):
     return [os.path.join(build_directory, p) for p in os.listdir(build_directory) if p != artifact_name]
 
 
-def error_handler_git_access(func, path, exc):
-    """
-    This function exists because the git idx file is written with strange permissions that prevent it from being
-    deleted. Due to this, we need to register an error handler that attempts to fix the file permissions before
-    re-attempting the delete operations.
-    """
-
-    if not os.access(path, os.W_OK):
-        os.chmod(path, stat.S_IWUSR)
-        func(path)
-    else:
-        raise
-
-
 def create_sdist_skeleton(build_directory, artifact_name, common_root):
     """
     Given a properly formatted input directory, set up the skeleton for a combined package
@@ -141,8 +127,7 @@ def create_sdist_skeleton(build_directory, artifact_name, common_root):
     """
     sdist_directory = os.path.join(build_directory, artifact_name)
 
-    if os.path.exists(sdist_directory):
-        shutil.rmtree(sdist_directory, ignore_errors=False, onerror=error_handler_git_access)
+    cleanup_directory(sdist_directory)
 
     os.makedirs(sdist_directory)
     namespaces = common_root.split("/")
@@ -335,8 +320,7 @@ def output_workload(
 
 
 def prep_directory(path: str) -> str:
-    if os.path.exists(path):
-        rmtree(path, ignore_errors=False, onerror=error_handler_git_access)
+    cleanup_directory(path)
 
     os.makedirs(path)
     return path

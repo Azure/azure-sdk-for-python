@@ -27,7 +27,7 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -78,7 +78,7 @@ def build_create_or_update_dataset_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -113,7 +113,7 @@ def build_get_dataset_request(dataset_name: str, *, if_none_match: Optional[str]
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -146,7 +146,7 @@ def build_delete_dataset_request(dataset_name: str, **kwargs: Any) -> HttpReques
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -178,7 +178,7 @@ def build_rename_dataset_request(dataset_name: str, **kwargs: Any) -> HttpReques
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -236,31 +236,30 @@ class DatasetOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_get_datasets_by_workspace_request(
+                _request = build_get_datasets_by_workspace_request(
                     api_version=api_version,
-                    template_url=self.get_datasets_by_workspace.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("DatasetListResponse", pipeline_response)
@@ -270,11 +269,11 @@ class DatasetOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -285,8 +284,6 @@ class DatasetOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    get_datasets_by_workspace.metadata = {"url": "/datasets"}
 
     def _create_or_update_dataset_initial(
         self, dataset_name: str, properties: _models.Dataset, if_match: Optional[str] = None, **kwargs: Any
@@ -309,25 +306,24 @@ class DatasetOperations:
         _dataset = _models.DatasetResource(properties=properties)
         _json = self._serialize.body(_dataset, "DatasetResource")
 
-        request = build_create_or_update_dataset_request(
+        _request = build_create_or_update_dataset_request(
             dataset_name=dataset_name,
             if_match=if_match,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._create_or_update_dataset_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -341,11 +337,9 @@ class DatasetOperations:
             deserialized = self._deserialize("DatasetResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _create_or_update_dataset_initial.metadata = {"url": "/datasets/{datasetName}"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def begin_create_or_update_dataset(
@@ -399,7 +393,7 @@ class DatasetOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("DatasetResource", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -422,8 +416,6 @@ class DatasetOperations:
                 deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update_dataset.metadata = {"url": "/datasets/{datasetName}"}
 
     @distributed_trace
     def get_dataset(
@@ -456,23 +448,22 @@ class DatasetOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[Optional[_models.DatasetResource]] = kwargs.pop("cls", None)
 
-        request = build_get_dataset_request(
+        _request = build_get_dataset_request(
             dataset_name=dataset_name,
             if_none_match=if_none_match,
             api_version=api_version,
-            template_url=self.get_dataset.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -486,11 +477,9 @@ class DatasetOperations:
             deserialized = self._deserialize("DatasetResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_dataset.metadata = {"url": "/datasets/{datasetName}"}
+        return deserialized  # type: ignore
 
     def _delete_dataset_initial(  # pylint: disable=inconsistent-return-statements
         self, dataset_name: str, **kwargs: Any
@@ -509,22 +498,21 @@ class DatasetOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_dataset_request(
+        _request = build_delete_dataset_request(
             dataset_name=dataset_name,
             api_version=api_version,
-            template_url=self._delete_dataset_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -534,9 +522,7 @@ class DatasetOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_dataset_initial.metadata = {"url": "/datasets/{datasetName}"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_delete_dataset(self, dataset_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -577,7 +563,7 @@ class DatasetOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -600,8 +586,6 @@ class DatasetOperations:
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete_dataset.metadata = {"url": "/datasets/{datasetName}"}
-
     def _rename_dataset_initial(  # pylint: disable=inconsistent-return-statements
         self, dataset_name: str, new_name: Optional[str] = None, **kwargs: Any
     ) -> None:
@@ -623,24 +607,23 @@ class DatasetOperations:
         _request = _models.ArtifactRenameRequest(new_name=new_name)
         _json = self._serialize.body(_request, "ArtifactRenameRequest")
 
-        request = build_rename_dataset_request(
+        _request = build_rename_dataset_request(
             dataset_name=dataset_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._rename_dataset_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -650,9 +633,7 @@ class DatasetOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _rename_dataset_initial.metadata = {"url": "/datasets/{datasetName}/rename"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_rename_dataset(self, dataset_name: str, new_name: Optional[str] = None, **kwargs: Any) -> LROPoller[None]:
@@ -698,7 +679,7 @@ class DatasetOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -720,5 +701,3 @@ class DatasetOperations:
                 deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_rename_dataset.metadata = {"url": "/datasets/{datasetName}/rename"}

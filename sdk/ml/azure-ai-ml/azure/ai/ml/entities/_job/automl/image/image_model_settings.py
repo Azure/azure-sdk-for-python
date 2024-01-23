@@ -24,6 +24,7 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 class ImageModelDistributionSettings(RestTranslatableMixin):
     """Model settings for all AutoML Image Verticals.
+    Please do not instantiate directly. Use the child classes instead.
 
     :param advanced_settings: Settings for advanced scenarios.
     :type advanced_settings: str
@@ -314,6 +315,15 @@ class ImageModelSettingsClassification(ImageModelDistributionSettings):
      1 for weighted loss with sqrt.(class_weights). 2 for weighted loss with class_weights. Must be
      0 or 1 or 2.
     :type weighted_loss: int
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_automl_image.py
+            :start-after: [START automl.automl_image_job.image_classification_model_settings]
+            :end-before: [END automl.automl_image_job.image_classification_model_settings]
+            :language: python
+            :dedent: 8
+            :caption: Defining the automl image classification model settings.
     """
 
     def __init__(
@@ -632,6 +642,13 @@ class ImageModelSettingsObjectDetection(ImageModelDistributionSettings):
     :param log_validation_loss: indicates whether or not to log validation loss
     :type log_validation_loss: str or
      ~azure.mgmt.machinelearningservices.models.LogValidationLoss
+
+    .. literalinclude:: ../samples/ml_samples_automl_image.py
+            :start-after: [START automl.automl_image_job.image_object_detection_model_settings]
+            :end-before: [END automl.automl_image_job.image_object_detection_model_settings]
+            :language: python
+            :dedent: 8
+            :caption: Defining the automl image object detection or instance segmentation model settings.
     """
 
     def __init__(

@@ -43,6 +43,18 @@ class MetricThreshold(RestTranslatableMixin):
 
 @experimental
 class NumericalDriftMetrics(RestTranslatableMixin):
+    """Numerical Drift Metrics
+
+    :param jensen_shannon_distance: The Jensen-Shannon distance between the two distributions
+    :paramtype jensen_shannon_distance: float
+    :param normalized_wasserstein_distance: The normalized Wasserstein distance between the two distributions
+    :paramtype normalized_wasserstein_distance: float
+    :param population_stability_index: The population stability index between the two distributions
+    :paramtype population_stability_index: float
+    :param two_sample_kolmogorov_smirnov_test: The two sample Kolmogorov-Smirnov test between the two distributions
+    :paramtype two_sample_kolmogorov_smirnov_test: float
+    """
+
     def __init__(
         self,
         *,
@@ -108,6 +120,16 @@ class NumericalDriftMetrics(RestTranslatableMixin):
 
 @experimental
 class CategoricalDriftMetrics(RestTranslatableMixin):
+    """Categorical Drift Metrics
+
+    :param jensen_shannon_distance: The Jensen-Shannon distance between the two distributions
+    :paramtype jensen_shannon_distance: float
+    :param population_stability_index: The population stability index between the two distributions
+    :paramtype population_stability_index: float
+    :param pearsons_chi_squared_test: The Pearson's Chi-Squared test between the two distributions
+    :paramtype pearsons_chi_squared_test: float
+    """
+
     def __init__(
         self,
         *,
@@ -164,20 +186,10 @@ class CategoricalDriftMetrics(RestTranslatableMixin):
 class DataDriftMetricThreshold(MetricThreshold):
     """Data drift metric threshold
 
-    :param applicable_feature_type: The feature type of the metric threshold
-    :type applicable_feature_type: Literal[
-        ~azure.ai.ml.constants.MonitorFeatureType.CATEGORICAL
-        , ~azure.ai.ml.constants.MonitorFeatureType.MonitorFeatureType.NUMERICAL]
-    :param metric_name: The metric to calculate
-    :type metric_name: Literal[
-        MonitorMetricName.JENSEN_SHANNON_DISTANCE
-        , ~azure.ai.ml.constants.MonitorMetricName.NORMALIZED_WASSERSTEIN_DISTANCE
-        , ~azure.ai.ml.constants.MonitorMetricName.POPULATION_STABILITY_INDEX
-        , ~azure.ai.ml.constants.MonitorMetricName.TWO_SAMPLE_KOLMOGOROV_SMIRNOV_TEST
-        , ~azure.ai.ml.constants.MonitorMetricName.PEARSONS_CHI_SQUARED_TEST]
-    :param threshold: The threshold value. If None, a default value will be set
-        depending on the selected metric.
-    :type threshold: float
+    :param numerical: Numerical drift metrics
+    :paramtype numerical: ~azure.ai.ml.entities.NumericalDriftMetrics
+    :param categorical: Categorical drift metrics
+    :paramtype categorical: ~azure.ai.ml.entities.CategoricalDriftMetrics
     """
 
     def __init__(
@@ -252,20 +264,10 @@ class DataDriftMetricThreshold(MetricThreshold):
 class PredictionDriftMetricThreshold(MetricThreshold):
     """Prediction drift metric threshold
 
-    :param applicable_feature_type: The feature type of the metric threshold
-    :type applicable_feature_type: Literal[
-        ~azure.ai.ml.constants.MonitorFeatureType.CATEGORICAL
-        , ~azure.ai.ml.constants.MonitorFeatureType.MonitorFeatureType.NUMERICAL]
-    :param metric_name: The metric to calculate
-    :type metric_name: Literal[
-        ~azure.ai.ml.constants.MonitorMetricName.JENSEN_SHANNON_DISTANCE
-        , ~azure.ai.ml.constants.MonitorMetricName.NORMALIZED_WASSERSTEIN_DISTANCE
-        , ~azure.ai.ml.constants.MonitorMetricName.POPULATION_STABILITY_INDEX
-        , ~azure.ai.ml.constants.MonitorMetricName.TWO_SAMPLE_KOLMOGOROV_SMIRNOV_TEST
-        , ~azure.ai.ml.constants.MonitorMetricName.PEARSONS_CHI_SQUARED_TEST]
-    :param threshold: The threshold value. If None, a default value will be set
-        depending on the selected metric.
-    :type threshold: float
+    :param numerical: Numerical drift metrics
+    :paramtype numerical: ~azure.ai.ml.entities.NumericalDriftMetrics
+    :param categorical: Categorical drift metrics
+    :paramtype categorical: ~azure.ai.ml.entities.CategoricalDriftMetrics
     """
 
     def __init__(
@@ -340,6 +342,16 @@ class PredictionDriftMetricThreshold(MetricThreshold):
 
 @experimental
 class DataQualityMetricsNumerical(RestTranslatableMixin):
+    """Data Quality Numerical Metrics
+
+    :param null_value_rate: The null value rate
+    :paramtype null_value_rate: float
+    :param data_type_error_rate: The data type error rate
+    :paramtype data_type_error_rate: float
+    :param out_of_bounds_rate: The out of bounds rate
+    :paramtype out_of_bounds_rate: float
+    """
+
     def __init__(
         self, *, null_value_rate: float = None, data_type_error_rate: float = None, out_of_bounds_rate: float = None
     ):
@@ -376,11 +388,11 @@ class DataQualityMetricsNumerical(RestTranslatableMixin):
         data_type_error_rate_val = None
         out_of_bounds_rate_val = None
         for thresholds in obj:
-            if thresholds.metric == "nullValueRate":
+            if thresholds.metric in ("NullValueRate" "nullValueRate"):
                 null_value_rate_val = thresholds.threshold.value
-            if thresholds.metric == "dataTypeErrorRate":
+            if thresholds.metric in ("DataTypeErrorRate", "dataTypeErrorRate"):
                 data_type_error_rate_val = thresholds.threshold.value
-            if thresholds.metric == "outOfBoundsRate":
+            if thresholds.metric in ("OutOfBoundsRate", "outOfBoundsRate"):
                 out_of_bounds_rate_val = thresholds.threshold.value
         return cls(
             null_value_rate=null_value_rate_val,
@@ -403,6 +415,16 @@ class DataQualityMetricsNumerical(RestTranslatableMixin):
 
 @experimental
 class DataQualityMetricsCategorical(RestTranslatableMixin):
+    """Data Quality Categorical Metrics
+
+    :param null_value_rate: The null value rate
+    :paramtype null_value_rate: float
+    :param data_type_error_rate: The data type error rate
+    :paramtype data_type_error_rate: float
+    :param out_of_bounds_rate: The out of bounds rate
+    :paramtype out_of_bounds_rate: float
+    """
+
     def __init__(
         self, *, null_value_rate: float = None, data_type_error_rate: float = None, out_of_bounds_rate: float = None
     ):
@@ -439,11 +461,11 @@ class DataQualityMetricsCategorical(RestTranslatableMixin):
         data_type_error_rate_val = None
         out_of_bounds_rate_val = None
         for thresholds in obj:
-            if thresholds.metric == "nullValueRate":
+            if thresholds.metric in ("NullValueRate" "nullValueRate"):
                 null_value_rate_val = thresholds.threshold.value
-            if thresholds.metric == "dataTypeErrorRate":
+            if thresholds.metric in ("DataTypeErrorRate", "dataTypeErrorRate"):
                 data_type_error_rate_val = thresholds.threshold.value
-            if thresholds.metric == "outOfBoundsRate":
+            if thresholds.metric in ("OutOfBoundsRate", "outOfBoundsRate"):
                 out_of_bounds_rate_val = thresholds.threshold.value
         return cls(
             null_value_rate=null_value_rate_val,
@@ -468,19 +490,10 @@ class DataQualityMetricsCategorical(RestTranslatableMixin):
 class DataQualityMetricThreshold(MetricThreshold):
     """Data quality metric threshold
 
-    :param applicable_feature_type: The feature type of the metric threshold
-    :type applicable_feature_type: Literal[
-        ~azure.ai.ml.constants.MonitorFeatureType.CATEGORICAL
-        , ~azure.ai.ml.constants.MonitorFeatureType.MonitorFeatureType.NUMERICAL]
-    :param metric_name: The metric to calculate
-    :type metric_name: Literal[
-        ~azure.ai.ml.constants.MonitorMetricName.JENSEN_SHANNON_DISTANCE
-        , ~azure.ai.ml.constants.MonitorMetricName.NULL_VALUE_RATE
-        , ~azure.ai.ml.constants.MonitorMetricName.DATA_TYPE_ERROR_RATE
-        , ~azure.ai.ml.constants.MonitorMetricName.OUT_OF_BOUND_RATE]
-    :param threshold: The threshold value. If None, a default value will be set
-        depending on the selected metric.
-    :type threshold: float
+    :param numerical: Numerical data quality metrics
+    :paramtype numerical: ~azure.ai.ml.entities.DataQualityMetricsNumerical
+    :param categorical: Categorical data quality metrics
+    :paramtype categorical: ~azure.ai.ml.entities.DataQualityMetricsCategorical
     """
 
     def __init__(
@@ -557,7 +570,7 @@ class FeatureAttributionDriftMetricThreshold(MetricThreshold):
     """Feature attribution drift metric threshold
 
     :param normalized_discounted_cumulative_gain: The threshold value for metric.
-    :type normalized_discounted_cumulative_gain: float
+    :paramtype normalized_discounted_cumulative_gain: float
     """
 
     def __init__(self, *, normalized_discounted_cumulative_gain: float = None, threshold: float = None):
@@ -669,15 +682,15 @@ class CustomMonitoringMetricThreshold(MetricThreshold):
 class GenerationSafetyQualityMonitoringMetricThreshold(RestTranslatableMixin):  # pylint: disable=name-too-long
     """Generation safety quality metric threshold
 
-    :keyword groundedness: The groundedness metric threshold
+    :param groundedness: The groundedness metric threshold
     :paramtype groundedness: Dict[str, float]
-    :keyword relevance: The relevance metric threshold
+    :param relevance: The relevance metric threshold
     :paramtype relevance: Dict[str, float]
-    :keyword coherence: The coherence metric threshold
+    :param coherence: The coherence metric threshold
     :paramtype coherence: Dict[str, float]
-    :keyword fluency: The fluency metric threshold
+    :param fluency: The fluency metric threshold
     :paramtype fluency: Dict[str, float]
-    :keyword similarity: The similarity metric threshold
+    :param similarity: The similarity metric threshold
     :paramtype similarity: Dict[str, float]
     """
 

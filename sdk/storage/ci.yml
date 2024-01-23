@@ -35,7 +35,7 @@ extends:
     # https://github.com/Azure/azure-sdk-for-python/issues/17837
     MatrixConfigs:
       - Name: storage_ci_matrix
-        Path: eng/pipelines/templates/stages/platform-matrix-cryptography-dependency.json
+        Path: eng/pipelines/templates/stages/platform-matrix-excluding-pypy.json
         Selection: sparse
         GenerateVMJobs: true
     Artifacts:

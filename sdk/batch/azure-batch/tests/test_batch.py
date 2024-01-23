@@ -115,9 +115,9 @@ class TestBatch(AzureMgmtRecordedTestCase):
                     # self.assertEqual(batch_error.error.code, code)
                     assert batch_error.error.code == code
             except IndexError:
-                self.fail("Inner BatchErrorException expected but not exist")
+                pytest.fail("Inner BatchErrorException expected but not exist")
         except Exception as err:
-            self.fail("Expected CreateTasksError, instead got: {!r}".format(err))
+            pytest.fail("Expected CreateTasksError, instead got: {!r}".format(err))
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @StorageAccountPreparer(name_prefix="batch1", location=AZURE_LOCATION)

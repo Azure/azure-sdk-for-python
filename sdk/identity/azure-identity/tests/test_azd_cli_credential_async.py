@@ -16,6 +16,7 @@ from azure.identity._credentials.azd_cli import CLI_NOT_FOUND, NOT_LOGGED_IN
 from azure.core.exceptions import ClientAuthenticationError
 import pytest
 
+from helpers import INVALID_CHARACTERS
 from helpers_async import get_completed_future
 from test_azd_cli_credential import TEST_ERROR_OUTPUTS
 
@@ -37,6 +38,28 @@ async def test_no_scopes():
 
     with pytest.raises(ValueError):
         await AzureDeveloperCliCredential().get_token()
+
+
+async def test_invalid_tenant_id():
+    """Invalid tenant IDs should raise ValueErrors."""
+
+    for c in INVALID_CHARACTERS:
+        with pytest.raises(ValueError):
+            AzureDeveloperCliCredential(tenant_id="tenant" + c)
+
+        with pytest.raises(ValueError):
+            await AzureDeveloperCliCredential().get_token("scope", tenant_id="tenant" + c)
+
+
+async def test_invalid_scopes():
+    """Scopes with invalid characters should raise ValueErrors."""
+
+    for c in INVALID_CHARACTERS:
+        with pytest.raises(ValueError):
+            await AzureDeveloperCliCredential().get_token("scope" + c)
+
+        with pytest.raises(ValueError):
+            await AzureDeveloperCliCredential().get_token("scope", "scope2", "scope" + c)
 
 
 async def test_close():

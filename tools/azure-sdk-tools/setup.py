@@ -20,8 +20,6 @@ DEPENDENCIES = [
     "PyYAML",
     "urllib3",
     "tomli-w==1.0.0",
-    # gh tools
-    "PyGithub>=1.59.0",
 ]
 
 setup(
@@ -39,6 +37,9 @@ setup(
             "generate_package=packaging_tools.generate_package:generate_main",
             "generate_sdk=packaging_tools.generate_sdk:generate_main",
             "generate_client=packaging_tools.generate_client:generate_main",
+            "multiapi_combiner=packaging_tools.multiapi_combiner:combine",
+            "perfstress=devtools_testutils.perfstress_tests:run_perfstress_cmd",
+            "perfstressdebug=devtools_testutils.perfstress_tests:run_perfstress_debug_cmd",
             "sdk_generator=packaging_tools.sdk_generator:generate_main",
             "sdk_package=packaging_tools.sdk_package:generate_main",
             "sdk_build=ci_tools.build:build",
@@ -49,13 +50,15 @@ setup(
             "sdk_analyze_deps=ci_tools.dependency_analysis:analyze_dependencies",
             "sdk_find_invalid_versions=ci_tools.versioning.find_invalid_versions:find_invalid_versions_main",
             "sdk_verify_keywords=ci_tools.keywords_verify:entrypoint",
-            "multiapi_combiner=packaging_tools.multiapi_combiner:combine",
+            "systemperf=devtools_testutils.perfstress_tests:run_system_perfstress_tests_cmd"
         ],
     },
     extras_require={
         ":python_version>='3.5'": ["pytest-asyncio>=0.9.0"],
         ":python_version<'3.11'": ["tomli==2.0.1"],
-        "build": ["six", "setuptools", "pyparsing", "certifi"],
-        "conda": ["beautifulsoup4"]
+        "build": ["six", "setuptools", "pyparsing", "certifi", "cibuildwheel"],
+        "conda": ["beautifulsoup4"],
+        "systemperf": ["aiohttp>=3.0", "requests>=2.0", "tornado==6.0.3", "httpx>=0.21", "azure-core"],
+        "ghtools": ["PyGithub>=1.59.0"],
     },
 )

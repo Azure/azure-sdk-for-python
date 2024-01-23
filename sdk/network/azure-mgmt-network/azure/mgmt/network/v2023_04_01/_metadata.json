@@ -230,7 +230,6 @@
         "virtual_hub_route_table_v2_s": "VirtualHubRouteTableV2SOperations",
         "express_route_gateways": "ExpressRouteGatewaysOperations",
         "express_route_connections": "ExpressRouteConnectionsOperations",
-        "network_virtual_appliance_connections": "NetworkVirtualApplianceConnectionsOperations",
         "virtual_hub_bgp_connection": "VirtualHubBgpConnectionOperations",
         "virtual_hub_bgp_connections": "VirtualHubBgpConnectionsOperations",
         "virtual_hub_ip_configuration": "VirtualHubIpConfigurationOperations",

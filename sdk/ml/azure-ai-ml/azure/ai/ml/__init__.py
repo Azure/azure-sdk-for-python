@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-__path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
+__path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 import logging
 
@@ -24,6 +24,9 @@ from .entities._load_functions import (
     load_data,
     load_datastore,
     load_environment,
+    load_feature_set,
+    load_feature_store,
+    load_feature_store_entity,
     load_job,
     load_model,
     load_model_package,
@@ -58,6 +61,9 @@ __all__ = [
     "load_compute",
     "load_data",
     "load_datastore",
+    "load_feature_set",
+    "load_feature_store",
+    "load_feature_store_entity",
     "load_model",
     "load_environment",
     "load_job",

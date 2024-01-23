@@ -12,8 +12,8 @@ In the `receive` method of `EventHubConsumerClient`:
 If no partition id is specified, the checkpoint_store are used for load-balance and checkpoint.
 If partition id is specified, the checkpoint_store can only be used for checkpoint.
 """
+from typing import Dict
 import os
-from collections import defaultdict
 from azure.eventhub import EventHubConsumerClient
 from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
 
@@ -23,7 +23,7 @@ EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
 BLOB_CONTAINER_NAME = "your-blob-container-name"  # Please make sure the blob container resource exists.
 
-partition_recv_cnt_since_last_checkpoint = defaultdict(int)
+partition_recv_cnt_since_last_checkpoint: Dict[str, int] = {}
 checkpoint_event_cnt = 20
 
 

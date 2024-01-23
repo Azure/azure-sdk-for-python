@@ -98,7 +98,7 @@ class SessionContainer(object):
                 # session token for this request
                 alt_content_path = ""
                 alt_content_path_key = http_constants.HttpHeaders.AlternateContentPath
-                response_result_id_key = u"id"
+                response_result_id_key = "id"
                 response_result_id = None
                 if alt_content_path_key in response_headers:
                     alt_content_path = response_headers[http_constants.HttpHeaders.AlternateContentPath]
@@ -133,7 +133,7 @@ class SessionContainer(object):
             # update session token in collection rid to session token map
             if collection_rid in self.rid_to_session_token:
                 # we need to update the session tokens for 'this' collection
-                for id_ in parsed_tokens:
+                for id_ in parsed_tokens:  # pylint: disable=consider-using-dict-items
                     old_session_token = (
                         self.rid_to_session_token[collection_rid][id_]
                         if id_ in self.rid_to_session_token[collection_rid]

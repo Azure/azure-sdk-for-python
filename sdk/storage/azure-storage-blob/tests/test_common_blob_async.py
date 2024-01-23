@@ -3216,4 +3216,69 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         assert await v1_blob.exists(version_id=v2_props['version_id']) is False
         assert await blob_client.exists() is True
 
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_storage_account_audience_blob_service_client(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        self.bsc.list_containers()
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), credential=token_credential,
+            audience=f'https://{storage_account_name}.blob.core.windows.net'
+        )
+
+        # Assert
+        response = bsc.list_containers()
+        assert response is not None
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_storage_account_audience_blob_client(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = await self._create_block_blob()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        await blob.exists()
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        blob = BlobClient(
+            self.bsc.url, container_name=self.container_name, blob_name=blob_name,
+            credential=token_credential, audience=f'https://{storage_account_name}.blob.core.windows.net'
+        )
+
+        # Assert
+        response = await blob.exists()
+        assert response is not None
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_oauth_error_handling(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        # Arrange
+        from azure.identity.aio import ClientSecretCredential
+
+        # Generate an invalid credential
+        creds = ClientSecretCredential(
+            self.get_settings_value("TENANT_ID"),
+            self.get_settings_value("CLIENT_ID"),
+            self.get_settings_value("CLIENT_SECRET") + 'a'
+        )
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=creds, retry_total=0)
+        container = bsc.get_container_client('testing')
+
+        # Act
+        with pytest.raises(ClientAuthenticationError):
+            await container.exists()
 # ------------------------------------------------------------------------------

@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/preview/2022-12-01-preview/examples/VolumeGroups_Get_MaximumSet_Gen.json
+# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2023-01-01/examples/VolumeGroups_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

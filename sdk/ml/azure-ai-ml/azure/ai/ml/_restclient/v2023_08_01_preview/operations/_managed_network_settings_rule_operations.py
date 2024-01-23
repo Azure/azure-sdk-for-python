@@ -226,7 +226,7 @@ class ManagedNetworkSettingsRuleOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either OutboundRuleListResult or the result of
@@ -341,6 +341,7 @@ class ManagedNetworkSettingsRuleOperations(object):
         response_headers = {}
         if response.status_code == 202:
             response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+            response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
             
 
         if cls:
@@ -364,7 +365,7 @@ class ManagedNetworkSettingsRuleOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
         :param rule_name: Name of the workspace managed network outbound rule.
         :type rule_name: str
@@ -404,7 +405,7 @@ class ManagedNetworkSettingsRuleOperations(object):
                 return cls(pipeline_response, None, {})
 
 
-        if polling is True: polling_method = ARMPolling(lro_delay, **kwargs)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -433,7 +434,7 @@ class ManagedNetworkSettingsRuleOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
         :param rule_name: Name of the workspace managed network outbound rule.
         :type rule_name: str
@@ -562,7 +563,7 @@ class ManagedNetworkSettingsRuleOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
         :param rule_name: Name of the workspace managed network outbound rule.
         :type rule_name: str

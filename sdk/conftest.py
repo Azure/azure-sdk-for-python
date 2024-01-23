@@ -27,6 +27,7 @@ import os
 import pytest
 
 from devtools_testutils import environment_variables, recorded_test, test_proxy, variable_recorder
+from devtools_testutils.preparers import AbstractPreparer
 
 
 def pytest_configure(config):
@@ -51,17 +52,10 @@ def pytest_runtest_setup(item):
             pytest.skip("playback test only")
 
 
-try:
-    from azure_devtools.scenario_tests import AbstractPreparer
-
-    @pytest.fixture(scope="session", autouse=True)
-    def clean_cached_resources():
-        yield
-        AbstractPreparer._perform_pending_deletes()
-
-
-except ImportError:
-    pass
+@pytest.fixture(scope="session", autouse=True)
+def clean_cached_resources():
+    yield
+    AbstractPreparer._perform_pending_deletes()
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
@@ -74,3 +68,12 @@ def pytest_runtest_makereport(item, call) -> None:
         error = call.excinfo.value
         # set a test_error attribute on the item (available to other fixtures from request.node)
         setattr(item, "test_error", error)
+
+
+@pytest.fixture(autouse=True)
+def reduce_logging_volume(caplog, pytestconfig):
+    # Unless specific log level is requested, raise minimum log level in captured call logs to WARNING
+    # By default, all INFO-level logs from test execution are printed if tests fail, making output hard to read
+    if not (pytestconfig.getoption("log_level") or pytestconfig.getoption("log_cli_level")):
+        caplog.set_level(30)
+    yield

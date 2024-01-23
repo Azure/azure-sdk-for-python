@@ -45,6 +45,7 @@ from azure.ai.ml.entities._job.sweep.search_space import (
     SweepDistribution,
     Uniform,
 )
+from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationErrorType, ValidationException
 from azure.ai.ml.sweep import SweepJob
 
@@ -92,6 +93,8 @@ class Sweep(ParameterizedSweep, BaseNode):
         ~azure.ai.ml.UserIdentityConfiguration]
     :param queue_settings: The queue settings for the job.
     :type queue_settings: ~azure.ai.ml.entities.QueueSettings
+    :param resources: Compute Resource configuration for the job.
+    :type resources: Optional[Union[dict, ~azure.ai.ml.entities.ResourceConfiguration]]
     """
 
     def __init__(
@@ -117,6 +120,7 @@ class Sweep(ParameterizedSweep, BaseNode):
             Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
         queue_settings: Optional[QueueSettings] = None,
+        resources: Optional[Union[dict, JobResourceConfiguration]] = None,
         **kwargs,
     ) -> None:
         # TODO: get rid of self._job_inputs, self._job_outputs once we have general Input
@@ -142,6 +146,7 @@ class Sweep(ParameterizedSweep, BaseNode):
             early_termination=early_termination,
             search_space=search_space,
             queue_settings=queue_settings,
+            resources=resources,
         )
 
         self.identity = identity
@@ -223,6 +228,7 @@ class Sweep(ParameterizedSweep, BaseNode):
             "early_termination",
             "search_space",
             "queue_settings",
+            "resources",
         ]
 
     def _to_rest_object(self, **kwargs) -> dict:
@@ -310,6 +316,7 @@ class Sweep(ParameterizedSweep, BaseNode):
             outputs=self._job_outputs,
             identity=self.identity,
             queue_settings=self.queue_settings,
+            resources=self.resources,
         )
 
     @classmethod
