@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -955,7 +955,7 @@ class PhoneNumbersOperations:
         return ItemPaged(get_next, extract_data)
 
     def _search_available_phone_numbers_initial(
-        self, country_code: str, body: Union[_models.PhoneNumberSearchRequest, IO], **kwargs: Any
+        self, country_code: str, body: Union[_models.PhoneNumberSearchRequest, IO[bytes]], **kwargs: Any
     ) -> _models.PhoneNumberSearchResult:
         error_map = {
             401: ClientAuthenticationError,
@@ -1040,13 +1040,6 @@ class PhoneNumbersOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns PhoneNumberSearchResult
         :rtype:
          ~azure.core.polling.LROPoller[~azure.communication.phonenumbers.models.PhoneNumberSearchResult]
@@ -1055,7 +1048,7 @@ class PhoneNumbersOperations:
 
     @overload
     def begin_search_available_phone_numbers(
-        self, country_code: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, country_code: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.PhoneNumberSearchResult]:
         """Search for available phone numbers to purchase.
 
@@ -1064,17 +1057,10 @@ class PhoneNumbersOperations:
         :param country_code: The ISO 3166-2 country code, e.g. US. Required.
         :type country_code: str
         :param body: The phone number search request. Required.
-        :type body: IO
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns PhoneNumberSearchResult
         :rtype:
          ~azure.core.polling.LROPoller[~azure.communication.phonenumbers.models.PhoneNumberSearchResult]
@@ -1083,7 +1069,7 @@ class PhoneNumbersOperations:
 
     @distributed_trace
     def begin_search_available_phone_numbers(
-        self, country_code: str, body: Union[_models.PhoneNumberSearchRequest, IO], **kwargs: Any
+        self, country_code: str, body: Union[_models.PhoneNumberSearchRequest, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.PhoneNumberSearchResult]:
         """Search for available phone numbers to purchase.
 
@@ -1091,19 +1077,12 @@ class PhoneNumbersOperations:
 
         :param country_code: The ISO 3166-2 country code, e.g. US. Required.
         :type country_code: str
-        :param body: The phone number search request. Is either a PhoneNumberSearchRequest type or a IO
-         type. Required.
-        :type body: ~azure.communication.phonenumbers.models.PhoneNumberSearchRequest or IO
+        :param body: The phone number search request. Is either a PhoneNumberSearchRequest type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.communication.phonenumbers.models.PhoneNumberSearchRequest or IO[bytes]
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns PhoneNumberSearchResult
         :rtype:
          ~azure.core.polling.LROPoller[~azure.communication.phonenumbers.models.PhoneNumberSearchResult]
@@ -1231,7 +1210,7 @@ class PhoneNumbersOperations:
         return deserialized  # type: ignore
 
     def _purchase_phone_numbers_initial(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.PhoneNumberPurchaseRequest, IO], **kwargs: Any
+        self, body: Union[_models.PhoneNumberPurchaseRequest, IO[bytes]], **kwargs: Any
     ) -> None:
         error_map = {
             401: ClientAuthenticationError,
@@ -1303,13 +1282,6 @@ class PhoneNumbersOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1317,24 +1289,17 @@ class PhoneNumbersOperations:
 
     @overload
     def begin_purchase_phone_numbers(
-        self, body: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Purchases phone numbers.
 
         Purchases phone numbers.
 
         :param body: The phone number purchase request. Required.
-        :type body: IO
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1342,25 +1307,18 @@ class PhoneNumbersOperations:
 
     @distributed_trace
     def begin_purchase_phone_numbers(
-        self, body: Union[_models.PhoneNumberPurchaseRequest, IO], **kwargs: Any
+        self, body: Union[_models.PhoneNumberPurchaseRequest, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Purchases phone numbers.
 
         Purchases phone numbers.
 
         :param body: The phone number purchase request. Is either a PhoneNumberPurchaseRequest type or
-         a IO type. Required.
-        :type body: ~azure.communication.phonenumbers.models.PhoneNumberPurchaseRequest or IO
+         a IO[bytes] type. Required.
+        :type body: ~azure.communication.phonenumbers.models.PhoneNumberPurchaseRequest or IO[bytes]
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1520,7 +1478,10 @@ class PhoneNumbersOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     def _update_capabilities_initial(
-        self, phone_number: str, body: Optional[Union[_models.PhoneNumberCapabilitiesRequest, IO]] = None, **kwargs: Any
+        self,
+        phone_number: str,
+        body: Optional[Union[_models.PhoneNumberCapabilitiesRequest, IO[bytes]]] = None,
+        **kwargs: Any,
     ) -> _models.PurchasedPhoneNumber:
         error_map = {
             401: ClientAuthenticationError,
@@ -1609,13 +1570,6 @@ class PhoneNumbersOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns PurchasedPhoneNumber
         :rtype:
          ~azure.core.polling.LROPoller[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
@@ -1626,7 +1580,7 @@ class PhoneNumbersOperations:
     def begin_update_capabilities(
         self,
         phone_number: str,
-        body: Optional[IO] = None,
+        body: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any,
@@ -1639,17 +1593,10 @@ class PhoneNumbersOperations:
          encoded as %2B, e.g. +11234567890. Required.
         :type phone_number: str
         :param body: Defines the update capabilities request. Default value is None.
-        :type body: IO
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns PurchasedPhoneNumber
         :rtype:
          ~azure.core.polling.LROPoller[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
@@ -1658,7 +1605,10 @@ class PhoneNumbersOperations:
 
     @distributed_trace
     def begin_update_capabilities(
-        self, phone_number: str, body: Optional[Union[_models.PhoneNumberCapabilitiesRequest, IO]] = None, **kwargs: Any
+        self,
+        phone_number: str,
+        body: Optional[Union[_models.PhoneNumberCapabilitiesRequest, IO[bytes]]] = None,
+        **kwargs: Any,
     ) -> LROPoller[_models.PurchasedPhoneNumber]:
         """Updates the capabilities of a phone number.
 
@@ -1668,18 +1618,12 @@ class PhoneNumbersOperations:
          encoded as %2B, e.g. +11234567890. Required.
         :type phone_number: str
         :param body: Defines the update capabilities request. Is either a
-         PhoneNumberCapabilitiesRequest type or a IO type. Default value is None.
-        :type body: ~azure.communication.phonenumbers.models.PhoneNumberCapabilitiesRequest or IO
+         PhoneNumberCapabilitiesRequest type or a IO[bytes] type. Default value is None.
+        :type body: ~azure.communication.phonenumbers.models.PhoneNumberCapabilitiesRequest or
+         IO[bytes]
         :keyword content_type: Body Parameter content-type. Known values are:
          'application/merge-patch+json'. Default value is None.
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns PurchasedPhoneNumber
         :rtype:
          ~azure.core.polling.LROPoller[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
@@ -1864,13 +1808,6 @@ class PhoneNumbersOperations:
 
         :param phone_number: Phone number to be released, e.g. +11234567890. Required.
         :type phone_number: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2036,7 +1973,7 @@ class PhoneNumbersOperations:
 
     @overload
     def operator_information_search(
-        self, body: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.OperatorInformationResult:
         """Searches for number format and operator information for a given list of phone numbers.
 
@@ -2044,7 +1981,7 @@ class PhoneNumbersOperations:
 
         :param body: The phone number(s) whose number format and operator information should be
          searched. Required.
-        :type body: IO
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2055,15 +1992,15 @@ class PhoneNumbersOperations:
 
     @distributed_trace
     def operator_information_search(
-        self, body: Union[_models.OperatorInformationRequest, IO], **kwargs: Any
+        self, body: Union[_models.OperatorInformationRequest, IO[bytes]], **kwargs: Any
     ) -> _models.OperatorInformationResult:
         """Searches for number format and operator information for a given list of phone numbers.
 
         Searches for number format and operator information for a given list of phone numbers.
 
         :param body: The phone number(s) whose number format and operator information should be
-         searched. Is either a OperatorInformationRequest type or a IO type. Required.
-        :type body: ~azure.communication.phonenumbers.models.OperatorInformationRequest or IO
+         searched. Is either a OperatorInformationRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.communication.phonenumbers.models.OperatorInformationRequest or IO[bytes]
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
