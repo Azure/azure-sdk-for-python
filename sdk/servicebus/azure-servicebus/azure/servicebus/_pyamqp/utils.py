@@ -152,6 +152,3 @@ def amqp_symbol_value(value):
 
 def amqp_array_value(value):
     return {TYPE: AMQPTypes.array, VALUE: value}
-
-def amqp_timestamp_value(value):
-    return {TYPE: AMQPTypes.timestamp, VALUE: value}
