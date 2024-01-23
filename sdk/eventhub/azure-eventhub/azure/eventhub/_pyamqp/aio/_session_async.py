@@ -9,7 +9,7 @@ import uuid
 import logging
 import time
 import asyncio
-from typing import Optional, Union, List
+from typing import Optional, Union
 
 from ..constants import ConnectionState, SessionState, SessionTransferState, Role
 from ._sender_async import SenderLink

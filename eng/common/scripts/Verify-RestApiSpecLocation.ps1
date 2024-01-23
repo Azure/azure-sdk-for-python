@@ -210,7 +210,7 @@ function Verify-PackageVersion() {
 
         # Ignore the validation if the package is not GA version
         if ($version.IsPrerelease) {
-          Write-Host "ServiceDir:$ServiceDirectory, Package $($parsedPackage.PackageId) is marked with version $($parsedPackage.PackageVersion), the version is a prerelease version and the validation of spec location is ignored."
+          Write-Host "ServiceDir:$ServiceDirectory, Package $PackageName is marked with version $version, the version is a prerelease version and the validation of spec location is ignored."
           exit 0
         }
         $continueValidation = $true
@@ -257,7 +257,7 @@ try{
       }
     }
   }
-  elseif ($Language -eq "java" -or $Language -eq "js" -or $Language -eq "python" -or $Language -eq "go") {
+  elseif ($Language -eq "java" -or $Language -eq "javascript" -or $Language -eq "python" -or $Language -eq "go") {
     # for these languages we ignore the validation because they always use the latest spec from main branch to release SDK
     # mgmt plane packages: azure-core-management|azure-resourcemanager|azure-resourcemanager-advisor (java), azure-mgmt-devcenter (python), arm-advisor (js), armaad (go)
     if($PackageName -match "^(arm|azure-mgmt|azure-resourcemanager|azure-core-management)[-a-z]*$") {

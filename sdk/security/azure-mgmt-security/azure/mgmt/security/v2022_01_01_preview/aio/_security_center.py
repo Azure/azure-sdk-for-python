@@ -25,12 +25,12 @@ if TYPE_CHECKING:
 class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
     """API spec for Microsoft.Security (Azure Security Center) resource provider.
 
-    :ivar governance_rules: GovernanceRulesOperations operations
-    :vartype governance_rules:
-     azure.mgmt.security.v2022_01_01_preview.aio.operations.GovernanceRulesOperations
     :ivar governance_assignments: GovernanceAssignmentsOperations operations
     :vartype governance_assignments:
      azure.mgmt.security.v2022_01_01_preview.aio.operations.GovernanceAssignmentsOperations
+    :ivar governance_rules: GovernanceRulesOperations operations
+    :vartype governance_rules:
+     azure.mgmt.security.v2022_01_01_preview.aio.operations.GovernanceRulesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param base_url: Service URL. Default value is "https://management.azure.com".
@@ -52,11 +52,11 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.governance_rules = GovernanceRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.governance_assignments = GovernanceAssignmentsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-01-preview"
+        )
+        self.governance_rules = GovernanceRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-01-preview"
         )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:

@@ -14,13 +14,6 @@
 # /scripts/
 # /tools/
 
-################
-# Automation
-################
-
-# Git Hub integration and bot rules
-/.github/                                                            @jsquire @ronniegeraghty
-
 ###########
 # SDK
 ###########
@@ -172,6 +165,7 @@
 /sdk/eventgrid/                                                      @lmazuel @l0lawrence
 
 # PRLabel: %Image Analysis
+# ServiceLabel: %Image Analysis %Service Attention
 /sdk/vision/azure-ai-vision-imageanalysis/                           @dargilco @rhurey
 
 # PRLabel: %HDInsight
@@ -603,7 +597,7 @@
 #/<NotInRepo>/          @jfggdl
 
 # ServiceLabel: %Event Hubs %Service Attention
-#/<NotInRepo>/          @kasun04 @saglodha
+#/<NotInRepo>/          @kasun04
 
 # ServiceLabel: %Functions %Service Attention
 #/<NotInRepo>/          @ahmedelnably @fabiocav
@@ -619,9 +613,6 @@
 
 # ServiceLabel: %HPC Cache %Service Attention
 #/<NotInRepo>/          @romahamu @omzevall
-
-# ServiceLabel: %Image Analysis %Service Attention
-#/<NotInRepo>/          @dargilco @rhurey
 
 # ServiceLabel: %Import Export %Service Attention
 #/<NotInRepo>/          @madhurinms
@@ -783,7 +774,7 @@
 #/<NotInRepo>/          @chlahav
 
 # ServiceLabel: %Service Attention %Service Bus
-#/<NotInRepo>/          @saglodha @EldertGrootenboer
+#/<NotInRepo>/          @EldertGrootenboer
 
 # ServiceLabel: %Service Attention %Service Fabric
 #/<NotInRepo>/          @QingChenmsft @vaishnavk @juhacket

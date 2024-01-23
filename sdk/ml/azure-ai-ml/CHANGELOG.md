@@ -11,6 +11,8 @@
 
 ### Other Changes
 
+- Support for Python 3.12
+
 ## 1.13.0 (unreleased)
 
 ### Features Added
