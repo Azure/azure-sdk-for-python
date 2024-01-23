@@ -446,8 +446,6 @@ from ._models_py3 import NetworkSecurityGroupListResult
 from ._models_py3 import NetworkSecurityGroupResult
 from ._models_py3 import NetworkSecurityRulesEvaluationResult
 from ._models_py3 import NetworkVirtualAppliance
-from ._models_py3 import NetworkVirtualApplianceConnection
-from ._models_py3 import NetworkVirtualApplianceConnectionList
 from ._models_py3 import NetworkVirtualApplianceListResult
 from ._models_py3 import NetworkVirtualApplianceSiteListResult
 from ._models_py3 import NetworkVirtualApplianceSku
@@ -511,7 +509,6 @@ from ._models_py3 import PrivateLinkServicePropertiesVisibility
 from ._models_py3 import PrivateLinkServiceVisibility
 from ._models_py3 import Probe
 from ._models_py3 import PropagatedRouteTable
-from ._models_py3 import PropagatedRouteTableNfv
 from ._models_py3 import ProtocolConfiguration
 from ._models_py3 import PublicIPAddress
 from ._models_py3 import PublicIPAddressDnsSettings
@@ -547,8 +544,6 @@ from ._models_py3 import RouteMapRule
 from ._models_py3 import RouteTable
 from ._models_py3 import RouteTableListResult
 from ._models_py3 import RoutingConfiguration
-from ._models_py3 import RoutingConfigurationNfv
-from ._models_py3 import RoutingConfigurationNfvSubResource
 from ._models_py3 import RoutingIntent
 from ._models_py3 import RoutingPolicy
 from ._models_py3 import ScopeConnection
@@ -1362,8 +1357,6 @@ __all__ = [
     "NetworkSecurityGroupResult",
     "NetworkSecurityRulesEvaluationResult",
     "NetworkVirtualAppliance",
-    "NetworkVirtualApplianceConnection",
-    "NetworkVirtualApplianceConnectionList",
     "NetworkVirtualApplianceListResult",
     "NetworkVirtualApplianceSiteListResult",
     "NetworkVirtualApplianceSku",
@@ -1427,7 +1420,6 @@ __all__ = [
     "PrivateLinkServiceVisibility",
     "Probe",
     "PropagatedRouteTable",
-    "PropagatedRouteTableNfv",
     "ProtocolConfiguration",
     "PublicIPAddress",
     "PublicIPAddressDnsSettings",
@@ -1463,8 +1455,6 @@ __all__ = [
     "RouteTable",
     "RouteTableListResult",
     "RoutingConfiguration",
-    "RoutingConfigurationNfv",
-    "RoutingConfigurationNfvSubResource",
     "RoutingIntent",
     "RoutingPolicy",
     "ScopeConnection",

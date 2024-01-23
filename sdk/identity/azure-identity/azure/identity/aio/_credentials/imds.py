@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-from typing import Optional, TypeVar, Any
+from typing import Optional, Any
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.credentials import AccessToken
@@ -14,8 +14,6 @@ from .._internal.get_token_mixin import GetTokenMixin
 from .._internal.managed_identity_client import AsyncManagedIdentityClient
 from ..._internal import within_credential_chain
 from ..._credentials.imds import _get_request, _check_forbidden_response, PIPELINE_SETTINGS
-
-T = TypeVar("T", bound="ImdsCredential")
 
 
 class ImdsCredential(AsyncContextManager, GetTokenMixin):
@@ -29,7 +27,7 @@ class ImdsCredential(AsyncContextManager, GetTokenMixin):
             self._endpoint_available = None
         self._user_assigned_identity = "client_id" in kwargs or "identity_config" in kwargs
 
-    async def __aenter__(self: T) -> T:
+    async def __aenter__(self) -> "ImdsCredential":
         await self._client.__aenter__()
         return self
 

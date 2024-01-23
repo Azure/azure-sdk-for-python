@@ -527,11 +527,11 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 except HttpResponseError as error:
                     process_storage_error(error)
                 try:
-                    next_chunk = next(dl_tasks)
+                    for _ in range(0, len(done)):
+                        next_chunk = next(dl_tasks)
+                        running_futures.add(asyncio.ensure_future(downloader.process_chunk(next_chunk)))
                 except StopIteration:
                     break
-                else:
-                    running_futures.add(asyncio.ensure_future(downloader.process_chunk(next_chunk)))
 
             if running_futures:
                 # Wait for the remaining downloads to finish
@@ -683,11 +683,11 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             except HttpResponseError as error:
                 process_storage_error(error)
             try:
-                next_chunk = next(dl_tasks)
+                for _ in range(0, len(done)):
+                    next_chunk = next(dl_tasks)
+                    running_futures.add(asyncio.ensure_future(downloader.process_chunk(next_chunk)))
             except StopIteration:
                 break
-            else:
-                running_futures.add(asyncio.ensure_future(downloader.process_chunk(next_chunk)))
 
         if running_futures:
             # Wait for the remaining downloads to finish

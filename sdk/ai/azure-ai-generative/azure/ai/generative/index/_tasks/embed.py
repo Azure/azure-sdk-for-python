@@ -10,7 +10,7 @@ import pathlib
 import queue
 import time
 import traceback
-from typing import Iterator, Optional
+from typing import Iterator, List, Optional
 
 import pandas as pd
 from azure.ai.generative.index._documents import (
@@ -31,7 +31,7 @@ from azure.ai.generative.index._utils.logging import (
 logger = get_logger("embed")
 
 
-def read_chunks_into_documents(files: Iterator[pathlib.Path], chunk_format: str = "csv") -> Iterator[Document]:
+def read_chunks_into_documents(files: List[pathlib.Path], chunk_format: str = "csv") -> Iterator[Document]:
     """Reads chunks from files and yields documents."""
     # Append to list of texts and corresponding metadata
     file_max_chunk_len = 0

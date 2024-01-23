@@ -4,35 +4,131 @@
 # license information.
 #-------------------------------------------------------------------------
 from functools import partial
+import time
+from typing import Awaitable, Callable, Optional, Tuple, Union, Any
+
+from ..sasl import SASLAnonymousCredential
 
 from ..authentication import (
     _generate_sas_access_token,
-    SASTokenAuth,
-    JWTTokenAuth
+    AccessToken
 )
-from ..constants import AUTH_DEFAULT_EXPIRATION_SECONDS
+from ..constants import AUTH_DEFAULT_EXPIRATION_SECONDS, AUTH_TYPE_CBS, TOKEN_TYPE_JWT, TOKEN_TYPE_SASTOKEN
 
-
-async def _generate_sas_token_async(auth_uri, sas_name, sas_key, expiry_in=AUTH_DEFAULT_EXPIRATION_SECONDS):
+async def _generate_sas_token_async(
+        auth_uri: str,
+        sas_name: str,
+        sas_key: str,
+        expiry_in: float = AUTH_DEFAULT_EXPIRATION_SECONDS
+    ) -> AccessToken:
     return _generate_sas_access_token(auth_uri, sas_name, sas_key, expiry_in=expiry_in)
 
-
-class JWTTokenAuthAsync(JWTTokenAuth):
+class _CBSAuthAsync:
     # TODO:
     #  1. naming decision, suffix with Auth vs Credential
-    ...
+    auth_type = AUTH_TYPE_CBS
+
+    def __init__( # pylint: disable=unused-argument
+        self,
+        uri: str,
+        audience: str,
+        token_type: Union[str, bytes],
+        get_token: Callable[[], Awaitable[AccessToken]],
+        *,
+        expires_in: Optional[float] = AUTH_DEFAULT_EXPIRATION_SECONDS,
+        expires_on: Optional[float] = None,
+        **kwargs: Any
+    ):
+        """
+        CBS authentication using JWT tokens.
+
+        :param uri: The AMQP endpoint URI. This must be provided as
+         a decoded string.
+        :type uri: str
+        :param audience: The token audience field. For SAS tokens
+         this is usually the URI.
+        :type audience: str
+        :param get_token: The callback function used for getting and refreshing
+         tokens. It should return a valid jwt token each time it is called.
+        :type get_token: callable object
+        :param token_type: The type field of the token request.
+         Default value is `"jwt"`.
+        :type token_type: str
+
+        """
+        self.sasl = SASLAnonymousCredential()
+        self.uri = uri
+        self.audience = audience
+        self.token_type = token_type
+        self.get_token = get_token
+        self.expires_in = expires_in
+        self.expires_on = expires_on
+
+    @staticmethod
+    def _set_expiry(expires_in: Optional[float] = None, expires_on: Optional[float] = None) -> Tuple[float, float]:
+        if not expires_on and not expires_in:
+            raise ValueError("Must specify either 'expires_on' or 'expires_in'.")
+
+        expires_in_interval: float = 0 if expires_in is None else expires_in
+        expires_on_time: float = 0 if expires_on is None else expires_on
+
+        if not expires_on and expires_in:
+            expires_on_time = time.time() + expires_in
+        elif expires_on and not expires_in:
+            expires_in_interval = expires_on - time.time()
+            if expires_in_interval < 1:
+                raise ValueError("Token has already expired.")
+
+        return expires_in_interval, expires_on_time
 
 
-class SASTokenAuthAsync(SASTokenAuth):
+class JWTTokenAuthAsync(_CBSAuthAsync):
     # TODO:
     #  1. naming decision, suffix with Auth vs Credential
     def __init__(
         self,
-        uri,
-        audience,
-        username,
-        password,
-        **kwargs
+        uri: str,
+        audience: str,
+        get_token: Callable[[], Awaitable[AccessToken]],
+        *,
+        token_type: Union[str, bytes] = TOKEN_TYPE_JWT,
+        **kwargs: Any
+    ):
+        """
+        CBS authentication using JWT tokens.
+
+        :param uri: The AMQP endpoint URI. This must be provided as
+         a decoded string.
+        :type uri: str
+        :param audience: The token audience field. For SAS tokens
+         this is usually the URI.
+        :type audience: str
+        :param get_token: The callback function used for getting and refreshing
+         tokens. It should return a valid jwt token each time it is called.
+        :type get_token: callable object
+        :param token_type: The type field of the token request.
+         Default value is `"jwt"`.
+        :type token_type: str or bytes
+
+        """
+        super().__init__(uri, audience, token_type, get_token)
+        self.get_token = get_token
+
+
+class SASTokenAuthAsync(_CBSAuthAsync):
+    # TODO:
+    #  1. naming decision, suffix with Auth vs Credential
+    def __init__(
+        self,
+        uri: str,
+        audience: str,
+        username: str,
+        password: str,
+        *,
+        expires_in: Optional[float] = AUTH_DEFAULT_EXPIRATION_SECONDS,
+        expires_on: Optional[float] = None,
+        token_type: Union[str, bytes] = TOKEN_TYPE_SASTOKEN,
+        **kwargs: Any
     ):
         """
         CBS authentication using SAS tokens.
@@ -60,11 +156,15 @@ class SASTokenAuthAsync(SASTokenAuth):
         :type token_type: str
 
         """
-        super(SASTokenAuthAsync, self).__init__(
+        self.username = username
+        self.password = password
+        expires_in, expires_on = self._set_expiry(expires_in, expires_on)
+        self.get_token = partial(_generate_sas_token_async, uri, username, password, expires_in)
+        super().__init__(
             uri,
             audience,
-            username,
-            password,
-            **kwargs
+            token_type,
+            self.get_token,
+            expires_in=expires_in,
+            expires_on=expires_on
         )
-        self.get_token = partial(_generate_sas_token_async, uri, username, password, self.expires_in)

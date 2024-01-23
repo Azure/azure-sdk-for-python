@@ -11,29 +11,31 @@ try:
     import time
     from enum import Enum
     from functools import lru_cache
-    from typing import Dict, List, Tuple, Any, Union
+    from typing import Dict, List, Tuple, Any, Union, Optional
     from collections import defaultdict
     from azure.ai.resources.entities import BaseConnection
+    from azure.ai.generative.constants._common import USER_AGENT_HEADER_KEY
     from azure.identity import DefaultAzureCredential
     from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, ActivityLogger
     from azure.core.tracing.decorator import distributed_trace
+    from azure.ai.generative._user_agent import USER_AGENT
 except ImportError as e:
     print("In order to use qa, please install the 'qa_generation' extra of azure-ai-generative")
     raise e
 
 try:
-    import pkg_resources
+    import pkg_resources  # type: ignore[import]
     openai_version_str = pkg_resources.get_distribution("openai").version
     openai_version = pkg_resources.parse_version(openai_version_str)
     import openai
     if openai_version >= pkg_resources.parse_version("1.0.0"):
-        _RETRY_ERRORS = (
+        _RETRY_ERRORS: Tuple = (
             openai.APIConnectionError ,
             openai.APIError,
             openai.APIStatusError
         )
     else:
-        _RETRY_ERRORS = (
+        _RETRY_ERRORS: Tuple = (  # type: ignore[no-redef]
             openai.error.ServiceUnavailableError,
             openai.error.APIError,
             openai.error.RateLimitError,
@@ -64,13 +66,15 @@ def _completion_with_retries(*args, **kwargs):
                     client = AzureOpenAI(
                         azure_endpoint = kwargs["api_base"], 
                         api_key=kwargs["api_key"],  
-                        api_version=kwargs["api_version"]
+                        api_version=kwargs["api_version"],
+                        default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
                     )
                     response = client.chat.completions.create(messages=kwargs["messages"], model=kwargs["deployment_id"], temperature=kwargs["temperature"], max_tokens=kwargs["max_tokens"])
                 else:
                     from openai import OpenAI
                     client = OpenAI(
-                        api_key=kwargs["api_key"],  
+                        api_key=kwargs["api_key"],
+                        default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},  
                     )
                     response = client.chat.completions.create(messages=kwargs["messages"], model=kwargs["model"], temperature=kwargs["temperature"], max_tokens=kwargs["max_tokens"])
                 return response.choices[0].message.content, dict(response.usage)
@@ -97,13 +101,15 @@ async def _completion_with_retries_async(*args, **kwargs):
                     client = AsyncAzureOpenAI(
                         azure_endpoint = kwargs["api_base"], 
                         api_key=kwargs["api_key"],  
-                        api_version=kwargs["api_version"]
+                        api_version=kwargs["api_version"],
+                        default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
                     )
                     response = await client.chat.completions.create(messages=kwargs["messages"], model=kwargs["deployment_id"], temperature=kwargs["temperature"], max_tokens=kwargs["max_tokens"])
                 else:
                     from openai import AsyncOpenAI
                     client = AsyncOpenAI(
-                        api_key=kwargs["api_key"],  
+                        api_key=kwargs["api_key"],
+                        default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
                     )
                     response = await client.chat.completions.create(messages=kwargs["messages"], model=kwargs["model"], temperature=kwargs["temperature"], max_tokens=kwargs["max_tokens"])
                 return response.choices[0].message.content, dict(response.usage)
@@ -166,10 +172,10 @@ class QADataGenerator:
 
         activity_logger.update_info()
 
-    def _validate(self, qa_type: QAType, num_questions: int):
+    def _validate(self, qa_type: QAType, num_questions: Optional[int]):
         if qa_type == QAType.SUMMARY and num_questions is not None:
             raise ValueError("num_questions unsupported for Summary QAType")
-        if qa_type != QAType.SUMMARY and num_questions <= 0:
+        if qa_type != QAType.SUMMARY and num_questions <= 0:  # type: ignore[operator]
             raise ValueError("num_questions must be an integer greater than zero")
 
     def _get_messages_for_qa_type(self, qa_type: QAType, text: str, num_questions: int) -> List:
@@ -183,7 +189,7 @@ class QADataGenerator:
         }
         filename = template_filename[qa_type]
         messages = self._get_messages_from_file(filename)
-        input_variables = {"text": text}
+        input_variables: Dict[str, Any] = {"text": text}
         if qa_type == QAType.SUMMARY:
             input_variables["num_words"] = 100
         else:
@@ -277,7 +283,7 @@ class QADataGenerator:
             answer_key = "ground_truth"
             chat_history_key = field_mapping.get("chat_history_key", "chat_history")
             for qs_and_as in results:
-                chat_history = []
+                chat_history: List = []
                 for question, answer in qs_and_as: 
                     data_dict[chat_history_key].append(list(chat_history))
                     if qa_type == QAType.CONVERSATION:
@@ -315,10 +321,11 @@ class QADataGenerator:
 
     @distributed_trace
     @monitor_with_activity(logger, "QADataGenerator.Generate", ActivityType.INTERNALCALL)
-    def generate(self, text: str, qa_type: QAType, num_questions: int = None) -> Dict:
-        self._validate(qa_type, num_questions)
+    def generate(self, text: str, qa_type: QAType, num_questions: Optional[int] = None) -> Dict:
+        self._validate(qa_type, num_questions)  
+        validated_num_questions: int = num_questions  # type: ignore[assignment]
         content, token_usage = _completion_with_retries(
-            messages=self._get_messages_for_qa_type(qa_type, text, num_questions),
+            messages=self._get_messages_for_qa_type(qa_type, text, validated_num_questions),
             **self._chat_completion_params,
         )
         questions, answers = self._parse_qa_from_response(content)
@@ -345,10 +352,11 @@ class QADataGenerator:
 
     @distributed_trace
     @monitor_with_activity(logger, "QADataGenerator.GenerateAsync", ActivityType.INTERNALCALL)
-    async def generate_async(self, text: str, qa_type: QAType, num_questions: int = None) -> Dict:
+    async def generate_async(self, text: str, qa_type: QAType, num_questions: Optional[int] = None) -> Dict:
         self._validate(qa_type, num_questions)
+        validated_num_questions: int = num_questions  # type: ignore[assignment]
         content, token_usage = await _completion_with_retries_async(
-            messages=self._get_messages_for_qa_type(qa_type, text, num_questions),
+            messages=self._get_messages_for_qa_type(qa_type, text, validated_num_questions),
             **self._chat_completion_params,
         )
         questions, answers = self._parse_qa_from_response(content)

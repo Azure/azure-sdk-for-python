@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 
 from ._models import AuthorizationRule
-from ._models import CorrelationFilter
 from ._models import CreateQueueBody
 from ._models import CreateQueueBodyContent
 from ._models import CreateRuleBody
@@ -55,7 +54,8 @@ from ._enums import MessagingSku
 from ._enums import NamespaceType
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
-from ._patch import patch_sdk as _patch_sdk
+# manually delete imports from generated models and import directly from patch for correct typing
+from ._patch import patch_sdk as _patch_sdk, CorrelationFilter, KeyObjectValue
 
 __all__ = [
     "AuthorizationRule",
@@ -70,6 +70,7 @@ __all__ = [
     "CreateTopicBodyContent",
     "EmptyRuleAction",
     "FalseFilter",
+    "KeyObjectValue",
     "KeyValue",
     "MessageCountDetails",
     "NamespaceProperties",

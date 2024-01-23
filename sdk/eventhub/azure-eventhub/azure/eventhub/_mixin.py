@@ -6,10 +6,11 @@
 from typing import (
     Any,
     Optional,
-    List
+    List,
+    Tuple
 )
 
-class DictMixin(object):
+class DictMixin():
     def __setitem__(self, key: str, item: Any) -> None:
         self.__dict__[key] = item
 
@@ -57,13 +58,13 @@ class DictMixin(object):
     def update(self, *args: Any, **kwargs: Any) -> None:
         return self.__dict__.update(*args, **kwargs)
 
-    def keys(self) -> List:
+    def keys(self) -> List[str]:
         return [k for k in self.__dict__ if not k.startswith("_")]
 
-    def values(self) -> List:
+    def values(self) -> List[Any]:
         return [v for k, v in self.__dict__.items() if not k.startswith("_")]
 
-    def items(self) -> List:
+    def items(self) -> List[Tuple[str, Any]]:
         return [(k, v) for k, v in self.__dict__.items() if not k.startswith("_")]
 
     def get(self, key: str, default: Optional[Any]=None) -> Any:

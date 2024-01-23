@@ -48,8 +48,8 @@ class _ConnectionMode(Enum):
     SeparateConnection = 2
 
 
-class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attributes
-    def __init__(self, **kwargs):
+class _SharedConnectionManager:  # pylint:disable=too-many-instance-attributes
+    def __init__(self, **kwargs: Any):
         self._lock = Lock()
         self._conn: Union[Connection, uamqp_Connection] = None
 
@@ -106,7 +106,7 @@ class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attr
                 self._conn = None
 
 
-class _SeparateConnectionManager(object):
+class _SeparateConnectionManager:
     def __init__(self, **kwargs):
         pass
 

@@ -7,7 +7,7 @@ from typing import Iterable, Dict, Any, Union, Optional
 from abc import abstractmethod
 
 
-class CheckpointStore(object):
+class CheckpointStore:
     """CheckpointStore deals with the interaction with the chosen storage service.
 
     It can list and claim partition ownerships as well as list and save checkpoints.

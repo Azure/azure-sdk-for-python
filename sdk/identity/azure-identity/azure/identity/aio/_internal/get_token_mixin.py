@@ -15,7 +15,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class GetTokenMixin(abc.ABC):
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         self._last_request_time = 0
 
         # https://github.com/python/mypy/issues/5887
