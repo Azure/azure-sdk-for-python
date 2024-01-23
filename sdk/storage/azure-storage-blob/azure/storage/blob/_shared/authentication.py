@@ -35,6 +35,11 @@ def _wrap_exception(ex, desired_type):
         msg = ex.args[0]
     return desired_type(msg)
 
+def replace_all(text, dictionary):
+    for k, v in dictionary.items():
+        text = text.replace(k, v)
+    return text
+
 def first_pass_transform(string):
     ret = ""
     for c in string:
@@ -53,8 +58,8 @@ def second_pass_transform(string):
 
 def custom_compare_function(lhs, rhs):
     # First transform
-    lhs_transformed = first_pass_transform(lhs)
-    rhs_transformed = first_pass_transform(rhs)
+    lhs_transformed = replace_all(lhs, {'_':'\x00', '-':'' })
+    rhs_transformed = replace_all(rhs, {'_':'\x00', '-':'' })
     if lhs_transformed != rhs_transformed:
         if lhs_transformed < rhs_transformed:
             return -1
@@ -64,8 +69,8 @@ def custom_compare_function(lhs, rhs):
             pass
 
     # Second transform
-    lhs_transformed_2 = second_pass_transform(lhs)
-    rhs_transformed_2 = second_pass_transform(rhs)
+    lhs_transformed_2 = lhs.replace('-', '\x7f')
+    rhs_transformed_2 = rhs.replace('-', '\x7f')
     if lhs_transformed_2 != rhs_transformed_2:
         if lhs_transformed_2 < rhs_transformed_2:
             return -1
@@ -78,7 +83,6 @@ def custom_compare_function(lhs, rhs):
 # This method attempts to emulate the sorting done by the service
 def _storage_header_sort(input_headers: List[Tuple[str, str]]) -> List[Tuple[str, str]]:
     # Define the custom alphabet for weights
-    # custom_weights = "-!#$%&*.^_|~+\"\'(),/`~0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]abcdefghijklmnopqrstuvwxyz{}"
 
     # Build dict of tuples and list of keys
     header_dict = {}
