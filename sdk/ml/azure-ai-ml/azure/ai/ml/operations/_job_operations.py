@@ -403,8 +403,8 @@ class JobOperations(_ScopeDependentOperations):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/ml_samples_misc.py
-                :start-after: [START job_operations_cancel]
-                :end-before: [END job_operations_cancel]
+                :start-after: [START job_operations_begin_cancel]
+                :end-before: [END job_operations_begin_cancel]
                 :language: python
                 :dedent: 8
                 :caption: Canceling the job named "iris-dataset-job-1" and checking the poller for status.

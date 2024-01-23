@@ -57,10 +57,10 @@ class MiscConfigurationOptions(object):
         retrieved_job = ml_client.jobs.get(job_name)
         # [END job_operations_get]
 
-        # [START job_operations_cancel]
+        # [START job_operations_begin_cancel]
         cancel_poller = ml_client.jobs.begin_cancel(job_name)
         print(cancel_poller.result())
-        # [END job_operations_cancel]
+        # [END job_operations_begin_cancel]
 
         # [START job_operations_validate]
         from azure.ai.ml import load_job
