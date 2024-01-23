@@ -165,6 +165,7 @@
 /sdk/eventgrid/                                                      @lmazuel @l0lawrence
 
 # PRLabel: %Image Analysis
+# ServiceLabel: %Image Analysis %Service Attention
 /sdk/vision/azure-ai-vision-imageanalysis/                           @dargilco @rhurey
 
 # PRLabel: %HDInsight
@@ -612,9 +613,6 @@
 
 # ServiceLabel: %HPC Cache %Service Attention
 #/<NotInRepo>/          @romahamu @omzevall
-
-# ServiceLabel: %Image Analysis %Service Attention
-#/<NotInRepo>/          @dargilco @rhurey
 
 # ServiceLabel: %Import Export %Service Attention
 #/<NotInRepo>/          @madhurinms
