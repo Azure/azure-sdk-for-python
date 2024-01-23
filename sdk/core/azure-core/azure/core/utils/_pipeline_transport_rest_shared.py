@@ -334,7 +334,7 @@ def _parts_helper(
     return responses
 
 
-def _format_data_helper(data: FileType) -> Union[Tuple[None, str], Tuple[Optional[str], FileContent, str]]:
+def _format_data_helper(data: "FileType") -> Union[Tuple[None, str], Tuple[Optional[str], "FileContent", str]]:
     """Helper for _format_data.
 
     Format field data according to whether it is a stream or
@@ -350,10 +350,10 @@ def _format_data_helper(data: FileType) -> Union[Tuple[None, str], Tuple[Optiona
     if isinstance(data, tuple):
         if len(data) == 2:
             # Filename and file bytes are included
-            filename, file_bytes = cast(Tuple[Optional[str], FileContent], data)
+            filename, file_bytes = cast(Tuple[Optional[str], "FileContent"], data)
         elif len(data) == 3:
             # Filename, file object, and content_type are included
-            filename, file_bytes, content_type = cast(Tuple[Optional[str], FileContent, str], data)
+            filename, file_bytes, content_type = cast(Tuple[Optional[str], "FileContent", str], data)
         else:
             raise ValueError(
                 "Unexpected data format. Expected file, or tuple of (filename, file_bytes) or "
