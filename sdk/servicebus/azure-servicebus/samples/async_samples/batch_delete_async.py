@@ -37,7 +37,7 @@ async def run():
 
         receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE)
         async with receiver:
-            received_msgs = await receiver.delete_batch_messages(max_message_count=100, enqueued_time_older_than_utc=time)
+            received_msgs = await receiver.delete_batch_messages(max_message_count=10, enqueued_time_older_than_utc=time)
             print(received_msgs)
 
         print("Receive is done.")
