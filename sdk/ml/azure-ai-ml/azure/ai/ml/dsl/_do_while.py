@@ -1,11 +1,18 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from typing import Dict, Optional, Union
+
+from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._builders.do_while import DoWhile
+from azure.ai.ml.entities._builders.pipeline import Pipeline
+from azure.ai.ml.entities._inputs_outputs import Output
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput
 
 
-def do_while(body, mapping, max_iteration_count: int, condition=None):
+def do_while(
+    body: Union[Pipeline, Command], mapping: Dict, max_iteration_count: int, condition: Optional[Output] = None
+) -> DoWhile:
     """Build a do_while node by specifying the loop body, output-input mapping, and termination condition.
 
     .. remarks::
@@ -63,7 +70,7 @@ def do_while(body, mapping, max_iteration_count: int, condition=None):
     )
     do_while_node.set_limits(max_iteration_count=max_iteration_count)
 
-    def _infer_and_update_body_input_from_mapping():
+    def _infer_and_update_body_input_from_mapping() -> None:
         # pylint: disable=protected-access
         for source_output, body_input in mapping.items():
             # handle case that mapping key is a NodeOutput
