@@ -10,6 +10,7 @@ Example to show sending message(s) to a Service Bus Queue.
 """
 
 import os
+import time
 from datetime import datetime, timezone
 from azure.servicebus import ServiceBusClient, ServiceBusMessage, ServiceBusReceiveMode
 
@@ -17,28 +18,41 @@ from azure.servicebus import ServiceBusClient, ServiceBusMessage, ServiceBusRece
 CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
 QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
 
-def send_single_message(sender):
-    message = ServiceBusMessage("Single Message")
+def send_single_message(sender, i):
+    message = ServiceBusMessage(f"Single Message {i}")
     sender.send_messages(message)
 
 servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR, uamqp_transport=True)
 with servicebus_client:
     sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
     with sender:
-        send_single_message(sender)
-        send_single_message(sender)
-        send_single_message(sender)
-        time = datetime.now(timezone.utc)
+        send_single_message(sender, 1)
+        send_single_message(sender, 2)
+        send_single_message(sender, 3)
+        print(f"All messages sent before {datetime.now(timezone.utc)}")
 
     print("Send message is done.")
 
     receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE)
     with receiver:
-        received_msgs = receiver.delete_batch_messages(max_message_count=10, enqueued_time_older_than_utc=time)
-        print(received_msgs)
+
+        # Peek before deleting to see enqueued times
+        peeked_msgs = receiver.peek_messages(max_message_count=10)
+        for msg in peeked_msgs:
+            print(f"Message peeked has enqueued time of {msg.enqueued_time_utc}")
+
+        print(f"Deleting messages that are older than {datetime.now(timezone.utc)}")
+        deleted_msgs = receiver.delete_batch_messages(max_message_count=10, enqueued_time_older_than_utc=datetime.now(timezone.utc))
+        print(f"{deleted_msgs} messages deleted.")
 
         # Try to peek after deleting
         peeked_msgs = receiver.peek_messages(max_message_count=10)
-        print(len(peeked_msgs))
+        for msg in peeked_msgs:
+            print(f"Message peeked has enqueued time of {msg.enqueued_time_utc}")
+
+        # Try to receive after deleting
+        received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
+        for msg in received_msgs:
+            print(f"{msg} received.")
 
     print("Receive is done.")
