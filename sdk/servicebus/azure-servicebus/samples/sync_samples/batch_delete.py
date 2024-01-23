@@ -21,7 +21,7 @@ def send_single_message(sender):
     message = ServiceBusMessage("Single Message")
     sender.send_messages(message)
 
-servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR, uamqp_transport=False)
+servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR, uamqp_transport=True)
 with servicebus_client:
     sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
     with sender:
@@ -36,5 +36,9 @@ with servicebus_client:
     with receiver:
         received_msgs = receiver.delete_batch_messages(max_message_count=10, enqueued_time_older_than_utc=time)
         print(received_msgs)
+
+        # Try to peek after deleting
+        peeked_msgs = receiver.peek_messages(max_message_count=10)
+        print(len(peeked_msgs))
 
     print("Receive is done.")

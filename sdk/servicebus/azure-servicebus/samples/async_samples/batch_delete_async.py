@@ -40,6 +40,10 @@ async def run():
             received_msgs = await receiver.delete_batch_messages(max_message_count=10, enqueued_time_older_than_utc=time)
             print(received_msgs)
 
+            # Try to peek after deleting
+            peeked_msgs = await receiver.peek_messages(max_message_count=10)
+            print(len(peeked_msgs))
+
         print("Receive is done.")
 
 asyncio.run(run())

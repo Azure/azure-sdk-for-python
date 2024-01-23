@@ -870,9 +870,6 @@ class ServiceBusReceiver(
         self._check_live()
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
-        # TODO: Client side validation?
-        if self._receive_mode!=ServiceBusReceiveMode.RECEIVE_AND_DELETE:
-            raise ValueError("receive mode must be RECEIVE_AND_DELETE")
         if int(max_message_count) < 0:
             raise ValueError("max_message_count must be 1 or greater.")
 
