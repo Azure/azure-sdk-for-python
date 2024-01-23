@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from io import BytesIO
-from typing import Any, Dict, Generator, IO, Iterable, Optional, Union, TYPE_CHECKING
+from typing import Any, Dict, Generator, IO, Iterable, Optional, Type, Union, TYPE_CHECKING
 
 from ._shared.avro.avro_io import DatumReader
 from ._shared.avro.datafile import DataFileReader
@@ -36,7 +36,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
         encoding: Optional[str] = None,
         headers: Dict[str, Any] = None,  # type: ignore [assignment]
         response: Any = None,
-        error_cls: "BlobQueryError" = None,  # type: ignore [assignment]
+        error_cls: Type["BlobQueryError"] = None,  # type: ignore [assignment]
     ) -> None:
         self.name = name
         self.container = container
@@ -59,7 +59,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
         if 'data' in result:
             return result.get('data')
         if 'fatal' in result:
-            error = self._error_cls(  # type: ignore [operator]
+            error = self._error_cls(
                 error=result['name'],
                 is_fatal=result['fatal'],
                 description=result['description'],
