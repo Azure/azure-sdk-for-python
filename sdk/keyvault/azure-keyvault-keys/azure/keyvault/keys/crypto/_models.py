@@ -236,11 +236,10 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
 
         Normally you should use the `verify()` function to validate the signature. But for some non-standard signature
         formats you may need to explicitly recover and validate the signed data. The following are some examples:
-            * Some old Thawte and Verisign timestamp certificates without `DigestInfo`.
-            * Signed MD5/SHA1 hashes in TLS 1.1 or earlier
-              (`RFC 4346 <https://datatracker.ietf.org/doc/html/rfc4346.html>`_, section 4.7).
-            * IKE version 1 signatures without `DigestInfo`
-              (`RFC 2409 <https://datatracker.ietf.org/doc/html/rfc2409.html>`_, section 5.1).
+
+        * Some old Thawte and Verisign timestamp certificates without `DigestInfo`.
+        * Signed MD5/SHA1 hashes in TLS 1.1 or earlier (`RFC 4346 <https://datatracker.ietf.org/doc/html/rfc4346.html>`_, section 4.7).
+        * IKE version 1 signatures without `DigestInfo` (`RFC 2409 <https://datatracker.ietf.org/doc/html/rfc2409.html>`_, section 5.1).
 
         :param bytes signature: The signature.
         :param padding: An instance of `AsymmetricPadding`. Recovery is only supported with some of the padding types.
@@ -254,7 +253,7 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
             NotImplementedError if the local version of `cryptography` doesn't support this method.
             :class:`~cryptography.exceptions.InvalidSignature` if the signature is invalid.
             :class:`~cryptography.exceptions.UnsupportedAlgorithm` if the signature data recovery is not supported with
-                the provided `padding` type.
+            the provided `padding` type.
         """
         public_key = self.public_numbers().public_key()
         try:
