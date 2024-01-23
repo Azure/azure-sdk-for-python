@@ -112,7 +112,7 @@ class TrackedResource(Resource):
         self.location = location
 
 
-class Account(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class Account(TrackedResource):
     """An account resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -134,24 +134,8 @@ class Account(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
-    :ivar dashboard_uri: The Playwright testing dashboard URI for the account resource.
-    :vartype dashboard_uri: str
-    :ivar regional_affinity: This property sets the connection region for Playwright client workers
-     to cloud-hosted browsers. If enabled, workers connect to browsers in the closest Azure region,
-     ensuring lower latency. If disabled, workers connect to browsers in the Azure region in which
-     the workspace was initially created. Known values are: "Enabled" and "Disabled".
-    :vartype regional_affinity: str or ~azure.mgmt.playwrighttesting.models.EnablementStatus
-    :ivar scalable_execution: When enabled, Playwright client workers can connect to cloud-hosted
-     browsers. This can increase the number of parallel workers for a test run, significantly
-     minimizing test completion durations. Known values are: "Enabled" and "Disabled".
-    :vartype scalable_execution: str or ~azure.mgmt.playwrighttesting.models.EnablementStatus
-    :ivar reporting: When enabled, this feature allows the workspace to upload and display test
-     results, including artifacts like traces and screenshots, in the Playwright portal. This
-     enables faster and more efficient troubleshooting. Known values are: "Enabled" and "Disabled".
-    :vartype reporting: str or ~azure.mgmt.playwrighttesting.models.EnablementStatus
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
-     "Failed", "Canceled", "Deleting", and "Accepted".
-    :vartype provisioning_state: str or ~azure.mgmt.playwrighttesting.models.ProvisioningState
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.playwrighttesting.models.AccountProperties
     """
 
     _validation = {
@@ -160,8 +144,6 @@ class Account(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "location": {"required": True},
-        "dashboard_uri": {"readonly": True},
-        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -171,11 +153,7 @@ class Account(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
-        "dashboard_uri": {"key": "properties.dashboardUri", "type": "str"},
-        "regional_affinity": {"key": "properties.regionalAffinity", "type": "str"},
-        "scalable_execution": {"key": "properties.scalableExecution", "type": "str"},
-        "reporting": {"key": "properties.reporting", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "properties": {"key": "properties", "type": "AccountProperties"},
     }
 
     def __init__(
@@ -183,9 +161,7 @@ class Account(TrackedResource):  # pylint: disable=too-many-instance-attributes
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        regional_affinity: Optional[Union[str, "_models.EnablementStatus"]] = None,
-        scalable_execution: Optional[Union[str, "_models.EnablementStatus"]] = None,
-        reporting: Optional[Union[str, "_models.EnablementStatus"]] = None,
+        properties: Optional["_models.AccountProperties"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -193,26 +169,11 @@ class Account(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
-        :keyword regional_affinity: This property sets the connection region for Playwright client
-         workers to cloud-hosted browsers. If enabled, workers connect to browsers in the closest Azure
-         region, ensuring lower latency. If disabled, workers connect to browsers in the Azure region in
-         which the workspace was initially created. Known values are: "Enabled" and "Disabled".
-        :paramtype regional_affinity: str or ~azure.mgmt.playwrighttesting.models.EnablementStatus
-        :keyword scalable_execution: When enabled, Playwright client workers can connect to
-         cloud-hosted browsers. This can increase the number of parallel workers for a test run,
-         significantly minimizing test completion durations. Known values are: "Enabled" and "Disabled".
-        :paramtype scalable_execution: str or ~azure.mgmt.playwrighttesting.models.EnablementStatus
-        :keyword reporting: When enabled, this feature allows the workspace to upload and display test
-         results, including artifacts like traces and screenshots, in the Playwright portal. This
-         enables faster and more efficient troubleshooting. Known values are: "Enabled" and "Disabled".
-        :paramtype reporting: str or ~azure.mgmt.playwrighttesting.models.EnablementStatus
+        :keyword properties: The resource-specific properties for this resource.
+        :paramtype properties: ~azure.mgmt.playwrighttesting.models.AccountProperties
         """
         super().__init__(tags=tags, location=location, **kwargs)
-        self.dashboard_uri = None
-        self.regional_affinity = regional_affinity
-        self.scalable_execution = scalable_execution
-        self.reporting = reporting
-        self.provisioning_state = None
+        self.properties = properties
 
 
 class AccountListResult(_serialization.Model):
@@ -247,11 +208,110 @@ class AccountListResult(_serialization.Model):
         self.next_link = next_link
 
 
+class AccountProperties(_serialization.Model):
+    """Account properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar dashboard_uri: The Playwright testing dashboard URI for the account resource.
+    :vartype dashboard_uri: str
+    :ivar regional_affinity: This property sets the connection region for Playwright client workers
+     to cloud-hosted browsers. If enabled, workers connect to browsers in the closest Azure region,
+     ensuring lower latency. If disabled, workers connect to browsers in the Azure region in which
+     the workspace was initially created. Known values are: "Enabled" and "Disabled".
+    :vartype regional_affinity: str or ~azure.mgmt.playwrighttesting.models.EnablementStatus
+    :ivar scalable_execution: When enabled, Playwright client workers can connect to cloud-hosted
+     browsers. This can increase the number of parallel workers for a test run, significantly
+     minimizing test completion durations. Known values are: "Enabled" and "Disabled".
+    :vartype scalable_execution: str or ~azure.mgmt.playwrighttesting.models.EnablementStatus
+    :ivar reporting: When enabled, this feature allows the workspace to upload and display test
+     results, including artifacts like traces and screenshots, in the Playwright portal. This
+     enables faster and more efficient troubleshooting. Known values are: "Enabled" and "Disabled".
+    :vartype reporting: str or ~azure.mgmt.playwrighttesting.models.EnablementStatus
+    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+     "Failed", "Canceled", "Deleting", and "Accepted".
+    :vartype provisioning_state: str or ~azure.mgmt.playwrighttesting.models.ProvisioningState
+    """
+
+    _validation = {
+        "dashboard_uri": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "dashboard_uri": {"key": "dashboardUri", "type": "str"},
+        "regional_affinity": {"key": "regionalAffinity", "type": "str"},
+        "scalable_execution": {"key": "scalableExecution", "type": "str"},
+        "reporting": {"key": "reporting", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        regional_affinity: Optional[Union[str, "_models.EnablementStatus"]] = None,
+        scalable_execution: Optional[Union[str, "_models.EnablementStatus"]] = None,
+        reporting: Optional[Union[str, "_models.EnablementStatus"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword regional_affinity: This property sets the connection region for Playwright client
+         workers to cloud-hosted browsers. If enabled, workers connect to browsers in the closest Azure
+         region, ensuring lower latency. If disabled, workers connect to browsers in the Azure region in
+         which the workspace was initially created. Known values are: "Enabled" and "Disabled".
+        :paramtype regional_affinity: str or ~azure.mgmt.playwrighttesting.models.EnablementStatus
+        :keyword scalable_execution: When enabled, Playwright client workers can connect to
+         cloud-hosted browsers. This can increase the number of parallel workers for a test run,
+         significantly minimizing test completion durations. Known values are: "Enabled" and "Disabled".
+        :paramtype scalable_execution: str or ~azure.mgmt.playwrighttesting.models.EnablementStatus
+        :keyword reporting: When enabled, this feature allows the workspace to upload and display test
+         results, including artifacts like traces and screenshots, in the Playwright portal. This
+         enables faster and more efficient troubleshooting. Known values are: "Enabled" and "Disabled".
+        :paramtype reporting: str or ~azure.mgmt.playwrighttesting.models.EnablementStatus
+        """
+        super().__init__(**kwargs)
+        self.dashboard_uri = None
+        self.regional_affinity = regional_affinity
+        self.scalable_execution = scalable_execution
+        self.reporting = reporting
+        self.provisioning_state = None
+
+
 class AccountUpdate(_serialization.Model):
     """The type used for update operations of the Account.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar properties: The updatable properties of the Account.
+    :vartype properties: ~azure.mgmt.playwrighttesting.models.AccountUpdateProperties
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "AccountUpdateProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional["_models.AccountUpdateProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword properties: The updatable properties of the Account.
+        :paramtype properties: ~azure.mgmt.playwrighttesting.models.AccountUpdateProperties
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.properties = properties
+
+
+class AccountUpdateProperties(_serialization.Model):
+    """The updatable properties of the Account.
+
     :ivar regional_affinity: This property sets the connection region for Playwright client workers
      to cloud-hosted browsers. If enabled, workers connect to browsers in the closest Azure region,
      ensuring lower latency. If disabled, workers connect to browsers in the Azure region in which
@@ -268,24 +328,20 @@ class AccountUpdate(_serialization.Model):
     """
 
     _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-        "regional_affinity": {"key": "properties.regionalAffinity", "type": "str"},
-        "scalable_execution": {"key": "properties.scalableExecution", "type": "str"},
-        "reporting": {"key": "properties.reporting", "type": "str"},
+        "regional_affinity": {"key": "regionalAffinity", "type": "str"},
+        "scalable_execution": {"key": "scalableExecution", "type": "str"},
+        "reporting": {"key": "reporting", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
         regional_affinity: Optional[Union[str, "_models.EnablementStatus"]] = None,
         scalable_execution: Optional[Union[str, "_models.EnablementStatus"]] = None,
         reporting: Optional[Union[str, "_models.EnablementStatus"]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
         :keyword regional_affinity: This property sets the connection region for Playwright client
          workers to cloud-hosted browsers. If enabled, workers connect to browsers in the closest Azure
          region, ensuring lower latency. If disabled, workers connect to browsers in the Azure region in
@@ -301,7 +357,6 @@ class AccountUpdate(_serialization.Model):
         :paramtype reporting: str or ~azure.mgmt.playwrighttesting.models.EnablementStatus
         """
         super().__init__(**kwargs)
-        self.tags = tags
         self.regional_affinity = regional_affinity
         self.scalable_execution = scalable_execution
         self.reporting = reporting
@@ -630,11 +685,8 @@ class Quota(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.playwrighttesting.models.SystemData
-    :ivar free_trial: The free-trial quota.
-    :vartype free_trial: ~azure.mgmt.playwrighttesting.models.FreeTrialProperties
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
-     "Failed", "Canceled", "Deleting", and "Accepted".
-    :vartype provisioning_state: str or ~azure.mgmt.playwrighttesting.models.ProvisioningState
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.playwrighttesting.models.QuotaProperties
     """
 
     _validation = {
@@ -642,7 +694,6 @@ class Quota(ProxyResource):
         "name": {"readonly": True},
         "type": {"readonly": True},
         "system_data": {"readonly": True},
-        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -650,18 +701,16 @@ class Quota(ProxyResource):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
-        "free_trial": {"key": "properties.freeTrial", "type": "FreeTrialProperties"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "properties": {"key": "properties", "type": "QuotaProperties"},
     }
 
-    def __init__(self, *, free_trial: Optional["_models.FreeTrialProperties"] = None, **kwargs: Any) -> None:
+    def __init__(self, *, properties: Optional["_models.QuotaProperties"] = None, **kwargs: Any) -> None:
         """
-        :keyword free_trial: The free-trial quota.
-        :paramtype free_trial: ~azure.mgmt.playwrighttesting.models.FreeTrialProperties
+        :keyword properties: The resource-specific properties for this resource.
+        :paramtype properties: ~azure.mgmt.playwrighttesting.models.QuotaProperties
         """
         super().__init__(**kwargs)
-        self.free_trial = free_trial
-        self.provisioning_state = None
+        self.properties = properties
 
 
 class QuotaListResult(_serialization.Model):
@@ -694,6 +743,37 @@ class QuotaListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
+
+
+class QuotaProperties(_serialization.Model):
+    """Quota properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar free_trial: The free-trial quota.
+    :vartype free_trial: ~azure.mgmt.playwrighttesting.models.FreeTrialProperties
+    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+     "Failed", "Canceled", "Deleting", and "Accepted".
+    :vartype provisioning_state: str or ~azure.mgmt.playwrighttesting.models.ProvisioningState
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "free_trial": {"key": "freeTrial", "type": "FreeTrialProperties"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(self, *, free_trial: Optional["_models.FreeTrialProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword free_trial: The free-trial quota.
+        :paramtype free_trial: ~azure.mgmt.playwrighttesting.models.FreeTrialProperties
+        """
+        super().__init__(**kwargs)
+        self.free_trial = free_trial
+        self.provisioning_state = None
 
 
 class SystemData(_serialization.Model):
