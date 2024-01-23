@@ -24,6 +24,7 @@ from azure.core.pipeline._tools import is_rest
 from rest_client import MockRestClient
 from azure.core import PipelineClient
 
+
 def test_files_array():
     file = io.BytesIO(b"<file content>")
     request = HttpRequest(
@@ -33,6 +34,7 @@ def test_files_array():
     )
     expected_file = ("fileContent", (None, file, "application/octet-stream"))
     assert request.content == [expected_file, expected_file]
+
 
 @pytest.fixture
 def assert_iterator_body():
