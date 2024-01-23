@@ -1,5 +1,16 @@
 # Release History
 
+## 1.2.1 (Unreleased)
+
+### Features Added
+
+### Bugs Fixed
+
+### Other Changes
+
+- Update configure_azure_monitor signature and Django sample
+    ([#33834](https://github.com/Azure/azure-sdk-for-python/pull/33834))
+
 ## 1.2.0 (2024-01-18)
 
 ### Other Changes
@@ -10,6 +21,8 @@
     ([#33808](https://github.com/Azure/azure-sdk-for-python/pull/33808))
 - Update min dependency versions opentelemetry-resource-detector-azure~=0.1.1, exporter~=1.0.0b21, OTel SDK/API~= 1.21
     ([#33866](https://github.com/Azure/azure-sdk-for-python/pull/33866))
+- Update configure_azure_monitor signature and Django sample
+    ([#33834](https://github.com/Azure/azure-sdk-for-python/pull/33834))
 
 ## 1.1.1 (2023-12-04)
 
