@@ -40,7 +40,6 @@ from .models._models import (
     AckMessageError,
     AckMap,
     OpenClientError,
-    WebPubSubConnectionError,
 )
 from .models._enums import (
     WebPubSubDataType,
@@ -212,7 +211,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
     def _send_message(self, message: WebPubSubMessage, **kwargs: Any) -> None:
         pay_load = self._protocol.write_message(message)
         if not self._ws or not self._ws.sock:
-            raise WebPubSubConnectionError("The websocket connection is not connected.")
+            raise SendMessageError("The websocket connection is not connected.")
 
         self._ws.send(pay_load)
         if kwargs.pop("logging_enable", False) or self._logging_enable:
@@ -316,7 +315,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self,
         event_name: str,
         content: str,
-        data_type: Union[Literal[WebPubSubDataType.TEXT], str],
+        data_type: Union[Literal[WebPubSubDataType.TEXT], Literal["text"]],
         **kwargs: Any,
     ) -> None:
         """Send custom event to server. For more info about event handler in web pubsub, please refer
@@ -328,7 +327,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
          pubsub. Required.
         :type content: str.
         :param data_type: The data type. Required.
-        :type data_type: Union[~azure.messaging.webpubsubclient.models.WebPubSubDataType.TEXT, str].
+        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.TEXT or Literal["text"].
         :keyword int ack_id: The optional ackId. If not specified, client will generate one.
         :keyword bool ack: If False, the message won't contains ackId and no AckMessage
          will be returned from the service. Default is True.
@@ -339,7 +338,12 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self,
         event_name: str,
         content: memoryview,
-        data_type: Union[Literal[WebPubSubDataType.BINARY], Literal[WebPubSubDataType.PROTOBUF], str],
+        data_type: Union[
+            Literal[WebPubSubDataType.BINARY],
+            Literal[WebPubSubDataType.PROTOBUF],
+            Literal["binary"],
+            Literal["protobuf"],
+        ],
         **kwargs: Any,
     ) -> None:
         """Send custom event to server. For more info about event handler in web pubsub, please refer
@@ -351,8 +355,9 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
          pubsub. Required.
         :type content: memoryview.
         :param data_type: The data type. Required.
-        :type data_type: Union[~azure.messaging.webpubsubclient.models.WebPubSubDataType.BINARY,
-         ~azure.messaging.webpubsubclient.models.WebPubSubDataType.PROTOBUF, str].
+        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.BINARY or
+         ~azure.messaging.webpubsubclient.models.WebPubSubDataType.PROTOBUF or
+         Literal["binary"] or Literal["protobuf"].
         :keyword int ack_id: The optional ackId. If not specified, client will generate one.
         :keyword bool ack: If False, the message won't contains ackId and no AckMessage
          will be returned from the service. Default is True.
@@ -363,7 +368,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self,
         event_name: str,
         content: Dict[str, Any],
-        data_type: Union[Literal[WebPubSubDataType.JSON], str],
+        data_type: Union[Literal[WebPubSubDataType.JSON], Literal["json"]],
         **kwargs: Any,
     ) -> None:
         """Send custom event to server. For more info about event handler in web pubsub, please refer
@@ -375,7 +380,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
          pubsub. Required.
         :type content: Dict[str, Any].
         :param data_type: The data type. Required.
-        :type data_type: Union[~azure.messaging.webpubsubclient.models.WebPubSubDataType.JSON, str].
+        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.JSON or Literal["json"].
         :keyword int ack_id: The optional ackId. If not specified, client will generate one.
         :keyword bool ack: If False, the message won't contains ackId and no AckMessage
          will be returned from the service. Default is True.
@@ -427,7 +432,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self,
         group_name: str,
         content: str,
-        data_type: Union[Literal[WebPubSubDataType.TEXT], str],
+        data_type: Union[Literal[WebPubSubDataType.TEXT], Literal["text"]],
         **kwargs: Any,
     ) -> None:
         """Send message to group.
@@ -436,7 +441,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         :param content: The data content. Required.
         :type content: str.
         :param data_type: The data type. Required.
-        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.TEXT or str.
+        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.TEXT or Literal["text"].
         :keyword bool ack: If False, the message won't contains ackId and no AckMessage
          will be returned from the service. Default is True.
         :keyword bool no_echo: Whether the message needs to echo to sender. Default is False.
@@ -447,7 +452,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self,
         group_name: str,
         content: Dict[str, Any],
-        data_type: Union[Literal[WebPubSubDataType.JSON], str],
+        data_type: Union[Literal[WebPubSubDataType.JSON], Literal["json"]],
         **kwargs: Any,
     ) -> None:
         """Send message to group.
@@ -456,7 +461,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         :param content: The data content. Required.
         :type content: Dict[str, Any].
         :param data_type: The data type. Required.
-        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.JSON or str.
+        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.JSON or Literal["json"].
         :keyword bool ack: If False, the message won't contains ackId and no AckMessage
          will be returned from the service. Default is True.
         :keyword bool no_echo: Whether the message needs to echo to sender. Default is False.
@@ -467,7 +472,12 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self,
         group_name: str,
         content: memoryview,
-        data_type: Union[Literal[WebPubSubDataType.BINARY], Literal[WebPubSubDataType.PROTOBUF], str],
+        data_type: Union[
+            Literal[WebPubSubDataType.BINARY],
+            Literal[WebPubSubDataType.PROTOBUF],
+            Literal["binary"],
+            Literal["protobuf"],
+        ],
         **kwargs: Any,
     ) -> None:
         """Send message to group.
@@ -477,7 +487,8 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         :type content: memoryview.
         :param data_type: The data type. Required.
         :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.BINARY or
-         ~azure.messaging.webpubsubclient.models.WebPubSubDataType.PROTOBUF or str.
+         ~azure.messaging.webpubsubclient.models.WebPubSubDataType.PROTOBUF or
+         Literal["binary"] or Literal["protobuf"].
         :keyword bool ack: If False, the message won't contains ackId and no AckMessage
          will be returned from the service. Default is True.
         :keyword bool no_echo: Whether the message needs to echo to sender. Default is False.
@@ -793,9 +804,6 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
                 _LOGGER.warning("Recovery attempts failed after 30 seconds or the client is stopping")
                 self._handle_connection_close_and_no_recovery()
-            else:
-                _LOGGER.debug("WebSocket closed before open")
-                raise WebPubSubConnectionError(f"Fail to open Websocket: {close_status_code}")
 
         if self._is_stopping:
             raise OpenClientError("Can't open a client during closing")

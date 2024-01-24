@@ -938,7 +938,3 @@ class AckMap:
 
 class OpenClientError(AzureError):
     """Exception raised when fail to start the client"""
-
-
-class WebPubSubConnectionError(AzureError):
-    """Exception raised when fail to open the websocket or connection is closed"""
