@@ -25,7 +25,7 @@ class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
         )
         assert len(client.keys()) == 1
         assert "FeatureManagement" in client
-        assert "Alpha" in client["FeatureManagement"]
+        assert "Alpha" in client["FeatureManagement"]["FeatureFlags"]
 
     # method: load
     @recorded_by_proxy
@@ -43,7 +43,7 @@ class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
         )
         assert len(client.keys()) == 1
         assert "FeatureManagement" in client
-        assert "Alpha" not in client["FeatureManagement"]
+        assert "Alpha" not in client["FeatureManagement"]["FeatureFlags"]
 
     # method: load
     @recorded_by_proxy
@@ -61,5 +61,5 @@ class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
         )
         assert len(client.keys()) == 1
         assert "FeatureManagement" in client
-        assert "Alpha" not in client["FeatureManagement"]
-        assert "pha" in client["FeatureManagement"]
+        assert "Alpha" not in client["FeatureManagement"]["FeatureFlags"]
+        assert "pha" in client["FeatureManagement"]["FeatureFlags"]

@@ -22,7 +22,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert client["message"] == "hi"
         assert client["my_json"]["key"] == "value"
         assert "FeatureManagement" in client
-        assert "Alpha" in client["FeatureManagement"]
+        assert "Alpha" in client["FeatureManagement"]["FeatureFlags"]
 
     # method: provider_trim_prefixes
     @recorded_by_proxy
@@ -40,7 +40,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert client["trimmed"] == "key"
         assert "test.trimmed" not in client
         assert "FeatureManagement" in client
-        assert "Alpha" in client["FeatureManagement"]
+        assert "Alpha" in client["FeatureManagement"]["FeatureFlags"]
 
     # method: provider_selectors
     @recorded_by_proxy

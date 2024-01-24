@@ -38,12 +38,13 @@ config = load(
     refresh_interval=1,
     on_refresh_error=my_callback_on_fail,
     feature_flag_enabled=True,
+    feature_flag_refresh_enabled=True,
     **kwargs,
 )
 
 print(config["message"])
 print(config["my_json"]["key"])
-print(config["FeatureManagement"]["Beta"])
+print(config["FeatureManagement"]["FeatureFlags"]["Beta"])
 
 # Updating the configuration setting
 feature_flag_setting.enabled = False
@@ -59,7 +60,7 @@ config.refresh()
 # Printing the updated value
 print(config["message"])
 print(config["my_json"]["key"])
-print(config["FeatureManagement"]["Beta"])
+print(config["FeatureManagement"]["FeatureFlags"]["Beta"])
 
 # Waiting for the refresh interval to pass
 time.sleep(2)
@@ -70,4 +71,4 @@ config.refresh()
 # Printing the updated value
 print(config["message"])
 print(config["my_json"]["key"])
-print(config["FeatureManagement"]["Beta"])
+print(config["FeatureManagement"]["FeatureFlags"]["Beta"])
