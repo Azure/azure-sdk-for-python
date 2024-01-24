@@ -10,9 +10,8 @@ import sys
 import time
 from pathlib import Path, PurePosixPath
 from typing import Callable, Dict, Optional, Tuple, Union
+
 from typing_extensions import Literal
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
-from azure.storage.fileshare import ShareDirectoryClient, ShareFileClient
 
 from azure.ai.ml._artifacts._constants import (
     ARTIFACT_ORIGIN,
@@ -30,6 +29,8 @@ from azure.ai.ml._utils._asset_utils import (
     get_upload_files_from_folder,
 )
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.storage.fileshare import ShareDirectoryClient, ShareFileClient
 
 module_logger = logging.getLogger(__name__)
 
@@ -123,11 +124,11 @@ class FileStorageClient:
                 time.sleep(0.5)
             self._set_confirmation_metadata(source, asset_id, name, version)
         else:
-            name = self.name
-            version = self.version
+            name = str(self.name)
+            version = str(self.version)
             if self.legacy:
                 dest = dest.replace(ARTIFACT_ORIGIN, LEGACY_ARTIFACT_DIRECTORY)
-        artifact_info = {"remote path": dest, "name": name, "version": version}
+        artifact_info: Dict = {"remote path": dest, "name": name, "version": version}
 
         return artifact_info
 
@@ -165,19 +166,20 @@ class FileStorageClient:
         with open(source, "rb") as data:
             if in_directory:
                 file_name = dest.rsplit("/")[-1]
-                if show_progress:
-                    subdirectory_client.upload_file(
-                        file_name=file_name,
-                        data=data,
-                        validate_content=validate_content,
-                        raw_response_hook=callback,
-                    )
-                else:
-                    subdirectory_client.upload_file(
-                        file_name=file_name,
-                        data=data,
-                        validate_content=validate_content,
-                    )
+                if subdirectory_client is not None:
+                    if show_progress:
+                        subdirectory_client.upload_file(
+                            file_name=file_name,
+                            data=data,
+                            validate_content=validate_content,
+                            raw_response_hook=callback,
+                        )
+                    else:
+                        subdirectory_client.upload_file(
+                            file_name=file_name,
+                            data=data,
+                            validate_content=validate_content,
+                        )
             else:
                 if show_progress:
                     with FileUploadProgressBar(msg=msg) as pbar:
@@ -220,12 +222,12 @@ class FileStorageClient:
         upload_paths = sorted(get_upload_files_from_folder(source_path, prefix=prefix, ignore_file=ignore_file))
         self.total_file_count = len(upload_paths)
 
-        for root, *_ in os.walk(source):
+        for root, *_ in os.walk(source):  # type: ignore[type-var]
             if sys.platform.startswith(("win32", "cygwin")):
                 split_char = "\\"
             else:
                 split_char = "/"
-            trunc_root = root.rsplit(split_char)[-1]
+            trunc_root = root.rsplit(split_char)[-1]  # type: ignore[union-attr]
             subdir = subdir.create_subdirectory(trunc_root)
 
         if show_progress:
@@ -321,7 +323,7 @@ class FileStorageClient:
         asset_id: str,
         default_items: Dict[str, bool],
         legacy_items: Dict[str, bool],
-    ) -> Tuple[Union[ShareDirectoryClient, ShareFileClient], Dict]:
+    ) -> Tuple:
         # if asset_id key's value doesn't match either bool,
         # it's not in the dictionary and we check "LocalUpload" dictionary below.
 
