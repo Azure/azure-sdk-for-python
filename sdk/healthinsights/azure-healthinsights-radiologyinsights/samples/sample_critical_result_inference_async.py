@@ -12,7 +12,7 @@ from azure.healthinsights.radiologyinsights.aio import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 
 """
-FILE: async_sample.py
+FILE: sample_critical_result__inference_async.py
 
 DESCRIPTION:
     
