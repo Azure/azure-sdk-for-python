@@ -26,10 +26,6 @@ from ._models import PhoneNumberOperation
 from ._models import PhoneNumberPurchaseRequest
 from ._models import PhoneNumberSearchRequest
 from ._models import PhoneNumberSearchResult
-from ._models import PhoneNumbersBrowseRequest
-from ._models import PhoneNumbersBrowseResult
-from ._models import PhoneNumbersReservation
-from ._models import PhoneNumbersReservationPurchaseRequest
 from ._models import PurchasedPhoneNumber
 
 from ._enums import BillingFrequency
@@ -40,7 +36,6 @@ from ._enums import PhoneNumberOperationStatus
 from ._enums import PhoneNumberOperationType
 from ._enums import PhoneNumberSource
 from ._enums import PhoneNumberType
-from ._enums import ReservationStatus
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -66,10 +61,6 @@ __all__ = [
     "PhoneNumberPurchaseRequest",
     "PhoneNumberSearchRequest",
     "PhoneNumberSearchResult",
-    "PhoneNumbersBrowseRequest",
-    "PhoneNumbersBrowseResult",
-    "PhoneNumbersReservation",
-    "PhoneNumbersReservationPurchaseRequest",
     "PurchasedPhoneNumber",
     "BillingFrequency",
     "OperatorNumberType",
@@ -79,7 +70,6 @@ __all__ = [
     "PhoneNumberOperationType",
     "PhoneNumberSource",
     "PhoneNumberType",
-    "ReservationStatus",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
