@@ -224,7 +224,7 @@ class TestStorageHandle(StorageRecordedTestCase):
         # only run when recording, or playing back in CI
 
         self._setup(storage_account_name, storage_account_key)
-        share = self.fsc.get_share_client('mytestshare')
+        share = self.fsc.get_share_client('testshare')
         root = share.get_directory_client('testdir')
         file_client = root.get_file_client('testfile.txt')
 
