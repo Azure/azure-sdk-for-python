@@ -90,14 +90,10 @@ class MetricHandler(object):
 
         # Rename output columns. E.g. outputs.answer -> answer
         output_columns = [col for col in result_df.columns if col.startswith("outputs.")]
-        column_mapping.update({col: col.replace("outputs.", "") for col in output_columns})
+        column_mapping = {col: col.replace("outputs.", "") for col in output_columns}
         result_df.rename(columns=column_mapping, inplace=True)
 
-        artifacts = []
-        for col in result_df.columns:
-            artifacts.append({
-                col : result_df[col].tolist()
-            })
+        artifacts = {col: result_df[col].tolist() for col in result_df.columns}
 
         return {
             "metrics": result_metrics,

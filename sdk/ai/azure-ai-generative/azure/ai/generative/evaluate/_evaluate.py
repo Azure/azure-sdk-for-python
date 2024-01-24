@@ -333,15 +333,6 @@ def _evaluate(
 
         if metrics_results.get("metrics"):
             _log_metrics(run_id=run.info.run_id, metrics=metrics_results.get("metrics"))
-        pf_run_name = metrics_handler.calculate_metrics()
-
-        from promptflow import PFClient
-        pf_client = PFClient()
-
-        result = pf_client.get_details(pf_run_name, all_results=True)
-        metrics = pf_client.get_metrics(pf_run_name)
-
-        _log_metrics(run_id=run.info.run_id, metrics=metrics)
 
         with tempfile.TemporaryDirectory() as tmpdir:
             for param_name, param_value in kwargs.get("params_dict", {}).items():
@@ -460,8 +451,7 @@ def _get_chat_instance_table(metrics):
 
 
 def _get_instance_table(metrics, task_type, asset_handler):
-    if metrics.get("artifacts"):
-        metrics.get("artifacts").pop("bertscore", None)
+
     if task_type == CHAT:
         instance_level_metrics_table = _get_chat_instance_table(metrics.get("artifacts"))
     else:
@@ -475,7 +465,6 @@ def _get_instance_table(metrics, task_type, asset_handler):
     combined_table = pd.concat(
         [asset_handler.test_data,
          prediction_data,
-         asset_handler.ground_truth,
          instance_level_metrics_table
          ],
         axis=1,
