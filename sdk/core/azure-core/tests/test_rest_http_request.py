@@ -531,7 +531,7 @@ def test_multipart_filename_and_bytes(filebytes):
     files = ("specifiedFileName", filebytes)
     request = HttpRequest("POST", url="http://example.org", files={"file": files})
 
-    assert request.content == {"file": ("specifiedFileName", filebytes, "application/octet-stream")}
+    assert request.content == {"file": ("specifiedFileName", filebytes)}
 
 
 def test_multipart_filename_and_bytes_and_content_type(filebytes):

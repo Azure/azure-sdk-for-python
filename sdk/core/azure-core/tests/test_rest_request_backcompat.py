@@ -304,12 +304,7 @@ def test_request_formdata_body_files(old_request, new_request):
     new_request.set_formdata_body({"fileName": "hello.jpg"})
 
     assert old_request.data == new_request.data == None
-    assert (
-        old_request.files
-        == new_request.files
-        == new_request.content
-        == {"fileName": (None, "hello.jpg", "application/octet-stream")}
-    )
+    assert old_request.files == new_request.files == new_request.content == {"fileName": (None, "hello.jpg")}
 
     # we don't set any multipart headers with boundaries
     # we rely on the transport to boundary calculating
@@ -351,7 +346,7 @@ def test_request_formdata_body_and_files_kwarg(old_request):
     assert old_request.data == new_request.data == None
     assert old_request.body == new_request.body == None
     assert old_request.headers == new_request.headers == {}
-    assert old_request.files == new_request.files == {"fileName": (None, "hello.jpg", "application/octet-stream")}
+    assert old_request.files == new_request.files == {"fileName": (None, "hello.jpg")}
 
 
 def test_request_formdata_body_and_data_kwarg(old_request):

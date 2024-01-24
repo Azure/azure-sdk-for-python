@@ -114,8 +114,6 @@ def set_urlencoded_body(data, has_files):
 
 def set_multipart_body(files: FilesType):
     file_items = files.items() if isinstance(files, Mapping) else files
-    for a in file_items:
-        print(a)
     formatted_files = {f: _format_data_helper(d) for f, d in file_items if d is not None}
     return {}, formatted_files
 

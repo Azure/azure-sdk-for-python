@@ -345,7 +345,7 @@ def _format_data_helper(data: "FileType") -> Union[Tuple[None, str], Tuple[Optio
     :rtype: tuple[str, IO, str] or tuple[None, str]
     :return: A tuple of (data name, data IO, "application/octet-stream") or (None, data str)
     """
-    content_type = "application/octet-stream"  # default content type
+    content_type: Optional[str] = None
     filename: Optional[str] = None
     if isinstance(data, tuple):
         if len(data) == 2:
@@ -361,15 +361,18 @@ def _format_data_helper(data: "FileType") -> Union[Tuple[None, str], Tuple[Optio
             )
     else:
         # here we just get the file content
-        data = cast(IO, data)
-        try:
-            if data.name[0] != "<" and data.name[-1] != ">":
-                filename = os.path.basename(data.name)
-        except (AttributeError, TypeError):
-            pass
+        if hasattr(data, "read"):
+            data = cast(IO, data)
+            try:
+                if data.name[0] != "<" and data.name[-1] != ">":
+                    filename = os.path.basename(data.name)
+            except (AttributeError, TypeError):
+                pass
+            content_type = "application/octet-stream"
         file_bytes = data
-
-    return (filename, file_bytes, content_type)
+    if content_type:
+        return (filename, file_bytes, content_type)
+    return (None, cast(str, file_bytes))
 
 
 def _aiohttp_body_helper(
