@@ -34,7 +34,6 @@ from ._index import (
 from . import _edm
 from ..._generated.models import SuggestOptions
 from .._generated.models import (
-    SearchAlias,
     AzureMachineLearningSkill,
     AnalyzeResult,
     AnalyzedTokenInfo,
@@ -63,7 +62,6 @@ from .._generated.models import (
     CustomVectorizer,
     CustomWebApiParameters,
     CustomEntityLookupSkillLanguage,
-    CustomNormalizer,
     DataChangeDetectionPolicy,
     DataDeletionDetectionPolicy,
     DefaultCognitiveServicesAccount,
@@ -71,7 +69,6 @@ from .._generated.models import (
     DistanceScoringFunction,
     DistanceScoringParameters,
     DocumentExtractionSkill,
-    DocumentKeysOrIds,
     EdgeNGramTokenFilter,
     EdgeNGramTokenizer,
     EdgeNGramTokenFilterSide,
@@ -108,8 +105,6 @@ from .._generated.models import (
     LanguageDetectionSkill,
     LengthTokenFilter,
     LexicalAnalyzer,
-    LexicalNormalizer,
-    LexicalNormalizerName,
     LexicalAnalyzerName,
     LexicalTokenizer,
     LexicalTokenizerName,
@@ -143,7 +138,6 @@ from .._generated.models import (
     ScoringFunctionInterpolation,
     ScoringProfile,
     SearchIndexer,
-    SearchIndexerCache,
     SearchIndexerDataContainer,
     SearchIndexerDataIdentity,
     SearchIndexerDataNoneIdentity,
@@ -252,7 +246,6 @@ class SearchSuggester(Suggester):
 
 
 __all__ = (
-    "SearchAlias",
     "AnalyzeTextOptions",
     "AnalyzeResult",
     "AnalyzedTokenInfo",
@@ -285,7 +278,6 @@ __all__ = (
     "CustomWebApiParameters",
     "DefaultCognitiveServicesAccount",
     "CustomEntityLookupSkillLanguage",
-    "CustomNormalizer",
     "DataChangeDetectionPolicy",
     "DataDeletionDetectionPolicy",
     "DefaultCognitiveServicesAccount",
@@ -293,7 +285,6 @@ __all__ = (
     "DistanceScoringFunction",
     "DistanceScoringParameters",
     "DocumentExtractionSkill",
-    "DocumentKeysOrIds",
     "EdgeNGramTokenFilter",
     "EdgeNGramTokenizer",
     "ElisionTokenFilter",
@@ -336,8 +327,6 @@ __all__ = (
     "LengthTokenFilter",
     "LexicalAnalyzer",
     "LexicalAnalyzerName",
-    "LexicalNormalizer",
-    "LexicalNormalizerName",
     "LexicalTokenizer",
     "LexicalTokenizerName",
     "LimitTokenFilter",
@@ -374,7 +363,6 @@ __all__ = (
     "SearchField",
     "SearchIndex",
     "SearchIndexer",
-    "SearchIndexerCache",
     "SearchIndexerDataContainer",
     "SearchIndexerDataIdentity",
     "SearchIndexerDataNoneIdentity",

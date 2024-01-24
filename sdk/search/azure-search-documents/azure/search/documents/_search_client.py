@@ -17,15 +17,12 @@ from ._generated.models import (
     IndexingResult,
     QueryAnswerType,
     QueryCaptionType,
-    QueryLanguage,
-    QuerySpellerType,
     QueryType,
     SearchMode,
     ScoringStatistics,
     VectorFilterMode,
     VectorQuery,
     SemanticErrorMode,
-    QueryDebugMode,
     SuggestRequest,
 )
 from ._search_documents_error import RequestEntityTooLargeError
@@ -156,8 +153,6 @@ class SearchClient(HeadersMixin):
         semantic_query: Optional[str] = None,
         search_fields: Optional[List[str]] = None,
         search_mode: Optional[Union[str, SearchMode]] = None,
-        query_language: Optional[Union[str, QueryLanguage]] = None,
-        query_speller: Optional[Union[str, QuerySpellerType]] = None,
         query_answer: Optional[Union[str, QueryAnswerType]] = None,
         query_answer_count: Optional[int] = None,
         query_answer_threshold: Optional[float] = None,
@@ -174,7 +169,6 @@ class SearchClient(HeadersMixin):
         vector_filter_mode: Optional[Union[str, VectorFilterMode]] = None,
         semantic_error_mode: Optional[Union[str, SemanticErrorMode]] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
-        debug: Optional[Union[str, QueryDebugMode]] = None,
         **kwargs: Any
     ) -> SearchItemPaged[Dict]:
         # pylint:disable=too-many-locals, disable=redefined-builtin
@@ -225,18 +219,6 @@ class SearchClient(HeadersMixin):
         :keyword search_mode: A value that specifies whether any or all of the search terms must be
             matched in order to count the document as a match. Possible values include: 'any', 'all'.
         :paramtype search_mode: str or ~azure.search.documents.models.SearchMode
-        :keyword query_language: The language of the search query. Possible values include: "none", "en-us",
-            "en-gb", "en-in", "en-ca", "en-au", "fr-fr", "fr-ca", "de-de", "es-es", "es-mx", "zh-cn",
-            "zh-tw", "pt-br", "pt-pt", "it-it", "ja-jp", "ko-kr", "ru-ru", "cs-cz", "nl-be", "nl-nl",
-            "hu-hu", "pl-pl", "sv-se", "tr-tr", "hi-in", "ar-sa", "ar-eg", "ar-ma", "ar-kw", "ar-jo",
-            "da-dk", "no-no", "bg-bg", "hr-hr", "hr-ba", "ms-my", "ms-bn", "sl-sl", "ta-in", "vi-vn",
-            "el-gr", "ro-ro", "is-is", "id-id", "th-th", "lt-lt", "uk-ua", "lv-lv", "et-ee", "ca-es",
-            "fi-fi", "sr-ba", "sr-me", "sr-rs", "sk-sk", "nb-no", "hy-am", "bn-in", "eu-es", "gl-es",
-            "gu-in", "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae", "pa-in", "te-in", "ur-pk".
-        :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
-        :keyword query_speller: A value that specified the type of the speller to use to spell-correct
-            individual search query terms. Possible values include: "none", "lexicon".
-        :paramtype query_speller: str or ~azure.search.documents.models.QuerySpellerType
         :keyword query_answer: This parameter is only valid if the query type is 'semantic'. If set,
             the query returns answers extracted from key passages in the highest ranked documents.
             Possible values include: "none", "extractive".
@@ -283,9 +265,6 @@ class SearchClient(HeadersMixin):
         :paramtype semantic_error_mode: str or ~azure.search.documents.models.SemanticErrorMode
         :keyword int semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount of
             time it takes for semantic enrichment to finish processing before the request fails.
-        :keyword debug: Enables a debugging tool that can be used to further explore your Semantic search
-            results. Known values are: "disabled", "speller", "semantic", and "all".
-        :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
         :keyword vector_queries: The query parameters for vector and hybrid search queries.
         :paramtype vector_queries: list[VectorQuery]
         :keyword vector_filter_mode: Determines whether or not filters are applied before or after the
@@ -351,8 +330,6 @@ class SearchClient(HeadersMixin):
             semantic_query=semantic_query,
             search_fields=search_fields_str,
             search_mode=search_mode,
-            query_language=query_language,
-            speller=query_speller,
             answers=answers,
             captions=captions,
             semantic_fields=",".join(semantic_fields) if semantic_fields else None,
@@ -366,7 +343,6 @@ class SearchClient(HeadersMixin):
             vector_filter_mode=vector_filter_mode,
             semantic_error_handling=semantic_error_mode,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
-            debug=debug,
         )
         if isinstance(select, list):
             query.select(select)
