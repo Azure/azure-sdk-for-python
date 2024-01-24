@@ -42,12 +42,12 @@ def main():
                 "subnetId": "/subscriptions/20D7082A-0FC7-4468-82BD-542694D5042B/resourceGroups/testrg/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1",
                 "vCores": 8,
             },
-            "sku": {"name": "GP_Gen4", "tier": "GeneralPurpose"},
+            "sku": {"name": "GP_Gen5", "tier": "GeneralPurpose"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-08-01-preview/examples/ManagedInstanceCreateMin.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2023-05-01-preview/examples/ManagedInstanceCreateMin.json
 if __name__ == "__main__":
     main()

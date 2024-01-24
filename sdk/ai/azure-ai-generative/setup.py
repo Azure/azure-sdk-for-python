@@ -50,6 +50,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
@@ -94,7 +95,7 @@ setup(
             "azureml-fsspec>=1",
             "azureml-mlflow",
             "fsspec>=2023.3",
-            "openai>=0.27.8,<1",
+            "openai>=0.27.8",
             "tiktoken>=0.3,<1",
             "mmh3",
             "requests",
@@ -109,12 +110,12 @@ setup(
             "azure-search-documents==11.4.0b11"
         ],
         "promptflow": [
-            "promptflow[azure]==0.1.0b8",
-            "promptflow-tools==0.1.0b15",
+            "promptflow[azure]",
+            "promptflow-tools",
             "promptflow-vectordb"
         ],
         "qa_generation": [
-            "openai>=0.27.8,<1"
+            "openai>=0.27.8"
         ],
         "simulator": [
             "aiohttp>=3.8.5",

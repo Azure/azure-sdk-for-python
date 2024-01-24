@@ -1,5 +1,33 @@
 # Release History
 
+## 4.0.0b15 (2024-01-11)
+
+### Features Added
+
+  - Added operation ManagedInstancesOperations.begin_refresh_status
+  - Model ManagedInstance has a new parameter authentication_metadata
+  - Model ManagedInstance has a new parameter create_time
+  - Model ManagedInstance has a new parameter database_format
+  - Model ManagedInstance has a new parameter external_governance_status
+  - Model ManagedInstance has a new parameter hybrid_secondary_usage
+  - Model ManagedInstance has a new parameter hybrid_secondary_usage_detected
+  - Model ManagedInstance has a new parameter is_general_purpose_v2
+  - Model ManagedInstance has a new parameter pricing_model
+  - Model ManagedInstance has a new parameter storage_i_ops
+  - Model ManagedInstance has a new parameter storage_throughput_m_bps
+  - Model ManagedInstance has a new parameter virtual_cluster_id
+  - Model ManagedInstanceUpdate has a new parameter authentication_metadata
+  - Model ManagedInstanceUpdate has a new parameter create_time
+  - Model ManagedInstanceUpdate has a new parameter database_format
+  - Model ManagedInstanceUpdate has a new parameter external_governance_status
+  - Model ManagedInstanceUpdate has a new parameter hybrid_secondary_usage
+  - Model ManagedInstanceUpdate has a new parameter hybrid_secondary_usage_detected
+  - Model ManagedInstanceUpdate has a new parameter is_general_purpose_v2
+  - Model ManagedInstanceUpdate has a new parameter pricing_model
+  - Model ManagedInstanceUpdate has a new parameter storage_i_ops
+  - Model ManagedInstanceUpdate has a new parameter storage_throughput_m_bps
+  - Model ManagedInstanceUpdate has a new parameter virtual_cluster_id
+
 ## 4.0.0b14 (2023-12-18)
 
 ### Features Added

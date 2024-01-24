@@ -504,8 +504,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
      azure.mgmt.sql.operations.DatabaseEncryptionProtectorsOperations
     :ivar managed_databases: ManagedDatabasesOperations operations
     :vartype managed_databases: azure.mgmt.sql.operations.ManagedDatabasesOperations
-    :ivar managed_instances: ManagedInstancesOperations operations
-    :vartype managed_instances: azure.mgmt.sql.operations.ManagedInstancesOperations
     :ivar managed_ledger_digest_uploads: ManagedLedgerDigestUploadsOperations operations
     :vartype managed_ledger_digest_uploads:
      azure.mgmt.sql.operations.ManagedLedgerDigestUploadsOperations
@@ -594,6 +592,8 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     :ivar long_term_retention_policies: LongTermRetentionPoliciesOperations operations
     :vartype long_term_retention_policies:
      azure.mgmt.sql.operations.LongTermRetentionPoliciesOperations
+    :ivar managed_instances: ManagedInstancesOperations operations
+    :vartype managed_instances: azure.mgmt.sql.operations.ManagedInstancesOperations
     :ivar servers: ServersOperations operations
     :vartype servers: azure.mgmt.sql.operations.ServersOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
@@ -946,9 +946,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         self.managed_databases = ManagedDatabasesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.managed_instances = ManagedInstancesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.managed_ledger_digest_uploads = ManagedLedgerDigestUploadsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -1025,6 +1022,9 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
             self._client, self._config, self._serialize, self._deserialize
         )
         self.long_term_retention_policies = LongTermRetentionPoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_instances = ManagedInstancesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)

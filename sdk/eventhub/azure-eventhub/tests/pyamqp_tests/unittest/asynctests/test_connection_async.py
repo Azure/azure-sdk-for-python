@@ -10,7 +10,7 @@ from azure.eventhub._pyamqp.aio import Connection
 async def test_connection_begin_session():
     if sys.version_info < (3, 8):
         pytest.skip("AsyncMock is not available in Python 3.7")
-    connection = Connection("fake.host.com")
+    connection = Connection("sb://fake.host.com")
     connection._process_outgoing_frame = AsyncMock(return_value=None)
     # create session on the Connection
     session = connection.create_session(network_trace=False)
@@ -33,7 +33,7 @@ async def test_connection_begin_session():
 async def test_connection_end_session_on_timeout():
     if sys.version_info < (3, 8):
         pytest.skip("AsyncMock is not available in Python 3.7")
-    connection = Connection("fake.host.com")
+    connection = Connection("sb://fake.host.com")
     connection._process_outgoing_frame = AsyncMock(return_value=None)
     # create session on the Connection
     session = connection.create_session(network_trace=False)
