@@ -4,7 +4,7 @@
 # pylint: disable=protected-access, too-many-locals
 
 import os
-from typing import Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import AmlToken, ManagedIdentity, UserIdentity
 from azure.ai.ml.constants._common import AssetTypes
@@ -22,8 +22,10 @@ from .spark import Spark
 SUPPORTED_INPUTS = [AssetTypes.URI_FILE, AssetTypes.URI_FOLDER, AssetTypes.MLTABLE]
 
 
-def _parse_input(input_value):
-    component_input, job_input = None, None
+def _parse_input(input_value: Union[Input, dict, str, bool, int, float]) -> Tuple:
+    component_input = None
+    job_input: Union[Input, dict, str, bool, int, float] = ""
+
     if isinstance(input_value, Input):
         component_input = Input(**input_value._to_dict())
         input_type = input_value.type
@@ -46,8 +48,10 @@ def _parse_input(input_value):
     return component_input, job_input
 
 
-def _parse_output(output_value):
-    component_output, job_output = None, None
+def _parse_output(output_value: Union[Output, dict]) -> Tuple:
+    component_output = None
+    job_output: Union[Output, dict] = {}
+
     if isinstance(output_value, Output):
         component_output = Output(**output_value._to_dict())
         job_output = Output(**output_value._to_dict())
@@ -106,7 +110,7 @@ def spark(
     args: Optional[str] = None,
     compute: Optional[str] = None,
     resources: Optional[Union[Dict, SparkResourceConfiguration]] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> Spark:
     """Creates a Spark object which can be used inside a dsl.pipeline function or used as a standalone Spark job.
 

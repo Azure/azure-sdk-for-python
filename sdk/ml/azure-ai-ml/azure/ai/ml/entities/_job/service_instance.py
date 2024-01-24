@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import logging
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 from azure.ai.ml._restclient.runhistory.models import ServiceInstanceResult
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
@@ -29,7 +29,7 @@ class ServiceInstance(RestTranslatableMixin, DictMixin):
     """
 
     def __init__(
-        self,
+        self,  # pylint: disable=unused-argument
         *,
         type: Optional[str] = None,  # pylint: disable=redefined-builtin
         port: Optional[int] = None,
@@ -37,7 +37,7 @@ class ServiceInstance(RestTranslatableMixin, DictMixin):
         error: Optional[str] = None,
         endpoint: Optional[str] = None,
         properties: Optional[Dict[str, str]] = None,
-        **kwargs  # pylint: disable=unused-argument
+        **kwargs: Any
     ) -> None:
         self.type = type
         self.port = port
@@ -48,7 +48,7 @@ class ServiceInstance(RestTranslatableMixin, DictMixin):
 
     @classmethod
     # pylint: disable=arguments-differ
-    def _from_rest_object(cls, obj: ServiceInstanceResult, node_index: int) -> "ServiceInstance":
+    def _from_rest_object(cls, obj: ServiceInstanceResult, node_index: int) -> "ServiceInstance":  # type: ignore
         return cls(
             type=obj.type,
             port=obj.port,

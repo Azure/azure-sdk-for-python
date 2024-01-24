@@ -3,6 +3,9 @@
 # ---------------------------------------------------------
 
 # pylint: disable=protected-access
+from os import PathLike
+from typing import IO, Any, AnyStr, Callable, Dict, List, Optional, Union, cast
+
 from marshmallow import ValidationError
 
 from ..exceptions import ValidationException
@@ -11,7 +14,12 @@ from ._load_functions import _load_common_raising_marshmallow_error, _try_load_y
 from ._validation import PathAwareSchemaValidatableMixin, ValidationResult, ValidationResultBuilder
 
 
-def validate_common(cls, path, validate_func, params_override=None) -> ValidationResult:
+def validate_common(
+    cls: Any,
+    path: Union[str, PathLike, IO[AnyStr]],
+    validate_func: Callable,
+    params_override: Optional[List[Dict]] = None,
+) -> ValidationResult:
     params_override = params_override or []
     yaml_dict = _try_load_yaml_dict(path)
 
@@ -23,7 +31,8 @@ def validate_common(cls, path, validate_func, params_override=None) -> Validatio
         )
 
         if validate_func is not None:
-            return validate_func(entity)
+            res = cast(ValidationResult, validate_func(entity))
+            return res
         if isinstance(entity, PathAwareSchemaValidatableMixin):
             return entity._validate()
         return ValidationResultBuilder.success()
