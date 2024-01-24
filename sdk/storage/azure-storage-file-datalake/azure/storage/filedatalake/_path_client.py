@@ -935,6 +935,11 @@ class PathClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Getting the properties for a file/directory.
         """
+        upn = kwargs.pop('upn', None)
+        if upn:
+            headers = kwargs.pop('headers', {})
+            headers['x-ms-upn'] = str(upn)
+            kwargs['headers'] = headers
         path_properties = self._blob_client.get_blob_properties(**kwargs)
         return path_properties
 
