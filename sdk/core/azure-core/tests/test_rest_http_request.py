@@ -23,6 +23,17 @@ from azure.core.pipeline.policies import CustomHookPolicy, UserAgentPolicy, Sans
 from azure.core.pipeline._tools import is_rest
 from rest_client import MockRestClient
 from azure.core import PipelineClient
+from utils import NamedIo
+
+
+@pytest.fixture
+def send_request(client):
+    def _send_request(request):
+        response = client.send_request(request, stream=False)
+        response.raise_for_status()
+        return response
+
+    return _send_request
 
 
 def test_files_array():
@@ -34,6 +45,16 @@ def test_files_array():
     )
     expected_file = ("fileContent", (None, file, "application/octet-stream"))
     assert request.content == [expected_file, expected_file]
+
+
+def test_multipart_data_and_named_files_content(send_request):
+    request = HttpRequest(
+        "POST",
+        "/multipart/data-and-named-files-array",
+        data={"message": "Hello, world!"},
+        files={"fileContent": [NamedIo("0", b"<file content>"), NamedIo("1", b"<file content>")]},
+    )
+    send_request(request)
 
 
 @pytest.fixture

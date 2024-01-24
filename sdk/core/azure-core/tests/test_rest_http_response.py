@@ -15,7 +15,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.rest._requests_basic import RestRequestsTransportResponse
 from azure.core.exceptions import HttpResponseError
 import xml.etree.ElementTree as ET
-from utils import readonly_checks, NamedIo
+from utils import readonly_checks
 
 
 @pytest.fixture
@@ -214,16 +214,6 @@ def test_multipart_data_and_files_content(send_request):
         "/multipart/data-and-files",
         data={"message": "Hello, world!"},
         files={"fileContent": io.BytesIO(b"<file content>")},
-    )
-    send_request(request)
-
-
-def test_multipart_data_and_named_files_content(send_request):
-    request = HttpRequest(
-        "POST",
-        "/multipart/data-and-named-files-array",
-        data={"message": "Hello, world!"},
-        files={"fileContent": [NamedIo("0", b"<file content>"), NamedIo("1", b"<file content>")]},
     )
     send_request(request)
 

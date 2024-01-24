@@ -10,6 +10,30 @@ import pytest
 from azure.core.rest import HttpRequest
 import collections.abc
 
+from utils import NamedIo
+
+
+@pytest.fixture
+def send_request(client):
+    async def _send_request(request):
+        async with client:
+            response = await client.send_request(request, stream=False)
+            response.raise_for_status()
+            return response
+
+    return _send_request
+
+
+@pytest.mark.asyncio
+async def test_multipart_data_and_named_files_content(send_request):
+    request = HttpRequest(
+        "POST",
+        "/multipart/data-and-named-files-array",
+        data={"message": "Hello, world!"},
+        files={"fileContent": [NamedIo("0", b"<file content>"), NamedIo("1", b"<file content>")]},
+    )
+    await send_request(request)
+
 
 @pytest.fixture
 def assert_aiterator_body():

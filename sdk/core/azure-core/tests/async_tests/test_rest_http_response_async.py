@@ -12,7 +12,7 @@ import zlib
 from azure.core.rest import HttpRequest, AsyncHttpResponse
 from azure.core.rest._aiohttp import RestAioHttpTransportResponse
 from azure.core.exceptions import HttpResponseError
-from utils import readonly_checks, NamedIo
+from utils import readonly_checks
 
 
 @pytest.fixture
@@ -238,17 +238,6 @@ async def test_multipart_data_and_files_content(send_request):
         "/multipart/data-and-files",
         data={"message": "Hello, world!"},
         files={"fileContent": io.BytesIO(b"<file content>")},
-    )
-    await send_request(request)
-
-
-@pytest.mark.asyncio
-async def test_multipart_data_and_named_files_content(send_request):
-    request = HttpRequest(
-        "POST",
-        "/multipart/data-and-named-files-array",
-        data={"message": "Hello, world!"},
-        files={"fileContent": [NamedIo("0", b"<file content>"), NamedIo("1", b"<file content>")]},
     )
     await send_request(request)
 
