@@ -1521,6 +1521,7 @@ class FileOperations:
         prevsharesnapshot: Optional[str] = None,
         timeout: Optional[int] = None,
         range: Optional[str] = None,
+        support_rename: Optional[bool] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> _models.ShareFileRangeList:
@@ -1540,6 +1541,13 @@ class FileOperations:
         :param range: Specifies the range of bytes over which to list ranges, inclusively. Default
          value is None.
         :type range: str
+        :param support_rename: This header is allowed only when PrevShareSnapshot query parameter is
+         set. Determines whether the changed ranges for a file that has been renamed or moved between
+         the target snapshot (or the live file) and the previous snapshot should be listed. If the value
+         is true, the valid changed ranges for the file will be returned. If the value is false, the
+         operation will result in a failure with 409 (Conflict) response. The default value is false.
+         Default value is None.
+        :type support_rename: bool
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
         :keyword comp: comp. Default value is "rangelist". Note that overriding this default value may
@@ -1575,6 +1583,7 @@ class FileOperations:
             timeout=timeout,
             range=range,
             lease_id=_lease_id,
+            support_rename=support_rename,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
