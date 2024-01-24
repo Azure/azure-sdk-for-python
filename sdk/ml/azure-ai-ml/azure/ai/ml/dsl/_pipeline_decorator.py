@@ -10,7 +10,7 @@ from collections import OrderedDict
 from functools import wraps
 from inspect import Parameter, signature
 from pathlib import Path
-from typing import Callable, Dict, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, List, Optional, TypeVar, Union, overload
 
 from typing_extensions import ParamSpec
 
@@ -57,7 +57,7 @@ P = ParamSpec("P")
 # Overload the returns a decorator when func is None
 @overload
 def pipeline(
-    func: None = None,
+    func: None,
     *,
     name: Optional[str] = None,
     version: Optional[str] = None,
@@ -65,7 +65,7 @@ def pipeline(
     description: Optional[str] = None,
     experiment_name: Optional[str] = None,
     tags: Optional[Dict[str, str]] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> Callable[[Callable[P, T]], Callable[P, PipelineJob]]:
     ...
 
@@ -73,7 +73,7 @@ def pipeline(
 # Overload the returns a decorated function when func isn't None
 @overload
 def pipeline(
-    func: Callable[P, T] = None,
+    func: Callable[P, T],
     *,
     name: Optional[str] = None,
     version: Optional[str] = None,
@@ -81,7 +81,7 @@ def pipeline(
     description: Optional[str] = None,
     experiment_name: Optional[str] = None,
     tags: Optional[Dict[str, str]] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> Callable[P, PipelineJob]:
     ...
 
@@ -94,8 +94,8 @@ def pipeline(
     display_name: Optional[str] = None,
     description: Optional[str] = None,
     experiment_name: Optional[str] = None,
-    tags: Optional[Dict[str, str]] = None,
-    **kwargs,
+    tags: Optional[Union[Dict[str, str], str]] = None,
+    **kwargs: Any,
 ) -> Union[Callable[[Callable[P, T]], Callable[P, PipelineJob]], Callable[P, PipelineJob]]:
     """Build a pipeline which contains all component nodes defined in this function.
 
@@ -135,7 +135,8 @@ def pipeline(
     """
 
     def pipeline_decorator(func: Callable[P, T]) -> Callable[P, PipelineJob]:
-        if not isinstance(func, Callable):  # pylint: disable=isinstance-second-argument-not-valid-type
+        # pylint: disable=isinstance-second-argument-not-valid-type
+        if not isinstance(func, Callable):  # type: ignore
             raise UserErrorException(f"Dsl pipeline decorator accept only function type, got {type(func)}.")
 
         non_pipeline_inputs = kwargs.get("non_pipeline_inputs", []) or kwargs.get("non_pipeline_parameters", [])
@@ -244,9 +245,10 @@ def pipeline(
 
             return built_pipeline
 
-        wrapper._is_dsl_func = True
-        wrapper._job_settings = job_settings
-        wrapper._pipeline_builder = pipeline_builder
+        # Bug Item number: 2883169
+        wrapper._is_dsl_func = True  # type: ignore
+        wrapper._job_settings = job_settings  # type: ignore
+        wrapper._pipeline_builder = pipeline_builder  # type: ignore
         return wrapper
 
     # enable use decorator without "()" if all arguments are default values
@@ -256,7 +258,7 @@ def pipeline(
 
 
 # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
-def _validate_args(func, args, kwargs, non_pipeline_inputs):
+def _validate_args(func: Callable, args: Any, kwargs: Dict, non_pipeline_inputs: List) -> OrderedDict:
     """Validate customer function args and convert them to kwargs."""
     if not isinstance(non_pipeline_inputs, List) or any(not isinstance(param, str) for param in non_pipeline_inputs):
         msg = "Type of 'non_pipeline_parameter' in dsl.pipeline should be a list of string"
@@ -297,7 +299,7 @@ def _validate_args(func, args, kwargs, non_pipeline_inputs):
             raise MultipleValueError(func.__name__, _k)
         provided_args[_k] = _v
 
-    def _is_supported_data_type(_data):
+    def _is_supported_data_type(_data: object) -> bool:
         return isinstance(_data, SUPPORTED_INPUT_TYPES) or is_group(_data)
 
     for pipeline_input_name in provided_args:

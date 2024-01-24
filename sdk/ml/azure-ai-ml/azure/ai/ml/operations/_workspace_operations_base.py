@@ -11,7 +11,7 @@ from typing import Any, Callable, Dict, MutableMapping, Optional, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningServices as ServiceClient082023Preview
+from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
@@ -72,7 +72,7 @@ class WorkspaceOperationsBase(ABC):
         self._init_kwargs = kwargs
         self.containerRegistry = "none"
 
-    def get(self, workspace_name: Optional[str] = None, **kwargs: Dict) -> Workspace:
+    def get(self, workspace_name: Optional[str] = None, **kwargs: Any) -> Workspace:
         """Get a Workspace by name.
 
         :param workspace_name: Name of the workspace.
@@ -90,7 +90,7 @@ class WorkspaceOperationsBase(ABC):
         workspace: Workspace,
         update_dependent_resources: bool = False,
         get_callback: Optional[Callable[[], Workspace]] = None,
-        **kwargs: Dict,
+        **kwargs: Any,
     ) -> LROPoller[Workspace]:
         """Create a new Azure Machine Learning Workspace.
 
@@ -194,7 +194,7 @@ class WorkspaceOperationsBase(ABC):
             wait=False,
         )
 
-        def callback():
+        def callback() -> Workspace:
             """Callback to be called after completion
 
             :return: Result of calling appropriate callback.
@@ -206,7 +206,7 @@ class WorkspaceOperationsBase(ABC):
         injected_callback = kwargs.get("cls", None)
         if injected_callback:
             # pylint: disable=function-redefined
-            def real_callback():
+            def real_callback() -> Any:
                 """Callback to be called after completion
 
                 :return: Result of calling appropriate callback.
@@ -227,8 +227,8 @@ class WorkspaceOperationsBase(ABC):
         workspace: Workspace,
         *,
         update_dependent_resources: bool = False,
-        deserialize_callback: Optional[Callable[[], Workspace]] = None,
-        **kwargs: Dict,
+        deserialize_callback: Optional[Callable] = None,
+        **kwargs: Any,
     ) -> LROPoller[Workspace]:
         """Updates a Azure Machine Learning Workspace.
 
@@ -365,7 +365,7 @@ class WorkspaceOperationsBase(ABC):
         grant_materialization_permissions = kwargs.get("grant_materialization_permissions", None)
 
         # pylint: disable=unused-argument, docstring-missing-param
-        def callback(_, deserialized, args):
+        def callback(_: Any, deserialized: Any, args: Any) -> Workspace:
             """Callback to be called after completion
 
             :return: Workspace deserialized.
@@ -408,7 +408,7 @@ class WorkspaceOperationsBase(ABC):
         injected_callback = kwargs.get("cls", None)
         if injected_callback:
             # pylint: disable=function-redefined, docstring-missing-param
-            def real_callback(_, deserialized, args):
+            def real_callback(_: Any, deserialized: Any, args: Any) -> Any:
                 """Callback to be called after completion
 
                 :return: Result of calling appropriate callback.
@@ -422,7 +422,7 @@ class WorkspaceOperationsBase(ABC):
         return poller
 
     def begin_delete(
-        self, name: str, *, delete_dependent_resources: bool, permanently_delete: bool = False, **kwargs: Dict
+        self, name: str, *, delete_dependent_resources: bool, permanently_delete: bool = False, **kwargs: Any
     ) -> LROPoller[None]:
         """Delete a Workspace.
 
@@ -511,7 +511,7 @@ class WorkspaceOperationsBase(ABC):
         return poller
 
     # pylint: disable=too-many-statements,too-many-branches,too-many-locals
-    def _populate_arm_parameters(self, workspace: Workspace, **kwargs: Dict) -> Tuple[dict, dict, dict]:
+    def _populate_arm_parameters(self, workspace: Workspace, **kwargs: Any) -> Tuple[dict, dict, dict]:
         """Populates ARM template parameters for use to deploy a workspace resource.
 
         :param workspace: Workspace resource.
@@ -519,7 +519,7 @@ class WorkspaceOperationsBase(ABC):
         :return: A tuple of three dicts: an ARM template, ARM template parameters, resources_being_deployed.
         :rtype: Tuple[dict, dict, dict]
         """
-        resources_being_deployed = {}
+        resources_being_deployed: Dict = {}
         if not workspace.location:
             workspace.location = get_resource_group_location(
                 self._credentials, self._subscription_id, workspace.resource_group
@@ -763,7 +763,7 @@ class WorkspaceOperationsBase(ABC):
         return template, param, resources_being_deployed
 
     def _populate_feature_store_role_assignment_parameters(
-        self, workspace: Workspace, **kwargs: Dict
+        self, workspace: Workspace, **kwargs: Any
     ) -> Tuple[dict, dict, dict]:
         """Populates ARM template parameters for use to update feature store materialization identity role assignments.
 
@@ -814,7 +814,7 @@ class WorkspaceOperationsBase(ABC):
         resources_being_deployed[materialization_identity_id] = (ArmConstants.USER_ASSIGNED_IDENTITIES, None)
         return template, param, resources_being_deployed
 
-    def _check_workspace_name(self, name) -> str:
+    def _check_workspace_name(self, name: Optional[str]) -> str:
         """Validates that a workspace name exists.
 
         :param name: Name for a workspace resource.
@@ -881,7 +881,7 @@ def _generate_key_vault(name: str, resources_being_deployed: dict) -> str:
     # The name must begin with a letter, end with a letter or digit, and not contain consecutive hyphens.
     key_vault = get_name_for_dependent_resource(name, "keyvault")
     resources_being_deployed[key_vault] = (ArmConstants.KEY_VAULT, None)
-    return key_vault
+    return str(key_vault)
 
 
 def _generate_storage(name: str, resources_being_deployed: dict) -> str:
@@ -897,7 +897,7 @@ def _generate_storage(name: str, resources_being_deployed: dict) -> str:
     """
     storage = get_name_for_dependent_resource(name, "storage")
     resources_being_deployed[storage] = (ArmConstants.STORAGE, None)
-    return storage
+    return str(storage)
 
 
 def _generate_storage_container(name: str, resources_being_deployed: dict) -> str:
@@ -913,7 +913,7 @@ def _generate_storage_container(name: str, resources_being_deployed: dict) -> st
     """
     storage_container = get_name_for_dependent_resource(name, "container")
     resources_being_deployed[storage_container] = (ArmConstants.STORAGE_CONTAINER, None)
-    return storage_container
+    return str(storage_container)
 
 
 def _generate_log_analytics(name: str, resources_being_deployed: dict) -> str:
@@ -932,7 +932,7 @@ def _generate_log_analytics(name: str, resources_being_deployed: dict) -> str:
         ArmConstants.LOG_ANALYTICS,
         None,
     )
-    return log_analytics
+    return str(log_analytics)
 
 
 def _generate_app_insights(name: str, resources_being_deployed: dict) -> str:
@@ -953,7 +953,7 @@ def _generate_app_insights(name: str, resources_being_deployed: dict) -> str:
         ArmConstants.APP_INSIGHTS,
         None,
     )
-    return app_insights
+    return str(app_insights)
 
 
 def _generate_container_registry(name: str, resources_being_deployed: dict) -> str:
@@ -974,7 +974,7 @@ def _generate_container_registry(name: str, resources_being_deployed: dict) -> s
         ArmConstants.CONTAINER_REGISTRY,
         None,
     )
-    return con_reg
+    return str(con_reg)
 
 
 def _generate_materialization_identity(
@@ -1001,8 +1001,8 @@ def _generate_materialization_identity(
         if char.isalpha() or char.isdigit():
             namespace = namespace + char
     namespace = namespace.encode("utf-8").hex()
-    namespace = uuid.UUID(namespace[:32].ljust(32, "0"))
-    materialization_identity = f"materialization-uai-" f"{uuid.uuid3(namespace, workspace.name.lower()).hex}"
+    uuid_namespace = uuid.UUID(namespace[:32].ljust(32, "0"))
+    materialization_identity = f"materialization-uai-" f"{uuid.uuid3(uuid_namespace, workspace.name.lower()).hex}"
     resources_being_deployed[materialization_identity] = (
         ArmConstants.USER_ASSIGNED_IDENTITIES,
         None,
@@ -1013,13 +1013,13 @@ def _generate_materialization_identity(
 class CustomArmTemplateDeploymentPollingMethod(PollingMethod):
     """A custom polling method for ARM template deployment used internally for workspace creation."""
 
-    def __init__(self, poller, arm_submit, func) -> None:
+    def __init__(self, poller: Any, arm_submit: Any, func: Any) -> None:
         self.poller = poller
         self.arm_submit = arm_submit
         self.func = func
         super().__init__()
 
-    def resource(self):
+    def resource(self) -> Any:
         """
         Polls for the resource creation completing every so often with ability to cancel deployment and outputs
         either error or executes function to "deserialize" result.
@@ -1027,7 +1027,7 @@ class CustomArmTemplateDeploymentPollingMethod(PollingMethod):
         :return: The response from polling result and calling func from CustomArmTemplateDeploymentPollingMethod
         :rtype: Any
         """
-        error = None
+        error: Any = None
         try:
             while not self.poller.done():
                 try:
@@ -1056,7 +1056,7 @@ class CustomArmTemplateDeploymentPollingMethod(PollingMethod):
         return self.func()
 
     # pylint: disable=docstring-missing-param
-    def initialize(self, *args, **kwargs):
+    def initialize(self, *args: Any, **kwargs: Any) -> None:
         """
         unused stub overridden from ABC
 
@@ -1064,7 +1064,7 @@ class CustomArmTemplateDeploymentPollingMethod(PollingMethod):
         :rtype: ~azure.ai.ml.entities.OutboundRule
         """
 
-    def finished(self):
+    def finished(self) -> None:
         """
         unused stub overridden from ABC
 
@@ -1072,7 +1072,7 @@ class CustomArmTemplateDeploymentPollingMethod(PollingMethod):
         :rtype: ~azure.ai.ml.entities.OutboundRule
         """
 
-    def run(self):
+    def run(self) -> None:
         """
         unused stub overridden from ABC
 
@@ -1080,7 +1080,7 @@ class CustomArmTemplateDeploymentPollingMethod(PollingMethod):
         :rtype: ~azure.ai.ml.entities.OutboundRule
         """
 
-    def status(self):
+    def status(self) -> None:
         """
         unused stub overridden from ABC
 

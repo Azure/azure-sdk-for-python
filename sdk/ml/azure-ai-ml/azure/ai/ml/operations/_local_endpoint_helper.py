@@ -6,7 +6,7 @@
 
 import json
 import logging
-from typing import Iterable, Optional
+from typing import Any, Iterable, Optional
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -87,10 +87,10 @@ class _LocalEndpointHelper(object):
             headers = {}
             if deployment_name is not None:
                 headers[EndpointInvokeFields.MODEL_DEPLOYMENT] = deployment_name
-            return self._requests_pipeline.post(scoring_uri, json=data, headers=headers).text()
+            return str(self._requests_pipeline.post(scoring_uri, json=data, headers=headers).text())
         endpoint_stub = self._endpoint_stub.get(endpoint_name=endpoint_name)
         if endpoint_stub:
-            return self._endpoint_stub.invoke()
+            return str(self._endpoint_stub.invoke())
         raise LocalEndpointNotFoundError(endpoint_name=endpoint_name, deployment_name=deployment_name)
 
     def get(self, endpoint_name: str) -> OnlineEndpoint:
@@ -143,7 +143,7 @@ class _LocalEndpointHelper(object):
             endpoints.append(_convert_container_to_endpoint(container=container))
         return endpoints
 
-    def delete(self, name: str):
+    def delete(self, name: str) -> None:
         """Delete a local endpoint.
 
         :param name: Name of endpoint to delete.
@@ -160,7 +160,8 @@ class _LocalEndpointHelper(object):
 
 
 def _convert_container_to_endpoint(
-    container: "docker.models.containers.Container",
+    # Bug Item number: 2885719
+    container: "docker.models.containers.Container",  # type: ignore
     endpoint_json: Optional[dict] = None,
 ) -> OnlineEndpoint:
     """Converts provided Container for local deployment to OnlineEndpoint entity.
@@ -190,7 +191,7 @@ def _convert_container_to_endpoint(
     )
 
 
-def _convert_json_to_endpoint(endpoint_json: dict, **kwargs) -> OnlineEndpoint:
+def _convert_json_to_endpoint(endpoint_json: dict, **kwargs: Any) -> OnlineEndpoint:
     """Converts metadata json and kwargs to OnlineEndpoint entity.
 
     :param endpoint_json: dictionary representation of OnlineEndpoint entity.

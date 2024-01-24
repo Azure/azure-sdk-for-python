@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 import shutil
 import tempfile
-from typing import Any, List, Union, Iterable
+from typing import Any, Dict, List, Tuple, Union, Iterable, Optional
 import uuid
 
 
@@ -61,7 +61,6 @@ class DeploymentOperations:
             )
 
         model = deployment.model
-        v2_deployment = None
         temp_dir = tempfile.TemporaryDirectory()
         if isinstance(model, PromptflowModel):
             if not deployment.instance_type:
@@ -85,7 +84,7 @@ class DeploymentOperations:
             deployment_environment_variables = (
                 deployment.environment_variables if deployment.environment_variables else {}
             )
-            v2_deployment = ManagedOnlineDeployment(
+            v2_deployment: ManagedOnlineDeployment = ManagedOnlineDeployment(  # type: ignore[no-redef]
                 name=deployment.name,
                 endpoint_name=endpoint_name,
                 model=azureml_model,
@@ -129,7 +128,7 @@ class DeploymentOperations:
                         " specifying conda_file and one of loader_module or chat_module for deployment."
                     )
 
-            v2_deployment = ManagedOnlineDeployment(
+            v2_deployment: ManagedOnlineDeployment = ManagedOnlineDeployment(  # type: ignore[no-redef]
                 name=deployment.name,
                 endpoint_name=endpoint_name,
                 model=azureml_model,
@@ -154,6 +153,7 @@ class DeploymentOperations:
                     default_instance_type, allowed_instance_types = get_default_allowed_instance_type_for_hugging_face(
                         model_details, self._ml_client._credential
                     )
+                    default_instance_type = str(default_instance_type)  # type: ignore[no-redef]
                     self._check_default_instance_type_and_populate(
                         default_instance_type, deployment, allowed_instance_types=allowed_instance_types
                     )
@@ -177,7 +177,7 @@ class DeploymentOperations:
                     )
                     # create mapping of allowed SKU to (SKU family, number of vCPUs, and cost per hour on linux)
                     filtered_vm_sizes = [vm_size for vm_size in vm_sizes.value if vm_size.name in allowed_skus]
-                    sku_to_family_vcpu_cost_map = {}
+                    sku_to_family_vcpu_cost_map: Dict[Any, Tuple[Any, Any, Optional[Any]]] = {}
                     sku_families = []
                     for vm_size in filtered_vm_sizes:
                         cost = None
@@ -189,7 +189,7 @@ class DeploymentOperations:
 
                     # sort allowed skus by price and find the first vm that has enough quota
                     sku_to_family_vcpu_cost_map = dict(
-                        sorted(sku_to_family_vcpu_cost_map.items(), key=lambda item: item[1][2])
+                        sorted(sku_to_family_vcpu_cost_map.items(), key=lambda item: item[1][2])  # type: ignore
                     )
                     # get usage info and filter it down to dedicated usage for each SKU family
                     usage_info = self._ml_client.compute.list_usage()
@@ -218,7 +218,7 @@ class DeploymentOperations:
                             "with more quota."
                         )
 
-            v2_deployment = ManagedOnlineDeployment(
+            v2_deployment: ManagedOnlineDeployment = ManagedOnlineDeployment(  # type: ignore[no-redef]
                 name=deployment.name,
                 endpoint_name=endpoint_name,
                 model=model_id,
@@ -270,7 +270,7 @@ class DeploymentOperations:
 
     @distributed_trace
     @monitor_with_activity(logger, "Deployment.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, endpoint_name: str = None) -> Deployment:
+    def get(self, name: str, endpoint_name: Optional[str] = None) -> Deployment:
         endpoint_name = endpoint_name if endpoint_name else name
         deployment = self._ml_client.online_deployments.get(
             name=name,
@@ -292,13 +292,13 @@ class DeploymentOperations:
 
     @distributed_trace
     @monitor_with_activity(logger, "Deployment.GetKeys", ActivityType.PUBLICAPI)
-    def get_keys(self, name: str, endpoint_name: str = None) -> DeploymentKeys:
+    def get_keys(self, name: str, endpoint_name: Optional[str] = None) -> DeploymentKeys:
         endpoint_name = endpoint_name if endpoint_name else name
         return DeploymentKeys._from_v2_endpoint_keys(self._ml_client.online_endpoints.get_keys(endpoint_name))
 
     @distributed_trace
     @monitor_with_activity(logger, "Deployment.Delete", ActivityType.PUBLICAPI)
-    def delete(self, name: str, endpoint_name: str = None) -> None:
+    def delete(self, name: str, endpoint_name: Optional[str] = None) -> None:
         self._ml_client.online_deployments.delete(
             name=name,
             endpoint_name=endpoint_name if endpoint_name else name,
@@ -306,7 +306,7 @@ class DeploymentOperations:
 
     @distributed_trace
     @monitor_with_activity(logger, "Deployment.Invoke", ActivityType.PUBLICAPI)
-    def invoke(self, name: str, request_file: Union[str, os.PathLike], endpoint_name: str = None) -> Any:
+    def invoke(self, name: str, request_file: Union[str, os.PathLike], endpoint_name: Optional[str] = None) -> Any:
         return self._ml_client.online_endpoints.invoke(
             endpoint_name=endpoint_name if endpoint_name else name,
             request_file=request_file,
@@ -317,9 +317,9 @@ class DeploymentOperations:
         self,
         instance_type: str,
         deployment: Deployment,
-        allowed_instance_types: List[str] = None,
-        min_sku_spec: str = None,
-    ) -> bool:
+        allowed_instance_types: Optional[List[str]] = None,
+        min_sku_spec: Optional[str] = None,
+    ) -> None:
         vm_sizes = self._ml_client.compute.list_sizes()
         inference_sku_vm_info = [vm for vm in vm_sizes if vm.name == instance_type][0]
         usage_info = self._ml_client.compute.list_usage()

@@ -36,7 +36,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     """
 
     @staticmethod
-    async def create_connection_async(**kwargs):
+    async def create_connection_async(**kwargs) -> ConnectionAsync:
         """
         Creates and returns the pyamqp Connection object.
         :keyword str host: The hostname, used by pyamqp.

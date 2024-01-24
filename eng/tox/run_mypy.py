@@ -18,8 +18,6 @@ from ci_tools.environment_exclusions import (
 )
 from ci_tools.parsing import ParsedSetup
 from ci_tools.variables import in_ci
-from gh_tools.vnext_issue_creator import create_vnext_issue
-
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -102,8 +100,11 @@ if __name__ == "__main__":
                 sample_code_error = sample_err
 
     if args.next and in_ci() and not is_typing_ignored(package_name):
+        from gh_tools.vnext_issue_creator import create_vnext_issue, close_vnext_issue
         if src_code_error or sample_code_error:
             create_vnext_issue(package_name, "mypy")
+        else:
+            close_vnext_issue(package_name, "mypy")
 
     if src_code_error and sample_code_error:
         raise Exception(

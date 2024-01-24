@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Optional
+from typing import Any, Optional
 from functools import partial
 
 from azure.core.tracing.decorator import distributed_trace
@@ -22,7 +22,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         for details.
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity.aio`
-    :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
 
     :keyword api_version: Version of the service API to use. Defaults to the most recent.
     :paramtype api_version: ~azure.keyvault.secrets.ApiVersion or str
@@ -41,7 +41,7 @@ class SecretClient(AsyncKeyVaultClientBase):
     # pylint:disable=protected-access
 
     @distributed_trace_async
-    async def get_secret(self, name: str, version: Optional[str] = None, **kwargs) -> KeyVaultSecret:
+    async def get_secret(self, name: str, version: Optional[str] = None, **kwargs: Any) -> KeyVaultSecret:
         """Get a secret. Requires the secrets/get permission.
 
         :param str name: The name of the secret
@@ -50,9 +50,8 @@ class SecretClient(AsyncKeyVaultClientBase):
         :returns: The fetched secret.
         :rtype: ~azure.keyvault.secrets.KeyVaultSecret
 
-        :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+        :raises ~azure.core.exceptions.ResourceNotFoundError or ~azure.core.exceptions.HttpResponseError:
+            the former if the secret doesn't exist; the latter for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -66,7 +65,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         return KeyVaultSecret._from_secret_bundle(bundle)
 
     @distributed_trace_async
-    async def set_secret(self, name: str, value: str, **kwargs) -> KeyVaultSecret:
+    async def set_secret(self, name: str, value: str, **kwargs: Any) -> KeyVaultSecret:
         """Set a secret value. If `name` is in use, create a new version of the secret. If not, create a new secret.
 
         Requires secrets/set permission.
@@ -84,7 +83,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         :returns: The created or updated secret.
         :rtype: ~azure.keyvault.secrets.KeyVaultSecret
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -120,7 +119,7 @@ class SecretClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def update_secret_properties(
-        self, name: str, version: Optional[str] = None, **kwargs
+        self, name: str, version: Optional[str] = None, **kwargs: Any
     ) -> SecretProperties:
         """Update properties of a secret other than its value. Requires secrets/set permission.
 
@@ -140,9 +139,8 @@ class SecretClient(AsyncKeyVaultClientBase):
         :returns: The updated secret properties.
         :rtype: ~azure.keyvault.secrets.SecretProperties
 
-        :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+        :raises ~azure.core.exceptions.ResourceNotFoundError or ~azure.core.exceptions.HttpResponseError:
+            the former if the secret doesn't exist; the latter for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -177,7 +175,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         return SecretProperties._from_secret_bundle(bundle)  # pylint: disable=protected-access
 
     @distributed_trace
-    def list_properties_of_secrets(self, **kwargs) -> AsyncItemPaged[SecretProperties]:
+    def list_properties_of_secrets(self, **kwargs: Any) -> AsyncItemPaged[SecretProperties]:
         """List identifiers and attributes of all secrets in the vault. Requires secrets/list permission.
 
         List items don't include secret values. Use :func:`get_secret` to get a secret's value.
@@ -201,7 +199,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_properties_of_secret_versions(self, name: str, **kwargs) -> AsyncItemPaged[SecretProperties]:
+    def list_properties_of_secret_versions(self, name: str, **kwargs: Any) -> AsyncItemPaged[SecretProperties]:
         """List properties of all versions of a secret, excluding their values. Requires secrets/list permission.
 
         List items don't include secret values. Use :func:`get_secret` to get a secret's value.
@@ -228,7 +226,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace_async
-    async def backup_secret(self, name: str, **kwargs) -> bytes:
+    async def backup_secret(self, name: str, **kwargs: Any) -> bytes:
         """Back up a secret in a protected form useable only by Azure Key Vault. Requires secrets/backup permission.
 
         :param str name: Name of the secret to back up
@@ -236,9 +234,8 @@ class SecretClient(AsyncKeyVaultClientBase):
         :returns: The backup result, in a protected bytes format that can only be used by Azure Key Vault.
         :rtype: bytes
 
-        :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+        :raises ~azure.core.exceptions.ResourceNotFoundError or ~azure.core.exceptions.HttpResponseError:
+            the former if the secret doesn't exist; the latter for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -252,7 +249,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         return backup_result.value
 
     @distributed_trace_async
-    async def restore_secret_backup(self, backup: bytes, **kwargs) -> SecretProperties:
+    async def restore_secret_backup(self, backup: bytes, **kwargs: Any) -> SecretProperties:
         """Restore a backed up secret. Requires the secrets/restore permission.
 
         :param bytes backup: A secret backup as returned by :func:`backup_secret`
@@ -260,9 +257,8 @@ class SecretClient(AsyncKeyVaultClientBase):
         :returns: The restored secret
         :rtype: ~azure.keyvault.secrets.SecretProperties
 
-        :raises:
-            :class:`~azure.core.exceptions.ResourceExistsError` if the secret's name is already in use,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+        :raises ~azure.core.exceptions.ResourceExistsError or ~azure.core.exceptions.HttpResponseError:
+            the former if the secret's name is already in use; the latter for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -280,7 +276,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         return SecretProperties._from_secret_bundle(bundle)
 
     @distributed_trace_async
-    async def delete_secret(self, name: str, **kwargs) -> DeletedSecret:
+    async def delete_secret(self, name: str, **kwargs: Any) -> DeletedSecret:
         """Delete all versions of a secret. Requires secrets/delete permission.
 
         If the vault has soft-delete enabled, deletion may take several seconds to complete.
@@ -290,9 +286,8 @@ class SecretClient(AsyncKeyVaultClientBase):
         :returns: The deleted secret.
         :rtype: ~azure.keyvault.secrets.DeletedSecret
 
-        :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+        :raises ~azure.core.exceptions.ResourceNotFoundError or ~azure.core.exceptions.HttpResponseError:
+            the former if the secret doesn't exist; the latter for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -305,12 +300,17 @@ class SecretClient(AsyncKeyVaultClientBase):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 2
-        deleted_secret = DeletedSecret._from_deleted_secret_bundle(
-            await self._client.delete_secret(self.vault_url, name, **kwargs)
+        pipeline_response, deleted_secret_bundle = await self._client.delete_secret(
+            vault_base_url=self.vault_url,
+            secret_name=name,
+            cls=lambda pipeline_response, deserialized, _: (pipeline_response, deserialized),
+            **kwargs,
         )
+        deleted_secret = DeletedSecret._from_deleted_secret_bundle(deleted_secret_bundle)
 
         polling_method = AsyncDeleteRecoverPollingMethod(
             # no recovery ID means soft-delete is disabled, in which case we initialize the poller as finished
+            pipeline_response=pipeline_response,
             command=partial(self.get_deleted_secret, name=name, **kwargs),
             final_resource=deleted_secret,
             finished=deleted_secret.recovery_id is None,
@@ -321,7 +321,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         return polling_method.resource()
 
     @distributed_trace_async
-    async def get_deleted_secret(self, name: str, **kwargs) -> DeletedSecret:
+    async def get_deleted_secret(self, name: str, **kwargs: Any) -> DeletedSecret:
         """Get a deleted secret. Possible only in vaults with soft-delete enabled. Requires secrets/get permission.
 
         :param str name: Name of the deleted secret
@@ -329,9 +329,8 @@ class SecretClient(AsyncKeyVaultClientBase):
         :returns: The deleted secret.
         :rtype: ~azure.keyvault.secrets.DeletedSecret
 
-        :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the deleted secret doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+        :raises ~azure.core.exceptions.ResourceNotFoundError or ~azure.core.exceptions.HttpResponseError:
+            the former if the deleted secret doesn't exist; the latter for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -345,7 +344,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
     @distributed_trace
-    def list_deleted_secrets(self, **kwargs) -> AsyncItemPaged[DeletedSecret]:
+    def list_deleted_secrets(self, **kwargs: Any) -> AsyncItemPaged[DeletedSecret]:
         """Lists all deleted secrets. Possible only in vaults with soft-delete enabled.
 
         Requires secrets/list permission.
@@ -369,7 +368,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace_async
-    async def purge_deleted_secret(self, name: str, **kwargs) -> None:
+    async def purge_deleted_secret(self, name: str, **kwargs: Any) -> None:
         """Permanently delete a deleted secret. Possible only in vaults with soft-delete enabled.
 
         Performs an irreversible deletion of the specified secret, without possibility for recovery. The operation is
@@ -383,7 +382,7 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         :returns: None
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
@@ -396,7 +395,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         await self._client.purge_deleted_secret(self.vault_url, name, **kwargs)
 
     @distributed_trace_async
-    async def recover_deleted_secret(self, name: str, **kwargs) -> SecretProperties:
+    async def recover_deleted_secret(self, name: str, **kwargs: Any) -> SecretProperties:
         """Recover a deleted secret to its latest version. This is possible only in vaults with soft-delete enabled.
 
         Requires the secrets/recover permission. If the vault does not have soft-delete enabled, :func:`delete_secret`
@@ -408,7 +407,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         :returns: The recovered secret's properties.
         :rtype: ~azure.keyvault.secrets.SecretProperties
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -421,13 +420,21 @@ class SecretClient(AsyncKeyVaultClientBase):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 2
-        recovered_secret = SecretProperties._from_secret_bundle(
-            await self._client.recover_deleted_secret(self.vault_url, name, **kwargs)
+        pipeline_response, recovered_secret_bundle = await self._client.recover_deleted_secret(
+            vault_base_url=self.vault_url,
+            secret_name=name,
+            cls=lambda pipeline_response, deserialized, _: (pipeline_response, deserialized),
+            **kwargs,
         )
+        recovered_secret = SecretProperties._from_secret_bundle(recovered_secret_bundle)
 
         command = partial(self.get_secret, name=name, **kwargs)
         polling_method = AsyncDeleteRecoverPollingMethod(
-            command=command, final_resource=recovered_secret, finished=False, interval=polling_interval
+            pipeline_response=pipeline_response,
+            command=command,
+            final_resource=recovered_secret,
+            finished=False,
+            interval=polling_interval
         )
         await polling_method.run()
 

@@ -14,7 +14,8 @@ class TestDallE(AzureRecordedTestCase):
     @pytest.mark.parametrize("api_type", ALL)
     @configure_v0
     def test_image_create(self, set_vars, azure_openai_creds, api_type):
-        openai.api_version = "2023-10-01-preview"  # not supported by later versions
+        if api_type != OPENAI:
+            openai.api_version = "2023-10-01-preview"  # not supported by later versions
         image = openai.Image.create(
             prompt="a cute baby seal"
         )
@@ -25,7 +26,8 @@ class TestDallE(AzureRecordedTestCase):
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure_v0
     def test_image_create_n(self, set_vars, azure_openai_creds, api_type):
-        openai.api_version = "2023-10-01-preview"  # not supported by later versions
+        if api_type != OPENAI:
+            openai.api_version = "2023-10-01-preview"  # not supported by later versions
         image = openai.Image.create(
             prompt="a cute baby seal",
             n=2
@@ -38,7 +40,8 @@ class TestDallE(AzureRecordedTestCase):
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure_v0
     def test_image_create_size(self, set_vars, azure_openai_creds, api_type):
-        openai.api_version = "2023-10-01-preview"  # not supported by later versions
+        if api_type != OPENAI:
+            openai.api_version = "2023-10-01-preview"  # not supported by later versions
         image = openai.Image.create(
             prompt="a cute baby seal",
             size="256x256"
@@ -61,7 +64,8 @@ class TestDallE(AzureRecordedTestCase):
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure_v0
     def test_image_create_user(self, set_vars, azure_openai_creds, api_type):
-        openai.api_version = "2023-10-01-preview"  # not supported by later versions
+        if api_type != OPENAI:
+            openai.api_version = "2023-10-01-preview"  # not supported by later versions
         image = openai.Image.create(
             prompt="a cute baby seal",
             user="krista"
