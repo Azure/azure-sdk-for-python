@@ -278,7 +278,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 :name: create_database
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop("response_hook", None)
+        response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
@@ -461,7 +461,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :rtype: None
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop("response_hook", None)
+        response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
@@ -482,7 +482,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
         :rtype: ~azure.cosmos.DatabaseAccount
         """
-        response_hook = kwargs.pop("response_hook", None)
+        response_hook = kwargs.pop('response_hook', None)
         result = self.client_connection.GetDatabaseAccount(**kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
