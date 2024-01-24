@@ -14,12 +14,9 @@ from opentelemetry.sdk.metrics import (
 )
 from opentelemetry.sdk.metrics.export import (
     AggregationTemporality,
-    DataPointT,
-    HistogramDataPoint,
     MetricExporter,
     MetricExportResult,
     MetricsData as OTMetricsData,
-    NumberDataPoint,
 )
 from azure.monitor.opentelemetry.exporter.quickpulse._generated._client import QuickpulseClient
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser

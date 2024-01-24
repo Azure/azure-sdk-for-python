@@ -67,7 +67,6 @@ class ConnectionStringParser:
             or env_cs.get(INGESTION_ENDPOINT)
             or "https://dc.services.visualstudio.com"
         )
-
         self.live_endpoint = (
             code_cs.get(LIVE_ENDPOINT)
             or env_cs.get(LIVE_ENDPOINT)
@@ -102,9 +101,13 @@ class ConnectionStringParser:
         auth = result.get("authorization")
         if auth is not None and auth.lower() != "ikey":
             raise ValueError("Invalid authorization mechanism")
+
+        # Construct the endpoints if not passed in explicitly
         endpoint_suffix = ""
         location_prefix = ""
         suffix = result.get("endpointsuffix")
+        # Get regional information if provided
+        prefix = result.get("location")
         if suffix is not None:
             endpoint_suffix = suffix
             # Get regional information if provided
@@ -113,20 +116,19 @@ class ConnectionStringParser:
                 location_prefix = prefix + "."
         # Construct the endpoints if not passed in explicitly
         if result.get(INGESTION_ENDPOINT) is None:
-            endpoint = "https://{0}dc.{1}".format(
-                location_prefix, endpoint_suffix
-            )
-            result[INGESTION_ENDPOINT] = endpoint
-        else:
-            # Default to None if cannot construct
-            result[INGESTION_ENDPOINT] = None
+            if endpoint_suffix:
+                result[INGESTION_ENDPOINT] = "https://{0}dc.{1}".format(
+                    location_prefix, endpoint_suffix
+                )
+            else:
+                # Default to None if cannot construct
+                result[INGESTION_ENDPOINT] = None
         if result.get(LIVE_ENDPOINT) is None:
-            endpoint = "https://{0}live.{1}".format(
-                location_prefix, endpoint_suffix
-            )
-            result[LIVE_ENDPOINT] = endpoint
-        else:
-            # Default to None if cannot construct
-            result[LIVE_ENDPOINT] = None
-        
+            if endpoint_suffix:
+                result[LIVE_ENDPOINT] = "https://{0}live.{1}".format(
+                    location_prefix, endpoint_suffix
+                )
+            else:
+                result[LIVE_ENDPOINT] = None
+
         return result

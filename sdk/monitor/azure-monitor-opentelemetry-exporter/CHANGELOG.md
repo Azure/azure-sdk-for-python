@@ -5,7 +5,7 @@
 ### Features Added
 
 - Add live metrics skeleton + swagger definitions
-    ([#31355](https://github.com/Azure/azure-sdk-for-python/pull/31355))
+    ([#33983](https://github.com/Azure/azure-sdk-for-python/pull/33983))
 
 ### Other Changes
 
