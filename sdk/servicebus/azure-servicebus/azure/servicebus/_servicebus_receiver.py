@@ -106,12 +106,11 @@ class ServiceBusReceiver(
     :keyword str subscription_name: The path of specific Service Bus Subscription under the
      specified Topic the client connects to.
     :keyword Optional[float] max_wait_time:  The timeout in seconds to wait for the first and subsequent
-     messages to arrive, or the total time for the operation to complete. If no messages arrive, and no
-     timeout is specified, this call will not return until the connection is closed. The default value
-     is None, meaning no timeout. On a sesionful queue/topic when NEXT_AVAILABLE_SESSION is specified,
-     this will act as the timeout for connecting to a session. If connection errors are occurring due
-     to write timing out,the connection timeout value may need to be adjusted. See the `socket_timeout`
-     optional parameter for more details.
+     messages to arrive. If no messages arrive, and no timeout is specified, this call will not return
+     until the connection is closed. The default value is None, meaning no timeout. On a sessionful 
+     queue/topic when NEXT_AVAILABLE_SESSION is specified, this will act as the timeout for connecting
+     to a session. If connection errors are occurring due to write timing out,the connection timeout
+     value may need to be adjusted. See the `socket_timeout` optional parameter for more details.
     :keyword receive_mode: The mode with which messages will be retrieved from the entity. The two options
      are PEEK_LOCK and RECEIVE_AND_DELETE. Messages received with PEEK_LOCK must be settled within a given
      lock period before they will be removed from the queue. Messages received with RECEIVE_AND_DELETE
@@ -266,8 +265,6 @@ class ServiceBusReceiver(
                 return self._do_retryable_operation(
                     self._iter_next,
                     wait_time=wait_time,
-                    timeout=self._max_wait_time,
-                    operation_requires_timeout=True
                 )
             except StopIteration:
                 self._message_iter = None
@@ -679,8 +676,7 @@ class ServiceBusReceiver(
         :param Optional[int] max_message_count: Maximum number of messages in the batch. Actual number
          returned will depend on prefetch_count and incoming stream rate.
          Setting to None will fully depend on the prefetch config. The default value is 1.
-        :param Optional[float] max_wait_time: DEPRECATED - Please use the max_wait_time
-         on the ServiceBusReceiver. The timeout in seconds to wait for the first and
+        :param Optional[float] max_wait_time: The timeout in seconds to wait for the first and
          subsequent messages to arrive, or the total time for the operation to complete.
          If no messages arrive, and no timeout is specified, this call will not return
          until the connection is closed. The default value is None, meaning no timeout.
