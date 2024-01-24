@@ -21,11 +21,6 @@ class BaseHandler(metaclass=abc.ABCMeta):
             self._prediction_data = test_data_df[[prediction_data]]
             test_data_df = test_data_df.drop(prediction_data, axis=1)
 
-        self._ground_truth = None
-        if isinstance(ground_truth, str) and ground_truth in test_data_df.columns:
-            self._ground_truth = test_data_df[[ground_truth]]
-            test_data_df = test_data_df.drop(ground_truth, axis=1)
-
         self._test_data = test_data_df
 
         self.params_dict = kwargs.pop("params_dict", None)
@@ -46,9 +41,6 @@ class BaseHandler(metaclass=abc.ABCMeta):
             self.execute_target()
         return self._input_output_data
 
-    @property
-    def ground_truth(self):
-        return self._ground_truth
 
     @abc.abstractmethod
     def execute_target(self):

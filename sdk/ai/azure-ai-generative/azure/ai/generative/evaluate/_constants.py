@@ -12,11 +12,6 @@ SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING = {
     CHAT: "rag-evaluation",
 }
 
-TYPE_TO_KWARGS_MAPPING = {
-    "qa": ["questions", "contexts", "y_pred", "y_test"],
-    "rag-evaluation": ["y_pred"]
-}
-
 
 class EvaluationMetrics:
     """

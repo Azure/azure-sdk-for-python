@@ -27,7 +27,7 @@ from azure.ai.generative.evaluate._metrics_handler._code_metric_handler import C
 from azure.ai.generative.evaluate._utils import _is_flow, load_jsonl, _get_artifact_dir_path, _copy_artifact
 from azure.ai.generative.evaluate._mlflow_log_collector import RedirectUserOutputStreams
 from azure.ai.generative.evaluate._constants import SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING, SUPPORTED_TASK_TYPE, CHAT, \
-    TYPE_TO_KWARGS_MAPPING, SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING
+    SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING
 from azure.ai.generative.evaluate._evaluation_result import EvaluationResult
 from ._metrics_handler._prompt_metric_handler import PromptMetricHandler
 
@@ -65,27 +65,6 @@ def _get_metric_handler_class(
         handler = LocalCodeHandler
 
     return handler
-
-
-def _validate_data(data, prediction_data, truth_data):
-    errors = []
-    prediction_data_column = ""
-    truth_data_column = ""
-
-    if isinstance(prediction_data, str):
-        prediction_data_column = data[0].get(prediction_data, None)
-
-    if isinstance(truth_data, str):
-        truth_data_column = data[0].get(truth_data, None)
-
-    if prediction_data_column is None:
-        errors.append("prediction_data column not found in data")
-
-    if truth_data_column is None:
-        errors.append("truth_data column not found in data")
-
-    if len(errors) > 1:
-        raise Exception(f'Invalid data {" ,".join(errors)}')
 
 
 def _log_metrics(run_id, metrics):
@@ -230,8 +209,6 @@ def _evaluate(
         evaluation_name=None,
         target=None,
         data=None,
-        truth_data=None,
-        prediction_data=None,
         task_type=None,
         metrics=None,
         data_mapping=None,
@@ -250,9 +227,6 @@ def _evaluate(
 
     if "y_pred" in data_mapping:
         prediction_data = data_mapping.get("y_pred")
-
-    if "y_test" in data_mapping:
-        truth_data = data_mapping.get("y_test")
 
     # if target is None and prediction_data is None:
     #     raise Exception("target and prediction data cannot be null")
@@ -282,24 +256,12 @@ def _evaluate(
         asset_handler = asset_handler_class(
             asset=target,
             prediction_data=prediction_data,
-            ground_truth=truth_data,
             test_data=test_data,
             metrics_config=metrics_config,
             **kwargs
         )
 
         metrics_results = {"artifacts": {}, "metrics": {}}
-        # metrics_handler = MetricHandler(
-        #     task_type=SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING[task_type],
-        #     metrics=metrics,
-        #     prediction_data=asset_handler.prediction_data,
-        #     truth_data=asset_handler.ground_truth,
-        #     test_data=asset_handler.test_data,
-        #     metrics_mapping=metrics_config,
-        #     prediction_data_column_name=prediction_data if isinstance(prediction_data, str) else None,
-        #     ground_truth_column_name=truth_data if isinstance(truth_data, str) else None,
-        #     data_mapping=data_mapping
-        # )
 
         if metrics is None:
             metrics = SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING[task_type].DEFAULT_LIST
@@ -310,8 +272,6 @@ def _evaluate(
         custom_prompt_metrics = [metric for metric in metrics if isinstance(metric, PromptMetric)]
         code_metrics = [metric for metric in metrics if isinstance(metric, CodeMetric)]
 
-        # TODO : Once PF is used for inbuilt metrics parallelize submission of metrics calculation of different kind
-
         if custom_prompt_metrics:
             for metric in custom_prompt_metrics:
                 metrics_config.setdefault(metric.name, {param: param for param in metric.parameters})
@@ -320,12 +280,8 @@ def _evaluate(
                 task_type="custom-prompt-metric",
                 metrics=custom_prompt_metrics,
                 prediction_data=asset_handler.prediction_data,
-                truth_data=asset_handler.ground_truth,
                 test_data=asset_handler.test_data,
                 metrics_mapping=metrics_config,
-                prediction_data_column_name=prediction_data if isinstance(prediction_data, str) else None,
-                ground_truth_column_name=truth_data if isinstance(truth_data, str) else None,
-                type_to_kwargs="custom-prompt-metric"
             )
 
             prompt_metric_results = prompt_metric_handler.calculate_metrics()
@@ -339,12 +295,8 @@ def _evaluate(
                 task_type="custom-code-metric",
                 metrics=code_metrics,
                 prediction_data=asset_handler.prediction_data,
-                truth_data=asset_handler.ground_truth,
                 test_data=asset_handler.test_data,
                 metrics_mapping=metrics_config,
-                prediction_data_column_name=prediction_data if isinstance(prediction_data, str) else None,
-                ground_truth_column_name=truth_data if isinstance(truth_data, str) else None,
-                type_to_kwargs="code-prompt-metric"
             )
 
             code_metric_results = code_metric_handler.calculate_metrics()
@@ -358,12 +310,10 @@ def _evaluate(
                 task_type=SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING[task_type],
                 metrics=inbuilt_metrics,
                 prediction_data=asset_handler.prediction_data,
-                truth_data=asset_handler.ground_truth,
+                input_output_data=asset_handler.input_output_data,
                 test_data=asset_handler.test_data,
                 metrics_mapping=metrics_config,
-                prediction_data_column_name=prediction_data if isinstance(prediction_data, str) else None,
-                ground_truth_column_name=truth_data if isinstance(truth_data, str) else None,
-                type_to_kwargs=TYPE_TO_KWARGS_MAPPING[task_type]
+                data_mapping=data_mapping,
             )
 
             inbuilt_metrics_results = inbuilt_metrics_handler.calculate_metrics()
@@ -430,11 +380,7 @@ def _evaluate(
                 _copy_artifact(tmp_path, output_path)
 
     evaluation_result = EvaluationResult(
-<<<<<<< HEAD
         metrics_summary=metrics_results.get("metrics"),
-=======
-        metrics_summary=metrics,
->>>>>>> c272382bd1 (e2e works)
         artifacts={
             "eval_results.jsonl": f"runs:/{run.info.run_id}/eval_results.jsonl"
         },
