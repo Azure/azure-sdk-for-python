@@ -42,12 +42,12 @@ class TextNerJob(AutoMLNLPJob):
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/ml_samples_automl_nlp.py
-            :start-after: [START automl.text_ner_job]
-            :end-before: [END automl.text_ner_job]
-            :language: python
-            :dedent: 8
-            :caption: creating an automl text ner job
+        .. literalinclude:: ../samples/ml_samples_automl_nlp.py
+                :start-after: [START automl.text_ner_job]
+                :end-before: [END automl.text_ner_job]
+                :language: python
+                :dedent: 8
+                :caption: creating an automl text ner job
     """
 
     _DEFAULT_PRIMARY_METRIC = ClassificationPrimaryMetrics.ACCURACY

@@ -20,45 +20,43 @@ class Metric(metaclass=abc.ABCMeta):
 class CodeMetric(Metric):
     """Evaluation code metric
 
-        :keyword name: Name of the metric.
-        :paramtype name: str
-        :keyword calculate: Function to compute row level metrics. It should have the following signature:
+    :keyword name: Name of the metric.
+    :paramtype name: str
+    :keyword calculate: Function to compute row level metrics. It should have the following signature:
 
-            .. code-block:: python
+        .. code:: python
 
-                def my_code_metric(
-                    *,
-                    data: Dict,
-                    response: Union[Dict, str],
-                    **kwargs,
-                ):
-                    '''
-                        :keyword data: Row data.This method will be called for each row.
-                        :paramtype data: Dict
-                        :keyword response: Response from target function passed to evaluate API otherwise None.
-                        :paramtype response: Dict
-                        :keyword kwargs: Includes params like data_mapping for this metric passed to evaluate API.
-                        :paramtype kwargs: Dict
-                    '''
-                ...
-        :paramtype calculate: Callable
-        :keyword aggregator: Function to aggregate row level metrics. It should have the following signature:
-            .. code-block:: python
+            def my_code_metric(
+                data: Dict,
+                response: Union[Dict, str],
+                **kwargs,
+            ):
+                '''
+                :keyword data: Row data. This method will be called for each row.
+                :paramtype data: Dict
+                :keyword response: Response from target function passed to evaluate API otherwise None.
+                :paramtype response: Dict
+                :keyword kwargs: Includes params like data_mapping for this metric passed to evaluate API.
+                :paramtype kwargs: Dict
+                '''
 
-                def my_aggregator(
-                    *,
-                    values,
-                    **kwargs,
-                ):
-                    '''
-                        :keyword values: Row level metric value calculated by calculate method of the metric.
-                        :paramtype values: Union[int, Dict[str, int]]
-                        :keyword kwargs: Includes params like data_mapping for this metric passed to evaluate API.
-                        :paramtype kwargs: Dict
-                    '''
-                ...
-        :paramtype aggregator: Callable
+    :paramtype calculate: Callable
+    :keyword aggregator: Function to aggregate row level metrics. It should have the following signature:
 
+        .. code:: python
+
+            def my_aggregator(
+                values: Union[int, Dict[str, int]],
+                **kwargs,
+            ):
+                '''
+                :keyword values: Row level metric value calculated by calculate method of the metric.
+                :paramtype values: Union[int, Dict[str, int]]
+                :keyword kwargs: Includes params like data_mapping for this metric passed to evaluate API.
+                :paramtype kwargs: Dict
+                '''
+
+    :paramtype aggregator: Callable
     """
 
     def __init__(self, *, name, calculate, aggregator=None, **kwargs):
