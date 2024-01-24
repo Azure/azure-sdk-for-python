@@ -334,7 +334,7 @@ def _parts_helper(
     return responses
 
 
-def _format_data_helper(data: "FileType") -> Union[Tuple[None, str], Tuple[Optional[str], "FileContent", str]]:
+def _format_data_helper(data: "FileType") -> Union[Tuple[Optional[str], str], Tuple[Optional[str], "FileContent", str]]:
     """Helper for _format_data.
 
     Format field data according to whether it is a stream or
@@ -372,7 +372,7 @@ def _format_data_helper(data: "FileType") -> Union[Tuple[None, str], Tuple[Optio
         file_bytes = data
     if content_type:
         return (filename, file_bytes, content_type)
-    return (None, cast(str, file_bytes))
+    return (filename, cast(str, file_bytes))
 
 
 def _aiohttp_body_helper(

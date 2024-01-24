@@ -250,7 +250,7 @@ class HttpRequest:
         self.data = value
 
     @staticmethod
-    def _format_data(data: Union[str, IO]) -> Union[Tuple[None, str], Tuple[Optional[str], FileContent, str]]:
+    def _format_data(data: Union[str, IO]) -> Union[Tuple[Optional[str], str], Tuple[Optional[str], FileContent, str]]:
         """Format field data according to whether it is a stream or
         a string for a form-data request.
 
