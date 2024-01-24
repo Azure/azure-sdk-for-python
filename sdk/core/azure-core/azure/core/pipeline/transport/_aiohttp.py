@@ -35,6 +35,7 @@ from typing import (
     Union,
     Type,
     MutableMapping,
+    Mapping,
 )
 from types import TracebackType
 from collections.abc import AsyncIterator
@@ -180,7 +181,7 @@ class AioHttpTransport(AsyncHttpTransport):
         """
         if request.files:
             form_data = aiohttp.FormData(request.data or {})
-            if hasattr(request.files, "items"):
+            if isinstance(request.files, Mapping):
                 files = list(request.files.items())
             else:
                 files = request.files
