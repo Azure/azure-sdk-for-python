@@ -826,8 +826,8 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
         self,
         *,
         production_data: Optional[List[FADProductionData]] = None,
-        reference_data: ReferenceData,
-        metric_thresholds: FeatureAttributionDriftMetricThreshold,
+        reference_data: ReferenceData = None,
+        metric_thresholds: FeatureAttributionDriftMetricThreshold = None,
         alert_enabled: bool = True,
         properties: Optional[Dict[str, str]] = None,
     ):
@@ -864,7 +864,7 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
 
 
 @experimental
-class ModelPerformanceSignal(ModelSignal):
+class ModelPerformanceSignal(RestTranslatableMixin):
     """Model performance signal.
 
     :keyword baseline_dataset: The data to calculate performance against.
@@ -883,48 +883,44 @@ class ModelPerformanceSignal(ModelSignal):
     def __init__(
         self,
         *,
-        production_data: ProductionData,
-        reference_data: ReferenceData,
-        metric_thresholds: ModelPerformanceMetricThreshold,
-        model_type: MonitorModelType,
+        production_data: Optional[List[ProductionData]] = None,
+        reference_data: ReferenceData = None,
+        metric_thresholds: ModelPerformanceMetricThreshold = None,
         data_segment: DataSegment = None,
         alert_enabled: bool = True,
+        properties: Optional[Dict[str, str]] = None,
     ) -> None:
-        super().__init__(
-            production_data=production_data,
-            reference_data=reference_data,
-            metric_thresholds=metric_thresholds,
-            model_type=model_type,
-            alert_enabled=alert_enabled,
-        )
+        
+        self.production_data = production_data,
+        self.reference_data = reference_data,
+        self.metric_thresholds = metric_thresholds,
+        self.alert_enabled = alert_enabled,
         self.type = MonitorSignalType.MODEL_PERFORMANCE
         self.data_segment = data_segment
+        self.properties = properties
 
     def _to_rest_object(self, **kwargs) -> RestModelPerformanceSignal:
         default_data_window_size = kwargs.get("default_data_window_size")
-        if self.production_data.data_window is None:
-            self.production_data.data_window = BaselineDataRange(
-                lookback_window_size=default_data_window_size,
-            )
+        self.properties["azureml.modelmonitor.model_performance_thresholds"] = self.metric_thresholds._to_str_object()
         return RestModelPerformanceSignal(
-            production_data=self.production_data._to_rest_object(),
+            production_data=[data._to_rest_object(default=default_data_window_size) for data in self.production_data],
             reference_data=self.reference_data._to_rest_object(),
-            metric_threshold=self.metric_thresholds._to_rest_object(model_type=self.model_type),
+            metric_threshold=self.metric_thresholds._to_rest_object(),
             data_segment=self.data_segment._to_rest_object() if self.data_segment else None,
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
+            properties=self.properties,
         )
 
     @classmethod
     def _from_rest_object(cls, obj: RestModelPerformanceSignal) -> "ModelPerformanceSignal":
         return cls(
-            production_data=ProductionData._from_rest_object(obj.production_data),
+            production_data=[ProductionData._from_rest_object(data) for data in obj.production_data],
             reference_data=ReferenceData._from_rest_object(obj.reference_data),
-            metric_thresholds=ModelPerformanceMetricThreshold._from_rest_object(obj.metric_threshold),
-            model_type=obj.metric_threshold.model_type.lower(),
             data_segment=DataSegment._from_rest_object(obj.data_segment) if obj.data_segment else None,
             alert_enabled=False
             if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
             else MonitoringNotificationMode.ENABLED,
+            properties=obj.properties,
         )
 
 

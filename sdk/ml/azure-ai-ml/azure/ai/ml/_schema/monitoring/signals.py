@@ -221,10 +221,14 @@ class FeatureAttributionDriftSignalSchema(metaclass=PatchedSchemaMeta):
         return FeatureAttributionDriftSignal(**data)
 
 
-class ModelPerformanceSignalSchema(ModelSignalSchema):
+class ModelPerformanceSignalSchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(allowed_values=MonitorSignalType.MODEL_PERFORMANCE, required=True)
+    production_data = fields.List(NestedField(ProductionDataSchema))
+    reference_data = NestedField(ReferenceDataSchema)
     data_segment = NestedField(DataSegmentSchema)
+    alert_enabled = fields.Bool()
     metric_thresholds = NestedField(ModelPerformanceMetricThresholdSchema)
+    properties = fields.Dict()
 
     @pre_dump
     def predump(self, data, **kwargs):
@@ -237,7 +241,9 @@ class ModelPerformanceSignalSchema(ModelSignalSchema):
     @post_load
     def make(self, data, **kwargs):
         from azure.ai.ml.entities._monitoring.signals import ModelPerformanceSignal
-
+        import debugpy
+        debugpy.connect(("localhost", 5678))
+        debugpy.breakpoint()
         data.pop("type", None)
         return ModelPerformanceSignal(**data)
 

@@ -28,6 +28,7 @@ from azure.ai.ml.entities._monitoring.signals import (
     GenerationSafetyQualitySignal,
     MonitoringSignal,
     PredictionDriftSignal,
+    ModelPerformanceSignal,
 )
 from azure.ai.ml.entities._monitoring.target import MonitoringTarget
 
@@ -75,6 +76,7 @@ class MonitorDefinition(RestTranslatableMixin):
                 FeatureAttributionDriftSignal,
                 CustomMonitoringSignal,
                 GenerationSafetyQualitySignal,
+                ModelPerformanceSignal,
             ],
         ] = None,
         alert_notification: Optional[Union[Literal[AZMONITORING], AlertNotification]] = None,

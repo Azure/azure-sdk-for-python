@@ -477,7 +477,7 @@ class ScheduleOperations(_ScopeDependentOperations):
                     ErrorTarget=ErrorTarget.SCHEDULE,
                     ErrorCategory=ErrorCategory.USER_ERROR,
                 )
-            if signal.type == MonitorSignalType.FEATURE_ATTRIBUTION_DRIFT:
+            if signal.type in [MonitorSignalType.FEATURE_ATTRIBUTION_DRIFT, MonitorSignalType.MODEL_PERFORMANCE]:
                 for prod_data in signal.production_data:
                     self._job_operations._resolve_job_input(prod_data.input_data, schedule._base_path)
                     prod_data.pre_processing_component = self._orchestrators.get_asset_arm_id(
