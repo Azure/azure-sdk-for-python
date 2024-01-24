@@ -26,7 +26,7 @@ class CustomIterator(PageIterator):
             continuation_token=kwargs.get("continuation_token"),
         )
         self._command = command
-        self.results_per_page = kwargs.get("results_per_page")
+        self.page_size = kwargs.get("page_size")
 
     def _get_next_cb(self, continuation_token, **kwargs):  # pylint: disable=inconsistent-return-statements
         if not continuation_token:
@@ -37,7 +37,7 @@ class CustomIterator(PageIterator):
             next_row_key = continuation_token.get("RowKey")
 
         return self._command(
-            top=self.results_per_page,
+            top=self.page_size,
             next_partition_key=next_partition_key,
             next_row_key=next_row_key
         )
@@ -58,7 +58,7 @@ class AsyncCustomIterator(AsyncPageIterator):
     def __init__(
             self,
             command,
-            results_per_page=None,
+            page_size=None,
             continuation_token=None,
         ):
         super(AsyncCustomIterator, self).__init__(
@@ -67,7 +67,7 @@ class AsyncCustomIterator(AsyncPageIterator):
             continuation_token=continuation_token or ""
         )
         self._command = command
-        self.results_per_page = results_per_page
+        self.page_size = page_size
 
     async def _get_next_cb(self, continuation_token, **kwargs):  # pylint: disable=inconsistent-return-statements
         if not continuation_token:
@@ -78,7 +78,7 @@ class AsyncCustomIterator(AsyncPageIterator):
             next_row_key = continuation_token.get("RowKey")
 
         return await self._command(
-            top=self.results_per_page,
+            top=self.page_size,
             next_partition_key=next_partition_key,
             next_row_key=next_row_key
         )

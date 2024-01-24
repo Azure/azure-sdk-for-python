@@ -109,7 +109,7 @@ class ListEntitiesPageableTest(_TableTest):
         for _ in ItemPaged(
             self._get_list_entities,
             page_iterator_class=CustomIterator,
-            results_per_page=self.args.results_per_page,
+            page_size=self.args.page_size,
         ):
             pass    
 
@@ -117,7 +117,7 @@ class ListEntitiesPageableTest(_TableTest):
         async for _ in AsyncItemPaged(
             self._get_list_entities_async,
             page_iterator_class=AsyncCustomIterator,
-            results_per_page=self.args.results_per_page,
+            page_size=self.args.page_size,
         ):
             pass
 
@@ -133,7 +133,7 @@ class ListEntitiesPageableTest(_TableTest):
     def add_arguments(parser):
         super(ListEntitiesPageableTest, ListEntitiesPageableTest).add_arguments(parser)
         parser.add_argument(
-            '--results-per-page',
+            '--page-size',
             nargs='?',
             type=int,
             help="""Max number of entities to list per page. """

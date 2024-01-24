@@ -73,7 +73,7 @@ The options that are available for all Core perf tests:
 The options that are additionally available for `ListEntitiesPageableTest`:
 
 - `--count=100` - Number of table entities to list. Defaults to 100.
-- `--results-per-page=None` - Maximum number of entities to list per page. Default is None, which will return all possible results per page.
+- `--page-size=None` - Maximum number of entities to list per page. Default is None, which will return all possible results per page.
 
 ## Example command
 

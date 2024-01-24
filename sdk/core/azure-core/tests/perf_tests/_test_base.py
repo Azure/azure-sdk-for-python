@@ -37,6 +37,7 @@ from azure.core.pipeline.policies import (
     BearerTokenCredentialPolicy,
     AsyncBearerTokenCredentialPolicy,
 )
+import azure.core.pipeline.policies as policies
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -93,20 +94,6 @@ class _ServiceTest(PerfStressTest):
         }
     
     def _build_sync_pipeline_client(self, auth_policy):
-        sync_core_policies = {
-            "UserAgentPolicy": UserAgentPolicy,
-            "HeadersPolicy": HeadersPolicy,
-            "ProxyPolicy": ProxyPolicy,
-            "NetworkTraceLoggingPolicy": NetworkTraceLoggingPolicy,
-            "HttpLoggingPolicy": HttpLoggingPolicy,
-            "RetryPolicy": RetryPolicy, 
-            "CustomHookPolicy": CustomHookPolicy,
-            "RedirectPolicy": RedirectPolicy,
-            "ContentDecodePolicy": ContentDecodePolicy,
-            "DistributedTracingPolicy": DistributedTracingPolicy,
-            "RequestIdPolicy": RequestIdPolicy,
-            "SensitiveHeaderCleanupPolicy": SensitiveHeaderCleanupPolicy,
-        } # last 4 are not included in default generated policies
         default_policies = [
             UserAgentPolicy,
             HeadersPolicy,
@@ -126,36 +113,21 @@ class _ServiceTest(PerfStressTest):
             )
         elif self.args.policies == "all":
             # if all, autorest default policies + auth policy
-            sync_policies = [policy(sdk_moniker=self.sdk_moniker) for policy in default_policies]
-            sync_policies.append(auth_policy)
+            sync_policies = [auth_policy]
+            sync_policies.extend([policy(sdk_moniker=self.sdk_moniker) for policy in default_policies])
             sync_pipeline = Pipeline(
                 transport=self.sync_transport(),
                 policies=sync_policies
             )
         else:
-            # if custom list of policies, pass in custom list + auth policy
-            try:
-                custom_policies = ast.literal_eval(self.args.policies)
-            except ValueError as exc:
-                raise ValueError(f"""Invalid policies list: {self.args.policies}\n."""
-                                 f"""Must be string list of string policies from the following list:\n"""
-                                 f"""{list(sync_core_policies.keys())}""") from exc
-            try:
-                sync_policies = []
-                for policy in custom_policies:
-                    # if ContentDecodePolicy passed in, check for kwargs for that policy
-                    if policy == "ContentDecodePolicy" and self.args.content_decode_policy_kwargs:
-                        policy_kwargs = ast.literal_eval(self.args.content_decode_policy_kwargs)
-                        print(policy_kwargs)
-                        policy = sync_core_policies[policy](**policy_kwargs)
-                        sync_policies.append(policy)
-                    # else, just add policy to list
-                    else:
-                        policy = sync_core_policies[policy](sdk_moniker=self.sdk_moniker)
-                        sync_policies.append(policy)
-            except KeyError as exc:
-                raise ValueError(f"Invalid policy in: {self.args.policies}\n Valid options are:\n- {list(sync_core_policies.keys())}") from exc
-            sync_policies.append(auth_policy)
+            sync_policies = [auth_policy]
+            for p in self.args.policies.split(','):
+                # if ContentDecodePolicy passed in, check for kwargs for that policy
+                try:
+                    policy = getattr(policies, p)
+                except AttributeError as exc:
+                    raise ValueError(f"Azure Core has no policy named {exc.name}. Please use policies from the following list: {policies.__all__}") from exc
+                sync_policies.append(policy(sdk_moniker=self.sdk_moniker))
             sync_pipeline = Pipeline(
                 transport=self.sync_transport(),
                 policies=sync_policies
@@ -165,20 +137,6 @@ class _ServiceTest(PerfStressTest):
         )
 
     def _build_async_pipeline_client(self, auth_policy):
-        async_core_policies = {
-            "UserAgentPolicy": UserAgentPolicy,
-            "HeadersPolicy": HeadersPolicy,
-            "ProxyPolicy": ProxyPolicy,
-            "NetworkTraceLoggingPolicy": NetworkTraceLoggingPolicy,
-            "HttpLoggingPolicy": HttpLoggingPolicy,
-            "RetryPolicy": AsyncRetryPolicy, 
-            "CustomHookPolicy": CustomHookPolicy,
-            "RedirectPolicy": AsyncRedirectPolicy,
-            "ContentDecodePolicy": ContentDecodePolicy,
-            "DistributedTracingPolicy": DistributedTracingPolicy,
-            "RequestIdPolicy": RequestIdPolicy,
-            "SensitiveHeaderCleanupPolicy": SensitiveHeaderCleanupPolicy,
-        } # last 4 are not included in default generated policies
         default_policies = [
             UserAgentPolicy,
             HeadersPolicy,
@@ -197,35 +155,22 @@ class _ServiceTest(PerfStressTest):
             )
         elif self.args.policies == "all":
             # if all, autorest default policies + auth policy
-            async_policies = [policy(sdk_moniker=self.sdk_moniker) for policy in default_policies]
-            async_policies.append(auth_policy)
+            async_policies = [auth_policy]
+            async_policies.extend([policy(sdk_moniker=self.sdk_moniker) for policy in default_policies])
             async_pipeline = AsyncPipeline(
                 transport=self.async_transport(),
                 policies=async_policies
             )
         else:
+            async_policies = [auth_policy]
             # if custom list of policies, pass in custom list + auth policy
-            try:
-                custom_policies = ast.literal_eval(self.args.policies)
-            except ValueError as exc:
-                raise ValueError(f"""Invalid policies list: {self.args.policies}\n."""
-                                 f"""Must be string list of string policies from the following list:\n"""
-                                 f"""{list(async_core_policies.keys())}""") from exc
-            try:
-                async_policies = []
-                for policy in custom_policies:
-                    # if ContentDecodePolicy passed in, check for kwargs for that policy
-                    if policy == "ContentDecodePolicy" and self.args.content_decode_policy_kwargs:
-                        policy_kwargs = ast.literal_eval(self.args.content_decode_policy_kwargs)
-                        policy = async_core_policies[policy](**policy_kwargs)
-                        async_policies.append(policy)
-                    # else, just add policy to list
-                    else:
-                        policy = async_core_policies[policy](sdk_moniker=self.sdk_moniker)
-                        async_policies.append(policy)
-            except KeyError as exc:
-                raise ValueError(f"Invalid policy in: {self.args.policies}\n Valid options are:\n- {list(async_core_policies.keys())}") from exc
-            async_policies.append(auth_policy)
+            for p in self.args.policies.split(','):
+                # if ContentDecodePolicy passed in, check for kwargs for that policy
+                try:
+                    policy = getattr(policies, p)
+                except AttributeError as exc:
+                    raise ValueError(f"Azure Core has no policy named {exc.name}. Please use policies from the following list: {policies.__all__}") from exc
+                async_policies.append(policy(sdk_moniker=self.sdk_moniker))
             async_pipeline = AsyncPipeline(
                 transport=self.async_transport(),
                 policies=async_policies

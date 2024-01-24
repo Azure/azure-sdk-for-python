@@ -37,13 +37,11 @@ class UploadBinaryDataTest(_BlobTest):
                 'Content-Length': str(self.args.size),
                 'x-ms-version': self.api_version,
                 'Content-Type': 'application/octet-stream',
-                'Accept': 'application/octet-stream',
             },
             content=data
         )
         response = self.pipeline_client._pipeline.run(
-            request,
-            stream=True
+            request
         ).http_response
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
@@ -63,13 +61,11 @@ class UploadBinaryDataTest(_BlobTest):
                 'Content-Length': str(self.args.size),
                 'x-ms-version': self.api_version,
                 'Content-Type': 'application/octet-stream',
-                'Accept': 'application/octet-stream',
             },
             content=data
         )
         pipeline_response = await self.async_pipeline_client._pipeline.run(
-            request,
-            stream=True
+            request
         )
         response = pipeline_response.http_response
         if response.status_code not in [201]:
