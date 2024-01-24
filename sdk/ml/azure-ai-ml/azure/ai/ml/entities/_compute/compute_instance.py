@@ -401,7 +401,6 @@ class ComputeInstance(Compute):
             custom_applications = []
             for app in prop.properties.custom_services:
                 custom_applications.append(CustomApplications._from_rest_object(app))
-
         response = ComputeInstance(
             name=rest_obj.name,
             id=rest_obj.id,
@@ -421,7 +420,9 @@ class ComputeInstance(Compute):
             services=[app.as_dict() for app in prop.properties.applications]
             if prop.properties and prop.properties.applications
             else None,
-            created_on=prop.additional_properties.get("createdOn", None),
+            created_on=rest_obj.properties.created_on.strftime("%Y-%m-%dT%H:%M:%S.%f%z")
+            if rest_obj.properties and rest_obj.properties.created_on is not None
+            else None,
             create_on_behalf_of=create_on_behalf_of,
             network_settings=network_settings,
             ssh_settings=ssh_settings,

@@ -21,6 +21,8 @@ DISABLE_AZURE_CORE_TRACING_ARG = "disable_azure_core_tracing"
 DISABLE_LOGGING_ARG = "disable_logging"
 DISABLE_METRICS_ARG = "disable_metrics"
 DISABLE_TRACING_ARG = "disable_tracing"
+# TODO: Use constant in exporter once available
+DISTRO_VERSION_ARG = "distro_version"
 LOGGER_NAME_ARG = "logger_name"
 INSTRUMENTATION_OPTIONS_ARG = "instrumentation_options"
 RESOURCE_ARG = "resource"

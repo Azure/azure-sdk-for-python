@@ -98,6 +98,8 @@
     "sdk/ml/azure-ai-ml/swagger/**",
     "sdk/ml/azure-ai-ml/NOTICE.txt",
     "sdk/ml/azure-ai-ml/.pre-commit-config.yaml",
+    "sdk/monitor/azure-monitor-opentelemetry/samples/tracing/django/sample/db.sqlite3",
+    "sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/django/sample/db.sqlite3",
     "sdk/loadtestservice/azure-developer-loadtesting/**",
     "sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_serialization.py",
     "sdk/translation/azure-ai-translation-text/tests/test_break_sentence.py",
@@ -792,7 +794,12 @@
         "racwd",
         "rrggbb",
         "UPCA",
-        "UPCE"
+        "UPCE",
+        "mros",
+        "Nify",
+        "deserializers",
+        "ctxt",
+        "wday"
       ]
     },
     {
@@ -1242,6 +1249,13 @@
       ]
     },
     {
+      "filename": "sdk/ai/azure-ai-generative/**",
+      "words": [
+        "tqdm",
+        "genai"
+      ]
+    },
+    {
       "filename": "sdk/attestation/azure-security-attestation/tests/conftest.py",
       "words":[
         "sharedwus"
@@ -1657,6 +1671,16 @@
         "wday",
         "JSONify",
         "Nify"
+      ]
+    },
+    {
+      "filename": "sdk/vision/azure-ai-vision-imageanalysis/azure/ai/vision/imageanalysis/**/*.py",
+      "words": [
+        "mros",
+        "Nify",
+        "deserializers",
+        "ctxt",
+        "wday"
       ]
     },
     {

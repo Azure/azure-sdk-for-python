@@ -40,7 +40,7 @@ class InternalSparkComponent(
         dynamic_allocation_min_executors: Optional[int] = None,
         dynamic_allocation_max_executors: Optional[int] = None,
         conf: Optional[Dict[str, str]] = None,
-        args: Optional[Dict] = None,
+        args: Optional[str] = None,
         **kwargs,
     ):
         SparkJobEntryMixin.__init__(self, entry=entry, **kwargs)
@@ -90,12 +90,12 @@ class InternalSparkComponent(
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return InternalSparkComponentSchema(context=context)
 
-    @property
-    def environment(self) -> Union[str, Environment, dict]:
+    @property  # type: ignore[override]
+    def environment(self) -> Optional[Union[Environment, str]]:
         """Get the environment of the component.
 
         :return: The environment of the component.
-        :rtype: Union[str, Environment, dict]
+        :rtype: Optional[Union[Environment, str]]]
         """
         if isinstance(self._environment, Environment) and self._environment.image is None:
             return Environment(conda_file=self._environment.conda_file, image=DUMMY_IMAGE)
@@ -131,11 +131,11 @@ class InternalSparkComponent(
             raise ValueError(f"Unsupported environment type: {type(value)}")
 
     @property
-    def jars(self) -> List[str]:
+    def jars(self) -> Optional[List[str]]:
         """Get the jars of the component.
 
         :return: The jars of the component.
-        :rtype: List[str]
+        :rtype: Optional[List[str]]
         """
         return self._jars
 
@@ -153,11 +153,11 @@ class InternalSparkComponent(
         self._jars = value
 
     @property
-    def py_files(self) -> List[str]:
+    def py_files(self) -> Optional[List[str]]:
         """Get the py_files of the component.
 
         :return: The py_files of the component.
-        :rtype: List[str]
+        :rtype: Optional[List[str]]
         """
         return self._py_files
 

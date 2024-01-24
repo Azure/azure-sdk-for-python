@@ -27,7 +27,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from ..._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -53,7 +53,7 @@ def build_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -83,7 +83,7 @@ def build_list_by_home_region_request(asc_location: str, subscription_id: str, *
         "ascLocation": _SERIALIZER.url("asc_location", asc_location, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -125,7 +125,7 @@ def build_get_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -154,6 +154,7 @@ class ExternalSecuritySolutionsOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace
     def list(self, **kwargs: Any) -> Iterable["_models.ExternalSecuritySolution"]:
@@ -169,7 +170,7 @@ class ExternalSecuritySolutionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-01-01"))
         cls: ClsType[_models.ExternalSecuritySolutionList] = kwargs.pop("cls", None)
 
         error_map = {
@@ -254,7 +255,7 @@ class ExternalSecuritySolutionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-01-01"))
         cls: ClsType[_models.ExternalSecuritySolutionList] = kwargs.pop("cls", None)
 
         error_map = {
@@ -355,7 +356,7 @@ class ExternalSecuritySolutionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-01-01"))
         cls: ClsType[_models.ExternalSecuritySolution] = kwargs.pop("cls", None)
 
         request = build_get_request(
