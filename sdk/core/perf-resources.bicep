@@ -72,4 +72,3 @@ output AZURE_STORAGE_CONTAINER_NAME string = testContainer.name
 
 output AZURE_STORAGE_TABLE_NAME string = tables.name
 output AZURE_STORAGE_TABLES_ENDPOINT string = 'https://${storageAccount.name}.table.${storageEndpointSuffix}/'
-output AZURE_STORAGE_AAD_SCOPE string = 'https://storage.azure.com/.default'

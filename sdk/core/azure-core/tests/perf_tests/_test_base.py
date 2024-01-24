@@ -122,7 +122,6 @@ class _ServiceTest(PerfStressTest):
         else:
             sync_policies = [auth_policy]
             for p in self.args.policies.split(','):
-                # if ContentDecodePolicy passed in, check for kwargs for that policy
                 try:
                     policy = getattr(policies, p)
                 except AttributeError as exc:
@@ -165,7 +164,6 @@ class _ServiceTest(PerfStressTest):
             async_policies = [auth_policy]
             # if custom list of policies, pass in custom list + auth policy
             for p in self.args.policies.split(','):
-                # if ContentDecodePolicy passed in, check for kwargs for that policy
                 try:
                     policy = getattr(policies, p)
                 except AttributeError as exc:

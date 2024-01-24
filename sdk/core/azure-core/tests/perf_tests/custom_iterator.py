@@ -51,7 +51,7 @@ class CustomIterator(PageIterator):
                 "RowKey": response.headers[NEXT_ROW_KEY]
             }
 
-        return next_entity or None, response.json()['value']
+        return next_entity, response.json()['value']
 
 
 class AsyncCustomIterator(AsyncPageIterator):
@@ -91,4 +91,4 @@ class AsyncCustomIterator(AsyncPageIterator):
                 "PartitionKey": response.headers[NEXT_PARTITION_KEY],
                 "RowKey": response.headers[NEXT_ROW_KEY]
             }
-        return next_entity or None, response.json()['value']
+        return next_entity, response.json()['value']
