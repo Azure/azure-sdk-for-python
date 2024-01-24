@@ -1,11 +1,10 @@
 # Release History
 
-## 1.0.0 (2024-01-09)
+## 1.0.0 (2024-01-25)
 
 ### Features Added
 
 - Add Operation `open/close`
-- Add model `WebPubSubConnectionError`
 
 ### Breaking Changes
 
