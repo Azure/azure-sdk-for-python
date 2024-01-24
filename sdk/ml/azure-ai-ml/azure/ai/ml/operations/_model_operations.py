@@ -85,8 +85,8 @@ class ModelOperations(_ScopeDependentOperations):
     :param service_client: Service client to allow end users to operate on Azure Machine Learning Workspace
         resources (ServiceClient082023Preview or ServiceClient102021Dataplane).
     :type service_client: typing.Union[
-        ~azure.ai.ml._restclient.v2023_04_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces,
-        ~azure.ai.ml._restclient.v2021_10_01_dataplanepreview._azure_machine_learning_workspaces.
+        azure.ai.ml._restclient.v2023_04_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces,
+        azure.ai.ml._restclient.v2021_10_01_dataplanepreview._azure_machine_learning_workspaces.
         AzureMachineLearningWorkspaces]
     :param datastore_operations: Represents a client for performing operations on Datastores.
     :type datastore_operations: ~azure.ai.ml.operations._datastore_operations.DatastoreOperations
@@ -135,15 +135,6 @@ class ModelOperations(_ScopeDependentOperations):
         :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :return: Model asset object.
         :rtype: ~azure.ai.ml.entities.Model
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/ml_samples_misc.py
-                :start-after: [START model_operations_create_or_update]
-                :end-before: [END model_operations_create_or_update]
-                :language: python
-                :dedent: 8
-                :caption: Create model example.
         """
         try:
             name = model.name
@@ -302,15 +293,6 @@ class ModelOperations(_ScopeDependentOperations):
             Details will be provided in the error message.
         :return: Model asset object.
         :rtype: ~azure.ai.ml.entities.Model
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/ml_samples_misc.py
-                :start-after: [START model_operations_get]
-                :end-before: [END model_operations_get]
-                :language: python
-                :dedent: 8
-                :caption: Get model example.
         """
         if version and label:
             msg = "Cannot specify both version and label."
@@ -351,15 +333,6 @@ class ModelOperations(_ScopeDependentOperations):
             user. Contents will be overwritten.
         :type download_path: Union[PathLike, str]
         :raises ResourceNotFoundError: if can't find a model matching provided name.
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/ml_samples_misc.py
-                :start-after: [START model_operations_download]
-                :end-before: [END model_operations_download]
-                :language: python
-                :dedent: 8
-                :caption: Download files to model example.
         """
 
         model_uri = self.get(name=name, version=version).path
@@ -434,15 +407,6 @@ class ModelOperations(_ScopeDependentOperations):
         :type version: str
         :param label: Label of the model asset. (mutually exclusive with version)
         :type label: str
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/ml_samples_misc.py
-                :start-after: [START model_operations_archive]
-                :end-before: [END model_operations_archive]
-                :language: python
-                :dedent: 8
-                :caption: Archive a model example.
         """
         _archive_or_restore(
             asset_operations=self,
@@ -470,15 +434,6 @@ class ModelOperations(_ScopeDependentOperations):
         :type version: str
         :param label: Label of the model asset. (mutually exclusive with version)
         :type label: str
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/ml_samples_misc.py
-                :start-after: [START model_operations_restore]
-                :end-before: [END model_operations_restore]
-                :language: python
-                :dedent: 8
-                :caption: Restore a model example.
         """
         _archive_or_restore(
             asset_operations=self,
@@ -505,19 +460,10 @@ class ModelOperations(_ScopeDependentOperations):
         :param stage: The Model stage
         :type stage: Optional[str]
         :keyword list_view_type: View type for including/excluding (for example) archived models. Defaults to
-             :attr:`ListViewType.ACTIVE_ONLY`.
+            :attr:`ListViewType.ACTIVE_ONLY`.
         :type list_view_type: ListViewType
         :return: An iterator like instance of Model objects
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.Model]
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/ml_samples_misc.py
-                :start-after: [START model_operations_list]
-                :end-before: [END model_operations_list]
-                :language: python
-                :dedent: 8
-                :caption: List all models example.
         """
         if name:
             return cast(
@@ -579,15 +525,6 @@ class ModelOperations(_ScopeDependentOperations):
         :paramtype registry_name: str
         :return: Model asset object.
         :rtype: ~azure.ai.ml.entities.Model
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/ml_samples_misc.py
-                :start-after: [START model_operations_share]
-                :end-before: [END model_operations_share]
-                :language: python
-                :dedent: 8
-                :caption: Share a model example.
         """
 
         #  Get workspace info to get workspace GUID
@@ -671,15 +608,6 @@ class ModelOperations(_ScopeDependentOperations):
         :type package_request: ~azure.ai.ml.entities.ModelPackage
         :return: Environment object
         :rtype: ~azure.ai.ml.entities.Environment
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/ml_samples_misc.py
-                :start-after: [START model_operations_package]
-                :end-before: [END model_operations_package]
-                :language: python
-                :dedent: 8
-                :caption: Package a model example.
         """
 
         is_deployment_flow = kwargs.pop("skip_to_rest", False)
