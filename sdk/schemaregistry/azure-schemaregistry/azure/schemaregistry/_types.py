@@ -7,11 +7,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import sys
-from typing import Union
-
-if sys.version_info >= (3, 8):
-    from typing import Literal # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
-SchemaContentTypeValues = Union[Literal["application/json; serialization=Avro"], Literal["application/json; serialization=json"], Literal["text/plain; charset=utf-8"], Literal["text/vnd.ms.protobuf"]]
+from typing import Literal, Union
+SchemaContentTypeValues = Union[Literal["application/octet-stream"], Literal["text/plain; charset=utf-8"], Literal["application/json; serialization=Avro"], Literal["application/json; serialization=Json"], Literal["text/vnd.ms.protobuf"]]

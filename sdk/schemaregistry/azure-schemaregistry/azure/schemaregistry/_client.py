@@ -22,8 +22,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 class SchemaRegistryClient(SchemaRegistryClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
-    """SchemaRegistryClient is a client for registering and retrieving schemas from the Azure Schema
-    Registry service.
+    """SchemaRegistryClient.
 
     :param fully_qualified_namespace: The Schema Registry service endpoint, for example
      'my-namespace.servicebus.windows.net'. Required.

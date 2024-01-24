@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -181,6 +181,14 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         :return: An iterator like instance of SchemaGroup
         :rtype: ~azure.core.paging.ItemPaged[~azure.schemaregistry.models.SchemaGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "groupName": "str"  # Name of schema group. Required.
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -265,8 +273,6 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
 
         :param id: Schema ID that uniquely identifies a schema in the registry namespace. Required.
         :type id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: bytes
         :rtype: bytes
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -295,7 +301,7 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = kwargs.pop("stream", True)
         pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
             _request,
             stream=_stream,
@@ -319,13 +325,8 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         response_headers['Schema-Version']=self._deserialize('int', response.headers.get('Schema-Version'))
         response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(
-                bytes,
-                response.json()
-            )
+        response.read()
+        deserialized = response.content
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers) # type: ignore
@@ -352,6 +353,14 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         :return: An iterator like instance of SchemaVersion
         :rtype: ~azure.core.paging.ItemPaged[~azure.schemaregistry.models.SchemaVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "schemaVersion": 0  # Version number of specific schema. Required.
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -426,7 +435,7 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
 
 
     @distributed_trace
-    def get_schema_by_version(
+    def _get_schema_by_version(
         self,
         group_name: str,
         name: str,
@@ -443,8 +452,6 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         :type name: str
         :param schema_version: Version number of specific schema. Required.
         :type schema_version: int
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: bytes
         :rtype: bytes
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -475,7 +482,7 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = kwargs.pop("stream", True)
         pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
             _request,
             stream=_stream,
@@ -499,13 +506,8 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         response_headers['Schema-Version']=self._deserialize('int', response.headers.get('Schema-Version'))
         response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(
-                bytes,
-                response.json()
-            )
+        response.read()
+        deserialized = response.content
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers) # type: ignore

@@ -11,7 +11,6 @@ from typing import TYPE_CHECKING, Union
 
 from .. import _model_base
 from .._model_base import rest_field
-from ..models._enums import SchemaFormat
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -21,7 +20,7 @@ if TYPE_CHECKING:
 class Schema(_model_base.Model):
     """The schema content of a schema, along with id and meta properties.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar definition: The content of the schema. Required.
     :vartype definition: str
@@ -41,7 +40,7 @@ class SchemaGroup(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar group_name: Name of schema group. Required.
     :vartype group_name: str
@@ -55,7 +54,7 @@ class SchemaGroup(_model_base.Model):
 class SchemaProperties(_model_base.Model):
     """Meta properties of a schema.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: References a specific schema in the registry namespace. Required.
     :vartype id: str
@@ -72,7 +71,7 @@ class SchemaProperties(_model_base.Model):
 
     id: str = rest_field()
     """References a specific schema in the registry namespace. Required."""
-    format: Union[str, "SchemaFormat"] = rest_field(type=SchemaFormat)
+    format: Union[str, "_models.SchemaFormat"] = rest_field()
     """Format for the schema being stored. Required. Known values are: \"Avro\", \"Json\", \"Custom\",
      and \"Protobuf\"."""
     group_name: str = rest_field(name="groupName")
@@ -89,7 +88,7 @@ class SchemaVersion(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar schema_version: Version number of specific schema. Required.
     :vartype schema_version: int

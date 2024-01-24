@@ -10,6 +10,19 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ContentTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The content type for the schema.
+    """
+
+    AVRO = "application/json; serialization=Avro"
+    """The Avro schema content type."""
+    JSON = "application/json; serialization=Json"
+    """The JSON schema content type."""
+    CUSTOM = "text/plain; charset=utf-8"
+    """The custom schema content type."""
+    PROTOBUF = "text/vnd.ms.protobuf"
+    """The protobuf schema content type."""
+
 class SchemaFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents the format of the schema to be stored by the Schema Registry service.
     """
