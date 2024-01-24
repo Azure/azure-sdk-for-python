@@ -143,6 +143,7 @@ def create_package_and_install(
                         non_present_reqs = []
                         for addition in installation_additions:
                             try:
+                                logging.info(f"Download command {download_command + [addition] + commands_options}")
                                 subprocess.check_call(
                                     download_command + [addition] + commands_options,
                                     env=dict(os.environ, PIP_EXTRA_INDEX_URL=""),
@@ -151,9 +152,12 @@ def create_package_and_install(
                                 req_name, req_specifier = parse_require(addition)
                                 non_present_reqs.append(req_name)
 
-                        additional_downloaded_reqs = [
+                        pre_downloaded_reqs = [
                             os.path.abspath(os.path.join(tmp_dl_folder, pth)) for pth in os.listdir(tmp_dl_folder)
-                        ] + [
+                        ] 
+
+                        logging.info(f"pre downloaded wheels are: {pre_downloaded_reqs}")
+                        additional_downloaded_reqs = pre_downloaded_reqs + [
                             get_package_from_repo_or_folder(
                                 package_name, os.path.join(target_package.folder, ".tmp_whl_dir")
                             )
