@@ -13,7 +13,7 @@ def parallel_for(
 ) -> ParallelFor:
     """Build a parallel for loop by specifying the loop body and input items.
 
-    .. remarks::
+    .. note::
         The following example shows how to use parallel for API to create a pipeline with parallel for node.
 
         .. code-block:: python
