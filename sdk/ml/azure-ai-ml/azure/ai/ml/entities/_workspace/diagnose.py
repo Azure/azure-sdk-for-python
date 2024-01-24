@@ -1,7 +1,11 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Any, Dict, List, Optional
+from os import PathLike
+from pathlib import Path
+from typing import IO, Any, AnyStr, Dict, Optional, Union
+
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     DiagnoseRequestProperties as RestDiagnoseRequestProperties,
@@ -144,6 +148,14 @@ class DiagnoseResponseResultValue:
             application_insights_results=self.application_insights_results,
             other_results=self.other_results,
         )
+    
+    def dump(
+        self,
+        dest: Optional[Union[str, PathLike, IO[AnyStr]]] = None,  # pylint: disable=unused-argument
+        **kwargs,  # pylint: disable=unused-argument
+    ) -> Dict[str, Any]:
+        context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
+        return self.value._to_rest_object().dump()
 
 
 class DiagnoseResult:
