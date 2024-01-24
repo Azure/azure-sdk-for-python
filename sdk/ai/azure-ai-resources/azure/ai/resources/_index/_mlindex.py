@@ -4,21 +4,17 @@
 """MLIndex class for interacting with MLIndex assets."""
 import os
 import tempfile
-import uuid
-from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Iterator, Optional, Union
 
-import yaml
+import yaml  # type: ignore[import]
+from azure.ai.ml.entities import Data
 from azure.core.credentials import TokenCredential
-from azure.ai.resources._index._documents import Document, DocumentChunksIterator
-from azure.ai.resources._index._embeddings import EmbeddingsContainer
+from azure.ai.resources._index._documents import Document
+from azure.ai.resources._index._embeddings.EmbeddingsContainer import from_metadata
 from azure.ai.resources._index._utils.connections import (
-    Connection,
-    WorkspaceConnection,
     get_connection_credential,
     get_connection_by_id_v2,
-    get_id_from_connection,
     get_target_from_connection,
 )
 from azure.ai.resources._index._utils.logging import (
@@ -56,7 +52,7 @@ class MLIndex:
 
     def __init__(
         self,
-        uri: Optional[Union[str, Path, object]] = None,
+        uri: Optional[Union[str, Path, Data]] = None,
         mlindex_config: Optional[dict] = None
     ):
         """
@@ -97,8 +93,8 @@ class MLIndex:
                 self.base_uri = uri
 
                 mlindex_config = None
-                uri = uri.rstrip("/")
-                mlindex_uri = f"{uri}/MLIndex" if not uri.endswith("MLIndex") else uri
+                uri = str(uri).rstrip("/")
+                mlindex_uri = f"{uri}/MLIndex" if not str(uri).endswith("MLIndex") else uri
                 try:
                     mlindex_file = fsspec.open(mlindex_uri, "r")
                     if hasattr(mlindex_file.fs, "_path"):
@@ -146,7 +142,7 @@ class MLIndex:
 
     def get_langchain_embeddings(self, credential: Optional[TokenCredential] = None):
         """Get the LangChainEmbeddings from the MLIndex."""
-        embeddings = EmbeddingsContainer.from_metadata(self.embeddings_config.copy())
+        embeddings = from_metadata(self.embeddings_config.copy())
 
         return embeddings.as_langchain_embeddings(credential=credential)
 
@@ -215,7 +211,7 @@ class MLIndex:
                     logger.warning(f"azure-search-documents=={azure_search_documents_version} not compatible langchain.vectorstores.azuresearch yet, using REST client based VectorStore.")
 
                     return AzureCognitiveSearchVectorStore(
-                        index_name=self.index_config.get("index"),
+                        index_name=self.index_config.get("index", ""),
                         endpoint=self.index_config.get(
                             "endpoint",
                             get_target_from_connection(
@@ -233,11 +229,11 @@ class MLIndex:
                 from fsspec.core import url_to_fs
 
                 store = None
-                engine = self.index_config.get("engine")
+                engine: str = self.index_config.get("engine", "")
                 if engine == "langchain.vectorstores.FAISS":
                     from azure.ai.resources._index._langchain.vendor.vectorstores.faiss import FAISS
 
-                    embeddings = EmbeddingsContainer.from_metadata(self.embeddings_config.copy()).as_langchain_embeddings(credential=credential)
+                    embeddings = from_metadata(self.embeddings_config.copy()).as_langchain_embeddings(credential=credential)
 
                     fs, uri = url_to_fs(self.base_uri)
 
@@ -255,11 +251,11 @@ class MLIndex:
                         from azure.ai.resources._index._langchain.faiss import azureml_faiss_as_langchain_faiss
                     except Exception as e:
                         logger.warning(error_fmt_str.format(e=e))
-                        azureml_faiss_as_langchain_faiss = None
+                        azureml_faiss_as_langchain_faiss = None  # type: ignore[assignment]
 
-                    embeddings = EmbeddingsContainer.from_metadata(self.embeddings_config.copy()).as_langchain_embeddings(credential=credential)
+                    embeddings = from_metadata(self.embeddings_config.copy()).as_langchain_embeddings(credential=credential)
 
-                    store = FaissAndDocStore.load(self.base_uri, embeddings.embed_query)
+                    store: FaissAndDocStore = FaissAndDocStore.load(self.base_uri, embeddings.embed_query)  # type: ignore[no-redef]
                     if azureml_faiss_as_langchain_faiss is not None:
                         try:
                             store = azureml_faiss_as_langchain_faiss(FaissAndDocStore.load(self.base_uri, embeddings.embed_query))
@@ -282,7 +278,7 @@ class MLIndex:
                 connection_credential = get_connection_credential(self.index_config, credential=credential)
 
                 return AzureCognitiveSearchVectorStore(
-                    index_name=self.index_config.get("index"),
+                    index_name=self.index_config.get("index", ""),
                     endpoint=self.index_config.get(
                         "endpoint",
                         get_target_from_connection(
@@ -303,32 +299,6 @@ class MLIndex:
         else:
             raise ValueError(f"Unknown index kind: {index_kind}")
 
-    def as_native_index_client(self, credential: Optional[TokenCredential] = None):
-        """
-        Converts MLIndex config into a client for the underlying Index, may download files.
-
-        An azure.search.documents.SearchClient for acs indexes or an azure.ai.resources._index._indexes.indexFaissAndDocStore for faiss indexes.
-        """
-        index_kind = self.index_config.get("kind", None)
-        if index_kind == "acs":
-            connection_credential = get_connection_credential(self.index_config, credential=credential)
-
-            from azure.search.documents import SearchClient
-            return SearchClient(
-                endpoint=self.index_config.get("endpoint"),
-                index_name=self.index_config.get("index"),
-                credential=connection_credential,
-                user_agent=f"azureml-rag=={version}/mlindex"
-            )
-        elif index_kind == "faiss":
-            from azure.ai.resources._index._indexes.faiss import FaissAndDocStore
-
-            embeddings = self.get_langchain_embeddings(credential=credential)
-
-            return FaissAndDocStore.load(self.base_uri, embeddings.embed_query)
-        else:
-            raise ValueError(f"Unknown index kind: {index_kind}")
-
     def __repr__(self):
         """Returns a string representation of the MLIndex object."""
         return yaml.dump({
@@ -336,311 +306,7 @@ class MLIndex:
             "embeddings": self.embeddings_config,
         })
 
-    def override_connections(
-        self,
-        embedding_connection: Optional[Union[str, Connection, WorkspaceConnection]] = None,
-        index_connection: Optional[Union[str, Connection, WorkspaceConnection]] = None,
-        credential: Optional[TokenCredential] = None
-    ) -> "MLIndex":
-        """
-        Override the connections used by the MLIndex.
-
-        Args:
-        ----
-            embedding_connection: Optional connection to use for embeddings model
-            index_connection: Optional connection to use for index
-            credential: Optional credential to use when resolving connection information
-        """
-        if embedding_connection:
-            if self.embeddings_config.get("key") is not None:
-                self.embeddings_config.pop("key")
-
-            if embedding_connection.__class__.__name__ == "AzureOpenAIConnection":
-                # PromptFlow Connection
-                self.embeddings_config["connection_type"] = "inline"
-                self.embeddings_config["connection"] = {
-                    "key": embedding_connection.secrets.get("api_key"),
-                    "api_base": embedding_connection.api_base,
-                    "api_type": embedding_connection.api_type,
-                    "api_version": embedding_connection.api_version
-                }
-            else:
-                self.embeddings_config["connection_type"] = "workspace_connection"
-                if isinstance(embedding_connection, str):
-                    from azure.ai.resources._index._utils.connections import get_connection_by_id_v2
-                    embedding_connection = get_connection_by_id_v2(embedding_connection, credential=credential)
-                self.embeddings_config["connection"] = {"id": get_id_from_connection(embedding_connection)}
-        if index_connection:
-            if self.index_config["kind"] != "acs":
-                print("Index kind is not acs, ignoring override for connection")
-            else:
-                self.index_config["connection_type"] = "workspace_connection"
-                if isinstance(index_connection, str):
-                    from azure.ai.resources._index._utils.connections import get_connection_by_id_v2
-                    index_connection = get_connection_by_id_v2(index_connection, credential=credential)
-                self.index_config["connection"] = {"id": get_id_from_connection(index_connection)}
-        self.save(just_config=True)
-        return self
-
-    def set_embeddings_connection(self, connection: Optional[Union[str, Connection, WorkspaceConnection]], credential: Optional[TokenCredential] = None) -> "MLIndex":
-        """Set the embeddings connection used by the MLIndex."""
-        return self.override_connections(embedding_connection=connection)
-
-    @staticmethod
-    def from_files(
-        source_uri: str,
-        source_glob: str = "**/*",
-        chunk_size: int = 1000,
-        chunk_overlap: int = 0,
-        citation_url: Optional[str] = None,
-        citation_replacement_regex: Optional[Dict[str, str]] = None,
-        embeddings_model: str = "hugging_face://model/sentence-transformers/all-mpnet-base-v2",
-        embeddings_connection: Optional[str] = None,
-        embeddings_container: Optional[Union[str, Path]] = None,
-        index_type: str = "faiss",
-        index_connection: Optional[str] = None,
-        index_config: Dict[str, Any] = {},
-        output_path: Optional[Union[str, Path]] = None,
-        credential: Optional[TokenCredential] = None
-    ) -> "MLIndex":
-        r"""
-        Create a new MLIndex from a repo.
-
-        Args:
-        ----
-            source_uri: Iterator of documents to index
-            source_glob: Glob pattern to match files to index
-            chunk_size: Size of chunks to split documents into
-            chunk_overlap: Size of overlap between chunks
-            citation_url: Optional url to replace citation urls with
-            citation_replacement_regex: Optional regex to use to replace citation urls, e.g. `{"match_pattern": "(.*)/articles/(.*)(\.[^.]+)$", "replacement_pattern": "\1/\2"}`
-            embeddings_model: Name of embeddings model to use, expected format `azure_open_ai://deployment/.../model/text-embedding-ada-002` or `hugging_face://model/all-mpnet-base-v2`
-            embeddings_connection: Optional connection to use for embeddings model
-            embeddings_container: Optional path to location where un-indexed embeddings can be saved/loaded.
-            index_type: Type of index to use, e.g. faiss
-            index_connection: Optional connection to use for index
-            index_config: Config for index, e.g. index_name or field_mapping for acs
-
-        Returns:
-        -------
-            MLIndex
-        """
-        from azure.ai.resources._index._documents import DocumentChunksIterator, split_documents
-
-        with track_activity(logger, "MLIndex.from_files"):
-            chunked_documents = DocumentChunksIterator(
-                files_source=source_uri,
-                glob=source_glob,
-                base_url=citation_url,
-                document_path_replacement_regex=citation_replacement_regex,
-                chunked_document_processors=[lambda docs: split_documents(docs, splitter_args={"chunk_size": chunk_size, "chunk_overlap": chunk_overlap, "use_rcts": False})],
-            )
-
-            mlindex = MLIndex.from_documents(
-                chunked_documents,
-                embeddings_model=embeddings_model,
-                embeddings_connection=embeddings_connection,
-                embeddings_container=embeddings_container,
-                index_type=index_type,
-                index_connection=index_connection,
-                index_config=index_config,
-                output_path=output_path,
-                credential=credential
-            )
-
-        return mlindex
-
-    @staticmethod
-    def from_documents(
-        documents: Union[Iterator[Document], BaseLoader, DocumentChunksIterator],
-        embeddings_model: str = "hugging_face://model/sentence-transformers/all-mpnet-base-v2",
-        embeddings_connection: Optional[str] = None,
-        embeddings_container: Optional[Union[str, Path]] = None,
-        index_type: str = "faiss",
-        index_connection: Optional[str] = None,
-        index_config: Dict[str, Any] = {},
-        output_path: Optional[Union[str, Path]] = None,
-        credential: Optional[TokenCredential] = None
-    ) -> "MLIndex":
-        """
-        Create a new MLIndex from documents.
-
-        Args:
-        ----
-            documents: Iterator of documents to index
-            index_kind: Kind of index to use
-            embeddings_model: Name of embeddings model to use, expected format `azure_open_ai://deployment/.../model/text-embedding-ada-002` or `hugging_face://model/all-mpnet-base-v2`
-            embeddings_container: Optional path to location where un-indexed embeddings can be saved/loaded.
-            index_type: Type of index to use, e.g. faiss
-            index_connection: Optional connection to use for index
-            index_config: Config for index, e.g. index_name or field_mapping for acs
-            output_path: Optional path to save index to
-
-        Returns:
-        -------
-            MLIndex
-        """
-        import time
-
-        embeddings = None
-        # TODO: Move this logic to load from embeddings_container into EmbeddingsContainer
-        try:
-            if embeddings_container is not None:
-                if isinstance(embeddings_container, str) and "://" in embeddings_container:
-                    from fsspec.core import url_to_fs
-
-                    fs, uri = url_to_fs(embeddings_container)
-                else:
-                    embeddings_container = Path(embeddings_container)
-                    previous_embeddings_dir_name = None
-                    try:
-                        previous_embeddings_dir_name = str(max([dir for dir in embeddings_container.glob("*") if dir.is_dir()], key=os.path.getmtime).name)
-                    except Exception as e:
-                        logger.warning(
-                            f"failed to get latest folder from {embeddings_container} with {e}.", extra={"print": True})
-                        pass
-                    if previous_embeddings_dir_name is not None:
-                        try:
-                            embeddings = EmbeddingsContainer.load(previous_embeddings_dir_name, embeddings_container)
-                        except Exception as e:
-                            logger.warning(
-                                f"failed to load embeddings from {embeddings_container} with {e}.", extra={"print": True})
-                            pass
-        finally:
-            if embeddings is None:
-                logger.info("Creating new EmbeddingsContainer")
-                if isinstance(embeddings_model, str):
-                    connection_args = {}
-                    if "open_ai" in embeddings_model:
-                        from azure.ai.resources._index._utils.connections import get_connection_by_id_v2
-
-                        if embeddings_connection:
-                            if isinstance(embeddings_connection, str):
-                                embeddings_connection = get_connection_by_id_v2(embeddings_connection, credential=credential)
-                            connection_args = {
-                                "connection_type": "workspace_connection",
-                                "connection": {"id": get_id_from_connection(embeddings_connection)},
-                                "endpoint": embeddings_connection.target if hasattr(embeddings_connection, "target") else embeddings_connection["properties"]["target"],
-                            }
-                        else:
-                            connection_args = {
-                                "connection_type": "environment",
-                                "connection": {"key": "OPENAI_API_KEY"},
-                                "endpoint": os.getenv("OPENAI_API_BASE"),
-                            }
-                            if os.getenv("OPENAI_API_TYPE"):
-                                connection_args["api_type"] = os.getenv("OPENAI_API_TYPE")
-                            if os.getenv("OPENAI_API_VERSION"):
-                                connection_args["api_version"] = os.getenv("OPENAI_API_VERSION")
-
-                    embeddings = EmbeddingsContainer.from_uri(embeddings_model, credential=credential, **connection_args)
-                else:
-                    raise ValueError(f"Unknown embeddings model: {embeddings_model}")
-                    # try:
-                    #     import sentence_transformers
-                    #     if isinstance(embeddings_model, sentence_transformers.SentenceTransformer):
-                    #         embeddings = EmbeddingsContainer.from_sentence_transformer(embeddings_model)
-                    # except Exception as e:
-                    #     logger.warning(f"Failed to load sentence_transformers with {e}.")
-
-        pre_embed = time.time()
-        embeddings = embeddings.embed(documents)
-        post_embed = time.time()
-        logger.info(f"Embedding took {post_embed - pre_embed} seconds")
-
-        if embeddings_container is not None:
-            now = datetime.datetime.now()
-            # TODO: This means new snapshots will be created for every run, ideally there'd be a use container as readonly vs persist snapshot option
-            embeddings.save(str(embeddings_container / f"{now.strftime('%Y%m%d')}_{now.strftime('%H%M%S')}_{str(uuid.uuid4()).split('-')[0]}"))
-
-        mlindex = MLIndex.from_embeddings_container(
-            embeddings,
-            index_type=index_type,
-            index_connection=index_connection,
-            index_config=index_config,
-            output_path=output_path,
-            credential=credential
-        )
-
-        return mlindex
-
-    @staticmethod
-    def from_embeddings_container(
-        embeddings: EmbeddingsContainer,
-        index_type: str,
-        index_connection: Optional[str] = None,
-        index_config: Dict[str, Any] = {},
-        output_path: Optional[Union[str, Path]] = None,
-        credential: Optional[TokenCredential] = None
-    ) -> "MLIndex":
-        """
-        Create a new MLIndex from embeddings.
-
-        Args
-        ----
-            embeddings: EmbeddingsContainer to index
-            index_type: Type of index to use, e.g. faiss
-            index_connection: Optional connection to use for index
-            index_config: Config for index, e.g. index_name or field_mapping for acs
-            output_path: Optional path to save index to
-            credential: Optional credential to use when resolving connection information
-
-        Returns
-        -------
-            MLIndex
-        """
-        if output_path is None:
-            output_path = Path.cwd() / f"{index_type}_{embeddings.kind}_index"
-        if index_type == "faiss":
-            embeddings.write_as_faiss_mlindex(output_path=output_path, engine="indexes.faiss.FaissAndDocStore")
-
-            mlindex = MLIndex(
-                uri=Path(output_path),
-            )
-        elif index_type == "acs":
-            from azure.ai.resources._index._tasks.update_acs import create_index_from_raw_embeddings
-            from azure.ai.resources._index._utils.connections import get_connection_by_id_v2
-
-            if not index_connection:
-                index_config = {
-                    **index_config,
-                    **{
-                        "endpoint": os.getenv("AZURE_AI_SEARCH_ENDPOINT"),
-                        "api_version": "2023-07-01-preview",
-                    }
-                }
-                connection_args = {
-                    "connection_type": "environment",
-                    "connection": {"key": "AZURE_AI_SEARCH_KEY"}
-                }
-            else:
-                if isinstance(index_connection, str):
-                    index_connection = get_connection_by_id_v2(index_connection, credential=credential)
-                index_config = {
-                    **index_config,
-                    **{
-                        "endpoint": index_connection.target if hasattr(index_connection, "target") else index_connection["properties"]["target"],
-                        "api_version": index_connection.metadata.get("apiVersion", "2023-07-01-preview") if hasattr(index_connection, "metadata") else index_connection["properties"]["metadata"].get("apiVersion", "2023-07-01-preview"),
-                    }
-                }
-                connection_args = {
-                    "connection_type": "workspace_connection",
-                    "connection": {"id": get_id_from_connection(index_connection)}
-                }
-
-            mlindex = create_index_from_raw_embeddings(
-                embeddings,
-                index_config,
-                connection=connection_args,
-                output_path=str(output_path),
-                credential=credential
-            )
-        else:
-            raise ValueError(f"Unknown index type: {index_type}")
-
-        return mlindex
-
-    def save(self, output_uri: Optional[str], just_config: bool = False):
+    def save(self, output_uri: str, just_config: bool = False):
         """
         Save the MLIndex to a uri.
 

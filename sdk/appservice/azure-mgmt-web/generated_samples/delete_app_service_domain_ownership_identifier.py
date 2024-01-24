@@ -29,14 +29,13 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.domains.delete_ownership_identifier(
+    client.domains.delete_ownership_identifier(
         resource_group_name="testrg123",
         domain_name="example.com",
         name="ownershipIdentifier",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.DomainRegistration/stable/2022-09-01/examples/DeleteAppServiceDomainOwnershipIdentifier.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.DomainRegistration/stable/2023-01-01/examples/DeleteAppServiceDomainOwnershipIdentifier.json
 if __name__ == "__main__":
     main()

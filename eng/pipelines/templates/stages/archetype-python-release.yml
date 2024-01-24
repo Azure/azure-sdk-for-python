@@ -46,6 +46,20 @@ stages:
                           PackageName: ${{artifact.name}}
                           ServiceName: ${{parameters.ServiceDirectory}}
                           ForRelease: true
+
+                    - template: /eng/common/pipelines/templates/steps/verify-restapi-spec-location.yml
+                      parameters:
+                        PackageName: ${{artifact.name}}
+                        ServiceDirectory: ${{parameters.ServiceDirectory}}
+                        ArtifactLocation: $(Pipeline.Workspace)/${{parameters.ArtifactName}}
+
+                    - task: PythonScript@0
+                      displayName: Verify CI enabled
+                      condition: succeeded()
+                      inputs:
+                        scriptPath: 'scripts/devops_tasks/verify_ci_enabled.py'
+                        arguments: '--package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}'
+
                     - pwsh: |
                         Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}
                       workingDirectory: $(Pipeline.Workspace)

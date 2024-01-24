@@ -23,9 +23,9 @@
 IMPORTANT: This file has been marked for deprecation and will be removed in the future. For diagnostics logging in our
 SDK, please use our CosmosHttpLoggingPolicy outlined in our README.
 """
+import warnings
 
 from azure.core.utils import CaseInsensitiveDict
-import warnings
 
 
 class _RecordDiagnostics(object):

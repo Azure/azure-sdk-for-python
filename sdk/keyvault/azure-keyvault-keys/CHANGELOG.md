@@ -9,6 +9,9 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Python 3.7 is no longer supported. Please use Python version 3.8 or later.
+- `asyncio` is no longer directly referenced by the library
+  ([#33819](https://github.com/Azure/azure-sdk-for-python/pull/33819))
 
 ## 4.9.0b3 (2023-11-03)
 

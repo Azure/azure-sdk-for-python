@@ -15,9 +15,9 @@ from azure.ai.ml.entities import AccountKeyConfiguration, Data
 from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_storage_client
 
 from azure.ai.resources.entities.mlindex import Index as MLIndex
-from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, OpsLogger
+from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, ActivityLogger
 
-ops_logger = OpsLogger(__name__)
+ops_logger = ActivityLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
@@ -60,7 +60,8 @@ class MLIndexOperations():
             path = mlindex.path
         except:
             try:
-                path = mlindex["path"]
+                path = mlindex["path"]  # type: ignore[index]
+                # TODO: Bug 2875652
             except Exception as e:
                 raise e
 
@@ -83,7 +84,7 @@ class MLIndexOperations():
 
     @distributed_trace
     @monitor_with_activity(logger, "Index.Download", ActivityType.PUBLICAPI)
-    def download(self, name: str, download_path: Union[str, PathLike], version: str = None, label: str = None) -> None:
+    def download(self, name: str, download_path: Union[str, PathLike], version: Optional[str] = None, label: Optional[str] = None) -> None:
 
         model_uri = self.get(name=name, version=version, label=label).path
         ds_name, path_prefix = get_ds_name_and_path_prefix(model_uri)

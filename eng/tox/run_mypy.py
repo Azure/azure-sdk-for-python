@@ -18,8 +18,6 @@ from ci_tools.environment_exclusions import (
 )
 from ci_tools.parsing import ParsedSetup
 from ci_tools.variables import in_ci
-from gh_tools.vnext_issue_creator import create_vnext_issue
-
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -55,7 +53,7 @@ if __name__ == "__main__":
 
     pkg_details = ParsedSetup.from_path(package_dir)
     top_level_module = pkg_details.namespace.split(".")[0]
-    python_version = "3.8" if args.next else "3.7"
+    python_version = "3.8"
     commands = [
         sys.executable,
         "-m",
@@ -102,8 +100,11 @@ if __name__ == "__main__":
                 sample_code_error = sample_err
 
     if args.next and in_ci() and not is_typing_ignored(package_name):
+        from gh_tools.vnext_issue_creator import create_vnext_issue, close_vnext_issue
         if src_code_error or sample_code_error:
             create_vnext_issue(package_name, "mypy")
+        else:
+            close_vnext_issue(package_name, "mypy")
 
     if src_code_error and sample_code_error:
         raise Exception(

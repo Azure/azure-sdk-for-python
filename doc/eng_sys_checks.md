@@ -7,6 +7,7 @@
   - [The pyproject.toml](#the-pyprojecttoml)
   - [Environment variables important to CI](#environment-variables-important-to-ci)
     - [Atomic Overrides](#atomic-overrides)
+    - [Enable test logging in CI pipelines](#enable-test-logging-in-ci-pipelines)
   - [Analyze Checks](#analyze-checks)
     - [MyPy](#mypy)
     - [Pyright](#pyright)
@@ -153,6 +154,8 @@ The various tooling abstracted by the environments within `eng/tox/tox.ini` take
 
 Packages with classifier `Development Status :: 7 - Inactive`, are **not** built by default and as such normal `checks` like `mypy` and `pylint` are also not run against them. Older "core" packages like `azure-common` and `azure-servicemanagement-legacy` are present, but excluded from the build due to this restriction.
 
+Additionally, packages with the pyproject.toml option `ci_enabled = false` will **skip** normal checks and tests. This is used for packages that are not yet compliant with certain CI checks. If `ci_enabled = false` is present in the package's pyproject.toml, it will be blocked from releasing until it is removed and all required CI checks pass.
+
 To temporarily **override** this restriction, a dev need only set the queue time variable: `ENABLE_PACKAGE_NAME`. The `-` in package names should be replaced by an `_`, as that is how the environment variable will be set on the actual CI machine anyway.
 
 - `ENABLE_AZURE_COMMON=true`
@@ -164,6 +167,16 @@ The name that you should use is visible based on what the `tox environment` that
 
 - `AZURE_SERVICEBUS_PYRIGHT=true` <-- enable a check that normally is disabled in `pyproject.toml`
 - `AZURE_CORE_PYLINT=false` <-- disable a check that normally runs
+
+### Enable test logging in CI pipelines
+
+You can enable test logging in a pipeline by setting the queue time variable `PYTEST_LOG_LEVEL` to the desired logging [level](https://docs.python.org/3/library/logging.html#logging-levels). For example,
+
+`PYTEST_LOG_LEVEL=INFO`
+
+This also works locally with tox by setting the `PYTEST_LOG_LEVEL` environment variable. 
+
+Note that if you want DEBUG level logging with sensitive information unredacted in the test logs, then you still must pass `logging_enable=True` into the client(s) being used in tests.
 
 ## Analyze Checks
 

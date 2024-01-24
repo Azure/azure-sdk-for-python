@@ -7,6 +7,14 @@ from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurati
 from devtools_testutils import recorded_by_proxy
 from preparers import app_config_decorator
 from testcase import AppConfigTestCase
+import datetime
+from unittest.mock import patch
+
+from azure.appconfiguration.provider._azureappconfigurationprovider import _delay_failure
+
+
+def sleep(seconds):
+    assert isinstance(seconds, float)
 
 
 class TestAppConfigurationProvider(AppConfigTestCase):
@@ -103,6 +111,18 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             appconfiguration_connection_string, selects=selects, key_vault_options=key_vault_options
         )
         assert client["secret"] == "Reslover Value"
+
+    # method: _delay_failure
+    @patch("time.sleep", side_effect=sleep)
+    def test_delay_failure(self, mock_sleep, **kwargs):
+        start_time = datetime.datetime.now()
+        _delay_failure(start_time)
+        assert mock_sleep.call_count == 1
+
+        mock_sleep.reset_mock()
+        start_time = datetime.datetime.now() - datetime.timedelta(seconds=10)
+        _delay_failure(start_time)
+        mock_sleep.assert_not_called()
 
 
 def secret_resolver(secret_id):

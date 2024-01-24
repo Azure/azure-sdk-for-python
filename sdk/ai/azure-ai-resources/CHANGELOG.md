@@ -1,12 +1,20 @@
 # Release History
 
-## 1.0.0b2 (Unreleased)
+## 1.0.0b3 (Unreleased)
 
 ### Features Added
+
+- AzureOpenAIConnection.set_current_environment supports openai 1.0 and above.
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+- Support for Python 3.12
+
+## 1.0.0b2 (2023-11-30)
 
 ### Other Changes
 

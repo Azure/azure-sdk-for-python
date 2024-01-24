@@ -33,6 +33,7 @@
     "sdk/batch/azure-batch/**",
     "sdk/ai/**/index/**",
     "sdk/ai/azure-ai-generative/tests/**",
+    "sdk/ai/azure-ai-resources/azure/ai/resources/_index/_langchain/vendor/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customsearch/**",
@@ -68,6 +69,8 @@
     "sdk/healthinsights/azure-healthinsights-clinicalmatching/azure/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_forms/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/**",
+    "sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_forms/**",
+    "sdk/documentintelligence/azure-ai-documentintelligence/tests/sample_forms/**",
     "sdk/personalizer/azure-ai-personalizer/azure/ai/personalizer/**",
     "sdk/identity/azure-identity/images/**",
     "sdk/identity/azure-identity/tests/pod-identity/**",
@@ -95,6 +98,8 @@
     "sdk/ml/azure-ai-ml/swagger/**",
     "sdk/ml/azure-ai-ml/NOTICE.txt",
     "sdk/ml/azure-ai-ml/.pre-commit-config.yaml",
+    "sdk/monitor/azure-monitor-opentelemetry/samples/tracing/django/sample/db.sqlite3",
+    "sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/django/sample/db.sqlite3",
     "sdk/loadtestservice/azure-developer-loadtesting/**",
     "sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_serialization.py",
     "sdk/translation/azure-ai-translation-text/tests/test_break_sentence.py",
@@ -111,6 +116,7 @@
     "eng/common/docgeneration/Generate-DocIndex.ps1",
     "eng/**/*.py",
     ".gitignore",
+    "tools/azure-sdk-tools/ci_tools/github_tools.py",
     "tools/azure-sdk-tools/devtools_testutils/fake_credentials.py",
     "tools/azure-sdk-tools/packaging_tools/**",
     "tools/azure-sdk-tools/setup.py",
@@ -158,6 +164,7 @@
     "alru",
     "amqp",
     "amqps",
+    "anyio",
     "apim",
     "Asal",
     "asgi",
@@ -771,6 +778,31 @@
       ]
     },
     {
+      "filename": "sdk/documentintelligence/azure-ai-documentintelligence/tests/*.py",
+      "words": [
+        "WDLABCD"
+      ]
+    },
+    {
+      "filename": "sdk/documentintelligence/azure-ai-documentintelligence/**",
+      "words": [
+        "allinone",
+        "dmac",
+        "ierr",
+        "mymodel",
+        "heif",
+        "racwd",
+        "rrggbb",
+        "UPCA",
+        "UPCE",
+        "mros",
+        "Nify",
+        "deserializers",
+        "ctxt",
+        "wday"
+      ]
+    },
+    {
       "filename": "sdk/healthinsights/**",
       "words": [
         "ABDO",
@@ -905,7 +937,9 @@
         "ctxt",
         "wday",
         "percentilesw",
-        "plotly"
+        "plotly",
+        "nbformat",
+        "nbconvert"
       ]
     },
     {
@@ -1215,6 +1249,13 @@
       ]
     },
     {
+      "filename": "sdk/ai/azure-ai-generative/**",
+      "words": [
+        "tqdm",
+        "genai"
+      ]
+    },
+    {
       "filename": "sdk/attestation/azure-security-attestation/tests/conftest.py",
       "words":[
         "sharedwus"
@@ -1381,6 +1422,21 @@
         "adreadonly",
         "Shenzen",
         "myusername"
+      ]
+    },
+    {
+      "filename": "sdk/ai/azure-ai-resources/**",
+      "words": [
+        "azuread",
+        "all-mpnet-base-v2",
+        "dtype",
+        "LLMRAG",
+        "pipelinerunid",
+        "pydantic",
+        "swigfaiss",
+        "tiktokens",
+        "tqdm",
+        "wasb"
       ]
     },
     {
@@ -1615,6 +1671,16 @@
         "wday",
         "JSONify",
         "Nify"
+      ]
+    },
+    {
+      "filename": "sdk/vision/azure-ai-vision-imageanalysis/azure/ai/vision/imageanalysis/**/*.py",
+      "words": [
+        "mros",
+        "Nify",
+        "deserializers",
+        "ctxt",
+        "wday"
       ]
     },
     {

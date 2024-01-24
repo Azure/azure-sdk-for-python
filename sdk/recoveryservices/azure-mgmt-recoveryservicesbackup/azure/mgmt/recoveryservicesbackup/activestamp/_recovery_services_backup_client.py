@@ -36,6 +36,8 @@ from .operations import (
     DeletedProtectionContainersOperations,
     ExportJobsOperationResultsOperations,
     FeatureSupportOperations,
+    FetchTieringCostOperations,
+    GetTieringCostOperationResultOperations,
     ItemLevelRecoveryConnectionsOperations,
     JobCancellationsOperations,
     JobDetailsOperations,
@@ -63,6 +65,7 @@ from .operations import (
     ResourceGuardProxyOperations,
     RestoresOperations,
     SecurityPINsOperations,
+    TieringCostOperationStatusOperations,
     ValidateOperationOperations,
     ValidateOperationResultsOperations,
     ValidateOperationStatusesOperations,
@@ -228,13 +231,22 @@ class RecoveryServicesBackupClient(
     :ivar resource_guard_proxy: ResourceGuardProxyOperations operations
     :vartype resource_guard_proxy:
      azure.mgmt.recoveryservicesbackup.activestamp.operations.ResourceGuardProxyOperations
+    :ivar fetch_tiering_cost: FetchTieringCostOperations operations
+    :vartype fetch_tiering_cost:
+     azure.mgmt.recoveryservicesbackup.activestamp.operations.FetchTieringCostOperations
+    :ivar get_tiering_cost_operation_result: GetTieringCostOperationResultOperations operations
+    :vartype get_tiering_cost_operation_result:
+     azure.mgmt.recoveryservicesbackup.activestamp.operations.GetTieringCostOperationResultOperations
+    :ivar tiering_cost_operation_status: TieringCostOperationStatusOperations operations
+    :vartype tiering_cost_operation_status:
+     azure.mgmt.recoveryservicesbackup.activestamp.operations.TieringCostOperationStatusOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The subscription Id. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-04-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2023-06-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -374,6 +386,15 @@ class RecoveryServicesBackupClient(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.resource_guard_proxy = ResourceGuardProxyOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.fetch_tiering_cost = FetchTieringCostOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.get_tiering_cost_operation_result = GetTieringCostOperationResultOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.tiering_cost_operation_status = TieringCostOperationStatusOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

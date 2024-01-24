@@ -4,9 +4,9 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, Dict, Iterable, Optional
+from typing import Any, Dict, Iterable, Optional, cast
 
-from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
+from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
@@ -125,11 +125,14 @@ class ComputeOperations(_ScopeDependentOperations):
                 :dedent: 8
                 :caption: Retrieving a list of nodes from a compute resource.
         """
-        return self._operation.list_nodes(
-            self._operation_scope.resource_group_name,
-            self._workspace_name,
-            name,
-            cls=lambda objs: [AmlComputeNodeInfo._from_rest_object(obj) for obj in objs],
+        return cast(
+            Iterable[AmlComputeNodeInfo],
+            self._operation.list_nodes(
+                self._operation_scope.resource_group_name,
+                self._workspace_name,
+                name,
+                cls=lambda objs: [AmlComputeNodeInfo._from_rest_object(obj) for obj in objs],
+            ),
         )
 
     @distributed_trace
@@ -367,9 +370,12 @@ class ComputeOperations(_ScopeDependentOperations):
         """
         if not location:
             location = self._get_workspace_location()
-        return self._usage_operations.list(
-            location=location,
-            cls=lambda objs: [Usage._from_rest_object(obj) for obj in objs],
+        return cast(
+            Iterable[Usage],
+            self._usage_operations.list(
+                location=location,
+                cls=lambda objs: [Usage._from_rest_object(obj) for obj in objs],
+            ),
         )
 
     @distributed_trace
@@ -409,4 +415,4 @@ class ComputeOperations(_ScopeDependentOperations):
 
     def _get_workspace_location(self) -> str:
         workspace = self._workspace_operations.get(self._resource_group_name, self._workspace_name)
-        return workspace.location
+        return str(workspace.location)

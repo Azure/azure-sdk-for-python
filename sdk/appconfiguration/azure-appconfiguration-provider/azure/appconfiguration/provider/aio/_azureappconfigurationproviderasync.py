@@ -4,14 +4,15 @@
 # license information.
 # -------------------------------------------------------------------------
 import json
-from asyncio.locks import Lock
+import copy
+from threading import Lock
+import datetime
 import logging
 from typing import (
     Any,
     Awaitable,
     Callable,
     Dict,
-    Iterable,
     Mapping,
     Optional,
     overload,
@@ -19,9 +20,14 @@ from typing import (
     Tuple,
     TYPE_CHECKING,
     Union,
+    Iterator,
+    KeysView,
+    ItemsView,
+    ValuesView,
+    TypeVar,
 )
 
-from azure.appconfiguration import (  # pylint:disable=no-name-in-module
+from azure.appconfiguration import (  # type: ignore # pylint:disable=no-name-in-module
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
 )
@@ -42,13 +48,15 @@ from .._azureappconfigurationprovider import (
     _get_headers,
     _RefreshTimer,
     _build_sentinel,
+    _delay_failure,
 )
 from .._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
-JSON = Union[str, Mapping[str, Any]]  # pylint: disable=unsubscriptable-object
+JSON = Mapping[str, Any]  # pylint: disable=unsubscriptable-object
+_T = TypeVar("_T")
 
 
 @overload
@@ -58,6 +66,9 @@ async def load(
     *,
     selects: Optional[List[SettingSelector]] = None,
     trim_prefixes: Optional[List[str]] = None,
+    keyvault_credential: Optional["AsyncTokenCredential"] = None,
+    keyvault_client_configs: Optional[Mapping[str, JSON]] = None,
+    secret_resolver: Optional[Callable[[str], str]] = None,
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
     refresh_on: Optional[List[Tuple[str, str]]] = None,
     refresh_interval: int = 30,
@@ -104,6 +115,9 @@ async def load(
     connection_string: str,
     selects: Optional[List[SettingSelector]] = None,
     trim_prefixes: Optional[List[str]] = None,
+    keyvault_credential: Optional["AsyncTokenCredential"] = None,
+    keyvault_client_configs: Optional[Mapping[str, JSON]] = None,
+    secret_resolver: Optional[Callable[[str], str]] = None,
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
     refresh_on: Optional[List[Tuple[str, str]]] = None,
     refresh_interval: int = 30,
@@ -153,6 +167,7 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     credential: Optional["AsyncTokenCredential"] = kwargs.pop("credential", None)
     connection_string: Optional[str] = kwargs.pop("connection_string", None)
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = kwargs.pop("key_vault_options", None)
+    start_time = datetime.datetime.now()
 
     # Update endpoint and credential if specified positionally.
     if len(args) > 2:
@@ -186,14 +201,19 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
 
     headers = _get_headers("Startup", **kwargs)
     provider = _buildprovider(connection_string, endpoint, credential, **kwargs)
-    await provider._load_all(headers=headers)
+
+    try:
+        await provider._load_all(headers=headers)
+    except Exception as e:
+        _delay_failure(start_time)
+        raise e
 
     # Refresh-All sentinels are not updated on load_all, as they are not necessarily included in the provider.
     for (key, label), etag in provider._refresh_on.items():
         if not etag:
             try:
-                sentinel = await provider._client.get_configuration_setting(key, label, headers=headers)
-                provider._refresh_on[(key, label)] = sentinel.etag
+                sentinel = await provider._client.get_configuration_setting(key, label, headers=headers)  # type: ignore
+                provider._refresh_on[(key, label)] = sentinel.etag  # type: ignore
             except HttpResponseError as e:
                 if e.status_code == 404:
                     # If the sentinel is not found a refresh should be triggered when it is created.
@@ -202,9 +222,13 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
                         key,
                         label,
                     )
-                    provider._refresh_on[(key, label)] = None
+                    provider._refresh_on[(key, label)] = None  # type: ignore
                 else:
+                    _delay_failure(start_time)
                     raise e
+            except Exception as e:
+                _delay_failure(start_time)
+                raise e
     return provider
 
 
@@ -230,15 +254,17 @@ def _buildprovider(
             **kwargs
         )
         return provider
-    provider._client = AzureAppConfigurationClient(
-        endpoint,
-        credential,
-        user_agent=user_agent,
-        retry_total=retry_total,
-        retry_backoff_max=retry_backoff_max,
-        **kwargs
-    )
-    return provider
+    if endpoint is not None and credential is not None:
+        provider._client = AzureAppConfigurationClient(
+            endpoint,
+            credential,
+            user_agent=user_agent,
+            retry_total=retry_total,
+            retry_backoff_max=retry_backoff_max,
+            **kwargs
+        )
+        return provider
+    raise ValueError("Please pass either endpoint and credential, or a connection string.")
 
 
 async def _resolve_keyvault_reference(
@@ -271,7 +297,11 @@ async def _resolve_keyvault_reference(
         provider._secret_clients[vault_url] = referenced_client
 
     if referenced_client:
-        return (await referenced_client.get_secret(keyvault_identifier.name, version=keyvault_identifier.version)).value
+        secret_value = (
+            await referenced_client.get_secret(keyvault_identifier.name, version=keyvault_identifier.version)
+        ).value
+        if secret_value is not None:
+            return secret_value
 
     if provider._secret_resolver:
         resolved = provider._secret_resolver(config.secret_id)
@@ -305,10 +335,14 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         self._trim_prefixes = sorted(trim_prefixes, key=len, reverse=True)
 
         refresh_on: List[Tuple[str, str]] = kwargs.pop("refresh_on", None) or []
-        self._refresh_on: Mapping[Tuple[str, str] : Optional[str]] = {_build_sentinel(s): None for s in refresh_on}
+        self._refresh_on: Mapping[Tuple[str, str], Optional[str]] = {
+            _build_sentinel(s): None for s in refresh_on
+        }  # type:ignore
         self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._on_refresh_success: Optional[Callable] = kwargs.pop("on_refresh_success", None)
-        self._on_refresh_error: Optional[Callable[[Exception], None]] = kwargs.pop("on_refresh_error", None)
+        self._on_refresh_error: Optional[Union[Callable[[Exception], Awaitable[None]], None]] = kwargs.pop(
+            "on_refresh_error", None
+        )
         self._keyvault_credential = kwargs.pop("keyvault_credential", None)
         self._secret_resolver = kwargs.pop("secret_resolver", None)
         self._keyvault_client_configs = kwargs.pop("keyvault_client_configs", {})
@@ -318,53 +352,53 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             or self._secret_resolver is not None
         )
         self._update_lock = Lock()
+        self._refresh_lock = Lock()
 
     async def refresh(self, **kwargs) -> None:
         if not self._refresh_on:
             logging.debug("Refresh called but no refresh options set.")
             return
+        if not self._refresh_timer.needs_refresh():
+            logging.debug("Refresh called but refresh interval not elapsed.")
+            return
+        if not self._refresh_lock.acquire(blocking=False):  # pylint: disable= consider-using-with
+            logging.debug("Refresh called but refresh already in progress.")
+            return
         success = False
+        need_refresh = False
         try:
-            async with self._update_lock:
-                if not self._refresh_timer.needs_refresh():
-                    logging.debug("Refresh called but refresh interval not elapsed.")
-                    return
-                need_refresh = False
-                updated_sentinel_keys = dict(self._refresh_on)
-                headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
-                for (key, label), etag in updated_sentinel_keys.items():
-                    try:
-                        updated_sentinel = await self._client.get_configuration_setting(
-                            key=key,
-                            label=label,
-                            etag=etag,
-                            match_condition=MatchConditions.IfModified,
-                            headers=headers,
-                            **kwargs
-                        )
-                        if updated_sentinel is not None:
+            updated_sentinel_keys = dict(self._refresh_on)
+            headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
+            for (key, label), etag in updated_sentinel_keys.items():
+                try:
+                    updated_sentinel = await self._client.get_configuration_setting(  # type: ignore
+                        key=key,
+                        label=label,
+                        etag=etag,
+                        match_condition=MatchConditions.IfModified,
+                        headers=headers,
+                        **kwargs
+                    )
+                    if updated_sentinel is not None:
+                        logging.debug("Refresh all triggered by key: %s label %s.", key, label)
+                        need_refresh = True
+
+                        updated_sentinel_keys[(key, label)] = updated_sentinel.etag
+                except HttpResponseError as e:
+                    if e.status_code == 404:
+                        if etag is not None:
+                            # If the sentinel is not found, it means the key/label was deleted, so we should refresh
                             logging.debug("Refresh all triggered by key: %s label %s.", key, label)
                             need_refresh = True
-
-                            updated_sentinel_keys[(key, label)] = updated_sentinel.etag
-                    except HttpResponseError as e:
-                        if e.status_code == 404:
-                            if etag is not None:
-                                # If the sentinel is not found, it means the key/label was deleted, so we should refresh
-                                logging.debug("Refresh all triggered by key: %s label %s.", key, label)
-                                need_refresh = True
-                                updated_sentinel_keys[(key, label)] = None
-                        else:
-                            raise e
-                # Need to only update once, no matter how many sentinels are updated
-                if need_refresh:
-                    await self._load_all(headers=headers, sentinel_keys=updated_sentinel_keys, **kwargs)
-                    if self._on_refresh_success:
-                        await self._on_refresh_success()
-                # Even if we don't need to refresh, we should reset the timer
-                self._refresh_timer.reset()
-                success = True
-                return
+                            updated_sentinel_keys[(key, label)] = None
+                    else:
+                        raise e
+            # Need to only update once, no matter how many sentinels are updated
+            if need_refresh:
+                await self._load_all(headers=headers, sentinel_keys=updated_sentinel_keys, **kwargs)
+            # Even if we don't need to refresh, we should reset the timer
+            self._refresh_timer.reset()
+            success = True
         except (ServiceRequestError, ServiceResponseError, HttpResponseError) as e:
             # If we get an error we should retry sooner than the next refresh interval
             if self._on_refresh_error:
@@ -372,8 +406,11 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 return
             raise
         finally:
+            self._refresh_lock.release()
             if not success:
                 self._refresh_timer.backoff()
+            elif need_refresh and self._on_refresh_success:
+                await self._on_refresh_success()
 
     async def _load_all(self, **kwargs):
         configuration_settings = {}
@@ -424,14 +461,14 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 return config.value
         return config.value
 
-    def __getitem__(self, key: str) -> str:
+    def __getitem__(self, key: str) -> Any:
         # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         """
         Returns the value of the specified key.
         """
         return self._dict[key]
 
-    def __iter__(self) -> Iterable[str]:
+    def __iter__(self) -> Iterator[str]:
         return self._dict.__iter__()
 
     def __len__(self) -> int:
@@ -444,36 +481,45 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         """
         return self._dict.__contains__(__x)
 
-    def keys(self) -> Iterable[str]:
+    def keys(self) -> KeysView[str]:
         """
         Returns a list of keys loaded from Azure App Configuration.
 
         :return: A list of keys loaded from Azure App Configuration.
-        :rtype: Iterable[str]
+        :rtype: KeysView[str]
         """
-        return self._dict.keys()
+        return copy.deepcopy(self._dict).keys()
 
-    def items(self) -> Iterable[Tuple[str, str]]:
+    def items(self) -> ItemsView[str, Union[str, Mapping[str, Any]]]:
         """
-        Returns a list of key-value pairs loaded from Azure App Configuration. Any values that are Key Vault references
-        will be resolved.
+        Returns a set-like object of key-value pairs loaded from Azure App Configuration. Any values that are Key Vault
+         references will be resolved.
 
-        :return: A list of key-value pairs loaded from Azure App Configuration.
-        :rtype: Iterable[Tuple[str, str]]
+        :return: A set-like object of key-value pairs loaded from Azure App Configuration.
+        :rtype: ItemsView[str, Union[str, Mapping[str, Any]]]
         """
-        return self._dict.items()
+        return copy.deepcopy(self._dict).items()
 
-    def values(self) -> Iterable[str]:
+    def values(self) -> ValuesView[Union[str, Mapping[str, Any]]]:
         """
         Returns a list of values loaded from Azure App Configuration. Any values that are Key Vault references will be
         resolved.
 
-        :return: A list of values loaded from Azure App Configuration.
-        :rtype: Iterable[str]
+        :return: A list of values loaded from Azure App Configuration. The values are either Strings or JSON objects,
+         based on there content type.
+        :rtype: ValuesView[Union[str, Mapping[str, Any]]]
         """
-        return self._dict.values()
+        return copy.deepcopy(self._dict).values()
 
-    def get(self, key: str, default: Optional[str] = None) -> str:
+    @overload
+    def get(self, key: str, default: None = None) -> Union[str, JSON, None]:
+        ...
+
+    @overload
+    def get(self, key: str, default: Union[str, JSON, _T]) -> Union[str, JSON, _T]:  # pylint: disable=signature-differs
+        ...
+
+    def get(self, key: str, default: Optional[Union[str, JSON, _T]] = None) -> Union[str, JSON, _T, None]:
         """
         Returns the value of the specified key. If the key does not exist, returns the default value.
 
@@ -481,9 +527,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         :param default: The default value to return.
         :type: str or None
         :return: The value of the specified key.
-        :rtype: str
+        :rtype: Union[str, JSON]
         """
-        return self._dict.get(key, default)
+        return copy.deepcopy(self._dict).get(key, default)
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, AzureAppConfigurationProvider):
@@ -505,15 +551,15 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         """
         for client in self._secret_clients.values():
             await client.close()
-        await self._client.close()
+        await self._client.close()  # type: ignore
 
     async def __aenter__(self) -> "AzureAppConfigurationProvider":
-        await self._client.__aenter__()
+        await self._client.__aenter__()  # type: ignore
         for client in self._secret_clients.values():
             await client.__aenter__()
         return self
 
     async def __aexit__(self, *args) -> None:
-        await self._client.__aexit__(*args)
+        await self._client.__aexit__(*args)  # type: ignore
         for client in self._secret_clients.values():
             await client.__aexit__()

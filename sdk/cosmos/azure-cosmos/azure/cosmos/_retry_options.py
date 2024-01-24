@@ -23,7 +23,10 @@
 """
 
 
-class RetryOptions(object):
+from typing import Optional
+
+
+class RetryOptions:
     """The retry options to be applied to all requests when retrying.
 
     :ivar int MaxRetryAttemptCount:
@@ -37,20 +40,23 @@ class RetryOptions(object):
     """
 
     def __init__(
-        self, max_retry_attempt_count=9, fixed_retry_interval_in_milliseconds=None, max_wait_time_in_seconds=30
+        self,
+        max_retry_attempt_count: int = 9,
+        fixed_retry_interval_in_milliseconds: Optional[int] = None,
+        max_wait_time_in_seconds: int = 30
     ):
         self._max_retry_attempt_count = max_retry_attempt_count
         self._fixed_retry_interval_in_milliseconds = fixed_retry_interval_in_milliseconds
         self._max_wait_time_in_seconds = max_wait_time_in_seconds
 
     @property
-    def MaxRetryAttemptCount(self):
+    def MaxRetryAttemptCount(self) -> int:
         return self._max_retry_attempt_count
 
     @property
-    def FixedRetryIntervalInMilliseconds(self):
+    def FixedRetryIntervalInMilliseconds(self) -> Optional[int]:
         return self._fixed_retry_interval_in_milliseconds
 
     @property
-    def MaxWaitTimeInSeconds(self):
+    def MaxWaitTimeInSeconds(self) -> int:
         return self._max_wait_time_in_seconds

@@ -7,7 +7,7 @@
 import random
 import re
 import subprocess
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -86,7 +86,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         vscode_debug: bool = False,
         skip_script_validation: bool = False,
         local_enable_gpu: bool = False,
-        **kwargs,
+        **kwargs: Any,
     ) -> LROPoller[OnlineDeployment]:
         """Create or update a deployment.
 
@@ -305,14 +305,16 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         if container_type:
             container_type = self._validate_deployment_log_container_type(container_type)
         log_request = DeploymentLogsRequest(container_type=container_type, tail=lines)
-        return self._online_deployment.get_logs(
-            resource_group_name=self._resource_group_name,
-            workspace_name=self._workspace_name,
-            endpoint_name=endpoint_name,
-            deployment_name=name,
-            body=log_request,
-            **self._init_kwargs,
-        ).content
+        return str(
+            self._online_deployment.get_logs(
+                resource_group_name=self._resource_group_name,
+                workspace_name=self._workspace_name,
+                endpoint_name=endpoint_name,
+                deployment_name=name,
+                body=log_request,
+                **self._init_kwargs,
+            ).content
+        )
 
     @distributed_trace
     @monitor_with_activity(logger, "OnlineDeployment.List", ActivityType.PUBLICAPI)
@@ -336,7 +338,9 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             **self._init_kwargs,
         )
 
-    def _validate_deployment_log_container_type(self, container_type):
+    def _validate_deployment_log_container_type(
+        self, container_type: EndpointDeploymentLogContainerType
+    ) -> EndpointDeploymentLogContainerType:
         if container_type == EndpointDeploymentLogContainerType.INFERENCE_SERVER:
             return EndpointDeploymentLogContainerType.INFERENCE_SERVER_REST
 
@@ -357,7 +361,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             error_type=ValidationErrorType.INVALID_VALUE,
         )
 
-    def _get_ARM_deployment_name(self, name: str):
+    def _get_ARM_deployment_name(self, name: str) -> str:
         random.seed(version=2)
         return f"{self._workspace_name}-{name}-{random.randint(1, 10000000)}"
 
@@ -369,9 +373,11 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :return: The workspace location
         :rtype: str
         """
-        return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
+        return str(
+            self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
+        )
 
-    def _get_local_endpoint_mode(self, vscode_debug):
+    def _get_local_endpoint_mode(self, vscode_debug: Any) -> LocalEndpointMode:
         return LocalEndpointMode.VSCodeDevContainer if vscode_debug else LocalEndpointMode.DetachedContainer
 
     def _register_collection_data_assets(self, deployment: OnlineDeployment) -> None:

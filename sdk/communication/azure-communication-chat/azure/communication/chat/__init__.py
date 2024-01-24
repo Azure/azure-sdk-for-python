@@ -2,6 +2,7 @@ from ._version import VERSION
 from ._chat_client import ChatClient
 from ._chat_thread_client import ChatThreadClient
 from ._generated.models import (
+    ChatAttachmentType,
     SendChatMessageResult,
     ChatThreadItem,
     ChatMessageType,
@@ -9,6 +10,7 @@ from ._generated.models import (
 )
 
 from ._models import (
+    ChatAttachment,
     ChatParticipant,
     ChatMessage,
     ChatThreadProperties,
@@ -26,6 +28,8 @@ from ._shared.models import (
     identifier_from_raw_id,
     PhoneNumberIdentifier,
     PhoneNumberProperties,
+    MicrosoftTeamsAppIdentifier,
+    MicrosoftTeamsAppProperties,
     MicrosoftTeamsUserIdentifier,
     MicrosoftTeamsUserProperties,
     UnknownIdentifier
@@ -42,6 +46,8 @@ __all__ = [
     'ChatThreadItem',
     'ChatParticipant',
     'ChatMessageType',
+    'ChatAttachment',
+    'ChatAttachmentType',
     'CreateChatThreadResult',
     'ChatError',
     'CommunicationTokenCredential',
@@ -49,6 +55,8 @@ __all__ = [
     'CommunicationIdentifierKind',
     'CommunicationUserIdentifier',
     'CommunicationUserProperties',
+    'MicrosoftTeamsAppIdentifier',
+    'MicrosoftTeamsAppProperties',
     'MicrosoftTeamsUserIdentifier',
     'MicrosoftTeamsUserProperties',
     'identifier_from_raw_id',

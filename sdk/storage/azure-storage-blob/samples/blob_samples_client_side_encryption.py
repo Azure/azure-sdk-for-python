@@ -38,6 +38,7 @@ from cryptography.hazmat.primitives.keywrap import (
 )
 
 from azure.storage.blob import BlobServiceClient
+from azure.core.exceptions import HttpResponseError
 
 
 # Sample implementations of the encryption-related interfaces.
@@ -248,7 +249,7 @@ class BlobEncryptionSamples():
             try:
                 self.container_client.get_blob_client(unencrypted_blob_name).download_blob()
                 raise Exception
-            except ValueError:
+            except HttpResponseError:
                 pass
         finally:
             self.container_client.delete_container()

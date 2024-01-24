@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b19 (Unreleased)
+## 1.0.0b22 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,39 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.0.0b21 (2024-01-16)
+
+### Other Changes
+
+- Update to OTel SKD/API 1.21
+    ([#33864](https://github.com/Azure/azure-sdk-for-python/pull/33864))
+- Update Django sample
+    ([#33834](https://github.com/Azure/azure-sdk-for-python/pull/33834))
+
+## 1.0.0b20 (2024-01-04)
+
+### Other Changes
+
+- Store global instance of `StatsbeatMetric`
+    ([#33432](https://github.com/Azure/azure-sdk-for-python/pull/33432))
+- Shutdown statsbeat on customer getting 400 error code
+    ([#33489](https://github.com/Azure/azure-sdk-for-python/pull/33489))
+- Track custom events extension in feature statsbeat
+    ([#33667](https://github.com/Azure/azure-sdk-for-python/pull/33667))
+- Readme examples are updated with correct imports
+    ([#33691](https://github.com/Azure/azure-sdk-for-python/pull/33691))
+- Implement distro detection for statsbeat feature
+    ([#33761](https://github.com/Azure/azure-sdk-for-python/pull/33761))
+- Use empty resource for statsbeat `MeterProvider`
+    ([#33761](https://github.com/Azure/azure-sdk-for-python/pull/33761))
+
+## 1.0.0b19 (2023-11-20)
+
+### Bugs Fixed
+
+- Fix deserialization of `TelemetryItem` from local storage
+    ([#33163](https://github.com/Azure/azure-sdk-for-python/pull/33163))
 
 ## 1.0.0b18 (2023-11-06)
 
