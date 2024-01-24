@@ -91,8 +91,8 @@ class AzureRecordedTestCase(object):
         client_id = os.environ.get("AZURE_CLIENT_ID", getattr(os.environ, "CLIENT_ID", None))
         secret = os.environ.get("AZURE_CLIENT_SECRET", getattr(os.environ, "CLIENT_SECRET", None))
 
-        use_pwsh = os.environ.get("AZURE_TEST_USE_PWSH_AUTH")
-        use_cli = os.environ.get("AZURE_TEST_USE_CLI_AUTH")
+        use_pwsh = os.environ.get("AZURE_TEST_USE_PWSH_AUTH", "false")
+        use_cli = os.environ.get("AZURE_TEST_USE_CLI_AUTH", "false")
         is_async = kwargs.pop("is_async", False)
 
         # User-based authentication through Azure PowerShell, if requested
