@@ -6,13 +6,13 @@ from typing import Dict, List, Optional, Union
 
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
-from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
-from azure.ai.ml.entities._job.parallel.run_function import RunFunction
 from azure.ai.ml.entities._credentials import (
     AmlTokenConfiguration,
     ManagedIdentityConfiguration,
     UserIdentityConfiguration,
 )
+from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
+from azure.ai.ml.entities._job.parallel.run_function import RunFunction
 
 from .command_func import _parse_input, _parse_inputs_outputs, _parse_output
 from .parallel import Parallel
@@ -53,7 +53,7 @@ def parallel_run_function(
     For an example of using ParallelRunStep, see the notebook
     https://aka.ms/parallel-example-notebook
 
-    .. remarks::
+    .. note::
 
         To use parallel_run_function:
 

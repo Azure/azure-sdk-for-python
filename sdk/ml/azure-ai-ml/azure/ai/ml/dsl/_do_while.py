@@ -15,7 +15,7 @@ def do_while(
 ) -> DoWhile:
     """Build a do_while node by specifying the loop body, output-input mapping, and termination condition.
 
-    .. remarks::
+    .. note::
         The following example shows how to use the `do_while` function to create a pipeline with a `do_while` node.
 
         .. code-block:: python
