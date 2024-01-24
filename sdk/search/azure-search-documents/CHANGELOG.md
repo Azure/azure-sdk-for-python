@@ -16,6 +16,8 @@
 
 ### Other Changes
 
+- Python 3.7 is no longer supported. Please use Python version 3.8 or later.
+
 ## 11.4.0 (2023-10-13)
 
 ### Features Added
