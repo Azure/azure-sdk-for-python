@@ -195,7 +195,7 @@ def command(
     :keyword instance_type: The type of VM to be used by the compute target.
     :paramtype instance_type: Optional[str]
     :keyword locations: The list of locations where the job will run.
-    :paramtype locations: Optional[list[str]]
+    :paramtype locations: Optional[List[str]]
     :keyword docker_args: Extra arguments to pass to the Docker run command. This would override any
         parameters that have already been set by the system, or in this section. This parameter is only
         supported for Azure ML compute types. Defaults to None.

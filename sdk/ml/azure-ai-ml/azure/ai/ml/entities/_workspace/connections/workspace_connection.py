@@ -77,9 +77,13 @@ class WorkspaceConnection(Resource):
     :param credentials: The credentials for authenticating to the external resource. Note that certain connection
         types (as defined by the type input) only accept certain types of credentials.
     :type credentials: Union[
-        ~azure.ai.ml.entities.PatTokenConfiguration, ~azure.ai.ml.entities.SasTokenConfiguration,
-        ~azure.ai.ml.entities.UsernamePasswordConfiguration, ~azure.ai.ml.entities.ManagedIdentityConfiguration
-        ~azure.ai.ml.entities.ServicePrincipalConfiguration, ~azure.ai.ml.entities.AccessKeyConfiguration,
+
+        ~azure.ai.ml.entities.PatTokenConfiguration,
+        ~azure.ai.ml.entities.SasTokenConfiguration,
+        ~azure.ai.ml.entities.UsernamePasswordConfiguration,
+        ~azure.ai.ml.entities.ManagedIdentityConfiguration
+        ~azure.ai.ml.entities.ServicePrincipalConfiguration,
+        ~azure.ai.ml.entities.AccessKeyConfiguration,
         ~azure.ai.ml.entities.ApiKeyConfiguration
         ]
     :param is_shared: For connections in lean workspaces, this controls whether or not this connection
@@ -157,10 +161,14 @@ class WorkspaceConnection(Resource):
 
         :return: Credentials for workspace connection.
         :rtype: Union[
-            ~azure.ai.ml.entities.PatTokenConfiguration, ~azure.ai.ml.entities.SasTokenConfiguration,
-            ~azure.ai.ml.entities.UsernamePasswordConfiguration, ~azure.ai.ml.entities.ManagedIdentityConfiguration
-            ~azure.ai.ml.entities.ServicePrincipalConfiguration, ~azure.ai.ml.entities.AccessKeyConfiguration,
+            ~azure.ai.ml.entities.PatTokenConfiguration,
+            ~azure.ai.ml.entities.SasTokenConfiguration,
+            ~azure.ai.ml.entities.UsernamePasswordConfiguration,
+            ~azure.ai.ml.entities.ManagedIdentityConfiguration
+            ~azure.ai.ml.entities.ServicePrincipalConfiguration,
+            ~azure.ai.ml.entities.AccessKeyConfiguration,
             ~azure.ai.ml.entities.ApiKeyConfiguration
+
         ]
         """
         return self._credentials
@@ -186,18 +194,18 @@ class WorkspaceConnection(Resource):
 
     @property
     def is_shared(self) -> bool:
-        """Get the Boolean describing if this connection is shared
-            amongst its cohort within a workspace hub. Only applicable for connections created
-            within a lean workspace.
+        """Get the Boolean describing if this connection is shared amongst its cohort within a workspace hub.
+        Only applicable for connections created within a lean workspace.
+
         :rtype: bool
         """
         return self._is_shared
 
     @is_shared.setter
     def is_shared(self, value: bool) -> None:
-        """Assign the is_shared property of the connection, determining if it is shared amongst other
-            lean workspaces within its parent workspace hub. Only applicable for connections created
-            within a lean workspace workspace.
+        """Assign the is_shared property of the connection, determining if it is shared amongst other lean workspaces
+        within its parent workspace hub. Only applicable for connections created within a lean workspace workspace.
+
         :param value: The new is_shared value.
         :type value: bool
         """

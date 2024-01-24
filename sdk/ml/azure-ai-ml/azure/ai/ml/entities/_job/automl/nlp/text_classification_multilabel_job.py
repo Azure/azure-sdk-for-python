@@ -46,12 +46,12 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/ml_samples_automl_nlp.py
-            :start-after: [START automl.text_classification_multilabel_job]
-            :end-before: [END automl.text_classification_multilabel_job]
-            :language: python
-            :dedent: 8
-            :caption: creating an automl text classification multilabel job
+        .. literalinclude:: ../samples/ml_samples_automl_nlp.py
+                :start-after: [START automl.text_classification_multilabel_job]
+                :end-before: [END automl.text_classification_multilabel_job]
+                :language: python
+                :dedent: 8
+                :caption: creating an automl text classification multilabel job
     """
 
     _DEFAULT_PRIMARY_METRIC = ClassificationMultilabelPrimaryMetrics.ACCURACY

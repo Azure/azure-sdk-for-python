@@ -204,8 +204,8 @@ class ParameterizedSweep:
         """Set the sweep object.. Leave parameters as None if you don't want to update corresponding values.
 
         :keyword goal: Defines supported metric goals for hyperparameter tuning. Acceptable values are:
-        "minimize", "maximize".
-        :type goal: str
+            "minimize" and "maximize".
+        :paramtype goal: str
         :keyword primary_metric: Name of the metric to optimize.
         :paramtype primary_metric: str
         """

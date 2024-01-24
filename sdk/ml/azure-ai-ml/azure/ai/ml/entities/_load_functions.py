@@ -68,7 +68,7 @@ def load_common(
         functions that call this.
     :type relative_origin: str
     :param params_override: List of values to override in loaded yaml
-    :type params_override: Optional[list]
+    :type params_override: Optional[List]
     :return: The loaded resource
     :rtype: Resource
     """
@@ -178,7 +178,7 @@ def load_job(
         source is a file or file path input. Defaults to "./" if the source is a stream input with no name value.
     :paramtype relative_origin: Optional[str]
     :keyword params_override: Parameter fields to overwrite values in the YAML file.
-    :paramtype params_override: Optional[list[dict]]
+    :paramtype params_override: Optional[List[dict]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Job cannot be successfully validated.
         Details will be provided in the error message.
     :return: A loaded Job object.
@@ -318,7 +318,7 @@ def load_code(
     :paramtype relative_origin: Optional[str]
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :paramtype params_override: Optional[list[dict]]
+    :paramtype params_override: Optional[List[dict]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Code cannot be successfully validated.
         Details will be provided in the error message.
     :return: Loaded code object.
@@ -440,7 +440,7 @@ def load_model(
         source is a file or file path input. Defaults to "./" if the source is a stream input with no name value.
     :paramtype relative_origin: Optional[str]
     :keyword params_override: Parameter fields to overwrite values in the YAML file.
-    :paramtype params_override: Optional[list[dict]]
+    :paramtype params_override: Optional[List[dict]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Job cannot be successfully validated.
         Details will be provided in the error message.
     :return: A loaded Model object.
@@ -765,7 +765,6 @@ def load_schedule(
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :paramtype params_override: List[Dict]
-
     :return: Constructed schedule object.
     :rtype: Schedule
     """
@@ -779,6 +778,7 @@ def load_feature_store(
     **kwargs: Any,
 ) -> FeatureStore:
     """Load a feature store object from a yaml file.
+
     :param source: The local yaml source of a feature store. Must be either a
         path to a local file, or an already-open file.
         If the source is a path, it will be open and read.
@@ -919,7 +919,7 @@ def load_model_package(
         source is a file or file path input. Defaults to "./" if the source is a stream input with no name value.
     :paramtype relative_origin: Optional[str]
     :keyword params_override: Parameter fields to overwrite values in the YAML file.
-    :paramtype params_override: Optional[list[dict]]
+    :paramtype params_override: Optional[List[dict]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Job cannot be successfully validated.
         Details will be provided in the error message.
     :return: A loaded ModelPackage object.

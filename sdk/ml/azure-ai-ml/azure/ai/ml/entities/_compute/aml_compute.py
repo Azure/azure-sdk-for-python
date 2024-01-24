@@ -38,12 +38,12 @@ class AmlComputeSshSettings:
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/ml_samples_compute.py
-        :start-after: [START aml_compute_ssh_settings]
-        :end-before: [END aml_compute_ssh_settings]
-        :language: python
-        :dedent: 8
-        :caption: Configuring an AmlComputeSshSettings object.
+        .. literalinclude:: ../samples/ml_samples_compute.py
+            :start-after: [START aml_compute_ssh_settings]
+            :end-before: [END aml_compute_ssh_settings]
+            :language: python
+            :dedent: 8
+            :caption: Configuring an AmlComputeSshSettings object.
     """
 
     def __init__(

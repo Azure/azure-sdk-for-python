@@ -482,13 +482,13 @@ class Command(BaseNode, NodeWithGroupInputMixin):
 
         :keyword instance_type: The type of compute instance to run the job on. If not specified, the job will run on
             the default compute target.
-        :paramtype instance_type: Optional[Union[str, list[str]]]
+        :paramtype instance_type: Optional[Union[str, List[str]]]
         :keyword instance_count: The number of instances to run the job on. If not specified, the job will run on a
             single instance.
         :paramtype instance_count: Optional[int]
         :keyword locations: The list of locations where the job will run. If not specified, the job will run on the
             default compute target.
-        :paramtype locations: Optional[list[str]]
+        :paramtype locations: Optional[List[str]]
         :keyword properties: The properties of the job.
         :paramtype properties: Optional[dict]
         :keyword docker_args: The Docker arguments for the job.

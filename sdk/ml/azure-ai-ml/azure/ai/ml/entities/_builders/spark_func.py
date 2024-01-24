@@ -131,14 +131,14 @@ def spark(
     :paramtype entry: Optional[Union[dict[str, str], ~azure.ai.ml.entities.SparkJobEntry]]
     :keyword py_files: The list of .zip, .egg or .py files to place on the PYTHONPATH for Python apps.
         Defaults to None.
-    :paramtype py_files: Optional[list[str]]
+    :paramtype py_files: Optional[List[str]]
     :keyword jars: The list of .JAR files to include on the driver and executor classpaths. Defaults to None.
-    :paramtype jars: Optional[list[str]]
+    :paramtype jars: Optional[List[str]]
     :keyword files: The list of files to be placed in the working directory of each executor. Defaults to None.
-    :paramtype files: Optional[list[str]]
+    :paramtype files: Optional[List[str]]
     :keyword archives: The list of archives to be extracted into the working directory of each executor.
         Defaults to None.
-    :paramtype archives: Optional[list[str]]
+    :paramtype archives: Optional[List[str]]
     :keyword identity: The identity that the Spark job will use while running on compute.
     :paramtype identity: Optional[Union[
         dict[str, str],

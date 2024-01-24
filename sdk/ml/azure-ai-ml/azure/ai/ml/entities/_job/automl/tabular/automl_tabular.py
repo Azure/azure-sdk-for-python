@@ -276,18 +276,18 @@ class AutoMLTabular(AutoMLVertical, ABC):
         :keyword max_concurrent_trials: This is the maximum number of iterations that would be executed in parallel.
             The default value is 1.
 
-            * AmlCompute clusters support one iteration running per node.
-            For multiple AutoML experiment parent runs executed in parallel on a single AmlCompute cluster, the
-            sum of the ``max_concurrent_trials`` values for all experiments should be less
-            than or equal to the maximum number of nodes. Otherwise, runs will be queued until nodes are available.
+            * AmlCompute clusters support one iteration running per node. For multiple AutoML experiment parent runs
+                executed in parallel on a single AmlCompute cluster, the sum of the ``max_concurrent_trials`` values
+                for all experiments should be less than or equal to the maximum number of nodes. Otherwise, runs
+                will be queued until nodes are available.
 
             * DSVM supports multiple iterations per node. ``max_concurrent_trials`` should
-            be less than or equal to the number of cores on the DSVM. For multiple experiments
-            run in parallel on a single DSVM, the sum of the ``max_concurrent_trials`` values for all
-            experiments should be less than or equal to the maximum number of nodes.
+                be less than or equal to the number of cores on the DSVM. For multiple experiments
+                run in parallel on a single DSVM, the sum of the ``max_concurrent_trials`` values for all
+                experiments should be less than or equal to the maximum number of nodes.
 
             * Databricks - ``max_concurrent_trials`` should be less than or equal to the number of
-            worker nodes on Databricks.
+                worker nodes on Databricks.
 
             ``max_concurrent_trials`` does not apply to local runs. Formerly, this parameter
             was named ``concurrent_iterations``.
@@ -300,6 +300,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
             * Equal to -1, which means to use all the possible cores per iteration per child-run.
 
             * Equal to 1, the default.
+
         :paramtype max_cores_per_trial: typing.Optional[int]
         :keyword max_nodes: [Experimental] The maximum number of nodes to use for distributed training.
 

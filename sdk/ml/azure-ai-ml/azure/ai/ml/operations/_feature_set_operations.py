@@ -91,7 +91,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :param name: Name of a specific FeatureSet asset, optional.
         :type name: Optional[str]
         :keyword list_view_type: View type for including/excluding (for example) archived FeatureSet assets.
-        Default: ACTIVE_ONLY.
+            Defaults to ACTIVE_ONLY.
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of FeatureSet objects
         :rtype: ~azure.core.paging.ItemPaged[FeatureSet]
@@ -343,10 +343,10 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :type feature_set_name: str
         :param version: Feature set version.
         :type version: str
-        :keyword feature_name. This is case-sensitive.
+        :keyword feature_name: This is case-sensitive.
         :paramtype feature_name: str
-        :keyword tags: String representation of a comma-separated list of tag names
-            (and optionally values). Example: "tag1,tag2=value2".
+        :keyword tags: String representation of a comma-separated list of tag names, and optionally, values.
+            For example, "tag1,tag2=value2". If provided, only features matching the specified tags are returned.
         :paramtype tags: str
         :return: Feature object
         :rtype: ~azure.ai.ml.entities.Feature

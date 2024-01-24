@@ -277,7 +277,7 @@
 /sdk/mixedreality/azure-mixedreality-authentication/                 @RamonArguelles
 /sdk/remoterendering/                                                @FlorianBorn71
 
-# PRLabel: %Open AI
+# PRLabel: %OpenAI
 /sdk/openai/                                                         @kristapratico @glecaros
 
 # PRLabel: %Purview

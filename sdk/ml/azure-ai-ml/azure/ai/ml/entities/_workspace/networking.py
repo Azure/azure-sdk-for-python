@@ -83,7 +83,7 @@ class FqdnDestination(OutboundRule):
     :param name: Name of the outbound rule.
     :type name: str
     :param destination: Fully qualified domain name to which outbound connections are allowed.
-        For example: “*.contoso.com”.
+        For example: “xxxxxx.contoso.com”.
     :type destination: str
     :ivar type: Type of the outbound rule. Set to "FQDN" for this class.
     :vartype type: str

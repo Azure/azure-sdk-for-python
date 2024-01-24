@@ -50,7 +50,7 @@ class WorkspaceKeys:
     :param app_insights_instrumentation_key: Key for app insights associated with given workspace
     :type app_insights_instrumentation_key: str
     :param container_registry_credentials: Key for ACR associated with given workspace
-    :type container_registry_credentials:ContainerRegistryCredential
+    :type container_registry_credentials: ContainerRegistryCredential
     :param notebook_access_keys: Key for notebook resource associated with given workspace
     :type notebook_access_keys: NotebookAccessKeys
     """

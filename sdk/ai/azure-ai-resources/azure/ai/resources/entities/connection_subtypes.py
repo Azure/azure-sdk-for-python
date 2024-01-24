@@ -34,8 +34,7 @@ class AzureOpenAIConnection(BaseConnection):
     :param api_type: The api type that this connection was created for. Defaults to "Azure" and currently rarely changes.
     :type api_type: str
     :param is_shared: For connections created for a project, this determines if the connection
-        is shared amongst other connections with that project's parent AI resource.
-        Defaults to true.
+        is shared amongst other connections with that project's parent AI resource. Defaults to True.
     :type is_shared: bool
     """
 
@@ -162,8 +161,7 @@ class AzureAISearchConnection(BaseConnection):
     :param api_version: The api version that this connection was created for. Only applies to certain connection types.
     :type api_version: Optional[str]
     :param is_shared: For connections created for a project, this determines if the connection
-        is shared amongst other connections with that project's parent AI resource.
-        Defaults to true.
+        is shared amongst other connections with that project's parent AI resource. Defaults to True.
     :type is_shared: bool
     """
 
@@ -233,11 +231,10 @@ class AzureAIServiceConnection(BaseConnection):
     :param api_version: The api version that this connection was created for.
     :type api_version: Optional[str]
     :param kind: The kind of ai service that this connection points to. Valid inputs include:
-        "AzureOpenAI", "ContentSafety", and "Speech"
+        "AzureOpenAI", "ContentSafety", and "Speech".
     :type kind: str
     :param is_shared: For connections created for a project, this determines if the connection
-        is shared amongst other connections with that project's parent AI resource.
-        Defaults to true.
+        is shared amongst other connections with that project's parent AI resource. Defaults to True.
     :type is_shared: bool
     """
 
@@ -305,8 +302,7 @@ class GitHubConnection(BaseConnection):
     :param credentials: The credentials for authenticating the external resource.
     :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
     :param is_shared: For connections created for a project, this determines if the connection
-        is shared amongst other connections with that project's parent AI resource.
-        Defaults to true.
+        is shared amongst other connections with that project's parent AI resource. Defaults to True.
     :type is_shared: bool
     """
 
@@ -332,8 +328,7 @@ class CustomConnection(BaseConnection):
     :param credentials: The credentials for authenticating the external resource.
     :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
     :param is_shared: For connections created for a project, this determines if the connection
-        is shared amongst other connections with that project's parent AI resource.
-        Defaults to true.
+        is shared amongst other connections with that project's parent AI resource. Defaults to True.
     :type is_shared: bool
     """
     def __init__(

@@ -59,8 +59,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class Sweep(ParameterizedSweep, BaseNode):
-    """
-    Base class for sweep node.
+    """Base class for sweep node.
 
     This class should not be instantiated directly. Instead, it should be created via the builder function: sweep.
 
@@ -77,21 +76,53 @@ class Sweep(ParameterizedSweep, BaseNode):
         hyperparameter in search space.
     :type objective: ~azure.ai.ml.sweep.Objective
     :param early_termination_policy: The early termination policy of the sweep node.
-    :type early_termination_policy: Union[~azure.mgmt.machinelearningservices.models.BanditPolicy,
+    :type early_termination_policy: Union[
+
+        ~azure.mgmt.machinelearningservices.models.BanditPolicy,
         ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
-        ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
+        ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy
+
+    ]
+
     :param search_space: The hyperparameter search space to run trials in.
-    :type search_space: Dict[str, Union[~azure.ai.ml.entities.Choice, ~azure.ai.ml.entities.LogNormal,
-        ~azure.ai.ml.entities.LogUniform, ~azure.ai.ml.entities.Normal, ~azure.ai.ml.entities.QLogNormal,
-        ~azure.ai.ml.entities.QLogUniform, ~azure.ai.ml.entities.QNormal, ~azure.ai.ml.entities.QUniform,
-        ~azure.ai.ml.entities.Randint, ~azure.ai.ml.entities.Uniform]]
+    :type search_space: Dict[str, Union[
+
+        ~azure.ai.ml.entities.Choice,
+        ~azure.ai.ml.entities.LogNormal,
+        ~azure.ai.ml.entities.LogUniform,
+        ~azure.ai.ml.entities.Normal,
+        ~azure.ai.ml.entities.QLogNormal,
+        ~azure.ai.ml.entities.QLogUniform,
+        ~azure.ai.ml.entities.QNormal,
+        ~azure.ai.ml.entities.QUniform,
+        ~azure.ai.ml.entities.Randint,
+        ~azure.ai.ml.entities.Uniform
+
+    ]]
+
     :param inputs: Mapping of input data bindings used in the job.
-    :type inputs: Dict[str, Union[~azure.ai.ml.Input, str, bool, int, float]]
+    :type inputs: Dict[str, Union[
+
+        ~azure.ai.ml.Input,
+
+        str,
+        bool,
+        int,
+        float
+
+    ]]
+
     :param outputs: Mapping of output data bindings used in the job.
     :type outputs: Dict[str, Union[str, ~azure.ai.ml.Output]]
     :param identity: The identity that the training job will use while running on compute.
-    :type identity: Union[~azure.ai.ml.ManagedIdentityConfiguration, ~azure.ai.ml.AmlTokenConfiguration,
-        ~azure.ai.ml.UserIdentityConfiguration]
+    :type identity: Union[
+
+        ~azure.ai.ml.ManagedIdentityConfiguration,
+        ~azure.ai.ml.AmlTokenConfiguration,
+        ~azure.ai.ml.UserIdentityConfiguration
+
+    ]
+
     :param queue_settings: The queue settings for the job.
     :type queue_settings: ~azure.ai.ml.entities.QueueSettings
     :param resources: Compute Resource configuration for the job.
