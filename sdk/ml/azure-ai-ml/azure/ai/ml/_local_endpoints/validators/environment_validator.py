@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Dict, Optional, Tuple, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import download_artifact_from_storage_url
-from azure.ai.ml._utils._arm_id_utils import parse_name_version, parse_name_label
+from azure.ai.ml._utils._arm_id_utils import parse_name_label, parse_name_version
 from azure.ai.ml._utils.utils import dump_yaml, is_url
 from azure.ai.ml.constants._common import DefaultOpenEncoding
 from azure.ai.ml.entities import OnlineDeployment
@@ -23,9 +23,7 @@ def get_environment_artifacts(
     deployment: OnlineDeployment,
     environment_operations: EnvironmentOperations,
     download_path: str,
-) -> Union[
-    Tuple[str, Optional[Path], str, None, None, Optional[Dict]], Tuple[None, None, None, Path, str, Optional[Dict]]
-]:
+) -> Optional[Tuple]:
     """Validates and returns artifacts from environment specification.
 
     :param endpoint_name: name of endpoint which this deployment is linked to
@@ -137,11 +135,7 @@ def _get_cloud_environment_artifacts(
     )
 
 
-def _get_local_environment_artifacts(
-    base_path: Union[str, os.PathLike], environment: Environment
-) -> Union[
-    Tuple[str, Optional[Path], str, None, None, Optional[Dict]], Tuple[None, None, None, Path, str, Optional[Dict]]
-]:
+def _get_local_environment_artifacts(base_path: Union[str, os.PathLike], environment: Environment) -> Optional[Tuple]:
     """Retrieves the local environment's artifacts
 
     :param base_path: The base path

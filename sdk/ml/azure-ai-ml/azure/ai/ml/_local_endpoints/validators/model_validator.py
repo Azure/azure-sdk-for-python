@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 from pathlib import Path
-from typing import Tuple
+from typing import Tuple, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import download_artifact
 from azure.ai.ml._utils._arm_id_utils import parse_prefixed_name_version
@@ -21,7 +21,7 @@ def get_model_artifacts(
     deployment: OnlineDeployment,
     model_operations: ModelOperations,
     download_path: str,
-) -> Tuple[str, str, Path]:
+) -> Union[str, Tuple]:
     """Validates and returns model artifacts from deployment specification.
 
     :param endpoint_name: name of endpoint which this deployment is linked to
@@ -67,7 +67,7 @@ def _model_contains_cloud_artifacts(deployment: OnlineDeployment):
     return isinstance(deployment.model, str) or deployment.model.id is not None
 
 
-def _get_cloud_model_artifacts(model_operations: ModelOperations, model: str, download_path: str) -> str:
+def _get_cloud_model_artifacts(model_operations: ModelOperations, model: str, download_path: str) -> Tuple:
     if isinstance(model, Model):
         name = model.name
         version = model._version
