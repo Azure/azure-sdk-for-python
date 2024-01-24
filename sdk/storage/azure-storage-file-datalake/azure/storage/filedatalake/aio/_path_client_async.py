@@ -715,6 +715,11 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             #other-client--per-operation-configuration>`_.
         :rtype: DirectoryProperties or FileProperties
         """
+        upn = kwargs.pop('upn', None)
+        if upn:
+            headers = kwargs.pop('headers', {})
+            headers['x-ms-upn'] = str(upn)
+            kwargs['headers'] = headers
         path_properties = await self._blob_client.get_blob_properties(**kwargs)
         return path_properties
 
