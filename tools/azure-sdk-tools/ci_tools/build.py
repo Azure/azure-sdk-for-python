@@ -2,7 +2,6 @@ import argparse, sys, os, logging, glob, shutil
 
 from subprocess import run
 
-import platform
 from typing import List
 from ci_tools.functions import discover_targeted_packages, str_to_bool, process_requires
 from ci_tools.parsing import ParsedSetup
@@ -179,8 +178,6 @@ def create_package(
 
     dist = get_artifact_directory(dest_folder)
     setup_parsed = ParsedSetup.from_path(setup_directory_or_file)
-
-
 
     if setup_parsed.ext_modules:
         run(
