@@ -6,7 +6,7 @@ parameters:
 - name: PackageVersions
   displayName: PackageVersions (regex of package versions to run)
   type: string
-  default: '5|source'
+  default: '1|source'
 - name: Tests
   displayName: Tests (regex of tests to run)
   type: string
