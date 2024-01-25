@@ -428,7 +428,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                     if isinstance(last_exception, OperationTimeoutError):
                         description = "If trying to receive from NEXT_AVAILABLE_SESSION, "\
                             "use max_wait_time on the ServiceBusReceiver to control the"\
-                                " timeout when connecting to a session."
+                                " timeout."
                         error = OperationTimeoutError(
                             message=description,
                         )
@@ -472,7 +472,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             if isinstance(last_exception, OperationTimeoutError):
                 description = "If trying to receive from NEXT_AVAILABLE_SESSION, "\
                     "use max_wait_time on the ServiceBusReceiver to control the"\
-                        " timeout when connecting to a session."
+                        " timeout."
                 error = OperationTimeoutError(
                     message=description,
                 )
