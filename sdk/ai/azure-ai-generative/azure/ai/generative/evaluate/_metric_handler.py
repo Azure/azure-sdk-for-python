@@ -76,21 +76,18 @@ class MetricHandler(object):
         }
         nodes_list = ["gpt_coherence", "gpt_similarity", "gpt_relevance", "gpt_fluency", "gpt_groundedness"]
 
-        import time
-
         pf_run = run_pf_flow_with_dict_list(flow_path, dict_list, flow_params={"connections": {node: connection_override for node in nodes_list}})
         wait_for_pf_run_to_complete(pf_run.name)
 
         result_df = pf_client.get_details(pf_run.name, all_results=True)
         result_metrics = pf_client.get_metrics(pf_run.name)
 
-        # Drop input columns
-        input_columns = [col for col in result_df.columns if col.startswith("inputs.")]
-        result_df.drop(input_columns, axis=1, inplace=True)
+        # Drop unselected output columns
+        columns_to_drop = [col for col in result_df.columns if col.replace("outputs.", "") not in metrics]
+        result_df.drop(columns_to_drop, axis=1, inplace=True)
 
-        # Rename output columns. E.g. outputs.answer -> answer
-        output_columns = [col for col in result_df.columns if col.startswith("outputs.")]
-        column_mapping = {col: col.replace("outputs.", "") for col in output_columns}
+        # Rename inputs/outputs columns. E.g. inputs.question -> question, outputs.gpt_fluency -> gpt_fluency
+        column_mapping = {col: col.replace("outputs.", "").replace("inputs.", "") for col in result_df.columns}
         result_df.rename(columns=column_mapping, inplace=True)
 
         artifacts = {col: result_df[col].tolist() for col in result_df.columns}

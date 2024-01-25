@@ -457,14 +457,8 @@ def _get_instance_table(metrics, task_type, asset_handler):
     else:
         instance_level_metrics_table = pd.DataFrame(metrics.get("artifacts"))
 
-    prediction_data = asset_handler.prediction_data
-    for column in asset_handler.prediction_data.columns.values:
-        if column in asset_handler.test_data.columns.values:
-            prediction_data.drop(column, axis=1, inplace=True)
-
     combined_table = pd.concat(
-        [asset_handler.test_data,
-         prediction_data,
+        [asset_handler.input_output_data,
          instance_level_metrics_table
          ],
         axis=1,
