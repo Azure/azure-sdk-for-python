@@ -12,8 +12,18 @@ from azure.core.exceptions import (
     HttpResponseError,
     map_error,
 )
+from azure.core.pipeline.transport import (
+    RequestsTransport,
+    AsyncioRequestsTransport,
+)
 from ._test_base import _BlobTest
 
+import logging
+import sys
+handler = logging.StreamHandler(stream=sys.stdout)
+logger = logging.getLogger('azure')
+logger.setLevel(logging.DEBUG)
+logger.addHandler(handler)
 
 class UploadBinaryDataTest(_BlobTest):
     def __init__(self, arguments):
@@ -22,10 +32,19 @@ class UploadBinaryDataTest(_BlobTest):
         self.blob_endpoint = f"{self.account_endpoint}{self.container_name}/{blob_name}"
         self.upload_stream = RandomStream(self.args.size)
         self.upload_stream_async = AsyncRandomStream(self.args.size)
+        # TODO: investigate size-1 issue for requests transports - https://github.com/Azure/azure-sdk-for-python/issues/33997
+        if self.sync_transport == RequestsTransport:
+            self.sync_size = self.args.size - 1
+        else:
+            self.sync_size = self.args.size
+        if self.async_transport == AsyncioRequestsTransport:
+            self.async_size = self.args.size - 1
+        else:
+            self.async_size = self.args.size
 
+    # TODO: If seeing "the request verb is invalid" error frequently: https://github.com/Azure/azure-sdk-for-python/issues/33999
     def run_sync(self):
         self.upload_stream.reset()
-        data = self.upload_stream.read(self.args.size)
         current_time = format_date_time(time())
         request = HttpRequest(
             method="PUT",
@@ -34,11 +53,11 @@ class UploadBinaryDataTest(_BlobTest):
             headers={
                 'x-ms-date': current_time,
                 'x-ms-blob-type': 'BlockBlob',
-                'Content-Length': str(self.args.size),
+                'Content-Length': str(self.sync_size),
                 'x-ms-version': self.api_version,
                 'Content-Type': 'application/octet-stream',
             },
-            content=data
+            content=self.upload_stream
         )
         response = self.pipeline_client._pipeline.run(
             request
@@ -49,7 +68,6 @@ class UploadBinaryDataTest(_BlobTest):
 
     async def run_async(self):
         self.upload_stream_async.reset()
-        data = self.upload_stream_async.read(self.args.size)
         current_time = format_date_time(time())
         request = HttpRequest(
             method="PUT",
@@ -58,11 +76,11 @@ class UploadBinaryDataTest(_BlobTest):
             headers={
                 'x-ms-date': current_time,
                 'x-ms-blob-type': 'BlockBlob',
-                'Content-Length': str(self.args.size),
+                'Content-Length': str(self.async_size),
                 'x-ms-version': self.api_version,
                 'Content-Type': 'application/octet-stream',
             },
-            content=data
+            content=self.upload_stream_async
         )
         pipeline_response = await self.async_pipeline_client._pipeline.run(
             request

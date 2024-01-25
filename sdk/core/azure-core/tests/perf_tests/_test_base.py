@@ -7,7 +7,7 @@ import os
 import uuid
 import ast
 
-from devtools_testutils.perfstress_tests import PerfStressTest, get_random_bytes
+from devtools_testutils.perfstress_tests import PerfStressTest
 
 from azure.core import PipelineClient, AsyncPipelineClient
 from azure.core.pipeline import (
@@ -28,10 +28,6 @@ from azure.core.pipeline.policies import (
     RetryPolicy,
     CustomHookPolicy,
     RedirectPolicy,
-    RequestIdPolicy,
-    ContentDecodePolicy,
-    DistributedTracingPolicy,
-    SensitiveHeaderCleanupPolicy,
     AsyncRetryPolicy,
     AsyncRedirectPolicy,
     BearerTokenCredentialPolicy,
