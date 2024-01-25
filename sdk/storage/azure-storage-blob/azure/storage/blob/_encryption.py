@@ -15,7 +15,7 @@ from json import (
     dumps,
     loads,
 )
-from typing import Any, BinaryIO, Callable, Dict, Optional, Tuple, TYPE_CHECKING
+from typing import Any, Callable, Dict, IO, Optional, Tuple, TYPE_CHECKING
 from typing import OrderedDict as TypedOrderedDict
 from typing_extensions import Protocol
 
@@ -224,11 +224,11 @@ class GCMBlobEncryptionStream:
     """
     def __init__(
         self, content_encryption_key: bytes,
-        data_stream: BinaryIO,
+        data_stream: IO[bytes],
     ) -> None:
         """
         :param bytes content_encryption_key: The encryption key to use.
-        :param BinaryIO data_stream: The data stream to read data from.
+        :param IO[bytes] data_stream: The data stream to read data from.
         """
         self.content_encryption_key = content_encryption_key
         self.data_stream = data_stream

@@ -4,25 +4,17 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, TYPE_CHECKING
-)
+from typing import Union, Optional, Any, TYPE_CHECKING
 from urllib.parse import parse_qs
 
 from ._shared import sign_string, url_quote
 from ._shared.constants import X_MS_VERSION
 from ._shared.models import Services, UserDelegationKey
-from ._shared.shared_access_signature import SharedAccessSignature, _SharedAccessHelper, \
-    QueryStringConstants
+from ._shared.shared_access_signature import QueryStringConstants, SharedAccessSignature, _SharedAccessHelper
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from ..blob import (
-        ResourceTypes,
-        AccountSasPermissions,
-        ContainerSasPermissions,
-        BlobSasPermissions
-    )
+    from ..blob import AccountSasPermissions, BlobSasPermissions, ContainerSasPermissions, ResourceTypes
 
 
 class BlobQueryStringConstants(object):
@@ -37,13 +29,17 @@ class BlobSharedAccessSignature(SharedAccessSignature):
     generate_*_shared_access_signature method directly.
     '''
 
-    def __init__(self, account_name, account_key=None, user_delegation_key=None):
+    def __init__(
+        self, account_name: str,
+        account_key: Optional[str] = None,
+        user_delegation_key: Optional[UserDelegationKey] = None
+    ) -> None:
         '''
         :param str account_name:
             The storage account name used to generate the shared access signatures.
-        :param str account_key:
+        :param Optional[str] account_key:
             The access key to generate the shares access signatures.
-        :param ~azure.storage.blob.models.UserDelegationKey user_delegation_key:
+        :param Optional[~azure.storage.blob.models.UserDelegationKey] user_delegation_key:
             Instead of an account key, the user could pass in a user delegation key.
             A user delegation key can be obtained from the service by authenticating with an AAD identity;
             this can be accomplished by calling get_user_delegation_key on any Blob service object.
@@ -51,11 +47,24 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         super(BlobSharedAccessSignature, self).__init__(account_name, account_key, x_ms_version=X_MS_VERSION)
         self.user_delegation_key = user_delegation_key
 
-    def generate_blob(self, container_name, blob_name, snapshot=None, version_id=None, permission=None,
-                      expiry=None, start=None, policy_id=None, ip=None, protocol=None,
-                      cache_control=None, content_disposition=None,
-                      content_encoding=None, content_language=None,
-                      content_type=None, **kwargs):
+    def generate_blob(
+        self, container_name: str,
+        blob_name: str,
+        snapshot: Optional[str] = None,
+        version_id: Optional[str] = None,
+        permission: Optional[Union["BlobSasPermissions", str]] = None,
+        expiry: Optional[Union["datetime", str]] = None,
+        start: Optional[Union["datetime", str]] = None,
+        policy_id: Optional[str] = None,
+        ip: Optional[str] = None,
+        protocol: Optional[str] = None,
+        cache_control: Optional[str] = None,
+        content_disposition: Optional[str] = None,
+        content_encoding: Optional[str] = None,
+        content_language: Optional[str] = None,
+        content_type: Optional[str] = None,
+        **kwargs: Any
+    ) -> str:
         '''
         Generates a shared access signature for the blob or one of its snapshots.
         Use the returned signature with the sas_token parameter of any BlobService.
@@ -65,7 +74,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :param str blob_name:
             Name of blob.
         :param str snapshot:
-            The snapshot parameter is an opaque DateTime value that,
+            The snapshot parameter is an opaque datetime value that,
             when present, specifies the blob snapshot to grant permission.
         :param str version_id:
             An optional blob version ID. This parameter is only applicable for versioning-enabled
@@ -148,11 +157,21 @@ class BlobSharedAccessSignature(SharedAccessSignature):
 
         return sas.get_token()
 
-    def generate_container(self, container_name, permission=None, expiry=None,
-                           start=None, policy_id=None, ip=None, protocol=None,
-                           cache_control=None, content_disposition=None,
-                           content_encoding=None, content_language=None,
-                           content_type=None, **kwargs):
+    def generate_container(
+        self, container_name: str,
+        permission: Optional[Union["ContainerSasPermissions", str]] = None,
+        expiry: Optional[Union["datetime", str]] = None,
+        start: Optional[Union["datetime", str]] = None,
+        policy_id: Optional[str] = None,
+        ip: Optional[str] = None,
+        protocol: Optional[str] = None,
+        cache_control: Optional[str] = None,
+        content_disposition: Optional[str] = None,
+        content_encoding: Optional[str] = None,
+        content_language: Optional[str] = None,
+        content_type: Optional[str] = None,
+        **kwargs: Any
+    ) -> str:
         '''
         Generates a shared access signature for the container.
         Use the returned signature with the sas_token parameter of any BlobService.
@@ -308,15 +327,15 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
 
 
 def generate_account_sas(
-        account_name,  # type: str
-        account_key,  # type: str
-        resource_types,  # type: Union[ResourceTypes, str]
-        permission,  # type: Union[AccountSasPermissions, str]
-        expiry,  # type: Union[datetime, str]
-        start=None,  # type: Optional[Union[datetime, str]]
-        ip=None,  # type: Optional[str]
-        **kwargs # type: Any
-    ):  # type: (...) -> str
+    account_name: str,
+    account_key: str,
+    resource_types: Union["ResourceTypes", str],
+    permission: Union["AccountSasPermissions", str],
+    expiry: Union["datetime", str],
+    start: Optional[Union["datetime", str]] = None,
+    ip: Optional[str] = None,
+    **kwargs: Any
+) -> str:
     """Generates a shared access signature for the blob service.
 
     Use the returned signature with the credential parameter of any BlobServiceClient,
@@ -376,22 +395,21 @@ def generate_account_sas(
         start=start,
         ip=ip,
         **kwargs
-    ) # type: ignore
+    )
 
 
 def generate_container_sas(
-        account_name,  # type: str
-        container_name,  # type: str
-        account_key=None,  # type: Optional[str]
-        user_delegation_key=None,  # type: Optional[UserDelegationKey]
-        permission=None,  # type: Optional[Union[ContainerSasPermissions, str]]
-        expiry=None,  # type: Optional[Union[datetime, str]]
-        start=None,  # type: Optional[Union[datetime, str]]
-        policy_id=None,  # type: Optional[str]
-        ip=None,  # type: Optional[str]
-        **kwargs # type: Any
-    ):
-    # type: (...) -> Any
+    account_name: str,
+    container_name: str,
+    account_key: Optional[str] = None,
+    user_delegation_key: Optional[UserDelegationKey] = None,
+    permission: Optional[Union["ContainerSasPermissions", str]] = None,
+    expiry: Optional[Union["datetime", str]] = None,
+    start: Optional[Union["datetime", str]] = None,
+    policy_id: Optional[str] = None,
+    ip: Optional[str] = None,
+    **kwargs: Any
+) -> Any:
     """Generates a shared access signature for a container.
 
     Use the returned signature with the credential parameter of any BlobServiceClient,
@@ -501,20 +519,19 @@ def generate_container_sas(
 
 
 def generate_blob_sas(
-        account_name,  # type: str
-        container_name,  # type: str
-        blob_name,  # type: str
-        snapshot=None,  # type: Optional[str]
-        account_key=None,  # type: Optional[str]
-        user_delegation_key=None,  # type: Optional[UserDelegationKey]
-        permission=None,  # type: Optional[Union[BlobSasPermissions, str]]
-        expiry=None,  # type: Optional[Union[datetime, str]]
-        start=None,  # type: Optional[Union[datetime, str]]
-        policy_id=None,  # type: Optional[str]
-        ip=None,  # type: Optional[str]
-        **kwargs # type: Any
-    ):
-    # type: (...) -> Any
+    account_name: str,
+    container_name: str,
+    blob_name: str,
+    snapshot: Optional[str] = None,
+    account_key: Optional[str] = None,
+    user_delegation_key: Optional[UserDelegationKey] = None,
+    permission: Optional[Union["BlobSasPermissions", str]] = None,
+    expiry: Optional[Union["datetime", str]] = None,
+    start: Optional[Union["datetime", str]] = None,
+    policy_id: Optional[str] = None,
+    ip: Optional[str] = None,
+    **kwargs: Any
+) -> Any:
     """Generates a shared access signature for a blob.
 
     Use the returned signature with the credential parameter of any BlobServiceClient,
