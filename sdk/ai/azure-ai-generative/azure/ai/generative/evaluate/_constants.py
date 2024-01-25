@@ -68,7 +68,7 @@ class ChatMetrics:
     ]
 
 
-TASK_TYPE_TO_METRICS_MAPPING: Dic[str, QaMetrics] = {
+TASK_TYPE_TO_METRICS_MAPPING: Dict[str, QaMetrics] = {
     "qa": QaMetrics,
     "rag-evaluation": ChatMetrics
 }
