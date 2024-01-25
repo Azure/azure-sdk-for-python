@@ -5,7 +5,7 @@ import copy
 import pandas as pd
 
 from os import path
-from typing import Dict
+from typing import Dict, Optional
 from promptflow import PFClient
 from promptflow.entities import AzureOpenAIConnection, OpenAIConnection
 
@@ -22,7 +22,7 @@ class MetricHandler(object):
             test_data,
             metrics_mapping=None,
             metrics=None,
-            data_mapping: Dict=None,
+            data_mapping: Optional[Dict]=None,
     ):
         self.task_type = task_type
         self.prediction_data = prediction_data
@@ -39,7 +39,7 @@ class MetricHandler(object):
         else:
             return self.input_output_data
 
-    def calculate_metrics(self) -> str:
+    def calculate_metrics(self) -> Dict:
 
         metrics_calculation_data = self._get_data_for_pf()
 

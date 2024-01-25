@@ -115,7 +115,7 @@ def evaluate(
         task_type: Optional[str] = None,
         metrics_list: Optional[List[str]] = None,
         model_config: Optional[Dict[str, str]] = None,
-        data_mapping: Optional[Mapping] = None,
+        data_mapping: Optional[Dict[str, str]] = None,
         output_path: Optional[str] = None,
         **kwargs
 ):
@@ -134,9 +134,9 @@ def evaluate(
     :keyword metrics_list: List of metrics to calculate. A default list is picked based on task_type if not set.
     :paramtype metrics_list: Optional[List[str]]
     :keyword model_config: GPT configuration details needed for AI-assisted metrics.
-    :paramtype model_config: Dict[str, str]
+    :paramtype model_config: Optional[Dict[str, str]]
     :keyword data_mapping: GPT configuration details needed for AI-assisted metrics.
-    :paramtype data_mapping: typing.Mapping
+    :paramtype data_mapping: Optional[Dict[str, str]]
     :keyword output_path: The local folder path to save evaluation artifacts to if set
     :paramtype output_path: Optional[str]
     :keyword tracking_uri: Tracking uri to log evaluation results to AI Studio

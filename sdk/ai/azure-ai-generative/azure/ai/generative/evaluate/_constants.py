@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+from typing import Dict
+
 QA = "qa"
 CHAT = "chat"
 
@@ -66,7 +68,7 @@ class ChatMetrics:
     ]
 
 
-TASK_TYPE_TO_METRICS_MAPPING = {
+TASK_TYPE_TO_METRICS_MAPPING: Dic[str, QaMetrics] = {
     "qa": QaMetrics,
     "rag-evaluation": ChatMetrics
 }
