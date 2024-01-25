@@ -130,12 +130,12 @@ class DatabaseProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: A dict representing the database properties.
         :rtype: Dict[Str, Any]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database couldn't be retrieved.
         """
         database_link = _get_database_link(self)
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
@@ -146,8 +146,6 @@ class DatabaseProxy(object):
         self._properties = self.client_connection.ReadDatabase(
             database_link, options=request_options, **kwargs
         )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, self._properties)
         return self._properties
 
     @distributed_trace
@@ -231,7 +229,6 @@ class DatabaseProxy(object):
         if computed_properties:
             definition["computedProperties"] = computed_properties
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
@@ -239,14 +236,11 @@ class DatabaseProxy(object):
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
-        data = self.client_connection.CreateContainer(
+        result = self.client_connection.CreateContainer(
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
         )
 
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, data)
-
-        return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data)
+        return ContainerProxy(self.client_connection, self.database_link, result["id"], properties=result)
 
     @distributed_trace
     def create_container_if_not_exists(  # pylint:disable=docstring-missing-param
@@ -337,7 +331,6 @@ class DatabaseProxy(object):
         :rtype: None
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
@@ -347,8 +340,6 @@ class DatabaseProxy(object):
 
         collection_link = self._get_container_link(container)
         self.client_connection.DeleteContainer(collection_link, options=request_options, **kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, None)
 
     def get_container_client(self, container: Union[str, ContainerProxy, Mapping[str, Any]]) -> ContainerProxy:
         """Get a `ContainerProxy` for a container with specified ID (name).
@@ -511,7 +502,6 @@ class DatabaseProxy(object):
                 :name: reset_container_properties
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
         if populate_query_metrics is not None:
             warnings.warn(
@@ -536,15 +526,10 @@ class DatabaseProxy(object):
         }
 
         container_properties = self.client_connection.ReplaceContainer(
-            container_link, collection=parameters, options=request_options, **kwargs
-        )
-
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, container_properties)
+            container_link, collection=parameters, options=request_options, **kwargs)
 
         return ContainerProxy(
-            self.client_connection, self.database_link, container_properties["id"], properties=container_properties
-        )
+            self.client_connection, self.database_link, container_properties["id"], properties=container_properties)
 
     @distributed_trace
     def list_users(self, max_item_count: Optional[int] = None, **kwargs: Any) -> ItemPaged[Dict[str, Any]]:
@@ -642,13 +627,9 @@ class DatabaseProxy(object):
                 :name: create_user
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
 
         user = self.client_connection.CreateUser(
             database_link=self.database_link, user=body, options=request_options, **kwargs)
-
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, user)
 
         return UserProxy(
             client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
@@ -668,14 +649,9 @@ class DatabaseProxy(object):
         :rtype: ~azure.cosmos.UserProxy
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
 
         user = self.client_connection.UpsertUser(
-            database_link=self.database_link, user=body, options=request_options, **kwargs
-        )
-
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, user)
+            database_link=self.database_link, user=body, options=request_options, **kwargs)
 
         return UserProxy(
             client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
@@ -701,14 +677,10 @@ class DatabaseProxy(object):
         :rtype: ~azure.cosmos.UserProxy
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
 
         replaced_user = self.client_connection.ReplaceUser(
             user_link=self._get_user_link(user), user=body, options=request_options, **kwargs
         )
-
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, replaced_user)
 
         return UserProxy(
             client_connection=self.client_connection,
@@ -730,13 +702,8 @@ class DatabaseProxy(object):
         :rtype: None
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
 
-        self.client_connection.DeleteUser(
-            user_link=self._get_user_link(user), options=request_options, **kwargs
-        )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, None)
+        self.client_connection.DeleteUser(user_link=self._get_user_link(user), options=request_options, **kwargs)
 
     @distributed_trace
     def read_offer(self, **kwargs: Any) -> Offer:
@@ -802,7 +769,6 @@ class DatabaseProxy(object):
             If no throughput properties exists for the database or if the throughput properties could not be updated.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
-        response_hook = kwargs.pop('response_hook', None)
         properties = self._get_properties()
         link = properties["_self"]
         query_spec = {
@@ -821,6 +787,4 @@ class DatabaseProxy(object):
             offer=throughput_properties[0],
             **kwargs
         )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, data)
         return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)

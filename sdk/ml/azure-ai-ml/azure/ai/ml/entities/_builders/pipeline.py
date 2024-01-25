@@ -3,18 +3,22 @@
 # ---------------------------------------------------------
 import logging
 from enum import Enum
-from typing import Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union, cast
 
 from marshmallow import Schema
 
 from azure.ai.ml.entities._component.component import Component, NodeType
 from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._validation import MutableValidationResult
 
 from ..._schema import PathAwareSchema
 from .._job.pipeline.pipeline_job_settings import PipelineJobSettings
 from .._util import convert_ordered_dict_to_dict, copy_output_setting, validate_attribute_type
 from .base_node import BaseNode
+
+if TYPE_CHECKING:
+    from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
 
 module_logger = logging.getLogger(__name__)
 
@@ -55,7 +59,7 @@ class Pipeline(BaseNode):
         ] = None,
         outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
         settings: Optional[PipelineJobSettings] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
@@ -71,20 +75,21 @@ class Pipeline(BaseNode):
         )
         # copy pipeline component output's setting to node level
         self._copy_pipeline_component_out_setting_to_node()
-        self._settings = None
+        self._settings: Optional[PipelineJobSettings] = None
         self.settings = settings
 
     @property
-    def component(self) -> Union[str, Component]:
+    def component(self) -> Optional[Union[str, Component]]:
         """Id or instance of the pipeline component/job to be run for the step.
 
         :return: Id or instance of the pipeline component/job.
         :rtype: Union[str, ~azure.ai.ml.entities.Component]
         """
-        return self._component
+        res: Union[str, Component] = self._component
+        return res
 
     @property
-    def settings(self) -> PipelineJobSettings:
+    def settings(self) -> Optional[PipelineJobSettings]:
         """Settings of the pipeline.
 
         Note: settings is available only when create node as a job.
@@ -98,7 +103,7 @@ class Pipeline(BaseNode):
         return self._settings
 
     @settings.setter
-    def settings(self, value):
+    def settings(self, value: Union[PipelineJobSettings, Dict]) -> None:
         """Set the settings of the pipeline.
 
         :param value: The settings of the pipeline.
@@ -116,13 +121,13 @@ class Pipeline(BaseNode):
         self._settings = value
 
     @classmethod
-    def _get_supported_inputs_types(cls):
+    def _get_supported_inputs_types(cls) -> None:
         # Return None here to skip validation,
         # as input could be custom class object(parameter group).
         return None
 
     @property
-    def _skip_required_compute_missing_validation(self):
+    def _skip_required_compute_missing_validation(self) -> bool:
         return True
 
     @classmethod
@@ -140,7 +145,7 @@ class Pipeline(BaseNode):
             "component": (str, PipelineComponent),
         }
 
-    def _to_job(self):
+    def _to_job(self) -> "PipelineJob":
         from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
 
         return PipelineJob(
@@ -178,8 +183,8 @@ class Pipeline(BaseNode):
             validation_result.merge_with(self.component._customized_validate())
         return validation_result
 
-    def _to_rest_object(self, **kwargs) -> dict:
-        rest_obj = super()._to_rest_object(**kwargs)
+    def _to_rest_object(self, **kwargs: Any) -> dict:
+        rest_obj: Dict = super()._to_rest_object(**kwargs)
         rest_obj.update(
             convert_ordered_dict_to_dict(
                 {
@@ -189,7 +194,7 @@ class Pipeline(BaseNode):
         )
         return rest_obj
 
-    def _build_inputs(self):
+    def _build_inputs(self) -> Dict:
         inputs = super(Pipeline, self)._build_inputs()
         built_inputs = {}
         # Validate and remove non-specified inputs
@@ -199,17 +204,22 @@ class Pipeline(BaseNode):
         return built_inputs
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context: Any) -> Union[PathAwareSchema, Schema]:
         from azure.ai.ml._schema.pipeline.pipeline_component import PipelineSchema
 
         return PipelineSchema(context=context)
 
-    def _copy_pipeline_component_out_setting_to_node(self):
+    def _copy_pipeline_component_out_setting_to_node(self) -> None:
         """Copy pipeline component output's setting to node level."""
         from azure.ai.ml.entities import PipelineComponent
+        from azure.ai.ml.entities._job.pipeline._io import NodeOutput
 
         if not isinstance(self.component, PipelineComponent):
             return
         for key, val in self.component.outputs.items():
-            node_output = self.outputs.get(key)
+            node_output = cast(NodeOutput, self.outputs.get(key))
             copy_output_setting(source=val, target=node_output)
+
+    @classmethod
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "Job":
+        raise NotImplementedError()

@@ -190,7 +190,7 @@ class DataOperations(_ScopeDependentOperations):
             )
         )
 
-    def _get(self, name: str, version: Optional[str] = None) -> Data:
+    def _get(self, name: Optional[str], version: Optional[str] = None) -> Data:
         if version:
             return (
                 self._operation.get(
@@ -226,7 +226,7 @@ class DataOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_activity(logger, "Data.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Data:
+    def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Data:  # type: ignore
         """Get the specified data asset.
 
         :param name: Name of data asset.
@@ -443,7 +443,7 @@ class DataOperations(_ScopeDependentOperations):
                 :caption: Import data assets example.
         """
 
-        experiment_name = "data_import_" + data_import.name
+        experiment_name = "data_import_" + str(data_import.name)
         data_import.type = AssetTypes.MLTABLE if isinstance(data_import.source, Database) else AssetTypes.URI_FOLDER
 
         # avoid specifying auto_delete_setting in job output now
@@ -452,8 +452,8 @@ class DataOperations(_ScopeDependentOperations):
         # block cumtomer specified path on managed datastore
         data_import.path = _validate_workspace_managed_datastore(data_import.path)
 
-        if "${{name}}" not in data_import.path:
-            data_import.path = data_import.path.rstrip("/") + "/${{name}}"
+        if "${{name}}" not in str(data_import.path):
+            data_import.path = data_import.path.rstrip("/") + "/${{name}}"  # type: ignore
         import_job = import_data_func(
             description=data_import.description or experiment_name,
             display_name=experiment_name,
@@ -463,7 +463,7 @@ class DataOperations(_ScopeDependentOperations):
             outputs={
                 "sink": Output(
                     type=data_import.type,
-                    path=data_import.path,
+                    path=data_import.path,  # type: ignore
                     name=data_import.name,
                     version=data_import.version,
                 )
@@ -749,7 +749,7 @@ class DataOperations(_ScopeDependentOperations):
     def mount(
         self,
         path: str,
-        mount_point: str = None,
+        mount_point: Optional[str] = None,
         mode: str = "ro_mount",
         debug: bool = False,
         persistent: bool = False,

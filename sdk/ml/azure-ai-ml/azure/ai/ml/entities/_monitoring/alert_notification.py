@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import List
+from typing import List, Optional
 
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     EmailMonitoringAlertNotificationSettings,
@@ -19,7 +19,7 @@ class AlertNotification(RestTranslatableMixin):
 
     :keyword emails: A list of email addresses that will receive notifications for monitoring alerts.
         Defaults to None.
-    :paramtype emails: Optional[list[str]]
+    :paramtype emails: Optional[List[str]]
 
     .. admonition:: Example:
 
@@ -34,7 +34,7 @@ class AlertNotification(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        emails: List[str] = None,
+        emails: Optional[List[str]] = None,
     ) -> None:
         self.emails = emails
 
