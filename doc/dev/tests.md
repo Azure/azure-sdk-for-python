@@ -181,6 +181,13 @@ Live Azure resources will be necessary in order to run live tests and produce re
 resource management commands, documented in [/eng/common/TestResources][test_resources], that streamline this process.
 Both pure ARM templates (`test-resources.json`) and BICEP files (`test-resources.bicep`) are supported.
 
+User-based authentication is preferred when using test resources. To enable this:
+- Use the [`-UserAuth` command flag][user_auth_flag] when running the `New-TestResources` script.
+- Set the environment variable `AZURE_TEST_USE_PWSH_AUTH` to "true" to authenticate with Azure PowerShell, or
+`AZURE_TEST_USE_CLI_AUTH` to "true" to authenticate with Azure CLI.
+  - Ensure you're logged into the tool you choose -- if
+you used `New-TestResources.ps1` to deploy resources, you'll already have logged in with Azure PowerShell.
+
 If you haven't yet set up a `test-resources` file for test resource deployment and/or want to use test resources of
 your own, you can just configure credentials to target these resources instead.
 
@@ -209,14 +216,20 @@ environment variables necessary to run live tests for the service. After storing
 -- formatted as `VARIABLE=value` on separate lines -- your credentials and test configuration variables will be set in
 our environment when running tests.
 
-If your service doesn't have a `test-resources` file for test deployment, you'll need to set environment variables
-for `AZURE_SUBSCRIPTION_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, and `AZURE_CLIENT_SECRET` at minimum.
+If you used the [`-UserAuth` command flag][user_auth_flag] to deploy test resources, set either
+`AZURE_TEST_USE_PWSH_AUTH` or `AZURE_TEST_USE_CLI_AUTH` to "true" to authenticate with Azure PowerShell or Azure CLI,
+respectively. If both are set to true, Azure PowerShell will be used.
 
+If your service doesn't have a `test-resources` file for test deployment, you'll need to set environment variables
+for authentication at minimum. For user-based authentication, use `AZURE_TEST_USE_PWSH_AUTH` or
+`AZURE_TEST_USE_CLI_AUTH` as described above.
+
+For service principal authentication:
 1. Set the `AZURE_SUBSCRIPTION_ID` variable to your organization's subscription ID. You can find it in the "Overview"
    section of the "Subscriptions" blade in the [Azure Portal][azure_portal].
 2. Define the `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, and `AZURE_CLIENT_SECRET` of a test service principal. If you do not
-   have a service principal, use the Azure CLI's [az ad sp create-for-rbac][azure_cli_service_principal] command (ideally,
-   using your alias as the service principal's name prefix):
+   have a service principal, use the Azure CLI's [az ad sp create-for-rbac][azure_cli_service_principal] command
+   (ideally, using your alias as the service principal's name prefix):
 
 ```
 az login
@@ -326,7 +339,9 @@ well. To run tests in playback, either set `AZURE_TEST_RUN_LIVE` to "false" or l
 
 ### Run and record tests
 
-With the `AZURE_TEST_RUN_LIVE` environment variable set to "true", use `pytest` to run your test(s) in live mode.
+First, refer to the [Configure test variables](#configure-test-variables) section to ensure environment variables are
+set for test resources and authentication. With the `AZURE_TEST_RUN_LIVE` environment variable set to "true", use
+`pytest` to run your test(s) in live mode.
 
 ```
 (env) azure-sdk-for-python\sdk\my-service\my-package> pytest tests
@@ -339,18 +354,18 @@ Playback test errors most frequently indicate a need for additional sanitizers a
 [Sanitize secrets](#sanitize-secrets)). If you encounter any unexpected errors, refer to the
 [test proxy troubleshooting guide][troubleshooting_guide].
 
-At this point there should folder called `recordings` inside your package's `tests` directory. Each recording in this
-folder will be a `.json` file that captures the HTTP traffic that was generated while running the test matching the
-file's name.
+If tests were recorded for a new library, there should now be a folder called `recordings` inside your package's
+`tests` directory. Each recording in this folder will be a `.json` file that captures the HTTP traffic that was
+generated while running the test matching the file's name.
 
 The final step in setting up recordings is to move these files out of the `azure-sdk-for-python` and into the
 `azure-sdk-assets` repository. The [recording migration guide][recording_move] describes how to do so. This step only
-needs to be completed once. Your library will have an `assets.json` file at its root, which stores the `azure-sdk-assets`
-tag that contains the current set of recordings.
+needs to be completed once. Your library will have an `assets.json` file at its root, which stores the
+`azure-sdk-assets` tag that contains the current set of recordings.
 
-From this point on, recordings will automatically be fetched when tests are run in playback mode -- either from
-a local cache (described in [Update test recordings](#update-test-recordings)), or from `azure-sdk-assets` if they're
-not locally available.
+From this point on, recordings will automatically be fetched when tests are run in playback mode -- either from a local
+cache (described in [Update test recordings](#update-test-recordings)), or from `azure-sdk-assets` if they're not
+locally available.
 
 #### Update test recordings
 
@@ -725,3 +740,4 @@ Tests that use the Shared Access Signature (SAS) to authenticate a client should
 [test_proxy_startup]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md#start-the-proxy-server
 [test_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/TestResources#readme
 [troubleshooting_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_troubleshooting.md
+[user_auth_flag]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/common/TestResources/New-TestResources.ps1.md#-userauth
