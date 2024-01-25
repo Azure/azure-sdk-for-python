@@ -611,14 +611,7 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, 
 
     # is it a literal?
     try:
-        if sys.version_info >= (3, 8):
-            from typing import (
-                Literal,
-            )  # pylint: disable=no-name-in-module, ungrouped-imports
-        else:
-            from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
-
-        if annotation.__origin__ == Literal:
+        if annotation.__origin__ is typing.Literal:
             return None
     except AttributeError:
         pass
@@ -709,7 +702,11 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, 
     ):
         if obj is None:
             return obj
-        return _deserialize_with_callable(deserializer, obj)
+        try:
+            return _deserialize_with_callable(deserializer, obj)
+        except Exception:
+            pass
+        return obj
 
     if get_deserializer(annotation, rf):
         return functools.partial(_deserialize_default, get_deserializer(annotation, rf))

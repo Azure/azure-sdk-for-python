@@ -22,7 +22,9 @@ class TestTranslation(TextTranslationTest):
         source_language = "es"
         target_languages = ["cs"]
         input_text_elements = [InputTextItem(text="Hola mundo")]
-        response = client.translate(request_body=input_text_elements, to=target_languages, from_parameter=source_language)
+        response = client.translate(
+            request_body=input_text_elements, to=target_languages, from_parameter=source_language
+        )
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
@@ -60,7 +62,10 @@ class TestTranslation(TextTranslationTest):
         target_languages = ["en"]
         input_text_elements = [InputTextItem(text="<span class=notranslate>今天是怎么回事是</span>非常可怕的")]
         response = client.translate(
-            request_body=input_text_elements, to=target_languages, from_parameter=source_language, text_type=TextType.HTML
+            request_body=input_text_elements,
+            to=target_languages,
+            from_parameter=source_language,
+            text_type=TextType.HTML,
         )
 
         assert len(response) == 1
@@ -82,7 +87,9 @@ class TestTranslation(TextTranslationTest):
                 text='The word < mstrans:dictionary translation ="wordomatic">wordomatic</mstrans:dictionary> is a dictionary entry.'
             )
         ]
-        response = client.translate(request_body=input_text_elements, to=target_languages, from_parameter=source_language)
+        response = client.translate(
+            request_body=input_text_elements, to=target_languages, from_parameter=source_language
+        )
 
         assert len(response) == 1
         assert len(response[0].translations) == 1

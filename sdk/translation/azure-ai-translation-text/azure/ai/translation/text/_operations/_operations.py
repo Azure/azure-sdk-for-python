@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -26,7 +26,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._model_base import AzureJSONEncoder, _deserialize
+from .._model_base import SdkJSONEncoder, _deserialize
 from .._serialization import Serializer
 from .._vendor import TextTranslationClientMixinABC, prep_if_match, prep_if_none_match
 
@@ -270,6 +270,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> _models.GetLanguagesResult:
+        # pylint: disable=line-too-long
         """Gets the set of languages currently supported by other operations of the Translator.
 
         Gets the set of languages currently supported by other operations of the Translator.
@@ -300,11 +301,86 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: GetLanguagesResult. The GetLanguagesResult is compatible with MutableMapping
         :rtype: ~azure.ai.translation.text.models.GetLanguagesResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "dictionary": {
+                        "str": {
+                            "dir": "str",  # Directionality, which is rtl for
+                              right-to-left languages or ltr for left-to-right languages. Required.
+                            "name": "str",  # Display name of the language in the locale
+                              requested via Accept-Language header. Required.
+                            "nativeName": "str",  # Display name of the language in the
+                              locale native for this language. Required.
+                            "translations": [
+                                {
+                                    "code": "str",  # Language code identifying
+                                      the target language. Required.
+                                    "dir": "str",  # Directionality, which is rtl
+                                      for right-to-left languages or ltr for left-to-right languages.
+                                      Required.
+                                    "name": "str",  # Display name of the
+                                      language in the locale requested via Accept-Language header.
+                                      Required.
+                                    "nativeName": "str"  # Display name of the
+                                      language in the locale native for this language. Required.
+                                }
+                            ]
+                        }
+                    },
+                    "translation": {
+                        "str": {
+                            "dir": "str",  # Directionality, which is rtl for
+                              right-to-left languages or ltr for left-to-right languages. Required.
+                            "name": "str",  # Display name of the language in the locale
+                              requested via Accept-Language header. Required.
+                            "nativeName": "str"  # Display name of the language in the
+                              locale native for this language. Required.
+                        }
+                    },
+                    "transliteration": {
+                        "str": {
+                            "name": "str",  # Display name of the language in the locale
+                              requested via Accept-Language header. Required.
+                            "nativeName": "str",  # Display name of the language in the
+                              locale native for this language. Required.
+                            "scripts": [
+                                {
+                                    "code": "str",  # Code identifying the
+                                      script. Required.
+                                    "dir": "str",  # Directionality, which is rtl
+                                      for right-to-left languages or ltr for left-to-right languages.
+                                      Required.
+                                    "name": "str",  # Display name of the script
+                                      in the locale requested via Accept-Language header. Required.
+                                    "nativeName": "str",  # Display name of the
+                                      language in the locale native for the language. Required.
+                                    "toScripts": [
+                                        {
+                                            "code": "str",  # Code
+                                              identifying the script. Required.
+                                            "dir": "str",  #
+                                              Directionality, which is rtl for right-to-left languages
+                                              or ltr for left-to-right languages. Required.
+                                            "name": "str",  # Display
+                                              name of the script in the locale requested via
+                                              Accept-Language header. Required.
+                                            "nativeName": "str"  #
+                                              Display name of the language in the locale native for the
+                                              language. Required.
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -389,6 +465,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         content_type: str = "application/json",
         **kwargs: Any
     ) -> List[_models.TranslatedTextItem]:
+        # pylint: disable=line-too-long
         """Translate Text.
 
         Translate Text.
@@ -470,17 +547,83 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: list of TranslatedTextItem
         :rtype: list[~azure.ai.translation.text.models.TranslatedTextItem]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                request_body = [
+                    {
+                        "text": "str"  # Text to translate. Required.
+                    }
+                ]
+
+                # response body for status code(s): 200
+                response == [
+                    {
+                        "translations": [
+                            {
+                                "text": "str",  # A string giving the translated
+                                  text. Required.
+                                "to": "str",  # A string representing the language
+                                  code of the target language. Required.
+                                "alignment": {
+                                    "proj": "str"  # Maps input text to
+                                      translated text. The alignment information is only provided when
+                                      the request  parameter includeAlignment is true. Alignment is
+                                      returned as a string value of the following  format:
+                                      [[SourceTextStartIndex]:[SourceTextEndIndex]"u2013[TgtTextStartIndex]:[TgtTextEndIndex]].
+                                      The colon separates start and end index, the dash separates the
+                                      languages, and space separates the words.  One word may align
+                                      with zero, one, or multiple words in the other language, and the
+                                      aligned words may  be non-contiguous. When no alignment
+                                      information is available, the alignment element will be empty.
+                                      Required.
+                                },
+                                "sentLen": {
+                                    "srcSentLen": [
+                                        0  # An integer array representing
+                                          the lengths of the sentences in the input text.  The length
+                                          of the array is the number of sentences, and the values are
+                                          the length of each sentence. Required.
+                                    ],
+                                    "transSentLen": [
+                                        0  # An integer array representing
+                                          the lengths of the sentences in the translated text.  The
+                                          length of the array is the number of sentences, and the
+                                          values are the length of each sentence. Required.
+                                    ]
+                                },
+                                "transliteration": {
+                                    "script": "str",  # A string specifying the
+                                      script used in the output. Required.
+                                    "text": "str"  # A string which is the result
+                                      of converting the input string to the output script. Required.
+                                }
+                            }
+                        ],
+                        "detectedLanguage": {
+                            "language": "str",  # A string representing the code of the
+                              detected language. Required.
+                            "score": 0.0  # A float value indicating the confidence in
+                              the result. The score is between zero and one and a low score indicates a
+                              low confidence. Required.
+                        },
+                        "sourceText": {
+                            "text": "str"  # Input text in the default script of the
+                              source language. Required.
+                        }
+                    }
+                ]
         """
 
     @overload
     def translate(
         self,
-        request_body: IO,
+        request_body: IO[bytes],
         *,
         to: List[str],
         client_trace_id: Optional[str] = None,
@@ -498,12 +641,13 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         content_type: str = "application/json",
         **kwargs: Any
     ) -> List[_models.TranslatedTextItem]:
+        # pylint: disable=line-too-long
         """Translate Text.
 
         Translate Text.
 
         :param request_body: Defines the content of the request. Required.
-        :type request_body: IO
+        :type request_body: IO[bytes]
         :keyword to: Specifies the language of the output text. The target language must be one of the
          supported languages included
          in the translation scope. For example, use to=de to translate to German.
@@ -579,17 +723,76 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: list of TranslatedTextItem
         :rtype: list[~azure.ai.translation.text.models.TranslatedTextItem]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == [
+                    {
+                        "translations": [
+                            {
+                                "text": "str",  # A string giving the translated
+                                  text. Required.
+                                "to": "str",  # A string representing the language
+                                  code of the target language. Required.
+                                "alignment": {
+                                    "proj": "str"  # Maps input text to
+                                      translated text. The alignment information is only provided when
+                                      the request  parameter includeAlignment is true. Alignment is
+                                      returned as a string value of the following  format:
+                                      [[SourceTextStartIndex]:[SourceTextEndIndex]"u2013[TgtTextStartIndex]:[TgtTextEndIndex]].
+                                      The colon separates start and end index, the dash separates the
+                                      languages, and space separates the words.  One word may align
+                                      with zero, one, or multiple words in the other language, and the
+                                      aligned words may  be non-contiguous. When no alignment
+                                      information is available, the alignment element will be empty.
+                                      Required.
+                                },
+                                "sentLen": {
+                                    "srcSentLen": [
+                                        0  # An integer array representing
+                                          the lengths of the sentences in the input text.  The length
+                                          of the array is the number of sentences, and the values are
+                                          the length of each sentence. Required.
+                                    ],
+                                    "transSentLen": [
+                                        0  # An integer array representing
+                                          the lengths of the sentences in the translated text.  The
+                                          length of the array is the number of sentences, and the
+                                          values are the length of each sentence. Required.
+                                    ]
+                                },
+                                "transliteration": {
+                                    "script": "str",  # A string specifying the
+                                      script used in the output. Required.
+                                    "text": "str"  # A string which is the result
+                                      of converting the input string to the output script. Required.
+                                }
+                            }
+                        ],
+                        "detectedLanguage": {
+                            "language": "str",  # A string representing the code of the
+                              detected language. Required.
+                            "score": 0.0  # A float value indicating the confidence in
+                              the result. The score is between zero and one and a low score indicates a
+                              low confidence. Required.
+                        },
+                        "sourceText": {
+                            "text": "str"  # Input text in the default script of the
+                              source language. Required.
+                        }
+                    }
+                ]
         """
 
     @distributed_trace
     def translate(
         self,
-        request_body: Union[List[_models.InputTextItem], IO],
+        request_body: Union[List[_models.InputTextItem], IO[bytes]],
         *,
         to: List[str],
         client_trace_id: Optional[str] = None,
@@ -606,13 +809,14 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         allow_fallback: Optional[bool] = None,
         **kwargs: Any
     ) -> List[_models.TranslatedTextItem]:
+        # pylint: disable=line-too-long
         """Translate Text.
 
         Translate Text.
 
         :param request_body: Defines the content of the request. Is either a [InputTextItem] type or a
-         IO type. Required.
-        :type request_body: list[~azure.ai.translation.text.models.InputTextItem] or IO
+         IO[bytes] type. Required.
+        :type request_body: list[~azure.ai.translation.text.models.InputTextItem] or IO[bytes]
         :keyword to: Specifies the language of the output text. The target language must be one of the
          supported languages included
          in the translation scope. For example, use to=de to translate to German.
@@ -685,14 +889,70 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
          specifies that the service is allowed to fall back to a general system when a custom system
          doesn't exist. Default value is None.
         :paramtype allow_fallback: bool
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: list of TranslatedTextItem
         :rtype: list[~azure.ai.translation.text.models.TranslatedTextItem]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == [
+                    {
+                        "translations": [
+                            {
+                                "text": "str",  # A string giving the translated
+                                  text. Required.
+                                "to": "str",  # A string representing the language
+                                  code of the target language. Required.
+                                "alignment": {
+                                    "proj": "str"  # Maps input text to
+                                      translated text. The alignment information is only provided when
+                                      the request  parameter includeAlignment is true. Alignment is
+                                      returned as a string value of the following  format:
+                                      [[SourceTextStartIndex]:[SourceTextEndIndex]"u2013[TgtTextStartIndex]:[TgtTextEndIndex]].
+                                      The colon separates start and end index, the dash separates the
+                                      languages, and space separates the words.  One word may align
+                                      with zero, one, or multiple words in the other language, and the
+                                      aligned words may  be non-contiguous. When no alignment
+                                      information is available, the alignment element will be empty.
+                                      Required.
+                                },
+                                "sentLen": {
+                                    "srcSentLen": [
+                                        0  # An integer array representing
+                                          the lengths of the sentences in the input text.  The length
+                                          of the array is the number of sentences, and the values are
+                                          the length of each sentence. Required.
+                                    ],
+                                    "transSentLen": [
+                                        0  # An integer array representing
+                                          the lengths of the sentences in the translated text.  The
+                                          length of the array is the number of sentences, and the
+                                          values are the length of each sentence. Required.
+                                    ]
+                                },
+                                "transliteration": {
+                                    "script": "str",  # A string specifying the
+                                      script used in the output. Required.
+                                    "text": "str"  # A string which is the result
+                                      of converting the input string to the output script. Required.
+                                }
+                            }
+                        ],
+                        "detectedLanguage": {
+                            "language": "str",  # A string representing the code of the
+                              detected language. Required.
+                            "score": 0.0  # A float value indicating the confidence in
+                              the result. The score is between zero and one and a low score indicates a
+                              low confidence. Required.
+                        },
+                        "sourceText": {
+                            "text": "str"  # Input text in the default script of the
+                              source language. Required.
+                        }
+                    }
+                ]
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -713,7 +973,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         if isinstance(request_body, (IOBase, bytes)):
             _content = request_body
         else:
-            _content = json.dumps(request_body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(request_body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_text_translation_translate_request(
             to=to,
@@ -805,17 +1065,35 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: list of TransliteratedText
         :rtype: list[~azure.ai.translation.text.models.TransliteratedText]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                request_body = [
+                    {
+                        "text": "str"  # Text to translate. Required.
+                    }
+                ]
+
+                # response body for status code(s): 200
+                response == [
+                    {
+                        "script": "str",  # A string specifying the script used in the
+                          output. Required.
+                        "text": "str"  # A string which is the result of converting the input
+                          string to the output script. Required.
+                    }
+                ]
         """
 
     @overload
     def transliterate(
         self,
-        request_body: IO,
+        request_body: IO[bytes],
         *,
         language: str,
         from_script: str,
@@ -829,7 +1107,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         Transliterate Text.
 
         :param request_body: Defines the content of the request. Required.
-        :type request_body: IO
+        :type request_body: IO[bytes]
         :keyword language: Specifies the language of the text to convert from one script to another.
          Possible languages are listed in the transliteration scope obtained by querying the service
          for its supported languages. Required.
@@ -848,17 +1126,28 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: list of TransliteratedText
         :rtype: list[~azure.ai.translation.text.models.TransliteratedText]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == [
+                    {
+                        "script": "str",  # A string specifying the script used in the
+                          output. Required.
+                        "text": "str"  # A string which is the result of converting the input
+                          string to the output script. Required.
+                    }
+                ]
         """
 
     @distributed_trace
     def transliterate(
         self,
-        request_body: Union[List[_models.InputTextItem], IO],
+        request_body: Union[List[_models.InputTextItem], IO[bytes]],
         *,
         language: str,
         from_script: str,
@@ -871,8 +1160,8 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         Transliterate Text.
 
         :param request_body: Defines the content of the request. Is either a [InputTextItem] type or a
-         IO type. Required.
-        :type request_body: list[~azure.ai.translation.text.models.InputTextItem] or IO
+         IO[bytes] type. Required.
+        :type request_body: list[~azure.ai.translation.text.models.InputTextItem] or IO[bytes]
         :keyword language: Specifies the language of the text to convert from one script to another.
          Possible languages are listed in the transliteration scope obtained by querying the service
          for its supported languages. Required.
@@ -888,14 +1177,22 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
         :paramtype client_trace_id: str
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: list of TransliteratedText
         :rtype: list[~azure.ai.translation.text.models.TransliteratedText]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == [
+                    {
+                        "script": "str",  # A string specifying the script used in the
+                          output. Required.
+                        "text": "str"  # A string which is the result of converting the input
+                          string to the output script. Required.
+                    }
+                ]
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -916,7 +1213,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         if isinstance(request_body, (IOBase, bytes)):
             _content = request_body
         else:
-            _content = json.dumps(request_body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(request_body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_text_translation_transliterate_request(
             language=language,
@@ -972,6 +1269,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         content_type: str = "application/json",
         **kwargs: Any
     ) -> List[_models.BreakSentenceItem]:
+        # pylint: disable=line-too-long
         """Find Sentence Boundaries.
 
         Find Sentence Boundaries.
@@ -992,17 +1290,43 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: list of BreakSentenceItem
         :rtype: list[~azure.ai.translation.text.models.BreakSentenceItem]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                request_body = [
+                    {
+                        "text": "str"  # Text to translate. Required.
+                    }
+                ]
+
+                # response body for status code(s): 200
+                response == [
+                    {
+                        "sentLen": [
+                            0  # An integer array representing the lengths of the
+                              sentences in the input text. The length of the array is the number of
+                              sentences, and the values are the length of each sentence. Required.
+                        ],
+                        "detectedLanguage": {
+                            "language": "str",  # A string representing the code of the
+                              detected language. Required.
+                            "score": 0.0  # A float value indicating the confidence in
+                              the result. The score is between zero and one and a low score indicates a
+                              low confidence. Required.
+                        }
+                    }
+                ]
         """
 
     @overload
     def find_sentence_boundaries(
         self,
-        request_body: IO,
+        request_body: IO[bytes],
         *,
         client_trace_id: Optional[str] = None,
         language: Optional[str] = None,
@@ -1010,12 +1334,13 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         content_type: str = "application/json",
         **kwargs: Any
     ) -> List[_models.BreakSentenceItem]:
+        # pylint: disable=line-too-long
         """Find Sentence Boundaries.
 
         Find Sentence Boundaries.
 
         :param request_body: Defines the content of the request. Required.
-        :type request_body: IO
+        :type request_body: IO[bytes]
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
         :paramtype client_trace_id: str
@@ -1030,30 +1355,50 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: list of BreakSentenceItem
         :rtype: list[~azure.ai.translation.text.models.BreakSentenceItem]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == [
+                    {
+                        "sentLen": [
+                            0  # An integer array representing the lengths of the
+                              sentences in the input text. The length of the array is the number of
+                              sentences, and the values are the length of each sentence. Required.
+                        ],
+                        "detectedLanguage": {
+                            "language": "str",  # A string representing the code of the
+                              detected language. Required.
+                            "score": 0.0  # A float value indicating the confidence in
+                              the result. The score is between zero and one and a low score indicates a
+                              low confidence. Required.
+                        }
+                    }
+                ]
         """
 
     @distributed_trace
     def find_sentence_boundaries(
         self,
-        request_body: Union[List[_models.InputTextItem], IO],
+        request_body: Union[List[_models.InputTextItem], IO[bytes]],
         *,
         client_trace_id: Optional[str] = None,
         language: Optional[str] = None,
         script: Optional[str] = None,
         **kwargs: Any
     ) -> List[_models.BreakSentenceItem]:
+        # pylint: disable=line-too-long
         """Find Sentence Boundaries.
 
         Find Sentence Boundaries.
 
         :param request_body: Defines the content of the request. Is either a [InputTextItem] type or a
-         IO type. Required.
-        :type request_body: list[~azure.ai.translation.text.models.InputTextItem] or IO
+         IO[bytes] type. Required.
+        :type request_body: list[~azure.ai.translation.text.models.InputTextItem] or IO[bytes]
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
         :paramtype client_trace_id: str
@@ -1065,14 +1410,30 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
          If a script isn't specified, the default script of the language will be assumed. Default value
          is None.
         :paramtype script: str
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: list of BreakSentenceItem
         :rtype: list[~azure.ai.translation.text.models.BreakSentenceItem]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == [
+                    {
+                        "sentLen": [
+                            0  # An integer array representing the lengths of the
+                              sentences in the input text. The length of the array is the number of
+                              sentences, and the values are the length of each sentence. Required.
+                        ],
+                        "detectedLanguage": {
+                            "language": "str",  # A string representing the code of the
+                              detected language. Required.
+                            "score": 0.0  # A float value indicating the confidence in
+                              the result. The score is between zero and one and a low score indicates a
+                              low confidence. Required.
+                        }
+                    }
+                ]
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -1093,7 +1454,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         if isinstance(request_body, (IOBase, bytes)):
             _content = request_body
         else:
-            _content = json.dumps(request_body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(request_body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_text_translation_find_sentence_boundaries_request(
             client_trace_id=client_trace_id,
@@ -1148,6 +1509,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         content_type: str = "application/json",
         **kwargs: Any
     ) -> List[_models.DictionaryLookupItem]:
+        # pylint: disable=line-too-long
         """Lookup Dictionary Entries.
 
         Lookup Dictionary Entries.
@@ -1168,17 +1530,93 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: list of DictionaryLookupItem
         :rtype: list[~azure.ai.translation.text.models.DictionaryLookupItem]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                request_body = [
+                    {
+                        "text": "str"  # Text to translate. Required.
+                    }
+                ]
+
+                # response body for status code(s): 200
+                response == [
+                    {
+                        "displaySource": "str",  # A string giving the source term in a form
+                          best suited for end-user display. For example, if the input is "JOHN", the
+                          display form will reflect the usual spelling of the name: "John". Required.
+                        "normalizedSource": "str",  # A string giving the normalized form of
+                          the source term. For example, if the request is "JOHN", the normalized form
+                          will be "john". The content of this field becomes the input to lookup
+                          examples. Required.
+                        "translations": [
+                            {
+                                "backTranslations": [
+                                    {
+                                        "displayText": "str",  # A string
+                                          giving the source term that is a back-translation of the
+                                          target in a form best suited for end-user display. Required.
+                                        "frequencyCount": 0,  # An integer
+                                          representing the frequency of this translation pair in the
+                                          data. The main purpose of this field is to provide a user
+                                          interface with a means to sort back-translations so the most
+                                          frequent terms are first. Required.
+                                        "normalizedText": "str",  # A string
+                                          giving the normalized form of the source term that is a
+                                          back-translation of the target. This value should be used as
+                                          input to lookup examples. Required.
+                                        "numExamples": 0  # An integer
+                                          representing the number of examples that are available for
+                                          this translation pair. Actual examples must be retrieved with
+                                          a separate call to lookup examples. The number is mostly
+                                          intended to facilitate display in a UX. For example, a user
+                                          interface may add a hyperlink to the back-translation if the
+                                          number of examples is greater than zero and show the
+                                          back-translation as plain text if there are no examples. Note
+                                          that the actual number of examples returned by a call to
+                                          lookup examples may be less than numExamples, because
+                                          additional filtering may be applied on the fly to remove
+                                          "bad" examples. Required.
+                                    }
+                                ],
+                                "confidence": 0.0,  # A value between 0.0 and 1.0
+                                  which represents the "confidence"  (or perhaps more accurately,
+                                  "probability in the training data") of that translation pair.  The
+                                  sum of confidence scores for one source word may or may not sum to
+                                  1.0. Required.
+                                "displayTarget": "str",  # A string giving the term
+                                  in the target language and in a form best suited for end-user
+                                  display. Generally, this will only differ from the normalizedTarget
+                                  in terms of capitalization. For example, a proper noun like "Juan"
+                                  will have normalizedTarget = "juan" and displayTarget = "Juan".
+                                  Required.
+                                "normalizedTarget": "str",  # A string giving the
+                                  normalized form of this term in the target language. This value
+                                  should be used as input to lookup examples. Required.
+                                "posTag": "str",  # A string associating this term
+                                  with a part-of-speech tag. Required.
+                                "prefixWord": "str"  # A string giving the word to
+                                  display as a prefix of the translation. Currently, this is the
+                                  gendered determiner of nouns, in languages that have gendered
+                                  determiners. For example, the prefix of the Spanish word "mosca" is
+                                  "la", since "mosca" is a feminine noun in Spanish.  This is only
+                                  dependent on the translation, and not on the source.  If there is no
+                                  prefix, it will be the empty string. Required.
+                            }
+                        ]
+                    }
+                ]
         """
 
     @overload
     def lookup_dictionary_entries(
         self,
-        request_body: IO,
+        request_body: IO[bytes],
         *,
         from_parameter: str,
         to: str,
@@ -1186,12 +1624,13 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         content_type: str = "application/json",
         **kwargs: Any
     ) -> List[_models.DictionaryLookupItem]:
+        # pylint: disable=line-too-long
         """Lookup Dictionary Entries.
 
         Lookup Dictionary Entries.
 
         :param request_body: Defines the content of the request. Required.
-        :type request_body: IO
+        :type request_body: IO[bytes]
         :keyword from_parameter: Specifies the language of the input text.
          The source language must be one of the supported languages included in the dictionary scope.
          Required.
@@ -1206,30 +1645,100 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: list of DictionaryLookupItem
         :rtype: list[~azure.ai.translation.text.models.DictionaryLookupItem]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == [
+                    {
+                        "displaySource": "str",  # A string giving the source term in a form
+                          best suited for end-user display. For example, if the input is "JOHN", the
+                          display form will reflect the usual spelling of the name: "John". Required.
+                        "normalizedSource": "str",  # A string giving the normalized form of
+                          the source term. For example, if the request is "JOHN", the normalized form
+                          will be "john". The content of this field becomes the input to lookup
+                          examples. Required.
+                        "translations": [
+                            {
+                                "backTranslations": [
+                                    {
+                                        "displayText": "str",  # A string
+                                          giving the source term that is a back-translation of the
+                                          target in a form best suited for end-user display. Required.
+                                        "frequencyCount": 0,  # An integer
+                                          representing the frequency of this translation pair in the
+                                          data. The main purpose of this field is to provide a user
+                                          interface with a means to sort back-translations so the most
+                                          frequent terms are first. Required.
+                                        "normalizedText": "str",  # A string
+                                          giving the normalized form of the source term that is a
+                                          back-translation of the target. This value should be used as
+                                          input to lookup examples. Required.
+                                        "numExamples": 0  # An integer
+                                          representing the number of examples that are available for
+                                          this translation pair. Actual examples must be retrieved with
+                                          a separate call to lookup examples. The number is mostly
+                                          intended to facilitate display in a UX. For example, a user
+                                          interface may add a hyperlink to the back-translation if the
+                                          number of examples is greater than zero and show the
+                                          back-translation as plain text if there are no examples. Note
+                                          that the actual number of examples returned by a call to
+                                          lookup examples may be less than numExamples, because
+                                          additional filtering may be applied on the fly to remove
+                                          "bad" examples. Required.
+                                    }
+                                ],
+                                "confidence": 0.0,  # A value between 0.0 and 1.0
+                                  which represents the "confidence"  (or perhaps more accurately,
+                                  "probability in the training data") of that translation pair.  The
+                                  sum of confidence scores for one source word may or may not sum to
+                                  1.0. Required.
+                                "displayTarget": "str",  # A string giving the term
+                                  in the target language and in a form best suited for end-user
+                                  display. Generally, this will only differ from the normalizedTarget
+                                  in terms of capitalization. For example, a proper noun like "Juan"
+                                  will have normalizedTarget = "juan" and displayTarget = "Juan".
+                                  Required.
+                                "normalizedTarget": "str",  # A string giving the
+                                  normalized form of this term in the target language. This value
+                                  should be used as input to lookup examples. Required.
+                                "posTag": "str",  # A string associating this term
+                                  with a part-of-speech tag. Required.
+                                "prefixWord": "str"  # A string giving the word to
+                                  display as a prefix of the translation. Currently, this is the
+                                  gendered determiner of nouns, in languages that have gendered
+                                  determiners. For example, the prefix of the Spanish word "mosca" is
+                                  "la", since "mosca" is a feminine noun in Spanish.  This is only
+                                  dependent on the translation, and not on the source.  If there is no
+                                  prefix, it will be the empty string. Required.
+                            }
+                        ]
+                    }
+                ]
         """
 
     @distributed_trace
     def lookup_dictionary_entries(
         self,
-        request_body: Union[List[_models.InputTextItem], IO],
+        request_body: Union[List[_models.InputTextItem], IO[bytes]],
         *,
         from_parameter: str,
         to: str,
         client_trace_id: Optional[str] = None,
         **kwargs: Any
     ) -> List[_models.DictionaryLookupItem]:
+        # pylint: disable=line-too-long
         """Lookup Dictionary Entries.
 
         Lookup Dictionary Entries.
 
         :param request_body: Defines the content of the request. Is either a [InputTextItem] type or a
-         IO type. Required.
-        :type request_body: list[~azure.ai.translation.text.models.InputTextItem] or IO
+         IO[bytes] type. Required.
+        :type request_body: list[~azure.ai.translation.text.models.InputTextItem] or IO[bytes]
         :keyword from_parameter: Specifies the language of the input text.
          The source language must be one of the supported languages included in the dictionary scope.
          Required.
@@ -1241,14 +1750,80 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
         :paramtype client_trace_id: str
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: list of DictionaryLookupItem
         :rtype: list[~azure.ai.translation.text.models.DictionaryLookupItem]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == [
+                    {
+                        "displaySource": "str",  # A string giving the source term in a form
+                          best suited for end-user display. For example, if the input is "JOHN", the
+                          display form will reflect the usual spelling of the name: "John". Required.
+                        "normalizedSource": "str",  # A string giving the normalized form of
+                          the source term. For example, if the request is "JOHN", the normalized form
+                          will be "john". The content of this field becomes the input to lookup
+                          examples. Required.
+                        "translations": [
+                            {
+                                "backTranslations": [
+                                    {
+                                        "displayText": "str",  # A string
+                                          giving the source term that is a back-translation of the
+                                          target in a form best suited for end-user display. Required.
+                                        "frequencyCount": 0,  # An integer
+                                          representing the frequency of this translation pair in the
+                                          data. The main purpose of this field is to provide a user
+                                          interface with a means to sort back-translations so the most
+                                          frequent terms are first. Required.
+                                        "normalizedText": "str",  # A string
+                                          giving the normalized form of the source term that is a
+                                          back-translation of the target. This value should be used as
+                                          input to lookup examples. Required.
+                                        "numExamples": 0  # An integer
+                                          representing the number of examples that are available for
+                                          this translation pair. Actual examples must be retrieved with
+                                          a separate call to lookup examples. The number is mostly
+                                          intended to facilitate display in a UX. For example, a user
+                                          interface may add a hyperlink to the back-translation if the
+                                          number of examples is greater than zero and show the
+                                          back-translation as plain text if there are no examples. Note
+                                          that the actual number of examples returned by a call to
+                                          lookup examples may be less than numExamples, because
+                                          additional filtering may be applied on the fly to remove
+                                          "bad" examples. Required.
+                                    }
+                                ],
+                                "confidence": 0.0,  # A value between 0.0 and 1.0
+                                  which represents the "confidence"  (or perhaps more accurately,
+                                  "probability in the training data") of that translation pair.  The
+                                  sum of confidence scores for one source word may or may not sum to
+                                  1.0. Required.
+                                "displayTarget": "str",  # A string giving the term
+                                  in the target language and in a form best suited for end-user
+                                  display. Generally, this will only differ from the normalizedTarget
+                                  in terms of capitalization. For example, a proper noun like "Juan"
+                                  will have normalizedTarget = "juan" and displayTarget = "Juan".
+                                  Required.
+                                "normalizedTarget": "str",  # A string giving the
+                                  normalized form of this term in the target language. This value
+                                  should be used as input to lookup examples. Required.
+                                "posTag": "str",  # A string associating this term
+                                  with a part-of-speech tag. Required.
+                                "prefixWord": "str"  # A string giving the word to
+                                  display as a prefix of the translation. Currently, this is the
+                                  gendered determiner of nouns, in languages that have gendered
+                                  determiners. For example, the prefix of the Spanish word "mosca" is
+                                  "la", since "mosca" is a feminine noun in Spanish.  This is only
+                                  dependent on the translation, and not on the source.  If there is no
+                                  prefix, it will be the empty string. Required.
+                            }
+                        ]
+                    }
+                ]
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -1269,7 +1844,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         if isinstance(request_body, (IOBase, bytes)):
             _content = request_body
         else:
-            _content = json.dumps(request_body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(request_body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_text_translation_lookup_dictionary_entries_request(
             from_parameter=from_parameter,
@@ -1324,6 +1899,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         content_type: str = "application/json",
         **kwargs: Any
     ) -> List[_models.DictionaryExampleItem]:
+        # pylint: disable=line-too-long
         """Lookup Dictionary Examples.
 
         Lookup Dictionary Examples.
@@ -1344,17 +1920,65 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: list of DictionaryExampleItem
         :rtype: list[~azure.ai.translation.text.models.DictionaryExampleItem]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                request_body = [
+                    {
+                        "text": "str",  # Text to translate. Required.
+                        "translation": "str"  # A string specifying the translated text
+                          previously returned by the Dictionary lookup operation.  This should be the
+                          value from the normalizedTarget field in the translations list of the
+                          Dictionary  lookup response. The service will return examples for the
+                          specific source-target word-pair. Required.
+                    }
+                ]
+
+                # response body for status code(s): 200
+                response == [
+                    {
+                        "examples": [
+                            {
+                                "sourcePrefix": "str",  # The string to concatenate
+                                  before the value of sourceTerm to form a complete example. Do not add
+                                  a space character, since it is already there when it should be. This
+                                  value may be an empty string. Required.
+                                "sourceSuffix": "str",  # The string to concatenate
+                                  after the value of sourceTerm to form a complete example. Do not add
+                                  a space character, since it is already there when it should be. This
+                                  value may be an empty string. Required.
+                                "sourceTerm": "str",  # A string equal to the actual
+                                  term looked up. The string is added with sourcePrefix and
+                                  sourceSuffix to form the complete example. Its value is separated so
+                                  it can be marked in a user interface, e.g., by bolding it. Required.
+                                "targetPrefix": "str",  # A string similar to
+                                  sourcePrefix but for the target. Required.
+                                "targetSuffix": "str",  # A string similar to
+                                  sourceSuffix but for the target. Required.
+                                "targetTerm": "str"  # A string similar to sourceTerm
+                                  but for the target. Required.
+                            }
+                        ],
+                        "normalizedSource": "str",  # A string giving the normalized form of
+                          the source term. Generally, this should be identical to the value of the Text
+                          field at the matching list index in the body of the request. Required.
+                        "normalizedTarget": "str"  # A string giving the normalized form of
+                          the target term. Generally, this should be identical to the value of the
+                          Translation field at the matching list index in the body of the request.
+                          Required.
+                    }
+                ]
         """
 
     @overload
     def lookup_dictionary_examples(
         self,
-        request_body: IO,
+        request_body: IO[bytes],
         *,
         from_parameter: str,
         to: str,
@@ -1362,12 +1986,13 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         content_type: str = "application/json",
         **kwargs: Any
     ) -> List[_models.DictionaryExampleItem]:
+        # pylint: disable=line-too-long
         """Lookup Dictionary Examples.
 
         Lookup Dictionary Examples.
 
         :param request_body: Defines the content of the request. Required.
-        :type request_body: IO
+        :type request_body: IO[bytes]
         :keyword from_parameter: Specifies the language of the input text.
          The source language must be one of the supported languages included in the dictionary scope.
          Required.
@@ -1382,30 +2007,68 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: list of DictionaryExampleItem
         :rtype: list[~azure.ai.translation.text.models.DictionaryExampleItem]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == [
+                    {
+                        "examples": [
+                            {
+                                "sourcePrefix": "str",  # The string to concatenate
+                                  before the value of sourceTerm to form a complete example. Do not add
+                                  a space character, since it is already there when it should be. This
+                                  value may be an empty string. Required.
+                                "sourceSuffix": "str",  # The string to concatenate
+                                  after the value of sourceTerm to form a complete example. Do not add
+                                  a space character, since it is already there when it should be. This
+                                  value may be an empty string. Required.
+                                "sourceTerm": "str",  # A string equal to the actual
+                                  term looked up. The string is added with sourcePrefix and
+                                  sourceSuffix to form the complete example. Its value is separated so
+                                  it can be marked in a user interface, e.g., by bolding it. Required.
+                                "targetPrefix": "str",  # A string similar to
+                                  sourcePrefix but for the target. Required.
+                                "targetSuffix": "str",  # A string similar to
+                                  sourceSuffix but for the target. Required.
+                                "targetTerm": "str"  # A string similar to sourceTerm
+                                  but for the target. Required.
+                            }
+                        ],
+                        "normalizedSource": "str",  # A string giving the normalized form of
+                          the source term. Generally, this should be identical to the value of the Text
+                          field at the matching list index in the body of the request. Required.
+                        "normalizedTarget": "str"  # A string giving the normalized form of
+                          the target term. Generally, this should be identical to the value of the
+                          Translation field at the matching list index in the body of the request.
+                          Required.
+                    }
+                ]
         """
 
     @distributed_trace
     def lookup_dictionary_examples(
         self,
-        request_body: Union[List[_models.DictionaryExampleTextItem], IO],
+        request_body: Union[List[_models.DictionaryExampleTextItem], IO[bytes]],
         *,
         from_parameter: str,
         to: str,
         client_trace_id: Optional[str] = None,
         **kwargs: Any
     ) -> List[_models.DictionaryExampleItem]:
+        # pylint: disable=line-too-long
         """Lookup Dictionary Examples.
 
         Lookup Dictionary Examples.
 
         :param request_body: Defines the content of the request. Is either a
-         [DictionaryExampleTextItem] type or a IO type. Required.
-        :type request_body: list[~azure.ai.translation.text.models.DictionaryExampleTextItem] or IO
+         [DictionaryExampleTextItem] type or a IO[bytes] type. Required.
+        :type request_body: list[~azure.ai.translation.text.models.DictionaryExampleTextItem] or
+         IO[bytes]
         :keyword from_parameter: Specifies the language of the input text.
          The source language must be one of the supported languages included in the dictionary scope.
          Required.
@@ -1417,14 +2080,47 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
         :paramtype client_trace_id: str
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: list of DictionaryExampleItem
         :rtype: list[~azure.ai.translation.text.models.DictionaryExampleItem]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == [
+                    {
+                        "examples": [
+                            {
+                                "sourcePrefix": "str",  # The string to concatenate
+                                  before the value of sourceTerm to form a complete example. Do not add
+                                  a space character, since it is already there when it should be. This
+                                  value may be an empty string. Required.
+                                "sourceSuffix": "str",  # The string to concatenate
+                                  after the value of sourceTerm to form a complete example. Do not add
+                                  a space character, since it is already there when it should be. This
+                                  value may be an empty string. Required.
+                                "sourceTerm": "str",  # A string equal to the actual
+                                  term looked up. The string is added with sourcePrefix and
+                                  sourceSuffix to form the complete example. Its value is separated so
+                                  it can be marked in a user interface, e.g., by bolding it. Required.
+                                "targetPrefix": "str",  # A string similar to
+                                  sourcePrefix but for the target. Required.
+                                "targetSuffix": "str",  # A string similar to
+                                  sourceSuffix but for the target. Required.
+                                "targetTerm": "str"  # A string similar to sourceTerm
+                                  but for the target. Required.
+                            }
+                        ],
+                        "normalizedSource": "str",  # A string giving the normalized form of
+                          the source term. Generally, this should be identical to the value of the Text
+                          field at the matching list index in the body of the request. Required.
+                        "normalizedTarget": "str"  # A string giving the normalized form of
+                          the target term. Generally, this should be identical to the value of the
+                          Translation field at the matching list index in the body of the request.
+                          Required.
+                    }
+                ]
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -1445,7 +2141,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         if isinstance(request_body, (IOBase, bytes)):
             _content = request_body
         else:
-            _content = json.dumps(request_body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(request_body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_text_translation_lookup_dictionary_examples_request(
             from_parameter=from_parameter,

@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 class BackTranslation(_model_base.Model):
     """Back Translation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar normalized_text: A string giving the normalized form of the source term that is a
      back-translation of the target.
@@ -95,7 +95,7 @@ class BackTranslation(_model_base.Model):
 class BreakSentenceItem(_model_base.Model):
     """Item containing break sentence result.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar detected_language: The detectedLanguage property is only present in the result object
      when language auto-detection is requested.
@@ -137,7 +137,7 @@ class BreakSentenceItem(_model_base.Model):
 class CommonScriptModel(_model_base.Model):
     """Common properties of language script.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: Code identifying the script. Required.
     :vartype code: str
@@ -187,7 +187,7 @@ class CommonScriptModel(_model_base.Model):
 class DetectedLanguage(_model_base.Model):
     """An object describing the detected language.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar language: A string representing the code of the detected language. Required.
     :vartype language: str
@@ -225,7 +225,7 @@ class DetectedLanguage(_model_base.Model):
 class DictionaryExample(_model_base.Model):
     """Dictionary Example.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source_prefix: The string to concatenate before the value of sourceTerm to form a
      complete example.
@@ -296,7 +296,7 @@ class DictionaryExample(_model_base.Model):
 class DictionaryExampleItem(_model_base.Model):
     """Dictionary Example element.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar normalized_source: A string giving the normalized form of the source term. Generally,
      this should be identical
@@ -346,7 +346,7 @@ class DictionaryExampleItem(_model_base.Model):
 class InputTextItem(_model_base.Model):
     """Element containing the text for translation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar text: Text to translate. Required.
     :vartype text: str
@@ -377,7 +377,7 @@ class InputTextItem(_model_base.Model):
 class DictionaryExampleTextItem(InputTextItem):
     """Element containing the text with translation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar text: Text to translate. Required.
     :vartype text: str
@@ -420,7 +420,7 @@ class DictionaryExampleTextItem(InputTextItem):
 class DictionaryLookupItem(_model_base.Model):
     """Dictionary Lookup Element.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar normalized_source: A string giving the normalized form of the source term.
      For example, if the request is "JOHN", the normalized form will be "john".
@@ -470,7 +470,7 @@ class DictionaryLookupItem(_model_base.Model):
 class DictionaryTranslation(_model_base.Model):
     """Translation source term.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar normalized_target: A string giving the normalized form of this term in the target
      language.
@@ -560,7 +560,7 @@ class DictionaryTranslation(_model_base.Model):
 class ErrorDetails(_model_base.Model):
     """Error details as returned by Translator Service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: Number identifier of the error. Required.
     :vartype code: int
@@ -596,7 +596,7 @@ class ErrorDetails(_model_base.Model):
 class ErrorResponse(_model_base.Model):
     """Representation of the Error Response from Translator Service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar error: Error details. Required.
     :vartype error: ~azure.ai.translation.text.models.ErrorDetails
@@ -666,7 +666,7 @@ class GetLanguagesResult(_model_base.Model):
 class SentenceLength(_model_base.Model):
     """An object returning sentence boundaries in the input and output texts.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar src_sent_len: An integer array representing the lengths of the sentences in the input
      text.
@@ -712,7 +712,7 @@ class SentenceLength(_model_base.Model):
 class SourceDictionaryLanguage(_model_base.Model):
     """Properties ot the source dictionary language.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Display name of the language in the locale requested via Accept-Language header.
      Required.
@@ -764,7 +764,7 @@ class SourceDictionaryLanguage(_model_base.Model):
 class SourceText(_model_base.Model):
     """Input text in the default script of the source language.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar text: Input text in the default script of the source language. Required.
     :vartype text: str
@@ -795,7 +795,7 @@ class SourceText(_model_base.Model):
 class TargetDictionaryLanguage(_model_base.Model):
     """Properties of the target dictionary language.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Display name of the language in the locale requested via Accept-Language header.
      Required.
@@ -845,7 +845,7 @@ class TargetDictionaryLanguage(_model_base.Model):
 class TranslatedTextAlignment(_model_base.Model):
     """Alignment information object.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar proj: Maps input text to translated text. The alignment information is only provided when
      the request
@@ -893,7 +893,7 @@ class TranslatedTextAlignment(_model_base.Model):
 class TranslatedTextItem(_model_base.Model):
     """Element containing the translated text.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar detected_language: The detectedLanguage property is only present in the result object
      when language auto-detection is requested.
@@ -949,7 +949,7 @@ class TranslatedTextItem(_model_base.Model):
 class Translation(_model_base.Model):
     """Translation result.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar to: A string representing the language code of the target language. Required.
     :vartype to: str
@@ -1003,7 +1003,7 @@ class TranslationLanguage(_model_base.Model):
     47 language tag.
     A key identifies a language for which text can be translated to or translated from.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Display name of the language in the locale requested via Accept-Language header.
      Required.
@@ -1048,7 +1048,7 @@ class TranslationLanguage(_model_base.Model):
 class TransliterableScript(CommonScriptModel):
     """Script definition with list of script into which given script can be translitered.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: Code identifying the script. Required.
     :vartype code: str
@@ -1094,7 +1094,7 @@ class TransliterableScript(CommonScriptModel):
 class TransliteratedText(_model_base.Model):
     """Transliterated text element.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar text: A string which is the result of converting the input string to the output script.
      Required.
@@ -1134,7 +1134,7 @@ class TransliterationLanguage(_model_base.Model):
     from one script
     to another script.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Display name of the language in the locale requested via Accept-Language header.
      Required.
