@@ -11,7 +11,7 @@ class QuickpulseStateManager:
     def __new__(cls, *args, **kwargs):
         if not hasattr(cls, 'instance'):
             cls._instance = super(QuickpulseStateManager, cls).__new__(cls, *args, **kwargs)
-        return cls.instance
+        return cls._instance
 
     def __init__(self, connection_string):
         self._connection_string = connection_string
