@@ -131,7 +131,8 @@ class ComputeInstance(Compute):
     :type network_settings: Optional[~azure.ai.ml.entities.NetworkSettings]
     :param ssh_settings: SSH settings for the compute instance.
     :type ssh_settings: Optional[~azure.ai.ml.entities.ComputeInstanceSshSettings]
-    :param ssh_public_access_enabled: State of the public SSH port. Defaults to None. Possible values are:
+    :param ssh_public_access_enabled: State of the public SSH port. Defaults to None.
+        Possible values are:
 
         * False - Indicates that the public ssh port is closed on all nodes of the cluster.
         * True - Indicates that the public ssh port is open on all nodes of the cluster.
@@ -153,8 +154,10 @@ class ComputeInstance(Compute):
     :type idle_time_before_shutdown_minutes: Optional[int]
     :param enable_node_public_ip: Enable or disable node public IP address provisioning. Defaults to True.
         Possible values are:
+
             * True - Indicates that the compute nodes will have public IPs provisioned.
             * False - Indicates that the compute nodes will have a private endpoint and no public IPs.
+
     :type enable_node_public_ip: Optional[bool]
     :param setup_scripts: Details of customized scripts to execute for setting up the cluster.
     :type setup_scripts: Optional[~azure.ai.ml.entities.SetupScripts]
@@ -401,7 +404,6 @@ class ComputeInstance(Compute):
             custom_applications = []
             for app in prop.properties.custom_services:
                 custom_applications.append(CustomApplications._from_rest_object(app))
-
         response = ComputeInstance(
             name=rest_obj.name,
             id=rest_obj.id,
@@ -421,7 +423,9 @@ class ComputeInstance(Compute):
             services=[app.as_dict() for app in prop.properties.applications]
             if prop.properties and prop.properties.applications
             else None,
-            created_on=prop.additional_properties.get("createdOn", None),
+            created_on=rest_obj.properties.created_on.strftime("%Y-%m-%dT%H:%M:%S.%f%z")
+            if rest_obj.properties and rest_obj.properties.created_on is not None
+            else None,
             create_on_behalf_of=create_on_behalf_of,
             network_settings=network_settings,
             ssh_settings=ssh_settings,

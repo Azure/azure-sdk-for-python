@@ -215,6 +215,7 @@ class QLogNormal(QNormal):
     :type sigma: Optional[float]
     :param q: Quantization factor.
     :type q: Optional[int]
+
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
@@ -262,7 +263,10 @@ class Randint(SweepDistribution):
 
 
 class Uniform(SweepDistribution):
-    """Uniform distribution configuration.
+    """
+    :noindex:
+
+    Uniform distribution configuration.
 
     :param min_value: Minimum value of the distribution.
     :type min_value: float

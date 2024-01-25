@@ -6,18 +6,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._settings_operations import SettingsOperations
 from ._assessments_metadata_operations import AssessmentsMetadataOperations
 from ._assessments_operations import AssessmentsOperations
+from ._settings_operations import SettingsOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "SettingsOperations",
     "AssessmentsMetadataOperations",
     "AssessmentsOperations",
+    "SettingsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

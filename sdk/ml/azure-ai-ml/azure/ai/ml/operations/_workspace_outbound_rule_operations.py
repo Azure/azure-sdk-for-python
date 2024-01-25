@@ -88,7 +88,7 @@ class WorkspaceOutboundRuleOperations:
                 :language: python
                 :dedent: 8
                 :caption: Create an FQDN outbound rule for a workspace with the given name,
-                similar can be done for PrivateEndpointDestination or ServiceTagDestination.
+                    similar can be done for PrivateEndpointDestination or ServiceTagDestination.
         """
 
         workspace_name = self._check_workspace_name(workspace_name)
@@ -132,7 +132,7 @@ class WorkspaceOutboundRuleOperations:
                 :language: python
                 :dedent: 8
                 :caption: Update an FQDN outbound rule for a workspace with the given name,
-                similar can be done for PrivateEndpointDestination or ServiceTagDestination.
+                    similar can be done for PrivateEndpointDestination or ServiceTagDestination.
         """
 
         workspace_name = self._check_workspace_name(workspace_name)

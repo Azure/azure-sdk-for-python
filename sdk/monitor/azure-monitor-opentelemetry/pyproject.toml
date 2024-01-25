@@ -5,4 +5,3 @@ pyright = false
 pylint = true
 bandit = true
 strict_sphinx = true
-ci_enabled = false

@@ -7,12 +7,20 @@
 - Add live metrics skeleton + swagger definitions
     ([#33983](https://github.com/Azure/azure-sdk-for-python/pull/33983))
 
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.0.0b21 (2024-01-16)
 
 ### Other Changes
 
 - Update to OTel SKD/API 1.21
     ([#33864](https://github.com/Azure/azure-sdk-for-python/pull/33864))
+- Update Django sample
+    ([#33834](https://github.com/Azure/azure-sdk-for-python/pull/33834))
 
 ## 1.0.0b20 (2024-01-04)
 
