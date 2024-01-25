@@ -45,10 +45,7 @@ def sample_caption_image_file():
         exit()
 
     # Create an Image Analysis client for synchronous operations
-    client = ImageAnalysisClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(key)
-    )
+    client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     # [END create_client]
 
     # [START caption]

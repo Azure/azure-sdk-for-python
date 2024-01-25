@@ -1,5 +1,5 @@
 # coding=utf-8
-# pylint: disable=too-many-lines,anomalous-backslash-in-string,name-too-long
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8,8 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-import sys
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
@@ -22,11 +21,6 @@ from ._enums import (
     RouterRuleKind,
     WorkerSelectorAttachmentKind,
 )
-
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -98,6 +92,7 @@ class DistributionMode(_model_base.Model):
      values are: "bestWorker", "longestIdle", and "roundRobin".
     :vartype kind: str or ~azure.communication.jobrouter.models.DistributionModeKind
     """
+
     __mapping__: Dict[str, _model_base.Model] = {}
     min_concurrent_offers: Optional[int] = rest_field(name="minConcurrentOffers")
     """Governs the minimum desired number of active concurrent offers a job can have."""
@@ -2663,7 +2658,9 @@ class WebhookRouterRule(RouterRule, discriminator="webhook"):
         self.kind: Literal[RouterRuleKind.WEBHOOK] = RouterRuleKind.WEBHOOK
 
 
-class WeightedAllocationQueueSelectorAttachment(QueueSelectorAttachment, discriminator="weightedAllocation"):
+class WeightedAllocationQueueSelectorAttachment(
+    QueueSelectorAttachment, discriminator="weightedAllocation"
+):  # pylint: disable=name-too-long
     """Describes multiple sets of queue selectors, of which one will be selected and attached
     according to a weighting.
 
@@ -2704,7 +2701,9 @@ class WeightedAllocationQueueSelectorAttachment(QueueSelectorAttachment, discrim
         ] = QueueSelectorAttachmentKind.WEIGHTED_ALLOCATION
 
 
-class WeightedAllocationWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="weightedAllocation"):
+class WeightedAllocationWorkerSelectorAttachment(
+    WorkerSelectorAttachment, discriminator="weightedAllocation"
+):  # pylint: disable=name-too-long
     """Describes multiple sets of worker selectors, of which one will be selected and attached
     according to a weighting.
 

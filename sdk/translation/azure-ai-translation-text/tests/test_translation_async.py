@@ -212,7 +212,9 @@ class TestTranslationAsync(TextTranslationTest):
         target_languages = ["cs"]
         input_text_elements = [InputTextItem(text="<html><body>This <b>is</b> a test.</body></html>")]
         async with client:
-            response = await client.translate(request_body=input_text_elements, to=target_languages, text_type=TextType.HTML)
+            response = await client.translate(
+                request_body=input_text_elements, to=target_languages, text_type=TextType.HTML
+            )
 
         assert len(response) == 1
         assert len(response[0].translations) == 1
@@ -254,7 +256,9 @@ class TestTranslationAsync(TextTranslationTest):
         target_languages = ["cs"]
         input_text_elements = [InputTextItem(text="It is a beautiful morning")]
         async with client:
-            response = await client.translate(request_body=input_text_elements, to=target_languages, include_alignment=True)
+            response = await client.translate(
+                request_body=input_text_elements, to=target_languages, include_alignment=True
+            )
 
         assert len(response) == 1
         assert len(response[0].translations) == 1

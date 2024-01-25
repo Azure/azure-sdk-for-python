@@ -128,15 +128,17 @@ class ImageAnalysisClient(ImageAnalysisClientGenerated):
             )
 
         if image_data is not None:
-            return await ImageAnalysisClientOperationsMixin._analyze_from_image_data(  # pylint: disable=protected-access
-                self,
-                image_content=image_data,
-                visual_features=visual_features_impl,
-                language=language,
-                gender_neutral_caption=gender_neutral_caption,
-                smart_crops_aspect_ratios=smart_crops_aspect_ratios,
-                model_version=model_version,
-                **kwargs
+            return (
+                await ImageAnalysisClientOperationsMixin._analyze_from_image_data(  # pylint: disable=protected-access
+                    self,
+                    image_content=image_data,
+                    visual_features=visual_features_impl,
+                    language=language,
+                    gender_neutral_caption=gender_neutral_caption,
+                    smart_crops_aspect_ratios=smart_crops_aspect_ratios,
+                    model_version=model_version,
+                    **kwargs
+                )
             )
 
         raise ValueError("Either image_data or image_url must be specified.")
