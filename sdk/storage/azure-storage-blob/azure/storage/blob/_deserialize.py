@@ -4,8 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, Tuple, TYPE_CHECKING
 from urllib.parse import unquote
 from xml.etree.ElementTree import Element
 

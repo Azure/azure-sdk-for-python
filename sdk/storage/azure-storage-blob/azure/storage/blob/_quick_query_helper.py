@@ -53,7 +53,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
     def __len__(self):
         return self._size
 
-    def _process_record(self, result: Dict[str, Any]) -> Optional[Any]:
+    def _process_record(self, result: Dict[str, Any]) -> Optional[bytes]:
         self._size = result.get('totalBytes', self._size)
         self._bytes_processed = result.get('bytesScanned', self._bytes_processed)
         if 'data' in result:
@@ -69,7 +69,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
                 self._errors(error)
         return None
 
-    def _iter_stream(self) -> Generator[Any, Any, Any]:
+    def _iter_stream(self) -> Generator[bytes, None, None]:
         if self._first_result is not None:
             yield self._first_result
         for next_result in self._parsed_results:
@@ -129,7 +129,7 @@ class QuickQueryStreamer(object):
     File-like streaming iterator.
     """
 
-    def __init__(self, generator) -> None:
+    def __init__(self, generator):
         self.generator = generator
         self.iterator = iter(generator)
         self._buf = b""
