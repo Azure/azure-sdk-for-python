@@ -110,7 +110,7 @@ def pipeline(
     :keyword description: The description of the built pipeline.
     :paramtype description: str
     :keyword experiment_name: Name of the experiment the job will be created under, \
-                if None is provided, experiment will be set to current directory.
+        if None is provided, experiment will be set to current directory.
     :paramtype experiment_name: str
     :keyword tags: The tags of pipeline component.
     :paramtype tags: dict[str, str]
@@ -119,9 +119,11 @@ def pipeline(
     :return: Either
       * A decorator, if `func` is None
       * The decorated `func`
+
     :rtype: Union[
         Callable[[Callable], Callable[..., ~azure.ai.ml.entities.PipelineJob]],
         Callable[P, ~azure.ai.ml.entities.PipelineJob]
+
       ]
 
     .. admonition:: Example:

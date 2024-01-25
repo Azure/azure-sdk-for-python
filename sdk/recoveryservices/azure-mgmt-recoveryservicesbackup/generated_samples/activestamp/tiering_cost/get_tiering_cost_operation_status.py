@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.hybridcontainerservice import HybridContainerServiceMgmtClient
+from azure.mgmt.recoveryservicesbackup.activestamp import RecoveryServicesBackupClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-hybridcontainerservice
+    pip install azure-mgmt-recoveryservicesbackup
 # USAGE
-    python update_agent_pool.py
+    python get_tiering_cost_operation_status.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -24,19 +24,19 @@ from azure.mgmt.hybridcontainerservice import HybridContainerServiceMgmtClient
 
 
 def main():
-    client = HybridContainerServiceMgmtClient(
+    client = RecoveryServicesBackupClient(
         credential=DefaultAzureCredential(),
-        subscription_id="SUBSCRIPTION_ID",
+        subscription_id="04cf684a-d41f-4550-9f70-7708a3a2283b",
     )
 
-    response = client.agent_pool.begin_update(
-        connected_cluster_resource_uri="subscriptions/fd3c3665-1729-4b7b-9a38-238e83b0f98b/resourceGroups/testrg/providers/Microsoft.Kubernetes/connectedClusters/test-hybridakscluster",
-        agent_pool_name="test-hybridaksnodepool",
-        agent_pool={"tags": {"additionalProperties": "sample"}},
-    ).result()
+    response = client.tiering_cost_operation_status.get(
+        resource_group_name="gaallaRG",
+        vault_name="gaallavaultbvtd2msi",
+        operation_id="0f48183b-0a44-4dca-aec1-bba5daab888a",
+    )
     print(response)
 
 
-# x-ms-original-file: specification/hybridaks/resource-manager/Microsoft.HybridContainerService/preview/2023-11-15-preview/examples/UpdateAgentPool.json
+# x-ms-original-file: specification/recoveryservicesbackup/resource-manager/Microsoft.RecoveryServices/stable/2023-06-01/examples/TieringCost/GetTieringCostOperationStatus.json
 if __name__ == "__main__":
     main()

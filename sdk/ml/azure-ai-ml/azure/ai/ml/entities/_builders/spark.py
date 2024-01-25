@@ -70,11 +70,13 @@ class Spark(BaseNode, SparkJobEntryMixin):
     :param component: The ID or instance of the Spark component or job to be run during the step.
     :type component: Union[str, ~azure.ai.ml.entities.SparkComponent]
     :param identity: The identity that the Spark job will use while running on compute.
-    :type identity: Union[
-        Dict[str, str],
+    :type identity: Union[Dict[str, str],
         ~azure.ai.ml.entities.ManagedIdentityConfiguration,
         ~azure.ai.ml.entities.AmlTokenConfiguration,
-        ~azure.ai.ml.entities.UserIdentityConfiguration]
+        ~azure.ai.ml.entities.UserIdentityConfiguration
+
+    ]
+
     :param driver_cores: The number of cores to use for the driver process, only in cluster mode.
     :type driver_cores: int
     :param driver_memory: The amount of memory to use for the driver process, formatted as strings with a size unit
@@ -100,15 +102,16 @@ class Spark(BaseNode, SparkJobEntryMixin):
     :type conf: Dict[str, str]
     :param inputs: A mapping of input names to input data sources used in the job.
     :type inputs: Dict[str, Union[
-        ~azure.ai.ml.entities._job.pipeline._io.NodeOutput,
-        ~azure.ai.ml.Input,
         str,
         bool,
         int,
         float,
         Enum,
-        ]
-    ]
+        ~azure.ai.ml.entities._job.pipeline._io.NodeOutput,
+        ~azure.ai.ml.Input
+
+    ]]
+
     :param outputs: A mapping of output names to output data sources used in the job.
     :type outputs: Dict[str, Union[str, ~azure.ai.ml.Output]]
     :param args: The arguments for the job.
