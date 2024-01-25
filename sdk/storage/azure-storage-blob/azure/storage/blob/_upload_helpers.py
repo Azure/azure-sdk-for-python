@@ -139,10 +139,10 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
             total_size = length
             encryptor, padder = None, None
             if encryption_options and encryption_options.get('key'):
-                cek, iv, encrypted_data = generate_blob_encryption_data(
+                cek, iv, encryption_metadata = generate_blob_encryption_data(
                     encryption_options['key'],
                     encryption_options['version'])
-                headers['x-ms-meta-encryptiondata'] = encrypted_data
+                headers['x-ms-meta-encryptiondata'] = encryption_metadata
 
                 if encryption_options['version'] == _ENCRYPTION_PROTOCOL_V1:
                     encryptor, padder = get_blob_encryptor_and_padder(cek, iv, True)
