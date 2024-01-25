@@ -550,16 +550,16 @@ def test_multipart_incorrect_tuple_entry(filebytes):
 def test_multipart_tuple_input_single(filebytes):
     request = HttpRequest("POST", url="http://example.org", files=[("file", filebytes)])
 
-    assert request.content == {"file": ("conftest.py", filebytes, "application/octet-stream")}
+    assert request.content == [("file", ("conftest.py", filebytes, "application/octet-stream"))]
 
 
 def test_multipart_tuple_input_multiple(filebytes):
     request = HttpRequest("POST", url="http://example.org", files=[("file", filebytes), ("file2", filebytes)])
 
-    assert request.content == {
-        "file": ("conftest.py", filebytes, "application/octet-stream"),
-        "file2": ("conftest.py", filebytes, "application/octet-stream"),
-    }
+    assert request.content == [
+        ("file", ("conftest.py", filebytes, "application/octet-stream")),
+        ("file2", ("conftest.py", filebytes, "application/octet-stream")),
+    ]
 
 
 def test_multipart_tuple_input_multiple_with_filename_and_content_type(filebytes):
@@ -569,10 +569,21 @@ def test_multipart_tuple_input_multiple_with_filename_and_content_type(filebytes
         files=[("file", ("first file", filebytes, "image/pdf")), ("file2", ("second file", filebytes, "image/png"))],
     )
 
-    assert request.content == {
-        "file": ("first file", filebytes, "image/pdf"),
-        "file2": ("second file", filebytes, "image/png"),
-    }
+    assert request.content == [
+        ("file", ("first file", filebytes, "image/pdf")),
+        ("file2", ("second file", filebytes, "image/png")),
+    ]
+
+def test_multipart_tuple_input_multiple_same_name(filebytes):
+    request = HttpRequest(
+        "POST",
+        url="http://example.org",
+        files=[("file", ("first file", filebytes, "image/pdf")), ("file", ("second file", filebytes, "image/png"))],
+    )
+    assert request.content == [
+        ("file", ("first file", filebytes, "image/pdf")),
+        ("file", ("second file", filebytes, "image/png")),
+    ]
 
 
 # NOTE: For files, we don't allow list of tuples yet, just dict. Will uncomment when we add this capability
