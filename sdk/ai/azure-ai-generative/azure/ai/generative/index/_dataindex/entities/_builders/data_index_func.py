@@ -260,7 +260,7 @@ def data_index_incremental_update_acs(
         input_data: Input,
         embeddings_model: str,
         acs_config: str,
-        acs_connection_id: Optional[str],
+        acs_connection_id: str,
         aoai_connection_id: Optional[str],
         embeddings_container: Input,
         chunk_size: Optional[int] = 768,
@@ -754,9 +754,9 @@ def get_component_obj(ml_client, component_uri):
     return component_obj
 
 
-def _resolve_connection_id(ml_client, connection: Optional[Union[str, WorkspaceConnection]] = None) -> Optional[str]:
+def _resolve_connection_id(ml_client, connection: Optional[Union[str, WorkspaceConnection]] = None) -> str:
     if connection is None:
-        return None
+        return ""
 
     if isinstance(connection, str):
         short_form = re.match(r"azureml:(?P<connection_name>[^/]*)", connection)

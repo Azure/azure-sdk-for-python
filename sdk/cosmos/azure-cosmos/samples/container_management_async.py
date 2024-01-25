@@ -206,7 +206,7 @@ async def create_container(db, id):
             print(
                 'Creating container with analytical storage can only happen in synapse link activated accounts, skipping step')
 
-    print("\n2.8 Create Container - With auto scale settings")
+    print("\n2.8 Create Container - With autoscale settings")
 
     try:
         container = await db.create_container(
