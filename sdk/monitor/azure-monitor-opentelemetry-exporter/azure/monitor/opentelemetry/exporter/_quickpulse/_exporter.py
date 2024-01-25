@@ -64,8 +64,17 @@ class QuickpulseExporter(MetricExporter):
         timeout_millis: float = 10_000,  # pylint: disable=unused-argument
         **kwargs: Any,  # pylint: disable=unused-argument
     ) -> MetricExportResult:
-        """Exports a batch of metric data."""
+        """Exports a batch of metric data
+
+        :param metrics_data: OpenTelemetry Metric(s) to export.
+        :type metrics_data: Sequence[~opentelemetry.sdk.metrics._internal.point.MetricsData]
+        :param timeout_millis: The maximum amount of time to wait for each export. Not currently used.
+        :type timeout_millis: float
+        :return: The result of the export.
+        :rtype: ~opentelemetry.sdk.metrics.export.MetricExportResult
+        """
         # TODO
+        return MetricExportResult.SUCCESS
 
     def force_flush(
         self,
@@ -77,6 +86,8 @@ class QuickpulseExporter(MetricExporter):
 
         :param timeout_millis: The maximum amount of time to wait for shutdown. Not currently used.
         :type timeout_millis: float
+        :return: The result of the export.
+        :rtype: bool
         """
         return True
 
