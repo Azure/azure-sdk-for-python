@@ -262,10 +262,7 @@ class ServiceBusReceiver(
         self._check_live()
         while True:
             try:
-                return self._do_retryable_operation(
-                    self._iter_next,
-                    wait_time=wait_time,
-                )
+                return self._do_retryable_operation(self._iter_next, wait_time=wait_time)
             except StopIteration:
                 self._message_iter = None
                 raise
