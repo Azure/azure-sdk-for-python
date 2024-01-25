@@ -23,6 +23,8 @@ from typing import (
     Iterator,
     List,
     Sequence,
+    Mapping,
+    Any,
 )
 from http.client import HTTPConnection
 from urllib.parse import urlparse
@@ -390,3 +392,18 @@ def _aiohttp_body_helper(
         response._decompressed_content = True
         return response._content
     return response._content
+
+
+def _aiohttp_form_data_files_helper(files: Optional[Union[Mapping[str, Any], List[Any]]]) -> List[Any]:
+    """Convert files type to list
+
+    :param files: files of The request object
+    :type files: dict[str, Any] or list[Any]
+    :rtype: list[Any]
+    :return: converted files
+    """
+    if files:
+        if isinstance(files, Mapping):
+            return list(files.items())
+        return files
+    return []
