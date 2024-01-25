@@ -75,6 +75,7 @@ class ProductionDataSchema(metaclass=PatchedSchemaMeta):
     data_context = StringTransformedEnum(allowed_values=[o.value for o in MonitorDatasetContext])
     pre_processing_component = fields.Str()
     data_window = NestedField(BaselineDataRangeSchema)
+    target_columns = fields.Dict()
 
     @post_load
     def make(self, data, **kwargs):
@@ -89,6 +90,7 @@ class ReferenceDataSchema(metaclass=PatchedSchemaMeta):
     pre_processing_component = fields.Str()
     target_column_name = fields.Str()
     data_window = NestedField(BaselineDataRangeSchema)
+    target_columns = fields.Dict()
 
     @post_load
     def make(self, data, **kwargs):
@@ -241,9 +243,7 @@ class ModelPerformanceSignalSchema(metaclass=PatchedSchemaMeta):
     @post_load
     def make(self, data, **kwargs):
         from azure.ai.ml.entities._monitoring.signals import ModelPerformanceSignal
-        import debugpy
-        debugpy.connect(("localhost", 5678))
-        debugpy.breakpoint()
+
         data.pop("type", None)
         return ModelPerformanceSignal(**data)
 

@@ -179,11 +179,13 @@ class ProductionData(RestTranslatableMixin):
         data_context: MonitorDatasetContext = None,
         pre_processing_component: str = None,
         data_window: Optional[BaselineDataRange] = None,
+        target_columns: Optional[Dict[str, str]] = None,
     ):
         self.input_data = input_data
         self.data_context = data_context
         self.pre_processing_component = pre_processing_component
         self.data_window = data_window
+        self.target_columns = target_columns
 
     def _to_rest_object(self, **kwargs) -> RestMonitoringInputData:
         self._validate()
@@ -198,7 +200,7 @@ class ProductionData(RestTranslatableMixin):
         job_type = self.input_data.type
         monitoring_input_data = TrailingInputData(
             data_context=self.data_context,
-            target_columns=None,
+            target_columns=self.target_columns,
             job_type=job_type,
             uri=uri,
             pre_processing_component_id=self.pre_processing_component,
@@ -223,6 +225,7 @@ class ProductionData(RestTranslatableMixin):
             data_context=obj.data_context,
             pre_processing_component=obj.preprocessing_component_id,
             data_window=data_window,
+            target_columns=obj.columns,
         )
 
     def _validate(self):
@@ -265,12 +268,14 @@ class ReferenceData(RestTranslatableMixin):
         pre_processing_component: Optional[str] = None,
         target_column_name: Optional[str] = None,
         data_window: Optional[BaselineDataRange] = None,
+        target_columns: Optional[Dict[str, str]] = None,
     ):
         self.input_data = input_data
         self.data_context = data_context
         self.pre_processing_component = pre_processing_component
         self.target_column_name = target_column_name
         self.data_window = data_window
+        self.target_columns = target_columns
 
     def _to_rest_object(self, **kwargs) -> RestMonitoringInputData:
         default_data_window = kwargs.get("default_data_window")
@@ -280,9 +285,7 @@ class ReferenceData(RestTranslatableMixin):
                     self.data_window.lookback_window_offset = default_data_window
                 return TrailingInputData(
                     data_context=self.data_context,
-                    target_columns={"target_column": self.target_column_name}
-                    if self.target_column_name is not None
-                    else None,
+                    target_columns=self.target_columns,
                     job_type=self.input_data.type,
                     uri=self.input_data.path,
                     pre_processing_component_id=self.pre_processing_component,
@@ -294,9 +297,7 @@ class ReferenceData(RestTranslatableMixin):
             if self.data_window.window_start is not None and self.data_window.window_end is not None:
                 return StaticInputData(
                     data_context=self.data_context,
-                    target_columns={"target_column": self.target_column_name}
-                    if self.target_column_name is not None
-                    else None,
+                    target_columns=self.target_columns,
                     job_type=self.input_data.type,
                     uri=self.input_data.path,
                     pre_processing_component_id=self.pre_processing_component,
@@ -306,7 +307,7 @@ class ReferenceData(RestTranslatableMixin):
 
         return FixedInputData(
             data_context=self.data_context,
-            target_columns={"target_column": self.target_column_name} if self.target_column_name is not None else None,
+            target_columns=self.target_columns,
             job_type=self.input_data.type,
             uri=self.input_data.path,
         )._to_rest_object()
@@ -333,7 +334,7 @@ class ReferenceData(RestTranslatableMixin):
             data_context=obj.data_context,
             pre_processing_component=obj.preprocessing_component_id if obj.input_data_type != "Fixed" else None,
             data_window=data_window,
-            target_column_name=obj.columns["target_column"] if obj.columns is not None else None,
+            target_columns=obj.columns,
         )
 
 
@@ -399,6 +400,8 @@ class MonitoringSignal(RestTranslatableMixin):
             return CustomMonitoringSignal._from_rest_object(obj)
         if obj.signal_type == MonitoringSignalType.GENERATION_SAFETY_QUALITY:
             return GenerationSafetyQualitySignal._from_rest_object(obj)
+        if obj.signal_type == MonitoringSignalType.MODEL_PERFORMANCE:
+            return ModelPerformanceSignal._from_rest_object(obj)
 
         return None
 
@@ -891,16 +894,18 @@ class ModelPerformanceSignal(RestTranslatableMixin):
         properties: Optional[Dict[str, str]] = None,
     ) -> None:
         
-        self.production_data = production_data,
-        self.reference_data = reference_data,
-        self.metric_thresholds = metric_thresholds,
-        self.alert_enabled = alert_enabled,
+        self.production_data = production_data
+        self.reference_data = reference_data
+        self.metric_thresholds = metric_thresholds
+        self.alert_enabled = alert_enabled
         self.type = MonitorSignalType.MODEL_PERFORMANCE
         self.data_segment = data_segment
         self.properties = properties
 
     def _to_rest_object(self, **kwargs) -> RestModelPerformanceSignal:
         default_data_window_size = kwargs.get("default_data_window_size")
+        if self.properties is None:
+            self.properties = {}
         self.properties["azureml.modelmonitor.model_performance_thresholds"] = self.metric_thresholds._to_str_object()
         return RestModelPerformanceSignal(
             production_data=[data._to_rest_object(default=default_data_window_size) for data in self.production_data],
