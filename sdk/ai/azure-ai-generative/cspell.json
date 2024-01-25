@@ -1,3 +1,4 @@
 {
-    "ignoreWords": ["cmpl", "uqkvl", "redef", "datas", "unbatched", "endofprompt", "unlabel"]
+    "ignoreWords": ["cmpl", "uqkvl", "redef", "datas", "unbatched", "endofprompt", "unlabel", "pydash"],
+    "ignorePaths": ["azure/ai/generative/evaluate/pf_templates/built_in_metrics/**"]
 }
