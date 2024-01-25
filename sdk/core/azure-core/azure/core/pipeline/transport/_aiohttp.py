@@ -175,18 +175,20 @@ class AioHttpTransport(AsyncHttpTransport):
 
         :param request: The request object
         :type request: ~azure.core.pipeline.transport.HttpRequest or ~azure.core.rest.HttpRequest
-        :rtype: ~aiohttp.FormData
+        :rtype: bytes or ~aiohttp.FormData
         :return: The request data
         """
-        form_data = aiohttp.FormData(request.data or {})
-        files = _aiohttp_form_data_files_helper(request.files)
-        for form_file, data in files:
-            content_type = data[2] if len(data) > 2 else None
-            try:
-                form_data.add_field(form_file, data[1], filename=data[0], content_type=content_type)
-            except IndexError as err:
-                raise ValueError("Invalid formdata formatting: {}".format(data)) from err
-        return form_data
+        if request.files:
+            form_data = aiohttp.FormData(request.data or {})
+            files = _aiohttp_form_data_files_helper(request.files)
+            for form_file, data in files:
+                content_type = data[2] if len(data) > 2 else None
+                try:
+                    form_data.add_field(form_file, data[1], filename=data[0], content_type=content_type)
+                except IndexError as err:
+                    raise ValueError("Invalid formdata formatting: {}".format(data)) from err
+            return form_data
+        return request.data
 
     @overload
     async def send(
