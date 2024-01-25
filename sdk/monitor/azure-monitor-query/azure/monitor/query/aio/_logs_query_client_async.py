@@ -43,6 +43,15 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
             :language: python
             :dedent: 4
             :caption: Creating the asynchronous LogsQueryClient with a TokenCredential.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START create_logs_query_client_sovereign_cloud_async]
+            :end-before: [END create_logs_query_client_sovereign_cloud_async]
+            :language: python
+            :dedent: 4
+            :caption: Creating the LogsQueryClient for use with a sovereign cloud (i.e. non-public cloud).
     """
 
     def __init__(self, credential: AsyncTokenCredential, **kwargs: Any) -> None:
