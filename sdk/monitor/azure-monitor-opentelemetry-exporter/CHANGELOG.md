@@ -1,11 +1,13 @@
 # Release History
 
-## 1.0.0b21 (2024-01-16)
+## 1.0.0b22 (Unreleased)
 
 ### Features Added
 
 - Add live metrics skeleton + swagger definitions
     ([#33983](https://github.com/Azure/azure-sdk-for-python/pull/33983))
+
+## 1.0.0b21 (2024-01-16)
 
 ### Other Changes
 

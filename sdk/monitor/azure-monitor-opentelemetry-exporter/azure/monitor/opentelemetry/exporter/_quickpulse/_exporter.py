@@ -18,12 +18,12 @@ from opentelemetry.sdk.metrics.export import (
     MetricExportResult,
     MetricsData as OTMetricsData,
 )
-from azure.monitor.opentelemetry.exporter.quickpulse._generated._client import QuickpulseClient
+from azure.monitor.opentelemetry.exporter._quickpulse._generated._client import QuickpulseClient
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 
 _logger = logging.getLogger(__name__)
 
-__all__ = ["QuickPulseExporter"]
+__all__ = ["QuickpulseExporter"]
 
 
 APPLICATION_INSIGHTS_METRIC_TEMPORALITIES = {
@@ -36,11 +36,10 @@ APPLICATION_INSIGHTS_METRIC_TEMPORALITIES = {
 }
 
 
-class QuickPulseExporter(MetricExporter):
-    """Azure Monitor Metric exporter for OpenTelemetry."""
+class QuickpulseExporter(MetricExporter):
 
     def __init__(self, **kwargs: Any) -> None:
-        """Azure Monitor base exporter for OpenTelemetry.
+        """Metric exporter for Quickpulse.
 
         :keyword str connection_string: The connection string used for your Application Insights resource.
         :rtype: None
@@ -65,8 +64,8 @@ class QuickPulseExporter(MetricExporter):
         timeout_millis: float = 10_000,  # pylint: disable=unused-argument
         **kwargs: Any,  # pylint: disable=unused-argument
     ) -> MetricExportResult:
+        """Exports a batch of metric data."""
         # TODO
-        return None
 
     def force_flush(
         self,

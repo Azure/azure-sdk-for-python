@@ -1,4 +1,4 @@
-# OpenTelemetry Exporter for Azure Monitor Client for Python
+# Quickpulse metrics exporter for Python
 
 > see https://aka.ms/autorest
 
