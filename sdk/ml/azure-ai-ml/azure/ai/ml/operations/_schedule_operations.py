@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=protected-access
-from typing import Any, Iterable
+from typing import Any, Iterable, List, Tuple, cast
 
 from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
 from azure.ai.ml._scope_dependent_operations import (
@@ -11,50 +11,40 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
-
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import Job, JobSchedule, Schedule
-from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
-from azure.ai.ml.entities._monitoring.target import MonitoringTarget
-from azure.ai.ml.entities._monitoring.signals import (
-    ProductionData,
-    ReferenceData,
-    BaselineDataRange,
-    FADProductionData,
-)
 from azure.ai.ml.entities._inputs_outputs.input import Input
-from azure.ai.ml.exceptions import ScheduleException, ErrorCategory, ErrorTarget
+from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
+from azure.ai.ml.entities._monitoring.signals import BaselineDataRange, FADProductionData, ProductionData, ReferenceData
+from azure.ai.ml.entities._monitoring.target import MonitoringTarget
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ScheduleException
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
 from .._restclient.v2022_10_01.models import ScheduleListViewType
-from .._utils._arm_id_utils import (
-    is_ARM_id_for_parented_resource,
-    AMLNamedArmId,
-    AMLVersionedArmId,
-)
-from .._utils.utils import snake_to_camel
+from .._utils._arm_id_utils import AMLNamedArmId, AMLVersionedArmId, is_ARM_id_for_parented_resource
 from .._utils._azureml_polling import AzureMLPolling
+from .._utils.utils import snake_to_camel
 from ..constants._common import (
     ARM_ID_PREFIX,
+    AZUREML_RESOURCE_PROVIDER,
+    NAMED_RESOURCE_ID_FORMAT_WITH_PARENT,
     AzureMLResourceType,
     LROConfigurations,
-    NAMED_RESOURCE_ID_FORMAT_WITH_PARENT,
-    AZUREML_RESOURCE_PROVIDER,
 )
 from ..constants._monitoring import (
-    MonitorSignalType,
+    DEPLOYMENT_MODEL_INPUTS_COLLECTION_KEY,
     DEPLOYMENT_MODEL_INPUTS_NAME_KEY,
     DEPLOYMENT_MODEL_INPUTS_VERSION_KEY,
+    DEPLOYMENT_MODEL_OUTPUTS_COLLECTION_KEY,
     DEPLOYMENT_MODEL_OUTPUTS_NAME_KEY,
     DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY,
-    DEPLOYMENT_MODEL_INPUTS_COLLECTION_KEY,
-    DEPLOYMENT_MODEL_OUTPUTS_COLLECTION_KEY,
     MonitorDatasetContext,
+    MonitorSignalType,
 )
-from . import JobOperations, OnlineDeploymentOperations, DataOperations
+from . import DataOperations, JobOperations, OnlineDeploymentOperations
 from ._job_ops_helper import stream_logs_until_completion
 from ._operation_orchestrator import OperationOrchestrator
 
@@ -100,17 +90,26 @@ class ScheduleOperations(_ScopeDependentOperations):
 
     @property
     def _job_operations(self) -> JobOperations:
-        return self._all_operations.get_operation(AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations))
+        return cast(
+            JobOperations,
+            self._all_operations.get_operation(AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations)),
+        )
 
     @property
     def _online_deployment_operations(self) -> OnlineDeploymentOperations:
-        return self._all_operations.get_operation(
-            AzureMLResourceType.ONLINE_DEPLOYMENT, lambda x: isinstance(x, OnlineDeploymentOperations)
+        return cast(
+            OnlineDeploymentOperations,
+            self._all_operations.get_operation(
+                AzureMLResourceType.ONLINE_DEPLOYMENT, lambda x: isinstance(x, OnlineDeploymentOperations)
+            ),
         )
 
     @property
     def _data_operations(self) -> DataOperations:
-        return self._all_operations.get_operation(AzureMLResourceType.DATA, lambda x: isinstance(x, DataOperations))
+        return cast(
+            DataOperations,
+            self._all_operations.get_operation(AzureMLResourceType.DATA, lambda x: isinstance(x, DataOperations)),
+        )
 
     @distributed_trace
     @monitor_with_activity(logger, "Schedule.List", ActivityType.PUBLICAPI)
@@ -118,7 +117,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         self,
         *,
         list_view_type: ScheduleListViewType = ScheduleListViewType.ENABLED_ONLY,  # pylint: disable=unused-argument
-        **kwargs,
+        **kwargs: Any,
     ) -> Iterable[Schedule]:
         """List schedules in specified workspace.
 
@@ -129,7 +128,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         :rtype: Iterable[Schedule]
         """
 
-        def safe_from_rest_object(objs):
+        def safe_from_rest_object(objs: Any) -> List:
             result = []
             for obj in objs:
                 try:
@@ -138,13 +137,16 @@ class ScheduleOperations(_ScopeDependentOperations):
                     print(f"Translate {obj.name} to Schedule failed with: {e}")
             return result
 
-        return self.service_client.list(
-            resource_group_name=self._operation_scope.resource_group_name,
-            workspace_name=self._workspace_name,
-            list_view_type=list_view_type,
-            cls=safe_from_rest_object,
-            **self._kwargs,
-            **kwargs,
+        return cast(
+            Iterable[Schedule],
+            self.service_client.list(
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                list_view_type=list_view_type,
+                cls=safe_from_rest_object,
+                **self._kwargs,
+                **kwargs,
+            ),
         )
 
     def _get_polling(self, name: str) -> AzureMLPolling:
@@ -170,7 +172,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     def begin_delete(
         self,
         name: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> LROPoller[None]:
         """Delete schedule.
 
@@ -194,7 +196,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     def get(
         self,
         name: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> Schedule:
         """Get a schedule.
 
@@ -217,7 +219,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     def begin_create_or_update(
         self,
         schedule: Schedule,
-        **kwargs,
+        **kwargs: Any,
     ) -> LROPoller[Schedule]:
         """Create or update schedule.
 
@@ -256,7 +258,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     def begin_enable(
         self,
         name: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> LROPoller[Schedule]:
         """Enable a schedule.
 
@@ -274,7 +276,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     def begin_disable(
         self,
         name: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> LROPoller[Schedule]:
         """Disable a schedule.
 
@@ -351,6 +353,9 @@ class ScheduleOperations(_ScopeDependentOperations):
                     for inputs in signal.inputs.values():
                         self._job_operations._resolve_job_input(inputs, schedule._base_path)
                 for data in signal.input_data.values():
+                    if data.input_data is not None:
+                        for inputs in data.input_data.values():
+                            self._job_operations._resolve_job_input(inputs, schedule._base_path)
                     data.pre_processing_component = self._orchestrators.get_asset_arm_id(
                         asset=data.pre_processing_component if hasattr(data, "pre_processing_component") else None,
                         azureml_type=AzureMLResourceType.COMPONENT,
@@ -499,7 +504,7 @@ class ScheduleOperations(_ScopeDependentOperations):
                 asset=signal.reference_data.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
             )
 
-    def _process_and_get_endpoint_deployment_names_from_id(self, target: MonitoringTarget):
+    def _process_and_get_endpoint_deployment_names_from_id(self, target: MonitoringTarget) -> Tuple:
         target.endpoint_deployment_id = (
             target.endpoint_deployment_id[len(ARM_ID_PREFIX) :]
             if target.endpoint_deployment_id.startswith(ARM_ID_PREFIX)

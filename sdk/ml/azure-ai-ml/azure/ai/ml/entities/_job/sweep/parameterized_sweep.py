@@ -6,6 +6,7 @@ from typing import Dict, List, Optional, Type, Union
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from ..job_limits import SweepJobLimits
+from ..job_resource_configuration import JobResourceConfiguration
 from ..queue_settings import QueueSettings
 from .early_termination_policy import (
     BanditPolicy,
@@ -14,7 +15,6 @@ from .early_termination_policy import (
     MedianStoppingPolicy,
     TruncationSelectionPolicy,
 )
-from ..job_resource_configuration import JobResourceConfiguration
 from .objective import Objective
 from .sampling_algorithm import (
     BayesianSamplingAlgorithm,
@@ -220,8 +220,8 @@ class ParameterizedSweep:
         """Set the sweep object.. Leave parameters as None if you don't want to update corresponding values.
 
         :keyword goal: Defines supported metric goals for hyperparameter tuning. Acceptable values are:
-        "minimize", "maximize".
-        :type goal: str
+            "minimize" and "maximize".
+        :paramtype goal: str
         :keyword primary_metric: Name of the metric to optimize.
         :paramtype primary_metric: str
         """

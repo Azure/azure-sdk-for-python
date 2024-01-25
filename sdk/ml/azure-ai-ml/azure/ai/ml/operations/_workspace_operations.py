@@ -4,38 +4,39 @@
 
 # pylint: disable=protected-access
 
-from typing import Dict, Iterable, Optional
+from typing import Any, Dict, Iterable, Optional, cast
 
 from marshmallow import ValidationError
 
-from azure.core.exceptions import HttpResponseError
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
 from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedNetworkProvisionOptions
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
-from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._http_utils import HttpPipeline
+from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import (
+    _get_workspace_base_url,
     get_resource_and_group_name_from_resource_id,
     get_resource_group_name_from_resource_group_id,
-    _get_workspace_base_url,
     modified_operation_client,
 )
-from azure.ai.ml.constants._common import Scope, AzureMLResourceType
+from azure.ai.ml.constants._common import AzureMLResourceType, Scope
 from azure.ai.ml.entities import (
     DiagnoseRequestProperties,
     DiagnoseResponseResult,
     DiagnoseResponseResultValue,
     DiagnoseWorkspaceParameters,
+    ManagedNetworkProvisionStatus,
     Workspace,
     WorkspaceKeys,
-    ManagedNetworkProvisionStatus,
 )
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._workspace_hub._constants import PROJECT_WORKSPACE_KIND
 from azure.core.credentials import TokenCredential
+from azure.core.exceptions import HttpResponseError
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
+
 from ._workspace_operations_base import WorkspaceOperationsBase
 
 ops_logger = OpsLogger(__name__)
@@ -55,10 +56,12 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         service_client: ServiceClient082023Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
-        **kwargs: Dict,
+        **kwargs: Any,
     ):
-        self.dataplane_workspace_operations = kwargs.pop("dataplane_client").workspaces
-        self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
+        self.dataplane_workspace_operations = (
+            kwargs.pop("dataplane_client").workspaces if kwargs.get("dataplane_client") else None
+        )
+        self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline", None)
         ops_logger.update_info(kwargs)
         self._provision_network_operation = service_client.managed_network_provisions
         super().__init__(
@@ -89,12 +92,18 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         """
 
         if scope == Scope.SUBSCRIPTION:
-            return self._operation.list_by_subscription(
-                cls=lambda objs: [Workspace._from_rest_object(obj) for obj in objs]
+            return cast(
+                Iterable[Workspace],
+                self._operation.list_by_subscription(
+                    cls=lambda objs: [Workspace._from_rest_object(obj) for obj in objs]
+                ),
             )
-        return self._operation.list_by_resource_group(
-            self._resource_group_name,
-            cls=lambda objs: [Workspace._from_rest_object(obj) for obj in objs],
+        return cast(
+            Iterable[Workspace],
+            self._operation.list_by_resource_group(
+                self._resource_group_name,
+                cls=lambda objs: [Workspace._from_rest_object(obj) for obj in objs],
+            ),
         )
 
     @monitor_with_activity(logger, "Workspace.Get", ActivityType.PUBLICAPI)
@@ -176,7 +185,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         *,
         workspace_name: Optional[str] = None,
         include_spark: bool = False,
-        **kwargs,
+        **kwargs: Any,
     ) -> LROPoller[ManagedNetworkProvisionStatus]:
         """Triggers the workspace to provision the managed network. Specifying spark enabled
         as true prepares the workspace managed network for supporting Spark.
@@ -217,7 +226,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         self,
         workspace: Workspace,
         update_dependent_resources: bool = False,
-        **kwargs: Dict,
+        **kwargs: Any,
     ) -> LROPoller[Workspace]:
         """Create a new Azure Machine Learning Workspace.
 
@@ -267,7 +276,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         workspace: Workspace,
         *,
         update_dependent_resources: bool = False,
-        **kwargs: Dict,
+        **kwargs: Any,
     ) -> LROPoller[Workspace]:
         """Updates a Azure Machine Learning Workspace.
 
@@ -349,7 +358,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         parameters = DiagnoseWorkspaceParameters(value=DiagnoseRequestProperties())._to_rest_object()
 
         # pylint: disable=unused-argument, docstring-missing-param
-        def callback(_, deserialized, args):
+        def callback(_: Any, deserialized: Any, args: Any) -> Optional[DiagnoseResponseResultValue]:
             """Callback to be called after completion
 
             :return: DiagnoseResponseResult deserialized.
@@ -395,7 +404,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         workspace_base_uri = _get_workspace_base_url(workspace_operations, workspace_hub_name, self._requests_pipeline)
 
         # pylint:disable=unused-argument
-        def callback(_, deserialized, args):
+        def callback(_: Any, deserialized: Any, args: Any) -> Workspace:
             return Workspace._from_rest_object(deserialized)
 
         with modified_operation_client(self.dataplane_workspace_operations, workspace_base_uri):

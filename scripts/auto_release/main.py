@@ -239,8 +239,12 @@ class CodegenTestPR:
         modify_file(sdk_readme, edit_sdk_readme)
 
     @property
+    def readme_md_path(self)-> Path:
+        return Path(self.spec_repo) / "specification" / self.spec_readme.split("specification/")[-1]
+
+    @property
     def readme_python_md_path(self)-> Path:
-        return Path(self.spec_repo) / "specification" / self.spec_readme.split("specification/")[-1].replace("readme.md", "readme.python.md")
+        return Path(str(self.readme_md_path).replace("readme.md", "readme.python.md"))
 
     # Use the template to update readme and setup by packaging_tools
     @return_origin_path
@@ -255,7 +259,7 @@ class CodegenTestPR:
                     title = line.replace("title:", "").strip(" \r\n")
                     break
         else:
-            log("{python_md} does not exist")
+            log(f"{python_md} does not exist")
         os.chdir(Path(f'sdk/{self.sdk_folder}'))
         # add `title` and update `is_stable` in sdk_packaging.toml
         toml = Path(f"azure-mgmt-{self.package_name}") / "sdk_packaging.toml"
@@ -406,15 +410,18 @@ class CodegenTestPR:
     def check_model_flatten(self):
         last_version = self.get_last_release_version()
         if last_version == "" or last_version.startswith("1.0.0b"):
+            with open(self.readme_md_path, 'r') as file_in:
+                readme_md_content = file_in.read()
+
             with open(self.readme_python_md_path, 'r') as file_in:
-                content = file_in.read()
+                readme_python_md_content = file_in.read()
             
-            if "flatten-models: false" not in content and self.issue_link:
+            if "flatten-models: false" not in readme_md_content and "flatten-models: false" not in readme_python_md_content and self.issue_link:
                 api = Github(self.bot_token).get_repo("Azure/sdk-release-request")
                 issue_number = int(self.issue_link.split('/')[-1])
                 issue = api.get_issue(issue_number)
                 assignee = issue.assignee.login if issue.assignee else ""
-                message = "please set `flatten-models: false` in readme.python.md"
+                message = "please set `flatten-models: false` in readme.md or readme.python.md"
                 issue.create_comment(f'@{assignee}, {message}')
                 raise Exception(message)
 

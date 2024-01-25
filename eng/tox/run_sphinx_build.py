@@ -134,5 +134,9 @@ if __name__ == "__main__":
 
         if in_ci() or args.in_ci:
             move_output_and_compress(output_dir, package_dir, pkg_details.name)
+
+            if args.strict:
+                from gh_tools.vnext_issue_creator import close_vnext_issue
+                close_vnext_issue(pkg_details.name, "sphinx")
     else:
         logging.info("Skipping sphinx build for {}".format(pkg_details.name))

@@ -4,16 +4,8 @@ pyright = false
 type_check_samples = false
 verifytypes = false
 pylint = true
+strict_sphinx = false
 
-[tool.interrogate]
-fail-under = 75
-verbose = 2
-ignore-module = true
-exclude = ["setup.py", "tests", "azure/ai/ml/_restclient", "scripts", "samples"]
-ignore-init-method = true  # constructor docstrings are placed in the class docstring, not the init docstring 
-ignore-private = true
-ignore-semiprivate = true
-ignore-magic = true
 
 [tool.isort]
 profile = "black"
@@ -37,7 +29,14 @@ exclude = [
   "tests",
   "setup.py",
   "samples",
-  "azure/ai/ml/dsl",
+  "azure/ai/ml/_artifacts/",
+  "azure/ai/ml/_file_utils/",
+  "azure/ai/ml/_local_endpoints/",
+  "azure/ai/ml/_logging/",
+  "azure/ai/ml/_telemetry/",
+  "azure/ai/ml/_utils",
+  "azure/ai/ml/constants/",
+  "azure/ai/ml/data_transfer/",
   "azure/ai/ml/entities/",
   "azure/ai/ml/identity/",
   "azure/ai/ml/operations/",
