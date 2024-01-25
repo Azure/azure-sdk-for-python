@@ -3043,7 +3043,7 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     @ArgPasser()
     def test_queue_receive_iterator_resume_after_link_detach(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
 
-        def hack_iter_next_mock_error(self, wait_time=None, timeout=None):
+        def hack_iter_next_mock_error(self, wait_time=None):
             try:
                 self._receive_context.set()
                 self._open()
