@@ -675,7 +675,8 @@ class ServiceBusReceiver(
          Setting to None will fully depend on the prefetch config. The default value is 1.
         :param Optional[float] max_wait_time: Maximum time to wait in seconds for the first message to arrive.
          If no messages arrive, and no timeout is specified, this call will not return
-         until the connection is closed. The default value is None, meaning no timeout.
+         until the connection is closed. If specified, and no messages arrive within the
+         timeout period, an empty list will be returned.
         :return: A list of messages received. If no messages are available, this will be an empty list.
         :rtype: List[~azure.servicebus.ServiceBusReceivedMessage]
 
