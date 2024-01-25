@@ -1,5 +1,77 @@
 # Release History
 
+## 1.0.0 (2024-01-25)
+
+### Features Added
+
+  - Model AgentPool has a new parameter properties
+  - Model AgentPoolProfile has a new parameter enable_auto_scaling
+  - Model AgentPoolProfile has a new parameter max_count
+  - Model AgentPoolProfile has a new parameter max_pods
+  - Model AgentPoolProfile has a new parameter min_count
+  - Model AgentPoolProfile has a new parameter node_labels
+  - Model AgentPoolProfile has a new parameter node_taints
+  - Model AgentPoolProperties has a new parameter enable_auto_scaling
+  - Model AgentPoolProperties has a new parameter kubernetes_version
+  - Model AgentPoolProperties has a new parameter max_count
+  - Model AgentPoolProperties has a new parameter max_pods
+  - Model AgentPoolProperties has a new parameter min_count
+  - Model AgentPoolProperties has a new parameter node_labels
+  - Model AgentPoolProperties has a new parameter node_taints
+  - Model AgentPoolProvisioningStatusStatus has a new parameter current_state
+  - Model AgentPoolUpdateProfile has a new parameter kubernetes_version
+  - Model NamedAgentPoolProfile has a new parameter enable_auto_scaling
+  - Model NamedAgentPoolProfile has a new parameter kubernetes_version
+  - Model NamedAgentPoolProfile has a new parameter max_count
+  - Model NamedAgentPoolProfile has a new parameter max_pods
+  - Model NamedAgentPoolProfile has a new parameter min_count
+  - Model NamedAgentPoolProfile has a new parameter node_labels
+  - Model NamedAgentPoolProfile has a new parameter node_taints
+  - Model ProvisionedClusterProperties has a new parameter auto_scaler_profile
+  - Model ProvisionedClusterProperties has a new parameter cluster_vm_access_profile
+  - Model ProvisionedClusterProperties has a new parameter storage_profile
+  - Model ProvisionedClusterPropertiesStatus has a new parameter current_state
+
+### Breaking Changes
+
+  - Model AgentPool no longer has parameter availability_zones
+  - Model AgentPool no longer has parameter count
+  - Model AgentPool no longer has parameter location
+  - Model AgentPool no longer has parameter node_image_version
+  - Model AgentPool no longer has parameter os_sku
+  - Model AgentPool no longer has parameter os_type
+  - Model AgentPool no longer has parameter provisioning_state
+  - Model AgentPool no longer has parameter status
+  - Model AgentPool no longer has parameter vm_size
+  - Model AgentPoolProfile no longer has parameter availability_zones
+  - Model AgentPoolProfile no longer has parameter node_image_version
+  - Model AgentPoolProperties no longer has parameter availability_zones
+  - Model AgentPoolProperties no longer has parameter node_image_version
+  - Model AgentPoolProvisioningStatusStatus no longer has parameter operation_status
+  - Model ControlPlaneProfile no longer has parameter availability_zones
+  - Model ControlPlaneProfile no longer has parameter linux_profile
+  - Model ControlPlaneProfile no longer has parameter name
+  - Model ControlPlaneProfile no longer has parameter node_image_version
+  - Model ControlPlaneProfile no longer has parameter os_sku
+  - Model ControlPlaneProfile no longer has parameter os_type
+  - Model HybridIdentityMetadata has a new required parameter properties
+  - Model HybridIdentityMetadata no longer has parameter provisioning_state
+  - Model HybridIdentityMetadata no longer has parameter public_key
+  - Model HybridIdentityMetadata no longer has parameter resource_uid
+  - Model KubernetesVersionProperties no longer has parameter capabilities
+  - Model NamedAgentPoolProfile no longer has parameter availability_zones
+  - Model NamedAgentPoolProfile no longer has parameter node_image_version
+  - Model ProvisionedClusterPoolUpgradeProfile no longer has parameter name
+  - Model ProvisionedClusterPropertiesStatus no longer has parameter operation_status
+  - Model ProvisionedClusterUpgradeProfile has a new required parameter properties
+  - Model ProvisionedClusterUpgradeProfile no longer has parameter agent_pool_profiles
+  - Model ProvisionedClusterUpgradeProfile no longer has parameter control_plane_profile
+  - Model ProvisionedClusterUpgradeProfile no longer has parameter provisioning_state
+  - Model VirtualNetworkProperties no longer has parameter dhcp_servers
+  - Model VirtualNetworkPropertiesInfraVnetProfile no longer has parameter vmware
+  - Model VirtualNetworkPropertiesStatusOperationStatus no longer has parameter phase
+  - Removed operation AgentPoolOperations.begin_update
+
 ## 1.0.0b2 (2023-11-20)
 
 ### Features Added

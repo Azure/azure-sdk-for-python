@@ -224,7 +224,7 @@ def group(_cls: Type[T]) -> Type[T]:
         def _get_default(key: str) -> Any:
             # will set None as default value when default not exist so won't need to reorder the init params
             val = fields[key]
-            if hasattr(val, "default"):
+            if val is not None and hasattr(val, "default"):
                 return val.default
             return None
 

@@ -32,8 +32,7 @@ class BaseConnection:
     :param id: The connection's resource id.
     :type id: str
     :param is_shared: For connections created for a project, this determines if the connection
-        is shared amongst other connections with that project's parent AI resource.
-        Defaults to true.
+        is shared amongst other connections with that project's parent AI resource. Defaults to True.
     :type is_shared: bool
     """
 
@@ -79,10 +78,10 @@ class BaseConnection:
     
     @classmethod
     def _get_ai_connection_class_from_type(cls,  conn_type: str):
-        ''' Given a connection type string, get the corresponding AI SDK object via class
+        """Given a connection type string, get the corresponding AI SDK object via class
         comparisons. Accounts for any potential camel/snake/capitalization issues. Returns
         the BaseConnection class if no match is found.
-        '''
+        """
         #import here to avoid circular import
         from .connection_subtypes import (
             AzureOpenAIConnection,
@@ -194,7 +193,7 @@ class BaseConnection:
 
     @property
     def tags(self) -> Dict[str, Any]:
-        """tags for the connection.
+        """Tags for the connection.
 
         :return: This connection's tags.
         :rtype: Dict[str, Any]
@@ -236,18 +235,18 @@ class BaseConnection:
 
     @property
     def is_shared(self) -> bool:
-        """Get the Boolean describing if this connection is shared
-            amongst its cohort within a workspace hub. Only applicable for connections
-            that are project-scoped on creation.
+        """Get the Boolean describing if this connection is shared amongst its cohort within a workspace hub.
+        Only applicable for connections that are project-scoped on creation.
+
         :rtype: bool
         """
         return self._workspace_connection.is_shared
 
     @is_shared.setter
     def is_shared(self, value: bool):
-        """The is_shared determines if this connection is shared amongst other
-            lean workspaces within its parent workspace hub. Only applicable for connections
-            that are project-scoped on creation.
+        """The is_shared determines if this connection is shared amongst other lean workspaces within its parent
+        workspace hub. Only applicable for connections that are project-scoped on creation.
+
         :type value: bool
         """
         if not value:
@@ -255,7 +254,7 @@ class BaseConnection:
         self._workspace_connection.is_shared = value
 
     def set_current_environment(self, credential: Optional[TokenCredential] = None):
-        """Sets the current environment to use the connection. To use AAD auth for AzureOpenAI connetion, pass in a credential object.
+        """Sets the current environment to use the connection. To use AAD auth for AzureOpenAI connection, pass in a credential object.
         Only certain types of connections make use of this function. Those that don't will raise an error if this is called.
 
         :param credential: Optional credential to use for the connection. If not provided, the connection's credentials will be used.

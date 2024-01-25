@@ -8,7 +8,7 @@ import os
 import re
 from os import PathLike
 from pathlib import Path
-from typing import Dict, Optional, Type, Union
+from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
@@ -39,7 +39,7 @@ DataAssetTypeModelMap: Dict[str, Type[DataVersionBaseProperties]] = {
 }
 
 
-def getModelForDataAssetType(data_asset_type: str) -> Type[DataVersionBaseProperties]:
+def getModelForDataAssetType(data_asset_type: str) -> Optional[Type[DataVersionBaseProperties]]:
     model = DataAssetTypeModelMap.get(data_asset_type)
     if model is None:
         msg = "Unknown DataType {}".format(data_asset_type)
@@ -96,8 +96,10 @@ class Data(Artifact):
         properties: Optional[Dict] = None,
         path: Optional[str] = None,  # if type is mltable, the path has to be a folder.
         type: str = AssetTypes.URI_FOLDER,  # pylint: disable=redefined-builtin
-        **kwargs,
+        **kwargs: Any,
     ):
+        self._path: Optional[Union[Path, str, PathLike]] = None
+
         self._skip_validation = kwargs.pop("skip_validation", False)
         self._mltable_schema_url = kwargs.pop("mltable_schema_url", None)
         self._referenced_uris = kwargs.pop("referenced_uris", None)
@@ -114,13 +116,14 @@ class Data(Artifact):
         self.path = path
 
     @property
-    def path(self) -> Optional[Union[str, PathLike]]:
+    def path(self) -> Optional[Union[Path, str, PathLike]]:
         return self._path
 
     @path.setter
     def path(self, value: str) -> None:
         # Call the parent setter to resolve the path with base_path if it was a local path
-        super(Data, type(self)).path.fset(self, value)
+        # TODO: Bug Item number: 2883424
+        super(Data, type(self)).path.fset(self, value)  # type: ignore
         if self.type == AssetTypes.URI_FOLDER and self._path is not None and not is_url(self._path):
             self._path = Path(os.path.join(self._path, ""))
 
@@ -130,7 +133,7 @@ class Data(Artifact):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "Data":
         data = data or {}
         params_override = params_override or []
@@ -143,12 +146,13 @@ class Data(Artifact):
         return data_asset
 
     @classmethod
-    def _load_from_dict(cls, yaml_data: Dict, context: Dict, **kwargs) -> "Data":
+    def _load_from_dict(cls, yaml_data: Dict, context: Dict, **kwargs: Any) -> "Data":
         return Data(**load_from_dict(DataSchema, yaml_data, context, **kwargs))
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return DataSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = DataSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
     def _to_container_rest_object(self) -> DataContainer:
         VersionDetailsClass = getModelForDataAssetType(self.type)
@@ -157,24 +161,27 @@ class Data(Artifact):
                 properties=self.properties,
                 tags=self.tags,
                 is_archived=False,
-                data_type=VersionDetailsClass.data_type,
+                data_type=VersionDetailsClass.data_type if VersionDetailsClass is not None else None,
             )
         )
 
-    def _to_rest_object(self) -> DataVersionBase:
+    def _to_rest_object(self) -> Optional[DataVersionBase]:
         VersionDetailsClass = getModelForDataAssetType(self.type)
-        data_version_details = VersionDetailsClass(
-            description=self.description,
-            is_anonymous=self._is_anonymous,
-            tags=self.tags,
-            is_archived=False,
-            properties=self.properties,
-            data_uri=self.path,
-            auto_delete_setting=self.auto_delete_setting,
-        )
-        if VersionDetailsClass._attribute_map.get("referenced_uris") is not None:
-            data_version_details.referenced_uris = self._referenced_uris
-        return DataVersionBase(properties=data_version_details)
+        if VersionDetailsClass is not None:
+            data_version_details = VersionDetailsClass(
+                description=self.description,
+                is_anonymous=self._is_anonymous,
+                tags=self.tags,
+                is_archived=False,
+                properties=self.properties,
+                data_uri=self.path,
+                auto_delete_setting=self.auto_delete_setting,
+            )
+            if VersionDetailsClass._attribute_map.get("referenced_uris") is not None:
+                data_version_details.referenced_uris = self._referenced_uris
+            return DataVersionBase(properties=data_version_details)
+
+        return None
 
     @classmethod
     def _from_container_rest_object(cls, data_container_rest_object: DataContainer) -> "Data":
@@ -211,7 +218,7 @@ class Data(Artifact):
         return data
 
     @classmethod
-    def _resolve_cls_and_type(cls, data, params_override):
+    def _resolve_cls_and_type(cls, data: Dict, params_override: Optional[List[Dict]] = None) -> Tuple:
         from azure.ai.ml.entities._data_import.data_import import DataImport
 
         if "source" in data:
