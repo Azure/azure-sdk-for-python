@@ -315,14 +315,14 @@ class AIClient:
             IndexSource,
             IndexStore,
         )
-        from azure.ai.resources._index._embeddings.EmbeddingsContainer import from_uri
+        from azure.ai.resources._index._embeddings import EmbeddingsContainer
         if isinstance(input_source, ACSSource):
             from azure.ai.resources._index._utils.connections import get_connection_by_id_v2, get_target_from_connection
 
             # Construct MLIndex object
             mlindex_config = {}
             connection_args = {"connection_type": "workspace_connection", "connection": {"id": aoai_connection_id}}
-            mlindex_config["embeddings"] = from_uri(
+            mlindex_config["embeddings"] = EmbeddingsContainer.from_uri(
                 build_open_ai_protocol(embeddings_model), **connection_args
             ).get_metadata()
             mlindex_config["index"] = {
