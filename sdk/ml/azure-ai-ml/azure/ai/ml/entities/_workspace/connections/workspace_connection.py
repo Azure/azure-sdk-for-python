@@ -336,6 +336,7 @@ class WorkspaceConnection(Resource):
         :rtype: Dict[str, str]
         """
         properties = rest_obj.properties
+        credentials = None # Datastore connections can return conncetions with empty credentials. Need to account for this now.
         if properties.auth_type == ConnectionAuthType.PAT:
             credentials = PatTokenConfiguration._from_workspace_connection_rest_object(properties.credentials)
         if properties.auth_type == ConnectionAuthType.SAS:
