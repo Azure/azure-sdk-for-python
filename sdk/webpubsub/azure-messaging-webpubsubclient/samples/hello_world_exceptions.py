@@ -29,9 +29,9 @@ def main():
         try:
             client.open()
             break
-        # you may want to try again
+        # you may just want to try again
         except OpenClientError:
-            client.open()
+            pass
 
     # catch SendMessageError
     while True:
@@ -41,6 +41,7 @@ def main():
         except SendMessageError as err:
             if err.error_detail is None:
                 # connection is closed, and you may need to open client again
+                client.close()
                 client.open()
             elif err.error_detail.name == "NoAckMessageReceivedFromServer":
                 # no ack from service, you may want to try again
