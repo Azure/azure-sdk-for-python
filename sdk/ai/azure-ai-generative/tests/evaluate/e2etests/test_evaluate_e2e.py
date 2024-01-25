@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 @pytest.mark.e2etest
 @pytest.mark.live_test_only
-# @pytest.mark.usefixtures("recorded_test")
+@pytest.mark.usefixtures("recorded_test")
 class TestEvaluate(AzureRecordedTestCase):
 
     def test_evaluate_built_in_metrics(self, e2e_openai_api_base, e2e_openai_api_key, e2e_openai_completion_deployment_name, tmpdir):
