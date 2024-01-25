@@ -6,6 +6,7 @@ products:
   - azure-monitor
 ---
 
+
 # Microsoft Azure Monitor Opentelemetry Exporter Log Python Samples
 
 These code samples show common champion scenario operations with the AzureMonitorLogExporter.
