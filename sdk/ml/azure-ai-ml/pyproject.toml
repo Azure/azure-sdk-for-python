@@ -40,7 +40,6 @@ exclude = [
   "azure/ai/ml/entities/",
   "azure/ai/ml/identity/",
   "azure/ai/ml/operations/",
-  "azure/ai/ml/parallel/",
   "azure/ai/ml/sweep/",
   "azure/ai/ml/_azure_environments.py",
   "azure/ai/ml/exceptions.py",
