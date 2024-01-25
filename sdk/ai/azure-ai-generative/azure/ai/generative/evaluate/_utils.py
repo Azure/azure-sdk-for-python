@@ -30,7 +30,7 @@ def load_jsonl_to_df(path):
     else:
         raise Exception("File not found: {}".format(path))
 
-def df_to_dict_list(df, extra_kwargs: Dict = None):
+def df_to_dict_list(df, extra_kwargs: Optional[Dict] = None):
     if extra_kwargs is not None:
         return df.assign(**extra_kwargs).to_dict("records")
     return df.to_dict("records")
