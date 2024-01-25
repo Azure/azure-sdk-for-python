@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict, Union
+from typing import Dict, Union, Type
 
 QA = "qa"
 CHAT = "chat"
@@ -68,7 +68,7 @@ class ChatMetrics:
     ]
 
 
-TASK_TYPE_TO_METRICS_MAPPING: Dict[str, Union[QaMetrics, ChatMetrics]] = {
+TASK_TYPE_TO_METRICS_MAPPING: Dict[str, Union[Type[QaMetrics], [ChatMetrics]]] = {
     "qa": QaMetrics,
     "rag-evaluation": ChatMetrics
 }
