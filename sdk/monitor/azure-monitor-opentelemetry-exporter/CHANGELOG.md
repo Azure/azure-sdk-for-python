@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- Update exception details messsage based on `LogRecord` body
+    ([#33864](https://github.com/Azure/azure-sdk-for-python/pull/33864))
+
 ### Other Changes
 
 ## 1.0.0b21 (2024-01-16)
