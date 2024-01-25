@@ -2,18 +2,24 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Any, Dict, Optional, List
-
 from abc import ABC
+from typing import Any, Dict, List, Optional
+
+from azure.ai.ml._restclient.v2023_08_01_preview.models import FqdnOutboundRule as RestFqdnOutboundRule
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
-    ManagedNetworkSettings as RestManagedNetwork,
-    FqdnOutboundRule as RestFqdnOutboundRule,
-    PrivateEndpointOutboundRule as RestPrivateEndpointOutboundRule,
-    PrivateEndpointDestination as RestPrivateEndpointOutboundRuleDestination,
-    ServiceTagOutboundRule as RestServiceTagOutboundRule,
-    ServiceTagDestination as RestServiceTagOutboundRuleDestination,
     ManagedNetworkProvisionStatus as RestManagedNetworkProvisionStatus,
 )
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    PrivateEndpointDestination as RestPrivateEndpointOutboundRuleDestination,
+)
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    PrivateEndpointOutboundRule as RestPrivateEndpointOutboundRule,
+)
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    ServiceTagDestination as RestServiceTagOutboundRuleDestination,
+)
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ServiceTagOutboundRule as RestServiceTagOutboundRule
 from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory, OutboundRuleType
 
 
@@ -77,7 +83,7 @@ class FqdnDestination(OutboundRule):
     :param name: Name of the outbound rule.
     :type name: str
     :param destination: Fully qualified domain name to which outbound connections are allowed.
-        For example: “*.contoso.com”.
+        For example: “xxxxxx.contoso.com”.
     :type destination: str
     :ivar type: Type of the outbound rule. Set to "FQDN" for this class.
     :vartype type: str
