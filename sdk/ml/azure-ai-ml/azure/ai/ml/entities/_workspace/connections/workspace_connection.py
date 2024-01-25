@@ -6,12 +6,13 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Optional, Union, List, Type, Any
+from typing import IO, Any, AnyStr, Dict, List, Optional, Type, Union
 
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     AccessKeyAuthTypeWorkspaceConnectionProperties,
     ApiKeyAuthWorkspaceConnectionProperties,
     ConnectionAuthType,
+    ConnectionCategory,
     ManagedIdentityAuthTypeWorkspaceConnectionProperties,
     NoneAuthTypeWorkspaceConnectionProperties,
     PATAuthTypeWorkspaceConnectionProperties,
@@ -21,22 +22,21 @@ from azure.ai.ml._restclient.v2023_08_01_preview.models import (
 )
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     WorkspaceConnectionPropertiesV2BasicResource as RestWorkspaceConnection,
-    ConnectionCategory,
 )
 from azure.ai.ml._schema.workspace.connections.workspace_connection import WorkspaceConnectionSchema
 from azure.ai.ml._schema.workspace.connections.workspace_connection_subtypes import (
-    OpenAIWorkspaceConnectionSchema,
     AzureAISearchWorkspaceConnectionSchema,
     AzureAIServiceWorkspaceConnectionSchema,
+    OpenAIWorkspaceConnectionSchema,
 )
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake, dump_yaml_to_file
 from azure.ai.ml.constants._common import (
     BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
     CONNECTION_API_TYPE_KEY,
     CONNECTION_API_VERSION_KEY,
     CONNECTION_KIND_KEY,
+    PARAMS_OVERRIDE_KEY,
     WorkspaceConnectionTypes,
 )
 from azure.ai.ml.entities._credentials import (
@@ -77,9 +77,13 @@ class WorkspaceConnection(Resource):
     :param credentials: The credentials for authenticating to the external resource. Note that certain connection
         types (as defined by the type input) only accept certain types of credentials.
     :type credentials: Union[
-        ~azure.ai.ml.entities.PatTokenConfiguration, ~azure.ai.ml.entities.SasTokenConfiguration,
-        ~azure.ai.ml.entities.UsernamePasswordConfiguration, ~azure.ai.ml.entities.ManagedIdentityConfiguration
-        ~azure.ai.ml.entities.ServicePrincipalConfiguration, ~azure.ai.ml.entities.AccessKeyConfiguration,
+
+        ~azure.ai.ml.entities.PatTokenConfiguration,
+        ~azure.ai.ml.entities.SasTokenConfiguration,
+        ~azure.ai.ml.entities.UsernamePasswordConfiguration,
+        ~azure.ai.ml.entities.ManagedIdentityConfiguration
+        ~azure.ai.ml.entities.ServicePrincipalConfiguration,
+        ~azure.ai.ml.entities.AccessKeyConfiguration,
         ~azure.ai.ml.entities.ApiKeyConfiguration
         ]
     :param is_shared: For connections in lean workspaces, this controls whether or not this connection
@@ -157,10 +161,14 @@ class WorkspaceConnection(Resource):
 
         :return: Credentials for workspace connection.
         :rtype: Union[
-            ~azure.ai.ml.entities.PatTokenConfiguration, ~azure.ai.ml.entities.SasTokenConfiguration,
-            ~azure.ai.ml.entities.UsernamePasswordConfiguration, ~azure.ai.ml.entities.ManagedIdentityConfiguration
-            ~azure.ai.ml.entities.ServicePrincipalConfiguration, ~azure.ai.ml.entities.AccessKeyConfiguration,
+            ~azure.ai.ml.entities.PatTokenConfiguration,
+            ~azure.ai.ml.entities.SasTokenConfiguration,
+            ~azure.ai.ml.entities.UsernamePasswordConfiguration,
+            ~azure.ai.ml.entities.ManagedIdentityConfiguration
+            ~azure.ai.ml.entities.ServicePrincipalConfiguration,
+            ~azure.ai.ml.entities.AccessKeyConfiguration,
             ~azure.ai.ml.entities.ApiKeyConfiguration
+
         ]
         """
         return self._credentials
@@ -186,18 +194,18 @@ class WorkspaceConnection(Resource):
 
     @property
     def is_shared(self) -> bool:
-        """Get the Boolean describing if this connection is shared
-            amongst its cohort within a workspace hub. Only applicable for connections created
-            within a lean workspace.
+        """Get the Boolean describing if this connection is shared amongst its cohort within a workspace hub.
+        Only applicable for connections created within a lean workspace.
+
         :rtype: bool
         """
         return self._is_shared
 
     @is_shared.setter
     def is_shared(self, value: bool):
-        """Assign the is_shared property of the connection, determining if it is shared amongst other
-            lean workspaces within its parent workspace hub. Only applicable for connections created
-            within a lean workspace workspace.
+        """Assign the is_shared property of the connection, determining if it is shared amongst other lean workspaces
+        within its parent workspace hub. Only applicable for connections created within a lean workspace workspace.
+
         :param value: The new is_shared value.
         :type value: bool
         """
@@ -254,9 +262,9 @@ class WorkspaceConnection(Resource):
     @classmethod
     def _from_rest_object(cls, rest_obj: RestWorkspaceConnection) -> "WorkspaceConnection":
         from .workspace_connection_subtypes import (
-            AzureOpenAIWorkspaceConnection,
             AzureAISearchWorkspaceConnection,
             AzureAIServiceWorkspaceConnection,
+            AzureOpenAIWorkspaceConnection,
         )
 
         if not rest_obj:
@@ -336,6 +344,7 @@ class WorkspaceConnection(Resource):
         :rtype: Dict[str, str]
         """
         properties = rest_obj.properties
+        credentials = None # Datastore connections can return conncetions with empty credentials. Need to account for this now.
         if properties.auth_type == ConnectionAuthType.PAT:
             credentials = PatTokenConfiguration._from_workspace_connection_rest_object(properties.credentials)
         if properties.auth_type == ConnectionAuthType.SAS:
@@ -384,9 +393,9 @@ class WorkspaceConnection(Resource):
             return WorkspaceConnection
         # done here to avoid circular imports on load
         from .workspace_connection_subtypes import (
-            AzureOpenAIWorkspaceConnection,
             AzureAISearchWorkspaceConnection,
             AzureAIServiceWorkspaceConnection,
+            AzureOpenAIWorkspaceConnection,
         )
 
         cat = camel_to_snake(conn_type).lower()

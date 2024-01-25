@@ -73,7 +73,7 @@ async def create_database(client, id):
     except exceptions.CosmosResourceExistsError:
         print('A database with id \'{0}\' already exists'.format(id))
 
-    print("\n2.8 Create Database - With auto scale settings")
+    print("\n2.8 Create Database - With autoscale settings")
 
     try:
         await client.create_database(

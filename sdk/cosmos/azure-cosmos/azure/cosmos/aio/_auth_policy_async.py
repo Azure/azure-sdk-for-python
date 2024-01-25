@@ -4,12 +4,13 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from typing import Any, MutableMapping, TypeVar
+from typing import Any, MutableMapping, TypeVar, cast
 
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest
 from azure.core.rest import HttpRequest
+from azure.core.credentials import AccessToken
 
 from ..http_constants import HttpHeaders
 
@@ -35,7 +36,8 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
         :raises: :class:`~azure.core.exceptions.ServiceRequestError`
         """
         await super().on_request(request)
-        self._update_headers(request.http_request.headers, self._token.token)
+        # The None-check for self._token is done in the parent on_request
+        self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)
 
     async def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs: Any) -> None:
         """Acquire a token from the credential and authorize the request with it.
@@ -47,4 +49,5 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
         :param str scopes: required scopes of authentication
         """
         await super().authorize_request(request, *scopes, **kwargs)
-        self._update_headers(request.http_request.headers, self._token.token)
+        # The None-check for self._token is done in the parent authorize_request
+        self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)

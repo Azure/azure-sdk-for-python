@@ -2,6 +2,8 @@
 
 ## 12.16.0b1 (Unreleased)
 
+This version and all future versions will require Python 3.8+. Python 3.7 is no longer supported.
+
 ### Features Added
 - Added `exists` method to `ShareFileClient` to check if a file exists.
 

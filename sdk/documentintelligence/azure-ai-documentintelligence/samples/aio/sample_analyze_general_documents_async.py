@@ -53,14 +53,12 @@ async def analyze_general_documents():
     # [START analyze_general_documents]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
-    from azure.ai.documentintelligence.models import DocumentAnalysisFeature
+    from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
-    document_intelligence_client = DocumentIntelligenceClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     async with document_intelligence_client:
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_intelligence_client.begin_analyze_document(
@@ -69,74 +67,61 @@ async def analyze_general_documents():
                 features=[DocumentAnalysisFeature.KEY_VALUE_PAIRS],
                 content_type="application/octet-stream",
             )
-        result = await poller.result()
+        result: AnalyzeResult = await poller.result()
 
-    for style in result.styles:
-        if style.is_handwritten:
-            print("Document contains handwritten content: ")
-            print(
-                ",".join(
-                    [
-                        result.content[span.offset : span.offset + span.length]
-                        for span in style.spans
-                    ]
-                )
-            )
+    if result.styles:
+        for style in result.styles:
+            if style.is_handwritten:
+                print("Document contains handwritten content: ")
+                print(",".join([result.content[span.offset : span.offset + span.length] for span in style.spans]))
 
     print("----Key-value pairs found in document----")
-    for kv_pair in result.key_value_pairs:
-        if kv_pair.key:
-            print(
-                f"Key '{kv_pair.key.content}' found within "
-                f"'{kv_pair.key.bounding_regions}' bounding regions"
-            )
-        if kv_pair.value:
-            print(
-                f"Value '{kv_pair.value.content}' found within "
-                f"'{kv_pair.value.bounding_regions}' bounding regions\n"
-            )
+    if result.key_value_pairs:
+        for kv_pair in result.key_value_pairs:
+            if kv_pair.key:
+                print(f"Key '{kv_pair.key.content}' found within " f"'{kv_pair.key.bounding_regions}' bounding regions")
+            if kv_pair.value:
+                print(
+                    f"Value '{kv_pair.value.content}' found within "
+                    f"'{kv_pair.value.bounding_regions}' bounding regions\n"
+                )
 
     for page in result.pages:
         print(f"----Analyzing document from page #{page.page_number}----")
-        print(
-            f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}"
-        )
+        print(f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}")
 
-        for line_idx, line in enumerate(page.lines):
-            words = get_words(page.words, line)
-            print(
-                f"...Line #{line_idx} has {len(words)} words and text '{line.content}' within "
-                f"bounding polygon '{line.polygon}'"
-            )
-
-            for word in words:
+        if page.lines:
+            for line_idx, line in enumerate(page.lines):
+                words = get_words(page.words, line)
                 print(
-                    f"......Word '{word.content}' has a confidence of {word.confidence}"
+                    f"...Line #{line_idx} has {len(words)} words and text '{line.content}' within "
+                    f"bounding polygon '{line.polygon}'"
                 )
 
-        for selection_mark in page.selection_marks:
-            print(
-                f"Selection mark is '{selection_mark.state}' within bounding polygon "
-                f"'{selection_mark.polygon}' and has a confidence of "
-                f"{selection_mark.confidence}"
-            )
+                for word in words:
+                    print(f"......Word '{word.content}' has a confidence of {word.confidence}")
 
-    for table_idx, table in enumerate(result.tables):
-        print(
-            f"Table # {table_idx} has {table.row_count} rows and {table.column_count} columns"
-        )
-        for region in table.bounding_regions:
-            print(
-                f"Table # {table_idx} location on page: {region.page_number} is {region.polygon}"
-            )
-        for cell in table.cells:
-            print(
-                f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'"
-            )
-            for region in cell.bounding_regions:
+        if page.selection_marks:
+            for selection_mark in page.selection_marks:
                 print(
-                    f"...content on page {region.page_number} is within bounding polygon '{region.polygon}'\n"
+                    f"Selection mark is '{selection_mark.state}' within bounding polygon "
+                    f"'{selection_mark.polygon}' and has a confidence of "
+                    f"{selection_mark.confidence}"
                 )
+
+    if result.tables:
+        for table_idx, table in enumerate(result.tables):
+            print(f"Table # {table_idx} has {table.row_count} rows and {table.column_count} columns")
+            if table.bounding_regions:
+                for region in table.bounding_regions:
+                    print(f"Table # {table_idx} location on page: {region.page_number} is {region.polygon}")
+            for cell in table.cells:
+                print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
+                if cell.bounding_regions:
+                    for region in cell.bounding_regions:
+                        print(
+                            f"...content on page {region.page_number} is within bounding polygon '{region.polygon}'\n"
+                        )
     print("----------------------------------------")
     # [END analyze_general_documents]
 
