@@ -479,7 +479,7 @@ class DataDriftSignal(DataSignal):
         features: Optional[Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]]] = None,
         feature_type_override: Optional[Dict[str, Union[str, MonitorFeatureDataType]]] = None,
         metric_thresholds: DataDriftMetricThreshold = None,
-        alert_enabled: bool = True,
+        alert_enabled: bool = False,
         data_segment: Optional[DataSegment] = None,
         properties: Optional[Dict[str, str]] = None,
     ):
@@ -558,7 +558,7 @@ class PredictionDriftSignal(MonitoringSignal):
         production_data: ProductionData = None,
         reference_data: ReferenceData = None,
         metric_thresholds: PredictionDriftMetricThreshold,
-        alert_enabled: bool = True,
+        alert_enabled: bool = False,
         properties: Optional[Dict[str, str]] = None,
     ):
         super().__init__(
@@ -632,7 +632,7 @@ class DataQualitySignal(DataSignal):
         features: Optional[Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]]] = None,
         feature_type_override: Optional[Dict[str, Union[str, MonitorFeatureDataType]]] = None,
         metric_thresholds: [DataQualityMetricThreshold] = None,
-        alert_enabled: bool = True,
+        alert_enabled: bool = False,
         properties: Optional[Dict[str, str]] = None,
     ):
         super().__init__(
