@@ -247,8 +247,8 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                 message="Failed to send message.",
                 ack_id=ack_id,
                 error_detail=AckMessageError(
-                    name="",
-                    message="The connection may have been lost during message sending.",
+                    name="NoAckMessageReceivedFromServer",
+                    message="The connection may have been lost during message sending or service don't send ack message.",
                 ),
             )
         with message_ack.cv:
