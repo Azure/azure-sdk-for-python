@@ -136,8 +136,8 @@ def fl_scatter_gather(
     # Like other DSL nodes, this is just a wrapper around a node builder entity initializer.
     return FLScatterGather(
         silo_configs=silo_configs,
-        silo_component=silo_component,
-        aggregation_component=aggregation_component,
+        silo_component=silo_component,  # type: ignore[arg-type]
+        aggregation_component=aggregation_component,  # type: ignore[arg-type]
         shared_silo_kwargs=shared_silo_kwargs,
         aggregation_compute=aggregation_compute,
         aggregation_datastore=aggregation_datastore,
