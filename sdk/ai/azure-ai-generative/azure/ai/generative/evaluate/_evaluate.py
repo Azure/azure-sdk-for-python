@@ -9,9 +9,11 @@ import shutil
 import tempfile
 import time
 import logging
+from collections import Counter
 from json import JSONDecodeError
 from pathlib import Path
 from typing import Callable, Optional, Dict, List, Mapping
+from types import FunctionType
 
 import mlflow
 import numpy as np
@@ -25,7 +27,8 @@ from mlflow.protos.databricks_pb2 import ErrorCode, INVALID_PARAMETER_VALUE
 
 from azure.ai.generative.evaluate._metric_handler import MetricHandler
 from azure.ai.generative.evaluate._metrics_handler._code_metric_handler import CodeMetricHandler
-from azure.ai.generative.evaluate._utils import _is_flow, load_jsonl, _get_artifact_dir_path, _copy_artifact
+from azure.ai.generative.evaluate._utils import _is_flow, load_jsonl, _get_artifact_dir_path, _copy_artifact, \
+    is_lambda_function
 from azure.ai.generative.evaluate._mlflow_log_collector import RedirectUserOutputStreams
 from azure.ai.generative.evaluate._constants import SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING, SUPPORTED_TASK_TYPE, CHAT, \
     SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING
@@ -33,7 +36,7 @@ from azure.ai.generative.evaluate._evaluation_result import EvaluationResult
 from ._metrics_handler._prompt_metric_handler import PromptMetricHandler
 
 from ._utils import _write_properties_to_run_history
-from .metrics._custom_metric import CodeMetric, PromptMetric, Metric as GenAIMetric
+from .metrics._custom_metric import _CodeMetric, PromptMetric, Metric as GenAIMetric
 
 LOGGER = logging.getLogger(__name__)
 
@@ -84,25 +87,33 @@ def _log_metrics(run_id, metrics):
 
 
 def _validate_metrics(metrics, task_type):
-    genai_metrics = []
+    prompt_metrics = []
     builtin_metrics =[]
+    code_metrics = []
     unknown_metrics = []
 
     for metric in metrics:
-        if isinstance(metric, GenAIMetric):
-            genai_metrics.append(metric.name)
+        if isinstance(metric, PromptMetric):
+            prompt_metrics.append(metric)
         elif isinstance(metric, str) and metric in SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING[task_type].SUPPORTED_LIST:
             builtin_metrics.append(metric)
+        elif isinstance(metric, FunctionType):
+            if is_lambda_function(metric):
+                raise Exception("Lambda methods are not supported as code metrics")
+            code_metrics.append(metric)
+
         else:
             unknown_metrics.append(metric)
 
     if len(unknown_metrics) > 0:
         raise Exception("Unsupported metric found in the list")
 
-    # if len(set(genai_metrics) & set(builtin_metrics)) > 0:
-    if len(genai_metrics) != len(set(genai_metrics)) or len(builtin_metrics) != len(set(builtin_metrics))\
-            or (len(set(genai_metrics) & set(builtin_metrics)) > 0):
-        raise Exception("Duplicate metric name found. Metric names should be unique")
+    counter = Counter(builtin_metrics + [metric.name for metric in prompt_metrics] + [metric.__name__ for metric in code_metrics])
+    duplicates = [key for key, value in counter.items() if value > 1]
+    if len(duplicates) > 0:
+        raise Exception(f"Duplicate metric name found {duplicates}. Metric names should be unique")
+
+    return builtin_metrics, prompt_metrics, code_metrics
 
 
 @distributed_trace
@@ -275,15 +286,11 @@ def _evaluate(
         if metrics is None:
             metrics = SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING[task_type].DEFAULT_LIST
 
-        _validate_metrics(metrics, task_type)
-
-        inbuilt_metrics = [metric for metric in metrics if not isinstance(metric, GenAIMetric)]
-        custom_prompt_metrics = [metric for metric in metrics if isinstance(metric, PromptMetric)]
-        code_metrics = [metric for metric in metrics if isinstance(metric, CodeMetric)]
+        inbuilt_metrics, custom_prompt_metrics, code_metrics = _validate_metrics(metrics, task_type)
 
         if custom_prompt_metrics:
             for metric in custom_prompt_metrics:
-                metrics_config.setdefault(metric.name, {param: param for param in metric.parameters})
+                metrics_config.setdefault(metric.name, {param: param for param in metric._template_variable})
 
             prompt_metric_handler = PromptMetricHandler(
                 task_type="custom-prompt-metric",
@@ -302,7 +309,7 @@ def _evaluate(
         if code_metrics:
             code_metric_handler = CodeMetricHandler(
                 task_type="custom-code-metric",
-                metrics=code_metrics,
+                metrics=[_CodeMetric(name=metric.__name__, calculate=metric) for metric in code_metrics],
                 prediction_data=asset_handler.prediction_data,
                 test_data=asset_handler.test_data,
                 metrics_mapping=metrics_config,
