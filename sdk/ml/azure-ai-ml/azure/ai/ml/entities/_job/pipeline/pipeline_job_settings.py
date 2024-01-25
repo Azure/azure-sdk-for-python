@@ -8,7 +8,7 @@ from azure.ai.ml.entities._job.pipeline._attr_dict import _AttrDict
 
 
 class PipelineJobSettings(_AttrDict):
-    """Settings of PipelineJob, include default_datastore, default_compute, continue_on_step_failure and force_rerun.
+    """Settings of PipelineJob.
 
     :param default_datastore: The default datastore of the pipeline.
     :type default_datastore: str
@@ -22,8 +22,8 @@ class PipelineJobSettings(_AttrDict):
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/ml_samples_pipeline_job_configurations.py
-            :start-after: [START configure_PipelineJob_and_PipelineJobSettings]
-            :end-before: [END configure_PipelineJob_and_PipelineJobSettings]
+            :start-after: [START configure_pipeline_job_and_settings]
+            :end-before: [END configure_pipeline_job_and_settings]
             :language: python
             :dedent: 8
             :caption: Shows how to set pipeline properties using this class.

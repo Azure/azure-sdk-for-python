@@ -11,16 +11,19 @@ import re
 from enum import Enum
 from typing import Dict, List, Optional, Union
 
-from marshmallow import Schema, INCLUDE
+from marshmallow import INCLUDE, Schema
+
+from azure.ai.ml._schema.core.fields import NestedField, UnionField
+from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
 from azure.ai.ml.entities._credentials import (
     AmlTokenConfiguration,
     ManagedIdentityConfiguration,
     UserIdentityConfiguration,
     _BaseJobIdentityConfiguration,
 )
-from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
-from azure.ai.ml._schema.core.fields import NestedField, UnionField
+
 from ..._schema import PathAwareSchema
+from ..._utils.utils import is_data_binding_expression
 from ...constants._common import ARM_ID_PREFIX
 from ...constants._component import NodeType
 from .._component.component import Component
@@ -33,7 +36,6 @@ from .._job.parallel.parallel_task import ParallelTask
 from .._job.parallel.retry_settings import RetrySettings
 from .._job.pipeline._io import NodeOutput, NodeWithGroupInputMixin
 from .._util import convert_ordered_dict_to_dict, get_rest_dict_for_node_attrs, validate_attribute_type
-from ..._utils.utils import is_data_binding_expression
 from .base_node import BaseNode
 
 module_logger = logging.getLogger(__name__)
@@ -350,7 +352,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         """Set the resources for the parallel job.
 
         :keyword instance_type: The instance type or a list of instance types used as supported by the compute target.
-        :paramtype instance_type: str or list[str]
+        :paramtype instance_type: Union[str, List[str]]
         :keyword instance_count: The number of instances or nodes used by the compute target.
         :paramtype instance_count: int
         :keyword properties: The property dictionary for the resources.
