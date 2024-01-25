@@ -62,7 +62,7 @@ def build_schema_registry_get_schema_by_id_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2023-07-01"))
-    accept = _headers.pop('Accept', "application/json")
+    accept = _headers.pop('Accept', "application/octet-stream")
 
     # Construct URL
     _url = "/$schemaGroups/$schemas/{id}"
@@ -132,7 +132,7 @@ def build_schema_registry_get_schema_by_version_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2023-07-01"))
-    accept = _headers.pop('Accept', "application/json")
+    accept = _headers.pop('Accept', "application/octet-stream")
 
     # Construct URL
     _url = "/$schemaGroups/{groupName}/schemas/{name}/versions/{schemaVersion}"
