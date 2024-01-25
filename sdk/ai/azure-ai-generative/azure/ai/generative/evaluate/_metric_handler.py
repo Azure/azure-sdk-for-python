@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 from azure.ai.generative.evaluate._constants import TYPE_TO_KWARGS_MAPPING
 from azure.ai.generative.evaluate._constants import TASK_TYPE_TO_METRICS_MAPPING
-from azure.ai.generative.evaluate.metrics._custom_metric import CodeMetric
+from azure.ai.generative.evaluate.metrics._custom_metric import _CodeMetric
 
 LOGGER = logging.getLogger(__name__)
 

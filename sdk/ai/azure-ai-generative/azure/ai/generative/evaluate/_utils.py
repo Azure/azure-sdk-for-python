@@ -140,3 +140,7 @@ def _copy_artifact(source, destination):
 
     pathlib.Path(destination).mkdir(exist_ok=True, parents=True)
     shutil.copy2(source, destination)
+
+
+def is_lambda_function(obj):
+    return callable(obj) and obj.__name__ == "<lambda>"
