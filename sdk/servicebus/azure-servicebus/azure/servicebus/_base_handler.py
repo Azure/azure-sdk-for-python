@@ -433,8 +433,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                             message=description,
                         )
                         raise error from last_exception
-                    else:
-                        raise last_exception from None
+                    raise last_exception from None
                 self._backoff(
                     retried_times=retried_times,
                     last_exception=last_exception,
