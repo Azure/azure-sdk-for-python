@@ -92,7 +92,7 @@ class CodeMetricHandler(MetricHandler):
         with ThreadPoolExecutor(thread_name_prefix="code_metrics_row") as thread_pool:
             for i in range(0, len(data)):
                 row_metric_futures.append(thread_pool.submit(
-                    self._submit_method, metric.calculate, data=data[i], response=response[i]
+                    self._submit_method, metric.calculate, data={**data[i], **response[i]}
                 ))
 
             for row_metric_future in row_metric_futures:
