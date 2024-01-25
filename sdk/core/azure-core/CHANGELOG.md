@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Support tuple input for files to `azure.core.rest.HttpRequest`  #33948
+
 ### Breaking Changes
 
 ### Bugs Fixed
