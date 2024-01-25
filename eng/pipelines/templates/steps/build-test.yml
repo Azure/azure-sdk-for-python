@@ -31,10 +31,6 @@ steps:
     parameters:
       versionSpec: '${{ parameters.PythonVersion }}'
 
-  - template: set-dev-build.yml
-    parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
-
   - pwsh: |
       $ErrorActionPreference = 'Stop'
       $PSNativeCommandUseErrorActionPreference = $true
