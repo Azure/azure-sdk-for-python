@@ -52,7 +52,7 @@ def get_code_configuration_artifacts(
 
     if _code_configuration_contains_cloud_artifacts(deployment=deployment):
         return _get_cloud_code_configuration_artifacts(
-            deployment.code_configuration.code, code_operations, download_path
+            str(deployment.code_configuration.code), code_operations, download_path
         )
 
     if not _local_code_path_is_valid(deployment=deployment):

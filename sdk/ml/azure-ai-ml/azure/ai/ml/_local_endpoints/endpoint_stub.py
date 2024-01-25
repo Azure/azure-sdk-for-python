@@ -82,7 +82,7 @@ class EndpointStub:
         :return: The endpoint cache path
         :rtype: Path
         """
-        endpoint_cache_path = self._get_endpoint_cache_file(endpoint_name=endpoint.name)
+        endpoint_cache_path = self._get_endpoint_cache_file(endpoint_name=str(endpoint.name))
         endpoint_metadata = json.dumps(endpoint.dump())
         endpoint_cache_path.write_text(endpoint_metadata, encoding=DefaultOpenEncoding.WRITE)
         return endpoint_cache_path
