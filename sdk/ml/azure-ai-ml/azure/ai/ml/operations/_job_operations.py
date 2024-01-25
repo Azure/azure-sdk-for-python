@@ -936,7 +936,7 @@ class JobOperations(_ScopeDependentOperations):
             module_logger.info("Downloading artifact %s to %s", uri, destination)
             download_artifact_from_aml_uri(
                 uri=uri,
-                destination=destination,
+                destination=destination,  # type: ignore[arg-type]
                 datastore_operation=self._datastore_operations,
             )
 

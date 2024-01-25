@@ -543,8 +543,9 @@ def _check_and_upload_env_build_context(
             datastore_name=environment.datastore,
             show_progress=show_progress,
         )
-        # TODO: Depending on decision trailing "/" needs to stay or not. EMS requires it to be present
-        environment.build.path = uploaded_artifact.full_storage_path + "/"
+        if environment.build is not None:
+            # TODO: Depending on decision trailing "/" needs to stay or not. EMS requires it to be present
+            environment.build.path = str(uploaded_artifact.full_storage_path) + "/"
     return environment
 
 
