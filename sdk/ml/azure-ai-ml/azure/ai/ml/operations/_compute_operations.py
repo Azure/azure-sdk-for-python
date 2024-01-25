@@ -69,14 +69,17 @@ class ComputeOperations(_ScopeDependentOperations):
                 :caption: Retrieving a list of the AzureML Kubernetes compute resources in a workspace.
         """
 
-        return self._operation.list(
-            self._operation_scope.resource_group_name,
-            self._workspace_name,
-            cls=lambda objs: [
-                Compute._from_rest_object(obj)
-                for obj in objs
-                if compute_type is None or Compute._from_rest_object(obj).type.lower() == compute_type.lower()
-            ],
+        return cast(
+            Iterable[Compute],
+            self._operation.list(
+                self._operation_scope.resource_group_name,
+                self._workspace_name,
+                cls=lambda objs: [
+                    Compute._from_rest_object(obj)
+                    for obj in objs
+                    if compute_type is None or str(Compute._from_rest_object(obj).type).lower() == compute_type.lower()
+                ],
+            ),
         )
 
     @distributed_trace

@@ -46,7 +46,7 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
         tags: Optional[Dict[str, str]] = None,
         properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         """Endpoint base class.
 
@@ -76,9 +76,9 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
         # MFE is case-insensitive for Name. So convert the name into lower case here.
         if name:
             name = name.lower()
-        self._scoring_uri = kwargs.pop("scoring_uri", None)
-        self._openapi_uri = kwargs.pop("openapi_uri", None)
-        self._provisioning_state = kwargs.pop("provisioning_state", None)
+        self._scoring_uri: Optional[str] = kwargs.pop("scoring_uri", None)
+        self._openapi_uri: Optional[str] = kwargs.pop("openapi_uri", None)
+        self._provisioning_state: Optional[str] = kwargs.pop("provisioning_state", None)
         super().__init__(name, description, tags, properties, **kwargs)
         self.auth_mode = auth_mode
         self.location = location
@@ -111,7 +111,7 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
         return self._provisioning_state
 
     @abstractmethod
-    def dump(self, dest: Optional[Union[str, PathLike, IO[AnyStr]]] = None, **kwargs) -> None:
+    def dump(self, dest: Optional[Union[str, PathLike, IO[AnyStr]]] = None, **kwargs: Any) -> Dict:
         pass
 
     @classmethod
@@ -119,7 +119,7 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
     def _from_rest_object(cls, obj: Any) -> Any:
         pass
 
-    def _merge_with(self, other: "Endpoint") -> None:
+    def _merge_with(self, other: Any) -> None:
         if other:
             if self.name != other.name:
                 msg = "The endpoint name: {} and {} are not matched when merging."
@@ -132,7 +132,8 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
                 )
             self.description = other.description or self.description
             if other.tags:
-                self.tags = {**self.tags, **other.tags}
+                if self.tags is not None:
+                    self.tags = {**self.tags, **other.tags}
             if other.properties:
                 self.properties = {**self.properties, **other.properties}
             self.auth_mode = other.auth_mode or self.auth_mode

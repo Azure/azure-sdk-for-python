@@ -48,7 +48,7 @@ class ComputeConfiguration(RestTranslatableMixin, DictMixin):
         self.instance_type = instance_type
         self.location = location
         self.properties = properties
-        if deserialize_properties and properties:
+        if deserialize_properties and properties and self.properties is not None:
             for key, value in self.properties.items():
                 try:
                     self.properties[key] = json.loads(value)
