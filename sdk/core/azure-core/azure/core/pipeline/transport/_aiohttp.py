@@ -175,7 +175,7 @@ class AioHttpTransport(AsyncHttpTransport):
 
         :param request: The request object
         :type request: ~azure.core.pipeline.transport.HttpRequest or ~azure.core.rest.HttpRequest
-        :rtype: bytes or ~aiohttp.FormData
+        :rtype: ~aiohttp.FormData
         :return: The request data
         """
         form_data = aiohttp.FormData(request.data or {})
