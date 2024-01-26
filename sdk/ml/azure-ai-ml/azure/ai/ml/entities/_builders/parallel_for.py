@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import json
 import os
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml import Input, Output
 from azure.ai.ml._schema import PathAwareSchema
@@ -11,7 +11,7 @@ from azure.ai.ml._schema.pipeline.control_flow_job import ParallelForSchema
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._component import ComponentParameterTypes, ControlFlowType
-from azure.ai.ml.entities import Component
+from azure.ai.ml.entities import Component, Pipeline
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.control_flow_node import LoopNode
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
@@ -57,7 +57,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
         body: "Pipeline",
         items: Union[list, dict, str, PipelineInput, NodeOutput],
         max_concurrency: Optional[int] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
@@ -70,6 +70,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
         )
         # loop body is incomplete in submission time, so won't validate required inputs
         self.body._validate_required_input_not_provided = False
+        self._outputs: dict = {}
 
         actual_outputs = kwargs.get("outputs", {})
         # parallel for node shares output meta with body
@@ -107,7 +108,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
         return self._items
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> PathAwareSchema:
+    def _create_schema_for_validation(cls, context: Any) -> PathAwareSchema:
         return ParallelForSchema(context=context)
 
     @classmethod
@@ -150,22 +151,23 @@ class ParallelFor(LoopNode, NodeIOMixin):
         """Convert items to rest object."""
         # validate items.
         cls._validate_items(items=items, raise_error=True, body_component=None)
+        result: str = ""
         # convert items to rest object
         if isinstance(items, list):
-            rest_items = [cls._to_rest_item(item=i) for i in items]
-            rest_items = json.dumps(rest_items)
+            rest_items_list = [cls._to_rest_item(item=i) for i in items]
+            result = json.dumps(rest_items_list)
         elif isinstance(items, dict):
-            rest_items = {k: cls._to_rest_item(item=v) for k, v in items.items()}
-            rest_items = json.dumps(rest_items)
+            rest_items_dict = {k: cls._to_rest_item(item=v) for k, v in items.items()}
+            result = json.dumps(rest_items_dict)
         elif isinstance(items, (NodeOutput, PipelineInput)):
-            rest_items = str(items)
+            result = str(items)
         elif isinstance(items, str):
-            rest_items = items
+            result = items
         else:
             raise UserErrorException("Unsupported items type: {}".format(type(items)))
-        return rest_items
+        return result
 
-    def _to_rest_object(self, **kwargs) -> dict:  # pylint: disable=unused-argument
+    def _to_rest_object(self, **kwargs: Any) -> dict:  # pylint: disable=unused-argument
         """Convert self to a rest object for remote call.
 
         :return: The rest object
@@ -175,11 +177,13 @@ class ParallelFor(LoopNode, NodeIOMixin):
         # convert items to rest object
         rest_items = self._to_rest_items(items=self.items)
         rest_node.update({"items": rest_items, "outputs": self._to_rest_outputs()})
-        return convert_ordered_dict_to_dict(rest_node)
+        # TODO: Bug Item number: 2897665
+        res: dict = convert_ordered_dict_to_dict(rest_node)  # type: ignore
+        return res
 
     @classmethod
     # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
-    def _from_rest_item(cls, rest_item):
+    def _from_rest_item(cls, rest_item: Any) -> Dict:
         """Convert rest item to item."""
         primitive_inputs, asset_inputs = {}, {}
         for key, val in rest_item.items():
@@ -212,7 +216,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
         return cls._create_instance_from_schema_dict(pipeline_jobs=pipeline_jobs, loaded_data=obj)
 
     @classmethod
-    def _create_instance_from_schema_dict(cls, pipeline_jobs, loaded_data, **kwargs):
+    def _create_instance_from_schema_dict(cls, pipeline_jobs: Dict, loaded_data: Dict, **kwargs: Any) -> "ParallelFor":
         body_name = cls._get_data_binding_expression_value(loaded_data.pop("body"), regex=r"\{\{.*\.jobs\.(.*)\}\}")
 
         loaded_data["body"] = cls._get_body_from_pipeline_jobs(pipeline_jobs=pipeline_jobs, body_name=body_name)
@@ -238,7 +242,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
                     "Referencing output with type {} is not supported in parallel_for node.".format(output.type)
                 )
             if isinstance(output, NodeOutput):
-                output = output._to_job_output()
+                output = output._to_job_output()  # type: ignore
             if isinstance(output, Output):
                 out_dict = output._to_dict()
                 out_dict["type"] = new_type
@@ -262,7 +266,12 @@ class ParallelFor(LoopNode, NodeIOMixin):
         return validation_result
 
     @classmethod
-    def _validate_items(cls, items, raise_error=True, body_component=None):
+    def _validate_items(
+        cls,
+        items: Union[list, dict, str, NodeOutput, PipelineInput],
+        raise_error: bool = True,
+        body_component: Optional[Union[str, Component]] = None,
+    ) -> MutableValidationResult:
         validation_result = cls._create_empty_validation_result()
         if items is not None:
             if isinstance(items, str):
@@ -292,9 +301,14 @@ class ParallelFor(LoopNode, NodeIOMixin):
         return cls._try_raise(validation_result, raise_error=raise_error)
 
     @classmethod
-    def _validate_items_list(cls, items: list, validation_result, body_component=None):
+    def _validate_items_list(
+        cls,
+        items: list,
+        validation_result: MutableValidationResult,
+        body_component: Optional[Union[str, Component]] = None,
+    ) -> None:
         # pylint: disable=protected-access
-        meta = {}
+        meta: dict = {}
         # all items have to be dict and have matched meta
         for item in items:
             # item has to be dict
@@ -320,7 +334,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
                 cls._validate_item_value_type(item=item, validation_result=validation_result)
 
     @classmethod
-    def _validate_item_value_type(cls, item: dict, validation_result):
+    def _validate_item_value_type(cls, item: dict, validation_result: MutableValidationResult) -> None:
         # pylint: disable=protected-access
         supported_types = (Input, str, bool, int, float, PipelineInput)
         for _, val in item.items():
@@ -335,7 +349,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
                 cls._validate_input_item_value(entry=val, validation_result=validation_result)
 
     @classmethod
-    def _validate_input_item_value(cls, entry: Input, validation_result):
+    def _validate_input_item_value(cls, entry: Input, validation_result: MutableValidationResult) -> None:
         if not isinstance(entry, Input):
             return
         if not entry.path:

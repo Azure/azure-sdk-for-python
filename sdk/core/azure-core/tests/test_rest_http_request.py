@@ -515,6 +515,66 @@ def test_stream_input():
     HttpRequest(method="PUT", url="http://www.example.com", content=data_stream)  # ensure we can make this HttpRequest
 
 
+@pytest.fixture
+def filebytes():
+    file_path = os.path.join(os.path.dirname(__file__), "./conftest.py")
+    return open(file_path, "rb")
+
+
+def test_multipart_bytes(filebytes):
+    request = HttpRequest("POST", url="http://example.org", files={"file": filebytes})
+
+    assert request.content == {"file": ("conftest.py", filebytes, "application/octet-stream")}
+
+
+def test_multipart_filename_and_bytes(filebytes):
+    files = ("specifiedFileName", filebytes)
+    request = HttpRequest("POST", url="http://example.org", files={"file": files})
+
+    assert request.content == {"file": ("specifiedFileName", filebytes)}
+
+
+def test_multipart_filename_and_bytes_and_content_type(filebytes):
+    files = ("specifiedFileName", filebytes, "application/json")
+    request = HttpRequest("POST", url="http://example.org", files={"file": files})
+
+    assert request.content == {"file": ("specifiedFileName", filebytes, "application/json")}
+
+
+def test_multipart_incorrect_tuple_entry(filebytes):
+    files = ("specifiedFileName", filebytes, "application/json", "extra")
+    with pytest.raises(ValueError):
+        HttpRequest("POST", url="http://example.org", files={"file": files})
+
+
+def test_multipart_tuple_input_single(filebytes):
+    request = HttpRequest("POST", url="http://example.org", files=[("file", filebytes)])
+
+    assert request.content == {"file": ("conftest.py", filebytes, "application/octet-stream")}
+
+
+def test_multipart_tuple_input_multiple(filebytes):
+    request = HttpRequest("POST", url="http://example.org", files=[("file", filebytes), ("file2", filebytes)])
+
+    assert request.content == {
+        "file": ("conftest.py", filebytes, "application/octet-stream"),
+        "file2": ("conftest.py", filebytes, "application/octet-stream"),
+    }
+
+
+def test_multipart_tuple_input_multiple_with_filename_and_content_type(filebytes):
+    request = HttpRequest(
+        "POST",
+        url="http://example.org",
+        files=[("file", ("first file", filebytes, "image/pdf")), ("file2", ("second file", filebytes, "image/png"))],
+    )
+
+    assert request.content == {
+        "file": ("first file", filebytes, "image/pdf"),
+        "file2": ("second file", filebytes, "image/png"),
+    }
+
+
 # NOTE: For files, we don't allow list of tuples yet, just dict. Will uncomment when we add this capability
 # def test_multipart_multiple_files_single_input_content():
 #     files = [
