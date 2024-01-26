@@ -108,3 +108,16 @@ async def test_multipart_tuple_input_multiple_same_name(client):
         ],
     )
     (await client.send_request(request)).raise_for_status()
+
+@pytest.mark.asyncio
+async def test_data_and_file_input_same_name(client):
+    request = HttpRequest(
+        "POST",
+        url="/multipart/data-and-file-input-same-name",
+        data={"message": "Hello, world!"},
+        files=[
+            ("file", ("firstFileName", NamedIo("firstFile"), "image/pdf")),
+            ("file", ("secondFileName", NamedIo("secondFile"), "image/png")),
+        ],
+    )
+    (await client.send_request(request)).raise_for_status()
