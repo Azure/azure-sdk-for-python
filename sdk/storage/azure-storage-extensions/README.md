@@ -16,8 +16,8 @@ pip install azure-storage-extensions
 ```
 
 Please note that this package contains [C-Extension modules](https://docs.python.org/3/extending/extending.html) and therefore you must install the correct wheel for your
-particular platform. We destribute many pre-built wheels for a wide variety of platforms on PyPi and `pip` will attempt to install the wheel meant for your platform. If
-however, a wheel is not available for your platform, we also distrubute the source code on PyPi so `pip` will attempt to build the module at install time, assuming you have
+particular platform. We distribute many pre-built wheels for a wide variety of platforms on PyPi and `pip` will attempt to install the wheel meant for your platform. If
+however, a wheel is not available for your platform, we also distribute the source code on PyPi so `pip` will attempt to build the module at install time, assuming you have
 a compiler available. If you encounter any issues installing this package, please feel to open an Issue.
 
 ## Extensions
