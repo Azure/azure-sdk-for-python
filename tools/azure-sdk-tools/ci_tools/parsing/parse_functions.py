@@ -10,7 +10,7 @@ except:
     # otherwise fall back to pypi package tomli
     import tomli as toml
 
-from typing import Dict, List, Tuple, Any
+from typing import Dict, List, Tuple, Any, Union
 
 # Assumes the presence of setuptools
 from pkg_resources import (
@@ -21,7 +21,6 @@ from pkg_resources import (
 # this assumes the presence of "packaging"
 from packaging.specifiers import SpecifierSet
 from setuptools import Extension
-
 
 NEW_REQ_PACKAGES = ["azure-core", "azure-mgmt-core"]
 
@@ -269,7 +268,15 @@ def parse_setup_py(setup_filename: str)  -> Tuple[str, str, str, List[str], bool
     )
 
 def parse_pyproject(pyproject_filename: str) -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], str, List[Extension]]:
-    project_config = get_pyproject_config(pyproject_filename, "project")
+    toml_dict = get_pyproject_dict(pyproject_filename)
+
+    from setuptools.config import read_configuration
+
+    from setuptools_scm import Configuration
+    project_config = Configuration.from_file(pyproject_filename)
+
+    breakpoint()
+
 
     if project_config:
         name = project_config.get("name")
@@ -284,6 +291,7 @@ def parse_pyproject(pyproject_filename: str) -> Tuple[str, str, str, List[str], 
         keywords = project_config.get("keywords", [])
         # ext_package = project_config.get("ext_package", None) todo
         # ext_modules = project_config.get("ext_modules", []) todo
+        breakpoint()
 
         return (
             name,
@@ -302,8 +310,33 @@ def parse_pyproject(pyproject_filename: str) -> Tuple[str, str, str, List[str], 
         )
 
 
+def get_pyproject(folder: str) -> Union[str, None]:
+    """
+    Given a folder, attempts to find a pyproject.toml file with a "project" configuration and return its location.
+    """
+    pyproject_filename = os.path.join(folder, "pyproject.toml")
+
+    if os.path.exists(pyproject_filename):
+        project_config = get_pyproject_config(pyproject_filename, "project")
+        if project_config:
+            return pyproject_filename
+
+    return None
+
+def get_setup_py(folder: str) -> Union[str, None]:
+    """
+    Given a folder, attempts to find a setup.py file and return its location.
+    """
+    setup_filename = os.path.join(folder, "setup.py")
+
+    if os.path.exists(setup_filename):
+        return setup_filename
+
+    return None
+
+
 def parse_setup(
-    setup_filename: str,
+    setup_filename_or_folder: str,
 ):
     """
     Used to evaluate a setup.py (or a directory containing a setup.py) and return a tuple containing:
@@ -323,27 +356,31 @@ def parse_setup(
         <ext_modules>
     )
     """
-    # handle a bare folder arg
-    if os.path.isfolder(setup_filename):
-        pyproject_filename = os.path.join(setup_filename, "pyproject.toml")
 
-        if os.path.exists(pyproject_filename) and get_pyproject_config(pyproject_filename):
-            setup_filename = pyproject_filename
-        else:
-            os.path.join(setup_filename, "setup.py")
+    if not os.path.isfile(setup_filename_or_folder):
+        setup_filename_or_folder = get_pyproject(setup_filename_or_folder) or get_setup_py(setup_filename_or_folder)
 
-    if setup_filename.endswith("pyproject.toml"):
-        return parse_pyproject(setup_filename)
+    if setup_filename_or_folder.endswith(".toml"):
+        return parse_pyproject(setup_filename_or_folder)
     else:
-        return parse_setup_py(setup_filename)            
+        breakpoint()
+        return parse_setup_py(setup_filename_or_folder)
+
+def get_pyproject_dict(pyproject_file) -> Dict[str, Any]:
+    """
+    Given a pyproject.toml file, returns a dictionary of a target section. Defaults to `project` section.
+    """
+    with open(pyproject_file, "rb") as f:
+        pyproject_dict = toml.load(f)
+
+    return pyproject_dict
 
 
 def get_pyproject_config(pyproject_file: str, section: str = "project") -> Dict[str, Any]:
     """
     Given a pyproject.toml file, returns a dictionary of a target section. Defaults to `project` section.
     """
-    with open(pyproject_file, "rb") as f:
-        pyproject_dict = toml.load(f)
+    pyproject_dict = get_pyproject_dict(pyproject_file)
 
     if section not in pyproject_dict:
         return None

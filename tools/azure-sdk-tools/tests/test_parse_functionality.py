@@ -6,7 +6,8 @@ from unittest.mock import patch
 import pytest
 
 package_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-test_folder = os.path.join(os.path.dirname(__file__), )
+scenarios_folder = os.path.join(os.path.dirname(__file__), "integration", "scenarios")
+pyproject_scenario = os.path.join(scenarios_folder, "pyproject_project_def")
 
 def test_parse_require():
     test_scenarios = [
@@ -206,15 +207,9 @@ setup(
 
 def test_parse_pyproject():
     # ensure that we can parse from a folder and a specific file
-    pass
+    data = ParsedSetup.from_path(pyproject_scenario)
 
-def test_parse_pyproject():
-    # ensure that we can parse from a folder and a specific file
-    pass
-
-def test_parse_setup_py():
-    # ensure that we can parse from a folder and a specific file
-    pass
+    assert data.name == "azure-keyvault-keys"
 
 def test_parse_setup_py():
     # ensure that we can parse from a folder and a specific file
