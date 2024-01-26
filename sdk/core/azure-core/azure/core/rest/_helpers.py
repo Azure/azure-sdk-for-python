@@ -52,7 +52,7 @@ from ..utils._pipeline_transport_rest_shared import (
     _prepare_multipart_body_helper,
     _serialize_request,
     _format_data_helper,
-    get_file_items
+    get_file_items,
 )
 
 if TYPE_CHECKING:

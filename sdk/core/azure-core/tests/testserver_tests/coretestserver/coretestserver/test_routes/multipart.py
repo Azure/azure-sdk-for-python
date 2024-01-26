@@ -147,6 +147,7 @@ def multipart_request():
         content_type="multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed",
     )
 
+
 @multipart_api.route("/tuple-input-multiple-same-name", methods=["POST"])
 def tuple_input_multiple_same_name():
     assert_with_message("content type", multipart_header_start, request.content_type[: len(multipart_header_start)])
@@ -157,11 +158,12 @@ def tuple_input_multiple_same_name():
     file1 = files[0]
     assert_with_message("file content type", "image/pdf", file1.content_type)
     assert_with_message("filename", "firstFileName", file1.filename)
-    
+
     file2 = files[1]
     assert_with_message("file content type", "image/png", file2.content_type)
     assert_with_message("filename", "secondFileName", file2.filename)
     return Response(status=200)
+
 
 @multipart_api.route("/data-and-file-input-same-name", methods=["POST"])
 def data_and_file_input_same_name():

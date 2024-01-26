@@ -411,6 +411,7 @@ def _aiohttp_body_helper(
         return response._content
     return response._content
 
+
 def get_file_items(files: "FilesType") -> Sequence[Tuple[str, "FileType"]]:
     if isinstance(files, Mapping):
         return files.items()

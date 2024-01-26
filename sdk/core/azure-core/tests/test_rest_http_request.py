@@ -575,20 +575,28 @@ def test_multipart_tuple_input_multiple_with_filename_and_content_type(filebytes
         ("file2", ("second file", filebytes, "image/png")),
     ]
 
+
 def test_multipart_tuple_input_multiple_same_name(client):
     request = HttpRequest(
         "POST",
         url="/multipart/tuple-input-multiple-same-name",
-        files=[("file", ("firstFileName", NamedIo("firstFile"), "image/pdf")), ("file", ("secondFileName", NamedIo("secondFile"), "image/png"))],
+        files=[
+            ("file", ("firstFileName", NamedIo("firstFile"), "image/pdf")),
+            ("file", ("secondFileName", NamedIo("secondFile"), "image/png")),
+        ],
     )
     client.send_request(request).raise_for_status()
+
 
 def test_data_and_file_input_same_name(client):
     request = HttpRequest(
         "POST",
         url="/multipart/data-and-file-input-same-name",
         data={"message": "Hello, world!"},
-        files=[("file", ("firstFileName", NamedIo("firstFile"), "image/pdf")), ("file", ("secondFileName", NamedIo("secondFile"), "image/png"))],
+        files=[
+            ("file", ("firstFileName", NamedIo("firstFile"), "image/pdf")),
+            ("file", ("secondFileName", NamedIo("secondFile"), "image/png")),
+        ],
     )
     client.send_request(request).raise_for_status()
 
