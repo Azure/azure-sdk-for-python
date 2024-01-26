@@ -665,10 +665,13 @@ class ModelPerformanceMetricThreshold(MetricThreshold):
             thresholds.append(self.classification._to_str_object(**kwargs))
         if self.regression:
             thresholds.append(self.regression._to_str_object(**kwargs))
-        
+ 
         if not thresholds:
             return None
-        result = "[" + ", ".join(thresholds) + "]"
+        if len(thresholds) == 2:
+            result = "[" + ", ".join(thresholds) + "]"
+        else:
+            result = "[" + thresholds[0] + "]"
         return result
 
     def _to_rest_object(self, **kwargs) -> ModelPerformanceMetricThresholdBase:

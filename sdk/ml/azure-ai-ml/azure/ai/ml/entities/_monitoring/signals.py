@@ -169,7 +169,7 @@ class ProductionData(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        input_data: Input,
+        input_data: Optional[Input] = None,
         data_context: MonitorDatasetContext = None,
         pre_processing_component: str = None,
         data_window: Optional[BaselineDataRange] = None,
@@ -901,7 +901,7 @@ class ModelPerformanceSignal(RestTranslatableMixin):
                 lookback_window_size=default_data_window_size,
             )
         return RestModelPerformanceSignal(
-            production_data=[self.production_data._to_rest_object()],
+            production_data=[self.production_data._to_rest_object(default_data_window_size=default_data_window_size)],
             reference_data=self.reference_data._to_rest_object(),
             metric_threshold=self.metric_thresholds._to_rest_object(),
             data_segment=self.data_segment._to_rest_object() if self.data_segment else None,
