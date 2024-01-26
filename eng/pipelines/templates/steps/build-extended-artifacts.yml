@@ -43,9 +43,9 @@ steps:
     condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
 
   - task: UsePythonVersion@0
-    displayName: 'Use Python $(PythonVersion)'
+    displayName: 'Use Python 3.11'
     inputs:
-      versionSpec: $(PythonVersion)
+      versionSpec: '3.11'
 
   - script: |
       python -m pip install setuptools==58.3.0
@@ -60,16 +60,6 @@ steps:
     - template: auth-dev-feed.yml
       parameters:
         DevFeedName: ${{ parameters.DevFeedName }}
-
-  - task: UsePythonVersion@0
-    displayName: 'Use Python 3.11 for docs generation'
-    inputs:
-      versionSpec: '3.11'
-
-  - script: |
-      python -m pip install setuptools==58.3.0
-      python -m pip install -r eng/ci_tools.txt
-    displayName: 'Prep Environment'
 
   - task: PythonScript@0
     displayName: 'Generate Docs'
