@@ -7,6 +7,7 @@ import os
 import time
 import pytest
 import pathlib
+import uuid
 from devtools_testutils import AzureRecordedTestCase
 from conftest import AZURE, OPENAI, ALL, ASST_AZURE, configure_async
 
@@ -23,7 +24,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             name="python test",
             instructions="You are a personal math tutor. Write and run code to answer math questions.",
             tools=[{"type": "code_interpreter"}],
-            model="gpt-4-1106-preview",
+            **kwargs,
         )
         try:
             retrieved_assistant = await client_async.beta.assistants.retrieve(
@@ -60,10 +61,11 @@ class TestAssistantsAsync(AzureRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [ASST_AZURE])
     async def test_assistants_files_crud(self, client_async, azure_openai_creds, api_type, **kwargs):
-        with open("test.txt", "w") as f:
+        file_name = f"test{uuid.uuid4()}.txt"
+        with open(file_name, "w") as f:
             f.write("test")
 
-        path = pathlib.Path("test.txt")
+        path = pathlib.Path(file_name)
 
         file1 = await client_async.files.create(
             file=open(path, "rb"),
@@ -79,8 +81,8 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             name="python test",
             instructions="You are a personal math tutor. Write and run code to answer math questions.",
             tools=[{"type": "code_interpreter"}],
-            model="gpt-4-1106-preview",
-            file_ids=[file1.id]
+            file_ids=[file1.id],
+            **kwargs
         )
         assert assistant.file_ids == [file1.id]
         try:
@@ -158,10 +160,11 @@ class TestAssistantsAsync(AzureRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [ASST_AZURE])
     async def test_assistants_messages_crud(self, client_async, azure_openai_creds, api_type, **kwargs):
-        with open("test.txt", "w") as f:
+        file_name = f"test{uuid.uuid4()}.txt"
+        with open(file_name, "w") as f:
             f.write("test")
 
-        path = pathlib.Path("test.txt")
+        path = pathlib.Path(file_name)
 
         file = await client_async.files.create(
             file=open(path, "rb"),
@@ -244,7 +247,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             name="python test",
             instructions="You are a personal math tutor. Write and run code to answer math questions.",
             tools=[{"type": "code_interpreter"}],
-            model="gpt-4-1106-preview",
+            **kwargs,
         )
 
         try:
@@ -262,13 +265,6 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                 instructions="Please address the user as Jane Doe.",
                 # additional_instructions="After solving each equation, say 'Isn't math fun?'",
             )
-
-            run = await client_async.beta.threads.runs.update(
-                thread_id=thread.id,
-                run_id=run.id,
-                metadata={"user": "user123"}
-            )
-            assert run.metadata == {"user": "user123"}
 
             start_time = time.time()
 
@@ -289,6 +285,13 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                 else:
                     time.sleep(5)
 
+            run = await client_async.beta.threads.runs.update(
+                thread_id=thread.id,
+                run_id=run.id,
+                metadata={"user": "user123"}
+            )
+            assert run.metadata == {"user": "user123"}
+
         finally:
             delete_assistant = await client_async.beta.assistants.delete(
                 assistant_id=assistant.id
@@ -302,15 +305,15 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             assert delete_thread.id == thread.id
             assert delete_thread.deleted is True
 
-    @pytest.mark.skip("Azure retrieval not working yet")
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [ASST_AZURE])
     async def test_assistants_runs_retrieval(self, client_async, azure_openai_creds, api_type, **kwargs):
-        with open("policy.txt", "w") as f:
+        file_name = f"test{uuid.uuid4()}.txt"
+        with open(file_name, "w") as f:
             f.write("Contoso company policy requires that all employees take at least 10 vacation days a year.")
 
-        path = pathlib.Path("policy.txt")
+        path = pathlib.Path(file_name)
 
         file = await client_async.files.create(
             file=open(path, "rb"),
@@ -321,8 +324,8 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             name="python test",
             instructions="You help answer questions about Contoso company policy.",
             tools=[{"type": "retrieval"}],
-            model="gpt-4-1106-preview",
-            file_ids=[file.id]
+            file_ids=[file.id],
+            **kwargs
         )
 
         try:
@@ -400,7 +403,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                     }
                 }
             ],
-            model="gpt-4-1106-preview",
+            **kwargs,
         )
 
         try:
@@ -457,10 +460,13 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                     thread_id=run.thread_id,
                     run_id=r.id
                 )
+                async for step in run_steps:
+                    assert step.id
+
                 retrieved_step = await client_async.beta.threads.runs.steps.retrieve(
                     thread_id=run.thread_id,
                     run_id=r.id,
-                    step_id=run_steps.data[0].id
+                    step_id=step.id
                 )
                 assert retrieved_step.id
                 assert retrieved_step.created_at

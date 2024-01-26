@@ -7,8 +7,9 @@ import os
 import time
 import pytest
 import pathlib
+import uuid
 from devtools_testutils import AzureRecordedTestCase
-from conftest import AZURE, OPENAI, ALL, ASST_AZURE, configure
+from conftest import ASST_AZURE, configure
 
 TIMEOUT = 300
 
@@ -22,7 +23,7 @@ class TestAssistants(AzureRecordedTestCase):
             name="python test",
             instructions="You are a personal math tutor. Write and run code to answer math questions.",
             tools=[{"type": "code_interpreter"}],
-            model="gpt-4-1106-preview",
+            **kwargs,
         )
         try:
             retrieved_assistant = client.beta.assistants.retrieve(
@@ -58,10 +59,11 @@ class TestAssistants(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize("api_type", [ASST_AZURE])
     def test_assistants_files_crud(self, client, azure_openai_creds, api_type, **kwargs):
-        with open("test.txt", "w") as f:
+        file_name = f"test{uuid.uuid4()}.txt"
+        with open(file_name, "w") as f:
             f.write("test")
 
-        path = pathlib.Path("test.txt")
+        path = pathlib.Path(file_name)
 
         file1 = client.files.create(
             file=open(path, "rb"),
@@ -77,8 +79,8 @@ class TestAssistants(AzureRecordedTestCase):
             name="python test",
             instructions="You are a personal math tutor. Write and run code to answer math questions.",
             tools=[{"type": "code_interpreter"}],
-            model="gpt-4-1106-preview",
-            file_ids=[file1.id]
+            file_ids=[file1.id],
+            **kwargs
         )
         assert assistant.file_ids == [file1.id]
         try:
@@ -154,10 +156,11 @@ class TestAssistants(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize("api_type", [ASST_AZURE])
     def test_assistants_messages_crud(self, client, azure_openai_creds, api_type, **kwargs):
-        with open("test.txt", "w") as f:
+        file_name = f"test{uuid.uuid4()}.txt"
+        with open(file_name, "w") as f:
             f.write("test")
 
-        path = pathlib.Path("test.txt")
+        path = pathlib.Path(file_name)
 
         file = client.files.create(
             file=open(path, "rb"),
@@ -239,7 +242,7 @@ class TestAssistants(AzureRecordedTestCase):
             name="python test",
             instructions="You are a personal math tutor. Write and run code to answer math questions.",
             tools=[{"type": "code_interpreter"}],
-            model="gpt-4-1106-preview",
+            **kwargs,
         )
 
         try:
@@ -257,13 +260,6 @@ class TestAssistants(AzureRecordedTestCase):
                 instructions="Please address the user as Jane Doe.",
                 # additional_instructions="After solving each equation, say 'Isn't math fun?'",
             )
-
-            run = client.beta.threads.runs.update(
-                thread_id=thread.id,
-                run_id=run.id,
-                metadata={"user": "user123"}
-            )
-            assert run.metadata == {"user": "user123"}
 
             start_time = time.time()
 
@@ -283,6 +279,13 @@ class TestAssistants(AzureRecordedTestCase):
                     break
                 else:
                     time.sleep(5)
+            
+            run = client.beta.threads.runs.update(
+                thread_id=thread.id,
+                run_id=run.id,
+                metadata={"user": "user123"}
+            )
+            assert run.metadata == {"user": "user123"}
 
         finally:
             delete_assistant = client.beta.assistants.delete(
@@ -297,14 +300,14 @@ class TestAssistants(AzureRecordedTestCase):
             assert delete_thread.id == thread.id
             assert delete_thread.deleted is True
 
-    @pytest.mark.skip("Azure retrieval not working yet")
     @configure
     @pytest.mark.parametrize("api_type", [ASST_AZURE])
     def test_assistants_runs_retrieval(self, client, azure_openai_creds, api_type, **kwargs):
-        with open("policy.txt", "w") as f:
+        file_name = f"test{uuid.uuid4()}.txt"
+        with open(file_name, "w") as f:
             f.write("Contoso company policy requires that all employees take at least 10 vacation days a year.")
 
-        path = pathlib.Path("policy.txt")
+        path = pathlib.Path(file_name)
 
         file = client.files.create(
             file=open(path, "rb"),
@@ -315,8 +318,8 @@ class TestAssistants(AzureRecordedTestCase):
             name="python test",
             instructions="You help answer questions about Contoso company policy.",
             tools=[{"type": "retrieval"}],
-            model="gpt-4-1106-preview",
-            file_ids=[file.id]
+            file_ids=[file.id],
+            **kwargs
         )
 
         try:
@@ -393,7 +396,7 @@ class TestAssistants(AzureRecordedTestCase):
                     }
                 }
             ],
-            model="gpt-4-1106-preview",
+            **kwargs,
         )
 
         try:
@@ -475,18 +478,3 @@ class TestAssistants(AzureRecordedTestCase):
             )
             assert delete_thread.id
             assert delete_thread.deleted is True
-
-    @configure
-    @pytest.mark.parametrize("api_type", [ASST_AZURE])
-    def test_langchain(self, client, azure_openai_creds, api_type, **kwargs):
-        from langchain.agents.openai_assistant import OpenAIAssistantRunnable
-
-        interpreter_assistant = OpenAIAssistantRunnable.create_assistant(
-            name="langchain assistant",
-            instructions="You are a personal math tutor. Write and run code to answer math questions.",
-            tools=[{"type": "code_interpreter"}],
-            model="gpt-4-1106-preview",
-            client=client
-        )
-        output = interpreter_assistant.invoke({"content": "What's 10 - 4 raised to the 2.7"})
-        print(output)
