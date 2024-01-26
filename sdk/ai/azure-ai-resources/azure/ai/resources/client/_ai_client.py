@@ -322,9 +322,9 @@ class AIClient:
             # Construct MLIndex object
             mlindex_config = {}
             connection_args = {"connection_type": "workspace_connection", "connection": {"id": aoai_connection_id}}
-            mlindex_config["embeddings"] = EmbeddingsContainer.from_uri(
+            mlindex_config["embeddings"] = EmbeddingsContainer.from_uri(  # type: ignore[attr-defined]
                 build_open_ai_protocol(embeddings_model), **connection_args
-            ).get_metadata()
+            ).get_metadata()  # Bug 2922096
             mlindex_config["index"] = {
                 "kind": "acs",
                 "connection_type": "workspace_connection",

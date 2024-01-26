@@ -2,11 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
-import asyncio
 import logging
-from typing import Any, Callable, Optional, Union
+from typing import Any, Callable, cast, Optional, Union
+
+from azure.core.pipeline import PipelineResponse
+from azure.core.pipeline.transport import AsyncHttpTransport
 from azure.core.polling import AsyncPollingMethod
+
 from .._models import KeyVaultCertificate, CertificateOperation
 
 
@@ -14,10 +16,13 @@ logger = logging.getLogger(__name__)
 
 
 class CreateCertificatePollerAsync(AsyncPollingMethod):
-    def __init__(self, get_certificate_command: Callable, interval: int = 5) -> None:
-        self._command = None  # type: Optional[Callable]
-        self._resource = None  # type: Optional[Union[CertificateOperation, KeyVaultCertificate]]
-        self._pending_certificate_op = None  # type: Optional[CertificateOperation]
+    def __init__(
+            self, pipeline_response: PipelineResponse, get_certificate_command: Callable, interval: int = 5
+        ) -> None:
+        self._pipeline_response = pipeline_response
+        self._command: Optional[Callable] = None
+        self._resource: Optional[Union[CertificateOperation, KeyVaultCertificate]] = None
+        self._pending_certificate_op: Optional[CertificateOperation] = None
         self._get_certificate_command = get_certificate_command
         self._polling_interval = interval
 
@@ -33,7 +38,9 @@ class CreateCertificatePollerAsync(AsyncPollingMethod):
             while not self.finished():
                 await self._update_status()
                 if not self.finished():
-                    await asyncio.sleep(self._polling_interval)
+                    # We should always ask the client's transport to sleep, instead of sleeping directly
+                    transport: AsyncHttpTransport = cast(AsyncHttpTransport, self._pipeline_response.context.transport)
+                    await transport.sleep(self._polling_interval)
             operation = self._pending_certificate_op
             if operation and operation.status and operation.status.lower() == "completed":
                 self._resource = await self._get_certificate_command()

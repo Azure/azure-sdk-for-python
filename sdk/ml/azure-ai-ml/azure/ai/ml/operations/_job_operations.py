@@ -287,10 +287,11 @@ class JobOperations(_ScopeDependentOperations):
 
         schedule_defined = kwargs.pop("schedule_defined", None)
         scheduled_job_name = kwargs.pop("scheduled_job_name", None)
+        max_results = kwargs.pop("max_results", None)
 
         if parent_job_name:
             parent_job = self.get(parent_job_name)
-            return self._runs_operations.get_run_children(parent_job.name)
+            return self._runs_operations.get_run_children(parent_job.name, max_results=max_results)
 
         return cast(
             Iterable[Job],
@@ -344,6 +345,7 @@ class JobOperations(_ScopeDependentOperations):
             raise UserErrorException(f"{name} is a invalid input for client.jobs.get().")
         job_object = self._get_job(name)
 
+        job: Any = None
         if not _is_pipeline_child_job(job_object):
             job = Job._from_rest_object(job_object)
             if job_object.properties.job_type != RestJobType.AUTO_ML:
@@ -451,7 +453,7 @@ class JobOperations(_ScopeDependentOperations):
             # other compute
             if is_ARM_id_for_resource(compute, resource_type=AzureMLResourceType.COMPUTE):
                 # compute is not a sub-workspace resource
-                compute_name = compute.split("/")[-1]
+                compute_name = compute.split("/")[-1]  # type: ignore
             elif isinstance(compute, Compute):
                 compute_name = compute.name
             elif isinstance(compute, str):
@@ -570,7 +572,7 @@ class JobOperations(_ScopeDependentOperations):
                 except Exception as e:  # pylint: disable=broad-except
                     validation_result.append_error(yaml_path=f"jobs.{node_name}.compute", message=str(e))
 
-        validation_result.resolve_location_for_diagnostics(job._source_path)
+        validation_result.resolve_location_for_diagnostics(str(job._source_path))
         return job._try_raise(validation_result, raise_error=raise_on_failure)  # pylint: disable=protected-access
 
     @distributed_trace
@@ -645,7 +647,7 @@ class JobOperations(_ScopeDependentOperations):
             job.experiment_name = experiment_name
 
         if job.compute == LOCAL_COMPUTE_TARGET:
-            job.environment_variables[COMMON_RUNTIME_ENV_VAR] = "true"
+            job.environment_variables[COMMON_RUNTIME_ENV_VAR] = "true"  # type: ignore
 
         # TODO: why we put log logic here instead of inside self._validate()?
         try:
@@ -939,7 +941,7 @@ class JobOperations(_ScopeDependentOperations):
             )
 
     def _get_named_output_uri(
-        self, job_name: str, output_names: Optional[Union[Iterable[str], str]] = None
+        self, job_name: Optional[str], output_names: Optional[Union[Iterable[str], str]] = None
     ) -> Dict[str, str]:
         """Gets the URIs to the specified named outputs of job.
 
@@ -1081,7 +1083,7 @@ class JobOperations(_ScopeDependentOperations):
                 pass
         else:
             try:
-                self._resolve_job_inputs(job.inputs.values(), job._base_path)
+                self._resolve_job_inputs(job.inputs.values(), job._base_path)  # type: ignore
             except AttributeError:
                 # If the job object doesn't have "inputs" attribute, we don't need to resolve. E.g. AutoML jobs
                 pass
@@ -1161,7 +1163,7 @@ class JobOperations(_ScopeDependentOperations):
         :return: A list of values from the Input Dict
         :rtype: List[Union[Input, str, bool, int, float]]
         """
-        input_values = []
+        input_values: List = []
         # Flatten inputs for pipeline job
         for key, item in inputs.items():
             if isinstance(item, _GroupAttrDict):
@@ -1169,9 +1171,10 @@ class JobOperations(_ScopeDependentOperations):
             else:
                 if not isinstance(item, (str, bool, int, float)):
                     # skip resolving inferred optional input without path (in do-while + dynamic input case)
-                    if isinstance(item._data, Input) and not item._data.path and item._meta._is_inferred_optional:
-                        continue
-                    input_values.append(item._data)
+                    if isinstance(item._data, Input):  # type: ignore
+                        if not item._data.path and item._meta._is_inferred_optional:  # type: ignore
+                            continue
+                    input_values.append(item._data)  # type: ignore
         return input_values
 
     def _resolve_job_input(self, entry: Union[Input, str, bool, int, float], base_path: str) -> None:
@@ -1206,8 +1209,9 @@ class JobOperations(_ScopeDependentOperations):
                 entry.datastore if hasattr(entry, "datastore") and entry.datastore else WORKSPACE_BLOB_STORE
             )
 
-            if os.path.isabs(entry.path):  # absolute local path, upload, transform to remote url
-                if entry.type == AssetTypes.URI_FOLDER and not os.path.isdir(entry.path):
+            # absolute local path, upload, transform to remote url
+            if os.path.isabs(entry.path):  # type: ignore
+                if entry.type == AssetTypes.URI_FOLDER and not os.path.isdir(entry.path):  # type: ignore
                     raise ValidationException(
                         message="There is no dir on target path: {}".format(entry.path),
                         target=ErrorTarget.JOB,
@@ -1215,7 +1219,7 @@ class JobOperations(_ScopeDependentOperations):
                         error_category=ErrorCategory.USER_ERROR,
                         error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
                     )
-                if entry.type == AssetTypes.URI_FILE and not os.path.isfile(entry.path):
+                if entry.type == AssetTypes.URI_FILE and not os.path.isfile(entry.path):  # type: ignore
                     raise ValidationException(
                         message="There is no file on target path: {}".format(entry.path),
                         target=ErrorTarget.JOB,
@@ -1234,19 +1238,20 @@ class JobOperations(_ScopeDependentOperations):
                 # TODO : Move this part to a common place
                 if entry.type == AssetTypes.URI_FOLDER and entry.path and not entry.path.endswith("/"):
                     entry.path = entry.path + "/"
-            elif ":" in entry.path or "@" in entry.path:  # Check for AzureML id, is there a better way?
+            # Check for AzureML id, is there a better way?
+            elif ":" in entry.path or "@" in entry.path:  # type: ignore
                 asset_type = AzureMLResourceType.DATA
                 if entry.type in [AssetTypes.MLFLOW_MODEL, AssetTypes.CUSTOM_MODEL]:
                     asset_type = AzureMLResourceType.MODEL
 
-                entry.path = self._orchestrators.get_asset_arm_id(entry.path, asset_type)
+                entry.path = self._orchestrators.get_asset_arm_id(entry.path, asset_type)  # type: ignore
             else:  # relative local path, upload, transform to remote url
                 # Base path will be None for dsl pipeline component for now. We have 2 choices if the dsl pipeline
                 # function is imported from another file:
                 # 1) Use cwd as default base path;
                 # 2) Use the file path of the dsl pipeline function as default base path.
                 # Pick solution 1 for now as defining input path in the script to submit is a more common scenario.
-                local_path = Path(base_path or Path.cwd(), entry.path).resolve()
+                local_path = Path(base_path or Path.cwd(), entry.path).resolve()  # type: ignore
                 entry.path = _upload_and_generate_remote_uri(
                     self._operation_scope,
                     self._datastore_operations,
@@ -1274,7 +1279,7 @@ class JobOperations(_ScopeDependentOperations):
 
     def _resolve_job_inputs_arm_id(self, job: Job) -> None:
         try:
-            inputs: Dict[str, Union[Input, InputOutputBase, str, bool, int, float]] = job.inputs
+            inputs: Dict[str, Union[Input, InputOutputBase, str, bool, int, float]] = job.inputs  # type: ignore
             for _, entry in inputs.items():
                 if isinstance(entry, InputOutputBase):
                     # extract original input form input builder.
@@ -1351,7 +1356,7 @@ class JobOperations(_ScopeDependentOperations):
             )
 
         if job.code is not None and not is_ARM_id_for_resource(job.code, AzureMLResourceType.CODE):
-            job.code = resolver(
+            job.code = resolver(  # type: ignore
                 Code(base_path=job._base_path, path=job.code),
                 azureml_type=AzureMLResourceType.CODE,
             )
@@ -1379,7 +1384,7 @@ class JobOperations(_ScopeDependentOperations):
             )
 
         if job.code is not None and not is_ARM_id_for_resource(job.code, AzureMLResourceType.CODE):
-            job.code = resolver(
+            job.code = resolver(  # type: ignore
                 Code(base_path=job._base_path, path=job.code),
                 azureml_type=AzureMLResourceType.CODE,
             )
@@ -1415,12 +1420,12 @@ class JobOperations(_ScopeDependentOperations):
         :return: The provided ParallelJob, with resolved fields
         :rtype: ParallelJob
         """
-        if job.code is not None and not is_ARM_id_for_resource(job.code, AzureMLResourceType.CODE):
-            job.code = resolver(
-                Code(base_path=job._base_path, path=job.code),
+        if job.code is not None and not is_ARM_id_for_resource(job.code, AzureMLResourceType.CODE):  # type: ignore
+            job.code = resolver(  # type: ignore
+                Code(base_path=job._base_path, path=job.code),  # type: ignore
                 azureml_type=AzureMLResourceType.CODE,
             )
-        job.environment = resolver(job.environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
+        job.environment = resolver(job.environment, azureml_type=AzureMLResourceType.ENVIRONMENT)  # type: ignore
         job.compute = self._resolve_compute_id(resolver, job.compute)
         return job
 
@@ -1507,7 +1512,7 @@ class JobOperations(_ScopeDependentOperations):
             not isinstance(pipeline_job.component, str)
             and getattr(pipeline_job.component, "_source", None) == ComponentSource.YAML_COMPONENT
         ):
-            pipeline_job.component = resolver(
+            pipeline_job.component = resolver(  # type: ignore
                 pipeline_job.component,
                 azureml_type=AzureMLResourceType.COMPONENT,
             )
@@ -1523,18 +1528,19 @@ class JobOperations(_ScopeDependentOperations):
         :type job: Job
         """
         try:
-            studio_endpoint = job.services.get("Studio", None)
-            studio_url = studio_endpoint.endpoint
-            default_scopes = _resource_to_scopes(_get_base_url_from_metadata())
-            module_logger.debug("default_scopes used: `%s`\n", default_scopes)
-            # Extract the tenant id from the credential using PyJWT
-            decode = jwt.decode(
-                self._credential.get_token(*default_scopes).token,
-                options={"verify_signature": False, "verify_aud": False},
-            )
-            tid = decode["tid"]
-            formatted_tid = TID_FMT.format(tid)
-            studio_endpoint.endpoint = studio_url + formatted_tid
+            if job.services is not None:
+                studio_endpoint = job.services.get("Studio", None)
+                studio_url = studio_endpoint.endpoint
+                default_scopes = _resource_to_scopes(_get_base_url_from_metadata())
+                module_logger.debug("default_scopes used: `%s`\n", default_scopes)
+                # Extract the tenant id from the credential using PyJWT
+                decode = jwt.decode(
+                    self._credential.get_token(*default_scopes).token,
+                    options={"verify_signature": False, "verify_aud": False},
+                )
+                tid = decode["tid"]
+                formatted_tid = TID_FMT.format(tid)
+                studio_endpoint.endpoint = studio_url + formatted_tid
         except Exception:  # pylint: disable=broad-except
             module_logger.info("Proceeding with no tenant id appended to studio URL\n")
 

@@ -88,7 +88,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         self._managed_label_resolver = {"latest": self._get_latest_version}
 
     @monitor_with_activity(logger, "Environment.CreateOrUpdate", ActivityType.PUBLICAPI)
-    def create_or_update(self, environment: Environment) -> Environment:
+    def create_or_update(self, environment: Environment) -> Environment:  # type: ignore
         """Returns created or updated environment asset.
 
         :param environment: Environment object
@@ -196,7 +196,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 )
             )
             if not env_rest_obj and self._registry_name:
-                env_rest_obj = self._get(name=environment.name, version=environment.version)
+                env_rest_obj = self._get(name=str(environment.name), version=environment.version)
             return Environment._from_rest_object(env_rest_obj)
         except Exception as ex:  # pylint: disable=broad-except
             if isinstance(ex, SchemaValidationError):

@@ -6,15 +6,15 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Optional, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union
 
+from azure.ai.ml._restclient.v2023_08_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
-    Workspace as RestWorkspace,
-    FeatureStoreSettings as RestFeatureStoreSettings,
-    ManagedNetworkSettings as RestManagedNetwork,
-    ManagedServiceIdentity as RestManagedServiceIdentity,
     ServerlessComputeSettings as RestServerlessComputeSettings,
 )
+from azure.ai.ml._restclient.v2023_08_01_preview.models import Workspace as RestWorkspace
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
@@ -116,12 +116,12 @@ class Workspace(Resource):
         enable_data_isolation: bool = False,
         workspace_hub: Optional[str] = None,
         serverless_compute: Optional[ServerlessComputeSettings] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         self._kind = kwargs.pop("kind", "default")
         self.print_as_yaml = True
-        self._discovery_url = kwargs.pop("discovery_url", None)
-        self._mlflow_tracking_uri = kwargs.pop("mlflow_tracking_uri", None)
+        self._discovery_url: Optional[str] = kwargs.pop("discovery_url", None)
+        self._mlflow_tracking_uri: Optional[str] = kwargs.pop("mlflow_tracking_uri", None)
         self._workspace_id = kwargs.pop("workspace_id", None)
         self._feature_store_settings: Optional[FeatureStoreSettings] = kwargs.pop("feature_store_settings", None)
         super().__init__(name=name, description=description, tags=tags, **kwargs)
@@ -147,7 +147,7 @@ class Workspace(Resource):
         self.serverless_compute: Optional[ServerlessComputeSettings] = serverless_compute
 
     @property
-    def discovery_url(self) -> str:
+    def discovery_url(self) -> Optional[str]:
         """Backend service base URLs for the workspace.
 
         :return: Backend service URLs of the workspace
@@ -156,7 +156,7 @@ class Workspace(Resource):
         return self._discovery_url
 
     @property
-    def mlflow_tracking_uri(self) -> str:
+    def mlflow_tracking_uri(self) -> Optional[str]:
         """MLflow tracking uri for the workspace.
 
         :return: Returns mlflow tracking uri of the workspace.
@@ -164,7 +164,7 @@ class Workspace(Resource):
         """
         return self._mlflow_tracking_uri
 
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
         """Dump the workspace spec into a file in yaml format.
 
         :param dest: The destination to receive this workspace's spec.
@@ -181,7 +181,8 @@ class Workspace(Resource):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return WorkspaceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = WorkspaceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
     @classmethod
     def _load(
@@ -189,7 +190,7 @@ class Workspace(Resource):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "Workspace":
         data = data or {}
         params_override = params_override or []
@@ -201,7 +202,7 @@ class Workspace(Resource):
         return Workspace(**loaded_schema)
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspace) -> "Workspace":
+    def _from_rest_object(cls, rest_obj: RestWorkspace) -> Optional["Workspace"]:
         if not rest_obj:
             return None
         customer_managed_key = (

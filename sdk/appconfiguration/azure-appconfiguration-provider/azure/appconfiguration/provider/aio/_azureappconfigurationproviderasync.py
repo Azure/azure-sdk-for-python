@@ -13,7 +13,6 @@ from typing import (
     Awaitable,
     Callable,
     Dict,
-    Iterable,
     Mapping,
     Optional,
     overload,
@@ -21,9 +20,14 @@ from typing import (
     Tuple,
     TYPE_CHECKING,
     Union,
+    Iterator,
+    KeysView,
+    ItemsView,
+    ValuesView,
+    TypeVar,
 )
 
-from azure.appconfiguration import (  # pylint:disable=no-name-in-module
+from azure.appconfiguration import (  # type: ignore # pylint:disable=no-name-in-module
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
 )
@@ -51,7 +55,8 @@ from .._user_agent import USER_AGENT
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
-JSON = Union[str, Mapping[str, Any]]  # pylint: disable=unsubscriptable-object
+JSON = Mapping[str, Any]  # pylint: disable=unsubscriptable-object
+_T = TypeVar("_T")
 
 
 @overload
@@ -61,6 +66,9 @@ async def load(
     *,
     selects: Optional[List[SettingSelector]] = None,
     trim_prefixes: Optional[List[str]] = None,
+    keyvault_credential: Optional["AsyncTokenCredential"] = None,
+    keyvault_client_configs: Optional[Mapping[str, JSON]] = None,
+    secret_resolver: Optional[Callable[[str], str]] = None,
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
     refresh_on: Optional[List[Tuple[str, str]]] = None,
     refresh_interval: int = 30,
@@ -107,6 +115,9 @@ async def load(
     connection_string: str,
     selects: Optional[List[SettingSelector]] = None,
     trim_prefixes: Optional[List[str]] = None,
+    keyvault_credential: Optional["AsyncTokenCredential"] = None,
+    keyvault_client_configs: Optional[Mapping[str, JSON]] = None,
+    secret_resolver: Optional[Callable[[str], str]] = None,
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
     refresh_on: Optional[List[Tuple[str, str]]] = None,
     refresh_interval: int = 30,
@@ -201,8 +212,8 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     for (key, label), etag in provider._refresh_on.items():
         if not etag:
             try:
-                sentinel = await provider._client.get_configuration_setting(key, label, headers=headers)
-                provider._refresh_on[(key, label)] = sentinel.etag
+                sentinel = await provider._client.get_configuration_setting(key, label, headers=headers)  # type: ignore
+                provider._refresh_on[(key, label)] = sentinel.etag  # type: ignore
             except HttpResponseError as e:
                 if e.status_code == 404:
                     # If the sentinel is not found a refresh should be triggered when it is created.
@@ -211,7 +222,7 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
                         key,
                         label,
                     )
-                    provider._refresh_on[(key, label)] = None
+                    provider._refresh_on[(key, label)] = None  # type: ignore
                 else:
                     _delay_failure(start_time)
                     raise e
@@ -243,15 +254,17 @@ def _buildprovider(
             **kwargs
         )
         return provider
-    provider._client = AzureAppConfigurationClient(
-        endpoint,
-        credential,
-        user_agent=user_agent,
-        retry_total=retry_total,
-        retry_backoff_max=retry_backoff_max,
-        **kwargs
-    )
-    return provider
+    if endpoint is not None and credential is not None:
+        provider._client = AzureAppConfigurationClient(
+            endpoint,
+            credential,
+            user_agent=user_agent,
+            retry_total=retry_total,
+            retry_backoff_max=retry_backoff_max,
+            **kwargs
+        )
+        return provider
+    raise ValueError("Please pass either endpoint and credential, or a connection string.")
 
 
 async def _resolve_keyvault_reference(
@@ -284,7 +297,11 @@ async def _resolve_keyvault_reference(
         provider._secret_clients[vault_url] = referenced_client
 
     if referenced_client:
-        return (await referenced_client.get_secret(keyvault_identifier.name, version=keyvault_identifier.version)).value
+        secret_value = (
+            await referenced_client.get_secret(keyvault_identifier.name, version=keyvault_identifier.version)
+        ).value
+        if secret_value is not None:
+            return secret_value
 
     if provider._secret_resolver:
         resolved = provider._secret_resolver(config.secret_id)
@@ -318,10 +335,14 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         self._trim_prefixes = sorted(trim_prefixes, key=len, reverse=True)
 
         refresh_on: List[Tuple[str, str]] = kwargs.pop("refresh_on", None) or []
-        self._refresh_on: Mapping[Tuple[str, str] : Optional[str]] = {_build_sentinel(s): None for s in refresh_on}
+        self._refresh_on: Mapping[Tuple[str, str], Optional[str]] = {
+            _build_sentinel(s): None for s in refresh_on
+        }  # type:ignore
         self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._on_refresh_success: Optional[Callable] = kwargs.pop("on_refresh_success", None)
-        self._on_refresh_error: Optional[Callable[[Exception], None]] = kwargs.pop("on_refresh_error", None)
+        self._on_refresh_error: Optional[Union[Callable[[Exception], Awaitable[None]], None]] = kwargs.pop(
+            "on_refresh_error", None
+        )
         self._keyvault_credential = kwargs.pop("keyvault_credential", None)
         self._secret_resolver = kwargs.pop("secret_resolver", None)
         self._keyvault_client_configs = kwargs.pop("keyvault_client_configs", {})
@@ -350,7 +371,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
             for (key, label), etag in updated_sentinel_keys.items():
                 try:
-                    updated_sentinel = await self._client.get_configuration_setting(
+                    updated_sentinel = await self._client.get_configuration_setting(  # type: ignore
                         key=key,
                         label=label,
                         etag=etag,
@@ -440,14 +461,14 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 return config.value
         return config.value
 
-    def __getitem__(self, key: str) -> str:
+    def __getitem__(self, key: str) -> Any:
         # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         """
         Returns the value of the specified key.
         """
         return self._dict[key]
 
-    def __iter__(self) -> Iterable[str]:
+    def __iter__(self) -> Iterator[str]:
         return self._dict.__iter__()
 
     def __len__(self) -> int:
@@ -460,37 +481,45 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         """
         return self._dict.__contains__(__x)
 
-    def keys(self) -> Iterable[str]:
+    def keys(self) -> KeysView[str]:
         """
         Returns a list of keys loaded from Azure App Configuration.
 
         :return: A list of keys loaded from Azure App Configuration.
-        :rtype: Iterable[str]
+        :rtype: KeysView[str]
         """
-        return list(self._dict.keys())
+        return copy.deepcopy(self._dict).keys()
 
-    def items(self) -> Iterable[Tuple[str, Union[str, JSON]]]:
+    def items(self) -> ItemsView[str, Union[str, Mapping[str, Any]]]:
         """
         Returns a set-like object of key-value pairs loaded from Azure App Configuration. Any values that are Key Vault
          references will be resolved.
 
         :return: A set-like object of key-value pairs loaded from Azure App Configuration.
-        :rtype: Iterable[Tuple[str, Union[str, JSON]]]
+        :rtype: ItemsView[str, Union[str, Mapping[str, Any]]]
         """
-        return copy.deepcopy(self._dict.items())
+        return copy.deepcopy(self._dict).items()
 
-    def values(self) -> Iterable[Union[str, JSON]]:
+    def values(self) -> ValuesView[Union[str, Mapping[str, Any]]]:
         """
         Returns a list of values loaded from Azure App Configuration. Any values that are Key Vault references will be
         resolved.
 
         :return: A list of values loaded from Azure App Configuration. The values are either Strings or JSON objects,
-        based on there content type.
-        :rtype: Iterable[[str], [JSON]]
+         based on there content type.
+        :rtype: ValuesView[Union[str, Mapping[str, Any]]]
         """
-        return copy.deepcopy(list((self._dict.values())))
+        return copy.deepcopy(self._dict).values()
 
-    def get(self, key: str, default: Optional[str] = None) -> Union[str, JSON]:
+    @overload
+    def get(self, key: str, default: None = None) -> Union[str, JSON, None]:
+        ...
+
+    @overload
+    def get(self, key: str, default: Union[str, JSON, _T]) -> Union[str, JSON, _T]:  # pylint: disable=signature-differs
+        ...
+
+    def get(self, key: str, default: Optional[Union[str, JSON, _T]] = None) -> Union[str, JSON, _T, None]:
         """
         Returns the value of the specified key. If the key does not exist, returns the default value.
 
@@ -500,7 +529,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         :return: The value of the specified key.
         :rtype: Union[str, JSON]
         """
-        return copy.deepcopy(self._dict.get(key, default))
+        return copy.deepcopy(self._dict).get(key, default)
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, AzureAppConfigurationProvider):
@@ -522,15 +551,15 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         """
         for client in self._secret_clients.values():
             await client.close()
-        await self._client.close()
+        await self._client.close()  # type: ignore
 
     async def __aenter__(self) -> "AzureAppConfigurationProvider":
-        await self._client.__aenter__()
+        await self._client.__aenter__()  # type: ignore
         for client in self._secret_clients.values():
             await client.__aenter__()
         return self
 
     async def __aexit__(self, *args) -> None:
-        await self._client.__aexit__(*args)
+        await self._client.__aexit__(*args)  # type: ignore
         for client in self._secret_clients.values():
             await client.__aexit__()

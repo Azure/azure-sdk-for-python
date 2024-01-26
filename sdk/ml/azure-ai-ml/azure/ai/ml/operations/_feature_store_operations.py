@@ -113,7 +113,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
     @distributed_trace
     @monitor_with_activity(logger, "FeatureStore.Get", ActivityType.PUBLICAPI)
     # pylint: disable=arguments-renamed
-    def get(self, name: str, **kwargs: Any) -> FeatureStore:
+    def get(self, name: str, **kwargs: Any) -> Optional[FeatureStore]:
         """Get a feature store by name.
 
         :param name: Name of the feature store.
@@ -225,14 +225,15 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         # please don't refer to OFFLINE_STORE_CONNECTION_NAME and
         # ONLINE_STORE_CONNECTION_NAME directly from FeatureStore
         random_string = uuid.uuid4().hex[:8]
-        feature_store._feature_store_settings.offline_store_connection_name = (
-            f"{OFFLINE_STORE_CONNECTION_NAME}-{random_string}"
-        )
-        feature_store._feature_store_settings.online_store_connection_name = (
-            f"{ONLINE_STORE_CONNECTION_NAME}-{random_string}"
-            if feature_store.online_store and feature_store.online_store.target
-            else None
-        )
+        if feature_store._feature_store_settings is not None:
+            feature_store._feature_store_settings.offline_store_connection_name = (
+                f"{OFFLINE_STORE_CONNECTION_NAME}-{random_string}"
+            )
+            feature_store._feature_store_settings.online_store_connection_name = (
+                f"{ONLINE_STORE_CONNECTION_NAME}-{random_string}"
+                if feature_store.online_store and feature_store.online_store.target
+                else None
+            )
 
         def get_callback() -> FeatureStore:
             return self.get(feature_store.name)
@@ -385,7 +386,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             update_online_store_connection = True
             update_online_store_role_assignment = True
 
-        feature_store_settings = FeatureStoreSettings._from_rest_object(rest_workspace_obj.feature_store_settings)
+        feature_store_settings: Any = FeatureStoreSettings._from_rest_object(rest_workspace_obj.feature_store_settings)
 
         # generate a random suffix for online/offline store connection name
         random_string = uuid.uuid4().hex[:8]

@@ -67,4 +67,9 @@ def condition(
             )
             raise UserErrorException(message=error_message, no_personal_data_message=error_message)
         condition = list(condition.outputs.values())[0]
-    return ConditionNode(condition=condition, true_block=true_block, false_block=false_block, _from_component_func=True)
+    return ConditionNode(
+        condition=condition,
+        true_block=true_block,  # type: ignore[arg-type]
+        false_block=false_block,  # type: ignore[arg-type]
+        _from_component_func=True,
+    )
