@@ -626,5 +626,5 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :return: The response of your network call. Does not do error handling on your response.
         :rtype: ~azure.core.rest.HttpResponse
         """
-        request.headers = self._merge_client_headers(request.headers)
+        request.headers = self._merge_client_headers(request.headers) or {}
         return self._client._send_request(request, stream=stream, **kwargs)  # pylint:disable=protected-access
