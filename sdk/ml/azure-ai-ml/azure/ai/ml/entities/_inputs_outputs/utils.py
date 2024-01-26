@@ -10,20 +10,25 @@ from collections import OrderedDict
 from enum import Enum as PyEnum
 from enum import EnumMeta
 from inspect import Parameter, getmro, signature
-from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Type, Union, cast
 
 from typing_extensions import Annotated, Literal, TypeAlias
 
 from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.exceptions import UserErrorException
 
+# avoid circular import error
+if TYPE_CHECKING:
+    from .input import Input
+    from .output import Output
+
 SUPPORTED_RETURN_TYPES_PRIMITIVE = list(IOConstants.PRIMITIVE_TYPE_2_STR.keys())
 
 
-Annotation: TypeAlias = Union[str, Type, Annotated, None]
+Annotation: TypeAlias = Union[str, Type, Annotated, None]  # type: ignore
 
 
-def is_group(obj) -> bool:
+def is_group(obj: object) -> bool:
     """Return True if obj is a group or an instance of a parameter group class.
 
     :param obj: The object to check.
@@ -34,12 +39,14 @@ def is_group(obj) -> bool:
     return hasattr(obj, IOConstants.GROUP_ATTR_NAME)
 
 
-def _get_annotation_by_value(val) -> Union["Input", Type["Input"]]:
+def _get_annotation_by_value(val: Any) -> Union["Input", Type["Input"]]:
     # TODO: we'd better remove this potential recursive import
     from .enum_input import EnumInput
     from .input import Input
 
-    def _is_dataset(data):
+    annotation: Any = None
+
+    def _is_dataset(data: Any) -> bool:
         from azure.ai.ml.entities._job.job_io_mixin import JobIOMixin
 
         DATASET_TYPES = JobIOMixin
@@ -55,11 +62,13 @@ def _get_annotation_by_value(val) -> Union["Input", Type["Input"]]:
         # Handle enum values
         annotation = EnumInput(enum=val.__class__)
     else:
-        annotation = _get_annotation_cls_by_type(type(val), raise_error=False)
-        if not annotation:
+        _new_annotation = _get_annotation_cls_by_type(type(val), raise_error=False)
+        if not _new_annotation:
             # Fall back to default
             annotation = Input._get_default_unknown_input()
-    return annotation
+        else:
+            return _new_annotation
+    return cast(Union["Input", Type["Input"]], annotation)
 
 
 def _get_annotation_cls_by_type(
@@ -94,17 +103,15 @@ def _get_param_with_standard_annotation(
     from .input import Input
     from .output import Output
 
-    def _is_dsl_type_cls(t: type):
+    def _is_dsl_type_cls(t: Any) -> bool:
         if type(t) is not type:  # pylint: disable=unidiomatic-typecheck
             return False
         return issubclass(t, (Input, Output))
 
-    def _is_dsl_types(o: object):
+    def _is_dsl_types(o: object) -> bool:
         return _is_dsl_type_cls(type(o))
 
-    def _get_fields(
-        annotations: Dict[str, Union[Annotation, Input, Output]]
-    ) -> Dict[str, Union[Annotation, Input, Output]]:
+    def _get_fields(annotations: Dict) -> Dict:
         """Return field names to annotations mapping in class.
 
         :param annotations: The annotations
@@ -124,11 +131,12 @@ def _get_param_with_standard_annotation(
                 annotation = EnumInput(type="string", enum=annotation)
             # Handle Group annotation
             if is_group(annotation):
-                annotation: GroupInput = copy.deepcopy(getattr(annotation, IOConstants.GROUP_ATTR_NAME))
+                _deep_copy: GroupInput = copy.deepcopy(getattr(annotation, IOConstants.GROUP_ATTR_NAME))
+                annotation = _deep_copy
             # Try creating annotation by type when got like 'param: int'
             if not _is_dsl_type_cls(annotation) and not _is_dsl_types(annotation):
                 origin_annotation = annotation
-                annotation: Input = _get_annotation_cls_by_type(annotation, raise_error=False)
+                annotation = cast(Input, _get_annotation_cls_by_type(annotation, raise_error=False))
                 if not annotation:
                     msg = f"Unsupported annotation type {origin_annotation!r} for parameter {name!r}."
                     raise UserErrorException(msg)
@@ -170,8 +178,10 @@ def _get_param_with_standard_annotation(
         # Create instance if is type class
         complete_annotation = anno
         if _is_dsl_type_cls(anno):
-            complete_annotation = anno()
-        complete_annotation._port_name = name
+            if anno is not None and not isinstance(anno, (str, Input, Output)):
+                complete_annotation = anno()
+        if complete_annotation is not None and not isinstance(complete_annotation, str):
+            complete_annotation._port_name = name
         if default is Input._EMPTY:
             return complete_annotation
         if isinstance(complete_annotation, Input):
@@ -216,24 +226,6 @@ def _get_param_with_standard_annotation(
             annotation = _update_annotation_with_default(annotation, name, defaults_dict.get(name, Input._EMPTY))
             all_fields[name] = annotation
         return all_fields
-
-    def _get_inherited_fields() -> Dict[str, Union[Annotation, Input, Output]]:
-        """Get all fields inherited from @group decorated base classes.
-
-        :return: The field dict
-        :rtype: Dict[str, Union[Annotation, Input, Output]]
-        """
-        # Return value of _get_param_with_standard_annotation
-        _fields: Dict[str, Union[Annotation, Input, Output]] = OrderedDict({})
-        if is_func:
-            return _fields
-        # In reversed order so that more derived classes
-        # override earlier field definitions in base classes.
-        for base in cls_or_func.__mro__[-1:0:-1]:
-            if is_group(base):
-                # merge and reorder fields from current base with previous
-                _fields = _merge_and_reorder(_fields, copy.deepcopy(getattr(base, IOConstants.GROUP_ATTR_NAME).values))
-        return _fields
 
     def _merge_and_reorder(
         inherited_fields: Dict[str, Union[Annotation, Input, Output]],
@@ -288,11 +280,12 @@ def _get_param_with_standard_annotation(
             _no_defaults_fields, _defaults_fields = {}, {}
             seen_default = False
             for key, val in _fields.items():
-                if val.get("default", None) or seen_default:
-                    seen_default = True
-                    _defaults_fields[key] = val
-                else:
-                    _no_defaults_fields[key] = val
+                if val is not None and not isinstance(val, str):
+                    if val.get("default", None) or seen_default:
+                        seen_default = True
+                        _defaults_fields[key] = val
+                    else:
+                        _no_defaults_fields[key] = val
             return _no_defaults_fields, _defaults_fields
 
         inherited_no_default, inherited_default = _split(inherited_fields)
@@ -314,6 +307,27 @@ def _get_param_with_standard_annotation(
             }
         )
 
+    def _get_inherited_fields() -> Dict[str, Union[Annotation, Input, Output]]:
+        """Get all fields inherited from @group decorated base classes.
+
+        :return: The field dict
+        :rtype: Dict[str, Union[Annotation, Input, Output]]
+        """
+        # Return value of _get_param_with_standard_annotation
+        _fields: Dict[str, Union[Annotation, Input, Output]] = OrderedDict({})
+        if is_func:
+            return _fields
+        # In reversed order so that more derived classes
+        # override earlier field definitions in base classes.
+        if isinstance(cls_or_func, type):
+            for base in cls_or_func.__mro__[-1:0:-1]:
+                if is_group(base):
+                    # merge and reorder fields from current base with previous
+                    _fields = _merge_and_reorder(
+                        _fields, copy.deepcopy(getattr(base, IOConstants.GROUP_ATTR_NAME).values)
+                    )
+        return _fields
+
     skip_params = skip_params or []
     inherited_fields = _get_inherited_fields()
     # From annotations get field with type
@@ -321,15 +335,16 @@ def _get_param_with_standard_annotation(
     annotations = {k: v for k, v in annotations.items() if k not in skip_params}
     annotations = _update_io_from_mldesigner(annotations)
     annotation_fields = _get_fields(annotations)
+    defaults_dict: Dict[str, Any] = {}
     # Update fields use class field with defaults from class dict or signature(func).paramters
     if not is_func:
         # Only consider public fields in class dict
-        defaults_dict: Dict[str, Any] = {
+        defaults_dict = {
             key: val for key, val in cls_or_func.__dict__.items() if not key.startswith("_") and key not in skip_params
         }
     else:
         # Infer parameter type from value if is function
-        defaults_dict: Dict[str, Any] = {
+        defaults_dict = {
             key: val.default
             for key, val in signature(cls_or_func).parameters.items()
             if key not in skip_params and val.kind != val.VAR_KEYWORD
@@ -374,7 +389,7 @@ def _update_io_from_mldesigner(annotations: Dict[str, Annotation]) -> Dict[str, 
         """
         return any(io.__module__.startswith(mldesigner_pkg) and item.__name__ == param_name for item in getmro(io))
 
-    def _is_input_or_output_type(io: type, type_str: Literal["Input", "Output", "Meta"]):
+    def _is_input_or_output_type(io: type, type_str: Literal["Input", "Output", "Meta"]) -> bool:
         """Checks whether a type is an Input or Output type
 
         :param io: A type
@@ -390,7 +405,7 @@ def _update_io_from_mldesigner(annotations: Dict[str, Annotation]) -> Dict[str, 
         return False
 
     result = {}
-    for key, io in annotations.items():
+    for key, io in annotations.items():  # pylint: disable=too-many-nested-blocks
         if isinstance(io, type):
             if _is_input_or_output_type(io, "Input"):
                 # mldesigner.Input -> entities.Input
@@ -399,24 +414,28 @@ def _update_io_from_mldesigner(annotations: Dict[str, Annotation]) -> Dict[str, 
                 # mldesigner.Output -> entities.Output
                 io = Output
             elif _is_primitive_type(io):
-                io = Output(type=io.TYPE_NAME) if key == return_annotation_key else Input(type=io.TYPE_NAME)
+                if not isinstance(io, type):
+                    io = Output(type=io.TYPE_NAME) if key == return_annotation_key else Input(type=io.TYPE_NAME)
         elif hasattr(io, "_to_io_entity_args_dict"):
             try:
                 if _is_input_or_output_type(type(io), "Input"):
                     # mldesigner.Input() -> entities.Input()
-                    io = Input(**io._to_io_entity_args_dict())
+                    if io is not None:
+                        io = Input(**io._to_io_entity_args_dict())
                 elif _is_input_or_output_type(type(io), "Output"):
                     # mldesigner.Output() -> entities.Output()
-                    io = Output(**io._to_io_entity_args_dict())
+                    if io is not None:
+                        io = Output(**io._to_io_entity_args_dict())
                 elif _is_primitive_type(type(io)):
-                    if io._is_enum():
-                        io = EnumInput(**io._to_io_entity_args_dict())
-                    else:
-                        io = (
-                            Output(**io._to_io_entity_args_dict())
-                            if key == return_annotation_key
-                            else Input(**io._to_io_entity_args_dict())
-                        )
+                    if io is not None and not isinstance(io, str):
+                        if io._is_enum():
+                            io = EnumInput(**io._to_io_entity_args_dict())
+                        else:
+                            io = (
+                                Output(**io._to_io_entity_args_dict())
+                                if key == return_annotation_key
+                                else Input(**io._to_io_entity_args_dict())
+                            )
             except BaseException as e:
                 raise UserErrorException(f"Failed to parse {io} to azure-ai-ml Input/Output: {str(e)}") from e
                 # Handle Annotated annotation
@@ -443,10 +462,7 @@ def _update_io_from_mldesigner(annotations: Dict[str, Annotation]) -> Dict[str, 
     return result
 
 
-T = TypeVar("T")
-
-
-def _remove_empty_values(data: T) -> T:
+def _remove_empty_values(data: Any) -> Any:
     """Recursively removes None values from a dict
 
     :param data: The value to remove None from

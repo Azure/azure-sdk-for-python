@@ -8,7 +8,9 @@
 
 from ._models_py3 import ElasticSan
 from ._models_py3 import ElasticSanList
+from ._models_py3 import ElasticSanProperties
 from ._models_py3 import ElasticSanUpdate
+from ._models_py3 import ElasticSanUpdateProperties
 from ._models_py3 import EncryptionIdentity
 from ._models_py3 import EncryptionProperties
 from ._models_py3 import ErrorAdditionalInfo
@@ -25,8 +27,10 @@ from ._models_py3 import OperationListResult
 from ._models_py3 import PrivateEndpoint
 from ._models_py3 import PrivateEndpointConnection
 from ._models_py3 import PrivateEndpointConnectionListResult
+from ._models_py3 import PrivateEndpointConnectionProperties
 from ._models_py3 import PrivateLinkResource
 from ._models_py3 import PrivateLinkResourceListResult
+from ._models_py3 import PrivateLinkResourceProperties
 from ._models_py3 import PrivateLinkServiceConnectionState
 from ._models_py3 import ProxyResource
 from ._models_py3 import Resource
@@ -38,6 +42,7 @@ from ._models_py3 import SkuLocationInfo
 from ._models_py3 import Snapshot
 from ._models_py3 import SnapshotCreationData
 from ._models_py3 import SnapshotList
+from ._models_py3 import SnapshotProperties
 from ._models_py3 import SourceCreationData
 from ._models_py3 import SystemData
 from ._models_py3 import TrackedResource
@@ -46,9 +51,13 @@ from ._models_py3 import VirtualNetworkRule
 from ._models_py3 import Volume
 from ._models_py3 import VolumeGroup
 from ._models_py3 import VolumeGroupList
+from ._models_py3 import VolumeGroupProperties
 from ._models_py3 import VolumeGroupUpdate
+from ._models_py3 import VolumeGroupUpdateProperties
 from ._models_py3 import VolumeList
+from ._models_py3 import VolumeProperties
 from ._models_py3 import VolumeUpdate
+from ._models_py3 import VolumeUpdateProperties
 
 from ._elastic_san_mgmt_client_enums import Action
 from ._elastic_san_mgmt_client_enums import ActionType
@@ -73,7 +82,9 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "ElasticSan",
     "ElasticSanList",
+    "ElasticSanProperties",
     "ElasticSanUpdate",
+    "ElasticSanUpdateProperties",
     "EncryptionIdentity",
     "EncryptionProperties",
     "ErrorAdditionalInfo",
@@ -90,8 +101,10 @@ __all__ = [
     "PrivateEndpoint",
     "PrivateEndpointConnection",
     "PrivateEndpointConnectionListResult",
+    "PrivateEndpointConnectionProperties",
     "PrivateLinkResource",
     "PrivateLinkResourceListResult",
+    "PrivateLinkResourceProperties",
     "PrivateLinkServiceConnectionState",
     "ProxyResource",
     "Resource",
@@ -103,6 +116,7 @@ __all__ = [
     "Snapshot",
     "SnapshotCreationData",
     "SnapshotList",
+    "SnapshotProperties",
     "SourceCreationData",
     "SystemData",
     "TrackedResource",
@@ -111,9 +125,13 @@ __all__ = [
     "Volume",
     "VolumeGroup",
     "VolumeGroupList",
+    "VolumeGroupProperties",
     "VolumeGroupUpdate",
+    "VolumeGroupUpdateProperties",
     "VolumeList",
+    "VolumeProperties",
     "VolumeUpdate",
+    "VolumeUpdateProperties",
     "Action",
     "ActionType",
     "CreatedByType",
