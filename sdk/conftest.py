@@ -26,6 +26,7 @@
 import os
 import pytest
 
+from devtools_testutils import environment_variables, recorded_test, test_proxy, variable_recorder
 
 def pytest_configure(config):
     # register an additional marker
