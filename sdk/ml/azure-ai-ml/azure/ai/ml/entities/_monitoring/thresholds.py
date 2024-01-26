@@ -593,43 +593,84 @@ class FeatureAttributionDriftMetricThreshold(MetricThreshold):
 
 
 @experimental
+class ModelPerformanceClassificationThresholds:
+    def __init__(
+        self,
+        *,
+        accuracy: Optional[float] = None,
+        precision: Optional[float] = None,
+        recall: Optional[float] = None,
+    ):
+        self.accuracy = accuracy
+        self.precision = precision
+        self.recall = recall
+
+    def _to_str_object(self, **kwargs) -> str:
+        thresholds = []
+        if self.accuracy:
+            thresholds.append("{\"modelType\":\"classification\",\"metric\":\"Accuracy\",\"threshold\":{\"value\":" + f"{self.accuracy}" + "}}")
+        if self.precision:
+            thresholds.append("{\"modelType\":\"classification\",\"metric\":\"Precision\",\"threshold\":{\"value\":" + f"{self.precision}" + "}}")
+        if self.recall:
+            thresholds.append("{\"modelType\":\"classification\",\"metric\":\"Recall\",\"threshold\":{\"value\":" + f"{self.recall}" + "}}")
+
+        if not thresholds:
+            return None
+
+        return ", ".join(thresholds)
+
+
+@experimental
+class ModelPerformanceRegressionThresholds:
+    def __init__(
+        self,
+        *,
+        mae: Optional[float] = None,
+        mse: Optional[float] = None,
+        rmse: Optional[float] = None,
+    ):
+        self.mae = mae
+        self.mse = mse
+        self.rmse = rmse
+
+    def _to_str_object(self, **kwargs) -> str:
+        thresholds = []
+        if self.mae:
+            thresholds.append("{\"modelType\":\"regression\",\"metric\":\"MeanAbsoluteError\",\"threshold\":{\"value\":" + f"{self.mae}" + "}}")
+        if self.mse:
+            thresholds.append("{\"modelType\":\"regression\",\"metric\":\"MeanSquaredError\",\"threshold\":{\"value\":" + f"{self.mse}" + "}}")
+        if self.rmse:
+            thresholds.append("{\"modelType\":\"regression\",\"metric\":\"RootMeanSquaredError\",\"threshold\":{\"value\":" + f"{self.rmse}" + "}}")
+
+        if not thresholds:
+            return None
+
+        return ", ".join(thresholds)
+
+
+@experimental
 class ModelPerformanceMetricThreshold(MetricThreshold):
     def __init__(
         self,
         *,
-        metric_name: Literal[
-            MonitorMetricName.ACCURACY,
-            MonitorMetricName.PRECISION,
-            MonitorMetricName.RECALL,
-            MonitorMetricName.F1_SCORE,
-            MonitorMetricName.MAE,
-            MonitorMetricName.MSE,
-            MonitorMetricName.RMSE,
-        ],
-        threshold: float = None,
+        classification: Optional[ModelPerformanceClassificationThresholds] = None,
+        regression: Optional[ModelPerformanceRegressionThresholds] = None,
     ):
-        super().__init__(threshold=threshold)
-        self.metric_name = metric_name
+        self.classification = classification
+        self.regression = regression
+
+    def _to_str_object(self, **kwargs) -> str:
+        thresholds = []
+        if self.classification:
+            thresholds.append(self.classification._to_str_object(**kwargs))
+        if self.regression:
+            thresholds.append(self.regression._to_str_object(**kwargs))
 
     def _to_rest_object(self, **kwargs) -> ModelPerformanceMetricThresholdBase:
-        model_type = kwargs.get("model_type")
-        if self.metric_name.lower() == MonitorMetricName.MAE.lower():
-            metric = RegressionModelPerformanceMetric.MEAN_ABSOLUTE_ERROR
-        elif self.metric_name.lower() == MonitorMetricName.MSE.lower():
-            metric = RegressionModelPerformanceMetric.MEAN_SQUARED_ERROR
-        elif self.metric_name.lower() == MonitorMetricName.RMSE.lower():
-            metric = RegressionModelPerformanceMetric.ROOT_MEAN_SQUARED_ERROR
-        else:
-            metric = snake_to_camel(self.metric_name)
-        threshold = MonitoringThreshold(value=self.threshold) if self.threshold is not None else None
+        threshold = MonitoringThreshold(value=0.9)
         return (
-            RegressionModelPerformanceMetricThreshold(
-                metric=metric,
-                threshold=threshold,
-            )
-            if model_type.lower() == MonitorModelType.REGRESSION.lower()
-            else ClassificationModelPerformanceMetricThreshold(
-                metric=metric,
+            ClassificationModelPerformanceMetricThreshold(
+                metric="Accuracy",
                 threshold=threshold,
             )
         )

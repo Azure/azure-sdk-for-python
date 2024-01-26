@@ -112,18 +112,33 @@ class FeatureAttributionDriftMetricThresholdSchema(MetricThresholdSchema):
         return FeatureAttributionDriftMetricThreshold(**data)
 
 
+class ModelPerformanceClassificationThresholdsSchema(metaclass=PatchedSchemaMeta):
+    accuracy = fields.Number()
+    precision = fields.Number()
+    recall = fields.Number()
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities._monitoring.thresholds import ModelPerformanceClassificationThresholds
+
+        return ModelPerformanceClassificationThresholds(**data)
+
+
+class ModelPerformanceRegressionThresholdsSchema(metaclass=PatchedSchemaMeta):
+    mae = fields.Number()
+    mse = fields.Number()
+    rmse = fields.Number()
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities._monitoring.thresholds import ModelPerformanceRegressionThresholds
+
+        return ModelPerformanceRegressionThresholds(**data)
+
+
 class ModelPerformanceMetricThresholdSchema(MetricThresholdSchema):
-    metric_name = StringTransformedEnum(
-        allowed_values=[
-            MonitorMetricName.ACCURACY,
-            MonitorMetricName.PRECISION,
-            MonitorMetricName.RECALL,
-            MonitorMetricName.F1_SCORE,
-            MonitorMetricName.MAE,
-            MonitorMetricName.MSE,
-            MonitorMetricName.RMSE,
-        ]
-    )
+    classification = NestedField(ModelPerformanceClassificationThresholdsSchema)
+    regression = NestedField(ModelPerformanceRegressionThresholdsSchema)
 
     @post_load
     def make(self, data, **kwargs):
