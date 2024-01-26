@@ -1439,12 +1439,19 @@ class JobOperations(_ScopeDependentOperations):
         :return: The provided SweepJob, with resolved fields
         :rtype: SweepJob
         """
-        if job.trial.code is not None and not is_ARM_id_for_resource(job.trial.code, AzureMLResourceType.CODE):
-            job.trial.code = resolver(
+        if (
+            job.trial is not None
+            and job.trial.code is not None
+            and not is_ARM_id_for_resource(job.trial.code, AzureMLResourceType.CODE)
+        ):
+            job.trial.code = resolver(  # type: ignore[assignment]
                 Code(base_path=job._base_path, path=job.trial.code),
                 azureml_type=AzureMLResourceType.CODE,
             )
-        job.trial.environment = resolver(job.trial.environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
+        if job.trial is not None:
+            job.trial.environment = resolver(  # type: ignore[assignment]
+                job.trial.environment, azureml_type=AzureMLResourceType.ENVIRONMENT
+            )
         job.compute = self._resolve_compute_id(resolver, job.compute)
         return job
 
