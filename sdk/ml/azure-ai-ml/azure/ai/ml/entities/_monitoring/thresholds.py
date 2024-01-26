@@ -689,35 +689,11 @@ class ModelPerformanceMetricThreshold(MetricThreshold):
             result = "[" + thresholds[0] + "]"
         return result
 
-<<<<<<< HEAD
     def _to_rest_object(self, **kwargs) -> ModelPerformanceMetricThresholdBase:
         threshold = MonitoringThreshold(value=0.9)
         return (
             ClassificationModelPerformanceMetricThreshold(
                 metric="Accuracy",
-=======
-    def _to_rest_object(self, **kwargs: Any) -> ModelPerformanceMetricThresholdBase:
-        model_type = kwargs.get("model_type")
-        metric = ""
-        if self.metric_name is not None:
-            if self.metric_name.lower() == MonitorMetricName.MAE.lower():
-                metric = RegressionModelPerformanceMetric.MEAN_ABSOLUTE_ERROR
-            elif self.metric_name.lower() == MonitorMetricName.MSE.lower():
-                metric = RegressionModelPerformanceMetric.MEAN_SQUARED_ERROR
-            elif self.metric_name.lower() == MonitorMetricName.RMSE.lower():
-                metric = RegressionModelPerformanceMetric.ROOT_MEAN_SQUARED_ERROR
-            else:
-                metric = snake_to_camel(self.metric_name)
-        threshold = MonitoringThreshold(value=self.threshold) if self.threshold is not None else None
-        return (
-            RegressionModelPerformanceMetricThreshold(
-                metric=metric,
-                threshold=threshold,
-            )
-            if model_type is not None and model_type.lower() == MonitorModelType.REGRESSION.lower()
-            else ClassificationModelPerformanceMetricThreshold(
-                metric=metric,
->>>>>>> main
                 threshold=threshold,
             )
         )
