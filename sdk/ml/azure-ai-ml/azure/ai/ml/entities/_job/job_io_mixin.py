@@ -3,19 +3,18 @@
 # ---------------------------------------------------------
 
 
-from typing import Dict, Union
+from typing import Dict, Optional
 
-from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import build_input_output
 
 
 class JobIOMixin:
     @property
-    def inputs(self) -> Dict[str, Union[Input, str, bool, int, float]]:
+    def inputs(self) -> Optional[Dict]:
         return self._inputs
 
     @inputs.setter
-    def inputs(self, value: Dict[str, Union[Input, str, bool, int, float]]):
+    def inputs(self, value: Dict) -> None:
         self._inputs = {}
         if not value:
             return
@@ -24,11 +23,11 @@ class JobIOMixin:
             self._inputs[input_name] = build_input_output(input_value)
 
     @property
-    def outputs(self) -> Dict[str, Output]:
+    def outputs(self) -> Optional[Dict]:
         return self._outputs
 
     @outputs.setter
-    def outputs(self, value: Dict[str, Output]):
+    def outputs(self, value: Dict) -> None:
         self._outputs = {}
         if not value:
             return
