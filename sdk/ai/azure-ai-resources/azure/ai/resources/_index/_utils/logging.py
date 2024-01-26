@@ -7,8 +7,9 @@ import logging
 import sys
 from contextlib import contextmanager, suppress
 from functools import lru_cache
+from typing import Optional
 
-import pkg_resources
+import pkg_resources  # type: ignore[import]
 
 COMPONENT_NAME = "azure.ai.resources._index"
 instrumentation_key = ""
@@ -52,10 +53,10 @@ except Exception:
 
     _ClientSessionId = str(uuid4())
 
-    verbosity = None
+    verbosity = 0
     telemetry_enabled = False
 
-    class ActivityLoggerAdapter(logging.LoggerAdapter):
+    class ActivityLoggerAdapter(logging.LoggerAdapter):  # type: ignore[no-redef]
         """Make logger look like Activity Logger."""
 
         def __init__(self, logger, activity_info):
@@ -188,7 +189,7 @@ class LoggerFactory:
                 activity_logger.error(message)
 
     @staticmethod
-    def get_stack(limit=3, start=1) -> str:
+    def get_stack(limit=3, start=1) -> Optional[str]:
         """Get the stack trace as a string."""
         try:
             stack = inspect.stack()

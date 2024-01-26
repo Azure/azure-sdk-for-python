@@ -2,11 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict, Iterable
-from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningServices as ServiceClient082023Preview
+from typing import Any, Dict, Iterable, Optional
+
+from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
 from azure.ai.ml._restclient.v2023_08_01_preview.models import OutboundRuleBasicResource
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
-
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._workspace.networking import OutboundRule
@@ -43,7 +43,7 @@ class WorkspaceOutboundRuleOperations:
         self._init_kwargs = kwargs
 
     @monitor_with_activity(logger, "WorkspaceOutboundRule.Get", ActivityType.PUBLICAPI)
-    def get(self, workspace_name: str, outbound_rule_name: str, **kwargs) -> OutboundRule:
+    def get(self, workspace_name: str, outbound_rule_name: str, **kwargs: Any) -> OutboundRule:
         """Get a workspace OutboundRule by name.
 
         :param workspace_name: Name of the workspace.
@@ -67,10 +67,12 @@ class WorkspaceOutboundRuleOperations:
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
         obj = self._rule_operation.get(resource_group, workspace_name, outbound_rule_name)
-        return OutboundRule._from_rest_object(obj.properties, name=obj.name)  # pylint: disable=protected-access
+        # pylint: disable=protected-access
+        res: OutboundRule = OutboundRule._from_rest_object(obj.properties, name=obj.name)  # type: ignore
+        return res
 
     @monitor_with_activity(logger, "WorkspaceOutboundRule.BeginCreate", ActivityType.PUBLICAPI)
-    def begin_create(self, workspace_name: str, rule: OutboundRule, **kwargs) -> LROPoller[OutboundRule]:
+    def begin_create(self, workspace_name: str, rule: OutboundRule, **kwargs: Any) -> LROPoller[OutboundRule]:
         """Create a Workspace OutboundRule.
 
         :param workspace_name: Name of the workspace.
@@ -88,16 +90,17 @@ class WorkspaceOutboundRuleOperations:
                 :language: python
                 :dedent: 8
                 :caption: Create an FQDN outbound rule for a workspace with the given name,
-                similar can be done for PrivateEndpointDestination or ServiceTagDestination.
+                    similar can be done for PrivateEndpointDestination or ServiceTagDestination.
         """
 
         workspace_name = self._check_workspace_name(workspace_name)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
-        rule_params = OutboundRuleBasicResource(properties=rule._to_rest_object())  # pylint: disable=protected-access
+        # pylint: disable=protected-access
+        rule_params = OutboundRuleBasicResource(properties=rule._to_rest_object())  # type: ignore
 
         # pylint: disable=unused-argument, docstring-missing-param
-        def callback(_, deserialized, args):
+        def callback(_: Any, deserialized: Any, args: Any) -> Optional[OutboundRule]:
             """Callback to be called after completion
 
             :return: Outbound rule deserialized.
@@ -114,7 +117,7 @@ class WorkspaceOutboundRuleOperations:
         return poller
 
     @monitor_with_activity(logger, "WorkspaceOutboundRule.BeginUpdate", ActivityType.PUBLICAPI)
-    def begin_update(self, workspace_name: str, rule: OutboundRule, **kwargs) -> LROPoller[OutboundRule]:
+    def begin_update(self, workspace_name: str, rule: OutboundRule, **kwargs: Any) -> LROPoller[OutboundRule]:
         """Update a Workspace OutboundRule.
 
         :param workspace_name: Name of the workspace.
@@ -132,16 +135,17 @@ class WorkspaceOutboundRuleOperations:
                 :language: python
                 :dedent: 8
                 :caption: Update an FQDN outbound rule for a workspace with the given name,
-                similar can be done for PrivateEndpointDestination or ServiceTagDestination.
+                    similar can be done for PrivateEndpointDestination or ServiceTagDestination.
         """
 
         workspace_name = self._check_workspace_name(workspace_name)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
-        rule_params = OutboundRuleBasicResource(properties=rule._to_rest_object())  # pylint: disable=protected-access
+        # pylint: disable=protected-access
+        rule_params = OutboundRuleBasicResource(properties=rule._to_rest_object())  # type: ignore
 
         # pylint: disable=unused-argument, docstring-missing-param
-        def callback(_, deserialized, args):
+        def callback(_: Any, deserialized: Any, args: Any) -> Optional[OutboundRule]:
             """Callback to be called after completion
 
             :return: Outbound rule deserialized.
@@ -158,7 +162,7 @@ class WorkspaceOutboundRuleOperations:
         return poller
 
     @monitor_with_activity(logger, "WorkspaceOutboundRule.List", ActivityType.PUBLICAPI)
-    def list(self, workspace_name: str, **kwargs) -> Iterable[OutboundRule]:
+    def list(self, workspace_name: str, **kwargs: Any) -> Iterable[OutboundRule]:
         """List Workspace OutboundRules.
 
         :param workspace_name: Name of the workspace.
@@ -185,10 +189,10 @@ class WorkspaceOutboundRuleOperations:
             OutboundRule._from_rest_object(rest_obj=obj.properties, name=obj.name)  # pylint: disable=protected-access
             for obj in rest_rules
         ]
-        return result
+        return result  # type: ignore
 
     @monitor_with_activity(logger, "WorkspaceOutboundRule.Remove", ActivityType.PUBLICAPI)
-    def begin_remove(self, workspace_name: str, outbound_rule_name: str, **kwargs) -> LROPoller[None]:
+    def begin_remove(self, workspace_name: str, outbound_rule_name: str, **kwargs: Any) -> LROPoller[None]:
         """Remove a Workspace OutboundRule.
 
         :param workspace_name: Name of the workspace.
@@ -219,7 +223,7 @@ class WorkspaceOutboundRuleOperations:
         module_logger.info("Delete request initiated for outbound rule: %s\n", outbound_rule_name)
         return poller
 
-    def _check_workspace_name(self, name) -> str:
+    def _check_workspace_name(self, name: str) -> str:
         """Validates that a workspace name exists.
 
         :param name: Name for a workspace resource.

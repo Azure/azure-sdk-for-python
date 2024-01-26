@@ -222,10 +222,10 @@ class EventHubProducerClient(
                     "'max_buffer_length' must be an integer greater than 0 in buffered mode"
                 )
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "EventHubProducerClient":
         return self
 
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *args: Any) -> None:
         await self.close()
 
     async def _buffered_send(self, events, **kwargs):

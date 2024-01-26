@@ -10,6 +10,7 @@ import logging
 import platform
 import traceback
 import os
+from typing import Optional
 
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 from opencensus.ext.azure.common import utils
@@ -21,9 +22,7 @@ from opencensus.ext.azure.common.protocol import (
 )
 from opencensus.trace import config_integration
 
-from azureml.telemetry import INSTRUMENTATION_KEY
-
-from azure.ai.ml._telemetry.logging_handler import in_jupyter_notebook, CustomDimensionsFilter
+from azure.ai.ml._telemetry.logging_handler import in_jupyter_notebook, CustomDimensionsFilter, INSTRUMENTATION_KEY
 from azure.ai.resources._version import VERSION
 
 
@@ -50,9 +49,9 @@ class ActivityLogger:
         self.package_logger: logging.Logger = logging.getLogger(AI_RESOURCES_INTERNAL_LOGGER_NAMESPACE + name)
         self.package_logger.propagate = False
         self.module_logger = logging.getLogger(name)
-        self.custom_dimensions = {}
+        self.custom_dimensions: dict = {}
 
-    def update_info(self, data: dict = None) -> None:
+    def update_info(self, data: Optional[dict] = None) -> None:
         if data and "app_insights_handler" in data:
             handler = data.pop("app_insights_handler")
         else:
@@ -157,8 +156,8 @@ class AzureGenAILogHandler(AzureLogHandler):
             "process": record.processName,
             "module": record.module,
             "level": record.levelname,
-            "operation_id": envelope.tags["gen.ai.operation.id"],
-            "operation_parent_id": envelope.tags["gen.ai.operation.parentId"],
+            "operation_id": envelope.tags.get("ai.resources.operation.id"),
+            "operation_parent_id": envelope.tags.get("ai.resources.operation.parentId"),
         }
         if hasattr(record, "custom_dimensions") and isinstance(record.custom_dimensions, dict):
             properties.update(record.custom_dimensions)
@@ -222,14 +221,11 @@ def create_envelope(instrumentation_key, record):
         tags=dict(utils.azure_monitor_context),
         time=utils.timestamp_to_iso_str(record.created),
     )
-    envelope.tags["gen.ai.operation.id"] = getattr(
+    envelope.tags["ai.resources.operation.id"] = getattr(
         record,
         "traceId",
         "00000000000000000000000000000000",
     )
-    envelope.tags["gen.ai.operation.parentId"] = "|{}.{}.".format(
-        envelope.tags["gen.ai.operation.id"],
-        getattr(record, "spanId", "0000000000000000"),
-    )
+    envelope.tags["ai.resources.operation.parentId"] = f"|{envelope.tags.get('ai.resources.operation.id')}.{getattr(record, 'spanId', '0000000000000000')}"
 
     return envelope

@@ -82,7 +82,7 @@ class AccountPreparer(AzureMgmtPreparer):
             storage = self._get_storage_account(**kwargs)
             if storage:
                 storage_resource = '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Storage/storageAccounts/{}'.format(
-                    self.test_class_instance.settings.SUBSCRIPTION_ID,
+                    self.test_class_instance.settings.get("AZURE_SUBSCRIPTION_ID"),
                     group.name,
                     storage.name
                 )
@@ -101,10 +101,6 @@ class AccountPreparer(AzureMgmtPreparer):
                 keys.primary)
             if storage:
                 self._add_app_package(group.name, name)
-            self.test_class_instance.scrubber.register_name_pair(
-                name,
-                self.resource_moniker
-            )
         else:
             # If using pilotprod, need to prefix the region with the environment.
             # IE: myaccount.pilotprod1.eastus.batch.azure.com

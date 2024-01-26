@@ -16,7 +16,7 @@ class ConversationBot:
     def __init__(
         self,
         role: ConversationRole,
-        model: LLMBase,
+        model: Union[LLMBase, OpenAIChatCompletionsModel],
         conversation_template: str,
         instantiation_parameters: Dict[str, str],
     ):
@@ -34,7 +34,7 @@ class ConversationBot:
                     the first turn will be generated using the LLM
         """
         if role == ConversationRole.USER and type(model) == LLAMAChatCompletionsModel:
-            self.logger.info("We suggest using LLaMa chat model to simulate assistant not to simulate user")
+            self.logger.info("We suggest using LLaMa chat model to simulate assistant not to simulate user")  # type: ignore[has-type]
 
 
         self.role = role
@@ -60,7 +60,7 @@ class ConversationBot:
                 self.conversation_starter = self.persona_template_args["conversation_starter"]
             else:
                 self.logger.info('This simulated bot will generate the first turn as no conversation starter is provided')
-                self.conversation_starter = None
+                self.conversation_starter = ""
 
 
     async def generate_response(

@@ -15,6 +15,8 @@ class TestDallEAsync(AzureRecordedTestCase):
     @pytest.mark.parametrize("api_type", ALL)
     @configure_v0_async
     async def test_image_create(self, set_vars, azure_openai_creds, api_type):
+        if api_type != OPENAI:
+            openai.api_version = "2023-10-01-preview"  # not supported by later versions
         image = await openai.Image.acreate(
             prompt="a cute baby seal"
         )
@@ -26,6 +28,8 @@ class TestDallEAsync(AzureRecordedTestCase):
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure_v0_async
     async def test_image_create_n(self, set_vars, azure_openai_creds, api_type):
+        if api_type != OPENAI:
+            openai.api_version = "2023-10-01-preview"  # not supported by later versions
         image = await openai.Image.acreate(
             prompt="a cute baby seal",
             n=2
@@ -39,6 +43,8 @@ class TestDallEAsync(AzureRecordedTestCase):
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure_v0_async
     async def test_image_create_size(self, set_vars, azure_openai_creds, api_type):
+        if api_type != OPENAI:
+            openai.api_version = "2023-10-01-preview"  # not supported by later versions
         image = await openai.Image.acreate(
             prompt="a cute baby seal",
             size="256x256"
@@ -63,6 +69,8 @@ class TestDallEAsync(AzureRecordedTestCase):
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure_v0_async
     async def test_image_create_user(self, set_vars, azure_openai_creds, api_type):
+        if api_type != OPENAI:
+            openai.api_version = "2023-10-01-preview"  # not supported by later versions
         image = await openai.Image.acreate(
             prompt="a cute baby seal",
             user="krista"

@@ -139,6 +139,8 @@ class EventHubConsumer(
         self._last_received_event: Optional[EventData] = None
         self._receive_start_time: Optional[float] = None
 
+        super(EventHubConsumer, self).__init__()
+
     def _create_handler(self, auth: Union[uamqp_JWTTokenAuth, JWTTokenAuth]) -> None:
         source = self._amqp_transport.create_source(
             self._source,

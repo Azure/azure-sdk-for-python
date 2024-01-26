@@ -239,10 +239,10 @@ class EventHubProducerClient(
                     "'buffer_concurrency' must be an integer greater than 0 in buffered mode"
                 )
 
-    def __enter__(self):
+    def __enter__(self) -> "EventHubProducerClient":
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self.close()
 
     def _buffered_send(self, events, **kwargs):

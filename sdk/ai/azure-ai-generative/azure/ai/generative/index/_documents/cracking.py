@@ -27,10 +27,11 @@ def files_to_document_source(
     """Convert files to DocumentSource."""
     file_source_path = Path(files_source)
     if file_source_path.is_file():
+        url: str = base_url  # type: ignore[assignment]
         yield DocumentSource(
             path=file_source_path,
             filename=file_source_path.name,
-            url=base_url,
+            url=url,
             mtime=file_source_path.stat().st_mtime
         )
         return
@@ -43,6 +44,7 @@ def files_to_document_source(
             url = f"{base_url}/{relative_path}"
         if process_url:
             url = process_url(url)
+
         yield DocumentSource(
             path=file,
             filename=str(relative_path),
@@ -122,15 +124,17 @@ class TextFileIOLoader(BaseDocumentLoader):
 class UnstructuredHTMLFileIOLoader(UnstructuredFileIOLoader, BaseDocumentLoader):
     """Loader that uses unstructured to load HTML files."""
 
-    def __init__(self, file, document_source: DocumentSource, metadata: dict, mode="single", **unstructured_kwargs: Any):
+    def __init__(self, file: IO, document_source: DocumentSource, metadata: dict, mode="single", **unstructured_kwargs: Any):
         """Initialize a text file loader."""
         self.metadata = metadata
         self.document_source = document_source
-        super().__init__(file=file, mode=mode, **unstructured_kwargs)
+        super().__init__(file=file, mode=mode, **unstructured_kwargs)  # type: ignore[call-arg]
+        # TODO: Bug 2878420
 
     def load(self) -> List[Document]:
         """Load file contents into Documents."""
-        docs = super().load()
+        docs = super().load()  # type: ignore[safe-super]
+        # TODO: Bug 2878421
         # TODO: Extract html file title and add to metadata
         return [StaticDocument(data=doc.page_content, metadata=doc.metadata) for doc in docs]
 
@@ -171,7 +175,7 @@ class PDFFileLoader(BaseDocumentLoader):
             from pypdf import PdfReader
         except Exception:
             try:
-                from PyPDF2 import PdfReader
+                from PyPDF2 import PdfReader  # type: ignore[no-redef]
             except Exception as e:
                 raise RuntimeError("Unable to import pypdf or PyPDF2.") from e
 
@@ -252,7 +256,7 @@ def extract_text_document_title(text: str, file_name: str) -> Tuple[str, str]:
             title = heading_0.group(0).strip()
             return title, title[2:]
 
-        import markdown
+        import markdown  # type: ignore[import]
         from bs4 import BeautifulSoup
         html_content = markdown.markdown(text)
         soup = BeautifulSoup(html_content, "html.parser")
@@ -332,22 +336,23 @@ SUPPORTED_EXTENSIONS = list(file_extension_loaders.keys())
 
 def crack_documents(sources: Iterator[DocumentSource], file_extension_loaders=file_extension_loaders) -> Iterator[ChunkedDocument]:
     """Crack documents into chunks."""
-    total_time = 0
+    total_time: float = 0.0
     files_by_extension = {
         str(ext): 0.0 for ext in file_extension_loaders
     }
     log_batch_size = 100
     for i, source in enumerate(sources):
         file_start_time = time.time()
-        files_by_extension[source.path.suffix.lower()] += 1
-        loader_cls = file_extension_loaders.get(source.path.suffix.lower())
+        # TODO: Bug 2878422 for all type: ignore in this method
+        files_by_extension[source.path.suffix.lower()] += 1  # type: ignore[union-attr]
+        loader_cls = file_extension_loaders.get(source.path.suffix.lower())  # type: ignore[union-attr]
         if i % log_batch_size == 0:
             for ext in files_by_extension:
                 if files_by_extension[ext] > 0:
                     safe_mlflow_log_metric(ext, files_by_extension[ext], logger=logger, step=int(time.time() * 1000))
         mode = "r"
         if loader_cls is None:
-            raise RuntimeError(f"Unsupported file extension '{source.path.suffix}': {source.filename}")
+            raise RuntimeError(f"Unsupported file extension '{source.path.suffix}': {source.filename}")  # type: ignore[union-attr]
 
         if hasattr(loader_cls, "file_io_mode"):
             mode = loader_cls.file_io_mode()
@@ -355,7 +360,7 @@ def crack_documents(sources: Iterator[DocumentSource], file_extension_loaders=fi
             mode = "rb"
 
         try:
-            with open(source.path, mode=mode) as f:
+            with open(source.path, mode=mode) as f:  # type: ignore[arg-type]
                 loader = loader_cls(**{
                     "file": f,
                     "document_source": source,
@@ -368,7 +373,7 @@ def crack_documents(sources: Iterator[DocumentSource], file_extension_loaders=fi
             # if loader_cls has a fallback_loader, try that
             if hasattr(loader_cls, "fallback_loader"):
                 fallback_loader_cls = loader_cls.fallback_loader()
-                with open(source.path, mode=mode) as f:
+                with open(source.path, mode=mode) as f:  # type: ignore[arg-type]
                     loader = fallback_loader_cls(**{
                         "file": f,
                         "document_source": source,
