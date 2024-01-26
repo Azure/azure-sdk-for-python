@@ -26,6 +26,7 @@
 import os
 import pytest
 
+from devtools_testutils.proxy_startup import test_proxy
 
 def pytest_configure(config):
     # register an additional marker
