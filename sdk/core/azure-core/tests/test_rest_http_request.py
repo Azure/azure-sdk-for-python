@@ -23,6 +23,7 @@ from azure.core.pipeline.policies import CustomHookPolicy, UserAgentPolicy, Sans
 from azure.core.pipeline._tools import is_rest
 from rest_client import MockRestClient
 from azure.core import PipelineClient
+from utils import NamedIo
 
 
 @pytest.fixture
@@ -574,16 +575,22 @@ def test_multipart_tuple_input_multiple_with_filename_and_content_type(filebytes
         ("file2", ("second file", filebytes, "image/png")),
     ]
 
-def test_multipart_tuple_input_multiple_same_name(filebytes):
+def test_multipart_tuple_input_multiple_same_name(client):
     request = HttpRequest(
         "POST",
-        url="http://example.org",
-        files=[("file", ("first file", filebytes, "image/pdf")), ("file", ("second file", filebytes, "image/png"))],
+        url="/multipart/tuple-input-multiple-same-name",
+        files=[("file", ("firstFileName", NamedIo("firstFile"), "image/pdf")), ("file", ("secondFileName", NamedIo("secondFile"), "image/png"))],
     )
-    assert request.content == [
-        ("file", ("first file", filebytes, "image/pdf")),
-        ("file", ("second file", filebytes, "image/png")),
-    ]
+    client.send_request(request).raise_for_status()
+
+def test_data_and_file_input_same_name(client):
+    request = HttpRequest(
+        "POST",
+        url="/multipart/data-and-file-input-same-name",
+        data={"message": "Hello, world!"},
+        files=[("file", ("firstFileName", NamedIo("firstFile"), "image/pdf")), ("file", ("secondFileName", NamedIo("secondFile"), "image/png"))],
+    )
+    client.send_request(request).raise_for_status()
 
 
 # NOTE: For files, we don't allow list of tuples yet, just dict. Will uncomment when we add this capability
