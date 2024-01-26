@@ -10,8 +10,8 @@ from pathlib import Path
 from typing import IO, Any, Callable, Iterator, List, Optional, Tuple, Type, Union
 
 from azure.ai.generative.index._documents.chunking import ChunkedDocument, DocumentSource
-from azure.ai.generative.index._documents.document import Document, StaticDocument
-from azure.ai.generative.index._langchain.vendor.document_loaders.unstructured import UnstructuredFileIOLoader
+from azure.ai.resources._index._documents.document import Document, StaticDocument
+from azure.ai.resources._index._langchain.vendor.document_loaders.unstructured import UnstructuredFileIOLoader
 from azure.ai.generative.index._utils.logging import get_logger, safe_mlflow_log_metric
 
 logger = get_logger(__name__)

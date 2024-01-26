@@ -4,7 +4,7 @@
 """Langchain compatible Docstore which serializes to jsonl."""
 from typing import Dict, Union
 
-from azure.ai.generative.index._docstore import FileBasedDocstore
+from azure.ai.resources._index._docstore import FileBasedDocstore
 from azure.ai.generative.index._embeddings import WrappedLangChainDocument
 from azure.ai.generative.index._documents import Document
 from langchain.docstore.base import AddableMixin, Docstore
@@ -15,7 +15,7 @@ class FileBasedDocStore(Docstore, AddableMixin):
     """Simple docstore which serializes to file and loads into memory."""
 
     def __init__(self, docstore: FileBasedDocstore):
-        """Initialize with azure.ai.generative.index._docstore.FileBasedDocstore."""
+        """Initialize with azure.ai.resources._index._docstore.FileBasedDocstore."""
         self.docstore = docstore
 
     def add(self, texts: Dict[str, LangChainDocument]) -> None:

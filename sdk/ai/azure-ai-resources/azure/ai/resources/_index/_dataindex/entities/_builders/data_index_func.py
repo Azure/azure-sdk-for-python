@@ -527,9 +527,9 @@ def data_index_acs(
         input_data: Input,
         embeddings_model: str,
         acs_config: str,
-        acs_connection_id: Optional[str],
         embeddings_container: Input,
         chunk_size: Optional[int] = 1024,
+        acs_connection_id: Optional[str] = None,
         data_source_glob: Optional[str] = None,
         data_source_url: Optional[str] = None,
         document_path_replacement_regex: Optional[str] = None,
@@ -720,6 +720,7 @@ def get_component_obj(ml_client, component_uri):
 
 def _resolve_connection_id(ml_client, connection: Optional[Union[str, WorkspaceConnection]] = None) -> Optional[str]:
     if connection is None:
+        print("connection is None\n") # REMOVE
         return None
 
     if isinstance(connection, str):
@@ -736,4 +737,5 @@ def _resolve_connection_id(ml_client, connection: Optional[Union[str, WorkspaceC
         # Handle azure.ai.resources Connections
         connection = connection._workspace_connection
 
+    print(connection.id) # REMOVE
     return connection.id

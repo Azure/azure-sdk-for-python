@@ -62,7 +62,7 @@ def crack_and_chunk_and_embed(
             if isinstance(embeddings_connection, str):
                 connection_args["connection"] = {"id": embeddings_connection}
             else:
-                from azure.ai.generative.index._utils.connections import get_id_from_connection
+                from azure.ai.resources._index._utils.connections import get_id_from_connection
 
                 connection_args["connection"] = {"id": get_id_from_connection(embeddings_connection)}
 

@@ -279,7 +279,7 @@ def main(args, logger, activity_logger):
         connection_args["connection"] = {"id": connection_id}
     else:
         if "open_ai" in args.embeddings_model:
-            from azure.ai.generative.index._utils.azureml import get_workspace_from_environment
+            from azure.ai.resources._index._utils.azureml import get_workspace_from_environment
 
             ws = get_workspace_from_environment()
             connection_args["connection_type"] = "workspace_keyvault"

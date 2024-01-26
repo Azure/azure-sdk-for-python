@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 """Faiss based VectorStore using a file based DocumentStore."""
-from azure.ai.generative.index._indexes.faiss import FaissAndDocStore
+from azure.ai.resources._index._indexes.faiss import FaissAndDocStore
 from azure.ai.generative.index._langchain.docstore import FileBasedDocStore
 from azure.ai.generative.index._utils.logging import get_logger
 from langchain.vectorstores import FAISS
