@@ -39,6 +39,7 @@ def _parse_datetime_from_str(string_datetime):
 
 
 def _datetime_to_str(datetime_obj):
+    from azure.storage.fileshare._generated._serialization import Serializer
     if not datetime_obj:
         return None
-    return datetime_obj if isinstance(datetime_obj, str) else datetime_obj.isoformat() + '0Z'
+    return datetime_obj if isinstance(datetime_obj, str) else Serializer.serialize_iso(datetime_obj)[:-1].ljust(27, "0") + "Z"
