@@ -36,7 +36,7 @@ repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvau
 
 [tool.setuptools.dynamic]
 version = {attr = "azure.keyvault.keys.__version__"}
-readme = {file = ["README.md", "CHANGELOG.md"]}
+readme = {file = ["README.md"]}
 
 [tool.setuptools.packages.find]
 exclude = ["samples", "tests", "azure", "azure.keyvault"]
