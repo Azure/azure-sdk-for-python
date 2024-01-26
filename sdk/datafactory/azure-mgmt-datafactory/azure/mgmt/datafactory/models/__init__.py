@@ -658,6 +658,10 @@ from ._models_py3 import SnowflakeImportCopyCommand
 from ._models_py3 import SnowflakeLinkedService
 from ._models_py3 import SnowflakeSink
 from ._models_py3 import SnowflakeSource
+from ._models_py3 import SnowflakeV2Dataset
+from ._models_py3 import SnowflakeV2LinkedService
+from ._models_py3 import SnowflakeV2Sink
+from ._models_py3 import SnowflakeV2Source
 from ._models_py3 import SparkConfigurationParametrizationReference
 from ._models_py3 import SparkLinkedService
 from ._models_py3 import SparkObjectDataset
@@ -742,6 +746,10 @@ from ._models_py3 import VerticaLinkedService
 from ._models_py3 import VerticaSource
 from ._models_py3 import VerticaTableDataset
 from ._models_py3 import WaitActivity
+from ._models_py3 import WarehouseLinkedService
+from ._models_py3 import WarehouseSink
+from ._models_py3 import WarehouseSource
+from ._models_py3 import WarehouseTableDataset
 from ._models_py3 import WebActivity
 from ._models_py3 import WebActivityAuthentication
 from ._models_py3 import WebAnonymousAuthentication
@@ -848,7 +856,6 @@ from ._data_factory_management_client_enums import RunQueryOrderByField
 from ._data_factory_management_client_enums import SalesforceSinkWriteBehavior
 from ._data_factory_management_client_enums import SalesforceSourceReadBehavior
 from ._data_factory_management_client_enums import SalesforceV2SinkWriteBehavior
-from ._data_factory_management_client_enums import SalesforceV2SourceReadBehavior
 from ._data_factory_management_client_enums import SapCloudForCustomerSinkWriteBehavior
 from ._data_factory_management_client_enums import SapHanaAuthenticationType
 from ._data_factory_management_client_enums import SapHanaPartitionOption
@@ -861,6 +868,7 @@ from ._data_factory_management_client_enums import SelfHostedIntegrationRuntimeN
 from ._data_factory_management_client_enums import ServiceNowAuthenticationType
 from ._data_factory_management_client_enums import ServicePrincipalCredentialType
 from ._data_factory_management_client_enums import SftpAuthenticationType
+from ._data_factory_management_client_enums import SnowflakeAuthenticationType
 from ._data_factory_management_client_enums import SparkAuthenticationType
 from ._data_factory_management_client_enums import SparkConfigurationReferenceType
 from ._data_factory_management_client_enums import SparkJobReferenceType
@@ -1545,6 +1553,10 @@ __all__ = [
     "SnowflakeLinkedService",
     "SnowflakeSink",
     "SnowflakeSource",
+    "SnowflakeV2Dataset",
+    "SnowflakeV2LinkedService",
+    "SnowflakeV2Sink",
+    "SnowflakeV2Source",
     "SparkConfigurationParametrizationReference",
     "SparkLinkedService",
     "SparkObjectDataset",
@@ -1629,6 +1641,10 @@ __all__ = [
     "VerticaSource",
     "VerticaTableDataset",
     "WaitActivity",
+    "WarehouseLinkedService",
+    "WarehouseSink",
+    "WarehouseSource",
+    "WarehouseTableDataset",
     "WebActivity",
     "WebActivityAuthentication",
     "WebAnonymousAuthentication",
@@ -1734,7 +1750,6 @@ __all__ = [
     "SalesforceSinkWriteBehavior",
     "SalesforceSourceReadBehavior",
     "SalesforceV2SinkWriteBehavior",
-    "SalesforceV2SourceReadBehavior",
     "SapCloudForCustomerSinkWriteBehavior",
     "SapHanaAuthenticationType",
     "SapHanaPartitionOption",
@@ -1747,6 +1762,7 @@ __all__ = [
     "ServiceNowAuthenticationType",
     "ServicePrincipalCredentialType",
     "SftpAuthenticationType",
+    "SnowflakeAuthenticationType",
     "SparkAuthenticationType",
     "SparkConfigurationReferenceType",
     "SparkJobReferenceType",
