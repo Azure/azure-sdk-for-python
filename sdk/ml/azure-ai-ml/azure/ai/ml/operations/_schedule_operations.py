@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=protected-access
-from typing import Any, Iterable, List, Tuple, cast
+from typing import Any, Iterable, List, Optional, Tuple, cast
 
 from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
 from azure.ai.ml._scope_dependent_operations import (
@@ -149,7 +149,7 @@ class ScheduleOperations(_ScopeDependentOperations):
             ),
         )
 
-    def _get_polling(self, name: str) -> AzureMLPolling:
+    def _get_polling(self, name: Optional[str]) -> AzureMLPolling:
         """Return the polling with custom poll interval.
 
         :param name: The schedule name
@@ -239,7 +239,7 @@ class ScheduleOperations(_ScopeDependentOperations):
             # resolve ARM id for target, compute, and input datasets for each signal
             self._resolve_monitor_schedule_arm_id(schedule)
         # Create schedule
-        schedule_data = schedule._to_rest_object()
+        schedule_data = schedule._to_rest_object()  # type: ignore
         print(schedule_data.properties.tags)
         poller = self.service_client.begin_create_or_update(
             resource_group_name=self._operation_scope.resource_group_name,
@@ -322,7 +322,7 @@ class ScheduleOperations(_ScopeDependentOperations):
             if mdc_output_enabled_str and mdc_output_enabled_str.lower() == "true":
                 mdc_output_enabled = True
         elif target and target.model_id:
-            target.model_id = self._orchestrators.get_asset_arm_id(
+            target.model_id = self._orchestrators.get_asset_arm_id(  # type: ignore
                 target.model_id,
                 AzureMLResourceType.MODEL,
                 register_asset=False,
@@ -343,7 +343,7 @@ class ScheduleOperations(_ScopeDependentOperations):
                     error_category=ErrorCategory.USER_ERROR,
                 )
         # resolve ARM id for each signal and populate any defaults if needed
-        for signal_name, signal in schedule.create_monitor.monitoring_signals.items():
+        for signal_name, signal in schedule.create_monitor.monitoring_signals.items():  # type: ignore
             if signal.type == MonitorSignalType.GENERATION_SAFETY_QUALITY:
                 for llm_data in signal.production_data:
                     self._job_operations._resolve_job_input(llm_data.input_data, schedule._base_path)
@@ -529,8 +529,8 @@ class ScheduleOperations(_ScopeDependentOperations):
 
     def _process_and_get_endpoint_deployment_names_from_id(self, target: MonitoringTarget) -> Tuple:
         target.endpoint_deployment_id = (
-            target.endpoint_deployment_id[len(ARM_ID_PREFIX) :]
-            if target.endpoint_deployment_id.startswith(ARM_ID_PREFIX)
+            target.endpoint_deployment_id[len(ARM_ID_PREFIX) :]  # type: ignore
+            if target.endpoint_deployment_id is not None and target.endpoint_deployment_id.startswith(ARM_ID_PREFIX)
             else target.endpoint_deployment_id
         )
 
@@ -540,7 +540,7 @@ class ScheduleOperations(_ScopeDependentOperations):
             snake_to_camel(AzureMLResourceType.ONLINE_ENDPOINT),
             AzureMLResourceType.DEPLOYMENT,
         ):
-            endpoint_name, deployment_name = target.endpoint_deployment_id.split(":")
+            endpoint_name, deployment_name = target.endpoint_deployment_id.split(":")  # type: ignore
             target.endpoint_deployment_id = NAMED_RESOURCE_ID_FORMAT_WITH_PARENT.format(
                 self._subscription_id,
                 self._resource_group_name,

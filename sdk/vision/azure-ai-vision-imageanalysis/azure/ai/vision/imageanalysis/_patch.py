@@ -128,7 +128,7 @@ class ImageAnalysisClient(ImageAnalysisClientGenerated):
             )
 
         if image_data is not None:
-            return ImageAnalysisClientOperationsMixin._analyze_from_buffer(  # pylint: disable=protected-access
+            return ImageAnalysisClientOperationsMixin._analyze_from_image_data(  # pylint: disable=protected-access
                 self,
                 image_content=image_data,
                 visual_features=visual_features_impl,

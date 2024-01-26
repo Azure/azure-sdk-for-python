@@ -72,7 +72,7 @@ class RegistryOperations:
         )
 
     @monitor_with_activity(logger, "Registry.Get", ActivityType.PUBLICAPI)
-    def get(self, name: Optional[str] = None) -> Registry:
+    def get(self, name: Optional[str] = None) -> Optional[Registry]:
         """Get a registry by name.
 
         :param name: Name of the registry.
@@ -143,7 +143,7 @@ class RegistryOperations:
             resource_group_name=self._resource_group_name,
             registry_name=registry.name,
             body=registry_data,
-            polling=self._get_polling(registry.name),
+            polling=self._get_polling(str(registry.name)),
             cls=lambda response, deserialized, headers: Registry._from_rest_object(deserialized),
         )
 

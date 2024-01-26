@@ -92,7 +92,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
     @distributed_trace
     @monitor_with_activity(logger, "WorkspaceHub.Get", ActivityType.PUBLICAPI)
     # pylint: disable=arguments-renamed, arguments-differ
-    def get(self, name: str, **kwargs: Dict) -> WorkspaceHub:
+    def get(self, name: str, **kwargs: Dict) -> Optional[WorkspaceHub]:
         """Get a Workspace WorkspaceHub by name.
 
         :param name: Name of the WorkspaceHub.
@@ -214,7 +214,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-        def deserialize_callback(rest_obj: Any) -> WorkspaceHub:
+        def deserialize_callback(rest_obj: Any) -> Optional[WorkspaceHub]:
             """Callback to be called after completion
 
             :param rest_obj: A rest representation of the Workspace.
