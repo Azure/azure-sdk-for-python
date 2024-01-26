@@ -9,7 +9,7 @@
 
 ### Bugs Fixed
 
-* Verifies that the `refresh_interval`` is at least 1 second.
+* Verifies that the `refresh_interval` is at least 1 second.
 
 ## 1.1.0b3 (2023-12-19)
 
