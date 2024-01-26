@@ -13,7 +13,6 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._shared.response_handlers import process_storage_error, return_response_headers
 from ._serialize import get_modify_conditions
-from ._shared.response_handlers import process_storage_error, return_response_headers
 
 if TYPE_CHECKING:
     from azure.storage.blob import BlobClient, ContainerClient
