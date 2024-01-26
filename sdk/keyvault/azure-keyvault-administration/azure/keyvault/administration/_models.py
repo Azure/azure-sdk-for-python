@@ -140,13 +140,15 @@ class KeyVaultRoleDefinition(object):
     def _from_generated(cls, definition: RoleDefinition) -> "KeyVaultRoleDefinition":
         # pylint:disable=protected-access
         return cls(
-            assignable_scopes=definition.assignable_scopes,
-            description=definition.description,
+            assignable_scopes=definition.properties.assignable_scopes if definition.properties else [],
+            description=definition.properties.description if definition.properties else "",
             id=definition.id,
             name=definition.name,
-            permissions=[KeyVaultPermission._from_generated(p) for p in definition.permissions or []],
-            role_name=definition.role_name,
-            role_type=definition.role_type,
+            permissions=[KeyVaultPermission._from_generated(p) for p in definition.properties.permissions or []]
+            if definition.properties
+            else [],
+            role_name=definition.properties.role_name if definition.properties else "",
+            role_type=definition.properties.role_type if definition.properties else "",
             type=definition.type,
         )
 
