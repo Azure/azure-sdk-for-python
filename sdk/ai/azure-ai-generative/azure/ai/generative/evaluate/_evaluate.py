@@ -297,6 +297,7 @@ def _evaluate(
                 metrics=custom_prompt_metrics,
                 prediction_data=asset_handler.prediction_data,
                 test_data=asset_handler.test_data,
+                input_output_data=asset_handler.input_output_data,
                 metrics_mapping=metrics_config,
             )
 
@@ -311,6 +312,7 @@ def _evaluate(
                 task_type="custom-code-metric",
                 metrics=[_CodeMetric(name=metric.__name__, calculate=metric) for metric in code_metrics],
                 prediction_data=asset_handler.prediction_data,
+                input_output_data=asset_handler.input_output_data,
                 test_data=asset_handler.test_data,
                 metrics_mapping=metrics_config,
             )

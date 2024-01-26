@@ -27,6 +27,7 @@ class PromptMetricHandler(MetricHandler):
             task_type,
             prediction_data,
             test_data,
+            input_output_data,
             metrics_mapping=None,
             metrics=None,
     ):
@@ -36,6 +37,7 @@ class PromptMetricHandler(MetricHandler):
             test_data=test_data,
             metrics_mapping=metrics_mapping,
             metrics=metrics,
+            input_output_data=input_output_data,
         )
 
         self._validate()
