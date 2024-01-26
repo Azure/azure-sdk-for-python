@@ -5,7 +5,7 @@
 ### Features Added
 
 * New API for Azure App Configuration Provider, `refresh`, which can be used to refresh the configuration from the Azure App Configuration service. `refresh` by default can check every 30 seconds for changes to specified sentinel keys. If a change is detected then all configurations are reloaded. Sentinel keys can be set by passing  a list of `SentinelKey`'s to `refresh_on`.
-* Addes `on_refresh_success` and `on_refresh_failure` callbacks to the load method. These callbacks are called when the refresh method successfully refreshes the configuration or fails to refresh the configuration.
+* Added new options `on_refresh_success` and `on_refresh_failure` callbacks to the load method. These callbacks are called when the refresh method successfully refreshes the configuration or fails to refresh the configuration.
 
 ### Bugs Fixed
 
