@@ -61,6 +61,11 @@ steps:
       parameters:
         DevFeedName: ${{ parameters.DevFeedName }}
 
+  - task: UsePythonVersion@0
+    displayName: 'Use Python 3.11 for docs generation'
+    inputs:
+      versionSpec: '3.11'
+
   - task: PythonScript@0
     displayName: 'Generate Docs'
     condition: and(succeededOrFailed(), ${{parameters.BuildDocs}})

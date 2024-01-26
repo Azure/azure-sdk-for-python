@@ -87,6 +87,11 @@ stages:
             env:
               GH_TOKEN: $(azuresdk-github-pat)
 
+          - task: UsePythonVersion@0
+            displayName: 'Use Python 3.11 for docs generation'
+            inputs:
+              versionSpec: '3.11'
+
           - task: PythonScript@0
             displayName: 'Generate Docs'
             continueOnError: true
