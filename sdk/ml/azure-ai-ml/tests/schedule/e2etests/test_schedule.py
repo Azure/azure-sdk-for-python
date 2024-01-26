@@ -41,6 +41,10 @@ class TestSchedule(AzureRecordedTestCase):
         assert rest_schedule._is_enabled is True
         job: PipelineJob = rest_schedule.create_job
         assert isinstance(job.identity, AmlTokenConfiguration)
+        # trigger once
+        result = client.schedules.trigger(schedule.name)
+        assert result.submission_id is not None
+        assert client.jobs.get(name=result.submission_id) is not None
         # disable
         rest_schedule = client.schedules.begin_disable(schedule.name).result(timeout=LROConfigurations.POLLING_TIMEOUT)
         assert rest_schedule._is_enabled is False

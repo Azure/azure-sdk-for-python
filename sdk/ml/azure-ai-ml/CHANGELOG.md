@@ -4,6 +4,7 @@
 
 ### Features Added
 - Remove `experimental` tag for  `ml_client.jobs.validate`.
+- Support `ml_client.schedules.trigger(name='my_schedule')` function to trigger a schedule once.
 
 ### Bugs Fixed
 

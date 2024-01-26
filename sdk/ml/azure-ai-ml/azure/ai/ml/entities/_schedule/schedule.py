@@ -10,12 +10,13 @@ from typing import IO, AnyStr, Dict, Optional, Union
 
 from typing_extensions import Literal
 
-from azure.ai.ml._restclient.v2023_06_01_preview.models import JobBase as RestJobBase
-from azure.ai.ml._restclient.v2023_06_01_preview.models import JobScheduleAction
-from azure.ai.ml._restclient.v2023_06_01_preview.models import PipelineJob as RestPipelineJob
-from azure.ai.ml._restclient.v2023_06_01_preview.models import Schedule as RestSchedule
-from azure.ai.ml._restclient.v2023_06_01_preview.models import ScheduleActionType as RestScheduleActionType
-from azure.ai.ml._restclient.v2023_06_01_preview.models import ScheduleProperties
+from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as RestJobBase
+from azure.ai.ml._restclient.v2024_01_01_preview.models import JobScheduleAction
+from azure.ai.ml._restclient.v2024_01_01_preview.models import PipelineJob as RestPipelineJob
+from azure.ai.ml._restclient.v2024_01_01_preview.models import Schedule as RestSchedule
+from azure.ai.ml._restclient.v2024_01_01_preview.models import ScheduleActionType as RestScheduleActionType
+from azure.ai.ml._restclient.v2024_01_01_preview.models import ScheduleProperties
+from azure.ai.ml._restclient.v2024_01_01_preview.models import TriggerRunSubmissionDto as RestTriggerRunSubmissionDto
 from azure.ai.ml._schema.schedule.schedule import JobScheduleSchema
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, is_private_preview_enabled
 from azure.ai.ml.constants import JobType
@@ -464,3 +465,16 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         :rtype: Dict[Literal["trigger_type"], str]
         """
         return {"trigger_type": type(self.trigger).__name__}
+
+
+class TriggerRunSubmissionDto:
+    def __init__(self, schedule_action_type, submission_id, **kwargs):  # pylint: disable=unused-argument
+        self.schedule_action_type = schedule_action_type
+        self.submission_id = submission_id
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestTriggerRunSubmissionDto) -> "TriggerRunSubmissionDto":
+        return cls(
+            schedule_action_type=obj.schedule_action_type,
+            submission_id=obj.submission_id,
+        )
