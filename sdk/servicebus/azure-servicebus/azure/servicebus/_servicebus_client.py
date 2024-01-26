@@ -358,7 +358,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
         :keyword Optional[float] max_wait_time:  The timeout in seconds to wait for the first and subsequent
          messages to arrive. If no messages arrive, and no timeout is specified, this call will not return
-         until the connection is closed. The default value is None, meaning no timeout. On a sessionful 
+         until the connection is closed. The default value is None, meaning no timeout. On a sessionful
          queue/topic when NEXT_AVAILABLE_SESSION is specified, this will act as the timeout for connecting.
          If connection errors are occurring due to write timing out,the connection timeout
          value may need to be adjusted. See the `socket_timeout` optional parameter for more details.
@@ -550,7 +550,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
         :keyword Optional[float] max_wait_time:  The timeout in seconds to wait for the first and subsequent
          messages to arrive. If no messages arrive, and no timeout is specified, this call will not return
-         until the connection is closed. The default value is None, meaning no timeout. On a sessionful 
+         until the connection is closed. The default value is None, meaning no timeout. On a sessionful
          queue/topic when NEXT_AVAILABLE_SESSION is specified, this will act as the timeout for connecting.
          If connection errors are occurring due to write timing out,the connection timeout
          value may need to be adjusted. See the `socket_timeout` optional parameter for more details.
