@@ -625,21 +625,21 @@ class ModelPerformanceRegressionThresholds:
     def __init__(
         self,
         *,
-        mae: Optional[float] = None,
-        mse: Optional[float] = None,
-        rmse: Optional[float] = None,
+        mean_absolute_error: Optional[float] = None,
+        mean_squared_error: Optional[float] = None,
+        root_mean_squared_error: Optional[float] = None,
     ):
-        self.mae = mae
-        self.mse = mse
-        self.rmse = rmse
+        self.mean_absolute_error = mean_absolute_error
+        self.mean_squared_error = mean_squared_error
+        self.root_mean_squared_error = root_mean_squared_error
 
     def _to_str_object(self, **kwargs) -> str:
         thresholds = []
-        if self.mae:
+        if self.mean_absolute_error:
             thresholds.append("{\"modelType\":\"regression\",\"metric\":\"MeanAbsoluteError\",\"threshold\":{\"value\":" + f"{self.mae}" + "}}")
-        if self.mse:
+        if self.mean_squared_error:
             thresholds.append("{\"modelType\":\"regression\",\"metric\":\"MeanSquaredError\",\"threshold\":{\"value\":" + f"{self.mse}" + "}}")
-        if self.rmse:
+        if self.root_mean_squared_error:
             thresholds.append("{\"modelType\":\"regression\",\"metric\":\"RootMeanSquaredError\",\"threshold\":{\"value\":" + f"{self.rmse}" + "}}")
 
         if not thresholds:
@@ -665,6 +665,11 @@ class ModelPerformanceMetricThreshold(MetricThreshold):
             thresholds.append(self.classification._to_str_object(**kwargs))
         if self.regression:
             thresholds.append(self.regression._to_str_object(**kwargs))
+        
+        if not thresholds:
+            return None
+        result = "[" + ", ".join(thresholds) + "]"
+        return result
 
     def _to_rest_object(self, **kwargs) -> ModelPerformanceMetricThresholdBase:
         threshold = MonitoringThreshold(value=0.9)

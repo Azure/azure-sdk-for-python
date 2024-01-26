@@ -370,7 +370,7 @@ class MonitoringSignal(RestTranslatableMixin):
         reference_data: ReferenceData = None,
         metric_thresholds: Union[MetricThreshold, List[MetricThreshold]],
         properties: Optional[Dict[str, str]] = None,
-        alert_enabled: bool = True,
+        alert_enabled: bool = False,
     ):
         self.production_data = production_data
         self.reference_data = reference_data
@@ -432,7 +432,7 @@ class DataSignal(MonitoringSignal):
         features: Optional[Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]]] = None,
         feature_type_override: Optional[Dict[str, Union[str, MonitorFeatureDataType]]] = None,
         metric_thresholds: List[MetricThreshold],
-        alert_enabled: bool = True,
+        alert_enabled: bool = False,
         properties: Optional[Dict[str, str]] = None,
     ):
         super().__init__(
@@ -478,7 +478,7 @@ class DataDriftSignal(DataSignal):
         features: Optional[Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]]] = None,
         feature_type_override: Optional[Dict[str, Union[str, MonitorFeatureDataType]]] = None,
         metric_thresholds: DataDriftMetricThreshold = None,
-        alert_enabled: bool = True,
+        alert_enabled: bool = False,
         data_segment: Optional[DataSegment] = None,
         properties: Optional[Dict[str, str]] = None,
     ):
@@ -557,7 +557,7 @@ class PredictionDriftSignal(MonitoringSignal):
         production_data: ProductionData = None,
         reference_data: ReferenceData = None,
         metric_thresholds: PredictionDriftMetricThreshold,
-        alert_enabled: bool = True,
+        alert_enabled: bool = False,
         properties: Optional[Dict[str, str]] = None,
     ):
         super().__init__(
@@ -631,7 +631,7 @@ class DataQualitySignal(DataSignal):
         features: Optional[Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]]] = None,
         feature_type_override: Optional[Dict[str, Union[str, MonitorFeatureDataType]]] = None,
         metric_thresholds: [DataQualityMetricThreshold] = None,
-        alert_enabled: bool = True,
+        alert_enabled: bool = False,
         properties: Optional[Dict[str, str]] = None,
     ):
         super().__init__(
@@ -713,7 +713,7 @@ class ModelSignal(MonitoringSignal):
         reference_data: ReferenceData,
         metric_thresholds: List[MetricThreshold],
         model_type: MonitorModelType,
-        alert_enabled: bool = True,
+        alert_enabled: bool = False,
     ) -> None:
         super().__init__(
             production_data=production_data,
@@ -821,7 +821,7 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
         production_data: Optional[List[FADProductionData]] = None,
         reference_data: ReferenceData,
         metric_thresholds: FeatureAttributionDriftMetricThreshold,
-        alert_enabled: bool = True,
+        alert_enabled: bool = False,
         properties: Optional[Dict[str, str]] = None,
     ):
         self.production_data = production_data
@@ -876,10 +876,10 @@ class ModelPerformanceSignal(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        production_data: ProductionData = None,
-        reference_data: ReferenceData = None,
+        production_data: ProductionData,
+        reference_data: ReferenceData,
         metric_thresholds: ModelPerformanceMetricThreshold,
-        data_segment: DataSegment = None,
+        data_segment: Optional[DataSegment] = None,
         alert_enabled: bool = False,
         properties: Optional[Dict[str, str]] = None,
     ) -> None:
@@ -906,6 +906,7 @@ class ModelPerformanceSignal(RestTranslatableMixin):
             metric_threshold=self.metric_thresholds._to_rest_object(),
             data_segment=self.data_segment._to_rest_object() if self.data_segment else None,
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
+            properties=self.properties,
         )
 
     @classmethod
@@ -919,6 +920,7 @@ class ModelPerformanceSignal(RestTranslatableMixin):
             alert_enabled=False
             if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
             else MonitoringNotificationMode.ENABLED,
+            properties=obj.properties,
         )
 
 
@@ -988,7 +990,7 @@ class CustomMonitoringSignal(RestTranslatableMixin):
         component_id: str,
         workspace_connection: Optional[WorkspaceConnection] = None,
         input_data: Optional[Dict[str, ReferenceData]] = None,
-        alert_enabled: bool = True,
+        alert_enabled: bool = False,
         properties: Optional[Dict[str, str]] = None,
     ):
         self.type = MonitorSignalType.CUSTOM
@@ -1116,7 +1118,7 @@ class GenerationSafetyQualitySignal(RestTranslatableMixin):
         production_data: List[LlmData] = None,
         workspace_connection_id: Optional[str] = None,
         metric_thresholds: GenerationSafetyQualityMonitoringMetricThreshold,
-        alert_enabled: bool = True,
+        alert_enabled: bool = False,
         properties: Optional[Dict[str, str]] = None,
         sampling_rate: float = None,
     ):
