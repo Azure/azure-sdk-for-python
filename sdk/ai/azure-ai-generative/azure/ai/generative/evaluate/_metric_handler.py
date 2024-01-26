@@ -1,13 +1,10 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import copy
 import pandas as pd
 
 from os import path
 from typing import Dict, Optional
-from promptflow import PFClient
-from promptflow.entities import AzureOpenAIConnection, OpenAIConnection
 
 from azure.ai.generative.evaluate._constants import TASK_TYPE_TO_METRICS_MAPPING
 from ._utils import run_pf_flow_with_dict_list, df_to_dict_list, wait_for_pf_run_to_complete
@@ -48,6 +45,9 @@ class MetricHandler(object):
         dict_list = df_to_dict_list(metrics_calculation_data, {"metrics": ','.join(metrics)}) # The PF eval template expects metrics names to be passed in as a input parameter 
         
         flow_path = path.join(path.dirname(__file__), "pf_templates", "built_in_metrics")
+
+        from promptflow import PFClient
+        from promptflow.entities import AzureOpenAIConnection, OpenAIConnection
 
         pf_client = PFClient()
 
