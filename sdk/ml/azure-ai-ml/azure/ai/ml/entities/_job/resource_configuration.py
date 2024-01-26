@@ -27,12 +27,12 @@ class ResourceConfiguration(RestTranslatableMixin, DictMixin):
     """
 
     def __init__(
-        self,
+        self,  # pylint: disable=unused-argument
         *,
         instance_count: Optional[int] = None,
         instance_type: Optional[str] = None,
         properties: Optional[Dict[str, Any]] = None,
-        **kwargs  # pylint: disable=unused-argument
+        **kwargs: Any
     ) -> None:
         self.instance_count = instance_count
         self.instance_type = instance_type

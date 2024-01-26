@@ -125,7 +125,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "FeatureSet.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: str, **kwargs: Dict) -> FeatureSet:
+    def get(self, name: str, version: str, **kwargs: Dict) -> Optional[FeatureSet]:  # type: ignore
         """Get the specified FeatureSet asset.
 
         :param name: Name of FeatureSet asset.
@@ -162,7 +162,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         sas_uri = None
 
         if not is_url(featureset_copy.path):
-            with open(os.path.join(featureset_copy.path, ".amlignore"), mode="w", encoding="utf-8") as f:
+            with open(os.path.join(str(featureset_copy.path), ".amlignore"), mode="w", encoding="utf-8") as f:
                 f.write(".*\n*.amltmp\n*.amltemp")
 
         featureset_copy, _ = _check_and_upload_path(
@@ -334,7 +334,9 @@ class FeatureSetOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "FeatureSet.GetFeature", ActivityType.PUBLICAPI)
-    def get_feature(self, feature_set_name: str, version: str, *, feature_name: str, **kwargs: Dict) -> "Feature":
+    def get_feature(
+        self, feature_set_name: str, version: str, *, feature_name: str, **kwargs: Dict
+    ) -> Optional["Feature"]:
         """Get Feature
 
         :param feature_set_name: Feature set name.

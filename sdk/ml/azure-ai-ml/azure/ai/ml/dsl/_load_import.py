@@ -41,5 +41,5 @@ def to_component(*, job: ComponentTranslatableMixin, **kwargs: Any) -> Callable[
 
     # set default base path as "./". Because if code path is relative path and base path is None, will raise error when
     # get arm id of Code
-    res: Callable = job._to_component(context={BASE_PATH_CONTEXT_KEY: Path("./")})
+    res: Callable = job._to_component(context={BASE_PATH_CONTEXT_KEY: Path("./")})  # type: ignore[arg-type, assignment]
     return res

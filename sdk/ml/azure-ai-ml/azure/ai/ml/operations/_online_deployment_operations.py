@@ -189,7 +189,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                     deployment = package_deployment(deployment, self._all_operations.all_operations["models"])
                     module_logger.info("\nStarting deployment")
 
-                deployment_rest = deployment._to_rest_object(location=location)
+                deployment_rest = deployment._to_rest_object(location=location)  # type: ignore
 
                 poller = self._online_deployment.begin_create_or_update(
                     resource_group_name=self._resource_group_name,
