@@ -508,8 +508,6 @@ class SearchIndex(_serialization.Model):
     :vartype token_filters: list[~azure.search.documents.indexes.models.TokenFilter]
     :ivar char_filters: The character filters for the index.
     :vartype char_filters: list[~azure.search.documents.indexes.models.CharFilter]
-    :ivar normalizers: The normalizers for the index.
-    :vartype normalizers: list[~azure.search.documents.indexes.models.LexicalNormalizer]
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
         This key is used to provide an additional level of encryption-at-rest for your data when you
         want full assurance that no one, not even Microsoft, can decrypt your data in Azure Cognitive
@@ -548,7 +546,6 @@ class SearchIndex(_serialization.Model):
         "tokenizers": {"key": "tokenizers", "type": "[LexicalTokenizer]"},
         "token_filters": {"key": "tokenFilters", "type": "[TokenFilter]"},
         "char_filters": {"key": "charFilters", "type": "[CharFilter]"},
-        "normalizers": {"key": "normalizers", "type": "[LexicalNormalizer]"},
         "encryption_key": {
             "key": "encryptionKey",
             "type": "SearchResourceEncryptionKey",
@@ -571,7 +568,6 @@ class SearchIndex(_serialization.Model):
         self.tokenizers = kwargs.get("tokenizers", None)
         self.token_filters = kwargs.get("token_filters", None)
         self.char_filters = kwargs.get("char_filters", None)
-        self.normalizers = kwargs.get("normalizers", None)
         self.encryption_key = kwargs.get("encryption_key", None)
         self.similarity = kwargs.get("similarity", None)
         self.semantic_search = kwargs.get("semantic_search", None)
@@ -605,7 +601,6 @@ class SearchIndex(_serialization.Model):
             tokenizers=tokenizers,
             token_filters=self.token_filters,
             char_filters=self.char_filters,
-            normalizers=self.normalizers,
             # pylint:disable=protected-access
             encryption_key=self.encryption_key._to_generated() if self.encryption_key else None,
             similarity=self.similarity,
@@ -633,10 +628,6 @@ class SearchIndex(_serialization.Model):
             fields = [SearchField._from_generated(x) for x in search_index.fields]  # pylint:disable=protected-access
         else:
             fields = None
-        try:
-            normalizers = search_index.normalizers
-        except AttributeError:
-            normalizers = None
         return cls(
             name=search_index.name,
             fields=fields,
@@ -648,7 +639,6 @@ class SearchIndex(_serialization.Model):
             tokenizers=tokenizers,
             token_filters=search_index.token_filters,
             char_filters=search_index.char_filters,
-            normalizers=normalizers,
             # pylint:disable=protected-access
             encryption_key=SearchResourceEncryptionKey._from_generated(search_index.encryption_key),
             similarity=search_index.similarity,
