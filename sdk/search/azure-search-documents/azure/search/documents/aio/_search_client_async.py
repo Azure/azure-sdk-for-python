@@ -715,5 +715,5 @@ class SearchClient(HeadersMixin):
         :return: The response of your network call. Does not do error handling on your response.
         :rtype: ~azure.core.rest.AsyncHttpResponse
         """
-        request.headers = self._merge_client_headers(request.headers) or {}
+        request.headers = self._merge_client_headers(request.headers)
         return await self._client._send_request(request, stream=stream, **kwargs)  # pylint:disable=protected-access
