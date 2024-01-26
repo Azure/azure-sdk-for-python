@@ -49,7 +49,7 @@ def _create_image_job(
     :return: An AutoML Image Job
     :rtype: TImageJob
     """
-    image_job = job_cls(primary_metric=primary_metric, **kwargs)
+    image_job = job_cls(primary_metric=primary_metric, **kwargs)  # type: ignore[operator]
     image_job.set_data(
         training_data=training_data,
         target_column_name=target_column_name,
@@ -111,7 +111,7 @@ def image_classification(
                 :dedent: 8
                 :caption: creating an automl image classification job
     """
-    return _create_image_job(
+    return _create_image_job(  # type: ignore[type-var, return-value]
         job_cls=ImageClassificationJob,
         training_data=training_data,
         target_column_name=target_column_name,
@@ -173,7 +173,7 @@ def image_classification_multilabel(
                 :dedent: 8
                 :caption: creating an automl image multilabel classification job
     """
-    return _create_image_job(
+    return _create_image_job(  # type: ignore[type-var, return-value]
         job_cls=ImageClassificationMultilabelJob,
         training_data=training_data,
         target_column_name=target_column_name,
@@ -234,7 +234,7 @@ def image_object_detection(
                 :dedent: 8
                 :caption: creating an automl image object detection job
     """
-    return _create_image_job(
+    return _create_image_job(  # type: ignore[type-var, return-value]
         job_cls=ImageObjectDetectionJob,
         training_data=training_data,
         target_column_name=target_column_name,
@@ -295,7 +295,7 @@ def image_instance_segmentation(
                 :dedent: 8
                 :caption: creating an automl image instance segmentation job
     """
-    return _create_image_job(
+    return _create_image_job(  # type: ignore[type-var, return-value]
         job_cls=ImageInstanceSegmentationJob,
         training_data=training_data,
         target_column_name=target_column_name,
