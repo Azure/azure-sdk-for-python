@@ -573,7 +573,7 @@ def test_send_long_wait(connstr_receivers, keep_alive, uamqp_transport):
     with client:
         client.send_event(EventData("Single Message"))
 
-        time.sleep(200)
+        time.sleep(300)
 
         assert client._producers["all-partitions"].closed == False
         client.send_event(EventData("Single Event"))
@@ -586,7 +586,7 @@ def test_send_long_wait_idle_timeout(connstr_receivers, keep_alive, uamqp_transp
     with client:
         client.send_event(EventData("Single Message"))
 
-        time.sleep(200)
+        time.sleep(300)
 
         assert client._producers["all-partitions"].closed == False
         client.send_event(EventData("Single Event"))

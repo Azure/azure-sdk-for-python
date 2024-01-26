@@ -548,7 +548,7 @@ async def test_send_long_wait_async(connstr_receivers, keep_alive, uamqp_transpo
     async with client:
         await client.send_event(EventData("Single Message"))
 
-        asyncio.sleep(200)
+        asyncio.sleep(300)
 
         
         assert client._producers["all-partitions"].closed == False
@@ -557,13 +557,13 @@ async def test_send_long_wait_async(connstr_receivers, keep_alive, uamqp_transpo
 @pytest.mark.parametrize("keep_alive", [5, 30])
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_send_long_wait_async(connstr_receivers, keep_alive, uamqp_transport):
+async def test_send_long_wait_idle_timeout_async(connstr_receivers, keep_alive, uamqp_transport):
     connection_str, receivers = connstr_receivers
     client = EventHubProducerClient.from_connection_string(connection_str, keep_alive=keep_alive, idle_timeout=10, uamqp_transport=uamqp_transport)
     async with client:
         await client.send_event(EventData("Single Message"))
 
-        asyncio.sleep(200)
+        asyncio.sleep(300)
 
         
         assert client._producers["all-partitions"].closed == False
