@@ -116,9 +116,11 @@ class MessageTemplateClient(MessageTemplateClientGenerated):
             raise ValueError("Invalid URL: {}".format(endpoint))
 
         self._endpoint = endpoint
+        self._credential = credential
+        self._authentication_policy = HMACCredentialsPolicy(endpoint, credential.key)
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         super().__init__(
-            self._endpoint, credential, api_version=self._api_version, **kwargs
+            self._endpoint, self._credential, authentication_policy=self._authentication_policy, api_version=self._api_version, **kwargs
         )
 
     @classmethod

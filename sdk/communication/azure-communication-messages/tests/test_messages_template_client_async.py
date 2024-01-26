@@ -26,10 +26,11 @@ class TestMessageTemplateClientToGetTemplatesAsync(AsyncMessagesRecordedTestCase
 
         message_template_item_list = []
         try:
-            template_items = message_template_client.get_templates(channel_id)
+            template_items = await message_template_client.get_templates(channel_id)
         except:
             raised = True
             raise
+        
         assert raised is False
         assert template_items is not None
 

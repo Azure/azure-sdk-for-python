@@ -59,8 +59,9 @@ class NotificationMessagesClient(NotificationMessagesClientGenerated):
         self._endpoint = endpoint
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._authentication_policy = HMACCredentialsPolicy(endpoint, credential.key)
+        self._credential = credential
         super().__init__(
-            self._endpoint, credential, api_version=self._api_version, **kwargs
+            self._endpoint, self._credential, authentication_policy=self._authentication_policy, api_version=self._api_version, **kwargs
         )
 
     @classmethod
@@ -112,8 +113,9 @@ class MessageTemplateClient(MessageTemplateClientGenerated):
         self._endpoint = endpoint
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._authentication_policy = HMACCredentialsPolicy(endpoint, credential.key)
+        self._credential = credential
         super().__init__(
-            self._endpoint, authentication_policy=self._authentication_policy, api_version=self._api_version, **kwargs
+            self._endpoint, self._credential, authentication_policy=self._authentication_policy, api_version=self._api_version, **kwargs
         )
 
     @classmethod

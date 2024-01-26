@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: send_template_notification_messages.py
+FILE: send_template_notification_messages_async.py
 
 DESCRIPTION:
     This sample demonstrates sending an Whatsapp template message from business phone number to a single user. 
@@ -15,7 +15,7 @@ DESCRIPTION:
     Follow the instructions in the Meta Business Help Center at https://www.facebook.com/business/help/2055875911147364?id=2129163877102343.
     The NotificationMessageClient is authenticated using a connection string.
 USAGE:
-    python send_template_notification_messages.py
+    python send_template_notification_messages_async.py
 
     Set the environment variable with your own value before running the sample:
     1) COMMUNICATION_SAMPLES_CONNECTION_STRING - the connection string in your ACS resource
@@ -23,20 +23,20 @@ USAGE:
     3) WHATSAPP_CHANNEL_ID - Channel created in Azure portal for Advanced Messaging.
 """
 
+import asyncio
 import os
 import sys
 
 sys.path.append("..")
 
-class SendWhatsAppTemplateMessageSample(object):
+class SendWhatsAppTemplateMessageSampleAsync(object):
 
     connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
     phone_number = os.getenv("RECIPIENT_PHONE_NUMBER")
     channel_id = os.getenv("WHATSAPP_CHANNEL_ID")
     
-    def send_template_send_message(self):
-
-        from azure.communication.messages import NotificationMessagesClient
+    async def send_template_send_message_async(self):
+        from azure.communication.messages.aio import NotificationMessagesClient
         from azure.communication.messages.models import ( TemplateNotificationContent, MessageTemplate )
 
         messaging_client = NotificationMessagesClient.from_connection_string(self.connection_string)
@@ -51,15 +51,19 @@ class SendWhatsAppTemplateMessageSample(object):
             template=input_template)
         
         # calling send() with whatsapp message details
-        message_responses = messaging_client.send(template_options)
-        response = message_responses.receipts[0]
-        
-        if (response is not None):
-            print("Message with message id {} was successful sent to {}"
-            .format(response.message_id, response.to))
-        else:
-            print("Message failed to send")
+        async with messaging_client:
+            message_responses =await messaging_client.send(template_options)
+            response = message_responses.receipts[0]
+            if (response is not None):
+                print("Message with message id {} was successful sent to {}"
+                .format(response.message_id, response.to))
+            else:
+                 print("Message failed to send")
+
+
+async def main():
+    sample = SendWhatsAppTemplateMessageSampleAsync()
+    await sample.send_template_send_message_async()
 
 if __name__ == '__main__':
-    sample = SendWhatsAppTemplateMessageSample()
-    sample.send_template_send_message()
+    asyncio.run(main())
