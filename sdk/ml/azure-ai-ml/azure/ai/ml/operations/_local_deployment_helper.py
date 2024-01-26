@@ -51,7 +51,7 @@ class _LocalDeploymentHelper(object):
         self._code_operations = operation_container.all_operations.get(AzureMLResourceType.CODE)
         self._environment_operations = operation_container.all_operations.get(AzureMLResourceType.ENVIRONMENT)
 
-    def create_or_update(
+    def create_or_update(  # type: ignore
         self,
         deployment: OnlineDeployment,
         local_endpoint_mode: LocalEndpointMode,
@@ -73,7 +73,7 @@ class _LocalDeploymentHelper(object):
 
             endpoint_metadata: Any = None
             try:
-                self.get(endpoint_name=deployment.endpoint_name, deployment_name=deployment.name)
+                self.get(endpoint_name=str(deployment.endpoint_name), deployment_name=str(deployment.name))
                 endpoint_metadata = json.dumps(self._docker_client.get_endpoint(endpoint_name=deployment.endpoint_name))
                 operation_message = "Updating local deployment"
             except LocalEndpointNotFoundError:
@@ -83,7 +83,7 @@ class _LocalDeploymentHelper(object):
             endpoint_metadata = (
                 endpoint_metadata
                 if endpoint_metadata
-                else _get_stubbed_endpoint_metadata(endpoint_name=deployment.endpoint_name)
+                else _get_stubbed_endpoint_metadata(endpoint_name=str(deployment.endpoint_name))
             )
             local_endpoint_polling_wrapper(
                 func=self._create_deployment,
@@ -95,7 +95,7 @@ class _LocalDeploymentHelper(object):
                 endpoint_metadata=endpoint_metadata,
                 deployment_metadata=deployment_metadata,
             )
-            return self.get(endpoint_name=deployment.endpoint_name, deployment_name=deployment.name)
+            return self.get(endpoint_name=str(deployment.endpoint_name), deployment_name=str(deployment.name))
         except Exception as ex:  # pylint: disable=broad-except
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
@@ -187,7 +187,9 @@ class _LocalDeploymentHelper(object):
         :type deployment_metadata: dict
         """
         deployment_name = deployment.name
-        deployment_directory = _create_build_directory(endpoint_name=endpoint_name, deployment_name=deployment_name)
+        deployment_directory = _create_build_directory(
+            endpoint_name=endpoint_name, deployment_name=str(deployment_name)
+        )
         deployment_directory_path = str(deployment_directory.resolve())
 
         # Get assets for mounting into the container

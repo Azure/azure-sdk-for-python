@@ -258,7 +258,7 @@ class CodeOperations(_ScopeDependentOperations):
         m = re.match(
             r"https://(?P<account_name>.+)\.blob\.core\.windows\.net"
             r"(:[0-9]+)?/(?P<container_name>.+)/(?P<blob_name>.*)",
-            code.path,
+            str(code.path),
         )
         if not m:
             raise ValueError(f"Invalid code path: {code.path}")
