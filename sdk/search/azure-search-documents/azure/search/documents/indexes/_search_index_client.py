@@ -616,7 +616,6 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         )
         return result  # pylint:disable=protected-access
 
-
     @distributed_trace
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs) -> HttpResponse:
         """Runs a network request using the client's existing pipeline.
