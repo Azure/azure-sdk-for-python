@@ -7,6 +7,7 @@
 - Added `semantic_query` for `Search` method.
 - Added back alias operations to `SearchIndexClient`
 - Added back `query_language`, `query_speller`, `semantic_fields` and `debug` for `Search` method.
+- Added `send_request` method for `SearchClient` & `SearchIndexClient` to run a network request using the client's existing pipeline.
 
 ### Breaking Changes
 
