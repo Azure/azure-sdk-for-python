@@ -8,9 +8,9 @@ from os import path
 from typing import Dict, Optional
 
 from azure.ai.generative.evaluate._constants import TASK_TYPE_TO_METRICS_MAPPING
+from ._user_agent import USER_AGENT
 
 from ._utils import run_pf_flow_with_dict_list, df_to_dict_list, wait_for_pf_run_to_complete
-from azure.ai.generative.evaluate.metrics._custom_metric import _CodeMetric
 
 LOGGER = logging.getLogger(__name__)
 
@@ -55,7 +55,9 @@ class MetricHandler(object):
         from promptflow import PFClient
         from promptflow.entities import AzureOpenAIConnection, OpenAIConnection
 
-        pf_client = PFClient()
+        pf_client = PFClient(
+            user_agent=USER_AGENT
+        )
 
         openai_config = self.metrics_mapping["openai_params"]
         conn_name = "openai_connection"
