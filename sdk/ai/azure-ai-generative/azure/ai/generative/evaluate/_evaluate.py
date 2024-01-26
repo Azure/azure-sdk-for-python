@@ -288,6 +288,8 @@ def _evaluate(
 
         inbuilt_metrics, custom_prompt_metrics, code_metrics = _validate_metrics(metrics, task_type)
 
+        # TODO : Once PF is used for inbuilt metrics parallelize submission of metrics calculation of different kind
+
         if custom_prompt_metrics:
             for metric in custom_prompt_metrics:
                 metrics_config.setdefault(metric.name, {param: param for param in metric._template_variable})
