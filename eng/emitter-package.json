@@ -2,6 +2,6 @@
   "main": "dist/src/index.js",
   "dependencies": {
     "@azure-tools/typespec-python": "0.18.2",
-    "@azure-tools/typespec-azure-resource-manager": "0.37.0"
+    "@azure-tools/typespec-azure-resource-manager": "0.38.0"
   }
 }
