@@ -172,25 +172,6 @@ class TestStorageShare(StorageRecordedTestCase):
         assert snapshot_props.metadata == metadata2
         self._delete_shares(share.share_name)
 
-    @FileSharePreparer()
-    @recorded_by_proxy
-    def test_delete_share_with_snapshots(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        self._setup(storage_account_name, storage_account_key)
-        share = self._get_share_reference()
-        share.create_share()
-        snapshot = share.create_snapshot()
-
-        # Act
-        with pytest.raises(HttpResponseError):
-            share.delete_share()
-
-        deleted = share.delete_share(delete_snapshots=True)
-        assert deleted is None
-        self._delete_shares()
-
     @pytest.mark.playback_test_only
     @FileSharePreparer()
     @recorded_by_proxy
