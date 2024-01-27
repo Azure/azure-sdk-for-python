@@ -210,7 +210,7 @@ def test_parse_pyproject():
     parsed_project = ParsedSetup.from_path("C:/repo/azure-sdk-for-python/sdk/keyvault/azure-keyvault-keys")
 
     assert parsed_project.name == "azure-keyvault-keys"
-    assert parsed_project.version == "4.9.0b4"
+    assert parsed_project.version == "0.0.1"
 
 def test_parse_setup_py():
     # ensure that we can parse from a folder and a specific file
