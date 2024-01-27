@@ -6,9 +6,13 @@ import json
 import pathlib
 import re
 import shutil
+import time
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Dict, List
 import pandas as pd
+import tempfile
+
+from pydash import flow
 
 _SUB_ID = "sub-id"
 _RES_GRP = "res-grp"
@@ -25,6 +29,48 @@ def load_jsonl_to_df(path):
         return pd.read_json(path, lines=True)
     else:
         raise Exception("File not found: {}".format(path))
+
+def df_to_dict_list(df, extra_kwargs: Optional[Dict] = None):
+    if extra_kwargs is not None:
+        return df.assign(**extra_kwargs).to_dict("records")
+    return df.to_dict("records")
+
+
+def run_pf_flow_with_dict_list(flow_path, data: List[Dict], flow_params=None):
+    from promptflow import PFClient
+
+
+    columns = data[0].keys()
+    column_mapping = {col: f"${{data.{col}}}" for col in columns} # e.g. {"question": "${data.question}"}
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmp_path = os.path.join(tmpdir, "test_data.jsonl")
+        with open(tmp_path, "w") as f:
+            for line in data:
+                f.write(json.dumps(line) + "\n")
+
+        pf_client = PFClient()
+
+        if flow_params is None:
+            flow_params = {}
+
+        return pf_client.run(
+            flow=flow_path,
+            data=tmp_path,
+            column_mapping=column_mapping,
+            **flow_params
+        )
+
+def wait_for_pf_run_to_complete(run_name):
+    from promptflow import PFClient
+    from promptflow._sdk._constants import RunStatus
+
+    pf_client = PFClient()
+    while True:
+        status = pf_client.runs.get(run_name).status
+        if status in [RunStatus.COMPLETED, RunStatus.FAILED, RunStatus.CANCELED]:
+            break
+        time.sleep(2)
 
 def _has_column(data, column_name):
     if data is None:
