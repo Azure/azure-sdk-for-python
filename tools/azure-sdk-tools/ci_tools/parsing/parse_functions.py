@@ -1,7 +1,9 @@
 import os
 import ast
 import textwrap
+import sys
 import re
+import importlib
 
 try:
     # py 311 adds this library natively
@@ -20,6 +22,7 @@ from pkg_resources import (
 
 # this assumes the presence of "packaging"
 from packaging.specifiers import SpecifierSet
+import setuptools
 from setuptools import Extension
 
 NEW_REQ_PACKAGES = ["azure-core", "azure-mgmt-core"]
@@ -272,28 +275,53 @@ def parse_setup_py(setup_filename: str)  -> Tuple[str, str, str, List[str], bool
 def parse_pyproject(pyproject_filename: str) -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], str, List[Extension]]:
     toml_dict = get_pyproject_dict(pyproject_filename)
 
-    from setuptools.config import read_configuration
+    project_config = toml_dict.get("project", None)
 
-    from setuptools_scm import Configuration
-    project_config = Configuration.from_file(pyproject_filename)
+    # This stilted dynamic evaluation is necessary because setuptools.configuration.read_configuration doesn't properly
+    # evaulate a valid pyproject.toml...or at least I am unable to get it to do so properly. I just get an empty dict
+    # of values. Using read_configuration is preferred because it will handle all of the setuptools dynamic evaluation for us.
+    # however, in my experience, I have been unable to make this happen.
+    # 
+    # I have been able to successfully call build.ProjectBuilder.prepare() and get a valid result, but that actually partially builds
+    # the project metadata into a dist-info folder, which is more work than I want to do to get the values I need.
+    # I'd rather just use read_configuration and be done with it.
+    # - scbedd 1/26/2024.
+    for value in project_config.get("dynamic", None):
+        if value == "version":
+            # check if the version exists in dynamic and is implemented using setuptools dynamic
+            original_path = sys.path.copy()
 
-    breakpoint()
+            sys.path.insert(0, os.path.dirname(pyproject_filename))
 
+            try:
+                dynamic_version = toml_dict["tool"]["setuptools"]["dynamic"]["version"]
+
+                if "attr" in dynamic_version:
+                    attr_string = dynamic_version["attr"]
+                    module_ending = attr_string.rindex(".")
+
+                    module, attribute = attr_string[:module_ending], attr_string[module_ending + 1:]
+
+                    module = importlib.import_module(module)
+                    parsed_version = getattr(module, attribute)
+                else:
+                    raise NotImplementedError("Unable to parse dynamic version that is not a python attr.")
+            finally:
+                sys.path = original_path
 
     if project_config:
         name = project_config.get("name")
-        version = project_config.get("version")
+        version = parsed_version
         python_requires = project_config.get("requires-python")
         requires = project_config.get("dependencies")
         is_new_sdk = name in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x)[0] in NEW_REQ_PACKAGES), requires))
         name_space = name.replace("-", ".")
-        # package_data = project_config.get("package_data", None) todo
-        # include_package_data = project_config.get("include_package_data", None) todo
+        # package_data = project_config.get("package_data", None) TODO
+        # include_package_data = project_config.get("include_package_data", None) TODO
         classifiers = project_config.get("classifiers", [])
         keywords = project_config.get("keywords", [])
-        # ext_package = project_config.get("ext_package", None) todo
-        # ext_modules = project_config.get("ext_modules", []) todo
-        breakpoint()
+        # ext_package = project_config.get("ext_package", None) TODO
+        # ext_modules = project_config.get("ext_modules", []) TODO
 
         return (
             name,
