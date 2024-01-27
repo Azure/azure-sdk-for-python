@@ -102,6 +102,9 @@ def get_version_py(setup_py_location):
 
 
 def set_version_py(setup_py_location, new_version):
+    if setup_py_location.endswith(".toml"):
+        raise NotImplementedError("This method does not yet support pyproject.toml files, only setup.py files.")
+
     version_py_location = get_version_py(setup_py_location)
 
     version_contents = ""
@@ -129,6 +132,9 @@ def get_classification(version):
 
 
 def set_dev_classifier(setup_py_location, version):
+    if setup_py_location.endswith(".toml"):
+        raise NotImplementedError("This method does not yet support pyproject.toml files, only setup.py files.")
+
     classification = get_classification(version)
 
     setup_contents = ""

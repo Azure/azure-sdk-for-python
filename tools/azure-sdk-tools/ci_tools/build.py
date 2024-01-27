@@ -179,18 +179,25 @@ def create_package(
     dist = get_artifact_directory(dest_folder)
     setup_parsed = ParsedSetup.from_path(setup_directory_or_file)
 
-    if setup_parsed.ext_modules:
-        run_logged(
-            [sys.executable, "-m", "cibuildwheel", "--output-dir", dist], prefix="cibuildwheel", cwd=setup_parsed.folder
-        )
+    if setup_parsed.is_pyproject:
+        # when building with pyproject, we will use `python -m build` to build the package
+        # -n argument will not use an isolated environment, which means the current environment must have all the dependencies of the package installed, to successfully
+        # pull in the dynamic `__version__` attribute. This is because setuptools is actually walking the __init__.py to get that attribute, which will fail
+        # if the imports within the setup.py don't work. Perhaps an isolated environment is better, pulling all the "dependencies" into the [build-system].requires list
+        raise NotImplementedError("Building with pyproject is not yet supported")
+    else:
+        if setup_parsed.ext_modules:
+            run_logged(
+                [sys.executable, "-m", "cibuildwheel", "--output-dir", dist], prefix="cibuildwheel", cwd=setup_parsed.folder
+            )
 
-    if enable_wheel:
-        run_logged(
-            [sys.executable, "setup.py", "bdist_wheel", "-d", dist], prefix="create_wheel", cwd=setup_parsed.folder
-        )
-    if enable_sdist:
-        run_logged(
-            [sys.executable, "setup.py", "sdist", "-d", dist],
-            prefix="create_sdist",
-            cwd=setup_parsed.folder,
-        )
+        if enable_wheel:
+            run_logged(
+                [sys.executable, "setup.py", "bdist_wheel", "-d", dist], prefix="create_wheel", cwd=setup_parsed.folder
+            )
+        if enable_sdist:
+            run_logged(
+                [sys.executable, "setup.py", "sdist", "-d", dist],
+                prefix="create_sdist",
+                cwd=setup_parsed.folder,
+            )

@@ -326,6 +326,9 @@ def process_requires(setup_py_path: str):
     update to require 1.0.1a1 to allow previously published dev versions to be allowed.
     """
 
+    if setup_py_path.endswith(".toml"):
+        raise NotImplementedError("This method does not yet support pyproject.toml files, only setup.py files.")
+
     pkg_details = ParsedSetup.from_path(setup_py_path)
     azure_requirements = [Requirement.parse(r) for r in pkg_details.requires if r.startswith("azure")]
 

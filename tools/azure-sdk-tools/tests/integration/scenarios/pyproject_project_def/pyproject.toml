@@ -40,3 +40,7 @@ readme = {file = ["README.md"]}
 
 [tool.setuptools.packages.find]
 exclude = ["samples", "tests", "azure", "azure.keyvault"]
+
+[tool.azure-sdk-build]
+pyright = false
+type_check_samples = false

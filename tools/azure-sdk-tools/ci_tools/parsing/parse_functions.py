@@ -60,6 +60,8 @@ class ParsedSetup:
         self.ext_package = ext_package
         self.ext_modules = ext_modules
 
+        self.is_pyproject = self.setup_filename.endswith(".toml")
+
         self.folder = os.path.dirname(self.setup_filename)
 
     @classmethod
