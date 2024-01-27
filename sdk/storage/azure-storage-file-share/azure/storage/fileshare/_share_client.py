@@ -7,7 +7,7 @@
 
 import sys
 from typing import (
-    Optional, Union, Dict, Any, Iterable, TYPE_CHECKING
+    Optional, Union, Dict, Any, Iterable, Literal, TYPE_CHECKING
 )
 from urllib.parse import urlparse, quote, unquote
 
@@ -34,10 +34,6 @@ from ._file_client import ShareFileClient
 from ._lease import ShareLeaseClient
 from ._models import ShareProtocols
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
