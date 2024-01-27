@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from datetime import datetime, timedelta
-from azure.storage.fileshare._generated._serialization import Serializer
+from ._generated._serialization import Serializer
 
 _ERROR_TOO_MANY_FILE_PERMISSIONS = 'file_permission and file_permission_key should not be set at the same time'
 _FILE_PERMISSION_TOO_LONG = 'Size of file_permission is too large. file_permission should be <=8KB, else' \
