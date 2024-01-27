@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines
 
-import sys
 from typing import (
     Optional, Union, Dict, Any, Iterable, Literal, TYPE_CHECKING
 )
