@@ -44,5 +44,4 @@ def _datetime_to_str(datetime_obj):
         return None
     if isinstance(datetime_obj, str):
         return datetime_obj
-    else:
-        Serializer.serialize_iso(datetime_obj)[:-1].ljust(27, "0") + "Z"
+    return Serializer.serialize_iso(datetime_obj)[:-1].ljust(27, "0") + "Z"
