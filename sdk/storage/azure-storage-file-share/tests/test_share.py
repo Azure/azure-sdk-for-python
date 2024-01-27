@@ -863,7 +863,7 @@ class TestStorageShare(StorageRecordedTestCase):
         share = self._create_share('prefix3')
         lease = share.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
         share.create_snapshot()
-        share.delete_share(delete_snapshots='include_leased', lease='00000000-1111-2222-3333-444444444444')
+        share.delete_share(delete_snapshots='include-leased', lease='00000000-1111-2222-3333-444444444444')
 
     @FileSharePreparer()
     @recorded_by_proxy

@@ -495,7 +495,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         else:
             if delete_snapshots == 'include':
                 delete_include = DeleteSnapshotsOptionType.INCLUDE
-            elif delete_snapshots == 'include_leased':
+            elif delete_snapshots == 'include-leased':
                 delete_include = DeleteSnapshotsOptionType.INCLUDE_LEASED
         try:
             self._client.share.delete(

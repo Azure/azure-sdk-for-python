@@ -360,7 +360,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         else:
             if delete_snapshots == 'include':
                 delete_include = DeleteSnapshotsOptionType.INCLUDE
-            elif delete_snapshots == 'include_leased':
+            elif delete_snapshots == 'include-leased':
                 delete_include = DeleteSnapshotsOptionType.INCLUDE_LEASED
         try:
             await self._client.share.delete(

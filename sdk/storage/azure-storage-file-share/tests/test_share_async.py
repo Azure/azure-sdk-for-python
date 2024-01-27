@@ -839,7 +839,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
-    async def test_list_shares_with_snapshot(self, **kwargs):
+    async def test_delete_snapshots_options(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -866,7 +866,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         share = await self._create_share('prefix3')
         lease = await share.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
         await share.create_snapshot()
-        await share.delete_share(delete_snapshots='include_leased', lease='00000000-1111-2222-3333-444444444444')
+        await share.delete_share(delete_snapshots='include-leased', lease='00000000-1111-2222-3333-444444444444')
 
     @FileSharePreparer()
     @recorded_by_proxy_async
