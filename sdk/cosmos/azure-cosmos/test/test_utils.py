@@ -44,7 +44,7 @@ class TestsUtils(unittest.TestCase):
 
     def test_connection_string(self):
         client: CosmosClient = (azure.cosmos.CosmosClient
-                                .from_connection_string(test_config._test_config.connection_str,
+                                .from_connection_string(test_config.TestConfig.connection_str,
                                                         consistency_level="Session"))
         database_id = "connection_string_test"
         db = client.create_database(database_id)

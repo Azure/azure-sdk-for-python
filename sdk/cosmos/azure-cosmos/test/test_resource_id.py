@@ -20,6 +20,7 @@ import unittest
 import uuid
 
 import pytest
+import conftest
 
 import azure.cosmos
 import test_config
@@ -29,7 +30,7 @@ from azure.cosmos import CosmosClient, PartitionKey
 @pytest.mark.cosmosEmulator
 class TestResourceIds(unittest.TestCase):
     client: azure.cosmos.CosmosClient = None
-    configs = test_config._test_config
+    configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
     connectionPolicy = configs.connectionPolicy
@@ -43,7 +44,7 @@ class TestResourceIds(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = CosmosClient(cls.host, cls.masterKey)
+        cls.client = conftest.cosmos_sync_client
 
     def test_id_unicode_validation(self):
         # unicode chars in Hindi for Id which translates to: "Hindi is the national language of India"

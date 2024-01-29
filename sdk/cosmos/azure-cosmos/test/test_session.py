@@ -4,6 +4,7 @@ import unittest
 import uuid
 
 import pytest
+import conftest
 
 import azure.cosmos._synchronized_request as synchronized_request
 import azure.cosmos.cosmos_client as cosmos_client
@@ -20,11 +21,12 @@ class SessionTests(unittest.TestCase):
 
     created_db: DatabaseProxy = None
     client: cosmos_client.CosmosClient = None
-    host = test_config._test_config.host
-    masterKey = test_config._test_config.masterKey
-    connectionPolicy = test_config._test_config.connectionPolicy
-    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
-    TEST_COLLECTION_ID = "Multi Partition Test Collection With Custom PK " + str(uuid.uuid4())
+    host = test_config.TestConfig.host
+    masterKey = test_config.TestConfig.masterKey
+    connectionPolicy = test_config.TestConfig.connectionPolicy
+    configs = test_config.TestConfig
+    TEST_DATABASE_ID = configs.TEST_DATABASE_ID
+    TEST_COLLECTION_ID = configs.TEST_MULTI_PARTITION_CONTAINER_ID
 
     @classmethod
     def setUpClass(cls):
@@ -37,17 +39,9 @@ class SessionTests(unittest.TestCase):
                             "'masterKey' and 'host' at the top of this class to run the "
                             "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session",
-                                                connection_policy=cls.connectionPolicy)
-        cls.created_db = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
-        cls.created_collection = cls.created_db.create_container_if_not_exists(
-            cls.TEST_COLLECTION_ID,
-            PartitionKey(path="/pk"),
-            offer_throughput=test_config._test_config.THROUGHPUT_FOR_5_PARTITIONS)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.client.delete_database(cls.TEST_DATABASE_ID)
+        cls.client = conftest.cosmos_sync_client
+        cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
+        cls.created_collection = cls.created_db.get_container_client(cls.TEST_COLLECTION_ID)
 
     def _MockRequest(self, global_endpoint_manager, request_params, connection_policy, pipeline_client, request):
         if HttpHeaders.SessionToken in request.headers:

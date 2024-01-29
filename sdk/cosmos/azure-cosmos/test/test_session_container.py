@@ -32,9 +32,9 @@ import test_config
 @pytest.mark.cosmosEmulator
 class TestSessionContainer(unittest.TestCase):
     # this test doesn't need real credentials, or connection to server
-    host = test_config._test_config.host
-    master_key = test_config._test_config.masterKey
-    connectionPolicy = test_config._test_config.connectionPolicy
+    host = test_config.TestConfig.host
+    master_key = test_config.TestConfig.masterKey
+    connectionPolicy = test_config.TestConfig.connectionPolicy
 
     def setUp(self):
         self.client = cosmos_client.CosmosClient(self.host, self.master_key, consistency_level="Session",

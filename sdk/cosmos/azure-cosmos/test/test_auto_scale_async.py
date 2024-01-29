@@ -18,11 +18,9 @@
 # SOFTWARE.
 
 import unittest
-import uuid
 
 import pytest
 
-import azure.cosmos
 import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos import ThroughputProperties, PartitionKey
@@ -31,15 +29,14 @@ from azure.cosmos.aio import CosmosClient, DatabaseProxy
 
 @pytest.mark.cosmosEmulator
 class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
-    host = test_config._test_config.host
-    masterKey = test_config._test_config.masterKey
-    connectionPolicy = test_config._test_config.connectionPolicy
+    host = test_config.TestConfig.host
+    masterKey = test_config.TestConfig.masterKey
+    connectionPolicy = test_config.TestConfig.connectionPolicy
 
     client: CosmosClient = None
     created_database: DatabaseProxy = None
-    sync_client: azure.cosmos.CosmosClient = None
 
-    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
+    TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
 
     @classmethod
     def setUpClass(cls):
@@ -49,13 +46,6 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-
-        cls.sync_client = azure.cosmos.CosmosClient(cls.host, cls.masterKey)
-        cls.sync_client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.sync_client.delete_database(cls.TEST_DATABASE_ID)
 
     async def asyncSetUp(self):
         self.client = CosmosClient(self.host, self.masterKey)

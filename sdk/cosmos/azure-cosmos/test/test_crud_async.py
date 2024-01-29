@@ -42,12 +42,10 @@ from azure.core import MatchConditions
 from azure.core.exceptions import AzureError, ServiceResponseError
 from azure.core.pipeline.transport import AsyncioRequestsTransport, AsyncioRequestsTransportResponse
 
-import azure.cosmos
 import azure.cosmos._base as base
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
 import test_config
-from azure.cosmos import cosmos_client
 from azure.cosmos.aio import CosmosClient, _retry_utility_async, DatabaseProxy
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 from azure.cosmos.partition_key import PartitionKey
@@ -76,16 +74,13 @@ class TimeoutTransport(AsyncioRequestsTransport):
 class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
     """Python CRUD Tests.
     """
-    sync_client: azure.cosmos.CosmosClient = None
     client: CosmosClient = None
-    configs = test_config._test_config
+    configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
     connectionPolicy = configs.connectionPolicy
     last_headers = []
     database_for_test: DatabaseProxy = None
-
-    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
 
     async def __assert_http_failure_with_status(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -109,18 +104,11 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.sync_client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.sync_client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.sync_client.delete_database(cls.TEST_DATABASE_ID)
-
     async def asyncSetUp(self):
         self.client = CosmosClient(self.host, self.masterKey)
-        self.database_for_test = self.client.get_database_client(self.TEST_DATABASE_ID)
+        self.database_for_test = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
 
-    async def asyncTearDown(self):
+    async def tearDown(self):
         await self.client.close()
 
     async def test_database_crud_async(self):
@@ -231,6 +219,7 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
 
         created_properties = await created_collection.read()
         assert 'consistent' == created_properties['indexingPolicy']['indexingMode']
+        assert PartitionKey(path='/pk', kind='Hash') == created_collection._properties['partitionKey']
 
         # read collections after creation
         collections = [collection async for collection in created_db.list_containers()]
@@ -251,18 +240,6 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
         created_container = created_db.get_container_client(created_collection.id)
         await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND,
                                                      created_container.read)
-
-        container_proxy = await created_db.create_container_if_not_exists(id=created_collection.id,
-                                                                          partition_key=PartitionKey(path='/id',
-                                                                                                     kind='Hash'))
-        assert created_collection.id == container_proxy.id
-        assert PartitionKey(path='/id', kind='Hash') == container_proxy._properties['partitionKey']
-
-        container_proxy = await created_db.create_container_if_not_exists(id=created_collection.id,
-                                                                          partition_key=created_properties[
-                                                                              'partitionKey'])
-        assert created_container.id == container_proxy.id
-        assert PartitionKey(path='/id', kind='Hash') == container_proxy._properties['partitionKey']
 
     async def test_partitioned_collection_async(self):
         created_db = self.database_for_test
@@ -299,13 +276,10 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
     async def test_partitioned_collection_quota_async(self):
         created_db = self.database_for_test
 
-        created_collection = await self.database_for_test.create_container(str(uuid.uuid4()), PartitionKey(path="/id"))
+        created_collection = self.database_for_test.get_container_client(
+            self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
-        retrieved_collection = created_db.get_container_client(
-            container=created_collection.id
-        )
-
-        retrieved_collection_properties = await retrieved_collection.read(
+        retrieved_collection_properties = await created_collection.read(
             populate_partition_key_range_statistics=True,
             populate_quota_info=True)
         assert retrieved_collection_properties.get("statistics") is not None
@@ -490,6 +464,7 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
         )]
 
         assert len(document_list) == 1
+        await self.database_for_test.delete_container(created_collection.id)
 
     async def test_partitioned_collection_permissions_async(self):
         created_db = self.database_for_test
@@ -573,11 +548,12 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
                 document_definition['id']
             )
 
+            await self.database_for_test.delete_container(all_collection.id)
+            await self.database_for_test.delete_container(read_collection.id)
+
     async def test_partitioned_collection_execute_stored_procedure_async(self):
 
-        created_collection = await self.database_for_test.create_container(
-            test_config._test_config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_PARTITION_KEY,
-            PartitionKey(path="/pk"))
+        created_collection = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         sproc = {
             'id': 'storedProcedure' + str(uuid.uuid4()),
@@ -608,10 +584,7 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
 
         created_db = self.database_for_test
 
-        created_collection = await created_db.create_container(
-            id='test_partitioned_collection_partition_key_value_types ' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path='/pk', kind='Hash')
-        )
+        created_collection = created_db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         document_definition = {'id': 'document1' + str(uuid.uuid4()),
                                'pk': None,
@@ -667,8 +640,7 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_partitioned_collection_conflict_crud_and_query_async(self):
 
-        created_collection = await self.database_for_test.create_container_if_not_exists(str(uuid.uuid4()),
-                                                                                         PartitionKey(path="/id"))
+        created_collection = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         conflict_definition = {'id': 'new conflict',
                                'resourceId': 'doc1',
@@ -714,7 +686,7 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
     async def test_document_crud_async(self):
 
         # create collection
-        created_collection = await self.database_for_test.create_container(str(uuid.uuid4()), PartitionKey(path="/id"))
+        created_collection = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # read documents
         document_list = [document async for document in created_collection.read_all_items()]
         # create a document
@@ -723,7 +695,8 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
         # create a document with auto ID generation
         document_definition = {'name': 'sample document',
                                'spam': 'eggs',
-                               'key': 'value'}
+                               'key': 'value',
+                               'pk': 'pk'}
 
         created_document = await created_collection.create_item(body=document_definition,
                                                                 enable_automatic_id_generation=True)
@@ -732,6 +705,7 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
         document_definition = {'name': 'sample document',
                                'spam': 'eggs',
                                'key': 'value',
+                               'pk': 'pk',
                                'id': str(uuid.uuid4())}
 
         created_document = await created_collection.create_item(body=document_definition)
@@ -838,13 +812,13 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
         # read document
         one_document_from_read = await created_collection.read_item(
             item=replaced_document['id'],
-            partition_key=replaced_document['id']
+            partition_key=replaced_document['pk']
         )
         assert replaced_document['id'] == one_document_from_read['id']
         # delete document
         await created_collection.delete_item(
             item=replaced_document,
-            partition_key=replaced_document['id']
+            partition_key=replaced_document['pk']
         )
         # read documents after deletion
         await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND,
@@ -855,8 +829,7 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
     async def test_document_upsert_async(self):
 
         # create collection
-        created_collection = await self.database_for_test.create_container_if_not_exists(str(uuid.uuid4()),
-                                                                                         PartitionKey(path="/id"))
+        created_collection = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         # read documents and check count
         document_list = [document async for document in created_collection.read_all_items()]
@@ -866,7 +839,8 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
         document_definition = {'id': 'doc',
                                'name': 'sample document',
                                'spam': 'eggs',
-                               'key': 'value'}
+                               'key': 'value',
+                               'pk': 'pk'}
 
         # create document using Upsert API
         created_document = await created_collection.upsert_item(body=document_definition)
@@ -923,8 +897,8 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
         assert len(document_list) == before_create_documents_count + 2
 
         # delete documents
-        await created_collection.delete_item(item=upserted_document, partition_key=upserted_document['id'])
-        await created_collection.delete_item(item=new_document, partition_key=new_document['id'])
+        await created_collection.delete_item(item=upserted_document, partition_key=upserted_document['pk'])
+        await created_collection.delete_item(item=new_document, partition_key=new_document['pk'])
 
         # read documents after delete and verify count is same as original
         document_list = [document async for document in created_collection.read_all_items()]
@@ -1318,8 +1292,7 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
     async def test_trigger_crud_async(self):
 
         # create collection
-        collection = await self.database_for_test.create_container_if_not_exists(str(uuid.uuid4()),
-                                                                                 PartitionKey(path="/id"))
+        collection = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # read triggers
         triggers = [trigger async for trigger in collection.scripts.list_triggers()]
         # create a trigger
@@ -1372,8 +1345,7 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
     async def test_udf_crud_async(self):
 
         # create collection
-        collection = await self.database_for_test.create_container_if_not_exists(str(uuid.uuid4()),
-                                                                                 PartitionKey(path="/id"))
+        collection = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # read udfs
         udfs = [udf async for udf in collection.scripts.list_user_defined_functions()]
         # create a udf
@@ -1415,7 +1387,7 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
     async def test_sproc_crud_async(self):
 
         # create collection
-        collection = await self.database_for_test.create_container(str(uuid.uuid4()), PartitionKey(path="/id"))
+        collection = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # read sprocs
         sprocs = [sproc async for sproc in collection.scripts.list_stored_procedures()]
         # create a sproc
@@ -1463,7 +1435,7 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_script_logging_execute_stored_procedure_async(self):
 
-        created_collection = await self.database_for_test.create_container(str(uuid.uuid4()), PartitionKey(path="/id"))
+        created_collection = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         sproc = {
             'id': 'storedProcedure' + str(uuid.uuid4()),
@@ -1515,28 +1487,10 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
         # create database
         db = self.database_for_test
         # create collection
-        collection = await db.create_container(
-            id='test_collection_indexing_policy default policy' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path='/id', kind='Hash')
-        )
+        collection = db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         collection_properties = await collection.read()
         assert collection_properties['indexingPolicy']['indexingMode'] == documents.IndexingMode.Consistent
-
-        await db.delete_container(container=collection)
-
-        consistent_collection = await db.create_container(
-            id='test_collection_indexing_policy consistent collection ' + str(uuid.uuid4()),
-            indexing_policy={
-                'indexingMode': documents.IndexingMode.Consistent
-            },
-            partition_key=PartitionKey(path='/id', kind='Hash')
-        )
-
-        consistent_collection_properties = await consistent_collection.read()
-        assert consistent_collection_properties['indexingPolicy']['indexingMode'] == documents.IndexingMode.Consistent
-
-        await db.delete_container(container=consistent_collection)
 
         collection_with_indexing_policy = await db.create_container(
             id='CollectionWithIndexingPolicy ' + str(uuid.uuid4()),
@@ -1574,13 +1528,9 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
         db = self.database_for_test
 
         # no indexing policy specified
-        collection = await db.create_container(
-            id='test_create_default_indexing_policy TestCreateDefaultPolicy01' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path='/id', kind='Hash')
-        )
+        collection = db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         collection_properties = await collection.read()
         await self._check_default_indexing_policy_paths(collection_properties['indexingPolicy'])
-        await db.delete_container(container=collection)
 
         # partial policy specified
         collection = await db.create_container(
@@ -1644,6 +1594,7 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
         )
         collection_properties = await collection.read()
         await self._check_default_indexing_policy_paths(collection_properties['indexingPolicy'])
+        await db.delete_container(container=collection)
 
     async def test_create_indexing_policy_with_composite_and_spatial_indexes_async(self):
 
@@ -1852,32 +1803,18 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_query_iterable_functionality_async(self):
 
-        async def __create_resources():
-            """Creates resources for this test.
-
-            :Parameters:
-                - `client`: cosmos_client_connection.CosmosClientConnection
-
-            :Returns:
-                dict
-
-            """
-            collection = await self.database_for_test.create_container_if_not_exists(
-                str(uuid.uuid4()),
-                PartitionKey(path="/pk"))
-            doc1 = await collection.upsert_item(body={'id': 'doc1', 'prop1': 'value1'})
-            doc2 = await collection.upsert_item(body={'id': 'doc2', 'prop1': 'value2'})
-            doc3 = await collection.upsert_item(body={'id': 'doc3', 'prop1': 'value3'})
-            resources = {
-                'coll': collection,
-                'doc1': doc1,
-                'doc2': doc2,
-                'doc3': doc3
-            }
-            return resources
-
+        collection = await self.database_for_test.create_container_if_not_exists("query-iterable-container-async",
+                                                                                 PartitionKey(path="/pk"))
+        doc1 = await collection.upsert_item(body={'id': 'doc1', 'prop1': 'value1'})
+        doc2 = await collection.upsert_item(body={'id': 'doc2', 'prop1': 'value2'})
+        doc3 = await collection.upsert_item(body={'id': 'doc3', 'prop1': 'value3'})
+        resources = {
+            'coll': collection,
+            'doc1': doc1,
+            'doc2': doc2,
+            'doc3': doc3
+        }
         # Validate QueryIterable by converting it to a list.
-        resources = await __create_resources()
         results = resources['coll'].read_all_items(max_item_count=2)
         docs = [doc async for doc in results]
         assert 3 == len(docs)
@@ -1910,6 +1847,8 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
         assert 1 == len([page async for page in await page_iter.__anext__()])
         with self.assertRaises(StopAsyncIteration):
             await page_iter.__anext__()
+
+        await self.database_for_test.delete_container(collection.id)
 
     async def test_trigger_functionality_async(self):
 
@@ -2055,7 +1994,7 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
     async def test_stored_procedure_functionality_async(self):
 
         # create collection
-        collection = await self.database_for_test.create_container(str(uuid.uuid4()), PartitionKey(path="/id"))
+        collection = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         sproc1 = {
             'id': 'storedProcedure1' + str(uuid.uuid4()),
@@ -2123,26 +2062,15 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
         db = self.database_for_test
 
         # Create collection.
-        collection = await db.create_container(
-            id='test_offer_read_and_query ' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path='/id', kind='Hash')
-        )
+        collection = db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # Read the offer.
         expected_offer = await collection.get_throughput()
         collection_properties = await collection.read()
         self.__validate_offer_response_body(expected_offer, collection_properties.get('_self'), None)
 
-        # Now delete the collection.
-        await db.delete_container(container=collection)
-        # Reading fails.
-        await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND, collection.get_throughput)
-
     async def test_offer_replace_async(self):
 
-        # Create collection.
-        container_id = str(uuid.uuid4())
-        partition_key = PartitionKey(path="/id")
-        collection = await self.database_for_test.create_container(container_id, partition_key)
+        collection = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # Read Offer
         expected_offer = await collection.get_throughput()
         collection_properties = await collection.read()
@@ -2175,10 +2103,7 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
     async def test_index_progress_headers_async(self):
 
         created_db = self.database_for_test
-        consistent_coll = await created_db.create_container(
-            id='test_index_progress_headers consistent_coll ' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path="/id", kind='Hash'),
-        )
+        consistent_coll = created_db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         created_container = created_db.get_container_client(container=consistent_coll)
         await created_container.read(populate_quota_info=True)
         assert HttpHeaders.LazyIndexingProgress not in created_db.client_connection.last_response_headers
@@ -2197,6 +2122,8 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
         assert HttpHeaders.LazyIndexingProgress not in created_db.client_connection.last_response_headers
         assert HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers
 
+        await created_db.delete_container(none_coll)
+
     async def test_get_resource_with_dictionary_and_object_async(self):
 
         created_db = self.database_for_test
@@ -2213,7 +2140,7 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
         read_db = self.client.get_database_client(await created_db.read())
         assert read_db.id == created_db.id
 
-        created_container = await self.database_for_test.create_container(str(uuid.uuid4()), PartitionKey(path="/id"))
+        created_container = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         # read container with id
         read_container = created_db.get_container_client(created_container.id)
@@ -2228,14 +2155,14 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
         read_container = created_db.get_container_client(created_properties)
         assert read_container.id == created_container.id
 
-        created_item = await created_container.create_item({'id': '1' + str(uuid.uuid4())})
+        created_item = await created_container.create_item({'id': '1' + str(uuid.uuid4()), 'pk': 'pk'})
 
         # read item with id
-        read_item = await created_container.read_item(item=created_item['id'], partition_key=created_item['id'])
+        read_item = await created_container.read_item(item=created_item['id'], partition_key=created_item['pk'])
         assert read_item['id'] == created_item['id']
 
         # read item with properties
-        read_item = await created_container.read_item(item=created_item, partition_key=created_item['id'])
+        read_item = await created_container.read_item(item=created_item, partition_key=created_item['pk'])
         assert read_item['id'], created_item['id']
 
         created_sproc = await created_container.scripts.create_stored_procedure({
@@ -2361,9 +2288,7 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_patch_operations_async(self):
 
-        created_container = await self.database_for_test.create_container_if_not_exists(id="patch_container",
-                                                                                        partition_key=PartitionKey(
-                                                                                            path="/pk"))
+        created_container = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         # Create item to patch
         item_id = "patch_item_" + str(uuid.uuid4())
@@ -2430,9 +2355,7 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_conditional_patching_async(self):
 
-        created_container = await self.database_for_test.create_container_if_not_exists(id="patch_filter_container",
-                                                                                        partition_key=PartitionKey(
-                                                                                            path="/pk"))
+        created_container = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # Create item to patch
         item_id = "conditional_patch_item_" + str(uuid.uuid4())
         item = {
@@ -2549,9 +2472,7 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
         # Feature must be enabled at the account level
         # If feature is not enabled the test will still pass as we just verify the headers were sent
 
-        created_container = await self.database_for_test.create_container_if_not_exists(
-            id="priority_level_container_async",
-            partition_key=PartitionKey(path="/pk"))
+        created_container = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         item1 = {"id": "item1", "pk": "pk1"}
         item2 = {"id": "item2", "pk": "pk2"}
         self.OriginalExecuteFunction = _retry_utility_async.ExecuteFunctionAsync

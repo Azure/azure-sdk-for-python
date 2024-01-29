@@ -1,14 +1,5 @@
 # The MIT License (MIT)
 # Copyright (c) 2023 Microsoft Corporation
-import unittest
-import uuid
-
-import pytest
-
-import test_config
-from azure.cosmos import CosmosClient, exceptions, PartitionKey, DatabaseProxy
-from azure.cosmos.http_constants import HttpHeaders, StatusCodes
-
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +17,16 @@ from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import unittest
+import uuid
+
+import pytest
+import conftest
+
+import test_config
+from azure.cosmos import CosmosClient, exceptions, PartitionKey, DatabaseProxy
+from azure.cosmos.http_constants import HttpHeaders, StatusCodes
+
 
 def get_subpartition_item(item_id):
     return {'id': item_id,
@@ -40,12 +41,12 @@ class TestTransactionalBatch(unittest.TestCase):
     """Python Transactional Batch Tests.
     """
 
-    configs = test_config._test_config
+    configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
     client: CosmosClient = None
     test_database: DatabaseProxy = None
-    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
+    TEST_DATABASE_ID = configs.TEST_DATABASE_ID
 
     @classmethod
     def setUpClass(cls):
@@ -55,12 +56,8 @@ class TestTransactionalBatch(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = CosmosClient(cls.host, cls.masterKey)
-        cls.test_database = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.client.delete_database(cls.TEST_DATABASE_ID)
+        cls.client = conftest.cosmos_sync_client
+        cls.test_database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
 
     def test_invalid_batch_sizes(self):
         container = self.test_database.create_container_if_not_exists(id="invalid_batch_size" + str(uuid.uuid4()),
@@ -98,6 +95,8 @@ class TestTransactionalBatch(unittest.TestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == StatusCodes.REQUEST_ENTITY_TOO_LARGE
             assert e.message.startswith("(RequestEntityTooLarge)")
+
+        self.test_database.delete_container(container.id)
 
     def test_batch_create(self):
         container = self.test_database.create_container_if_not_exists(id="batch_create" + str(uuid.uuid4()),
@@ -155,6 +154,8 @@ class TestTransactionalBatch(unittest.TestCase):
             assert operation_results[0].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
             assert operation_results[1].get("statusCode") == StatusCodes.BAD_REQUEST
 
+        self.test_database.delete_container(container.id)
+
     def test_batch_read(self):
         container = self.test_database.create_container_if_not_exists(id="batch_read" + str(uuid.uuid4()),
                                                                       partition_key=PartitionKey(path="/company"))
@@ -182,6 +183,8 @@ class TestTransactionalBatch(unittest.TestCase):
             assert len(operation_results) == 2
             assert operation_results[0].get("statusCode") == StatusCodes.NOT_FOUND
             assert operation_results[1].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
+
+        self.test_database.delete_container(container.id)
 
     def test_batch_replace(self):
         container = self.test_database.create_container_if_not_exists(id="batch_replace" + str(uuid.uuid4()),
@@ -226,6 +229,8 @@ class TestTransactionalBatch(unittest.TestCase):
             assert operation_results[1].get("statusCode") == StatusCodes.PRECONDITION_FAILED
             assert operation_results[2].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
 
+        self.test_database.delete_container(container.id)
+
     def test_batch_upsert(self):
         container = self.test_database.create_container_if_not_exists(id="batch_upsert" + str(uuid.uuid4()),
                                                                       partition_key=PartitionKey(path="/company"))
@@ -237,6 +242,8 @@ class TestTransactionalBatch(unittest.TestCase):
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert len(batch_response) == 3
         assert batch_response[1].get("resourceBody").get("message") == "item was upsert"
+
+        self.test_database.delete_container(container.id)
 
     def test_batch_patch(self):
         container = self.test_database.create_container_if_not_exists(id="batch_patch" + str(uuid.uuid4()),
@@ -304,6 +311,8 @@ class TestTransactionalBatch(unittest.TestCase):
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert len(batch_response) == 2
 
+        self.test_database.delete_container(container.id)
+
     def test_batch_delete(self):
         container = self.test_database.create_container_if_not_exists(id="batch_delete" + str(uuid.uuid4()),
                                                                       partition_key=PartitionKey(path="/company"))
@@ -337,6 +346,8 @@ class TestTransactionalBatch(unittest.TestCase):
             assert operation_results[0].get("statusCode") == StatusCodes.NOT_FOUND
             assert operation_results[1].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
 
+        self.test_database.delete_container(container.id)
+
     def test_batch_lsn(self):
         container = self.test_database.create_container_if_not_exists(id="batch_lsn" + str(uuid.uuid4()),
                                                                       partition_key=PartitionKey(path="/company"))
@@ -359,6 +370,8 @@ class TestTransactionalBatch(unittest.TestCase):
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert len(batch_response) == 6
         assert int(lsn) == int(container.client_connection.last_response_headers.get(HttpHeaders.LSN)) - 1
+
+        self.test_database.delete_container(container.id)
 
     def test_batch_subpartition(self):
         container = self.test_database.create_container_if_not_exists(
@@ -404,6 +417,8 @@ class TestTransactionalBatch(unittest.TestCase):
             assert "Partition key provided either doesn't correspond to " \
                    "definition in the collection or doesn't match partition key " \
                    "field values specified in the document." in e.message
+
+        self.test_database.delete_container(container.id)
 
 
 if __name__ == '__main__':

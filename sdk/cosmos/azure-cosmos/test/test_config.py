@@ -20,11 +20,12 @@
 # SOFTWARE.
 import collections
 import os
-import time
 import uuid
 
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
+from azure.cosmos import ContainerProxy
+from azure.cosmos import DatabaseProxy
 from azure.cosmos.cosmos_client import CosmosClient
 from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
@@ -37,10 +38,10 @@ except:
     print("no urllib3")
 
 
-class _test_config(object):
-
-    #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Cosmos DB Emulator Key")]
-    masterKey = os.getenv('ACCOUNT_KEY', 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==')
+class TestConfig(object):
+    # [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Cosmos DB Emulator Key")]
+    masterKey = os.getenv('ACCOUNT_KEY',
+                          'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==')
     host = os.getenv('ACCOUNT_HOST', 'https://localhost:8081/')
     connection_str = os.getenv('ACCOUNT_CONNECTION_STR', 'AccountEndpoint={};AccountKey={};'.format(host, masterKey))
 
@@ -61,24 +62,38 @@ class _test_config(object):
     THROUGHPUT_FOR_1_PARTITION = 400
 
     TEST_DATABASE_ID = os.getenv('COSMOS_TEST_DATABASE_ID', "Python SDK Test Database " + str(uuid.uuid4()))
-    TEST_THROUGHPUT_DATABASE_ID = "Python SDK Test Throughput Database " + str(uuid.uuid4())
-    TEST_COLLECTION_SINGLE_PARTITION_ID = "Single Partition Test Collection " + str(uuid.uuid4())
-    TEST_COLLECTION_MULTI_PARTITION_ID = "Multi Partition Test Collection " + str(uuid.uuid4())
-    TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID = ("Multi Partition Test Collection With Custom PK "
-                                                         + str(uuid.uuid4()))
 
-    TEST_COLLECTION_MULTI_PARTITION_PARTITION_KEY = "id"
-    TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_PARTITION_KEY = "pk"
+    TEST_SINGLE_PARTITION_CONTAINER_ID = "Single Partition Test Container " + str(uuid.uuid4())
+    TEST_MULTI_PARTITION_CONTAINER_ID = "Multi Partition Test Container " + str(uuid.uuid4())
 
-    IS_MULTI_MASTER_ENABLED = False
+    TEST_CONTAINER_PARTITION_KEY = "pk"
 
     @classmethod
     def create_database_if_not_exist(cls, client):
-        # type: (CosmosClient) -> Database
-        cls.try_delete_database(client)
-        test_database = client.create_database(cls.TEST_DATABASE_ID)
-        cls.IS_MULTI_MASTER_ENABLED = client.get_database_account()._EnableMultipleWritableLocations
+        # type: (CosmosClient) -> DatabaseProxy
+        test_database = client.create_database_if_not_exists(cls.TEST_DATABASE_ID,
+                                                             offer_throughput=cls.THROUGHPUT_FOR_1_PARTITION)
         return test_database
+
+    @classmethod
+    def create_single_partition_container_if_not_exist(cls, client):
+        # type: (CosmosClient) -> ContainerProxy
+        database = cls.create_database_if_not_exist(client)
+        document_collection = database.create_container_if_not_exists(
+            id=cls.TEST_SINGLE_PARTITION_CONTAINER_ID,
+            partition_key=PartitionKey(path='/' + cls.TEST_CONTAINER_PARTITION_KEY, kind='Hash'),
+            offer_throughput=cls.THROUGHPUT_FOR_1_PARTITION)
+        return document_collection
+
+    @classmethod
+    def create_multi_partition_container_if_not_exist(cls, client):
+        # type: (CosmosClient) -> ContainerProxy
+        database = cls.create_database_if_not_exist(client)
+        document_collection = database.create_container_if_not_exists(
+            id=cls.TEST_MULTI_PARTITION_CONTAINER_ID,
+            partition_key=PartitionKey(path='/' + cls.TEST_CONTAINER_PARTITION_KEY, kind='Hash'),
+            offer_throughput=cls.THROUGHPUT_FOR_5_PARTITIONS)
+        return document_collection
 
     @classmethod
     def try_delete_database(cls, client):
@@ -88,64 +103,6 @@ class _test_config(object):
         except exceptions.CosmosHttpResponseError as e:
             if e.status_code != StatusCodes.NOT_FOUND:
                 raise e
-
-    @classmethod
-    def create_multi_partition_collection_if_not_exist(cls, client):
-        # type: (CosmosClient) -> Container
-        test_collection_multi_partition = cls.create_collection_with_required_throughput(
-            client,
-            cls.THROUGHPUT_FOR_5_PARTITIONS,
-            False)
-        cls.remove_all_documents(test_collection_multi_partition, False)
-        return test_collection_multi_partition
-
-    @classmethod
-    def create_multi_partition_collection_with_custom_pk_if_not_exist(cls, client):
-        # type: (CosmosClient) -> Container
-        test_collection_multi_partition_with_custom_pk = cls.create_collection_with_required_throughput(
-            client,
-            cls.THROUGHPUT_FOR_5_PARTITIONS,
-            True)
-        cls.remove_all_documents(test_collection_multi_partition_with_custom_pk, True)
-        return test_collection_multi_partition_with_custom_pk
-
-    @classmethod
-    def create_collection_with_required_throughput(cls, client, throughput, use_custom_partition_key):
-        # type: (CosmosClient, int, boolean) -> Container
-        database = cls.create_database_if_not_exist(client)
-
-        if throughput == cls.THROUGHPUT_FOR_1_PARTITION:
-            collection_id = cls.TEST_CONTAINER_SINGLE_PARTITION_ID
-            partition_key = cls.TEST_COLLECTION_MULTI_PARTITION_PARTITION_KEY
-        else:
-            if use_custom_partition_key:
-                collection_id = cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID
-                partition_key = cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_PARTITION_KEY
-            else:
-                collection_id = cls.TEST_COLLECTION_MULTI_PARTITION_ID
-                partition_key = cls.TEST_COLLECTION_MULTI_PARTITION_PARTITION_KEY
-
-        document_collection = database.create_container_if_not_exists(
-            id=collection_id,
-            partition_key=PartitionKey(path='/' + partition_key, kind='Hash'),
-            offer_throughput=throughput)
-        return document_collection
-
-    @classmethod
-    def remove_all_documents(cls, document_collection, partition_key):
-        # type: (Container, boolean) -> None
-        while True:
-            query_iterable = document_collection.query_items(query="Select * from c", enable_cross_partition_query=True)
-            read_documents = list(query_iterable)
-            try:
-                for document in read_documents:
-                    document_collection.delete_item(item=document, partition_key=partition_key)
-                if cls.IS_MULTI_MASTER_ENABLED:
-                    # sleep to ensure deletes are propagated for multimaster enabled accounts
-                    time.sleep(2)
-                break
-            except exceptions.CosmosHttpResponseError as e:
-                print("Error occurred while deleting documents:" + str(e) + " \nRetrying...")
 
     @classmethod
     async def _validate_distinct_on_different_types_and_field_orders(cls, collection, query, expected_results):

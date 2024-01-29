@@ -40,11 +40,11 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
     """Python Transactional Batch Tests.
     """
 
-    configs = test_config._test_config
+    configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
     sync_client: azure.cosmos.CosmosClient = None
-    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
+    TEST_DATABASE_ID = configs.TEST_DATABASE_ID
 
     @classmethod
     def setUpClass(cls):
@@ -54,12 +54,6 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.sync_client = azure.cosmos.CosmosClient(cls.host, cls.masterKey)
-        cls.sync_client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.sync_client.delete_database(cls.TEST_DATABASE_ID)
 
     async def asyncSetUp(self):
         self.client = CosmosClient(self.host, self.masterKey)
@@ -106,7 +100,7 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
             assert e.status_code == StatusCodes.REQUEST_ENTITY_TOO_LARGE
             assert e.message.startswith("(RequestEntityTooLarge)")
 
-        await self.client.close()
+        await self.test_database.delete_container(container.id)
 
     async def test_batch_create_async(self):
         container = await self.test_database.create_container_if_not_exists(id="batch_create" + str(uuid.uuid4()),
@@ -164,7 +158,7 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
             assert operation_results[0].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
             assert operation_results[1].get("statusCode") == StatusCodes.BAD_REQUEST
 
-        await self.client.close()
+        await self.test_database.delete_container(container.id)
 
     async def test_batch_read_async(self):
         container = await self.test_database.create_container_if_not_exists(id="batch_read" + str(uuid.uuid4()),
@@ -194,7 +188,7 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
             assert operation_results[0].get("statusCode") == StatusCodes.NOT_FOUND
             assert operation_results[1].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
 
-        await self.client.close()
+        await self.test_database.delete_container(container.id)
 
     async def test_batch_replace_async(self):
         container = await self.test_database.create_container_if_not_exists(id="batch_replace" + str(uuid.uuid4()),
@@ -239,7 +233,7 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
             assert operation_results[1].get("statusCode") == StatusCodes.PRECONDITION_FAILED
             assert operation_results[2].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
 
-        await self.client.close()
+        await self.test_database.delete_container(container.id)
 
     async def test_batch_upsert_async(self):
         container = await self.test_database.create_container_if_not_exists(id="batch_upsert" + str(uuid.uuid4()),
@@ -253,7 +247,7 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
         assert len(batch_response) == 3
         assert batch_response[1].get("resourceBody").get("message") == "item was upsert"
 
-        await self.client.close()
+        await self.test_database.delete_container(container.id)
 
     async def test_batch_patch_async(self):
         container = await self.test_database.create_container_if_not_exists(id="batch_patch" + str(uuid.uuid4()),
@@ -322,7 +316,7 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
 
         assert len(operation_results) == 2
 
-        await self.client.close()
+        await self.test_database.delete_container(container.id)
 
     async def test_batch_delete_async(self):
         container = await self.test_database.create_container_if_not_exists(id="batch_delete" + str(uuid.uuid4()),
@@ -359,7 +353,7 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
             assert operation_results[0].get("statusCode") == StatusCodes.NOT_FOUND
             assert operation_results[1].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
 
-        await self.client.close()
+        await self.test_database.delete_container(container.id)
 
     async def test_batch_lsn_async(self):
         container = await self.test_database.create_container_if_not_exists(id="batch_lsn" + str(uuid.uuid4()),
@@ -384,7 +378,7 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
         assert len(batch_response) == 6
         assert int(lsn) == int(container.client_connection.last_response_headers.get(HttpHeaders.LSN)) - 1
 
-        await self.client.close()
+        await self.test_database.delete_container(container.id)
 
     async def test_batch_subpartition(self):
         container = await self.test_database.create_container_if_not_exists(
@@ -430,7 +424,7 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
                    "definition in the collection or doesn't match partition key " \
                    "field values specified in the document." in e.message
 
-        await self.client.close()
+        await self.test_database.delete_container(container.id)
 
 
 if __name__ == "__main__":

@@ -24,6 +24,7 @@ import uuid
 from unittest.mock import MagicMock
 
 import pytest
+import conftest
 
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
@@ -34,7 +35,7 @@ from azure.cosmos import PartitionKey, DatabaseProxy
 class HeadersTest(unittest.TestCase):
     database: DatabaseProxy = None
     client: cosmos_client.CosmosClient = None
-    configs = test_config._test_config
+    configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
 
@@ -42,21 +43,11 @@ class HeadersTest(unittest.TestCase):
     dedicated_gateway_max_age_million = 1000000
     dedicated_gateway_max_age_negative = -1
 
-    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
-    TEST_CONTAINER_ID = "Multi Partition Test Collection With Custom PK " + str(uuid.uuid4())
-
     @classmethod
     def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.database = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
-        cls.container = cls.database.create_container_if_not_exists(
-            id=cls.TEST_CONTAINER_ID,
-            partition_key=PartitionKey(path="/id"),
-            offer_throughput=cls.configs.THROUGHPUT_FOR_5_PARTITIONS)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.client.delete_database(cls.TEST_DATABASE_ID)
+        cls.client = conftest.cosmos_sync_client
+        cls.database = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
+        cls.container = cls.database.get_container_client(cls.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
     def side_effect_dedicated_gateway_max_age_thousand(self, *args, **kwargs):
         # Extract request headers from args

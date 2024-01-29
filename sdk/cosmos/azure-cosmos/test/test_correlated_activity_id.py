@@ -20,15 +20,14 @@
 # SOFTWARE.
 
 import unittest
-import uuid
 from unittest.mock import MagicMock
 
 import pytest
 
 import azure.cosmos.cosmos_client as cosmos_client
+import conftest
 import test_config
 from azure.cosmos import DatabaseProxy, ContainerProxy
-from azure.cosmos.partition_key import PartitionKey
 
 
 def side_effect_correlated_activity_id(*args):
@@ -42,25 +41,15 @@ class TestCorrelatedActivityId(unittest.TestCase):
     database: DatabaseProxy = None
     client: cosmos_client.CosmosClient = None
     container: ContainerProxy = None
-    configs = test_config._test_config
+    configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
 
-    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
-    TEST_CONTAINER_ID = "Multi Partition Test Collection With Custom PK " + str(uuid.uuid4())
-
     @classmethod
     def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.database = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
-        cls.container = cls.database.create_container(
-            id=cls.TEST_CONTAINER_ID,
-            partition_key=PartitionKey(path="/id"),
-            offer_throughput=cls.configs.THROUGHPUT_FOR_5_PARTITIONS)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.client.delete_database(cls.TEST_DATABASE_ID)
+        cls.client = conftest.cosmos_sync_client
+        cls.database = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
+        cls.container = cls.database.get_container_client(cls.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
     def test_correlated_activity_id(self):
         query = 'SELECT * from c ORDER BY c._ts'

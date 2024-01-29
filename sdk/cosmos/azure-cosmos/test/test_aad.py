@@ -14,23 +14,16 @@
 import base64
 import json
 import time
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
 import unittest
-import uuid
 from io import StringIO
 
 import pytest
 from azure.core.credentials import AccessToken
 
 import azure.cosmos.cosmos_client as cosmos_client
+import conftest
 import test_config
-from azure.cosmos import exceptions, PartitionKey, DatabaseProxy, ContainerProxy
+from azure.cosmos import exceptions, DatabaseProxy, ContainerProxy
 
 
 def _remove_padding(encoded_string):
@@ -42,6 +35,7 @@ def _remove_padding(encoded_string):
 
 def get_test_item(num):
     test_item = {
+        'pk': 'pk',
         'id': 'Item_' + str(num),
         'test_object': True,
         'lastName': 'Smith'
@@ -81,7 +75,7 @@ class CosmosEmulatorCredential(object):
                                                        "c44fd685-5c58-452c-aaf7-13ce75184f65",
                                                        "be895215-eab5-43b7-9536-9ef8fe130330"]}
 
-        emulator_key = test_config._test_config.masterKey
+        emulator_key = test_config.TestConfig.masterKey
 
         first_encoded_bytes = base64.urlsafe_b64encode(aad_header_cosmos_emulator.encode("utf-8"))
         first_encoded_padded = str(first_encoded_bytes, "utf-8")
@@ -107,24 +101,15 @@ class TestAAD(unittest.TestCase):
     client: cosmos_client.CosmosClient = None
     database: DatabaseProxy = None
     container: ContainerProxy = None
-    configs = test_config._test_config
+    configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
 
-    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
-    TEST_CONTAINER_ID = "Single Partition Test Collection With Custom PK " + str(uuid.uuid4())
-
     @classmethod
     def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.database = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
-        cls.container = cls.database.create_container_if_not_exists(
-            id=cls.TEST_CONTAINER_ID,
-            partition_key=PartitionKey(path="/id"))
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.client.delete_database(cls.TEST_DATABASE_ID)
+        cls.client = conftest.cosmos_sync_client
+        cls.database = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
+        cls.container = cls.database.get_container_client(cls.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
     def test_emulator_aad_credentials(self):
         if self.host != 'https://localhost:8081/':
@@ -136,15 +121,15 @@ class TestAAD(unittest.TestCase):
 
         print("Container info: " + str(self.container.read()))
         self.container.create_item(get_test_item(0))
-        print("Point read result: " + str(self.container.read_item(item='Item_0', partition_key='Item_0')))
-        query_results = list(self.container.query_items(query='select * from c', partition_key='Item_0'))
+        print("Point read result: " + str(self.container.read_item(item='Item_0', partition_key='pk')))
+        query_results = list(self.container.query_items(query='select * from c', partition_key='pk'))
         assert len(query_results) == 1
         print("Query result: " + str(query_results[0]))
-        self.container.delete_item(item='Item_0', partition_key='Item_0')
+        self.container.delete_item(item='Item_0', partition_key='pk')
 
         # Attempting to do management operations will return a 403 Forbidden exception
         try:
-            aad_client.delete_database(self.TEST_DATABASE_ID)
+            aad_client.delete_database(self.configs.TEST_DATABASE_ID)
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 403
             print("403 error assertion success")

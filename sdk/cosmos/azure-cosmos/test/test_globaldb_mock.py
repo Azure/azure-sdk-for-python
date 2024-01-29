@@ -134,13 +134,13 @@ class MockGlobalEndpointManager:
 
 @pytest.mark.cosmosEmulator
 class TestGlobalDBMock(unittest.TestCase):
-    host = test_config._test_config.global_host
-    write_location_host = test_config._test_config.write_location_host
-    read_location_host = test_config._test_config.read_location_host
-    masterKey = test_config._test_config.global_masterKey
+    host = test_config.TestConfig.global_host
+    write_location_host = test_config.TestConfig.write_location_host
+    read_location_host = test_config.TestConfig.read_location_host
+    masterKey = test_config.TestConfig.global_masterKey
 
-    write_location = test_config._test_config.write_location
-    read_location = test_config._test_config.read_location
+    write_location = test_config.TestConfig.write_location
+    read_location = test_config.TestConfig.read_location
 
     @classmethod
     def setUpClass(cls):

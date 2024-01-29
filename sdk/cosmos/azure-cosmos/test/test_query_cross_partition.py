@@ -23,6 +23,7 @@ import unittest
 import uuid
 
 import pytest
+import conftest
 
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
@@ -40,11 +41,11 @@ class CrossPartitionQueryTest(unittest.TestCase):
 
     created_db: DatabaseProxy = None
     client: cosmos_client.CosmosClient = None
-    config = test_config._test_config
+    config = test_config.TestConfig
     host = config.host
     masterKey = config.masterKey
     connectionPolicy = config.connectionPolicy
-    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
+    TEST_DATABASE_ID = config.TEST_DATABASE_ID
     TEST_CONTAINER_ID = "Multi Partition Test Collection With Custom PK " + str(uuid.uuid4())
 
     @classmethod
@@ -56,20 +57,14 @@ class CrossPartitionQueryTest(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey,
-                                                consistency_level="Session",
-                                                connection_policy=cls.connectionPolicy)
-        cls.created_db = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.client.delete_database(cls.TEST_DATABASE_ID)
+        cls.client = conftest.cosmos_sync_client
+        cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
 
     def setUp(self):
         self.created_container = self.created_db.create_container_if_not_exists(
             id=self.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),
-            offer_throughput=test_config._test_config.THROUGHPUT_FOR_5_PARTITIONS)
+            offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS)
 
     def tearDown(self):
         self.created_db.delete_container(self.TEST_CONTAINER_ID)

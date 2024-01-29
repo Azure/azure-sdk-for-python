@@ -31,6 +31,7 @@ import unittest
 import uuid
 
 import pytest
+import conftest
 from azure.core.paging import ItemPaged
 
 import azure.cosmos._base as base
@@ -49,11 +50,11 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
     created_container: ContainerProxy = None
     client: cosmos_client.CosmosClient = None
     created_db: DatabaseProxy = None
-    host = test_config._test_config.host
-    masterKey = test_config._test_config.masterKey
-    connectionPolicy = test_config._test_config.connectionPolicy
-    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
-    TEST_CONTAINER_ID = "Multi Partition Test Collection With Custom PK " + str(uuid.uuid4())
+    host = test_config.TestConfig.host
+    masterKey = test_config.TestConfig.masterKey
+    connectionPolicy = test_config.TestConfig.connectionPolicy
+    TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
+    TEST_CONTAINER_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
     @classmethod
     def setUpClass(cls):
@@ -64,9 +65,8 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, "Session",
-                                                connection_policy=cls.connectionPolicy)
-        cls.created_db = cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
+        cls.client = conftest.cosmos_sync_client
+        cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         cls.created_container = cls.created_db.create_container(
             id='orderby_tests collection ' + str(uuid.uuid4()),
             indexing_policy={
@@ -105,6 +105,10 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
                  }
             cls.created_container.create_item(d)
             cls.document_definitions.append(d)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.created_db.delete_container(cls.created_container.id)
 
     def test_orderby_query(self):
         # test a simple order by query

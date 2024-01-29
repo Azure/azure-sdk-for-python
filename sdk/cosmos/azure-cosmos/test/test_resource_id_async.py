@@ -28,14 +28,13 @@ from azure.cosmos.aio import CosmosClient, DatabaseProxy
 
 @pytest.mark.cosmosEmulator
 class TestResourceIdsAsync(unittest.IsolatedAsyncioTestCase):
-    configs = test_config._test_config
+    configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
     connectionPolicy = configs.connectionPolicy
     last_headers = []
     client: CosmosClient = None
     created_database: DatabaseProxy = None
-    sync_client: azure.cosmos.CosmosClient = None
 
     @classmethod
     def setUpClass(cls):
@@ -45,7 +44,6 @@ class TestResourceIdsAsync(unittest.IsolatedAsyncioTestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.sync_client = azure.cosmos.CosmosClient(cls.host, cls.masterKey)
 
     async def asyncSetUp(self):
         self.client = CosmosClient(self.host, self.masterKey)

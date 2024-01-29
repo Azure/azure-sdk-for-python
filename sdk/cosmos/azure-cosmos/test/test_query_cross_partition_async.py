@@ -39,17 +39,15 @@ from azure.cosmos.partition_key import PartitionKey
 class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 
-    TEST_CONTAINER_ID = str(uuid.uuid4())
-    TEST_DATABASE_ID = "Python SDK Test Throughput Database " + str(uuid.uuid4())
     created_db: DatabaseProxy = None
     created_container: ContainerProxy = None
     client: CosmosClient = None
-    config = test_config._test_config
+    config = test_config.TestConfig
     host = config.host
     masterKey = config.masterKey
     connectionPolicy = config.connectionPolicy
-    sync_client: azure.cosmos.CosmosClient = None
-    sync_database: azure.cosmos.DatabaseProxy = None
+    TEST_CONTAINER_ID = str(uuid.uuid4())
+    TEST_DATABASE_ID = config.TEST_DATABASE_ID
 
     @classmethod
     def setUpClass(cls):
@@ -59,12 +57,6 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.sync_client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.sync_database = cls.sync_client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.sync_client.delete_database(cls.TEST_DATABASE_ID)
 
     async def asyncSetUp(self):
         self.client = CosmosClient(self.host, self.masterKey)
@@ -72,7 +64,7 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         self.created_container = await self.created_db.create_container_if_not_exists(
             self.TEST_CONTAINER_ID,
             PartitionKey(path="/pk"),
-            offer_throughput=test_config._test_config.THROUGHPUT_FOR_5_PARTITIONS)
+            offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS)
 
     async def asyncTearDown(self):
         await self.created_db.delete_container(self.TEST_CONTAINER_ID)

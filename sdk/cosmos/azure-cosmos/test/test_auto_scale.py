@@ -1,11 +1,11 @@
 # The MIT License (MIT)
 # Copyright (c) 2022 Microsoft Corporation
 import unittest
-import uuid
 
 import pytest
 
 import azure.cosmos.exceptions as exceptions
+import conftest
 import test_config
 from azure.cosmos import CosmosClient
 from azure.cosmos import ThroughputProperties, PartitionKey
@@ -30,11 +30,10 @@ from azure.cosmos import ThroughputProperties, PartitionKey
 
 @pytest.mark.cosmosEmulator
 class TestAutoScale(unittest.TestCase):
-    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
     client: CosmosClient = None
-    host = test_config._test_config.host
-    masterKey = test_config._test_config.masterKey
-    connectionPolicy = test_config._test_config.connectionPolicy
+    host = test_config.TestConfig.host
+    masterKey = test_config.TestConfig.masterKey
+    connectionPolicy = test_config.TestConfig.connectionPolicy
 
     @classmethod
     def setUpClass(cls):
@@ -45,12 +44,8 @@ class TestAutoScale(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = CosmosClient(cls.host, cls.masterKey, consistency_level="Session")
-        cls.created_database = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.client.delete_database(cls.TEST_DATABASE_ID)
+        cls.client = conftest.cosmos_sync_client
+        cls.created_database = cls.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
 
     def test_autoscale_create_container(self):
         created_container = self.created_database.create_container(

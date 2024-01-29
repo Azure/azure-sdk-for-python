@@ -28,15 +28,16 @@ import pytest
 
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.documents as documents
+import conftest
 import test_config
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.partition_key import PartitionKey
 
 
 class _config:
-    host = test_config._test_config.host
-    master_key = test_config._test_config.masterKey
-    connection_policy = test_config._test_config.connectionPolicy
+    host = test_config.TestConfig.host
+    master_key = test_config.TestConfig.masterKey
+    connection_policy = test_config.TestConfig.connectionPolicy
     PARTITION_KEY = 'key'
     UNIQUE_PARTITION_KEY = 'uniquePartitionKey'
     FIELD = 'field'
@@ -49,18 +50,12 @@ class _config:
 @pytest.mark.cosmosEmulator
 class TestAggregateQuery(unittest.TestCase):
     client: cosmos_client.CosmosClient = None
-    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
-    TEST_CONTAINER_ID = "Multi Partition Test Collection With Custom PK " + str(uuid.uuid4())
 
     @classmethod
     def setUpClass(cls):
         cls._all_tests = []
         cls._setup()
         cls._generate_test_configs()
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.client.delete_database(cls.TEST_DATABASE_ID)
 
     @classmethod
     def _setup(cls):
@@ -70,9 +65,8 @@ class TestAggregateQuery(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(
-            _config.host, {'masterKey': _config.master_key}, "Session", connection_policy=_config.connection_policy)
-        created_db = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
+        cls.client = conftest.cosmos_sync_client
+        created_db = cls.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
         cls.created_collection = cls._create_collection(created_db)
 
         # test documents

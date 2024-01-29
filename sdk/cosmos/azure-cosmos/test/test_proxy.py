@@ -71,7 +71,7 @@ class ProxyTests(unittest.TestCase):
     """Proxy Tests.
     """
     host = 'http://localhost:8081'
-    masterKey = test_config._test_config.masterKey
+    masterKey = test_config.TestConfig.masterKey
     testDbName = 'sample database'
     serverPort = 8089
 

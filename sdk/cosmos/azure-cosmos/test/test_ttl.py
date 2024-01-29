@@ -29,22 +29,27 @@ import time
 import unittest
 import uuid
 
+import pytest
+
+import conftest
+
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
 
-
+@pytest.mark.cosmosEmulator
 class TestTimeToLive(unittest.TestCase):
     """TTL Unit Tests.
     """
 
     client = None
     created_db = None
-    host = test_config._test_config.host
-    masterKey = test_config._test_config.masterKey
-    connectionPolicy = test_config._test_config.connectionPolicy
+    host = test_config.TestConfig.host
+    masterKey = test_config.TestConfig.masterKey
+    connectionPolicy = test_config.TestConfig.connectionPolicy
+    configs = test_config.TestConfig
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -67,13 +72,8 @@ class TestTimeToLive(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session",
-                                                connection_policy=cls.connectionPolicy)
-        cls.created_db = cls.client.create_database_if_not_exists("TTL_tests_database" + str(uuid.uuid4()))
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.client.delete_database(cls.created_db)
+        cls.client = conftest.cosmos_sync_client
+        cls.created_db = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
 
     def test_collection_and_document_ttl_values(self):
         ttl = 10

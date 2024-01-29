@@ -40,6 +40,7 @@ from azure.core.pipeline.transport import RequestsTransport, RequestsTransportRe
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
+import conftest
 import test_config
 from azure.cosmos import _retry_utility
 from azure.cosmos._routing import routing_range
@@ -69,13 +70,12 @@ class TimeoutTransport(RequestsTransport):
 class TestSubpartitionCrud(unittest.TestCase):
     """Python CRUD Tests.
     """
-    configs = test_config._test_config
+    configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
     connectionPolicy = configs.connectionPolicy
     last_headers = []
     client: cosmos_client.CosmosClient = None
-    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -98,12 +98,8 @@ class TestSubpartitionCrud(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, connection_policy=cls.connectionPolicy)
-        cls.databaseForTest = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.client.delete_database(cls.TEST_DATABASE_ID)
+        cls.client = conftest.cosmos_sync_client
+        cls.databaseForTest = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
 
     def test_collection_crud(self):
         created_db = self.databaseForTest

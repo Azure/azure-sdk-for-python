@@ -31,6 +31,7 @@ import unittest
 import uuid
 
 import pytest
+import conftest
 
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
@@ -44,14 +45,15 @@ class TestRoutingMapEndToEnd(unittest.TestCase):
     """Routing Map Functionalities end-to-end Tests.
     """
 
-    host = test_config._test_config.host
-    masterKey = test_config._test_config.masterKey
-    connectionPolicy = test_config._test_config.connectionPolicy
+    host = test_config.TestConfig.host
+    masterKey = test_config.TestConfig.masterKey
+    connectionPolicy = test_config.TestConfig.connectionPolicy
+    configs = test_config.TestConfig
     client: cosmos_client.CosmosClient = None
     created_database: DatabaseProxy = None
     created_container: ContainerProxy = None
-    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
-    TEST_COLLECTION_ID = "routing_map_tests_" + str(uuid.uuid4())
+    TEST_DATABASE_ID = configs.TEST_DATABASE_ID
+    TEST_COLLECTION_ID = configs.TEST_SINGLE_PARTITION_CONTAINER_ID
 
     @classmethod
     def setUpClass(cls):
@@ -62,15 +64,10 @@ class TestRoutingMapEndToEnd(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session",
-                                                connection_policy=cls.connectionPolicy)
-        cls.created_database = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
-        cls.created_container = cls.created_database.create_container(cls.TEST_COLLECTION_ID, PartitionKey(path="/pk"))
+        cls.client = conftest.cosmos_sync_client
+        cls.created_database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
+        cls.created_container = cls.created_database.get_container_client(cls.TEST_COLLECTION_ID)
         cls.collection_link = cls.created_container.container_link
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.client.delete_database(cls.TEST_DATABASE_ID)
 
     def test_read_partition_key_ranges(self):
         partition_key_ranges = list(self.client.client_connection._ReadPartitionKeyRanges(self.collection_link))

@@ -48,6 +48,7 @@ import azure.cosmos._base as base
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
+import conftest
 import test_config
 from azure.cosmos import _retry_utility
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
@@ -78,12 +79,11 @@ class CRUDTests(unittest.TestCase):
     """Python CRUD Tests.
     """
 
-    configs = test_config._test_config
+    configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
     connectionPolicy = configs.connectionPolicy
     last_headers = []
-    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
     client: cosmos_client.CosmosClient = None
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
@@ -107,12 +107,8 @@ class CRUDTests(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, connection_policy=cls.connectionPolicy)
-        cls.databaseForTest = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.client.delete_database(cls.TEST_DATABASE_ID)
+        cls.client = conftest.cosmos_sync_client
+        cls.databaseForTest = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
 
     def test_database_crud(self):
         # read databases.
@@ -216,6 +212,7 @@ class CRUDTests(unittest.TestCase):
 
         created_properties = created_collection.read()
         self.assertEqual('consistent', created_properties['indexingPolicy']['indexingMode'])
+        self.assertDictEqual(PartitionKey(path='/pk', kind='Hash'), created_properties['partitionKey'])
 
         # read collections after creation
         collections = list(created_db.list_containers())
@@ -238,18 +235,6 @@ class CRUDTests(unittest.TestCase):
         created_container = created_db.get_container_client(created_collection.id)
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            created_container.read)
-
-        container_proxy = created_db.create_container_if_not_exists(id=created_collection.id,
-                                                                    partition_key=PartitionKey(path='/id', kind='Hash'))
-        self.assertEqual(created_collection.id, container_proxy.id)
-        self.assertDictEqual(PartitionKey(path='/id', kind='Hash'), container_proxy._properties['partitionKey'])
-
-        container_proxy = created_db.create_container_if_not_exists(id=created_collection.id,
-                                                                    partition_key=created_properties['partitionKey'])
-        self.assertEqual(created_container.id, container_proxy.id)
-        self.assertDictEqual(PartitionKey(path='/id', kind='Hash'), container_proxy._properties['partitionKey'])
-
-        created_db.delete_container(created_collection.id)
 
     def test_partitioned_collection(self):
         created_db = self.databaseForTest
@@ -421,10 +406,11 @@ class CRUDTests(unittest.TestCase):
     def test_partitioned_collection_document_crud_and_query(self):
         created_db = self.databaseForTest
 
-        created_collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
+        created_collection = created_db.create_container("crud-query-container", partition_key=PartitionKey("/pk"))
 
         document_definition = {'id': 'document',
-                               'key': 'value'}
+                               'key': 'value',
+                               'pk': 'pk'}
 
         created_document = created_collection.create_item(
             body=document_definition
@@ -436,7 +422,7 @@ class CRUDTests(unittest.TestCase):
         # read document
         read_document = created_collection.read_item(
             item=created_document.get('id'),
-            partition_key=created_document.get('id')
+            partition_key=created_document.get('pk')
         )
 
         self.assertEqual(read_document.get('id'), created_document.get('id'))
@@ -469,13 +455,13 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(2, len(documentlist))
 
         # delete document
-        created_collection.delete_item(item=upserted_document, partition_key=upserted_document.get('id'))
+        created_collection.delete_item(item=upserted_document, partition_key=upserted_document.get('pk'))
 
         # query document on the partition key specified in the predicate will pass even without setting enableCrossPartitionQuery or passing in the partitionKey value
         documentlist = list(created_collection.query_items(
             {
                 'query': 'SELECT * FROM root r WHERE r.id=\'' + replaced_document.get('id') + '\''  # nosec
-            }))
+            }, enable_cross_partition_query=True))
         self.assertEqual(1, len(documentlist))
 
         # query document on any property other than partitionKey will fail without setting enableCrossPartitionQuery or passing in the partitionKey value
@@ -498,10 +484,11 @@ class CRUDTests(unittest.TestCase):
         # query document by providing the partitionKey value
         documentlist = list(created_collection.query_items(
             query='SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\'',  # nosec
-            partition_key=replaced_document.get('id')
+            partition_key=replaced_document.get('pk')
         ))
 
         self.assertEqual(1, len(documentlist))
+        created_db.delete_container(created_collection.id)
 
     def test_partitioned_collection_permissions(self):
         created_db = self.databaseForTest
@@ -591,7 +578,7 @@ class CRUDTests(unittest.TestCase):
     def test_partitioned_collection_execute_stored_procedure(self):
         created_db = self.databaseForTest
 
-        created_collection = self.configs.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
+        created_collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         sproc = {
             'id': 'storedProcedure' + str(uuid.uuid4()),
@@ -622,10 +609,7 @@ class CRUDTests(unittest.TestCase):
     def test_partitioned_collection_partition_key_value_types(self):
         created_db = self.databaseForTest
 
-        created_collection = created_db.create_container(
-            id='test_partitioned_collection_partition_key_value_types ' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path='/pk', kind='Hash')
-        )
+        created_collection = created_db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         document_definition = {'id': 'document1' + str(uuid.uuid4()),
                                'pk': None,
@@ -679,12 +663,10 @@ class CRUDTests(unittest.TestCase):
             document_definition
         )
 
-        created_db.delete_container(created_collection)
-
     def test_partitioned_collection_conflict_crud_and_query(self):
         created_db = self.databaseForTest
 
-        created_collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
+        created_collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         conflict_definition = {'id': 'new conflict',
                                'resourceId': 'doc1',
@@ -743,7 +725,7 @@ class CRUDTests(unittest.TestCase):
         # create database
         created_db = self.databaseForTest
         # create collection
-        created_collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
+        created_collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # read documents
         documents = list(created_collection.read_all_items())
         # create a document
@@ -752,7 +734,8 @@ class CRUDTests(unittest.TestCase):
         # create a document with auto ID generation
         document_definition = {'name': 'sample document',
                                'spam': 'eggs',
-                               'key': 'value'}
+                               'key': 'value',
+                               'pk': 'pk'}
 
         created_document = created_collection.create_item(body=document_definition, enable_automatic_id_generation=True)
         self.assertEqual(created_document.get('name'),
@@ -761,6 +744,7 @@ class CRUDTests(unittest.TestCase):
         document_definition = {'name': 'sample document',
                                'spam': 'eggs',
                                'key': 'value',
+                               'pk': 'pk',
                                'id': str(uuid.uuid4())}
 
         created_document = created_collection.create_item(body=document_definition)
@@ -880,14 +864,14 @@ class CRUDTests(unittest.TestCase):
         # read document
         one_document_from_read = created_collection.read_item(
             item=replaced_document['id'],
-            partition_key=replaced_document['id']
+            partition_key=replaced_document['pk']
         )
         self.assertEqual(replaced_document['id'],
                          one_document_from_read['id'])
         # delete document
         created_collection.delete_item(
             item=replaced_document,
-            partition_key=replaced_document['id']
+            partition_key=replaced_document['pk']
         )
         # read documents after deletion
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
@@ -900,7 +884,7 @@ class CRUDTests(unittest.TestCase):
         created_db = self.databaseForTest
 
         # create collection
-        created_collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
+        created_collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         # read documents and check count
         documents = list(created_collection.read_all_items())
@@ -910,6 +894,7 @@ class CRUDTests(unittest.TestCase):
         document_definition = {'id': 'doc',
                                'name': 'sample document',
                                'spam': 'eggs',
+                               'pk': 'pk',
                                'key': 'value'}
 
         # create document using Upsert API
@@ -985,8 +970,8 @@ class CRUDTests(unittest.TestCase):
             'upsert should increase the number of documents')
 
         # delete documents
-        created_collection.delete_item(item=upserted_document, partition_key=upserted_document['id'])
-        created_collection.delete_item(item=new_document, partition_key=new_document['id'])
+        created_collection.delete_item(item=upserted_document, partition_key=upserted_document['pk'])
+        created_collection.delete_item(item=new_document, partition_key=new_document['pk'])
 
         # read documents after delete and verify count is same as original
         documents = list(created_collection.read_all_items())
@@ -1408,7 +1393,7 @@ class CRUDTests(unittest.TestCase):
         # create database
         db = self.databaseForTest
         # create collection
-        collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
+        collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # read triggers
         triggers = list(collection.scripts.list_triggers())
         # create a trigger
@@ -1472,7 +1457,7 @@ class CRUDTests(unittest.TestCase):
         # create database
         db = self.databaseForTest
         # create collection
-        collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
+        collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # read udfs
         udfs = list(collection.scripts.list_user_defined_functions())
         # create a udf
@@ -1524,7 +1509,7 @@ class CRUDTests(unittest.TestCase):
         # create database
         db = self.databaseForTest
         # create collection
-        collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
+        collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # read sprocs
         sprocs = list(collection.scripts.list_stored_procedures())
         # create a sproc
@@ -1582,7 +1567,7 @@ class CRUDTests(unittest.TestCase):
     def test_script_logging_execute_stored_procedure(self):
         created_db = self.databaseForTest
 
-        created_collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
+        created_collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         sproc = {
             'id': 'storedProcedure' + str(uuid.uuid4()),
@@ -1636,32 +1621,12 @@ class CRUDTests(unittest.TestCase):
         # create database
         db = self.databaseForTest
         # create collection
-        collection = db.create_container(
-            id='test_collection_indexing_policy default policy' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path='/id', kind='Hash')
-        )
+        collection = db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         collection_properties = collection.read()
         self.assertEqual(collection_properties['indexingPolicy']['indexingMode'],
                          documents.IndexingMode.Consistent,
                          'default indexing mode should be consistent')
-
-        db.delete_container(container=collection)
-
-        consistent_collection = db.create_container(
-            id='test_collection_indexing_policy consistent collection ' + str(uuid.uuid4()),
-            indexing_policy={
-                'indexingMode': documents.IndexingMode.Consistent
-            },
-            partition_key=PartitionKey(path='/id', kind='Hash')
-        )
-
-        consistent_collection_properties = consistent_collection.read()
-        self.assertEqual(consistent_collection_properties['indexingPolicy']['indexingMode'],
-                         documents.IndexingMode.Consistent,
-                         'indexing mode should be consistent')
-
-        db.delete_container(container=consistent_collection)
 
         collection_with_indexing_policy = db.create_container(
             id='CollectionWithIndexingPolicy ' + str(uuid.uuid4()),
@@ -1703,13 +1668,10 @@ class CRUDTests(unittest.TestCase):
         db = self.databaseForTest
 
         # no indexing policy specified
-        collection = db.create_container(
-            id='test_create_default_indexing_policy TestCreateDefaultPolicy01' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path='/id', kind='Hash')
-        )
+        collection = db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
+
         collection_properties = collection.read()
         self._check_default_indexing_policy_paths(collection_properties['indexingPolicy'])
-        db.delete_container(container=collection)
 
         # partial policy specified
         collection = db.create_container(
@@ -1962,30 +1924,19 @@ class CRUDTests(unittest.TestCase):
             list(databases)
 
     def test_query_iterable_functionality(self):
-        def __create_resources(client):
-            """Creates resources for this test.
+        collection = self.databaseForTest.create_container("query-iterable-container",
+                                                           partition_key=PartitionKey("/pk"))
 
-            :Parameters:
-                - `client`: cosmos_client_connection.CosmosClientConnection
+        doc1 = collection.create_item(body={'id': 'doc1', 'prop1': 'value1', 'pk': 'pk'})
+        doc2 = collection.create_item(body={'id': 'doc2', 'prop1': 'value2', 'pk': 'pk'})
+        doc3 = collection.create_item(body={'id': 'doc3', 'prop1': 'value3', 'pk': 'pk'})
+        resources = {
+            'coll': collection,
+            'doc1': doc1,
+            'doc2': doc2,
+            'doc3': doc3
+        }
 
-            :Returns:
-                dict
-
-            """
-            collection = self.configs.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
-            doc1 = collection.create_item(body={'id': 'doc1', 'prop1': 'value1'})
-            doc2 = collection.create_item(body={'id': 'doc2', 'prop1': 'value2'})
-            doc3 = collection.create_item(body={'id': 'doc3', 'prop1': 'value3'})
-            resources = {
-                'coll': collection,
-                'doc1': doc1,
-                'doc2': doc2,
-                'doc3': doc3
-            }
-            return resources
-
-        # Validate QueryIterable by converting it to a list.
-        resources = __create_resources(self.client)
         results = resources['coll'].read_all_items(max_item_count=2)
         docs = list(iter(results))
         self.assertEqual(3,
@@ -2027,6 +1978,8 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(1, len(list(next(page_iter))), 'Second block should have 1 entry.')
         with self.assertRaises(StopIteration):
             next(page_iter)
+
+        self.databaseForTest.delete_container(collection.id)
 
     def test_trigger_functionality(self):
         triggers_in_collection1 = [
@@ -2184,7 +2137,7 @@ class CRUDTests(unittest.TestCase):
         # create database
         db = self.databaseForTest
         # create collection
-        collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
+        collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         sproc1 = {
             'id': 'storedProcedure1' + str(uuid.uuid4()),
@@ -2250,27 +2203,17 @@ class CRUDTests(unittest.TestCase):
     def test_offer_read_and_query(self):
         # Create database.
         db = self.databaseForTest
-
-        # Create collection.
-        collection = db.create_container(
-            id='test_offer_read_and_query ' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path='/id', kind='Hash')
-        )
+        collection = db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # Read the offer.
         expected_offer = collection.get_throughput()
         collection_properties = collection.read()
         self.__ValidateOfferResponseBody(expected_offer, collection_properties.get('_self'), None)
 
-        # Now delete the collection.
-        db.delete_container(container=collection)
-        # Reading fails.
-        self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND, collection.get_throughput)
-
     def test_offer_replace(self):
         # Create database.
         db = self.databaseForTest
         # Create collection.
-        collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
+        collection = db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # Read Offer
         expected_offer = collection.get_throughput()
         collection_properties = collection.read()
@@ -2306,11 +2249,7 @@ class CRUDTests(unittest.TestCase):
 
     def test_index_progress_headers(self):
         created_db = self.databaseForTest
-        consistent_coll = created_db.create_container(
-            id='test_index_progress_headers consistent_coll ' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path="/id", kind='Hash'),
-        )
-        created_container = created_db.get_container_client(container=consistent_coll)
+        created_container = created_db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         created_container.read(populate_quota_info=True)
         self.assertFalse(HttpHeaders.LazyIndexingProgress in created_db.client_connection.last_response_headers)
         self.assertTrue(HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers)
@@ -2328,7 +2267,6 @@ class CRUDTests(unittest.TestCase):
         self.assertFalse(HttpHeaders.LazyIndexingProgress in created_db.client_connection.last_response_headers)
         self.assertTrue(HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers)
 
-        created_db.delete_container(consistent_coll)
         created_db.delete_container(none_coll)
 
     def test_id_validation(self):
@@ -2373,43 +2311,6 @@ class CRUDTests(unittest.TestCase):
 
         self.client.delete_database(database=db)
 
-    def test_id_case_validation(self):
-        # create database
-        created_db = self.databaseForTest
-
-        uuid_string = str(uuid.uuid4())
-        collection_id1 = 'sampleCollection ' + uuid_string
-        collection_id2 = 'SampleCollection ' + uuid_string
-
-        # Verify that no collections exist
-        collections = list(created_db.list_containers())
-        number_of_existing_collections = len(collections)
-
-        # create 2 collections with different casing of IDs
-        # pascalCase
-        created_collection1 = created_db.create_container(
-            id=collection_id1,
-            partition_key=PartitionKey(path='/id', kind='Hash')
-        )
-
-        # CamelCase
-        created_collection2 = created_db.create_container(
-            id=collection_id2,
-            partition_key=PartitionKey(path='/id', kind='Hash')
-        )
-
-        collections = list(created_db.list_containers())
-
-        # verify if a total of 2 collections got created
-        self.assertEqual(len(collections), number_of_existing_collections + 2)
-
-        # verify that collections are created with specified IDs
-        self.assertEqual(collection_id1, created_collection1.id)
-        self.assertEqual(collection_id2, created_collection2.id)
-
-        created_db.delete_container(created_collection1)
-        created_db.delete_container(created_collection2)
-
     def test_get_resource_with_dictionary_and_object(self):
         created_db = self.databaseForTest
 
@@ -2425,7 +2326,7 @@ class CRUDTests(unittest.TestCase):
         read_db = self.client.get_database_client(created_db.read())
         self.assertEqual(read_db.id, created_db.id)
 
-        created_container = self.configs.create_multi_partition_collection_if_not_exist(self.client)
+        created_container = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         # read container with id
         read_container = created_db.get_container_client(created_container.id)
@@ -2440,14 +2341,14 @@ class CRUDTests(unittest.TestCase):
         read_container = created_db.get_container_client(created_properties)
         self.assertEqual(read_container.id, created_container.id)
 
-        created_item = created_container.create_item({'id': '1' + str(uuid.uuid4())})
+        created_item = created_container.create_item({'id': '1' + str(uuid.uuid4()), 'pk': 'pk'})
 
         # read item with id
-        read_item = created_container.read_item(item=created_item['id'], partition_key=created_item['id'])
+        read_item = created_container.read_item(item=created_item['id'], partition_key=created_item['pk'])
         self.assertEqual(read_item['id'], created_item['id'])
 
         # read item with properties
-        read_item = created_container.read_item(item=created_item, partition_key=created_item['id'])
+        read_item = created_container.read_item(item=created_item, partition_key=created_item['pk'])
         self.assertEqual(read_item['id'], created_item['id'])
 
         created_sproc = created_container.scripts.create_stored_procedure({
@@ -2573,8 +2474,7 @@ class CRUDTests(unittest.TestCase):
     #     created_db.delete_container(created_collection)
 
     def test_patch_operations(self):
-        created_container = self.databaseForTest.create_container_if_not_exists(id="patch_container",
-                                                                                partition_key=PartitionKey(path="/pk"))
+        created_container = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         # Create item to patch
         item = {
@@ -2635,8 +2535,7 @@ class CRUDTests(unittest.TestCase):
             self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
 
     def test_conditional_patching(self):
-        created_container = self.databaseForTest.create_container_if_not_exists(id="patch_filter_container",
-                                                                                partition_key=PartitionKey(path="/pk"))
+        created_container = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # Create item to patch
         item = {
             "id": "conditional_patch_item",
@@ -2749,8 +2648,8 @@ class CRUDTests(unittest.TestCase):
         # These test verify if headers for priority level are sent
         # Feature must be enabled at the account level
         # If feature is not enabled the test will still pass as we just verify the headers were sent
-        created_container = self.databaseForTest.create_container_if_not_exists(id="priority_level_container",
-                                                                                partition_key=PartitionKey(path="/pk"))
+        created_container = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
+
         item1 = {"id": "item1", "pk": "pk1"}
         item2 = {"id": "item2", "pk": "pk2"}
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction

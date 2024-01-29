@@ -2,6 +2,7 @@ import unittest
 import uuid
 
 import pytest
+import conftest
 
 import azure.cosmos._retry_utility as retry_utility
 import azure.cosmos.cosmos_client as cosmos_client
@@ -20,11 +21,11 @@ class QueryTest(unittest.TestCase):
 
     created_db: DatabaseProxy = None
     client: cosmos_client.CosmosClient = None
-    config = test_config._test_config
+    config = test_config.TestConfig
     host = config.host
     masterKey = config.masterKey
     connectionPolicy = config.connectionPolicy
-    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
+    TEST_DATABASE_ID = config.TEST_DATABASE_ID
 
     @classmethod
     def setUpClass(cls):
@@ -35,14 +36,8 @@ class QueryTest(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey,
-                                                consistency_level="Session",
-                                                connection_policy=cls.connectionPolicy)
-        cls.created_db = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.client.delete_database(cls.TEST_DATABASE_ID)
+        cls.client = conftest.cosmos_sync_client
+        cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
 
     def test_first_and_last_slashes_trimmed_for_query_string(self):
         created_collection = self.created_db.create_container_if_not_exists(
@@ -58,6 +53,7 @@ class QueryTest(unittest.TestCase):
         )
         iter_list = list(query_iterable)
         self.assertEqual(iter_list[0]['id'], doc_id)
+        self.created_db.delete_container(created_collection.id)
 
     def test_query_change_feed_with_pk(self):
         created_collection = self.created_db.create_container_if_not_exists("change_feed_test_" + str(uuid.uuid4()),
@@ -166,6 +162,7 @@ class QueryTest(unittest.TestCase):
         )
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 0)
+        self.created_db.delete_container(created_collection.id)
 
     def test_query_change_feed_with_pk_range_id(self):
         created_collection = self.created_db.create_container_if_not_exists("change_feed_test_" + str(uuid.uuid4()),
@@ -275,6 +272,7 @@ class QueryTest(unittest.TestCase):
         )
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 0)
+        self.created_db.delete_container(created_collection.id)
 
     def test_populate_query_metrics(self):
         created_collection = self.created_db.create_container_if_not_exists("query_metrics_test",
@@ -300,6 +298,7 @@ class QueryTest(unittest.TestCase):
         metrics = metrics_header.split(';')
         self.assertTrue(len(metrics) > 1)
         self.assertTrue(all(['=' in x for x in metrics]))
+        self.created_db.delete_container(created_collection.id)
 
     def test_populate_index_metrics(self):
         created_collection = self.created_db.create_container_if_not_exists("query_index_test",
@@ -329,10 +328,11 @@ class QueryTest(unittest.TestCase):
                                   'PotentialSingleIndexes': [], 'UtilizedCompositeIndexes': [],
                                   'PotentialCompositeIndexes': []}
         self.assertDictEqual(expected_index_metrics, index_metrics)
+        self.created_db.delete_container(created_collection.id)
 
     def test_max_item_count_honored_in_order_by_query(self):
-        created_collection = self.created_db.create_container_if_not_exists(
-            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
+        created_collection = self.created_db.create_container_if_not_exists("test-max-item-count" + str(uuid.uuid4()),
+                                                                            PartitionKey(path="/pk"))
         docs = []
         for i in range(10):
             document_definition = {'pk': 'pk', 'id': 'myId' + str(uuid.uuid4())}
@@ -344,7 +344,7 @@ class QueryTest(unittest.TestCase):
             max_item_count=1,
             enable_cross_partition_query=True
         )
-        self.validate_query_requests_count(query_iterable, 11 * 2 + 1)
+        self.validate_query_requests_count(query_iterable, 25)
 
         query_iterable = created_collection.query_items(
             query=query,
@@ -353,6 +353,7 @@ class QueryTest(unittest.TestCase):
         )
 
         self.validate_query_requests_count(query_iterable, 5)
+        self.created_db.delete_container(created_collection.id)
 
     def validate_query_requests_count(self, query_iterable, expected_count):
         self.count = 0
@@ -369,8 +370,7 @@ class QueryTest(unittest.TestCase):
         return self.OriginalExecuteFunction(function, *args, **kwargs)
 
     def test_get_query_plan_through_gateway(self):
-        created_collection = self.created_db.create_container_if_not_exists(
-            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
+        created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
         self._validate_query_plan(query="Select top 10 value count(c.id) from c",
                                   container_link=created_collection.container_link,
                                   top=10,
@@ -421,8 +421,7 @@ class QueryTest(unittest.TestCase):
         self.assertEqual(query_execution_info.get_limit(), limit)
 
     def test_unsupported_queries(self):
-        created_collection = self.created_db.create_container_if_not_exists(
-            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
+        created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
         queries = ['SELECT COUNT(1) FROM c', 'SELECT COUNT(1) + 5 FROM c', 'SELECT COUNT(1) + SUM(c) FROM c']
         for query in queries:
             query_iterable = created_collection.query_items(query=query, enable_cross_partition_query=True)
@@ -433,8 +432,7 @@ class QueryTest(unittest.TestCase):
                 self.assertEqual(e.status_code, 400)
 
     def test_query_with_non_overlapping_pk_ranges(self):
-        created_collection = self.created_db.create_container_if_not_exists(
-            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
+        created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
         query_iterable = created_collection.query_items("select * from c where c.pk='1' or c.pk='2'",
                                                         enable_cross_partition_query=True)
         self.assertListEqual(list(query_iterable), [])
@@ -474,6 +472,7 @@ class QueryTest(unittest.TestCase):
         self._validate_offset_limit(created_collection=created_collection,
                                     query='SELECT * from c ORDER BY c.pk OFFSET 100 LIMIT 1',
                                     results=[])
+        self.created_db.delete_container(created_collection.id)
 
     def _validate_offset_limit(self, created_collection, query, results):
         query_iterable = created_collection.query_items(
@@ -487,15 +486,14 @@ class QueryTest(unittest.TestCase):
             query=query,
             enable_cross_partition_query=True
         )
-        self.assertListEqual(list(map(lambda doc: doc['value'], list(query_iterable))), results)
+        self.assertListEqual(list(map(lambda doc: doc["value"], list(query_iterable))), results)
 
     def test_distinct(self):
-        created_database = self.config.create_database_if_not_exist(self.client)
         distinct_field = 'distinct_field'
         pk_field = "pk"
         different_field = "different_field"
 
-        created_collection = created_database.create_container(
+        created_collection = self.created_db.create_container(
             id='collection with composite index ' + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/pk", kind="Hash"),
             indexing_policy={
@@ -545,7 +543,7 @@ class QueryTest(unittest.TestCase):
                                 is_select=True,
                                 fields=[different_field])
 
-        created_database.delete_container(created_collection.id)
+        self.created_db.delete_container(created_collection.id)
 
     def _validate_distinct(self, created_collection, query, results, is_select, fields):
         query_iterable = created_collection.query_items(
@@ -566,8 +564,7 @@ class QueryTest(unittest.TestCase):
         self.assertListEqual(result_strings, query_results_strings)
 
     def test_distinct_on_different_types_and_field_orders(self):
-        created_collection = self.created_db.create_container_if_not_exists(
-            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
+        created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
         self.payloads = [
             {'f1': 1, 'f2': 'value', 'f3': 100000000000000000, 'f4': [1, 2, '3'], 'f5': {'f6': {'f7': 2}}},
             {'f2': '\'value', 'f4': [1.0, 2, '3'], 'f5': {'f6': {'f7': 2.0}}, 'f1': 1.0, 'f3': 100000000000000000.00},
@@ -593,7 +590,7 @@ class QueryTest(unittest.TestCase):
         self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
             query="Select distinct value c.f2 from c order by c.f2",
-            expected_results=['value', '\'value'],
+            expected_results=['\'value', 'value'],
             get_mock_result=lambda x, i: (x[i]["f2"], x[i]["f2"])
         )
 
@@ -636,8 +633,7 @@ class QueryTest(unittest.TestCase):
         _QueryExecutionContextBase.next = self.OriginalExecuteFunction
 
     def test_paging_with_continuation_token(self):
-        created_collection = (test_config._test_config
-                              .create_multi_partition_collection_with_custom_pk_if_not_exist(self.client))
+        created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         document_definition = {'pk': 'pk', 'id': '1'}
         created_collection.create_item(body=document_definition)
@@ -661,9 +657,7 @@ class QueryTest(unittest.TestCase):
         self.assertEqual(second_page['id'], second_page_fetched_with_continuation_token['id'])
 
     def test_cross_partition_query_with_continuation_token(self):
-        created_collection = self.created_db.create_container_if_not_exists(
-            self.config.TEST_COLLECTION_MULTI_PARTITION_ID,
-            PartitionKey(path="/id"))
+        created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
         document_definition = {'pk': 'pk1', 'id': '1'}
         created_collection.create_item(body=document_definition)
         document_definition = {'pk': 'pk2', 'id': '2'}
@@ -701,8 +695,7 @@ class QueryTest(unittest.TestCase):
         self.count = 0
 
     def test_value_max_query(self):
-        container = self.created_db.create_container_if_not_exists(
-            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
+        container = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
         query = "Select value max(c.version) FROM c where c.isComplete = true and c.lookupVersion = @lookupVersion"
         query_results = container.query_items(query, parameters=[
             {"name": "@lookupVersion", "value": "console_csat"}  # cspell:disable-line
@@ -711,8 +704,7 @@ class QueryTest(unittest.TestCase):
         self.assertListEqual(list(query_results), [None])
 
     def test_continuation_token_size_limit_query(self):
-        container = self.created_db.create_container_if_not_exists(
-            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
+        container = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
         for i in range(1, 1000):
             container.create_item(body=dict(pk='123', id=str(i), some_value=str(i % 3)))
         query = "Select * from c where c.some_value='2'"
@@ -728,7 +720,6 @@ class QueryTest(unittest.TestCase):
 
         # verify a second time
         self.assertLessEqual(len(token.encode('utf-8')), 1024)
-        self.created_db.delete_container(container)
 
     @pytest.mark.cosmosLiveTest
     def test_computed_properties_query(self):
@@ -793,6 +784,7 @@ class QueryTest(unittest.TestCase):
         queried_items = list(
             created_collection.query_items(query='Select * from c Where c.cp_str_len = 3', partition_key="test"))
         self.assertEqual(len(queried_items), 0)
+        self.created_db.delete_container(created_collection.id)
 
     def _MockNextFunction(self):
         if self.count < len(self.payloads):

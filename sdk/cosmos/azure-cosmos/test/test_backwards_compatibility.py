@@ -23,23 +23,21 @@
 # properly removing the methods marked for deprecation.
 
 import unittest
-import uuid
 from unittest.mock import MagicMock
 
 import pytest
 
+import conftest
 import test_config
-from azure.cosmos import cosmos_client, PartitionKey, Offer, http_constants, CosmosClient, DatabaseProxy, ContainerProxy
+from azure.cosmos import Offer, http_constants, CosmosClient, DatabaseProxy, ContainerProxy
 
 
 @pytest.mark.cosmosEmulator
 class TestBackwardsCompatibility(unittest.TestCase):
-    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
-    TEST_CONTAINER_ID = "Single Partition Test Collection With Custom PK " + str(uuid.uuid4())
+    configs = test_config.TestConfig
     databaseForTest: DatabaseProxy = None
     client: CosmosClient = None
     containerForTest: ContainerProxy = None
-    configs = test_config._test_config
     host = configs.host
     masterKey = configs.masterKey
 
@@ -52,15 +50,9 @@ class TestBackwardsCompatibility(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session")
-        cls.databaseForTest = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID,
-                                                                       offer_throughput=500)
-        cls.containerForTest = cls.databaseForTest.create_container_if_not_exists(
-            cls.TEST_CONTAINER_ID, PartitionKey(path="/id"), offer_throughput=400)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.client.delete_database(cls.TEST_DATABASE_ID)
+        cls.client = conftest.cosmos_sync_client
+        cls.databaseForTest = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
+        cls.containerForTest = cls.databaseForTest.get_container_client(cls.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
     def test_offer_methods(self):
         database_offer = self.databaseForTest.get_throughput()

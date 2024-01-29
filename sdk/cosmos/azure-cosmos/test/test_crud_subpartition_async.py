@@ -75,14 +75,12 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
     """Python CRUD Tests.
     """
 
-    configs = test_config._test_config
+    configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
     connectionPolicy = configs.connectionPolicy
     last_headers = []
     client: CosmosClient = None
-    sync_client: azure.cosmos.CosmosClient = None
-    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
 
     async def __assert_http_failure_with_status(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -105,16 +103,10 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.sync_client = azure.cosmos.CosmosClient(cls.host, cls.masterKey)
-        cls.sync_client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.sync_client.delete_database(cls.TEST_DATABASE_ID)
 
     async def asyncSetUp(self):
         self.client = CosmosClient(self.host, self.masterKey)
-        self.database_for_test = self.client.get_database_client(self.TEST_DATABASE_ID)
+        self.database_for_test = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
 
     async def asyncTearDown(self):
         await self.client.close()

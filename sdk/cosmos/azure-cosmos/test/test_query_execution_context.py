@@ -31,6 +31,7 @@ import unittest
 import uuid
 
 import pytest
+import conftest
 
 import azure.cosmos._base as base
 import azure.cosmos.cosmos_client as cosmos_client
@@ -53,13 +54,14 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
     """
 
     created_collection = None
-    TEST_DATABASE_ID = "Python SDK Test Throughput Database " + str(uuid.uuid4())
     document_definitions = None
     created_db = None
     client: cosmos_client.CosmosClient = None
-    host = test_config._test_config.host
-    masterKey = test_config._test_config.masterKey
-    connectionPolicy = test_config._test_config.connectionPolicy
+    config = test_config.TestConfig
+    host = test_config.TestConfig.host
+    masterKey = test_config.TestConfig.masterKey
+    connectionPolicy = test_config.TestConfig.connectionPolicy
+    TEST_DATABASE_ID = config.TEST_DATABASE_ID
 
     @classmethod
     def setUpClass(cls):
@@ -70,11 +72,8 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host,
-                                                cls.masterKey,
-                                                consistency_level="Session",
-                                                connection_policy=cls.connectionPolicy)
-        cls.created_db = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
+        cls.client = conftest.cosmos_sync_client
+        cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         cls.created_collection = cls.created_db.create_container(
             id='query_execution_context_tests_' + str(uuid.uuid4()),
             partition_key=PartitionKey(path='/id', kind='Hash')
@@ -92,7 +91,7 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.client.delete_database(cls.TEST_DATABASE_ID)
+        cls.created_db.delete_container(cls.created_collection.id)
 
     def setUp(self):
         # sanity check:

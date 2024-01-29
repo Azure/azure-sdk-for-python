@@ -32,6 +32,7 @@ import unittest
 import uuid
 
 import pytest
+import conftest
 
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
@@ -57,24 +58,18 @@ class MultiOrderbyTests(unittest.TestCase):
     LONG_STRING_FIELD = "longStringField"
     PARTITION_KEY = "pk"
     items = []
-    host = test_config._test_config.host
-    masterKey = test_config._test_config.masterKey
-    connectionPolicy = test_config._test_config.connectionPolicy
+    host = test_config.TestConfig.host
+    masterKey = test_config.TestConfig.masterKey
+    connectionPolicy = test_config.TestConfig.connectionPolicy
+    configs = test_config.TestConfig
 
     client: cosmos_client.CosmosClient = None
     database: DatabaseProxy = None
 
-    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
-
     @classmethod
     def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session",
-                                                connection_policy=cls.connectionPolicy)
-        cls.database = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.client.delete_database(cls.TEST_DATABASE_ID)
+        cls.client = conftest.cosmos_sync_client
+        cls.database = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
 
     def generate_multi_orderby_item(self):
         item = {'id': str(uuid.uuid4()), self.NUMBER_FIELD: random.randint(0, 5),
@@ -266,6 +261,8 @@ class MultiOrderbyTests(unittest.TestCase):
                             created_container.query_items(query=query, enable_cross_partition_query=True))
 
                         self.validate_results(expected_ordered_list, result_ordered_list, composite_index)
+
+        self.database.delete_container(created_container.id)
 
     def top(self, items, has_top, top_count):
         return items[0:top_count] if has_top else items

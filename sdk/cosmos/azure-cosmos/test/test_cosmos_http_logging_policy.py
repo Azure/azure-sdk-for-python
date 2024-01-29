@@ -54,7 +54,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
     mock_handler_default = None
     logger_diagnostic = None
     logger_default = None
-    config = test_config._test_config
+    config = test_config.TestConfig
     host = config.host
     masterKey = config.masterKey
     connectionPolicy = config.connectionPolicy

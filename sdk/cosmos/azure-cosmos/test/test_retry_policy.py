@@ -31,6 +31,7 @@ import unittest
 import uuid
 
 import pytest
+import conftest
 
 import azure.cosmos._retry_options as retry_options
 import azure.cosmos.cosmos_client as cosmos_client
@@ -42,14 +43,14 @@ from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 
 @pytest.mark.cosmosEmulator
 class TestRetryPolicy(unittest.TestCase):
-    TEST_DATABASE_ID = "Python SDK Test Throughput Database " + str(uuid.uuid4())
-    TEST_CONTAINER_SINGLE_PARTITION_ID = "Single Partition Test Collection " + str(uuid.uuid4())
     created_database = None
     client = None
-    host = test_config._test_config.host
-    masterKey = test_config._test_config.masterKey
-    connectionPolicy = test_config._test_config.connectionPolicy
+    host = test_config.TestConfig.host
+    masterKey = test_config.TestConfig.masterKey
+    connectionPolicy = test_config.TestConfig.connectionPolicy
     counter = 0
+    TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
+    TEST_CONTAINER_SINGLE_PARTITION_ID = test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -75,14 +76,9 @@ class TestRetryPolicy(unittest.TestCase):
 
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session",
                                                 connection_policy=cls.connectionPolicy)
-        cls.created_database = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
-        cls.created_collection = cls.created_database.create_container_if_not_exists(
-            cls.TEST_CONTAINER_SINGLE_PARTITION_ID, PartitionKey(path="/id"))
+        cls.created_database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
+        cls.created_collection = cls.created_database.get_container_client(cls.TEST_CONTAINER_SINGLE_PARTITION_ID)
         cls.retry_after_in_milliseconds = 1000
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.client.delete_database(cls.TEST_DATABASE_ID)
 
     def test_resource_throttle_retry_policy_default_retry_after(self):
         connection_policy = TestRetryPolicy.connectionPolicy
@@ -93,6 +89,7 @@ class TestRetryPolicy(unittest.TestCase):
             _retry_utility.ExecuteFunction = self._MockExecuteFunction
 
             document_definition = {'id': 'doc',
+                                   'pk': 'pk',
                                    'name': 'sample document',
                                    'key': 'value'}
 
@@ -118,6 +115,7 @@ class TestRetryPolicy(unittest.TestCase):
             _retry_utility.ExecuteFunction = self._MockExecuteFunction
 
             document_definition = {'id': 'doc',
+                                   'pk': 'pk',
                                    'name': 'sample document',
                                    'key': 'value'}
 
@@ -144,6 +142,7 @@ class TestRetryPolicy(unittest.TestCase):
             _retry_utility.ExecuteFunction = self._MockExecuteFunction
 
             document_definition = {'id': 'doc',
+                                   'pk': 'pk',
                                    'name': 'sample document',
                                    'key': 'value'}
 
@@ -162,6 +161,7 @@ class TestRetryPolicy(unittest.TestCase):
         connection_policy.RetryOptions = retry_options.RetryOptions(5)
 
         document_definition = {'id': 'doc',
+                               'pk': 'pk',
                                'name': 'sample document',
                                'key': 'value'}
 
@@ -192,9 +192,11 @@ class TestRetryPolicy(unittest.TestCase):
 
     def test_default_retry_policy_for_query(self):
         document_definition_1 = {'id': 'doc1',
+                                 'pk': 'pk',
                                  'name': 'sample document',
                                  'key': 'value'}
         document_definition_2 = {'id': 'doc2',
+                                 'pk': 'pk',
                                  'name': 'sample document',
                                  'key': 'value'}
 
@@ -216,11 +218,12 @@ class TestRetryPolicy(unittest.TestCase):
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
 
-        self.created_collection.delete_item(item=result_docs[0], partition_key=result_docs[0]['id'])
-        self.created_collection.delete_item(item=result_docs[1], partition_key=result_docs[1]['id'])
+        self.created_collection.delete_item(item=result_docs[0], partition_key=result_docs[0]['pk'])
+        self.created_collection.delete_item(item=result_docs[1], partition_key=result_docs[1]['pk'])
 
     def test_default_retry_policy_for_read(self):
         document_definition = {'id': 'doc',
+                               'pk': 'pk',
                                'name': 'sample document',
                                'key': 'value'}
 
@@ -230,17 +233,18 @@ class TestRetryPolicy(unittest.TestCase):
             mf = self.MockExecuteFunctionConnectionReset(self.original_execute_function)
             _retry_utility.ExecuteFunction = mf
 
-            doc = self.created_collection.read_item(item=created_document['id'], partition_key=created_document['id'])
+            doc = self.created_collection.read_item(item=created_document['id'], partition_key=created_document['pk'])
             self.assertEqual(doc['id'], 'doc')
             self.assertEqual(mf.counter, 3)
 
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
 
-        self.created_collection.delete_item(item=created_document, partition_key=created_document['id'])
+        self.created_collection.delete_item(item=created_document, partition_key=created_document['pk'])
 
     def test_default_retry_policy_for_create(self):
         document_definition = {'id': 'doc',
+                               'pk': 'pk',
                                'name': 'sample document',
                                'key': 'value'}
 
@@ -269,6 +273,7 @@ class TestRetryPolicy(unittest.TestCase):
 
     def test_timeout_failover_retry_policy_for_read(self):
         document_definition = {'id': 'failoverDoc',
+                               'pk': 'pk',
                                'name': 'sample document',
                                'key': 'value'}
 
@@ -279,7 +284,7 @@ class TestRetryPolicy(unittest.TestCase):
             _retry_utility.ExecuteFunction = mf
             try:
                 doc = self.created_collection.read_item(item=created_document['id'],
-                                                        partition_key=created_document['id'])
+                                                        partition_key=created_document['pk'])
                 self.assertEqual(doc['id'], 'doc')
             except exceptions.CosmosHttpResponseError as err:
                 self.assertEqual(err.status_code, 408)

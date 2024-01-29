@@ -6,19 +6,18 @@ import uuid
 import pytest
 
 import azure.cosmos.cosmos_client as cosmos_client
+import conftest
 import test_config
-from azure.cosmos import DatabaseProxy, PartitionKey, ContainerProxy
+from azure.cosmos import DatabaseProxy, ContainerProxy
 
 
 @pytest.mark.cosmosEmulator
 class EncodingTest(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 
-    host = test_config._test_config.host
-    masterKey = test_config._test_config.masterKey
-    connectionPolicy = test_config._test_config.connectionPolicy
-    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
-    TEST_CONTAINER_ID = "Multi Partition Test Collection With Custom PK " + str(uuid.uuid4())
+    host = test_config.TestConfig.host
+    masterKey = test_config.TestConfig.masterKey
+    connectionPolicy = test_config.TestConfig.connectionPolicy
     client: cosmos_client.CosmosClient = None
     created_db: DatabaseProxy = None
     created_container: ContainerProxy = None
@@ -32,16 +31,10 @@ class EncodingTest(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, connection_policy=cls.connectionPolicy)
-        cls.created_db = cls.client.create_database(cls.TEST_DATABASE_ID)
-        cls.created_container = cls.created_db.create_container_if_not_exists(
-            id=cls.TEST_CONTAINER_ID,
-            partition_key=PartitionKey("/pk"),
-            offer_throughput=test_config._test_config.THROUGHPUT_FOR_5_PARTITIONS)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.client.delete_database(cls.TEST_DATABASE_ID)
+        cls.client = conftest.cosmos_sync_client
+        cls.created_db = cls.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
+        cls.created_container = cls.created_db.get_container_client(
+            test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
     def test_unicode_characters_in_partition_key(self):
         test_string = u'€€ کلید پارتیشن विभाजन कुंजी 	123'  # cspell:disable-line

@@ -34,6 +34,7 @@ import uuid
 from urllib.parse import urlparse
 
 import pytest
+import conftest
 
 import azure.cosmos._global_endpoint_manager as global_endpoint_manager
 import azure.cosmos.cosmos_client as cosmos_client
@@ -48,7 +49,7 @@ from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
 
 def is_not_default_host(endpoint):
-    if endpoint == test_config._test_config.host:
+    if endpoint == test_config.TestConfig.host:
         return False
     return True
 
@@ -68,18 +69,17 @@ def _mock_get_database_account(url_connection):
 
 @pytest.mark.cosmosEmulator
 class TestGlobalDB(unittest.TestCase):
-    host = test_config._test_config.global_host
-    write_location_host = test_config._test_config.write_location_host
-    read_location_host = test_config._test_config.read_location_host
-    read_location2_host = test_config._test_config.read_location2_host
-    masterKey = test_config._test_config.global_masterKey
+    host = test_config.TestConfig.global_host
+    write_location_host = test_config.TestConfig.write_location_host
+    read_location_host = test_config.TestConfig.read_location_host
+    read_location2_host = test_config.TestConfig.read_location2_host
+    masterKey = test_config.TestConfig.global_masterKey
 
-    write_location = test_config._test_config.write_location
-    read_location = test_config._test_config.read_location
-    read_location2 = test_config._test_config.read_location2
+    write_location = test_config.TestConfig.write_location
+    read_location = test_config.TestConfig.read_location
+    read_location2 = test_config.TestConfig.read_location2
 
-    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
-    TEST_CONTAINER_ID = "Test Collection With Custom PK " + str(uuid.uuid4())
+    configs = test_config.TestConfig
 
     client: cosmos_client.CosmosClient = None
     test_db: DatabaseProxy = None
@@ -109,14 +109,9 @@ class TestGlobalDB(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.test_db = cls.client.create_database(id=cls.TEST_DATABASE_ID)
-        cls.test_coll = cls.test_db.create_container(id=cls.TEST_CONTAINER_ID,
-                                                     partition_key=PartitionKey(path="/id"))
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.client.delete_database(cls.TEST_DATABASE_ID)
+        cls.client = conftest.cosmos_sync_client
+        cls.test_db = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
+        cls.test_coll = cls.test_db.get_container_client(cls.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
     def test_global_db_read_write_endpoints(self):
         connection_policy = documents.ConnectionPolicy()
@@ -126,6 +121,7 @@ class TestGlobalDB(unittest.TestCase):
                                             connection_policy=connection_policy)
 
         document_definition = {'id': 'doc',
+                               'pk': 'pk',
                                'name': 'sample document',
                                'key': 'value'}
 
@@ -136,7 +132,7 @@ class TestGlobalDB(unittest.TestCase):
         # Delay to get these resources replicated to read location due to Eventual consistency
         time.sleep(5)
 
-        self.test_coll.read_item(item=created_document, partition_key=created_document['id'])
+        self.test_coll.read_item(item=created_document, partition_key=created_document['pk'])
         content_location = str(client.client_connection.last_response_headers[HttpHeaders.ContentLocation])
 
         content_location_url = urlparse(content_location)
@@ -152,8 +148,8 @@ class TestGlobalDB(unittest.TestCase):
         client = cosmos_client.CosmosClient(TestGlobalDB.host, TestGlobalDB.masterKey,
                                             connection_policy=connection_policy)
 
-        database = client.get_database_client(TestGlobalDB.TEST_DATABASE_ID)
-        container = database.get_container_client(TestGlobalDB.TEST_CONTAINER_ID)
+        database = client.get_database_client(self.configs.TEST_DATABASE_ID)
+        container = database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
         # When EnableEndpointDiscovery is True, WriteEndpoint is set to the write endpoint
         created_document = container.create_item(document_definition)
@@ -163,7 +159,7 @@ class TestGlobalDB(unittest.TestCase):
         # Delay to get these resources replicated to read location due to Eventual consistency
         time.sleep(5)
 
-        container.read_item(item=created_document, partition_key=created_document['id'])
+        container.read_item(item=created_document, partition_key=created_document['pk'])
         content_location = str(client.client_connection.last_response_headers[HttpHeaders.ContentLocation])
 
         content_location_url = urlparse(content_location)
@@ -186,8 +182,8 @@ class TestGlobalDB(unittest.TestCase):
                                'name': 'sample document',
                                'key': 'value'}
 
-        database = read_location_client.get_database_client(self.TEST_DATABASE_ID)
-        container = database.get_container_client(self.TEST_CONTAINER_ID)
+        database = read_location_client.get_database_client(self.configs.TEST_DATABASE_ID)
+        container = database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
         # Create Document will fail for the read location client since it has EnableEndpointDiscovery set to false, and hence the request will directly go to
         # the endpoint that was used to create the client instance(which happens to be a read endpoint)
@@ -208,8 +204,8 @@ class TestGlobalDB(unittest.TestCase):
                                                           self.masterKey,
                                                           connection_policy=connection_policy)
 
-        database = read_location_client.get_database_client(self.TEST_DATABASE_ID)
-        container = database.get_container_client(self.TEST_CONTAINER_ID)
+        database = read_location_client.get_database_client(self.configs.TEST_DATABASE_ID)
+        container = database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
         # CreateDocument call will go to the WriteEndpoint as EnableEndpointDiscovery is set to True and client will resolve the right endpoint based on the operation
         created_document = container.create_item(document_definition)
@@ -223,11 +219,12 @@ class TestGlobalDB(unittest.TestCase):
                                             connection_policy=connection_policy)
 
         document_definition = {'id': 'doc3',
+                               'pk': 'pk',
                                'name': 'sample document',
                                'key': 'value'}
 
-        database = client.get_database_client(self.TEST_DATABASE_ID)
-        container = database.get_container_client(self.TEST_CONTAINER_ID)
+        database = client.get_database_client(self.configs.TEST_DATABASE_ID)
+        container = database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
         created_document = container.create_item(document_definition)
         self.assertEqual(created_document['id'], document_definition['id'])
@@ -235,7 +232,7 @@ class TestGlobalDB(unittest.TestCase):
         # Delay to get these resources replicated to read location due to Eventual consistency
         time.sleep(5)
 
-        item = container.read_item(item=created_document, partition_key=created_document['id'])
+        item = container.read_item(item=created_document, partition_key=created_document['pk'])
         content_location = str(client.client_connection.last_response_headers[HttpHeaders.ContentLocation])
 
         content_location_url = urlparse(content_location)
@@ -252,8 +249,8 @@ class TestGlobalDB(unittest.TestCase):
             client = cosmos_client.CosmosClient(self.host, self.masterKey,
                                                 connection_policy=connection_policy)
 
-            database = client.get_database_client(self.TEST_DATABASE_ID)
-            container = database.get_container_client(self.TEST_CONTAINER_ID)
+            database = client.get_database_client(self.configs.TEST_DATABASE_ID)
+            container = database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
             document_definition['id'] = 'doc4'
             created_document = container.create_item(document_definition)
@@ -261,7 +258,7 @@ class TestGlobalDB(unittest.TestCase):
             # Delay to get these resources replicated to read location due to Eventual consistency
             time.sleep(5)
 
-            container.read_item(item=created_document, partition_key=created_document['id'])
+            container.read_item(item=created_document, partition_key=created_document['pk'])
             content_location = str(client.client_connection.last_response_headers[HttpHeaders.ContentLocation])
 
             content_location_url = urlparse(content_location)
@@ -448,11 +445,12 @@ class TestGlobalDB(unittest.TestCase):
             retry_after_in_milliseconds)
 
         document_definition = {'id': 'doc7',
+                               'pk': 'pk',
                                'name': 'sample document',
                                'key': 'value'}
 
-        database = client.get_database_client(self.TEST_DATABASE_ID)
-        container = database.get_container_client(self.TEST_CONTAINER_ID)
+        database = client.get_database_client(self.configs.TEST_DATABASE_ID)
+        container = database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.FORBIDDEN,

@@ -2,6 +2,7 @@ import unittest
 import uuid
 
 import pytest
+import conftest
 
 import azure.cosmos._constants as constants
 import azure.cosmos.cosmos_client as cosmos_client
@@ -13,11 +14,12 @@ from azure.cosmos.partition_key import PartitionKey
 
 @pytest.mark.cosmosEmulator
 class MultiMasterTests(unittest.TestCase):
-    host = test_config._test_config.host
-    masterKey = test_config._test_config.masterKey
-    connectionPolicy = test_config._test_config.connectionPolicy
+    host = test_config.TestConfig.host
+    masterKey = test_config.TestConfig.masterKey
+    connectionPolicy = test_config.TestConfig.connectionPolicy
     counter = 0
     last_headers = []
+    configs = test_config.TestConfig
 
     def test_tentative_writes_header_present(self):
         self.last_headers = []
@@ -39,10 +41,9 @@ class MultiMasterTests(unittest.TestCase):
                                             consistency_level="Session",
                                             connection_policy=connectionPolicy)
 
-        created_db = client.create_database(id='multi_master_tests ' + str(uuid.uuid4()))
+        created_db = client.get_database_client(self.configs.TEST_DATABASE_ID)
 
-        created_collection = created_db.create_container(id='test_db',
-                                                         partition_key=PartitionKey(path='/pk', kind='Hash'))
+        created_collection = created_db.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
         document_definition = {'id': 'doc' + str(uuid.uuid4()),
                                'pk': 'pk',
@@ -80,41 +81,30 @@ class MultiMasterTests(unittest.TestCase):
             partition_key='pk'
         )
 
-        client.delete_database(created_db)
-
         print(len(self.last_headers))
         is_allow_tentative_writes_set = self.EnableMultipleWritableLocations is True
 
-        # Create Database
+        # Create Document - Makes one initial call to fetch collection
         self.assertEqual(self.last_headers[0], is_allow_tentative_writes_set)
-
-        # Create Container
         self.assertEqual(self.last_headers[1], is_allow_tentative_writes_set)
 
-        # Create Document - Makes one initial call to fetch collection
-        self.assertEqual(self.last_headers[2], is_allow_tentative_writes_set)
-        self.assertEqual(self.last_headers[3], is_allow_tentative_writes_set)
-
         # Create Stored procedure
-        self.assertEqual(self.last_headers[4], is_allow_tentative_writes_set)
+        self.assertEqual(self.last_headers[2], is_allow_tentative_writes_set)
 
         # Execute Stored procedure
-        self.assertEqual(self.last_headers[5], is_allow_tentative_writes_set)
+        self.assertEqual(self.last_headers[3], is_allow_tentative_writes_set)
 
         # Read Document
-        self.assertEqual(self.last_headers[6], is_allow_tentative_writes_set)
+        self.assertEqual(self.last_headers[4], is_allow_tentative_writes_set)
 
         # Replace Document
-        self.assertEqual(self.last_headers[7], is_allow_tentative_writes_set)
+        self.assertEqual(self.last_headers[5], is_allow_tentative_writes_set)
 
         # Upsert Document
-        self.assertEqual(self.last_headers[8], is_allow_tentative_writes_set)
+        self.assertEqual(self.last_headers[6], is_allow_tentative_writes_set)
 
         # Delete Document
-        self.assertEqual(self.last_headers[9], is_allow_tentative_writes_set)
-
-        # Delete Database
-        self.assertEqual(self.last_headers[10], is_allow_tentative_writes_set)
+        self.assertEqual(self.last_headers[7], is_allow_tentative_writes_set)
 
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
 
