@@ -129,7 +129,7 @@ class QuickQueryStreamer(object):
     File-like streaming iterator.
     """
 
-    def __init__(self, generator) -> None:
+    def __init__(self, generator):
         self.generator = generator
         self.iterator = iter(generator)
         self._buf = b""
