@@ -2,7 +2,17 @@
 # Licensed under the MIT License.
 import logging
 
-from typing import Any
+from enum import Enum
+from typing import Any, Optional
+
+from azure.core.exceptions import HttpResponseError
+from azure.monitor.opentelemetry.exporter._quickpulse._generated._client import QuickpulseClient
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
+    CollectionConfigurationInfo,
+    MonitoringDataPoint,
+)
+from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
+from azure.monitor.opentelemetry.exporter._utils import _ticks_since_dot_net_epoch
 
 from opentelemetry.sdk.metrics import (
     Counter,
@@ -17,16 +27,13 @@ from opentelemetry.sdk.metrics.export import (
     MetricExporter,
     MetricExportResult,
     MetricsData as OTMetricsData,
+    PeriodicExportingMetricReader,
 )
-from azure.monitor.opentelemetry.exporter._quickpulse._generated._client import QuickpulseClient
-from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 
 _logger = logging.getLogger(__name__)
 
-__all__ = ["QuickpulseExporter"]
 
-
-APPLICATION_INSIGHTS_METRIC_TEMPORALITIES = {
+_APPLICATION_INSIGHTS_METRIC_TEMPORALITIES = {
     Counter: AggregationTemporality.DELTA,
     Histogram: AggregationTemporality.DELTA,
     ObservableCounter: AggregationTemporality.DELTA,
@@ -35,27 +42,32 @@ APPLICATION_INSIGHTS_METRIC_TEMPORALITIES = {
     UpDownCounter: AggregationTemporality.CUMULATIVE,
 }
 
+_SHORT_PING_INTERVAL_SECONDS = 5
+_SHORT_POST_INTERVAL_SECONDS = 1
+_LONG_PING_INTERVAL_SECONDS = 60
+_LONG_POST_INTERVAL_SECONDS = 20
 
-class QuickpulseExporter(MetricExporter):
 
-    def __init__(self, **kwargs: Any) -> None:
+class _QuickpulseExporter(MetricExporter):
+
+    def __init__(self, connection_string: str) -> None:
         """Metric exporter for Quickpulse.
 
-        :keyword str connection_string: The connection string used for your Application Insights resource.
+        :param str connection_string: The connection string used for your Application Insights resource.
         :rtype: None
         """
-        parsed_connection_string = ConnectionStringParser(kwargs.get('connection_string'))
+        parsed_connection_string = ConnectionStringParser(connection_string)
 
         self._endpoint = parsed_connection_string.endpoint
+        self._instrumentation_key = parsed_connection_string.instrumentation_key
         # TODO: Support AADaudience (scope)/credentials
 
-        self.client = QuickpulseClient(host=self._endpoint, **kwargs)
+        self._client = QuickpulseClient(host=self._endpoint)
         # TODO: Support redirect
 
         MetricExporter.__init__(
             self,
-            preferred_temporality=APPLICATION_INSIGHTS_METRIC_TEMPORALITIES, # type: ignore
-            preferred_aggregation=kwargs.get("preferred_aggregation"), # type: ignore
+            preferred_temporality=_APPLICATION_INSIGHTS_METRIC_TEMPORALITIES, # type: ignore
         )
 
     def export(
@@ -104,3 +116,76 @@ class QuickpulseExporter(MetricExporter):
         :param timeout_millis: The maximum amount of time to wait for shutdown. Not currently used.
         :type timeout_millis: float
         """
+
+
+    def _ping(self, monitoring_data_point) -> Optional[CollectionConfigurationInfo]:
+        try:
+            ping_response = self._client.ping(
+                monitoring_data_point=monitoring_data_point,
+                ikey=self._instrumentation_key,
+                x_ms_qps_transmission_time=_ticks_since_dot_net_epoch()
+            )
+            if isinstance(ping_response, CollectionConfigurationInfo):
+                pass
+            else:
+                # Responses that are not 200s are ignored
+                return None
+        except HttpResponseError as response_error:
+            # Errors are not reported
+            return None
+
+
+class QuickpulseState(Enum):
+    """Current state of quickpulse service.
+    The numerical value represents the ping/post interval in ms for those states.
+    """
+
+    PING_SHORT = _SHORT_PING_INTERVAL_SECONDS
+    PING_LONG = _LONG_PING_INTERVAL_SECONDS
+    POST_SHORT = _SHORT_POST_INTERVAL_SECONDS
+    POST_LONG = _LONG_POST_INTERVAL_SECONDS
+
+
+class _QuickpulseMetricReader(PeriodicExportingMetricReader):
+
+    def __init__(
+        self,
+        exporter: _QuickpulseExporter,
+        base_monitoring_data_point: MonitoringDataPoint,
+    ) -> None:
+        self._exporter = exporter
+        self._quick_pulse_state = QuickpulseState.PING_SHORT
+        self._base_monitoring_data_point = base_monitoring_data_point
+        self._elapsed_num_seconds = 0
+        super().__init__(
+            exporter=exporter,
+            export_interval_millis=_SHORT_POST_INTERVAL_SECONDS * 1000,
+        )
+
+    def _ticker(self) -> None:
+        if self._is_ping_state():
+            # Send a ping if elapsed number of request meets the threshold
+            if self._elapsed_num_seconds % int(self._quick_pulse_state.value) == 0:
+                print("pinging...")
+                ping_response = self._exporter._ping(
+                    self._base_monitoring_data_point,
+                )
+                if ping_response and ping_response.response_headers:
+                    if ping_response.response_headers.get("x-ms-qps-subscribed"):
+                        # Switch state to post if subscribed
+                        self._quick_pulse_state = QuickpulseState.POST_SHORT
+                # TODO: Implement redirect
+                # TODO: Implement interval hint
+                else:
+                    # Erroroneous responses instigate backoff logic
+                    # Backoff after _LONG_PING_INTERVAL_SECONDS (60s) of no successful requests
+                    if self._elapsed_num_seconds >= _LONG_PING_INTERVAL_SECONDS:
+                        self._quick_pulse_state = QuickpulseState.PING_LONG
+                    pass
+        else:
+            print("posting")
+            pass
+
+    def _is_ping_state(self):
+        return self._quick_pulse_state in (QuickpulseState.PING_SHORT, QuickpulseState.PING_LONG)
+    
