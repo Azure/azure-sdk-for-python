@@ -22,7 +22,7 @@ archs = "x86_64 aarch64"
 
 [tool.cibuildwheel.macos]
 archs = "x86_64 arm64"
-environment = "CFLAGS='-Wno-implicit-function-declaration'
+environment = "CFLAGS='-Wno-implicit-function-declaration'"
 
 [tool.cibuildwheel.windows]
 archs = "AMD64"
