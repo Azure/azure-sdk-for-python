@@ -18,6 +18,8 @@
 ### Features Added
 
 ### Bugs Fixed
+- Workspace ListKey operation serialization issue fixed.
+- Workspace Diagnose result now can be print in to Json format.
 
 ### Breaking Changes
 
