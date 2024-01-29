@@ -204,6 +204,16 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AppConfigurationSnapshotModifiedEventName = 'Microsoft.AppConfiguration.SnapshotModified'
 
+    ClusterCreatedEventName = 'Microsoft.AVS.ClusterCreated'
+
+    ClusterDeletedEventName = 'Microsoft.AVS.ClusterDeleted'
+
+    ClusterFailedEventName = 'Microsoft.AVS.ClusterFailed'
+
+    ClusterUpdatedEventName = 'Microsoft.AVS.ClusterUpdated'
+
+    ClusterUpdatingEventName = 'Microsoft.AVS.ClusterUpdating'
+
     ContainerRegistryChartDeletedEventName = 'Microsoft.ContainerRegistry.ChartDeleted'
 
     ContainerRegistryChartPushedEventName = 'Microsoft.ContainerRegistry.ChartPushed'
@@ -387,6 +397,20 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ResourceWriteFailureName = 'Microsoft.Resources.ResourceWriteFailure'
 
     ResourceWriteSuccessName = 'Microsoft.Resources.ResourceWriteSuccess'
+
+    ScriptExecutionCancelledEventName = 'Microsoft.AVS.ScriptExecutionCancelled'
+
+    ScriptExecutionFailedEventName = 'Microsoft.AVS.ScriptExecutionFailed'
+
+    ScriptExecutionFinishedEventName = 'Microsoft.AVS.ScriptExecutionFinished'
+
+    ScriptExecutionStartedEventName = 'Microsoft.AVS.ScriptExecutionStarted'
+
+    SddcFailedEventName = 'Microsoft.AVS.SddcFailed'
+
+    SddcUpdatedEventName = 'Microsoft.AVS.SddcUpdated'
+
+    SddcUpdatingEventName = 'Microsoft.AVS.SddcUpdating'
 
     ServiceBusActiveMessagesAvailablePeriodicNotificationsEventName = 'Microsoft.ServiceBus.ActiveMessagesAvailablePeriodicNotifications'
 
