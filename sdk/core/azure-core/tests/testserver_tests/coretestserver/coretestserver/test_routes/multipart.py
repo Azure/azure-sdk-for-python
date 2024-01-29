@@ -164,6 +164,22 @@ def tuple_input_multiple_same_name():
     assert_with_message("filename", "secondFileName", file2.filename)
     return Response(status=200)
 
+@multipart_api.route("/tuple-input-multiple-same-name-with-tuple-file-value", methods=["POST"])
+def test_input_multiple_same_name_with_tuple_file_value():
+    assert_with_message("content type", multipart_header_start, request.content_type[: len(multipart_header_start)])
+
+    images = request.files.getlist("images")
+    assert_with_message("num images", 2, len(images))
+
+    tuple_image = images[0]
+    assert_with_message("image content type", "image/png", tuple_image.content_type)
+    assert_with_message("filename", "foo.png", tuple_image.filename)
+
+    single_image = images[1]
+    assert_with_message("file content type", "application/octet-stream", single_image.content_type)
+    assert_with_message("filename", "foo.png", single_image.filename)
+    return Response(status=200)
+
 
 @multipart_api.route("/data-and-file-input-same-name", methods=["POST"])
 def data_and_file_input_same_name():
