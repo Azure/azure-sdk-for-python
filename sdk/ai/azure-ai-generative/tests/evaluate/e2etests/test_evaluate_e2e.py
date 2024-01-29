@@ -54,8 +54,8 @@ class TestEvaluate(AzureRecordedTestCase):
             metrics_summary = result.metrics_summary
             tabular_result = pd.read_json(os.path.join(output_path, "eval_results.jsonl"), lines=True)
 
-            assert "mean_gpt_groundedness" in metrics_summary.keys()
-            assert metrics_summary.get("mean_gpt_groundedness") == np.nanmean(tabular_result["gpt_groundedness"])
+            assert "gpt_groundedness" in metrics_summary.keys()
+            assert metrics_summary.get("gpt_groundedness") == np.nanmean(tabular_result["gpt_groundedness"])
 
 
     def test_duplicate_metrics_name(self, e2e_openai_api_base, e2e_openai_api_key, e2e_openai_completion_deployment_name, tmpdir):
