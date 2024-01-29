@@ -79,8 +79,12 @@
             "friday"
           ]
         }
-      },
-      "properties": {},
-      "tags": {}
+        },
+        "properties":{
+            "prop1": "value"
+        },
+        "tags": {
+            "tag1": "tag"
+        }
+      }
     }
-  }

@@ -27,6 +27,7 @@ create_monitor:
   monitoring_signals:
     testSignal:
       type: model_performance
+      alert_enabled: False
       production_data:
         input_data: 
           path: azureml:Direct:1
@@ -52,3 +53,7 @@ create_monitor:
       metric_thresholds:
         classification:
           accuracy: 0.9
+properties:
+  prop1: value
+tags:
+  tag1: tag

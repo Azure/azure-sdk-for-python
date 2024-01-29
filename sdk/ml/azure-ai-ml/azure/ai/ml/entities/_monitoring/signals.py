@@ -399,6 +399,8 @@ class MonitoringSignal(RestTranslatableMixin):
             return CustomMonitoringSignal._from_rest_object(obj)
         if obj.signal_type == MonitoringSignalType.GENERATION_SAFETY_QUALITY:
             return GenerationSafetyQualitySignal._from_rest_object(obj)
+        if obj.signal_type == MonitoringSignalType.MODEL_PERFORMANCE:
+            return ModelPerformanceSignal._from_rest_object(obj)
 
         return None
 
@@ -921,7 +923,6 @@ class ModelPerformanceSignal(RestTranslatableMixin):
             alert_enabled=False
             if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
             else MonitoringNotificationMode.ENABLED,
-            properties=obj.properties,
         )
 
 

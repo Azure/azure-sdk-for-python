@@ -632,6 +632,12 @@ class ModelPerformanceClassificationThresholds(RestTranslatableMixin):
 
         return ", ".join(thresholds)
 
+    @classmethod
+    def _from_rest_object(cls, obj) -> "ModelPerformanceClassificationThresholds":
+        return cls(
+            accuracy=obj.threshold.value if obj.threshold else None,
+        )
+
 
 @experimental
 class ModelPerformanceRegressionThresholds(RestTranslatableMixin):
@@ -650,11 +656,15 @@ class ModelPerformanceRegressionThresholds(RestTranslatableMixin):
         thresholds = []
         if self.mean_absolute_error:
             thresholds.append(
-                '{"modelType":"regression","metric":"MeanAbsoluteError","threshold":{"value":' + f"{self.mean_absolute_error}" + "}}"
+                '{"modelType":"regression","metric":"MeanAbsoluteError","threshold":{"value":'
+                + f"{self.mean_absolute_error}"
+                + "}}"
             )
         if self.mean_squared_error:
             thresholds.append(
-                '{"modelType":"regression","metric":"MeanSquaredError","threshold":{"value":' + f"{self.mean_squared_error}" + "}}"
+                '{"modelType":"regression","metric":"MeanSquaredError","threshold":{"value":'
+                + f"{self.mean_squared_error}"
+                + "}}"
             )
         if self.root_mean_squared_error:
             thresholds.append(
@@ -704,7 +714,10 @@ class ModelPerformanceMetricThreshold(RestTranslatableMixin):
 
     @classmethod
     def _from_rest_object(cls, obj: ModelPerformanceMetricThresholdBase) -> "ModelPerformanceMetricThreshold":
-        return cls(classification=None, regression=None)
+        return cls(
+            classification=ModelPerformanceClassificationThresholds._from_rest_object(obj),
+            regression=None,
+        )
 
 
 @experimental
