@@ -34,7 +34,6 @@ exclude = [
   "azure/ai/ml/_local_endpoints/",
   "azure/ai/ml/_logging/",
   "azure/ai/ml/_telemetry/",
-  "azure/ai/ml/_utils",
   "azure/ai/ml/_internal",
   "azure/ai/ml/automl",
   "azure/ai/ml/constants/",
@@ -42,10 +41,8 @@ exclude = [
   "azure/ai/ml/parallel/",
   "azure/ai/ml/sweep/",
   "azure/ai/ml/_azure_environments.py",
-  "azure/ai/ml/exceptions.py",
   "azure/ai/ml/_scope_dependent_operations.py",
   "azure/ai/ml/_ml_client.py",
-  "azure/ai/ml/_exception_helper.py",
 ]   
 warn_unused_configs = true 
 follow_imports = "skip"
