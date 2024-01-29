@@ -6,55 +6,54 @@
 
 import uuid
 
-from typing import Any, Optional, TypeVar, Union, TYPE_CHECKING
+from typing import Any, Optional, Union, TYPE_CHECKING
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
-from ._serialize import get_modify_conditions
 from ._shared.response_handlers import process_storage_error, return_response_headers
+from ._serialize import get_modify_conditions
 
 if TYPE_CHECKING:
+    from azure.storage.blob import BlobClient, ContainerClient
     from datetime import datetime
-
-    BlobClient = TypeVar("BlobClient")
-    ContainerClient = TypeVar("ContainerClient")
+    from ._generated.operations import BlobOperations, ContainerOperations
 
 
-class BlobLeaseClient(object):  # pylint: disable=client-accepts-api-version-keyword
+class BlobLeaseClient(): # pylint: disable=client-accepts-api-version-keyword
     """Creates a new BlobLeaseClient.
 
     This client provides lease operations on a BlobClient or ContainerClient.
-
-    :ivar str id:
-        The ID of the lease currently being maintained. This will be `None` if no
-        lease has yet been acquired.
-    :ivar str etag:
-        The ETag of the lease currently being maintained. This will be `None` if no
-        lease has yet been acquired or modified.
-    :ivar ~datetime.datetime last_modified:
-        The last modified timestamp of the lease currently being maintained.
-        This will be `None` if no lease has yet been acquired or modified.
-
-    :param client:
+    :param  client:
         The client of the blob or container to lease.
-    :type client: ~azure.storage.blob.BlobClient or
-        ~azure.storage.blob.ContainerClient
-    :param str lease_id:
+    :type client: Union[BlobClient, ContainerClient]
+    :param Optional[str] lease_id:
         A string representing the lease ID of an existing lease. This value does not
         need to be specified in order to acquire a new lease, or break one.
     """
-    def __init__(
-            self, client, lease_id=None
-    ):  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
-        # type: (Union[BlobClient, ContainerClient], Optional[str]) -> None
+
+    id: str
+    """The ID of the lease currently being maintained. This will be `None` if no
+    lease has yet been acquired."""
+    etag: Optional[str]
+    """The ETag of the lease currently being maintained. This will be `None` if no
+    lease has yet been acquired or modified."""
+    last_modified: Optional["datetime"]
+    """The last modified timestamp of the lease currently being maintained.
+    This will be `None` if no lease has yet been acquired or modified."""
+    _client: Union["BlobOperations", "ContainerOperations"]
+
+    def __init__( # pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
+        self, client: Union["BlobClient", "ContainerClient"],
+        lease_id: Optional[str] = None
+    ) -> None:
         self.id = lease_id or str(uuid.uuid4())
         self.last_modified = None
         self.etag = None
         if hasattr(client, 'blob_name'):
-            self._client = client._client.blob  # type: ignore # pylint: disable=protected-access
+            self._client = client._client.blob
         elif hasattr(client, 'container_name'):
-            self._client = client._client.container  # type: ignore # pylint: disable=protected-access
+            self._client = client._client.container
         else:
             raise TypeError("Lease must use either BlobClient or ContainerClient.")
 
@@ -65,8 +64,7 @@ class BlobLeaseClient(object):  # pylint: disable=client-accepts-api-version-key
         self.release()
 
     @distributed_trace
-    def acquire(self, lease_duration=-1, **kwargs):
-        # type: (int, **Any) -> None
+    def acquire(self, lease_duration: int = -1, **kwargs: Any) -> None:
         """Requests a new lease.
 
         If the container does not have an active lease, the Blob service creates a
@@ -110,7 +108,7 @@ class BlobLeaseClient(object):  # pylint: disable=client-accepts-api-version-key
         """
         mod_conditions = get_modify_conditions(kwargs)
         try:
-            response = self._client.acquire_lease(
+            response: Any = self._client.acquire_lease(
                 timeout=kwargs.pop('timeout', None),
                 duration=lease_duration,
                 proposed_lease_id=self.id,
@@ -119,13 +117,12 @@ class BlobLeaseClient(object):  # pylint: disable=client-accepts-api-version-key
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
-        self.etag = response.get('etag')  # type: str
+        self.id = response.get('lease_id')
+        self.last_modified = response.get('last_modified')
+        self.etag = response.get('etag')
 
     @distributed_trace
-    def renew(self, **kwargs):
-        # type: (Any) -> None
+    def renew(self, **kwargs: Any) -> None:
         """Renews the lease.
 
         The lease can be renewed if the lease ID specified in the
@@ -167,7 +164,7 @@ class BlobLeaseClient(object):  # pylint: disable=client-accepts-api-version-key
         """
         mod_conditions = get_modify_conditions(kwargs)
         try:
-            response = self._client.renew_lease(
+            response: Any = self._client.renew_lease(
                 lease_id=self.id,
                 timeout=kwargs.pop('timeout', None),
                 modified_access_conditions=mod_conditions,
@@ -175,13 +172,12 @@ class BlobLeaseClient(object):  # pylint: disable=client-accepts-api-version-key
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        self.etag = response.get('etag')  # type: str
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
+        self.etag = response.get('etag')
+        self.id = response.get('lease_id')
+        self.last_modified = response.get('last_modified')
 
     @distributed_trace
-    def release(self, **kwargs):
-        # type: (Any) -> None
+    def release(self, **kwargs: Any) -> None:
         """Release the lease.
 
         The lease may be released if the client lease id specified matches
@@ -221,7 +217,7 @@ class BlobLeaseClient(object):  # pylint: disable=client-accepts-api-version-key
         """
         mod_conditions = get_modify_conditions(kwargs)
         try:
-            response = self._client.release_lease(
+            response: Any = self._client.release_lease(
                 lease_id=self.id,
                 timeout=kwargs.pop('timeout', None),
                 modified_access_conditions=mod_conditions,
@@ -229,13 +225,12 @@ class BlobLeaseClient(object):  # pylint: disable=client-accepts-api-version-key
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        self.etag = response.get('etag')  # type: str
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
+        self.etag = response.get('etag')
+        self.id = response.get('lease_id')
+        self.last_modified = response.get('last_modified')
 
     @distributed_trace
-    def change(self, proposed_lease_id, **kwargs):
-        # type: (str, Any) -> None
+    def change(self, proposed_lease_id: str, **kwargs: Any) -> None:
         """Change the lease ID of an active lease.
 
         :param str proposed_lease_id:
@@ -274,7 +269,7 @@ class BlobLeaseClient(object):  # pylint: disable=client-accepts-api-version-key
         """
         mod_conditions = get_modify_conditions(kwargs)
         try:
-            response = self._client.change_lease(
+            response: Any = self._client.change_lease(
                 lease_id=self.id,
                 proposed_lease_id=proposed_lease_id,
                 timeout=kwargs.pop('timeout', None),
@@ -283,13 +278,12 @@ class BlobLeaseClient(object):  # pylint: disable=client-accepts-api-version-key
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        self.etag = response.get('etag')  # type: str
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
+        self.etag = response.get('etag')
+        self.id = response.get('lease_id')
+        self.last_modified = response.get('last_modified')
 
     @distributed_trace
-    def break_lease(self, lease_break_period=None, **kwargs):
-        # type: (Optional[int], Any) -> int
+    def break_lease(self, lease_break_period: Optional[int] = None, **kwargs: Any) -> int:
         """Break the lease, if the container or blob has an active lease.
 
         Once a lease is broken, it cannot be renewed. Any authorized request can break the lease;
