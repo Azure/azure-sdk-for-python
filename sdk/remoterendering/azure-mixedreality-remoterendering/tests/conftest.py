@@ -15,6 +15,7 @@ from devtools_testutils.sanitizers import (
     add_remove_header_sanitizer,
     is_live
 )
+from devtools_testutils import environment_variables, test_proxy
 
 # Environment variable keys
 ENV_ARR_SERVICE_ENDPOINT = "REMOTERENDERING_ARR_SERVICE_ENDPOINT"
