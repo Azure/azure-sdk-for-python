@@ -9,7 +9,7 @@ import os
 import typing
 from abc import abstractmethod
 from pathlib import Path
-from typing import Dict, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import CodeConfiguration as RestCodeConfiguration
 from azure.ai.ml._restclient.v2023_04_01_preview.models import EndpointComputeType
@@ -173,7 +173,7 @@ class OnlineDeployment(Deployment):
             Will be ignored if code_configuration is present, defaults to None
         :paramtype scoring_script: typing.Optional[typing.Union[str, os.PathLike]]
         """
-        self._provisioning_state = kwargs.pop("provisioning_state", None)
+        self._provisioning_state: Optional[str] = kwargs.pop("provisioning_state", None)
 
         super(OnlineDeployment, self).__init__(
             name=name,
@@ -199,7 +199,7 @@ class OnlineDeployment(Deployment):
         self._arm_type = ArmConstants.ONLINE_DEPLOYMENT_TYPE
         self.model_mount_path = model_mount_path
         self.instance_type = instance_type
-        self.data_collector = data_collector
+        self.data_collector: Any = data_collector
 
     @property
     def provisioning_state(self) -> Optional[str]:
@@ -210,7 +210,7 @@ class OnlineDeployment(Deployment):
         """
         return self._provisioning_state
 
-    def _generate_dependencies(self) -> Tuple[RestCodeConfiguration, str, str]:
+    def _generate_dependencies(self) -> Tuple:
         """Convert dependencies into ARM id or REST wrapper.
 
         :return: A 3-tuple of the code configuration, environment ID, and model ID.
@@ -220,12 +220,13 @@ class OnlineDeployment(Deployment):
 
         if self.code_configuration:
             self.code_configuration._validate()
-            code_id = (
-                self.code_configuration.code
-                if isinstance(self.code_configuration.code, str)
-                else self.code_configuration.code.id
-            )
-            code = RestCodeConfiguration(code_id=code_id, scoring_script=self.code_configuration.scoring_script)
+            if self.code_configuration.code is not None:
+                if isinstance(self.code_configuration.code, str):
+                    code_id = self.code_configuration.code
+                elif not isinstance(self.code_configuration.code, os.PathLike):
+                    code_id = self.code_configuration.code.id
+
+                code = RestCodeConfiguration(code_id=code_id, scoring_script=self.code_configuration.scoring_script)
 
         model_id = None
         if self.model:
@@ -237,10 +238,12 @@ class OnlineDeployment(Deployment):
 
         return code, environment_id, model_id
 
+    @abstractmethod
     def _to_dict(self) -> Dict:
         pass
 
-    def _to_arm_resource_param(self, **kwargs):
+    @abstractmethod
+    def _to_arm_resource_param(self, **kwargs: Any) -> Dict:
         pass
 
     @abstractmethod
@@ -262,8 +265,8 @@ class OnlineDeployment(Deployment):
             error_category=ErrorCategory.SYSTEM_ERROR,
         )
 
-    def _get_arm_resource(self, **kwargs):
-        resource = super(OnlineDeployment, self)._get_arm_resource(**kwargs)
+    def _get_arm_resource(self, **kwargs: Any) -> Dict:
+        resource: dict = super(OnlineDeployment, self)._get_arm_resource(**kwargs)
         depends_on = []
         if self.environment and isinstance(self.environment, Environment):
             depends_on.append(f"{self.environment._arm_type}Deployment")
@@ -274,7 +277,7 @@ class OnlineDeployment(Deployment):
         resource[ArmConstants.DEPENDSON_PARAMETER_NAME] = depends_on
         return resource
 
-    def _get_arm_resource_and_params(self, **kwargs):
+    def _get_arm_resource_and_params(self, **kwargs: Any) -> List:
         resource_param_tuple_list = [(self._get_arm_resource(**kwargs), self._to_arm_resource_param(**kwargs))]
         if self.environment and isinstance(self.environment, Environment):
             resource_param_tuple_list.extend(self.environment._get_arm_resource_and_params())
@@ -288,7 +291,7 @@ class OnlineDeployment(Deployment):
         if self.name:
             validate_endpoint_or_deployment_name(self.name, is_deployment=True)
 
-    def _merge_with(self, other: "OnlineDeployment") -> None:
+    def _merge_with(self, other: Any) -> None:
         if other:
             if self.name != other.name:
                 msg = "The deployment name: {} and {} are not matched when merging."
@@ -323,7 +326,7 @@ class OnlineDeployment(Deployment):
             self.instance_type = other.instance_type or self.instance_type
 
     @classmethod
-    def _set_scale_settings(cls, data: dict):
+    def _set_scale_settings(cls, data: dict) -> None:
         if not hasattr(data, EndpointYamlFields.SCALE_SETTINGS):
             return
 
@@ -341,7 +344,7 @@ class OnlineDeployment(Deployment):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[os.PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "OnlineDeployment":
         data = data or {}
         params_override = params_override or []
@@ -353,9 +356,11 @@ class OnlineDeployment(Deployment):
         deployment_type = data.get("type", None)
 
         if deployment_type == camel_to_snake(EndpointComputeType.KUBERNETES.value):
-            return load_from_dict(KubernetesOnlineDeploymentSchema, data, context, **kwargs)
+            res_kub: OnlineDeployment = load_from_dict(KubernetesOnlineDeploymentSchema, data, context, **kwargs)
+            return res_kub
 
-        return load_from_dict(ManagedOnlineDeploymentSchema, data, context, **kwargs)
+        res_manage: OnlineDeployment = load_from_dict(ManagedOnlineDeploymentSchema, data, context, **kwargs)
+        return res_manage
 
 
 class KubernetesOnlineDeployment(OnlineDeployment):
@@ -428,7 +433,7 @@ class KubernetesOnlineDeployment(OnlineDeployment):
         scoring_script: Optional[
             Union[str, os.PathLike]
         ] = None,  # promoted property from code_configuration.scoring_script
-        **kwargs,
+        **kwargs: Any,
     ):
         """Kubernetes Online endpoint deployment entity.
 
@@ -503,9 +508,11 @@ class KubernetesOnlineDeployment(OnlineDeployment):
         self.resources = resources
 
     def _to_dict(self) -> Dict:
-        return KubernetesOnlineDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = KubernetesOnlineDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
-    def _to_rest_object(self, location: str) -> RestOnlineDeploymentData:  # pylint: disable=arguments-differ
+    # pylint: disable=arguments-differ
+    def _to_rest_object(self, location: str) -> RestOnlineDeploymentData:  # type: ignore
         self._validate()
         code, environment, model = self._generate_dependencies()
 
@@ -530,7 +537,7 @@ class KubernetesOnlineDeployment(OnlineDeployment):
 
         return RestOnlineDeploymentData(location=location, properties=properties, tags=self.tags, sku=sku)
 
-    def _to_arm_resource_param(self, **kwargs):
+    def _to_arm_resource_param(self, **kwargs: Any) -> Dict:
         rest_object = self._to_rest_object(**kwargs)
         properties = rest_object.properties
         sku = rest_object.sku
@@ -545,7 +552,7 @@ class KubernetesOnlineDeployment(OnlineDeployment):
             }
         }
 
-    def _merge_with(self, other: "KubernetesOnlineDeployment") -> None:
+    def _merge_with(self, other: Any) -> None:
         if other:
             super()._merge_with(other)
             if self.resources:
@@ -581,7 +588,10 @@ class KubernetesOnlineDeployment(OnlineDeployment):
             environment=deployment.environment_id,
             resources=ResourceRequirementsSettings._from_rest_object(deployment.container_resource_requirements),
             app_insights_enabled=deployment.app_insights_enabled,
-            scale_settings=OnlineScaleSettings._from_rest_object(deployment.scale_settings),
+            scale_settings=cast(
+                Optional[Union[DefaultScaleSettings, TargetUtilizationScaleSettings]],
+                OnlineScaleSettings._from_rest_object(deployment.scale_settings),
+            ),
             liveness_probe=ProbeSettings._from_rest_object(deployment.liveness_probe),
             readiness_probe=ProbeSettings._from_rest_object(deployment.readiness_probe),
             environment_variables=deployment.environment_variables,
@@ -669,7 +679,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
             Union[str, os.PathLike]
         ] = None,  # promoted property from code_configuration.scoring_script
         data_collector: Optional[DataCollector] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         """Managed Online endpoint deployment entity.
 
@@ -746,9 +756,11 @@ class ManagedOnlineDeployment(OnlineDeployment):
         self.egress_public_network_access = egress_public_network_access
 
     def _to_dict(self) -> Dict:
-        return ManagedOnlineDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = ManagedOnlineDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
-    def _to_rest_object(self, location: str) -> RestOnlineDeploymentData:  # pylint: disable=arguments-differ
+    # pylint: disable=arguments-differ
+    def _to_rest_object(self, location: str) -> RestOnlineDeploymentData:  # type: ignore
         self._validate()
         code, environment, model = self._generate_dependencies()
         properties = RestManagedOnlineDeployment(
@@ -780,7 +792,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
             properties.egress_public_network_access = self.egress_public_network_access
         return RestOnlineDeploymentData(location=location, properties=properties, tags=self.tags, sku=sku)
 
-    def _to_arm_resource_param(self, **kwargs):
+    def _to_arm_resource_param(self, **kwargs: Any) -> Dict:
         rest_object = self._to_rest_object(**kwargs)
         properties = rest_object.properties
         sku = rest_object.sku
@@ -819,7 +831,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
             code_configuration=code_config,
             environment=deployment.environment_id,
             app_insights_enabled=deployment.app_insights_enabled,
-            scale_settings=OnlineScaleSettings._from_rest_object(deployment.scale_settings),
+            scale_settings=OnlineScaleSettings._from_rest_object(deployment.scale_settings),  # type: ignore
             liveness_probe=ProbeSettings._from_rest_object(deployment.liveness_probe),
             environment_variables=deployment.environment_variables,
             readiness_probe=ProbeSettings._from_rest_object(deployment.readiness_probe),
@@ -836,7 +848,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
             provisioning_state=deployment.provisioning_state if hasattr(deployment, "provisioning_state") else None,
         )
 
-    def _merge_with(self, other: "ManagedOnlineDeployment") -> None:
+    def _merge_with(self, other: Any) -> None:
         if other:
             super()._merge_with(other)
             self.instance_type = other.instance_type or self.instance_type

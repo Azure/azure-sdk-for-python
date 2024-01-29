@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import logging
 from collections import deque
-from typing import Deque, Dict, Optional, Union
+from typing import Any, Deque, Dict, Optional, Union
 
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.exceptions import UserErrorException
@@ -48,11 +48,11 @@ class _DSLSettings:
     """
 
     def __init__(self) -> None:
-        self._init_job: Optional[Union[BaseNode, str]] = None
-        self._finalize_job: Optional[Union[BaseNode, str]] = None
+        self._init_job: Any = None
+        self._finalize_job: Any = None
 
     @property
-    def init_job(self) -> BaseNode:
+    def init_job(self) -> Union[BaseNode, str]:
         return self._init_job
 
     @init_job.setter
@@ -78,7 +78,7 @@ class _DSLSettings:
         return None
 
     @property
-    def finalize_job(self) -> BaseNode:
+    def finalize_job(self) -> Union[BaseNode, str]:
         return self._finalize_job
 
     @finalize_job.setter

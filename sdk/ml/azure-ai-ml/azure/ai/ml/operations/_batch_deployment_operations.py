@@ -24,7 +24,6 @@ from azure.ai.ml._utils._package_utils import package_deployment
 from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service, modified_operation_client
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LROConfigurations
 from azure.ai.ml.entities import BatchDeployment, BatchJob, ModelBatchDeployment, PipelineComponent, PipelineJob
-from azure.ai.ml.entities._deployment.deployment import Deployment
 from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
@@ -120,9 +119,9 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
             not skip_script_validation
             and not isinstance(deployment, PipelineComponentBatchDeployment)
             and deployment
-            and deployment.code_configuration
-            and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX)
-            and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code)
+            and deployment.code_configuration  # type: ignore
+            and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX)  # type: ignore
+            and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code)  # type: ignore
         ):
             validate_scoring_script(deployment)
         module_logger.debug("Checking endpoint %s exists", deployment.endpoint_name)
@@ -137,7 +136,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
             operation_config=self._operation_config,
         )
         if isinstance(deployment, PipelineComponentBatchDeployment):
-            self._validate_component(deployment, orchestrators)
+            self._validate_component(deployment, orchestrators)  # type: ignore
         else:
             upload_dependencies(deployment, orchestrators)
         try:
@@ -326,7 +325,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
             self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
         )
 
-    def _validate_component(self, deployment: Deployment, orchestrators: OperationOrchestrator) -> None:
+    def _validate_component(self, deployment: Any, orchestrators: OperationOrchestrator) -> None:
         """Validates that the value provided is associated to an existing component or otherwise we will try to create
         an anonymous component that will be use for batch deployment.
 

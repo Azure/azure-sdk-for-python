@@ -59,7 +59,7 @@ def parallel_for(
     :rtype: ~azure.ai.ml.entities._builders.parallel_for.ParallelFor
     """
     parallel_for_node = ParallelFor(
-        body=body,
+        body=body,  # type: ignore[arg-type]
         items=items,
         _from_component_func=True,
         **kwargs,
