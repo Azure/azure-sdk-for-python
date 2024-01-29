@@ -4,9 +4,9 @@
 """Langchain compatible Docstore which serializes to jsonl."""
 from typing import Dict, Union
 
-from azure.ai.resources._index._docstore import FileBasedDocstore
 from azure.ai.generative.index._embeddings import WrappedLangChainDocument
-from azure.ai.generative.index._documents import Document
+from azure.ai.resources._index._documents import Document
+from azure.ai.resources._index._docstore import FileBasedDocstore
 from langchain.docstore.base import AddableMixin, Docstore
 from langchain.docstore.document import Document as LangChainDocument
 

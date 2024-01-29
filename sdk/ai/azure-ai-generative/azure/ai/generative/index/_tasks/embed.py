@@ -13,10 +13,6 @@ import traceback
 from typing import Iterator, List, Optional
 
 import pandas as pd
-from azure.ai.generative.index._documents import (
-    Document,
-    StaticDocument,
-)
 from azure.ai.generative.index._embeddings import EmbeddingsContainer
 from azure.ai.generative.index._utils.logging import (
     _logger_factory,
@@ -27,6 +23,7 @@ from azure.ai.generative.index._utils.logging import (
     safe_mlflow_start_run,
     track_activity,
 )
+from azure.ai.resources._index._documents import Document, StaticDocument
 
 logger = get_logger("embed")
 

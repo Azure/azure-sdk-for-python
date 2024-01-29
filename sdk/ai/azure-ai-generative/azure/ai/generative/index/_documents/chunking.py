@@ -11,9 +11,9 @@ from functools import lru_cache
 from typing import Any, Iterable, Iterator, List, Optional, Sequence
 
 from azure.ai.generative.index._documents.document import DocumentSource
-from azure.ai.resources._index._langchain.vendor.text_splitter import TextSplitter
 from azure.ai.generative.index._utils import merge_dicts
 from azure.ai.generative.index._utils.logging import get_logger, safe_mlflow_log_metric
+from azure.ai.resources._index._langchain.vendor.text_splitter import TextSplitter
 from azure.ai.resources._index._utils.tokens import tiktoken_cache_dir, token_length_function
 from azure.ai.resources._index._documents.document import Document, StaticDocument
 
