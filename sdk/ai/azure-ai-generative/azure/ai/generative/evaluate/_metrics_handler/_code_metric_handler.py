@@ -20,24 +20,16 @@ class CodeMetricHandler(MetricHandler):
             task_type,
             prediction_data,
             test_data,
-            truth_data=None,
-            prediction_data_column_name=None,
-            ground_truth_column_name=None,
             metrics_mapping=None,
             metrics=None,
-            type_to_kwargs=None,
     ):
 
         super().__init__(
             task_type=task_type,
             prediction_data=prediction_data,
             test_data=test_data,
-            truth_data=truth_data,
-            prediction_data_column_name=prediction_data_column_name,
-            ground_truth_column_name=ground_truth_column_name,
             metrics_mapping=metrics_mapping,
             metrics=metrics,
-            type_to_kwargs=type_to_kwargs,
         )
 
         self._validate()

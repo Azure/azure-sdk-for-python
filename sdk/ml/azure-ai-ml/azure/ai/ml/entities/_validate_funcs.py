@@ -3,7 +3,12 @@
 # ---------------------------------------------------------
 
 # pylint: disable=protected-access
+from os import PathLike
+from typing import IO, Any, AnyStr, Callable, Dict, List, Optional, Union, cast
+
 from marshmallow import ValidationError
+
+from azure.ai.ml import MLClient
 
 from ..exceptions import ValidationException
 from . import Component, Job
@@ -11,7 +16,12 @@ from ._load_functions import _load_common_raising_marshmallow_error, _try_load_y
 from ._validation import PathAwareSchemaValidatableMixin, ValidationResult, ValidationResultBuilder
 
 
-def validate_common(cls, path, validate_func, params_override=None) -> ValidationResult:
+def validate_common(
+    cls: Any,
+    path: Union[str, PathLike, IO[AnyStr]],
+    validate_func: Callable,
+    params_override: Optional[List[Dict]] = None,
+) -> ValidationResult:
     params_override = params_override or []
     yaml_dict = _try_load_yaml_dict(path)
 
@@ -23,7 +33,8 @@ def validate_common(cls, path, validate_func, params_override=None) -> Validatio
         )
 
         if validate_func is not None:
-            return validate_func(entity)
+            res = cast(ValidationResult, validate_func(entity))
+            return res
         if isinstance(entity, PathAwareSchemaValidatableMixin):
             return entity._validate()
         return ValidationResultBuilder.success()
@@ -33,11 +44,15 @@ def validate_common(cls, path, validate_func, params_override=None) -> Validatio
         return ValidationResultBuilder.from_validation_error(err, source_path=path)
 
 
-def validate_component(path, ml_client=None, params_override=None) -> ValidationResult:
+def validate_component(
+    path: Union[str, PathLike, IO[AnyStr]],
+    ml_client: Optional[MLClient] = None,
+    params_override: Optional[List[Dict]] = None,
+) -> ValidationResult:
     """Validate a component defined in a local file.
 
     :param path: The path to the component definition file.
-    :type path: str
+    :type path: Union[str, PathLike, IO[AnyStr]]
     :param ml_client: The client to use for validation. Will skip remote validation if None.
     :type ml_client: azure.ai.ml.core.AzureMLComputeClient
     :param params_override: Fields to overwrite on top of the yaml file.
@@ -54,7 +69,11 @@ def validate_component(path, ml_client=None, params_override=None) -> Validation
     )
 
 
-def validate_job(path, ml_client=None, params_override=None) -> ValidationResult:
+def validate_job(
+    path: Union[str, PathLike, IO[AnyStr]],
+    ml_client: Optional[MLClient] = None,
+    params_override: Optional[List[Dict]] = None,
+) -> ValidationResult:
     """Validate a job defined in a local file.
 
     :param path: The path to the job definition file.

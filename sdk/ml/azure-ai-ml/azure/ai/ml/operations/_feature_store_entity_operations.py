@@ -96,7 +96,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "FeatureStoreEntity.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: str, **kwargs: Dict) -> FeatureStoreEntity:
+    def get(self, name: str, version: str, **kwargs: Dict) -> FeatureStoreEntity:  # type: ignore
         """Get the specified FeatureStoreEntity asset.
 
         :param name: Name of FeatureStoreEntity asset.
