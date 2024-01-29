@@ -38,12 +38,12 @@ from azure.eventhub._utils import transform_outbound_single_message
 try:
     import uamqp
     from uamqp import compat
-    from azure.eventhub._transport._uamqp_transport import UamqpTransport
+    from azure.eventhub.aio._transport._uamqp_transport_async import UamqpTransportAsync as UamqpTransport
 except (ModuleNotFoundError, ImportError):
     uamqp = None
     UamqpTransport = None
 
-from azure.eventhub._transport._pyamqp_transport import PyamqpTransport
+from azure.eventhub.aio._transport._pyamqp_transport_async import PyamqpTransportAsync as PyamqpTransport
 
 
 @pytest.mark.liveTest
