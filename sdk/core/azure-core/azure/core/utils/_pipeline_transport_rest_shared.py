@@ -414,5 +414,7 @@ def _aiohttp_body_helper(
 
 def get_file_items(files: "FilesType") -> Sequence[Tuple[str, "FileType"]]:
     if isinstance(files, Mapping):
+        # casting because ItemsView technically isn't a Sequence, even
+        # though realistically it is ordered python 3.7 and after
         return cast(Sequence[Tuple[str, "FileType"]], files.items())
     return files
