@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import cast, List, Any, Union, Dict, Optional
 
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.tracing.decorator import distributed_trace
 from ._api_versions import DEFAULT_VERSION
@@ -705,3 +706,16 @@ class SearchClient(HeadersMixin):
 
     def __exit__(self, *args) -> None:
         self._client.__exit__(*args)
+
+    @distributed_trace
+    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs) -> HttpResponse:
+        """Runs a network request using the client's existing pipeline.
+
+        :param request: The network request you want to make.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.HttpResponse
+        """
+        request.headers = self._merge_client_headers(request.headers)
+        return self._client._send_request(request, stream=stream, **kwargs)  # pylint:disable=protected-access
