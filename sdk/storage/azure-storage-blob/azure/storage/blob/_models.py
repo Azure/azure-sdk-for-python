@@ -876,7 +876,7 @@ class ContainerSasPermissions(object):
     move: Optional[bool]
     execute: Optional[bool]
     set_immutability_policy: Optional[bool]
-    
+
     def __init__(
         self, read: bool = False,
         write: bool = False,
