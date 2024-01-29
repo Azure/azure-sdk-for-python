@@ -1,15 +1,14 @@
 # Release History
 
-## 11.6.0b1 (Unreleased)
+## 11.6.0b1 (2024-01-31)
 
 ### Features Added
 
-- Added `semantic_query` for `Search` method.
-- Added back alias operations to `SearchIndexClient`
+- Added back `semantic_query` for `Search` method.
+- Added back alias operations to `SearchIndexClient`.
+- Added back `AzureOpenAIEmbeddingSkill`, `AzureOpenAIParameters` and `AzureOpenAIVectorizer`.
 - Added back `query_language`, `query_speller`, `semantic_fields` and `debug` for `Search` method.
 - Added `send_request` method for `SearchClient` & `SearchIndexClient` to run a network request using the client's existing pipeline.
-
-### Breaking Changes
 
 ### Bugs Fixed
 
