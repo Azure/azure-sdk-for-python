@@ -49,7 +49,6 @@ from azure.ai.ml.constants._monitoring import (
     ALL_FEATURES,
     MonitorDatasetContext,
     MonitorFeatureDataType,
-    MonitorModelType,
     MonitorSignalType,
 )
 from azure.ai.ml.entities._inputs_outputs import Input
@@ -435,7 +434,7 @@ class DataSignal(MonitoringSignal):
         features: Optional[Union[List[str], MonitorFeatureFilter, Literal["all_features"]]] = None,
         feature_type_override: Optional[Dict[str, Union[str, MonitorFeatureDataType]]] = None,
         metric_thresholds: Optional[Union[MetricThreshold, List[MetricThreshold]]],
-        alert_enabled: bool = True,
+        alert_enabled: bool = False,
         properties: Optional[Dict[str, str]] = None,
     ):
         super().__init__(
@@ -480,7 +479,7 @@ class DataDriftSignal(DataSignal):
         features: Optional[Union[List[str], MonitorFeatureFilter, Literal["all_features"]]] = None,
         feature_type_override: Optional[Dict[str, Union[str, MonitorFeatureDataType]]] = None,
         metric_thresholds: Optional[Union[DataDriftMetricThreshold, List[MetricThreshold]]] = None,
-        alert_enabled: bool = True,
+        alert_enabled: bool = False,
         data_segment: Optional[DataSegment] = None,
         properties: Optional[Dict[str, str]] = None,
     ):
@@ -649,7 +648,7 @@ class DataQualitySignal(DataSignal):
         features: Optional[Union[List[str], MonitorFeatureFilter, Literal["all_features"]]] = None,
         feature_type_override: Optional[Dict[str, Union[str, MonitorFeatureDataType]]] = None,
         metric_thresholds: Optional[Union[MetricThreshold, List[MetricThreshold]]] = None,
-        alert_enabled: bool = True,
+        alert_enabled: bool = False,
         properties: Optional[Dict[str, str]] = None,
     ):
         super().__init__(
@@ -742,7 +741,7 @@ class FADProductionData(RestTranslatableMixin):
         *,
         input_data: Input,
         data_context: Optional[MonitorDatasetContext] = None,
-        data_column_names: Optional[Dict] = None,
+        data_column_names: Optional[Dict[str, str]] = None,
         pre_processing_component: Optional[str] = None,
         data_window: Optional[BaselineDataRange] = None,
     ):
@@ -918,7 +917,6 @@ class ModelPerformanceSignal(RestTranslatableMixin):
             production_data=ProductionData._from_rest_object(obj.production_data[0]),
             reference_data=ReferenceData._from_rest_object(obj.reference_data),
             metric_thresholds=ModelPerformanceMetricThreshold._from_rest_object(obj.metric_threshold),
-            model_type=obj.metric_threshold.model_type.lower(),
             data_segment=DataSegment._from_rest_object(obj.data_segment) if obj.data_segment else None,
             alert_enabled=False
             if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)

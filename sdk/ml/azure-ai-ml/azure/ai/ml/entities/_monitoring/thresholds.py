@@ -27,7 +27,7 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
 )
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
-from azure.ai.ml.constants._monitoring import MonitorFeatureType, MonitorMetricName, MonitorModelType
+from azure.ai.ml.constants._monitoring import MonitorFeatureType, MonitorMetricName
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
@@ -600,7 +600,7 @@ class FeatureAttributionDriftMetricThreshold(MetricThreshold):
 
 
 @experimental
-class ModelPerformanceClassificationThresholds:
+class ModelPerformanceClassificationThresholds(RestTranslatableMixin):
     def __init__(
         self,
         *,
@@ -612,7 +612,7 @@ class ModelPerformanceClassificationThresholds:
         self.precision = precision
         self.recall = recall
 
-    def _to_str_object(self, **kwargs) -> str:
+    def _to_str_object(self, **kwargs):
         thresholds = []
         if self.accuracy:
             thresholds.append(
@@ -634,7 +634,7 @@ class ModelPerformanceClassificationThresholds:
 
 
 @experimental
-class ModelPerformanceRegressionThresholds:
+class ModelPerformanceRegressionThresholds(RestTranslatableMixin):
     def __init__(
         self,
         *,
@@ -646,20 +646,20 @@ class ModelPerformanceRegressionThresholds:
         self.mean_squared_error = mean_squared_error
         self.root_mean_squared_error = root_mean_squared_error
 
-    def _to_str_object(self, **kwargs) -> str:
+    def _to_str_object(self, **kwargs):
         thresholds = []
         if self.mean_absolute_error:
             thresholds.append(
-                '{"modelType":"regression","metric":"MeanAbsoluteError","threshold":{"value":' + f"{self.mae}" + "}}"
+                '{"modelType":"regression","metric":"MeanAbsoluteError","threshold":{"value":' + f"{self.mean_absolute_error}" + "}}"
             )
         if self.mean_squared_error:
             thresholds.append(
-                '{"modelType":"regression","metric":"MeanSquaredError","threshold":{"value":' + f"{self.mse}" + "}}"
+                '{"modelType":"regression","metric":"MeanSquaredError","threshold":{"value":' + f"{self.mean_squared_error}" + "}}"
             )
         if self.root_mean_squared_error:
             thresholds.append(
                 '{"modelType":"regression","metric":"RootMeanSquaredError","threshold":{"value":'
-                + f"{self.rmse}"
+                + f"{self.root_mean_squared_error}"
                 + "}}"
             )
 
@@ -670,7 +670,7 @@ class ModelPerformanceRegressionThresholds:
 
 
 @experimental
-class ModelPerformanceMetricThreshold(MetricThreshold):
+class ModelPerformanceMetricThreshold(RestTranslatableMixin):
     def __init__(
         self,
         *,
@@ -680,7 +680,7 @@ class ModelPerformanceMetricThreshold(MetricThreshold):
         self.classification = classification
         self.regression = regression
 
-    def _to_str_object(self, **kwargs) -> str:
+    def _to_str_object(self, **kwargs):
         thresholds = []
         if self.classification:
             thresholds.append(self.classification._to_str_object(**kwargs))
@@ -704,15 +704,7 @@ class ModelPerformanceMetricThreshold(MetricThreshold):
 
     @classmethod
     def _from_rest_object(cls, obj: ModelPerformanceMetricThresholdBase) -> "ModelPerformanceMetricThreshold":
-        if obj.metric == RegressionModelPerformanceMetric.MEAN_ABSOLUTE_ERROR:
-            metric_name = MonitorMetricName.MAE
-        elif obj.metric == RegressionModelPerformanceMetric.MEAN_SQUARED_ERROR:
-            metric_name = MonitorMetricName.MSE
-        elif obj.metric == RegressionModelPerformanceMetric.ROOT_MEAN_SQUARED_ERROR:
-            metric_name = MonitorMetricName.RMSE
-        else:
-            metric_name = snake_to_camel(obj.metric)
-        return cls(metric_name=metric_name, threshold=obj.threshold.value if obj.threshold else None)
+        return cls(classification=None, regression=None)
 
 
 @experimental

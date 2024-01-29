@@ -13,7 +13,6 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import FixedInputData as
 from azure.ai.ml._restclient.v2023_06_01_preview.models import MonitoringInputDataBase as RestMonitorInputBase
 from azure.ai.ml._restclient.v2023_06_01_preview.models import StaticInputData as RestStaticInputData
 from azure.ai.ml._restclient.v2023_06_01_preview.models import TrailingInputData as RestTrailingInputData
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
 from azure.ai.ml.constants._monitoring import MonitorDatasetContext, MonitorInputDataType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin

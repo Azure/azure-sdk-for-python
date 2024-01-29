@@ -30,7 +30,6 @@ from azure.ai.ml.entities._monitoring.signals import (
 from azure.ai.ml.entities._monitoring.target import MonitoringTarget
 
 
-@experimental
 class MonitorDefinition(RestTranslatableMixin):
     """Monitor definition
 

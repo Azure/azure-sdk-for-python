@@ -2,11 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument, line-too-long
+# pylint: disable=unused-argument, line-too-long, name-too-long
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml.constants._monitoring import MonitorFeatureType, MonitorMetricName
+from azure.ai.ml.constants._monitoring import MonitorFeatureType
 from azure.ai.ml._schema.core.fields import StringTransformedEnum, NestedField
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 
