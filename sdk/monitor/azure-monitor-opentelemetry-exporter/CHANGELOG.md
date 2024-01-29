@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Add live metrics skeleton + swagger definitions
+    ([#33983](https://github.com/Azure/azure-sdk-for-python/pull/33983))
+
 ### Breaking Changes
 
 ### Bugs Fixed
@@ -34,7 +37,7 @@
 - Implement distro detection for statsbeat feature
     ([#33761](https://github.com/Azure/azure-sdk-for-python/pull/33761))
 - Use empty resource for statsbeat `MeterProvider`
-    ([#33761](https://github.com/Azure/azure-sdk-for-python/pull/33761))
+    ([#33768](https://github.com/Azure/azure-sdk-for-python/pull/33768))
 
 ## 1.0.0b19 (2023-11-20)
 

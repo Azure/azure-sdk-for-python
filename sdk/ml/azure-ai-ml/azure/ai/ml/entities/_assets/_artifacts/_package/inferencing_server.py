@@ -4,13 +4,22 @@
 
 # pylint: disable=protected-access,redefined-builtin,unused-argument
 
+from typing import Any, Optional
+
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+    AzureMLOnlineInferencingServer as RestAzureMLOnlineInferencingServer,
+)
+from azure.ai.ml._restclient.v2023_02_01_preview.models import CustomInferencingServer as RestCustomInferencingServer
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+    OnlineInferenceConfiguration as RestOnlineInferenceConfiguration,
+)
+from azure.ai.ml._restclient.v2023_02_01_preview.models import Route as RestRoute
+from azure.ai.ml._restclient.v2023_02_01_preview.models import TritonInferencingServer as RestTritonInferencingServer
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    AzureMLBatchInferencingServer as RestAzureMLBatchInferencingServer,
+)
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     AzureMLOnlineInferencingServer as RestAzureMLOnlineInferencingServer,
-    AzureMLBatchInferencingServer as RestAzureMLBatchInferencingServer,
-    CustomInferencingServer as RestCustomInferencingServer,
-    TritonInferencingServer as RestTritonInferencingServer,
-    OnlineInferenceConfiguration as RestOnlineInferenceConfiguration,
-    Route as RestRoute,
 )
 from azure.ai.ml._utils._experimental import experimental
 
@@ -26,7 +35,7 @@ class AzureMLOnlineInferencingServer:
     :ivar type: The type of the inferencing server.
     """
 
-    def __init__(self, *, code_configuration: CodeConfiguration = None, **kwargs):
+    def __init__(self, *, code_configuration: Optional[CodeConfiguration] = None, **kwargs: Any):
         self.type = "azureml_online"
         self.code_configuration = code_configuration
 
@@ -47,7 +56,7 @@ class AzureMLBatchInferencingServer:
     :ivar type: The type of the inferencing server.
     """
 
-    def __init__(self, *, code_configuration: CodeConfiguration = None, **kwargs):
+    def __init__(self, *, code_configuration: Optional[CodeConfiguration] = None, **kwargs: Any):
         self.type = "azureml_batch"
         self.code_configuration = code_configuration
 
@@ -68,7 +77,7 @@ class TritonInferencingServer:
     :ivar type: The type of the inferencing server.
     """
 
-    def __init__(self, *, inference_configuration: CodeConfiguration = None, **kwargs):
+    def __init__(self, *, inference_configuration: Optional[CodeConfiguration] = None, **kwargs: Any):
         self.type = "triton"
         self.inference_configuration = inference_configuration
 
@@ -92,7 +101,7 @@ class Route:
     :type path: str
     """
 
-    def __init__(self, *, port: str = None, path: str = None):
+    def __init__(self, *, port: Optional[str] = None, path: Optional[str] = None):
         self.port = port
         self.path = path
 
@@ -100,7 +109,7 @@ class Route:
     def _from_rest_object(cls, rest_obj: RestRoute) -> "RestRoute":
         return Route(port=rest_obj.port, path=rest_obj.path)
 
-    def _to_rest_object(self) -> RestRoute:
+    def _to_rest_object(self) -> Optional[RestRoute]:
         return RestRoute(port=self.port, path=self.path)
 
 
@@ -122,11 +131,11 @@ class OnlineInferenceConfiguration:
 
     def __init__(
         self,
-        liveness_route: Route = None,
-        readiness_route: Route = None,
-        scoring_route: Route = None,
-        entry_script: str = None,
-        configuration: dict = None,
+        liveness_route: Optional[Route] = None,
+        readiness_route: Optional[Route] = None,
+        scoring_route: Optional[Route] = None,
+        entry_script: Optional[str] = None,
+        configuration: Optional[dict] = None,
     ):
         self.liveness_route = liveness_route
         self.readiness_route = readiness_route
@@ -145,10 +154,40 @@ class OnlineInferenceConfiguration:
         )
 
     def _to_rest_object(self) -> RestOnlineInferenceConfiguration:
+        if self.liveness_route is not None and self.readiness_route is not None and self.scoring_route is not None:
+            return RestOnlineInferenceConfiguration(
+                liveness_route=self.liveness_route._to_rest_object(),
+                readiness_route=self.readiness_route._to_rest_object(),
+                scoring_route=self.scoring_route._to_rest_object(),
+                entry_script=self.entry_script,
+                configuration=self.configuration,
+            )
+
+        if self.liveness_route is None:
+            return RestOnlineInferenceConfiguration(
+                readiness_route=self.readiness_route._to_rest_object() if self.readiness_route is not None else None,
+                scoring_route=self.scoring_route._to_rest_object() if self.scoring_route is not None else None,
+                entry_script=self.entry_script,
+                configuration=self.configuration,
+            )
+
+        if self.readiness_route is None:
+            return RestOnlineInferenceConfiguration(
+                liveness_route=self.liveness_route._to_rest_object(),
+                scoring_route=self.scoring_route._to_rest_object() if self.scoring_route is not None else None,
+                entry_script=self.entry_script,
+                configuration=self.configuration,
+            )
+
+        if self.scoring_route is None:
+            return RestOnlineInferenceConfiguration(
+                liveness_route=self.liveness_route._to_rest_object(),
+                readiness_route=self.readiness_route._to_rest_object(),
+                entry_script=self.entry_script,
+                configuration=self.configuration,
+            )
+
         return RestOnlineInferenceConfiguration(
-            liveness_route=self.liveness_route._to_rest_object(),
-            readiness_route=self.readiness_route._to_rest_object(),
-            scoring_route=self.scoring_route._to_rest_object(),
             entry_script=self.entry_script,
             configuration=self.configuration,
         )
@@ -163,7 +202,7 @@ class CustomInferencingServer:
     :ivar type: The type of the inferencing server.
     """
 
-    def __init__(self, *, inference_configuration: OnlineInferenceConfiguration = None, **kwargs):
+    def __init__(self, *, inference_configuration: Optional[OnlineInferenceConfiguration] = None, **kwargs: Any):
         self.type = "custom"
         self.inference_configuration = inference_configuration
 
