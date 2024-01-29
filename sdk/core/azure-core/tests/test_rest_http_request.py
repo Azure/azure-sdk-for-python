@@ -587,14 +587,12 @@ def test_multipart_tuple_input_multiple_same_name(client):
     )
     client.send_request(request).raise_for_status()
 
+
 def test_multipart_tuple_input_multiple_same_name_with_tuple_file_value(client):
     request = HttpRequest(
         "POST",
         url="/multipart/tuple-input-multiple-same-name-with-tuple-file-value",
-        files=[
-            ('images', ('foo.png', NamedIo("notMyName.pdf"), 'image/png')),
-            ('images', NamedIo("foo.png"))
-        ],
+        files=[("images", ("foo.png", NamedIo("notMyName.pdf"), "image/png")), ("images", NamedIo("foo.png"))],
     )
     client.send_request(request).raise_for_status()
 
@@ -610,31 +608,3 @@ def test_data_and_file_input_same_name(client):
         ],
     )
     client.send_request(request).raise_for_status()
-
-
-# NOTE: For files, we don't allow list of tuples yet, just dict. Will uncomment when we add this capability
-# def test_multipart_multiple_files_single_input_content():
-#     files = [
-#         ("file", io.BytesIO(b"<file content 1>")),
-#         ("file", io.BytesIO(b"<file content 2>")),
-#     ]
-#     request = HttpRequest("POST", url="http://example.org", files=files)
-#     assert request.headers == {
-#         "Content-Length": "271",
-#         "Content-Type": "multipart/form-data; boundary=+++",
-#     }
-#     assert request.content == b"".join(
-#         [
-#             b"--+++\r\n",
-#             b'Content-Disposition: form-data; name="file"; filename="upload"\r\n',
-#             b"Content-Type: application/octet-stream\r\n",
-#             b"\r\n",
-#             b"<file content 1>\r\n",
-#             b"--+++\r\n",
-#             b'Content-Disposition: form-data; name="file"; filename="upload"\r\n',
-#             b"Content-Type: application/octet-stream\r\n",
-#             b"\r\n",
-#             b"<file content 2>\r\n",
-#             b"--+++--\r\n",
-#         ]
-#     )

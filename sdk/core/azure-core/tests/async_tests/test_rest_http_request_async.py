@@ -109,17 +109,16 @@ async def test_multipart_tuple_input_multiple_same_name(client):
     )
     (await client.send_request(request)).raise_for_status()
 
+
 @pytest.mark.asyncio
 async def test_multipart_tuple_input_multiple_same_name_with_tuple_file_value(client):
     request = HttpRequest(
         "POST",
         url="/multipart/tuple-input-multiple-same-name-with-tuple-file-value",
-        files=[
-            ('images', ('foo.png', NamedIo("notMyName.pdf"), 'image/png')),
-            ('images', NamedIo("foo.png"))
-        ],
+        files=[("images", ("foo.png", NamedIo("notMyName.pdf"), "image/png")), ("images", NamedIo("foo.png"))],
     )
     (await client.send_request(request)).raise_for_status()
+
 
 @pytest.mark.asyncio
 async def test_data_and_file_input_same_name(client):
