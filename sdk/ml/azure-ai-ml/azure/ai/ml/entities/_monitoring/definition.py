@@ -101,7 +101,7 @@ class MonitorDefinition(RestTranslatableMixin):
         obj: RestMonitorDefinition,
         **kwargs: Any,
     ) -> "MonitorDefinition":
-        from_rest_alert_notification = None
+        from_rest_alert_notification: Any = None
         if obj.alert_notification_setting:
             if isinstance(obj.alert_notification_setting, AzMonMonitoringAlertNotificationSettings):
                 from_rest_alert_notification = AZMONITORING
