@@ -68,7 +68,7 @@ class ActivityLoggerAdapter(logging.LoggerAdapter):
         :type activity_info: str
         """
         self._activity_info = activity_info
-        super(ActivityLoggerAdapter, self).__init__(logger, None)
+        super(ActivityLoggerAdapter, self).__init__(logger)
 
     @property
     def activity_info(self) -> str:
