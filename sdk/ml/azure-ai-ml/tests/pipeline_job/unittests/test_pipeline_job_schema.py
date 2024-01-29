@@ -1850,6 +1850,16 @@ class TestPipelineJobSchema:
             "output_path": {"path": "azureml://datastores/mock/paths/my_output_file.txt", "type": "uri_file"},
         }
 
+        # Assert the output_path:None not override original component output value
+        test_path = "./tests/test_configs/pipeline_jobs/pipeline_component_job_with_overrides2.yml"
+        job: PipelineJob = load_job(source=test_path)
+        assert job._validate().passed
+        job_dict = job._to_dict()
+        assert job_dict["outputs"] == {
+            "not_exists": {"path": "azureml://datastores/mock/paths/not_exists.txt", "type": "uri_file"},
+            "output_path": {"type": "uri_folder"},  # uri_folder from component output
+        }
+
     def test_invalid_pipeline_component_job(self):
         test_path = "./tests/test_configs/pipeline_jobs/invalid/invalid_pipeline_component_job.yml"
         with pytest.raises(Exception) as e:

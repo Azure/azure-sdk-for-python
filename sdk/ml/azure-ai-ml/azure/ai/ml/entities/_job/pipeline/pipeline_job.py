@@ -140,8 +140,10 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         ]:
             self._inputs = self._build_inputs_dict(inputs, input_definition_dict=component.inputs)
             # for pipeline component created pipeline jobs,
-            # it's output should have same value with the component outputs, then override it with given outputs
-            self._outputs = self._build_pipeline_outputs_dict({**component.outputs, **(outputs or {})})
+            # it's output should have same value with the component outputs,
+            # then override it with given outputs (filter out None value)
+            pipeline_outputs = {k: v for k, v in (outputs or {}).items() if v}
+            self._outputs = self._build_pipeline_outputs_dict({**component.outputs, **pipeline_outputs})
         else:
             # Build inputs/outputs dict without meta when definition not available
             self._inputs = self._build_inputs_dict(inputs)
