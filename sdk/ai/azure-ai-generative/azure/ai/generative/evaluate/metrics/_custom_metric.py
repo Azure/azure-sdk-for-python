@@ -11,7 +11,7 @@ class Metric(metaclass=abc.ABCMeta):
         self.description = description
 
 
-class _CodeMetric(Metric):
+class CodeMetric(Metric):
     """Evaluation code metric
 
     :keyword name: Name of the metric.
@@ -54,7 +54,7 @@ class _CodeMetric(Metric):
     """
 
     def __init__(self, *, name, calculate, description=None, **kwargs):
-        super(_CodeMetric, self).__init__(name=name, description=description)
+        super(CodeMetric, self).__init__(name=name, description=description)
         self.calculate = calculate
 
 

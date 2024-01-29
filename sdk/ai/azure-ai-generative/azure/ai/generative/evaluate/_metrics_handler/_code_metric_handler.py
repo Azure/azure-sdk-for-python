@@ -9,7 +9,7 @@ from concurrent.futures.thread import ThreadPoolExecutor
 from numpy import NaN
 
 from .._metric_handler import MetricHandler
-from ..metrics._custom_metric import _CodeMetric
+from ..metrics._custom_metric import CodeMetric
 
 LOGGER = logging.getLogger(__name__)
 
@@ -37,9 +37,9 @@ class CodeMetricHandler(MetricHandler):
         self._validate()
 
     def _validate(self):
-        supported_list = [isinstance(metric, _CodeMetric) for metric in self.metrics]
+        supported_list = [isinstance(metric, CodeMetric) for metric in self.metrics]
         if not all(supported_list):
-            raise Exception(f"{self.__class__.__name__} supports only {_CodeMetric.__class__.__name__} type of metrics")
+            raise Exception(f"{self.__class__.__name__} supports only {CodeMetric.__class__.__name__} type of metrics")
 
     def calculate_metrics(self):
         LOGGER.info(f"Calculating code metrics : {[metric.name for metric in self.metrics]}")

@@ -36,7 +36,7 @@ from azure.ai.generative.evaluate._evaluation_result import EvaluationResult
 from ._metrics_handler._prompt_metric_handler import PromptMetricHandler
 
 from ._utils import _write_properties_to_run_history
-from .metrics._custom_metric import _CodeMetric, PromptMetric, Metric as GenAIMetric
+from .metrics._custom_metric import CodeMetric, PromptMetric, Metric as GenAIMetric
 
 LOGGER = logging.getLogger(__name__)
 
@@ -312,7 +312,7 @@ def _evaluate(
         if code_metrics:
             code_metric_handler = CodeMetricHandler(
                 task_type="custom-code-metric",
-                metrics=[_CodeMetric(name=metric.__name__, calculate=metric) for metric in code_metrics],
+                metrics=[CodeMetric(name=metric.__name__, calculate=metric) for metric in code_metrics],
                 prediction_data=asset_handler.prediction_data,
                 input_output_data=asset_handler.input_output_data,
                 test_data=asset_handler.test_data,
