@@ -305,7 +305,7 @@ class GenerationSafetyQualitySchema(metaclass=PatchedSchemaMeta):
     metric_thresholds = NestedField(GenerationSafetyQualityMetricThresholdSchema)
     alert_enabled = fields.Bool()
     properties = fields.Dict()
-    sampling_rate = fields.Int()
+    sampling_rate = fields.Float()
 
     @pre_dump
     def predump(self, data, **kwargs):

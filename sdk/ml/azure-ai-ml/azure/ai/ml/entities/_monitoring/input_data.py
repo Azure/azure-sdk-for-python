@@ -19,7 +19,6 @@ from azure.ai.ml.constants._monitoring import MonitorDatasetContext, MonitorInpu
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
-@experimental
 class MonitorInputData(RestTranslatableMixin):
     """Monitor input data.
 
@@ -64,7 +63,6 @@ class MonitorInputData(RestTranslatableMixin):
         return None
 
 
-@experimental
 class FixedInputData(MonitorInputData):
     """
     :ivar type: Specifies the type of monitoring input data. Set automatically to "Fixed" for this class.
@@ -105,7 +103,6 @@ class FixedInputData(MonitorInputData):
         )
 
 
-@experimental
 class TrailingInputData(MonitorInputData):
     """
     :ivar type: Specifies the type of monitoring input data. Set automatically to "Trailing" for this class.
@@ -158,7 +155,6 @@ class TrailingInputData(MonitorInputData):
         )
 
 
-@experimental
 class StaticInputData(MonitorInputData):
     """
     :ivar type: Specifies the type of monitoring input data. Set automatically to "Static" for this class.

@@ -74,6 +74,7 @@ class MonitorDefinition(RestTranslatableMixin):
 
     def _to_rest_object(self, **kwargs: Any) -> RestMonitorDefinition:
         default_data_window_size = kwargs.get("default_data_window_size")
+        ref_data_window_size = kwargs.get("ref_data_window_size")
         rest_alert_notification = None
         if self.alert_notification:
             if isinstance(self.alert_notification, str) and self.alert_notification.lower() == AZMONITORING:
@@ -86,6 +87,7 @@ class MonitorDefinition(RestTranslatableMixin):
             _signals = {
                 signal_name: signal._to_rest_object(
                     default_data_window_size=default_data_window_size,
+                    ref_data_window_size=ref_data_window_size,
                 )
                 for signal_name, signal in self.monitoring_signals.items()
             }
