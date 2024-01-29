@@ -26,7 +26,7 @@ from ._generated.models import StaticWebsite as GeneratedStaticWebsite
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from ._generated.models import AccessTier, PageList
+    from ._generated.models import PageList
 
 # Parse a generated PageList into a single list of PageRange sorted by start.
 def parse_page_list(page_list: "PageList") -> List["PageRange"]:
@@ -174,6 +174,37 @@ class BlobImmutabilityPolicyMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MUTABLE = "Mutable"
 
 
+class RetentionPolicy(GeneratedRetentionPolicy):
+    """The retention policy which determines how long the associated data should
+    persist.
+
+    :param bool enabled:
+        Indicates whether a retention policy is enabled for the storage service.
+        The default value is False.
+    :param Optional[int] days:
+        Indicates the number of days that metrics or logging or
+        soft-deleted data should be retained. All data older than this value will
+        be deleted. If enabled=True, the number of days must be specified.
+    """
+
+    enabled: bool = False
+    days: Optional[int] = None
+
+    def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
+        super(RetentionPolicy, self).__init__(enabled=enabled, days=days, allow_permanent_delete=None)
+        if self.enabled and (self.days is None):
+            raise ValueError("If policy is enabled, 'days' must be specified.")
+
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        return cls(
+            enabled=generated.enabled,
+            days=generated.days,
+        )
+
+
 class BlobAnalyticsLogging(GeneratedLogging):
     """Azure Analytics Logging settings.
 
@@ -189,6 +220,12 @@ class BlobAnalyticsLogging(GeneratedLogging):
         Determines how long the associated data should persist. If not specified the retention
         policy will be disabled by default.
     """
+
+    version: str = '1.0'
+    delete: bool = False
+    read: bool = False
+    write: bool = False
+    retention_policy: RetentionPolicy = RetentionPolicy()
 
     def __init__(self, **kwargs: Any) -> None:
         self.version = kwargs.get('version', '1.0')
@@ -226,6 +263,11 @@ class Metrics(GeneratedMetrics):
         policy will be disabled by default.
     """
 
+    version: str = '1.0'
+    enabled: bool = False
+    include_apis: Optional[bool]
+    retention_policy: RetentionPolicy = RetentionPolicy()
+
     def __init__(self, **kwargs: Any) -> None:
         self.version = kwargs.get('version', '1.0')
         self.enabled = kwargs.get('enabled', False)
@@ -244,34 +286,6 @@ class Metrics(GeneratedMetrics):
         )
 
 
-class RetentionPolicy(GeneratedRetentionPolicy):
-    """The retention policy which determines how long the associated data should
-    persist.
-
-    :param bool enabled:
-        Indicates whether a retention policy is enabled for the storage service.
-        The default value is False.
-    :param Optional[int] days:
-        Indicates the number of days that metrics or logging or
-        soft-deleted data should be retained. All data older than this value will
-        be deleted. If enabled=True, the number of days must be specified.
-    """
-
-    def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
-        super(RetentionPolicy, self).__init__(enabled=enabled, days=days, allow_permanent_delete=None)
-        if self.enabled and (self.days is None):
-            raise ValueError("If policy is enabled, 'days' must be specified.")
-
-    @classmethod
-    def _from_generated(cls, generated):
-        if not generated:
-            return cls()
-        return cls(
-            enabled=generated.enabled,
-            days=generated.days,
-        )
-
-
 class StaticWebsite(GeneratedStaticWebsite):
     """The properties that enable an account to host a static website.
 
@@ -285,6 +299,11 @@ class StaticWebsite(GeneratedStaticWebsite):
     :keyword str default_index_document_path:
         Absolute path of the default index page.
     """
+
+    enabled: bool = False
+    index_document: Optional[str]
+    error_document404_path: Optional[str]
+    default_index_document_path: Optional[str]
 
     def __init__(self, **kwargs: Any) -> None:
         self.enabled = kwargs.get('enabled', False)
@@ -336,6 +355,20 @@ class CorsRule(GeneratedCorsRule):
         The number of seconds that the client/browser should cache a
         preflight response.
     """
+
+    allowed_origins: str
+    """The comma-delimited string representation of the list of origin domains that will be allowed via
+        CORS, or "*" to allow all domains."""
+    allowed_methods: str
+    """The comma-delimited string representation of the list HTTP methods that are allowed to be executed
+        by the origin."""
+    exposed_headers: str
+    """The comma-delimited string representation of the list of response headers to expose to CORS clients."""
+    allowed_headers: str
+    """The comma-delimited string representation of the list of headers allowed to be part of the cross-origin
+        request."""
+    max_age_in_seconds: int
+    """The number of seconds that the client/browser should cache a pre-flight response."""
 
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
         self.allowed_origins = ','.join(allowed_origins)
@@ -515,6 +548,8 @@ class ImmutabilityPolicy(DictMixin):
         Possible values to set include: "Locked", "Unlocked".
         "Mutable" can only be returned by service, don't set to "Mutable".
     """
+    expiry_time: Optional["datetime"] = None
+    policy_mode: Optional[str] = None
 
     def __init__(self, **kwargs: Any) -> None:
         self.expiry_time = kwargs.pop('expiry_time', None)
@@ -531,9 +566,9 @@ class ImmutabilityPolicy(DictMixin):
 class FilteredBlob(DictMixin):
     """Blob info from a Filter Blobs API call."""
 
-    name: str  # type: ignore [assignment]
+    name: str
     """Blob name"""
-    container_name: str  # type: ignore [assignment]
+    container_name: str
     """Container name."""
     tags: Optional[Dict[str, str]]
     """Key value pairs of blob tags."""
@@ -593,6 +628,13 @@ class ContentSettings(DictMixin):
         header is stored so that the client can check for message content
         integrity.
     """
+    content_type: Optional[str] = None
+    content_encoding: Optional[str] = None
+    content_language: Optional[str] = None
+    content_disposition: Optional[str] = None
+    cache_control: Optional[str] = None
+    content_md5: Optional[bytearray] = None
+
 
     def __init__(
         self, content_type: Optional[str] = None,
@@ -700,6 +742,8 @@ class BlobBlock(DictMixin):
     :param str state:
         Block state. Possible values: committed|uncommitted
     """
+    block_id: str
+    state: Union[str, Enum]
 
     def __init__(self, block_id: str, state: Union[str, Enum] = BlockState.Latest) -> None:
         self.id = block_id
@@ -730,6 +774,8 @@ class PageRange(DictMixin):
         End of page range in bytes.
     """
 
+    start: Optional[int] = None
+    end: Optional[int] = None
     cleared: bool
     """Whether the range has been cleared."""
 
@@ -775,59 +821,6 @@ class PageRangePaged(PageIterator):
         return parse_page_list(response)
 
 
-class AccessPolicy(GenAccessPolicy):
-    """Access Policy class used by the set and get access policy methods in each service.
-
-    A stored access policy can specify the start time, expiry time, and
-    permissions for the Shared Access Signatures with which it's associated.
-    Depending on how you want to control access to your resource, you can
-    specify all of these parameters within the stored access policy, and omit
-    them from the URL for the Shared Access Signature. Doing so permits you to
-    modify the associated signature's behavior at any time, as well as to revoke
-    it. Or you can specify one or more of the access policy parameters within
-    the stored access policy, and the others on the URL. Finally, you can
-    specify all of the parameters on the URL. In this case, you can use the
-    stored access policy to revoke the signature, but not to modify its behavior.
-
-    Together the Shared Access Signature and the stored access policy must
-    include all fields required to authenticate the signature. If any required
-    fields are missing, the request will fail. Likewise, if a field is specified
-    both in the Shared Access Signature URL and in the stored access policy, the
-    request will fail with status code 400 (Bad Request).
-
-    :param permission:
-        The permissions associated with the shared access signature. The
-        user is restricted to operations allowed by the permissions.
-        Required unless an id is given referencing a stored access policy
-        which contains this field. This field must be omitted if it has been
-        specified in an associated stored access policy.
-    :paramtype permission: Optional[Union[ContainerSasPermissions, str]]
-    :param expiry:
-        The time at which the shared access signature becomes invalid.
-        Required unless an id is given referencing a stored access policy
-        which contains this field. This field must be omitted if it has
-        been specified in an associated stored access policy. Azure will always
-        convert values to UTC. If a date is passed in without timezone info, it
-        is assumed to be UTC.
-    :paramtype expiry: Optional[Union[str, datetime]]
-    :param start:
-        The time at which the shared access signature becomes valid. If
-        omitted, start time for this call is assumed to be the time when the
-        storage service receives the request. Azure will always convert values
-        to UTC. If a date is passed in without timezone info, it is assumed to
-        be UTC.
-    :paramtype start: Optional[Union[str, datetime]]
-    """
-    def __init__(
-        self, permission: Optional[Union["ContainerSasPermissions", str]] = None,
-        expiry: Optional[Union[str, "datetime"]] = None,
-        start: Optional[Union[str, "datetime"]] = None
-    ) -> None:
-        self.start = start  # type: ignore [assignment]
-        self.expiry = expiry  # type: ignore [assignment]
-        self.permission = permission  # type: ignore [assignment]
-
-
 class ContainerSasPermissions(object):
     """ContainerSasPermissions class to be used with the
     :func:`~azure.storage.blob.generate_container_sas` function and
@@ -870,6 +863,20 @@ class ContainerSasPermissions(object):
         To enable operations related to set/delete immutability policy.
         To get immutability policy, you just need read permission.
     """
+
+    read: bool = False
+    write: bool = False
+    delete: bool = False
+    delete_previous_version: bool = False
+    list: bool = False
+    tag: bool = False
+    add: Optional[bool]
+    create: Optional[bool]
+    permanent_delete: Optional[bool]
+    move: Optional[bool]
+    execute: Optional[bool]
+    set_immutability_policy: Optional[bool]
+
     def __init__(
         self, read: bool = False,
         write: bool = False,
@@ -941,6 +948,66 @@ class ContainerSasPermissions(object):
                      move=p_move, execute=p_execute, set_immutability_policy=p_set_immutability_policy)
 
         return parsed
+
+
+class AccessPolicy(GenAccessPolicy):
+    """Access Policy class used by the set and get access policy methods in each service.
+
+    A stored access policy can specify the start time, expiry time, and
+    permissions for the Shared Access Signatures with which it's associated.
+    Depending on how you want to control access to your resource, you can
+    specify all of these parameters within the stored access policy, and omit
+    them from the URL for the Shared Access Signature. Doing so permits you to
+    modify the associated signature's behavior at any time, as well as to revoke
+    it. Or you can specify one or more of the access policy parameters within
+    the stored access policy, and the others on the URL. Finally, you can
+    specify all of the parameters on the URL. In this case, you can use the
+    stored access policy to revoke the signature, but not to modify its behavior.
+
+    Together the Shared Access Signature and the stored access policy must
+    include all fields required to authenticate the signature. If any required
+    fields are missing, the request will fail. Likewise, if a field is specified
+    both in the Shared Access Signature URL and in the stored access policy, the
+    request will fail with status code 400 (Bad Request).
+
+    :param permission:
+        The permissions associated with the shared access signature. The
+        user is restricted to operations allowed by the permissions.
+        Required unless an id is given referencing a stored access policy
+        which contains this field. This field must be omitted if it has been
+        specified in an associated stored access policy.
+    :type permission: Optional[Union[ContainerSasPermissions, str]]
+    :param expiry:
+        The time at which the shared access signature becomes invalid.
+        Required unless an id is given referencing a stored access policy
+        which contains this field. This field must be omitted if it has
+        been specified in an associated stored access policy. Azure will always
+        convert values to UTC. If a date is passed in without timezone info, it
+        is assumed to be UTC.
+    :paramtype expiry: Optional[Union[str, datetime]]
+    :param start:
+        The time at which the shared access signature becomes valid. If
+        omitted, start time for this call is assumed to be the time when the
+        storage service receives the request. Azure will always convert values
+        to UTC. If a date is passed in without timezone info, it is assumed to
+        be UTC.
+    :paramtype start: Optional[Union[str, datetime]]
+    """
+    permission: Optional[Union[ContainerSasPermissions, str]]  #type: ignore [assignment]
+    """The permissions associated with the shared access signature. The user is restricted to
+        operations allowed by the permissions."""
+    expiry: Optional[Union["datetime", str]]  #type: ignore [assignment]
+    """The time at which the shared access signature becomes invalid."""
+    start: Optional[Union["datetime", str]]  #type: ignore [assignment]
+    """The time at which the shared access signature becomes valid."""
+    def __init__(
+        self, permission: Optional[Union["ContainerSasPermissions", str]] = None,
+        expiry: Optional[Union[str, "datetime"]] = None,
+        start: Optional[Union[str, "datetime"]] = None
+    ) -> None:
+        self.start = start
+        self.expiry = expiry
+        self.permission = permission
 
 
 class BlobSasPermissions(object):
@@ -1162,18 +1229,31 @@ class ArrowType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DECIMAL = 'decimal'
 
 
+class ObjectReplicationRule(DictMixin):
+    """Policy id and rule ids applied to a blob."""
+
+    rule_id: str
+    """Rule id."""
+    status: str
+    """The status of the rule. It could be "Complete" or "Failed" """
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.rule_id = kwargs.pop('rule_id', None)  # type: ignore [assignment]
+        self.status = kwargs.pop('status', None)  # type: ignore [assignment]
+
+
 class ObjectReplicationPolicy(DictMixin):
     """Policy id and rule ids applied to a blob."""
 
-    policy_id: Optional[str]
+    policy_id: str
     """Policy id for the blob. A replication policy gets created (policy id) when creating a source/destination pair."""
-    algorithm: Optional[List["ObjectReplicationRule"]]
+    rules: List[ObjectReplicationRule]
     """Within each policy there may be multiple replication rules.
         e.g. rule 1= src/container/.pdf to dst/container2/; rule2 = src/container1/.jpg to dst/container3"""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.policy_id = kwargs.pop('policy_id', None)
-        self.rules = kwargs.pop('rules', None)
+        self.policy_id = kwargs.pop('policy_id', None)  # type: ignore [assignment]
+        self.rules = kwargs.pop('rules', None)  # type: ignore [assignment]
 
 
 class BlobProperties(DictMixin):
@@ -1308,19 +1388,6 @@ class BlobProperties(DictMixin):
                                                       policy_mode=kwargs.get('x-ms-immutability-policy-mode'))
         self.has_legal_hold = kwargs.get('x-ms-legal-hold')
         self.has_versions_only = None
-
-
-class ObjectReplicationRule(DictMixin):
-    """Policy id and rule ids applied to a blob."""
-
-    rule_id: Optional[str]
-    """Rule id."""
-    status: Optional[str]
-    """The status of the rule. It could be "Complete" or "Failed" """
-
-    def __init__(self, **kwargs: Any) -> None:
-        self.rule_id = kwargs.pop('rule_id', None)
-        self.status = kwargs.pop('status', None)
 
 
 class BlobQueryError(object):

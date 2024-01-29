@@ -224,11 +224,11 @@ class BlobPrefix(ItemPaged, DictMixin):
     Returned from walk_blobs when a delimiter is used.
     Can be thought of as a virtual blob directory."""
 
-    name: Optional[str]
+    name: str
     """The prefix, or "directory name" of the blob."""
     service_endpoint: Optional[str]
     """The service URL."""
-    prefix: Optional[str]
+    prefix: str
     """A blob name prefix being used to filter the list."""
     marker: Optional[str]
     """The continuation token of the current page of results."""
@@ -236,26 +236,26 @@ class BlobPrefix(ItemPaged, DictMixin):
     """The maximum number of results retrieved per API call."""
     next_marker: Optional[str]
     """The continuation token to retrieve the next page of results."""
-    location_mode: Optional[str]
+    location_mode: str
     """The location mode being used to list results. The available
     options include "primary" and "secondary"."""
     current_page: Optional[List[BlobProperties]]
     """The current page of listed results."""
-    delimiter: Optional[str]
+    delimiter: str
     """A delimiting character used for hierarchy listing."""
     command: Callable
     """Function to retrieve the next page of items."""
-    container: Optional[str]
+    container: str
     """The name of the container."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super(BlobPrefix, self).__init__(*args, page_iterator_class=BlobPrefixPaged, **kwargs)
-        self.name = kwargs.get('prefix')
-        self.prefix = kwargs.get('prefix')
+        self.name = kwargs.get('prefix')  # type: ignore [assignment]
+        self.prefix = kwargs.get('prefix')  # type: ignore [assignment]
         self.results_per_page = kwargs.get('results_per_page')
-        self.container = kwargs.get('container')
-        self.delimiter = kwargs.get('delimiter')
-        self.location_mode = kwargs.get('location_mode')
+        self.container = kwargs.get('container')  # type: ignore [assignment]
+        self.delimiter = kwargs.get('delimiter')  # type: ignore [assignment]
+        self.location_mode = kwargs.get('location_mode')  # type: ignore [assignment]
 
 
 class FilteredBlobPaged(PageIterator):
