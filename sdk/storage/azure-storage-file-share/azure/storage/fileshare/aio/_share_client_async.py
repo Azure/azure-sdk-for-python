@@ -315,7 +315,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
     @distributed_trace_async
     async def delete_share(
-        self, delete_snapshots: Optional[Literal['include', 'include-leased']] = False,
+        self, delete_snapshots: Optional[Union[bool, Literal['include', 'include-leased']]] = False,
         **kwargs: Any
         ) -> None:
         """Marks the specified share for deletion. The share is
@@ -324,7 +324,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :param delete_snapshots:
             Indicates if snapshots are to be deleted.
         :type delete_snapshots:
-            Optional[Literal['include', 'include-leased']]
+            Optional[Union[bool, Literal['include', 'include-leased']]]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.

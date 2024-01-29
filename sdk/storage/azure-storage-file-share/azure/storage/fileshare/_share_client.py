@@ -449,7 +449,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
 
     @distributed_trace
     def delete_share(
-        self, delete_snapshots: Optional[Literal['include', 'include-leased']] = False,
+        self, delete_snapshots: Optional[Union[bool, Literal['include', 'include-leased']]] = False,
         **kwargs: Any
     ) -> None:
         """Marks the specified share for deletion. The share is
@@ -458,7 +458,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         :param delete_snapshots:
             Indicates if snapshots are to be deleted.
         :type delete_snapshots:
-            Optional[Literal['include', 'include-leased']]
+            Optional[Union[bool, Literal['include', 'include-leased']]]
         :keyword lease:
             Required if the share has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.

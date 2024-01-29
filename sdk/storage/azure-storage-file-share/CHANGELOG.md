@@ -15,7 +15,7 @@ Python 3.12.
 - Fixed an issue where authentication errors could raise `AttributeError` instead of `ClientAuthenticationError` when
 using async OAuth credentials.
 - Fixed an issue where parameter `delete_snapshots` to `delete_share` API did not support all possible enums. This change
-makes `delete_snapshots` now accept string literals 'include' and include-leased' instead of a bool.
+makes `delete_snapshots` now accept string literals 'include' and 'include-leased'.
 
 ## 12.15.0 (2023-11-07)
 
