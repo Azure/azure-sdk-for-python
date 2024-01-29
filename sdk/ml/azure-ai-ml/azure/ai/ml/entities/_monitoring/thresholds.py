@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument, line-too-long
+# pylint: disable=unused-argument, line-too-long, protected-access
 
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -22,8 +22,6 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     NumericalDataQualityMetricThreshold,
     NumericalPredictionDriftMetricThreshold,
     PredictionDriftMetricThresholdBase,
-    RegressionModelPerformanceMetric,
-    RegressionModelPerformanceMetricThreshold,
 )
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel

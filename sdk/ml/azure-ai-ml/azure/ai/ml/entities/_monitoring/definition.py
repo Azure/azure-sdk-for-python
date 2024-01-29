@@ -10,7 +10,6 @@ from typing_extensions import Literal
 
 from azure.ai.ml._restclient.v2023_06_01_preview.models import AzMonMonitoringAlertNotificationSettings
 from azure.ai.ml._restclient.v2023_06_01_preview.models import MonitorDefinition as RestMonitorDefinition
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._monitoring import (
     AZMONITORING,
     DEFAULT_DATA_DRIFT_SIGNAL_NAME,
@@ -25,7 +24,6 @@ from azure.ai.ml.entities._monitoring.signals import (
     DataQualitySignal,
     MonitoringSignal,
     PredictionDriftSignal,
-    ModelPerformanceSignal,
 )
 from azure.ai.ml.entities._monitoring.target import MonitoringTarget
 
@@ -44,7 +42,8 @@ class MonitorDefinition(RestTranslatableMixin):
         , ~azure.ai.ml.entities.DataQualitySignal, ~azure.ai.ml.entities.PredictionDriftSignal
         , ~azure.ai.ml.entities.FeatureAttributionDriftSignal
         , ~azure.ai.ml.entities.CustomMonitoringSignal
-        , ~azure.ai.ml.entities.GenerationSafetyQualitySignal]]]
+        , ~azure.ai.ml.entities.GenerationSafetyQualitySignal
+        , ~azure.ai.ml.entities.ModelPerformanceSignal]]]
     :keyword alert_notification: The alert configuration for the monitor.
     :paramtype alert_notification: Optional[Union[Literal['azmonitoring'], ~azure.ai.ml.entities.AlertNotification]]
 

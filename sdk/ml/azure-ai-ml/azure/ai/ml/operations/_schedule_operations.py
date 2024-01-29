@@ -361,29 +361,6 @@ class ScheduleOperations(_ScopeDependentOperations):
                         azureml_type=AzureMLResourceType.COMPONENT,
                     )
                 continue
-            if signal.type == MonitorSignalType.MODEL_PERFORMANCE:
-                if mdc_output_enabled:
-                    if signal.production_data:
-                        if signal.production_data.data_column_names and not signal.production_data.input_data:
-                            # if production dataset is present and data collector for output is enabled,
-                            # create a default target dataset with production model outputs as target
-                            signal.production_data.input_data = Input(
-                                path=f"{model_outputs_name}:{model_outputs_version}",
-                                type=self._data_operations.get(model_outputs_name, model_outputs_version).type,
-                            )
-                            if signal.production_data.data_window is None:
-                                signal.production_data.data_window = BaselineDataRange(
-                                    lookback_window_size="default", lookback_window_offset="P0D"
-                                )
-                elif not signal.production_data:
-                    # if target dataset is absent and data collector for output is not enabled,
-                    # collect exception message
-                    msg = (
-                        f"A production data must be provided for signal with name {signal_name}"
-                        f"and type {signal.type} if the monitoring_target endpoint_deployment_id is empty"
-                        "or refers to a deployment for which data collection for model outputs is not enabled."
-                    )
-                    error_messages.append(msg)
             error_messages = []
             if not signal.production_data or not signal.reference_data:
                 # if there is no target dataset, we check the type of signal
