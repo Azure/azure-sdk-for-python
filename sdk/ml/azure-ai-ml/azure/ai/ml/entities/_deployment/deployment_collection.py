@@ -54,7 +54,7 @@ class DeploymentCollection:
 
     def _to_rest_object(self) -> RestCollection:
         return RestCollection(
-            data_collection_mode="enabled" if self.enabled.lower() == "true" else "disabled",
+            data_collection_mode="enabled" if str(self.enabled).lower() == "true" else "disabled",
             sampling_rate=self.sampling_rate,
             data_id=self.data,
             client_id=self.client_id,
