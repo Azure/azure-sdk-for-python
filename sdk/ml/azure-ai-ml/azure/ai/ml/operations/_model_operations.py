@@ -285,10 +285,10 @@ class ModelOperations(_ScopeDependentOperations):
 
         :param name: Name of the model.
         :type name: str
-        :param version: Version of the model.
-        :type version: str
-        :param label: Label of the model. (mutually exclusive with version)
-        :type label: str
+        :keyword version: Version of the model.
+        :paramtype version: str
+        :keyword label: Label of the model. (mutually exclusive with version)
+        :paramtype label: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Model cannot be successfully validated.
             Details will be provided in the error message.
         :return: Model asset object.
@@ -329,9 +329,9 @@ class ModelOperations(_ScopeDependentOperations):
         :type name: str
         :param version: Version of the model.
         :type version: str
-        :param download_path: Local path as download destination, defaults to current working directory of the current
+        :keyword download_path: Local path as download destination, defaults to current working directory of the current
             user. Contents will be overwritten.
-        :type download_path: Union[PathLike, str]
+        :paramtype download_path: Union[PathLike, str]
         :raises ResourceNotFoundError: if can't find a model matching provided name.
         """
 
@@ -403,10 +403,19 @@ class ModelOperations(_ScopeDependentOperations):
 
         :param name: Name of model asset.
         :type name: str
-        :param version: Version of model asset.
-        :type version: str
-        :param label: Label of the model asset. (mutually exclusive with version)
-        :type label: str
+        :keyword version: Version of model asset.
+        :paramtype version: str
+        :keyword label: Label of the model asset. (mutually exclusive with version)
+        :paramtype label: str
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_misc.py
+                :start-after: [START model_operations_archive]
+                :end-before: [END model_operations_archive]
+                :language: python
+                :dedent: 8
+                :caption: Archive a model example.
         """
         _archive_or_restore(
             asset_operations=self,
@@ -430,10 +439,19 @@ class ModelOperations(_ScopeDependentOperations):
 
         :param name: Name of model asset.
         :type name: str
-        :param version: Version of model asset.
-        :type version: str
-        :param label: Label of the model asset. (mutually exclusive with version)
-        :type label: str
+        :keyword version: Version of model asset.
+        :paramtype version: str
+        :keyword label: Label of the model asset. (mutually exclusive with version)
+        :paramtype label: str
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_misc.py
+                :start-after: [START model_operations_restore]
+                :end-before: [END model_operations_restore]
+                :language: python
+                :dedent: 8
+                :caption: Restore a model example.
         """
         _archive_or_restore(
             asset_operations=self,
@@ -455,13 +473,13 @@ class ModelOperations(_ScopeDependentOperations):
     ) -> Iterable[Model]:
         """List all model assets in workspace.
 
-        :param name: Name of the model.
-        :type name: Optional[str]
-        :param stage: The Model stage
-        :type stage: Optional[str]
-        :keyword list_view_type: View type for including/excluding (for example) archived models. Defaults to
-            :attr:`ListViewType.ACTIVE_ONLY`.
-        :type list_view_type: ListViewType
+        :keyword name: Name of the model.
+        :paramtype name: Optional[str]
+        :keyword stage: The Model stage
+        :paramtype stage: Optional[str]
+        :keyword list_view_type: View type for including/excluding (for example) archived models.
+            Defaults to :attr:`ListViewType.ACTIVE_ONLY`.
+        :paramtype list_view_type: ListViewType
         :return: An iterator like instance of Model objects
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.Model]
         """
