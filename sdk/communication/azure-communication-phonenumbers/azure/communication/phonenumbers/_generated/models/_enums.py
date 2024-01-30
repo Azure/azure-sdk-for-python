@@ -16,6 +16,15 @@ class BillingFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MONTHLY = "monthly"
 
 
+class OperatorNumberType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of service associated with the phone number."""
+
+    UNKNOWN = "unknown"
+    OTHER = "other"
+    GEOGRAPHIC = "geographic"
+    MOBILE = "mobile"
+
+
 class PhoneNumberAssignmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents the assignment type of the offering."""
 
@@ -48,6 +57,14 @@ class PhoneNumberOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RELEASE_PHONE_NUMBER = "releasePhoneNumber"
     SEARCH = "search"
     UPDATE_PHONE_NUMBER_CAPABILITIES = "updatePhoneNumberCapabilities"
+    RESERVATION_PURCHASE = "reservationPurchase"
+
+
+class PhoneNumberSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Source of the number, e.g. Cloud or OperatorConnect."""
+
+    CLOUD = "cloud"
+    OPERATOR_CONNECT = "operatorConnect"
 
 
 class PhoneNumberType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
