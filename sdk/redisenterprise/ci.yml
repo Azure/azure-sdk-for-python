@@ -28,6 +28,7 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: redisenterprise
+    TestProxy: true
     Artifacts:
     - name: azure-mgmt-redisenterprise
       safeName: azuremgmtredisenterprise
