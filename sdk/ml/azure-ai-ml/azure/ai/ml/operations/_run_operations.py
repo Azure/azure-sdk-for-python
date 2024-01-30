@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Iterable, Optional, cast
+from typing import Any, Iterable, Optional, cast
 
 from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as RunHistoryServiceClient
 from azure.ai.ml._restclient.runhistory.models import GetRunDataRequest, GetRunDataResult, Run, RunDetails
@@ -66,7 +66,7 @@ class RunOperations(_ScopeDependentOperations):
         :rtype: Optional[_BaseJob]
         """
         try:
-            from_rest_job = Job._from_rest_object(job_object)
+            from_rest_job: Any = Job._from_rest_object(job_object)
             from_rest_job._id = NAMED_RESOURCE_ID_FORMAT.format(
                 self._subscription_id,
                 self._resource_group_name,

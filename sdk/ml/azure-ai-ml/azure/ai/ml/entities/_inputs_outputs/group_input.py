@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 import copy
 from enum import Enum as PyEnum
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationException
@@ -10,6 +11,10 @@ from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationEx
 from .input import Input
 from .output import Output
 from .utils import is_group
+
+# avoid circular import error
+if TYPE_CHECKING:
+    from azure.ai.ml.entities._job.pipeline._io import _GroupAttrDict
 
 
 class GroupInput(Input):
@@ -21,10 +26,10 @@ class GroupInput(Input):
     :type _group_class: Any
     """
 
-    def __init__(self, values: dict, _group_class) -> None:
+    def __init__(self, values: dict, _group_class: Any) -> None:
         super().__init__(type=IOConstants.GROUP_TYPE_NAME)
         self.assert_group_value_valid(values)
-        self.values = values
+        self.values: Any = values
         # Create empty default by values
         # Note Output do not have default so just set a None
         self.default = self._create_default()
@@ -32,30 +37,31 @@ class GroupInput(Input):
         self._group_class = _group_class
 
     @classmethod
-    def _create_group_attr_dict(cls, dct):
+    def _create_group_attr_dict(cls, dct: dict) -> "_GroupAttrDict":
         from .._job.pipeline._io import _GroupAttrDict
 
         return _GroupAttrDict(dct)
 
     @classmethod
-    def _is_group_attr_dict(cls, obj):
+    def _is_group_attr_dict(cls, obj: object) -> bool:
         from .._job.pipeline._io import _GroupAttrDict
 
         return isinstance(obj, _GroupAttrDict)
 
-    def __getattr__(self, item):
+    def __getattr__(self, item: Any) -> Any:
         try:
-            return super().__getattr__(item)
+            # TODO: Bug Item number: 2883363
+            return super().__getattr__(item)  # type: ignore
         except AttributeError:
             # TODO: why values is not a dict in some cases?
             if isinstance(self.values, dict) and item in self.values:
                 return self.values[item]
             raise
 
-    def _create_default(self):
+    def _create_default(self) -> "_GroupAttrDict":
         from .._job.pipeline._io import PipelineInput
 
-        default_dict = {}
+        default_dict: dict = {}
         # Note: no top-level group names at this time.
         for k, v in self.values.items():
             # skip create default for outputs or port inputs
@@ -72,7 +78,7 @@ class GroupInput(Input):
         return self._create_group_attr_dict(default_dict)
 
     @classmethod
-    def assert_group_value_valid(cls, values):
+    def assert_group_value_valid(cls, values: Dict) -> None:
         """Check if all values in the group are supported types.
 
         :param values: The values of the group.
@@ -94,10 +100,11 @@ class GroupInput(Input):
             if value.type not in IOConstants.INPUT_TYPE_COMBINATION and not isinstance(value, GroupInput):
                 raise UserErrorException(msg.format(key, value.type))
             if key in names:
-                raise ValueError(f"Duplicate parameter name {value.name!r} found in Group values.")
+                if not isinstance(value, Input):
+                    raise ValueError(f"Duplicate parameter name {value.name!r} found in Group values.")
             names.add(key)
 
-    def flatten(self, group_parameter_name):
+    def flatten(self, group_parameter_name: str) -> Dict:
         """Flatten the group and return all parameters.
 
         :param group_parameter_name: The name of the group parameter.
@@ -121,7 +128,7 @@ class GroupInput(Input):
         return attr_dict
 
     @staticmethod
-    def custom_class_value_to_attr_dict(value, group_names=None):
+    def custom_class_value_to_attr_dict(value: Any, group_names: Optional[List] = None) -> Any:
         """Convert a custom parameter group class object to GroupAttrDict.
 
         :param value: The value to convert.
@@ -150,7 +157,7 @@ class GroupInput(Input):
         return GroupInput._create_group_attr_dict(attr_dict)
 
     @staticmethod
-    def validate_conflict_keys(keys):
+    def validate_conflict_keys(keys: List) -> None:
         """Validate conflicting keys in a flattened input dictionary, like {'a.b.c': 1, 'a.b': 1}.
 
         :param keys: The keys to validate.
@@ -159,7 +166,7 @@ class GroupInput(Input):
         """
         conflict_msg = "Conflict parameter key '%s' and '%s'."
 
-        def _group_count(s):
+        def _group_count(s: str) -> int:
             return len(s.split(".")) - 1
 
         # Sort order by group numbers
@@ -181,7 +188,7 @@ class GroupInput(Input):
                 )
 
     @staticmethod
-    def restore_flattened_inputs(inputs):
+    def restore_flattened_inputs(inputs: Dict) -> Dict:
         """Restore flattened inputs to structured groups.
 
         :param inputs: The flattened input dictionary.
@@ -189,9 +196,9 @@ class GroupInput(Input):
         :return: The restored structured inputs.
         :rtype: dict
         """
-        GroupInput.validate_conflict_keys(inputs.keys())
+        GroupInput.validate_conflict_keys(list(inputs.keys()))
         restored_inputs = {}
-        group_inputs = {}
+        group_inputs: Dict = {}
         # 1. Build all group parameters dict
         for name, data in inputs.items():
             # for a.b.c, group names is [a, b]
@@ -208,7 +215,7 @@ class GroupInput(Input):
                 target_dict = target_dict[group_name]
             target_dict[param_name] = data
 
-        def restore_from_dict_recursively(_data):
+        def restore_from_dict_recursively(_data: dict) -> Union[GroupInput, "_GroupAttrDict"]:
             for key, val in _data.items():
                 if type(val) == dict:  # pylint: disable=unidiomatic-typecheck
                     _data[key] = restore_from_dict_recursively(val)
@@ -223,7 +230,7 @@ class GroupInput(Input):
             restored_inputs[name] = restore_from_dict_recursively(data)
         return restored_inputs
 
-    def _update_default(self, default_value=None):  # pylint: disable=protected-access
+    def _update_default(self, default_value: object = None) -> None:  # pylint: disable=protected-access
         default_cls = type(default_value)
 
         # Assert '__dsl_group__' must in the class of default value

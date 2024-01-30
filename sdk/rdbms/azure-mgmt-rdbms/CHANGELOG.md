@@ -1,5 +1,13 @@
 # Release History
 
+## 10.2.0b14 (2024-01-23)
+
+### Features Added
+
+  - Added operation group AdvancedThreatProtectionSettingsOperations
+  - Added operation group LocationBasedCapabilitySetOperations
+  - Added operation group OperationResultsOperations
+
 ## 10.2.0b13 (2023-12-18)
 
 ### Other Changes
