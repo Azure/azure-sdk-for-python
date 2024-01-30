@@ -16,8 +16,8 @@ autorest SWAGGER.md --version-tolerant=false
 ### Settings
 
 ```yaml
-tag: package-2024-03-07
-require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/f579ddcd291d55b0a2a32ee81995432458db3da9/specification/communication/data-plane/Chat/readme.md
+tag: package-chat-2024-03-07
+require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/45984f17a46cd8bbc9439bd119924c2680c94c90/specification/communication/data-plane/Chat/readme.md
 output-folder: ../azure/communication/chat/_generated
 namespace: azure.communication.chat
 no-namespace-folders: true
