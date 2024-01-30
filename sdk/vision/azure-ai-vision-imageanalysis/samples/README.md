@@ -5,7 +5,7 @@ languages:
 products:
   - azure
   - azure-computer-vision
-urlFragment: image-analysis-python-samples
+urlFragment: image-analysis-samples
 ---
 
 # Samples for Image Analysis client library for Python
@@ -37,13 +37,16 @@ See [Prerequisites](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/
 
 ## Setup
 
-1. Clone or download this sample repository
-1. Open a command prompt / terminal window in this samples folder
-1. Install the Image Analysis client library for Python with pip:
-
-```bash
-pip install azure-ai-vision-imageanalysis
-```
+* Clone or download this sample repository
+* Open a command prompt / terminal window in this samples folder
+* Install the Image Analysis client library for Python with pip:
+  ```bash
+  pip install azure-ai-vision-imageanalysis
+  ```
+* If you plan to run the asynchronous client samples, insall the additional package [aiohttp](https://pypi.org/project/aiohttp/):
+  ```bash
+  pip install aiohttp
+  ```
 
 ## Set environment variables
 

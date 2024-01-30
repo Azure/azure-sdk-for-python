@@ -29,13 +29,12 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.services.disable_test_endpoint(
+    client.services.disable_test_endpoint(
         resource_group_name="myResourceGroup",
         service_name="myservice",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/appplatform/resource-manager/Microsoft.AppPlatform/stable/2022-12-01/examples/Services_DisableTestEndpoint.json
+# x-ms-original-file: specification/appplatform/resource-manager/Microsoft.AppPlatform/stable/2023-12-01/examples/Services_DisableTestEndpoint.json
 if __name__ == "__main__":
     main()

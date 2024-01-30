@@ -22,6 +22,30 @@ class AdministratorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ACTIVE_DIRECTORY = "ActiveDirectory"
 
 
+class AdvancedThreatProtectionName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AdvancedThreatProtectionName."""
+
+    DEFAULT = "Default"
+
+
+class AdvancedThreatProtectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state."""
+
+    SUCCEEDED = "Succeeded"
+    UPDATING = "Updating"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+
+
+class AdvancedThreatProtectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the state of the Advanced Threat Protection, whether it is enabled or disabled on the
+    server.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
 class BackupFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Backup Format for the current backup. (CollatedFormat is INTERNAL – DO NOT USE)."""
 

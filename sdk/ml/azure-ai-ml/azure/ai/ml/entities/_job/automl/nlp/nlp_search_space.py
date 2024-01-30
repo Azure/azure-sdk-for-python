@@ -57,30 +57,32 @@ class NlpSearchSpace(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        gradient_accumulation_steps: Optional[Union[int, SweepDistribution]] = None,
-        learning_rate: Optional[Union[float, SweepDistribution]] = None,
-        learning_rate_scheduler: Optional[Union[str, SweepDistribution]] = None,
-        model_name: Optional[Union[str, SweepDistribution]] = None,
-        number_of_epochs: Optional[Union[int, SweepDistribution]] = None,
-        training_batch_size: Optional[Union[int, SweepDistribution]] = None,
-        validation_batch_size: Optional[Union[int, SweepDistribution]] = None,
-        warmup_ratio: Optional[Union[float, SweepDistribution]] = None,
-        weight_decay: Optional[Union[float, SweepDistribution]] = None
+        gradient_accumulation_steps: Optional[Union[bool, int, float, str, SweepDistribution]] = None,
+        learning_rate: Optional[Union[bool, int, float, str, SweepDistribution]] = None,
+        learning_rate_scheduler: Optional[Union[bool, int, float, str, SweepDistribution]] = None,
+        model_name: Optional[Union[bool, int, float, str, SweepDistribution]] = None,
+        number_of_epochs: Optional[Union[bool, int, float, str, SweepDistribution]] = None,
+        training_batch_size: Optional[Union[bool, int, float, str, SweepDistribution]] = None,
+        validation_batch_size: Optional[Union[bool, int, float, str, SweepDistribution]] = None,
+        warmup_ratio: Optional[Union[bool, int, float, str, SweepDistribution]] = None,
+        weight_decay: Optional[Union[bool, int, float, str, SweepDistribution]] = None
     ):
         # Since we want customers to be able to specify enums as well rather than just strings, we need to access
         # the enum values here before we serialize them ('NlpModels.BERT_BASE_CASED' vs. 'bert-base-cased').
         if isinstance(learning_rate_scheduler, NlpLearningRateScheduler):
             learning_rate_scheduler = camel_to_snake(learning_rate_scheduler.value)
         elif isinstance(learning_rate_scheduler, Choice):
-            learning_rate_scheduler.values = [
-                camel_to_snake(item.value) if isinstance(item, NlpLearningRateScheduler) else item
-                for item in learning_rate_scheduler.values
-            ]
+            if learning_rate_scheduler.values is not None:
+                learning_rate_scheduler.values = [
+                    camel_to_snake(item.value) if isinstance(item, NlpLearningRateScheduler) else item
+                    for item in learning_rate_scheduler.values
+                ]
 
         if isinstance(model_name, NlpModels):
             model_name = model_name.value
         elif isinstance(model_name, Choice):
-            model_name.values = [item.value if isinstance(item, NlpModels) else item for item in model_name.values]
+            if model_name.values is not None:
+                model_name.values = [item.value if isinstance(item, NlpModels) else item for item in model_name.values]
 
         self.gradient_accumulation_steps = gradient_accumulation_steps
         self.learning_rate = learning_rate

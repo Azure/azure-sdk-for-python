@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 from azure.appconfiguration.provider import load, WatchKey
-from azure.appconfiguration import (
+from azure.appconfiguration import (  # type:ignore
     AzureAppConfigurationClient,
     ConfigurationSetting,
 )

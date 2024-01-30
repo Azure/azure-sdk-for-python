@@ -3,25 +3,19 @@
 # ---------------------------------------------------------
 # pylint: disable=protected-access,redefined-builtin
 
-from typing import Dict, List, Optional
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    CustomService,
-    Docker,
-    Endpoint as RestEndpoint,
-    EnvironmentVariable as RestEnvironmentVariable,
-    EnvironmentVariableType as RestEnvironmentVariableType,
-    Image as RestImage,
-    ImageType as RestImageType,
-    Protocol,
-    VolumeDefinition as RestVolumeDefinition,
-    VolumeDefinitionType as RestVolumeDefinitionType,
-)
+from typing import Any, Dict, List, Optional
+
+from azure.ai.ml._restclient.v2022_10_01_preview.models import CustomService, Docker
+from azure.ai.ml._restclient.v2022_10_01_preview.models import Endpoint as RestEndpoint
+from azure.ai.ml._restclient.v2022_10_01_preview.models import EnvironmentVariable as RestEnvironmentVariable
+from azure.ai.ml._restclient.v2022_10_01_preview.models import EnvironmentVariableType as RestEnvironmentVariableType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import Image as RestImage
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ImageType as RestImageType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import Protocol
+from azure.ai.ml._restclient.v2022_10_01_preview.models import VolumeDefinition as RestVolumeDefinition
+from azure.ai.ml._restclient.v2022_10_01_preview.models import VolumeDefinitionType as RestVolumeDefinitionType
+from azure.ai.ml.constants._compute import DUPLICATE_APPLICATION_ERROR, INVALID_VALUE_ERROR, CustomApplicationDefaults
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml.constants._compute import (
-    CustomApplicationDefaults,
-    DUPLICATE_APPLICATION_ERROR,
-    INVALID_VALUE_ERROR,
-)
 
 
 class ImageSettings:
@@ -69,7 +63,7 @@ class EndpointsSettings:
         return EndpointsSettings(target=obj.target, published=obj.published)
 
     @classmethod
-    def _validate_endpoint_settings(cls, target: int, published: int):
+    def _validate_endpoint_settings(cls, target: int, published: int) -> None:
         ports = {
             CustomApplicationDefaults.TARGET_PORT: target,
             CustomApplicationDefaults.PUBLISHED_PORT: published,
@@ -140,7 +134,7 @@ class CustomApplications:
         endpoints: List[EndpointsSettings],
         environment_variables: Optional[Dict] = None,
         bind_mounts: Optional[List[VolumeSettings]] = None,
-        **kwargs
+        **kwargs: Any
     ):
         self.name = name
         self.type = type
@@ -150,7 +144,7 @@ class CustomApplications:
         self.bind_mounts = bind_mounts
         self.additional_properties = kwargs
 
-    def _to_rest_object(self):
+    def _to_rest_object(self) -> CustomService:
         endpoints = None
         if self.endpoints:
             endpoints = [endpoint._to_rest_object() for endpoint in self.endpoints]
@@ -204,7 +198,7 @@ class CustomApplications:
         )
 
 
-def validate_custom_applications(custom_apps: List[CustomApplications]):
+def validate_custom_applications(custom_apps: List[CustomApplications]) -> None:
     message = DUPLICATE_APPLICATION_ERROR
 
     names = [app.name for app in custom_apps]

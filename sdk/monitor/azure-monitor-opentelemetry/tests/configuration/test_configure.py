@@ -11,9 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import os
 import unittest
 from unittest.mock import Mock, patch
+
+from opentelemetry.sdk.resources import Resource
 
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 from azure.monitor.opentelemetry._configure import (
@@ -23,6 +24,9 @@ from azure.monitor.opentelemetry._configure import (
     _setup_tracing,
     configure_azure_monitor,
 )
+
+
+TEST_RESOURCE = Resource({"foo": "bar"})
 
 
 class TestConfigure(unittest.TestCase):
@@ -221,13 +225,13 @@ class TestConfigure(unittest.TestCase):
                 "azure_sdk": {"enabled": True}
             },
             "sampling_ratio": 0.5,
-            "resource": "test_resource",
+            "resource": TEST_RESOURCE,
         }
         _setup_tracing(configurations)
         sampler_mock.assert_called_once_with(sampling_ratio=0.5)
         tp_mock.assert_called_once_with(
             sampler=sampler_init_mock,
-            resource="test_resource"
+            resource=TEST_RESOURCE
         )
         set_tracer_provider_mock.assert_called_once_with(tp_init_mock)
         get_tracer_provider_mock.assert_called()
@@ -285,11 +289,11 @@ class TestConfigure(unittest.TestCase):
         configurations = {
             "connection_string": "test_cs",
             "logger_name": "test",
-            "resource": "test_resource",
+            "resource": TEST_RESOURCE,
         }
         _setup_logging(configurations)
 
-        lp_mock.assert_called_once_with(resource="test_resource")
+        lp_mock.assert_called_once_with(resource=TEST_RESOURCE)
         set_logger_provider_mock.assert_called_once_with(lp_init_mock)
         get_logger_provider_mock.assert_called()
         log_exporter_mock.assert_called_once_with(**configurations)
@@ -336,12 +340,12 @@ class TestConfigure(unittest.TestCase):
 
         configurations = {
             "connection_string": "test_cs",
-            "resource": "test_resource",
+            "resource": TEST_RESOURCE,
         }
         _setup_metrics(configurations)
         mp_mock.assert_called_once_with(
             metric_readers=[reader_init_mock],
-            resource="test_resource"
+            resource=TEST_RESOURCE
         )
         set_meter_provider_mock.assert_called_once_with(mp_init_mock)
         metric_exporter_mock.assert_called_once_with(**configurations)

@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
 # pylint:disable=async-client-bad-name,missing-client-constructor-parameter-credential
 class AsyncManagedIdentityClient(AsyncContextManager, ManagedIdentityClientBase):
-    async def __aenter__(self):
+    async def __aenter__(self) -> "AsyncManagedIdentityClient":
         await self._pipeline.__aenter__()
         return self
 
@@ -30,7 +30,8 @@ class AsyncManagedIdentityClient(AsyncContextManager, ManagedIdentityClientBase)
     async def request_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         # pylint:disable=invalid-overridden-method
         resource = _scopes_to_resource(*scopes)
-        request = self._request_factory(resource, self._identity_config)  # pylint: disable=no-member
+        # pylint: disable=no-member
+        request = self._request_factory(resource, self._identity_config)  # type: ignore
         request_time = int(time.time())
         response = await self._pipeline.run(request, retry_on_methods=[request.method], **kwargs)
         token = self._process_response(response=response, request_time=request_time, resource=resource)

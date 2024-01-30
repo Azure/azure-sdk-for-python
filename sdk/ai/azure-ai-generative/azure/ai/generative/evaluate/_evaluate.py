@@ -1,16 +1,20 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import copy
+from hmac import new
 import json
 import os
 import shutil
 import tempfile
 import time
 import logging
+from json import JSONDecodeError
 from pathlib import Path
 from typing import Callable, Optional, Dict, List, Mapping
 
 import mlflow
+import numpy as np
 import pandas as pd
 from azure.core.tracing.decorator import distributed_trace
 from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, ActivityLogger
@@ -20,12 +24,16 @@ from mlflow.exceptions import MlflowException
 from mlflow.protos.databricks_pb2 import ErrorCode, INVALID_PARAMETER_VALUE
 
 from azure.ai.generative.evaluate._metric_handler import MetricHandler
+from azure.ai.generative.evaluate._metrics_handler._code_metric_handler import CodeMetricHandler
 from azure.ai.generative.evaluate._utils import _is_flow, load_jsonl, _get_artifact_dir_path, _copy_artifact
 from azure.ai.generative.evaluate._mlflow_log_collector import RedirectUserOutputStreams
-from azure.ai.generative.evaluate._constants import SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING, SUPPORTED_TASK_TYPE, CHAT
+from azure.ai.generative.evaluate._constants import SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING, SUPPORTED_TASK_TYPE, CHAT, \
+    SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING
 from azure.ai.generative.evaluate._evaluation_result import EvaluationResult
+from ._metrics_handler._prompt_metric_handler import PromptMetricHandler
 
 from ._utils import _write_properties_to_run_history
+from .metrics._custom_metric import CodeMetric, PromptMetric, Metric as GenAIMetric
 
 LOGGER = logging.getLogger(__name__)
 
@@ -47,25 +55,17 @@ def _get_handler_class(
     return handler
 
 
-def _validate_data(data, prediction_data, truth_data):
-    errors = []
-    prediction_data_column = ""
-    truth_data_column = ""
+def _get_metric_handler_class(
+        asset,
+):
+    if _is_flow(asset):
+        from azure.ai.generative.evaluate._local_flow_handler import LocalFlowHandler
+        handler = LocalFlowHandler
+    else:
+        from azure.ai.generative.evaluate._local_code_handler import LocalCodeHandler
+        handler = LocalCodeHandler
 
-    if isinstance(prediction_data, str):
-        prediction_data_column = data[0].get(prediction_data, None)
-
-    if isinstance(truth_data, str):
-        truth_data_column = data[0].get(truth_data, None)
-
-    if prediction_data_column is None:
-        errors.append("prediction_data column not found in data")
-
-    if truth_data_column is None:
-        errors.append("truth_data column not found in data")
-
-    if len(errors) > 1:
-        raise Exception(f'Invalid data {" ,".join(errors)}')
+    return handler
 
 
 def _log_metrics(run_id, metrics):
@@ -83,6 +83,28 @@ def _log_metrics(run_id, metrics):
     )
 
 
+def _validate_metrics(metrics, task_type):
+    genai_metrics = []
+    builtin_metrics =[]
+    unknown_metrics = []
+
+    for metric in metrics:
+        if isinstance(metric, GenAIMetric):
+            genai_metrics.append(metric.name)
+        elif isinstance(metric, str) and metric in SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING[task_type].SUPPORTED_LIST:
+            builtin_metrics.append(metric)
+        else:
+            unknown_metrics.append(metric)
+
+    if len(unknown_metrics) > 0:
+        raise Exception("Unsupported metric found in the list")
+
+    # if len(set(genai_metrics) & set(builtin_metrics)) > 0:
+    if len(genai_metrics) != len(set(genai_metrics)) or len(builtin_metrics) != len(set(builtin_metrics))\
+            or (len(set(genai_metrics) & set(builtin_metrics)) > 0):
+        raise Exception("Duplicate metric name found. Metric names should be unique")
+
+
 @distributed_trace
 @monitor_with_activity(package_logger, "Evaluate", ActivityType.PUBLICAPI)
 def evaluate(
@@ -93,7 +115,7 @@ def evaluate(
         task_type: Optional[str] = None,
         metrics_list: Optional[List[str]] = None,
         model_config: Optional[Dict[str, str]] = None,
-        data_mapping: Optional[Mapping] = None,
+        data_mapping: Optional[Dict[str, str]] = None,
         output_path: Optional[str] = None,
         **kwargs
 ):
@@ -112,9 +134,9 @@ def evaluate(
     :keyword metrics_list: List of metrics to calculate. A default list is picked based on task_type if not set.
     :paramtype metrics_list: Optional[List[str]]
     :keyword model_config: GPT configuration details needed for AI-assisted metrics.
-    :paramtype model_config: Dict[str, str]
+    :paramtype model_config: Optional[Dict[str, str]]
     :keyword data_mapping: GPT configuration details needed for AI-assisted metrics.
-    :paramtype data_mapping: typing.Mapping
+    :paramtype data_mapping: Optional[Dict[str, str]]
     :keyword output_path: The local folder path to save evaluation artifacts to if set
     :paramtype output_path: Optional[str]
     :keyword tracking_uri: Tracking uri to log evaluation results to AI Studio
@@ -140,8 +162,20 @@ def evaluate(
     if model_config:
         metrics_config.update({"openai_params": model_config})
 
+
     if data_mapping:
-        metrics_config.update(data_mapping)
+        import warnings
+
+        new_data_mapping = dict(data_mapping)
+        if "y_pred" in new_data_mapping:
+            warnings.warn("y_pred is deprecated, please use \"answer\" instead")
+            value = data_mapping.pop("y_pred")
+            new_data_mapping.update({"answer": value})
+        if "y_test" in new_data_mapping:
+            warnings.warn("y_test is deprecated, please use \"ground_truth\" instead")
+            value = data_mapping.pop("y_test")
+            new_data_mapping.update({"ground_truth": value})
+        data_mapping = new_data_mapping
 
     sweep_args = kwargs.pop("sweep_args", None)
     if sweep_args:
@@ -188,8 +222,6 @@ def _evaluate(
         evaluation_name=None,
         target=None,
         data=None,
-        truth_data=None,
-        prediction_data=None,
         task_type=None,
         metrics=None,
         data_mapping=None,
@@ -206,14 +238,8 @@ def _evaluate(
         test_data = data
         _data_is_file = False
 
-    if "y_pred" in data_mapping:
-        prediction_data = data_mapping.get("y_pred")
-
-    if "y_test" in data_mapping:
-        truth_data = data_mapping.get("y_test")
-
-    if target is None and prediction_data is None:
-        raise Exception("target and prediction data cannot be null")
+    if "answer" in data_mapping:
+        prediction_data = data_mapping.get("answer")
 
     if task_type not in SUPPORTED_TASK_TYPE:
         raise Exception(f"task type {task_type} is not supported")
@@ -223,7 +249,7 @@ def _evaluate(
         metrics_config.update({"openai_params": model_config})
 
     if data_mapping:
-        metrics_config.update(data_mapping)
+        metrics_config.update({"data_mapping": data_mapping})
 
     with mlflow.start_run(nested=True if mlflow.active_run() else False, run_name=evaluation_name) as run, \
             RedirectUserOutputStreams(logger=LOGGER) as _:
@@ -239,50 +265,74 @@ def _evaluate(
 
         asset_handler = asset_handler_class(
             asset=target,
-            prediction_data=prediction_data,
-            ground_truth=truth_data,
             test_data=test_data,
             metrics_config=metrics_config,
             **kwargs
         )
 
-        metrics_handler = MetricHandler(
-            task_type=SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING[task_type],
-            metrics=metrics,
-            prediction_data=asset_handler.prediction_data,
-            truth_data=asset_handler.ground_truth,
-            test_data=asset_handler.test_data,
-            metrics_mapping=metrics_config,
-            prediction_data_column_name=prediction_data if isinstance(prediction_data, str) else None,
-            ground_truth_column_name=truth_data if isinstance(truth_data, str) else None,
-        )
+        metrics_results = {"artifacts": {}, "metrics": {}}
 
-        metrics = metrics_handler.calculate_metrics()
+        if metrics is None:
+            metrics = SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING[task_type].DEFAULT_LIST
 
-        def _get_instance_table():
-            metrics.get("artifacts").pop("bertscore", None)
-            if task_type == CHAT:
-                instance_level_metrics_table = _get_chat_instance_table(metrics.get("artifacts"))
-            else:
-                instance_level_metrics_table = pd.DataFrame(metrics.get("artifacts"))
+        _validate_metrics(metrics, task_type)
 
-            prediction_data = asset_handler.prediction_data
-            for column in asset_handler.prediction_data.columns.values:
-                if column in asset_handler.test_data.columns.values:
-                    prediction_data.drop(column, axis=1, inplace=True)
+        inbuilt_metrics = [metric for metric in metrics if not isinstance(metric, GenAIMetric)]
+        custom_prompt_metrics = [metric for metric in metrics if isinstance(metric, PromptMetric)]
+        code_metrics = [metric for metric in metrics if isinstance(metric, CodeMetric)]
 
-            combined_table = pd.concat(
-                [asset_handler.test_data,
-                 prediction_data,
-                 asset_handler.ground_truth,
-                 instance_level_metrics_table
-                 ],
-                axis=1,
-                verify_integrity=True
+        if custom_prompt_metrics:
+            for metric in custom_prompt_metrics:
+                metrics_config.setdefault(metric.name, {param: param for param in metric.parameters})
+
+            prompt_metric_handler = PromptMetricHandler(
+                task_type="custom-prompt-metric",
+                metrics=custom_prompt_metrics,
+                prediction_data=asset_handler.prediction_data,
+                test_data=asset_handler.test_data,
+                metrics_mapping=metrics_config,
             )
-            return combined_table
 
-        _log_metrics(run_id=run.info.run_id, metrics=metrics.get("metrics"))
+            prompt_metric_results = prompt_metric_handler.calculate_metrics()
+
+            if prompt_metric_results is not None:
+                for k, v in metrics_results.items():
+                    v.update(prompt_metric_results[k])
+
+        if code_metrics:
+            code_metric_handler = CodeMetricHandler(
+                task_type="custom-code-metric",
+                metrics=code_metrics,
+                prediction_data=asset_handler.prediction_data,
+                test_data=asset_handler.test_data,
+                metrics_mapping=metrics_config,
+            )
+
+            code_metric_results = code_metric_handler.calculate_metrics()
+
+            if code_metric_results is not None:
+                for k, v in metrics_results.items():
+                    v.update(code_metric_results[k])
+
+        if inbuilt_metrics:
+            inbuilt_metrics_handler = MetricHandler(
+                task_type=SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING[task_type],
+                metrics=inbuilt_metrics,
+                prediction_data=asset_handler.prediction_data,
+                input_output_data=asset_handler.input_output_data,
+                test_data=asset_handler.test_data,
+                metrics_mapping=metrics_config,
+                data_mapping=data_mapping,
+            )
+
+            inbuilt_metrics_results = inbuilt_metrics_handler.calculate_metrics()
+
+            if inbuilt_metrics_results is not None:
+                for k, v in metrics_results.items():
+                    v.update(inbuilt_metrics_results[k])
+
+        if metrics_results.get("metrics"):
+            _log_metrics(run_id=run.info.run_id, metrics=metrics_results.get("metrics"))
 
         with tempfile.TemporaryDirectory() as tmpdir:
             for param_name, param_value in kwargs.get("params_dict", {}).items():
@@ -310,7 +360,10 @@ def _evaluate(
                     else:
                         raise ex
 
-            eval_artifact_df = _get_instance_table().to_json(orient="records", lines=True, force_ascii=False)
+            eval_artifact_df = _get_instance_table(metrics_results, task_type, asset_handler).to_json(orient="records",
+                                                                                                      lines=True,
+                                                                                                      force_ascii=False)
+            # eval_artifact_df = result.to_json(orient="records", lines=True, force_ascii=False)
             tmp_path = os.path.join(tmpdir, "eval_results.jsonl")
 
             with open(tmp_path, "w", encoding="utf-8") as f:
@@ -322,13 +375,12 @@ def _evaluate(
             mlflow.log_param("task_type", task_type)
             if task_type == CHAT:
                 log_property("_azureml.chat_history_column", data_mapping.get("y_pred"))
-            # log_param_and_tag("_azureml.evaluate_metric_mapping", json.dumps(metrics_handler._metrics_mapping_to_log))
 
             if output_path:
                 _copy_artifact(tmp_path, output_path)
 
     evaluation_result = EvaluationResult(
-        metrics_summary=metrics.get("metrics"),
+        metrics_summary=metrics_results.get("metrics"),
         artifacts={
             "eval_results.jsonl": f"runs:/{run.info.run_id}/eval_results.jsonl"
         },
@@ -396,3 +448,20 @@ def _get_chat_instance_table(metrics):
 
     instance_level_metrics_table = pd.DataFrame(instance_table_metrics_dict)
     return instance_level_metrics_table
+
+
+def _get_instance_table(metrics, task_type, asset_handler):
+
+    if task_type == CHAT:
+        instance_level_metrics_table = _get_chat_instance_table(metrics.get("artifacts"))
+    else:
+        instance_level_metrics_table = pd.DataFrame(metrics.get("artifacts"))
+
+    combined_table = pd.concat(
+        [asset_handler.input_output_data,
+         instance_level_metrics_table
+         ],
+        axis=1,
+        verify_integrity=True
+    )
+    return combined_table
