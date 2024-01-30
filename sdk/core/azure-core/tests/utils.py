@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------
 import pytest
 import types
+import io
 
 ############################## LISTS USED TO PARAMETERIZE TESTS ##############################
 from azure.core.rest import HttpRequest as RestHttpRequest
@@ -172,3 +173,9 @@ def readonly_checks(response, old_response_class):
         if not attr in vars(old_response):
             with pytest.raises(AttributeError):
                 setattr(response, attr, "new_value")
+
+
+class NamedIo(io.BytesIO):
+    def __init__(self, name: str, *args, **kwargs):
+        super(NamedIo, self).__init__(*args, **kwargs)
+        self.name = name
