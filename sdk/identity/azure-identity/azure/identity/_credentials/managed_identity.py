@@ -22,7 +22,7 @@ class ManagedIdentityCredential:
 
     This credential defaults to using a system-assigned identity. To configure a user-assigned identity, use one of
     the keyword arguments. See `Microsoft Entra ID documentation
-    <https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview>`_ for more
+    <https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview>`__ for more
     information about configuring managed identity for applications.
 
     :keyword str client_id: a user-assigned identity's client ID or, when using Pod Identity, the client ID of an Azure

@@ -10,19 +10,16 @@ from ._models_py3 import AddonStatusProfile
 from ._models_py3 import AgentPool
 from ._models_py3 import AgentPoolListResult
 from ._models_py3 import AgentPoolName
-from ._models_py3 import AgentPoolPatch
 from ._models_py3 import AgentPoolProfile
 from ._models_py3 import AgentPoolProperties
 from ._models_py3 import AgentPoolProvisioningStatus
-from ._models_py3 import AgentPoolProvisioningStatusOperationStatus
-from ._models_py3 import AgentPoolProvisioningStatusOperationStatusError
 from ._models_py3 import AgentPoolProvisioningStatusStatus
 from ._models_py3 import AgentPoolUpdateProfile
 from ._models_py3 import CloudProviderProfile
 from ._models_py3 import CloudProviderProfileInfraNetworkProfile
-from ._models_py3 import ControlPlaneEndpointProfile
-from ._models_py3 import ControlPlaneEndpointProfileControlPlaneEndpoint
+from ._models_py3 import ClusterVMAccessProfile
 from ._models_py3 import ControlPlaneProfile
+from ._models_py3 import ControlPlaneProfileControlPlaneEndpoint
 from ._models_py3 import CredentialResult
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
@@ -30,8 +27,8 @@ from ._models_py3 import ErrorResponse
 from ._models_py3 import ExtendedLocation
 from ._models_py3 import HybridIdentityMetadata
 from ._models_py3 import HybridIdentityMetadataList
+from ._models_py3 import HybridIdentityMetadataProperties
 from ._models_py3 import KubernetesPatchVersions
-from ._models_py3 import KubernetesVersionCapabilities
 from ._models_py3 import KubernetesVersionProfile
 from ._models_py3 import KubernetesVersionProfileList
 from ._models_py3 import KubernetesVersionProfileProperties
@@ -50,18 +47,21 @@ from ._models_py3 import NetworkProfileLoadBalancerProfile
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
+from ._models_py3 import ProvisionedCluster
 from ._models_py3 import ProvisionedClusterLicenseProfile
+from ._models_py3 import ProvisionedClusterListResult
 from ._models_py3 import ProvisionedClusterPoolUpgradeProfile
 from ._models_py3 import ProvisionedClusterPoolUpgradeProfileProperties
 from ._models_py3 import ProvisionedClusterProperties
+from ._models_py3 import ProvisionedClusterPropertiesAutoScalerProfile
 from ._models_py3 import ProvisionedClusterPropertiesStatus
-from ._models_py3 import ProvisionedClusterPropertiesStatusOperationStatus
-from ._models_py3 import ProvisionedClusterPropertiesStatusOperationStatusError
 from ._models_py3 import ProvisionedClusterUpgradeProfile
-from ._models_py3 import ProvisionedClusters
-from ._models_py3 import ProvisionedClustersListResult
+from ._models_py3 import ProvisionedClusterUpgradeProfileProperties
 from ._models_py3 import ProxyResource
 from ._models_py3 import Resource
+from ._models_py3 import StorageProfile
+from ._models_py3 import StorageProfileNfsCSIDriver
+from ._models_py3 import StorageProfileSmbCSIDriver
 from ._models_py3 import SystemData
 from ._models_py3 import TrackedResource
 from ._models_py3 import VirtualNetwork
@@ -69,7 +69,6 @@ from ._models_py3 import VirtualNetworkExtendedLocation
 from ._models_py3 import VirtualNetworkProperties
 from ._models_py3 import VirtualNetworkPropertiesInfraVnetProfile
 from ._models_py3 import VirtualNetworkPropertiesInfraVnetProfileHci
-from ._models_py3 import VirtualNetworkPropertiesInfraVnetProfileVmware
 from ._models_py3 import VirtualNetworkPropertiesStatus
 from ._models_py3 import VirtualNetworkPropertiesStatusOperationStatus
 from ._models_py3 import VirtualNetworkPropertiesStatusOperationStatusError
@@ -87,6 +86,7 @@ from ._hybrid_container_service_mgmt_client_enums import ActionType
 from ._hybrid_container_service_mgmt_client_enums import AddonPhase
 from ._hybrid_container_service_mgmt_client_enums import AzureHybridBenefit
 from ._hybrid_container_service_mgmt_client_enums import CreatedByType
+from ._hybrid_container_service_mgmt_client_enums import Expander
 from ._hybrid_container_service_mgmt_client_enums import ExtendedLocationTypes
 from ._hybrid_container_service_mgmt_client_enums import NetworkPolicy
 from ._hybrid_container_service_mgmt_client_enums import OSSKU
@@ -103,19 +103,16 @@ __all__ = [
     "AgentPool",
     "AgentPoolListResult",
     "AgentPoolName",
-    "AgentPoolPatch",
     "AgentPoolProfile",
     "AgentPoolProperties",
     "AgentPoolProvisioningStatus",
-    "AgentPoolProvisioningStatusOperationStatus",
-    "AgentPoolProvisioningStatusOperationStatusError",
     "AgentPoolProvisioningStatusStatus",
     "AgentPoolUpdateProfile",
     "CloudProviderProfile",
     "CloudProviderProfileInfraNetworkProfile",
-    "ControlPlaneEndpointProfile",
-    "ControlPlaneEndpointProfileControlPlaneEndpoint",
+    "ClusterVMAccessProfile",
     "ControlPlaneProfile",
+    "ControlPlaneProfileControlPlaneEndpoint",
     "CredentialResult",
     "ErrorAdditionalInfo",
     "ErrorDetail",
@@ -123,8 +120,8 @@ __all__ = [
     "ExtendedLocation",
     "HybridIdentityMetadata",
     "HybridIdentityMetadataList",
+    "HybridIdentityMetadataProperties",
     "KubernetesPatchVersions",
-    "KubernetesVersionCapabilities",
     "KubernetesVersionProfile",
     "KubernetesVersionProfileList",
     "KubernetesVersionProfileProperties",
@@ -143,18 +140,21 @@ __all__ = [
     "Operation",
     "OperationDisplay",
     "OperationListResult",
+    "ProvisionedCluster",
     "ProvisionedClusterLicenseProfile",
+    "ProvisionedClusterListResult",
     "ProvisionedClusterPoolUpgradeProfile",
     "ProvisionedClusterPoolUpgradeProfileProperties",
     "ProvisionedClusterProperties",
+    "ProvisionedClusterPropertiesAutoScalerProfile",
     "ProvisionedClusterPropertiesStatus",
-    "ProvisionedClusterPropertiesStatusOperationStatus",
-    "ProvisionedClusterPropertiesStatusOperationStatusError",
     "ProvisionedClusterUpgradeProfile",
-    "ProvisionedClusters",
-    "ProvisionedClustersListResult",
+    "ProvisionedClusterUpgradeProfileProperties",
     "ProxyResource",
     "Resource",
+    "StorageProfile",
+    "StorageProfileNfsCSIDriver",
+    "StorageProfileSmbCSIDriver",
     "SystemData",
     "TrackedResource",
     "VirtualNetwork",
@@ -162,7 +162,6 @@ __all__ = [
     "VirtualNetworkProperties",
     "VirtualNetworkPropertiesInfraVnetProfile",
     "VirtualNetworkPropertiesInfraVnetProfileHci",
-    "VirtualNetworkPropertiesInfraVnetProfileVmware",
     "VirtualNetworkPropertiesStatus",
     "VirtualNetworkPropertiesStatusOperationStatus",
     "VirtualNetworkPropertiesStatusOperationStatusError",
@@ -179,6 +178,7 @@ __all__ = [
     "AddonPhase",
     "AzureHybridBenefit",
     "CreatedByType",
+    "Expander",
     "ExtendedLocationTypes",
     "NetworkPolicy",
     "OSSKU",
