@@ -29,8 +29,6 @@ For docs and references, see [Python SDK References](https://docs.microsoft.com/
 Code samples for this package can be found at [Attestation Management](https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing&terms=Getting%20started%20-%20Managing) on docs.microsoft.com.
 Additional code samples for different Azure services are available at [Samples Repo](https://aka.ms/azsdk/python/mgmt/samples)
 
-## Key Concepts
-Content TBD
 
 ## Examples
 
@@ -48,7 +46,6 @@ client = AttestationManagementClient(
 response = client.attestation_providers.list()
 print(response)
 ```
-TBC
 
 ## Troubleshooting
 
@@ -56,7 +53,7 @@ TBC
 The CredentialUnavailableError is a specific error type derived from ClientAuthenticationError. This error type is used to indicate that the credential can't authenticate in the current environment, due to missing required configuration or setup. This error is also used as an indication for chained credential types, such as DefaultAzureCredential and ChainedTokenCredential, that the chained credential should continue to attempt other credential types later in the chain.
 
 ### Permission issues
-Service client calls that result in HttpResponseError with a StatusCode of 401 or 403 often indicate the caller doesn't have sufficient permissions for the specified API. Check the service documentation to determine which RBAC roles are needed for the specific request, and ensure the authenticated user or service principal have been granted the appropriate roles on the resource.
+Service client calls that result in HttpResponseError with a StatusCode of 401 or 403 often indicate the caller doesn't have sufficient permissions for the specified API. Check the [service documentation](https://learn.microsoft.com/azure/attestation/) to determine which RBAC roles are needed for the specific request, and ensure the authenticated user or service principal have been granted the appropriate roles on the resource.
 
 ## Next Steps
 
