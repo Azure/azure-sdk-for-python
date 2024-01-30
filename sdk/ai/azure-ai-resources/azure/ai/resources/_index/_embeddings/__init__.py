@@ -219,6 +219,10 @@ class EmbeddingsContainer:
         """Set the path to the embeddings container."""
         self._embeddings_container_path = value
 
+    def as_langchain_embeddings(self, credential: Optional[TokenCredential] = None) -> Embedder:
+        """Returns a langchain Embedder that can be used to embed text."""
+        return get_langchain_embeddings(self.kind, self.arguments, credential=credential)
+
     @staticmethod
     def from_uri(uri: str, credential: Optional[TokenCredential] = None, **kwargs) -> "EmbeddingsContainer":
         """Create an embeddings object from a URI."""
