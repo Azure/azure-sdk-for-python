@@ -71,7 +71,6 @@ def pytest_configure(config):
     This hook is called for every plugin and initial conftest
     file after command line options have been parsed.
     """
-    print("this is called for configure", config)
 
 
 def pytest_sessionstart(session):
@@ -79,7 +78,6 @@ def pytest_sessionstart(session):
     Called after the Session object has been created and
     before performing collection and entering the run test loop.
     """
-    print("this is session start", session)
     config = test_config.TestConfig
     config.create_database_if_not_exist(cosmos_sync_client)
     config.create_single_partition_container_if_not_exist(cosmos_sync_client)
@@ -91,7 +89,6 @@ def pytest_sessionfinish(session, exitstatus):
     Called after whole test run finished, right before
     returning the exit status to the system.
     """
-    print("this is session finish", session, exitstatus)
     config = test_config.TestConfig
     config.try_delete_database(cosmos_sync_client)
 
@@ -100,4 +97,3 @@ def pytest_unconfigure(config):
     """
     called before test process is exited.
     """
-    print("this is called for unconfigure", config)

@@ -341,6 +341,10 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
         assert self.last_headers[1] == [{}]
         del self.last_headers[:]
 
+        await created_db.delete_container(created_collection.id)
+        await created_db.delete_container(created_collection1.id)
+        await created_db.delete_container(created_collection2.id)
+
     async def test_partitioned_collection_partition_key_extraction_special_chars_async(self):
         created_db = self.database_for_test
 
@@ -379,6 +383,9 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
         assert self.last_headers[1] == '["val2"]'
         del self.last_headers[:]
+
+        await created_db.delete_container(created_collection1.id)
+        await created_db.delete_container(created_collection2.id)
 
     def test_partitioned_collection_path_parser(self):
         test_dir = os.path.dirname(os.path.abspath(__file__))
@@ -554,13 +561,15 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
     async def test_partitioned_collection_execute_stored_procedure_async(self):
 
         created_collection = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
+        document_id = str(uuid.uuid4())
 
         sproc = {
             'id': 'storedProcedure' + str(uuid.uuid4()),
             'body': (
                     'function () {' +
                     '   var client = getContext().getCollection();' +
-                    '   client.createDocument(client.getSelfLink(), { id: \'testDoc\', pk : 2}, {}, function(err, docCreated, options) { ' +
+                    '   client.createDocument(client.getSelfLink(), { id: "' + document_id + '", pk : 2}, ' +
+                    '   {}, function(err, docCreated, options) { ' +
                     '   if(err) throw new Error(\'Error while creating document: \' + err.message);' +
                     '   else {' +
                     '   getContext().getResponse().setBody(1);' +
@@ -1522,6 +1531,8 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
         assert 1 == len(collection_with_indexing_policy_properties['indexingPolicy']['includedPaths'])
         assert 2 == len(collection_with_indexing_policy_properties['indexingPolicy']['excludedPaths'])
 
+        await db.delete_container(collection_with_indexing_policy.id)
+
     async def test_create_default_indexing_policy_async(self):
 
         # create database
@@ -1675,6 +1686,8 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
             assert indexing_policy['spatialIndexes'] == read_indexing_policy['spatialIndexes']
 
         assert indexing_policy['compositeIndexes'] == read_indexing_policy['compositeIndexes']
+
+        await db.delete_container(created_container.id)
 
     async def _check_default_indexing_policy_paths(self, indexing_policy):
         def __get_first(array):
@@ -1990,6 +2003,10 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
                 body={'id': 'Docoptype', 'key': 'value2'},
                 post_trigger_include='triggerOpType'
             )
+
+        await db.delete_container(collection1)
+        await db.delete_container(collection2)
+        await db.delete_container(collection3)
 
     async def test_stored_procedure_functionality_async(self):
 

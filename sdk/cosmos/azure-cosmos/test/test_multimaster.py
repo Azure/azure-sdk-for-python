@@ -2,14 +2,12 @@ import unittest
 import uuid
 
 import pytest
-import conftest
 
 import azure.cosmos._constants as constants
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 from azure.cosmos import _retry_utility
 from azure.cosmos.http_constants import HttpHeaders
-from azure.cosmos.partition_key import PartitionKey
 
 
 @pytest.mark.cosmosEmulator

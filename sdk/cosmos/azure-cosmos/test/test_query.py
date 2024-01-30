@@ -2,7 +2,6 @@ import unittest
 import uuid
 
 import pytest
-import conftest
 
 import azure.cosmos._retry_utility as retry_utility
 import azure.cosmos.cosmos_client as cosmos_client
@@ -36,7 +35,7 @@ class QueryTest(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = conftest.cosmos_sync_client
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
 
     def test_first_and_last_slashes_trimmed_for_query_string(self):
@@ -564,7 +563,10 @@ class QueryTest(unittest.TestCase):
         self.assertListEqual(result_strings, query_results_strings)
 
     def test_distinct_on_different_types_and_field_orders(self):
-        created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
+        created_collection = self.created_db.create_container(
+            id="test-distinct-container-" + str(uuid.uuid4()),
+            partition_key=PartitionKey("/pk"),
+            offer_throughput=self.config.THROUGHPUT_FOR_5_PARTITIONS)
         self.payloads = [
             {'f1': 1, 'f2': 'value', 'f3': 100000000000000000, 'f4': [1, 2, '3'], 'f5': {'f6': {'f7': 2}}},
             {'f2': '\'value', 'f4': [1.0, 2, '3'], 'f5': {'f6': {'f7': 2.0}}, 'f1': 1.0, 'f3': 100000000000000000.00},
@@ -632,6 +634,8 @@ class QueryTest(unittest.TestCase):
         _QueryExecutionContextBase.__next__ = self.OriginalExecuteFunction
         _QueryExecutionContextBase.next = self.OriginalExecuteFunction
 
+        self.created_db.delete_container(created_collection.id)
+
     def test_paging_with_continuation_token(self):
         created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
 
@@ -658,9 +662,9 @@ class QueryTest(unittest.TestCase):
 
     def test_cross_partition_query_with_continuation_token(self):
         created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
-        document_definition = {'pk': 'pk1', 'id': '1'}
+        document_definition = {'pk': 'pk1', 'id': str(uuid.uuid4())}
         created_collection.create_item(body=document_definition)
-        document_definition = {'pk': 'pk2', 'id': '2'}
+        document_definition = {'pk': 'pk2', 'id': str(uuid.uuid4())}
         created_collection.create_item(body=document_definition)
 
         query = 'SELECT * from c'
@@ -706,7 +710,7 @@ class QueryTest(unittest.TestCase):
     def test_continuation_token_size_limit_query(self):
         container = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
         for i in range(1, 1000):
-            container.create_item(body=dict(pk='123', id=str(i), some_value=str(i % 3)))
+            container.create_item(body=dict(pk='123', id=str(uuid.uuid4()), some_value=str(i % 3)))
         query = "Select * from c where c.some_value='2'"
         response_query = container.query_items(query, partition_key='123', max_item_count=100,
                                                continuation_token_limit=1)

@@ -30,16 +30,14 @@
 
 import time
 import unittest
-import uuid
 from urllib.parse import urlparse
 
 import pytest
-import conftest
 
 import azure.cosmos._global_endpoint_manager as global_endpoint_manager
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
-from azure.cosmos import _endpoint_discovery_retry_policy, _retry_utility, PartitionKey, documents, exceptions, \
+from azure.cosmos import _endpoint_discovery_retry_policy, _retry_utility, documents, exceptions, \
     DatabaseProxy, ContainerProxy
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
@@ -109,7 +107,7 @@ class TestGlobalDB(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = conftest.cosmos_sync_client
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.test_db = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
         cls.test_coll = cls.test_db.get_container_client(cls.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 

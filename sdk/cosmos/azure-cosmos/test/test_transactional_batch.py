@@ -21,7 +21,6 @@ import unittest
 import uuid
 
 import pytest
-import conftest
 
 import test_config
 from azure.cosmos import CosmosClient, exceptions, PartitionKey, DatabaseProxy
@@ -56,7 +55,7 @@ class TestTransactionalBatch(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = conftest.cosmos_sync_client
+        cls.client = CosmosClient(cls.host, cls.masterKey)
         cls.test_database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
 
     def test_invalid_batch_sizes(self):

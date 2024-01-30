@@ -28,14 +28,12 @@
 #   associated with your Azure Cosmos account.
 
 import unittest
-import uuid
 
 import pytest
-import conftest
 
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
-from azure.cosmos import PartitionKey, DatabaseProxy, ContainerProxy
+from azure.cosmos import DatabaseProxy, ContainerProxy
 from azure.cosmos._routing import routing_range as routing_range
 from azure.cosmos._routing.routing_map_provider import PartitionKeyRangeCache
 
@@ -64,7 +62,7 @@ class TestRoutingMapEndToEnd(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = conftest.cosmos_sync_client
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.created_database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         cls.created_container = cls.created_database.get_container_client(cls.TEST_COLLECTION_ID)
         cls.collection_link = cls.created_container.container_link

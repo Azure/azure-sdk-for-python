@@ -32,7 +32,6 @@ import unittest
 import uuid
 
 import pytest
-import conftest
 
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
@@ -68,7 +67,7 @@ class MultiOrderbyTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.client = conftest.cosmos_sync_client
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.database = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
 
     def generate_multi_orderby_item(self):

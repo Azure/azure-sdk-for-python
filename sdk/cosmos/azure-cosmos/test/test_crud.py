@@ -48,7 +48,6 @@ import azure.cosmos._base as base
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
-import conftest
 import test_config
 from azure.cosmos import _retry_utility
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
@@ -107,7 +106,7 @@ class CRUDTests(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = conftest.cosmos_sync_client
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.databaseForTest = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
 
     def test_database_crud(self):
@@ -579,13 +578,15 @@ class CRUDTests(unittest.TestCase):
         created_db = self.databaseForTest
 
         created_collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
+        document_id = str(uuid.uuid4())
 
         sproc = {
             'id': 'storedProcedure' + str(uuid.uuid4()),
             'body': (
                     'function () {' +
                     '   var client = getContext().getCollection();' +
-                    '   client.createDocument(client.getSelfLink(), { id: \'testDoc\', pk : 2}, {}, function(err, docCreated, options) { ' +
+                    '   client.createDocument(client.getSelfLink(), { id: "' + document_id + '", pk : 2}, ' +
+                    '   {}, function(err, docCreated, options) { ' +
                     '   if(err) throw new Error(\'Error while creating document: \' + err.message);' +
                     '   else {' +
                     '   getContext().getResponse().setBody(1);' +
@@ -1661,7 +1662,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(2,
                          len(collection_with_indexing_policy_properties['indexingPolicy']['excludedPaths']),
                          'Unexpected excluded path count')
-        db.delete_container(container=collection_with_indexing_policy)
+        db.delete_container(collection_with_indexing_policy.id)
 
     def test_create_default_indexing_policy(self):
         # create database
@@ -1845,6 +1846,7 @@ class CRUDTests(unittest.TestCase):
                 cosmos_client.CosmosClient(CRUDTests.host, CRUDTests.masterKey, "Session",
                                            connection_policy=connection_policy)
 
+    @pytest.mark.cosmosLiveTest
     def test_client_request_timeout_when_connection_retry_configuration_specified(self):
         connection_policy = documents.ConnectionPolicy()
         # making timeout 0 ms to make sure it will throw

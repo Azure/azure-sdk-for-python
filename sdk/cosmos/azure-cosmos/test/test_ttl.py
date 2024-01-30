@@ -31,13 +31,12 @@ import uuid
 
 import pytest
 
-import conftest
-
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
+
 
 @pytest.mark.cosmosEmulator
 class TestTimeToLive(unittest.TestCase):
@@ -72,7 +71,7 @@ class TestTimeToLive(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = conftest.cosmos_sync_client
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.created_db = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
 
     def test_collection_and_document_ttl_values(self):

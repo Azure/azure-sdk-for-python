@@ -2,9 +2,7 @@ import unittest
 import uuid
 
 import pytest
-import conftest
 
-import azure
 import azure.cosmos.aio._retry_utility_async as retry_utility
 import azure.cosmos.exceptions as exceptions
 import test_config
@@ -589,7 +587,10 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         await created_database.delete_container(created_collection.id)
 
     async def test_distinct_on_different_types_and_field_orders_async(self):
-        created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
+        created_collection = await self.created_db.create_container(
+            id="test-distinct-container-" + str(uuid.uuid4()),
+            partition_key=PartitionKey("/pk"),
+            offer_throughput=self.config.THROUGHPUT_FOR_5_PARTITIONS)
         payloads = [
             {'id': str(uuid.uuid4()), 'f1': 1, 'f2': 'value', 'f3': 100000000000000000, 'f4': [1, 2, '3'],
              'f5': {'f6': {'f7': 2}}},
@@ -651,6 +652,8 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
                               {'f1': 1.0, 'f2': '\'value', 'f3': 100000000000000000.00}]
         )
 
+        await self.created_db.delete_container(created_collection.id)
+
     async def test_paging_with_continuation_token_async(self):
         created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
 
@@ -678,9 +681,9 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_cross_partition_query_with_continuation_token_async(self):
         created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
-        document_definition = {'pk': 'pk1', 'id': '1'}
+        document_definition = {'pk': 'pk1', 'id': str(uuid.uuid4())}
         await created_collection.create_item(body=document_definition)
-        document_definition = {'pk': 'pk2', 'id': '2'}
+        document_definition = {'pk': 'pk2', 'id': str(uuid.uuid4())}
         await created_collection.create_item(body=document_definition)
 
         query = 'SELECT * from c'
@@ -714,7 +717,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
     async def test_continuation_token_size_limit_query_async(self):
         container = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
         for i in range(1, 1000):
-            await container.create_item(body=dict(pk='123', id=str(i), some_value=str(i % 3)))
+            await container.create_item(body=dict(pk='123', id=str(uuid.uuid4()), some_value=str(i % 3)))
         query = "Select * from c where c.some_value='2'"
         response_query = container.query_items(query, partition_key='123', max_item_count=100,
                                                continuation_token_limit=1)

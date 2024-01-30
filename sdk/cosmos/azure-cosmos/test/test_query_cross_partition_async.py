@@ -24,11 +24,9 @@ import uuid
 
 import pytest
 
-import azure.cosmos
 import azure.cosmos.aio._retry_utility_async as retry_utility
 import azure.cosmos.exceptions as exceptions
 import test_config
-from azure.cosmos import cosmos_client
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 from azure.cosmos.aio import CosmosClient, DatabaseProxy, ContainerProxy
 from azure.cosmos.documents import _DistinctType
@@ -496,9 +494,9 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         assert second_page['id'] == second_page_fetched_with_continuation_token['id']
 
     async def test_cross_partition_query_with_continuation_token_async(self):
-        document_definition = {'pk': 'pk1', 'id': '1'}
+        document_definition = {'pk': 'pk1', 'id': str(uuid.uuid4())}
         await self.created_container.create_item(body=document_definition)
-        document_definition = {'pk': 'pk2', 'id': '2'}
+        document_definition = {'pk': 'pk2', 'id': str(uuid.uuid4())}
         await self.created_container.create_item(body=document_definition)
 
         query = 'SELECT * from c'

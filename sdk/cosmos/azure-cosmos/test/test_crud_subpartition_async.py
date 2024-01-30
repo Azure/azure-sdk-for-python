@@ -39,7 +39,6 @@ import pytest
 import requests
 from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
 
-import azure
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
 import test_config

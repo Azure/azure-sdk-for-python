@@ -31,13 +31,12 @@ import unittest
 import uuid
 
 import pytest
-import conftest
 
 import azure.cosmos._retry_options as retry_options
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 import test_config
-from azure.cosmos import _retry_utility, PartitionKey
+from azure.cosmos import _retry_utility
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 
 
@@ -88,7 +87,7 @@ class TestRetryPolicy(unittest.TestCase):
         try:
             _retry_utility.ExecuteFunction = self._MockExecuteFunction
 
-            document_definition = {'id': 'doc',
+            document_definition = {'id': str(uuid.uuid4()),
                                    'pk': 'pk',
                                    'name': 'sample document',
                                    'key': 'value'}
@@ -102,7 +101,8 @@ class TestRetryPolicy(unittest.TestCase):
                                      HttpHeaders.ThrottleRetryCount])
                 self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[
                                             HttpHeaders.ThrottleRetryWaitTimeInMs],
-                                        connection_policy.RetryOptions.MaxRetryAttemptCount * self.retry_after_in_milliseconds)
+                                        connection_policy.RetryOptions.MaxRetryAttemptCount *
+                                        self.retry_after_in_milliseconds)
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
 
@@ -114,7 +114,7 @@ class TestRetryPolicy(unittest.TestCase):
         try:
             _retry_utility.ExecuteFunction = self._MockExecuteFunction
 
-            document_definition = {'id': 'doc',
+            document_definition = {'id': str(uuid.uuid4()),
                                    'pk': 'pk',
                                    'name': 'sample document',
                                    'key': 'value'}
@@ -141,7 +141,7 @@ class TestRetryPolicy(unittest.TestCase):
         try:
             _retry_utility.ExecuteFunction = self._MockExecuteFunction
 
-            document_definition = {'id': 'doc',
+            document_definition = {'id': str(uuid.uuid4()),
                                    'pk': 'pk',
                                    'name': 'sample document',
                                    'key': 'value'}
@@ -160,7 +160,7 @@ class TestRetryPolicy(unittest.TestCase):
         connection_policy = TestRetryPolicy.connectionPolicy
         connection_policy.RetryOptions = retry_options.RetryOptions(5)
 
-        document_definition = {'id': 'doc',
+        document_definition = {'id': str(uuid.uuid4()),
                                'pk': 'pk',
                                'name': 'sample document',
                                'key': 'value'}
@@ -191,11 +191,11 @@ class TestRetryPolicy(unittest.TestCase):
             _retry_utility.ExecuteFunction = self.original_execute_function
 
     def test_default_retry_policy_for_query(self):
-        document_definition_1 = {'id': 'doc1',
+        document_definition_1 = {'id': str(uuid.uuid4()),
                                  'pk': 'pk',
                                  'name': 'sample document',
                                  'key': 'value'}
-        document_definition_2 = {'id': 'doc2',
+        document_definition_2 = {'id': str(uuid.uuid4()),
                                  'pk': 'pk',
                                  'name': 'sample document',
                                  'key': 'value'}
@@ -207,12 +207,12 @@ class TestRetryPolicy(unittest.TestCase):
             mf = self.MockExecuteFunctionConnectionReset(self.original_execute_function)
             _retry_utility.ExecuteFunction = mf
 
-            docs = self.created_collection.query_items(query="Select * from c", max_item_count=1,
+            docs = self.created_collection.query_items(query="Select * from c order by c.id", max_item_count=1,
                                                        enable_cross_partition_query=True)
 
             result_docs = list(docs)
-            self.assertEqual(result_docs[0]['id'], 'doc1')
-            self.assertEqual(result_docs[1]['id'], 'doc2')
+            self.assertEqual(result_docs[0]['id'], document_definition_1['id'])
+            self.assertEqual(result_docs[1]['id'], document_definition_2['id'])
 
             self.assertEqual(mf.counter, 18)
         finally:
@@ -222,7 +222,7 @@ class TestRetryPolicy(unittest.TestCase):
         self.created_collection.delete_item(item=result_docs[1], partition_key=result_docs[1]['pk'])
 
     def test_default_retry_policy_for_read(self):
-        document_definition = {'id': 'doc',
+        document_definition = {'id': str(uuid.uuid4()),
                                'pk': 'pk',
                                'name': 'sample document',
                                'key': 'value'}
@@ -234,7 +234,7 @@ class TestRetryPolicy(unittest.TestCase):
             _retry_utility.ExecuteFunction = mf
 
             doc = self.created_collection.read_item(item=created_document['id'], partition_key=created_document['pk'])
-            self.assertEqual(doc['id'], 'doc')
+            self.assertEqual(doc['id'], document_definition['id'])
             self.assertEqual(mf.counter, 3)
 
         finally:
@@ -243,7 +243,7 @@ class TestRetryPolicy(unittest.TestCase):
         self.created_collection.delete_item(item=created_document, partition_key=created_document['pk'])
 
     def test_default_retry_policy_for_create(self):
-        document_definition = {'id': 'doc',
+        document_definition = {'id': str(uuid.uuid4()),
                                'pk': 'pk',
                                'name': 'sample document',
                                'key': 'value'}

@@ -18,6 +18,7 @@
 # SOFTWARE.
 
 import unittest
+import uuid
 
 import pytest
 
@@ -93,7 +94,7 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_autoscale_create_database_async(self):
         # Testing auto_scale_settings for the create_database method
-        created_database = await self.client.create_database("db1", offer_throughput=ThroughputProperties(
+        created_database = await self.client.create_database("db1_" + str(uuid.uuid4()), offer_throughput=ThroughputProperties(
             auto_scale_max_throughput=5000,
             auto_scale_increment_percent=0))
         created_db_properties = await created_database.get_throughput()
@@ -102,10 +103,10 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
         # Testing the input value of the increment_percentage
         assert created_db_properties.auto_scale_increment_percent == 0
 
-        await self.client.delete_database("db1")
+        await self.client.delete_database(created_database.id)
 
         # Testing auto_scale_settings for the create_database_if_not_exists method
-        created_database = await self.client.create_database_if_not_exists("db2", offer_throughput=ThroughputProperties(
+        created_database = await self.client.create_database_if_not_exists("db2_" + str(uuid.uuid4()), offer_throughput=ThroughputProperties(
             auto_scale_max_throughput=9000,
             auto_scale_increment_percent=11))
         created_db_properties = await created_database.get_throughput()
@@ -114,7 +115,7 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
         # Testing the input value of the increment_percentage
         assert created_db_properties.auto_scale_increment_percent == 11
 
-        await self.client.delete_database("db2")
+        await self.client.delete_database(created_database.id)
 
     async def test_replace_throughput_async(self):
         created_database = await self.client.create_database("replace_db", offer_throughput=ThroughputProperties(
@@ -139,6 +140,8 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
         # Testing the input value of the replaced auto_scale settings
         assert created_container_properties.auto_scale_max_throughput == 7000
         assert created_container_properties.auto_scale_increment_percent == 20
+
+        await self.created_database.delete_container(created_container.id)
 
 
 if __name__ == '__main__':

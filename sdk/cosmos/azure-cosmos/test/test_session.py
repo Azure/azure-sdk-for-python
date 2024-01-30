@@ -4,13 +4,12 @@ import unittest
 import uuid
 
 import pytest
-import conftest
 
 import azure.cosmos._synchronized_request as synchronized_request
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 import test_config
-from azure.cosmos import PartitionKey, DatabaseProxy
+from azure.cosmos import DatabaseProxy
 from azure.cosmos import _retry_utility
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
 
@@ -39,7 +38,7 @@ class SessionTests(unittest.TestCase):
                             "'masterKey' and 'host' at the top of this class to run the "
                             "tests.")
 
-        cls.client = conftest.cosmos_sync_client
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         cls.created_collection = cls.created_db.get_container_client(cls.TEST_COLLECTION_ID)
 

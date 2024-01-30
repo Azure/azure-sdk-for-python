@@ -20,15 +20,13 @@
 # SOFTWARE.
 
 import unittest
-import uuid
 from unittest.mock import MagicMock
 
 import pytest
-import conftest
 
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
-from azure.cosmos import PartitionKey, DatabaseProxy
+from azure.cosmos import DatabaseProxy
 
 
 @pytest.mark.cosmosEmulator
@@ -45,7 +43,7 @@ class HeadersTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.client = conftest.cosmos_sync_client
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.database = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
         cls.container = cls.database.get_container_client(cls.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
@@ -58,6 +56,22 @@ class HeadersTest(unittest.TestCase):
         # Extract request headers from args
         assert args[2]["x-ms-dedicatedgateway-max-age"] == self.dedicated_gateway_max_age_million
         raise StopIteration
+
+    def side_effect_correlated_activity_id(self, *args, **kwargs):
+        # Extract request headers from args
+        assert args[3]["x-ms-cosmos-correlated-activityid"]  # cspell:disable-line
+        raise StopIteration
+
+    def test_correlated_activity_id(self):
+        query = 'SELECT * from c ORDER BY c._ts'
+
+        cosmos_client_connection = self.container.client_connection
+        cosmos_client_connection._CosmosClientConnection__Post = MagicMock(
+            side_effect=self.side_effect_correlated_activity_id)
+        try:
+            list(self.container.query_items(query=query, partition_key="pk-1"))
+        except StopIteration:
+            pass
 
     def test_max_integrated_cache_staleness(self):
         cosmos_client_connection = self.container.client_connection

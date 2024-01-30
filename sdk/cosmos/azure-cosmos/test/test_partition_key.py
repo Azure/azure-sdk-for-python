@@ -23,7 +23,6 @@ import unittest
 import uuid
 
 import pytest
-import conftest
 
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.partition_key as partition_key
@@ -46,7 +45,7 @@ class PartitionKeyTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.client = conftest.cosmos_sync_client
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         cls.created_collection = cls.created_db.get_container_client(cls.TEST_CONTAINER_ID)
 

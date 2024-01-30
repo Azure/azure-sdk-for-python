@@ -1,13 +1,13 @@
 # The MIT License (MIT)
 # Copyright (c) 2022 Microsoft Corporation
 import unittest
+import uuid
 
 import pytest
 
 import azure.cosmos.exceptions as exceptions
-import conftest
 import test_config
-from azure.cosmos import CosmosClient
+from azure.cosmos import CosmosClient, cosmos_client
 from azure.cosmos import ThroughputProperties, PartitionKey
 
 
@@ -44,7 +44,7 @@ class TestAutoScale(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = conftest.cosmos_sync_client
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.created_database = cls.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
 
     def test_autoscale_create_container(self):
@@ -85,7 +85,7 @@ class TestAutoScale(unittest.TestCase):
 
     def test_autoscale_create_database(self):
         # Testing auto_scale_settings for the create_database method
-        created_database = self.client.create_database("db_auto_scale", offer_throughput=ThroughputProperties(
+        created_database = self.client.create_database("db_auto_scale_" + str(uuid.uuid4()), offer_throughput=ThroughputProperties(
             auto_scale_max_throughput=5000,
             auto_scale_increment_percent=2))
         created_db_properties = created_database.get_throughput()
@@ -94,10 +94,10 @@ class TestAutoScale(unittest.TestCase):
         # Testing the input value of the increment_percentage
         assert created_db_properties.auto_scale_increment_percent == 2
 
-        self.client.delete_database("db_auto_scale")
+        self.client.delete_database(created_database.id)
 
         # Testing auto_scale_settings for the create_database_if_not_exists method
-        created_database = self.client.create_database_if_not_exists("db_auto_scale_2",
+        created_database = self.client.create_database_if_not_exists("db_auto_scale_2_" + str(uuid.uuid4()),
                                                                      offer_throughput=ThroughputProperties(
                                                                          auto_scale_max_throughput=9000,
                                                                          auto_scale_increment_percent=11))
@@ -107,7 +107,7 @@ class TestAutoScale(unittest.TestCase):
         # Testing the input value of the increment_percentage
         assert created_db_properties.auto_scale_increment_percent == 11
 
-        self.client.delete_database("db_auto_scale_2")
+        self.client.delete_database(created_database.id)
 
     def test_autoscale_replace_throughput(self):
         created_database = self.client.create_database("replace_db", offer_throughput=ThroughputProperties(

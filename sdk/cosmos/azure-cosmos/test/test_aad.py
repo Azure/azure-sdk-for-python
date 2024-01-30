@@ -21,7 +21,6 @@ import pytest
 from azure.core.credentials import AccessToken
 
 import azure.cosmos.cosmos_client as cosmos_client
-import conftest
 import test_config
 from azure.cosmos import exceptions, DatabaseProxy, ContainerProxy
 
@@ -107,7 +106,7 @@ class TestAAD(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.client = conftest.cosmos_sync_client
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.database = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
         cls.container = cls.database.get_container_client(cls.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 

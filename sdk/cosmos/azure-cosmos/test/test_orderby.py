@@ -31,7 +31,6 @@ import unittest
 import uuid
 
 import pytest
-import conftest
 from azure.core.paging import ItemPaged
 
 import azure.cosmos._base as base
@@ -65,7 +64,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = conftest.cosmos_sync_client
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         cls.created_container = cls.created_db.create_container(
             id='orderby_tests collection ' + str(uuid.uuid4()),

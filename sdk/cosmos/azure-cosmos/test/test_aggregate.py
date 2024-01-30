@@ -28,7 +28,6 @@ import pytest
 
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.documents as documents
-import conftest
 import test_config
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.partition_key import PartitionKey
@@ -58,6 +57,10 @@ class TestAggregateQuery(unittest.TestCase):
         cls._generate_test_configs()
 
     @classmethod
+    def tearDownClass(cls) -> None:
+        cls.created_db.delete_container(cls.created_collection.id)
+
+    @classmethod
     def _setup(cls):
         if not _config.master_key or not _config.host:
             raise Exception(
@@ -65,9 +68,9 @@ class TestAggregateQuery(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = conftest.cosmos_sync_client
-        created_db = cls.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
-        cls.created_collection = cls._create_collection(created_db)
+        cls.client = cosmos_client.CosmosClient(_config.host, _config.master_key)
+        cls.created_db = cls.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
+        cls.created_collection = cls._create_collection(cls.created_db)
 
         # test documents
         document_definitions = []

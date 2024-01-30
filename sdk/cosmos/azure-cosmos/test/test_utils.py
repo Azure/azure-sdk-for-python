@@ -21,6 +21,7 @@
 
 import platform
 import unittest
+import uuid
 
 import azure.cosmos
 import azure.cosmos._utils as _utils
@@ -46,10 +47,10 @@ class TestsUtils(unittest.TestCase):
         client: CosmosClient = (azure.cosmos.CosmosClient
                                 .from_connection_string(test_config.TestConfig.connection_str,
                                                         consistency_level="Session"))
-        database_id = "connection_string_test"
+        database_id = "connection_string_test" + str(uuid.uuid4())
         db = client.create_database(database_id)
         self.assertTrue(db is not None)
-        client.delete_database(db)
+        client.delete_database(db.id)
 
 
 if __name__ == "__main__":

@@ -27,9 +27,8 @@ import unittest
 import uuid
 
 import azure.cosmos.cosmos_client as cosmos_client
-import conftest
 import test_config
-from azure.cosmos import DatabaseProxy, PartitionKey
+from azure.cosmos import DatabaseProxy, PartitionKey, ContainerProxy
 from azure.cosmos.exceptions import CosmosClientTimeoutError
 
 
@@ -61,6 +60,7 @@ def run_queries(container, iterations):
 
 class TestPartitionSplitQuery(unittest.TestCase):
     database: DatabaseProxy = None
+    container: ContainerProxy = None
     client: cosmos_client.CosmosClient = None
     configs = test_config.TestConfig
     host = configs.host
@@ -71,11 +71,15 @@ class TestPartitionSplitQuery(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.client = conftest.cosmos_sync_client
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         cls.container = cls.database.create_container_if_not_exists(
             id=cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/id"))
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        cls.database.delete_container(cls.container.id)
 
     def test_partition_split_query(self):
         for i in range(100):
@@ -95,7 +99,6 @@ class TestPartitionSplitQuery(unittest.TestCase):
         offer = self.database.get_throughput()
         while True:
             if time.time() - start_time > 60 * 20:  # timeout test at 20 minutes
-                self.database.delete_container(self.container.id)
                 raise CosmosClientTimeoutError()
             if offer.properties['content'].get('isOfferReplacePending', False):
                 time.sleep(10)
@@ -104,7 +107,6 @@ class TestPartitionSplitQuery(unittest.TestCase):
                 print("offer replaced successfully, took around {} seconds".format(time.time() - offer_time))
                 run_queries(self.container, 100)  # check queries work post partition split
                 self.assertTrue(offer.offer_throughput > self.throughput)
-                self.database.delete_container(self.container.id)
                 return
 
 

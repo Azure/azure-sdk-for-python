@@ -23,7 +23,6 @@ import unittest
 import uuid
 
 import pytest
-import conftest
 
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
@@ -57,7 +56,7 @@ class CrossPartitionQueryTest(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = conftest.cosmos_sync_client
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
 
     def setUp(self):
@@ -430,9 +429,9 @@ class CrossPartitionQueryTest(unittest.TestCase):
         self.assertEqual(second_page['id'], second_page_fetched_with_continuation_token['id'])
 
     def test_cross_partition_query_with_continuation_token(self):
-        document_definition = {'pk': 'pk1', 'id': '1'}
+        document_definition = {'pk': 'pk1', 'id': str(uuid.uuid4())}
         self.created_container.create_item(body=document_definition)
-        document_definition = {'pk': 'pk2', 'id': '2'}
+        document_definition = {'pk': 'pk2', 'id': str(uuid.uuid4())}
         self.created_container.create_item(body=document_definition)
 
         query = 'SELECT * from c'

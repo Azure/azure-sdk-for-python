@@ -40,7 +40,6 @@ from azure.core.pipeline.transport import RequestsTransport, RequestsTransportRe
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
-import conftest
 import test_config
 from azure.cosmos import _retry_utility
 from azure.cosmos._routing import routing_range
@@ -98,7 +97,7 @@ class TestSubpartitionCrud(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = conftest.cosmos_sync_client
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.databaseForTest = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
 
     def test_collection_crud(self):
@@ -461,6 +460,8 @@ class TestSubpartitionCrud(unittest.TestCase):
         created_mixed_type_doc = created_collection.create_item(body=doc_mixed_types)
         self.assertEqual(doc_mixed_types.get('city'), created_mixed_type_doc.get('city'))
         self.assertEqual(doc_mixed_types.get('zipcode'), created_mixed_type_doc.get('zipcode'))
+
+        created_db.delete_container(collection_id)
 
     def test_partitioned_collection_prefix_partition_query(self):
         created_db = self.databaseForTest
