@@ -35,7 +35,7 @@ def generate_sas(endpoint, shared_access_key, expiration_date_utc, **kwargs):
     :param str shared_access_key: The shared access key to be used for generating the token
     :param datetime.datetime expiration_date_utc: The expiration datetime in UTC for the signature.
     :keyword str api_version: The API Version to include in the signature.
-     If not provided, the default API version will be used.
+    If not provided, the default API version will be used.
     :return: A shared access signature string.
     :rtype: str
 
