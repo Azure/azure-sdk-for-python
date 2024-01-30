@@ -222,12 +222,7 @@ class _ServiceTest(PerfStressTest):
                             help="""List of policies to pass in to the pipeline. Options:"""
                             """\n- None: No extra policies passed in, except for authentication policy. This is the default."""
                             """\n- 'all': All policies added automatically by autorest."""
-                            """\n- "['policy1','policy2',...]": String list of string policies, such as "['RetryPolicy', 'HttpLoggingPolicy'].""",
-                            default=None)
-        parser.add_argument('--content-decode-policy-kwargs',
-                            nargs='?',
-                            type=str,
-                        help="""String dict of keyword args to pass to the ContentDecodePolicy if used, such as '{"response_encoding": <encoding_str>}'.""",
+                            """\n- 'policy1,policy2': Comma-separated list of policies, such as 'RetryPolicy,HttpLoggingPolicy'""",
                             default=None)
         parser.add_argument('--aad', action='store_true', help='Use AAD authentication instead of shared key.')
 

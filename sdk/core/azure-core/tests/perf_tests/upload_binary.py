@@ -67,6 +67,7 @@ class UploadBinaryDataTest(_BlobTest):
             raise HttpResponseError(response=response)
 
     async def run_async(self):
+        # TODO: sync upload_stream should work for async as well
         self.upload_stream_async.reset()
         current_time = format_date_time(time())
         request = HttpRequest(
