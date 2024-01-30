@@ -2259,7 +2259,7 @@ class ClusterResourceProperties(_serialization.Model):
     :vartype vnet_addons: ~azure.mgmt.appplatform.v2022_12_01.models.ServiceVNetAddons
     :ivar version: Version of the Service.
     :vartype version: int
-    :ivar service_id: ServiceInstanceEntity GUID which uniquely identifies a created resource.
+    :ivar service_id: ServiceInstanceEntity Id which uniquely identifies a created resource.
     :vartype service_id: str
     :ivar power_state: Power state of the Service. Known values are: "Running" and "Stopped".
     :vartype power_state: str or ~azure.mgmt.appplatform.v2022_12_01.models.PowerState

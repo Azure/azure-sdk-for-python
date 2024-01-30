@@ -47,11 +47,11 @@ class HybridContainerServiceMgmtClientOperationsMixin(HybridContainerServiceMgmt
     async def get_kubernetes_versions(
         self, custom_location_resource_uri: str, **kwargs: Any
     ) -> _models.KubernetesVersionProfile:
-        """Gets the supported kubernetes versions.
+        """Lists the supported kubernetes versions.
 
-        Gets the supported kubernetes versions from the underlying custom location.
+        Lists the supported kubernetes versions for the specified custom location.
 
-        :param custom_location_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param custom_location_resource_uri: The fully qualified Azure Resource Manager identifier of
          the custom location resource. Required.
         :type custom_location_resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -184,11 +184,13 @@ class HybridContainerServiceMgmtClientOperationsMixin(HybridContainerServiceMgmt
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.KubernetesVersionProfile]:
-        """Puts the kubernetes version.
+        """Puts the default kubernetes version resource type (one time operation, before listing the
+        kubernetes versions).
 
-        Puts the kubernetes version resource type.
+        Puts the default kubernetes version resource type (one time operation, before listing the
+        kubernetes versions).
 
-        :param custom_location_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param custom_location_resource_uri: The fully qualified Azure Resource Manager identifier of
          the custom location resource. Required.
         :type custom_location_resource_uri: str
         :param kubernetes_versions: Kubernetes Versions resource definition. Required.
@@ -220,11 +222,13 @@ class HybridContainerServiceMgmtClientOperationsMixin(HybridContainerServiceMgmt
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.KubernetesVersionProfile]:
-        """Puts the kubernetes version.
+        """Puts the default kubernetes version resource type (one time operation, before listing the
+        kubernetes versions).
 
-        Puts the kubernetes version resource type.
+        Puts the default kubernetes version resource type (one time operation, before listing the
+        kubernetes versions).
 
-        :param custom_location_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param custom_location_resource_uri: The fully qualified Azure Resource Manager identifier of
          the custom location resource. Required.
         :type custom_location_resource_uri: str
         :param kubernetes_versions: Kubernetes Versions resource definition. Required.
@@ -254,11 +258,13 @@ class HybridContainerServiceMgmtClientOperationsMixin(HybridContainerServiceMgmt
         kubernetes_versions: Union[_models.KubernetesVersionProfile, IO],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.KubernetesVersionProfile]:
-        """Puts the kubernetes version.
+        """Puts the default kubernetes version resource type (one time operation, before listing the
+        kubernetes versions).
 
-        Puts the kubernetes version resource type.
+        Puts the default kubernetes version resource type (one time operation, before listing the
+        kubernetes versions).
 
-        :param custom_location_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param custom_location_resource_uri: The fully qualified Azure Resource Manager identifier of
          the custom location resource. Required.
         :type custom_location_resource_uri: str
         :param kubernetes_versions: Kubernetes Versions resource definition. Is either a
@@ -386,11 +392,11 @@ class HybridContainerServiceMgmtClientOperationsMixin(HybridContainerServiceMgmt
     async def begin_delete_kubernetes_versions(
         self, custom_location_resource_uri: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Delete the kubernetes versions.
+        """Deletes the default kubernetes version resource type.
 
-        Delete the kubernetes versions resource type.
+        Delete the default kubernetes versions resource type.
 
-        :param custom_location_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param custom_location_resource_uri: The fully qualified Azure Resource Manager identifier of
          the custom location resource. Required.
         :type custom_location_resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -452,11 +458,11 @@ class HybridContainerServiceMgmtClientOperationsMixin(HybridContainerServiceMgmt
 
     @distributed_trace_async
     async def get_vm_skus(self, custom_location_resource_uri: str, **kwargs: Any) -> _models.VmSkuProfile:
-        """Gets the supported VM skus.
+        """Lists the supported VM skus.
 
-        Gets the supported VM skus from the underlying custom location.
+        Lists the supported VM skus for the specified custom location.
 
-        :param custom_location_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param custom_location_resource_uri: The fully qualified Azure Resource Manager identifier of
          the custom location resource. Required.
         :type custom_location_resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -586,11 +592,11 @@ class HybridContainerServiceMgmtClientOperationsMixin(HybridContainerServiceMgmt
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VmSkuProfile]:
-        """Puts the VM SKUs.
+        """Puts the default VM skus resource type (one time operation, before listing the VM skus).
 
-        Puts the VM SKUs resource type.
+        Puts the default VM skus resource type (one time operation, before listing the VM skus).
 
-        :param custom_location_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param custom_location_resource_uri: The fully qualified Azure Resource Manager identifier of
          the custom location resource. Required.
         :type custom_location_resource_uri: str
         :param skus: VM SKUs resource definition. Required.
@@ -617,11 +623,11 @@ class HybridContainerServiceMgmtClientOperationsMixin(HybridContainerServiceMgmt
     async def begin_put_vm_skus(
         self, custom_location_resource_uri: str, skus: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.VmSkuProfile]:
-        """Puts the VM SKUs.
+        """Puts the default VM skus resource type (one time operation, before listing the VM skus).
 
-        Puts the VM SKUs resource type.
+        Puts the default VM skus resource type (one time operation, before listing the VM skus).
 
-        :param custom_location_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param custom_location_resource_uri: The fully qualified Azure Resource Manager identifier of
          the custom location resource. Required.
         :type custom_location_resource_uri: str
         :param skus: VM SKUs resource definition. Required.
@@ -648,11 +654,11 @@ class HybridContainerServiceMgmtClientOperationsMixin(HybridContainerServiceMgmt
     async def begin_put_vm_skus(
         self, custom_location_resource_uri: str, skus: Union[_models.VmSkuProfile, IO], **kwargs: Any
     ) -> AsyncLROPoller[_models.VmSkuProfile]:
-        """Puts the VM SKUs.
+        """Puts the default VM skus resource type (one time operation, before listing the VM skus).
 
-        Puts the VM SKUs resource type.
+        Puts the default VM skus resource type (one time operation, before listing the VM skus).
 
-        :param custom_location_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param custom_location_resource_uri: The fully qualified Azure Resource Manager identifier of
          the custom location resource. Required.
         :type custom_location_resource_uri: str
         :param skus: VM SKUs resource definition. Is either a VmSkuProfile type or a IO type. Required.
@@ -776,11 +782,11 @@ class HybridContainerServiceMgmtClientOperationsMixin(HybridContainerServiceMgmt
 
     @distributed_trace_async
     async def begin_delete_vm_skus(self, custom_location_resource_uri: str, **kwargs: Any) -> AsyncLROPoller[None]:
-        """Deletes the Vm Skus.
+        """Deletes the default VM skus resource type.
 
-        Deletes the Vm Sku resource type.
+        Deletes the default VM skus resource type.
 
-        :param custom_location_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param custom_location_resource_uri: The fully qualified Azure Resource Manager identifier of
          the custom location resource. Required.
         :type custom_location_resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response

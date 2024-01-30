@@ -124,7 +124,7 @@ A `KeyVaultSettingsClient` manages Managed HSM account settings.
 This section contains code snippets covering common tasks:
 * Access control
     * [List all role definitions](#list-all-role-definitions)
-    * [Set, get, and delete a role definition](#set-get-and-delete-a-role-defintion)
+    * [Set, get, and delete a role definition](#set-get-and-delete-a-role-definition)
     * [List all role assignments](#list-all-role-assignments)
     * [Create, get, and delete a role assignment](#create-get-and-delete-a-role-assignment)
 * Backup and restore
@@ -149,7 +149,6 @@ for definition in role_definitions:
 <!-- END SNIPPET -->
 
 ### Set, get, and delete a role definition
-
 `set_role_definition` can be used by a `KeyVaultAccessControlClient` to either create a custom role definition or update
 an existing definition with the specified unique `name` (a UUID).
 
