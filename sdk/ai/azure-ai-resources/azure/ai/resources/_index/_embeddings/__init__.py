@@ -8,6 +8,7 @@ import time
 from collections import OrderedDict
 from typing import Callable, List, Optional, Union
 
+import cloudpickle
 from azure.core.credentials import TokenCredential
 from azure.ai.resources._index._embeddings.openai import OpenAIEmbedder
 from azure.ai.resources._index._langchain.vendor.embeddings.base import Embeddings as Embedder
@@ -224,3 +225,23 @@ class EmbeddingsContainer:
         config = parse_model_uri(uri, **kwargs)
         kwargs["credential"] = credential
         return EmbeddingsContainer(**{**config, **kwargs})
+    
+    @staticmethod
+    def from_metadata(metadata: dict) -> "EmbeddingsContainer":
+        """Create an embeddings object from metadata."""
+        schema_version = metadata.get("schema_version", "1")
+        if schema_version == "1":
+            embeddings = EmbeddingsContainer(metadata["kind"], **metadata["arguments"])
+            return embeddings
+        elif schema_version == "2":
+            kind = metadata["kind"]
+            del metadata["kind"]
+            if kind == "custom":
+                metadata["embedding_fn"] = cloudpickle.loads(
+                    gzip.decompress(metadata["pickled_embedding_fn"]))
+                del metadata["pickled_embedding_fn"]
+
+            embeddings = EmbeddingsContainer(kind, **metadata)
+            return embeddings
+        else:
+            raise ValueError(f"Schema version {schema_version} is not supported")
