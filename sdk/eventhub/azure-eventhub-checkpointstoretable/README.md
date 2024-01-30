@@ -5,11 +5,12 @@
 Azure EventHubs Checkpoint Store is used for storing checkpoints while processing events from Azure Event Hubs.
 This Checkpoint Store package works as a plug-in package to `EventHubConsumerClient`. It uses Azure Tables as the persistent store for maintaining checkpoints and partition ownership information.
 
+
+# Getting started
+
 ## _Disclaimer_
 
 _Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
-
-# Getting started
 
 ### Prerequisites
 
