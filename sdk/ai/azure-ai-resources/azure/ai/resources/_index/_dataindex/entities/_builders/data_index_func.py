@@ -736,5 +736,4 @@ def _resolve_connection_id(ml_client, connection: Optional[Union[str, WorkspaceC
         # Handle azure.ai.resources Connections
         connection = connection._workspace_connection
 
-    print(connection.id) # REMOVE
     return connection.id
