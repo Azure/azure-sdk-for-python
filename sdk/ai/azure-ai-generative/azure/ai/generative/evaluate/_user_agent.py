@@ -1,11 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from azure.ai.generative._version import VERSION
 
-__path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
-
-from ._custom_metric import PromptMetric
-
-__all__ = [
-    "PromptMetric"
-]
+USER_AGENT = "{}/{} {}/{}".format("azure-ai-generative", VERSION, "evaluate", VERSION)
