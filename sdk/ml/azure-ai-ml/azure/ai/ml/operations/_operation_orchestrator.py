@@ -143,9 +143,9 @@ class OperationOrchestrator(object):
         ):
             return asset
         if is_singularity_full_name_for_resource(asset):
-            return self._get_singularity_arm_id_from_full_name(asset)
+            return self._get_singularity_arm_id_from_full_name(str(asset))
         if is_singularity_short_name_for_resource(asset):
-            return self._get_singularity_arm_id_from_short_name(asset)
+            return self._get_singularity_arm_id_from_short_name(str(asset))
         if isinstance(asset, str):
             if azureml_type in AzureMLResourceType.NAMED_TYPES:
                 return NAMED_RESOURCE_ID_FORMAT.format(
@@ -232,6 +232,7 @@ class OperationOrchestrator(object):
             )
         if isinstance(asset, Asset):
             try:
+                result: Any = None
                 # TODO: once the asset redesign is finished, this logic can be replaced with unified API
                 if azureml_type == AzureMLResourceType.CODE and isinstance(asset, Code):
                     result = self._get_code_asset_arm_id(asset, register_asset=register_asset)
@@ -276,7 +277,7 @@ class OperationOrchestrator(object):
             self._validate_datastore_name(code_asset.path)
             if register_asset:
                 code_asset = self._code_assets.create_or_update(code_asset)
-                return code_asset.id
+                return str(code_asset.id)
             sas_info = get_storage_info_for_non_registry_asset(
                 service_client=self._code_assets._service_client,
                 workspace_name=self._operation_scope.workspace_name,

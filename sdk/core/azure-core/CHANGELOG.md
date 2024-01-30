@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Support tuple input for file values  to `azure.core.rest.HttpRequest`  #33948
+- Support tuple input to `files` with duplicate field names  `azure.core.rest.HttpRequest`  #34021
+
 ### Breaking Changes
 
 ### Bugs Fixed
