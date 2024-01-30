@@ -634,10 +634,16 @@ class MLIndex:
                                 else embeddings_connection["properties"]["target"],  # type: ignore[index]
                             }
                         else:
+                            import openai
+                            api_key = "OPENAI_API_KEY"
+                            api_base = "OPENAI_API_BASE"
+                            if version.parse(openai.version.VERSION) >= version.parse("1.0.0"):
+                                api_key = "AZURE_OPENAI_KEY"
+                                api_base = "AZURE_OPENAI_ENDPOINT"
                             connection_args = {
                                 "connection_type": "environment",
-                                "connection": {"key": "OPENAI_API_KEY"},
-                                "endpoint": os.getenv("OPENAI_API_BASE"),
+                                "connection": {"key": api_key},
+                                "endpoint": os.getenv(api_base),
                             }
                             if os.getenv("OPENAI_API_TYPE"):
                                 connection_args["api_type"] = os.getenv("OPENAI_API_TYPE")
