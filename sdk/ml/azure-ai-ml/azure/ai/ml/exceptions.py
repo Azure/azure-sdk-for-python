@@ -100,9 +100,9 @@ class MlException(AzureError):
     :param no_personal_data_message: The error message without any personal data. This will be pushed to telemetry logs.
     :type no_personal_data_message: str
     :param target: The name of the element that caused the exception to be thrown.
-    :type target: ErrorTarget
+    :type target: Union[str, ErrorTarget]
     :param error_category: The error category, defaults to Unknown.
-    :type error_category: ErrorCategory
+    :type error_category: Union[str, ErrorCategory]
     :param error: The original exception if any.
     :type error: Exception
     """
@@ -112,8 +112,8 @@ class MlException(AzureError):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorCategory] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
         self._error_category = error_category
@@ -170,9 +170,9 @@ class DeploymentException(MlException):
         This will be pushed to telemetry logs.
     :type no_personal_data_message: str
     :param target: The name of the element that caused the exception to be thrown.
-    :type target: ErrorTarget
+    :type target: Union[str, ErrorTarget]
     :param error_category: The error category, defaults to Unknown.
-    :type error_category: ErrorCategory
+    :type error_category: Union[str, ErrorCategory]
     """
 
     def __init__(
@@ -180,15 +180,14 @@ class DeploymentException(MlException):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorCategory] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
+
         super(DeploymentException, self).__init__(
-            message=message,
             target=target,
             error_category=error_category,
-            no_personal_data_message=no_personal_data_message,
             *args,
             **kwargs,
         )
@@ -203,9 +202,9 @@ class ComponentException(MlException):
         This will be pushed to telemetry logs.
     :type no_personal_data_message: str
     :param target: The name of the element that caused the exception to be thrown.
-    :type target: ErrorTarget
+    :type target: Union[str, ErrorTarget]
     :param error_category: The error category, defaults to Unknown.
-    :type error_category: ErrorCategory
+    :type error_category: Union[str, ErrorCategory]
     """
 
     def __init__(
@@ -213,15 +212,13 @@ class ComponentException(MlException):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorCategory] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
         super(ComponentException, self).__init__(
-            message=message,
             target=target,
             error_category=error_category,
-            no_personal_data_message=no_personal_data_message,
             *args,
             **kwargs,
         )
@@ -236,9 +233,9 @@ class JobException(MlException):
         This will be pushed to telemetry logs.
     :type no_personal_data_message: str
     :param target: The name of the element that caused the exception to be thrown.
-    :type target: ErrorTarget
+    :type target: Union[str, ErrorTarget]
     :param error_category: The error category, defaults to Unknown.
-    :type error_category: ErrorCategory
+    :type error_category: Union[str, ErrorCategory]
     """
 
     def __init__(
@@ -246,15 +243,13 @@ class JobException(MlException):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorCategory] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
         super(JobException, self).__init__(
-            message=message,
             target=target,
             error_category=error_category,
-            no_personal_data_message=no_personal_data_message,
             *args,
             **kwargs,
         )
@@ -269,9 +264,9 @@ class ModelException(MlException):
         This will be pushed to telemetry logs.
     :type no_personal_data_message: str
     :param target: The name of the element that caused the exception to be thrown.
-    :type target: ErrorTarget
+    :type target: Union[str, ErrorTarget]
     :param error_category: The error category, defaults to Unknown.
-    :type error_category: ErrorCategory
+    :type error_category: Union[str, ErrorCategory]
     """
 
     def __init__(
@@ -279,15 +274,13 @@ class ModelException(MlException):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorCategory] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
         super(ModelException, self).__init__(
-            message=message,
             target=target,
             error_category=error_category,
-            no_personal_data_message=no_personal_data_message,
             *args,
             **kwargs,
         )
@@ -302,9 +295,9 @@ class AssetException(MlException):
         This will be pushed to telemetry logs.
     :type no_personal_data_message: str
     :param target: The name of the element that caused the exception to be thrown.
-    :type target: ErrorTarget
+    :type target: Union[str, ErrorTarget]
     :param error_category: The error category, defaults to Unknown.
-    :type error_category: ErrorCategory
+    :type error_category: Union[str, ErrorCategory]
     """
 
     def __init__(
@@ -312,15 +305,13 @@ class AssetException(MlException):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorCategory] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
         super(AssetException, self).__init__(
-            message=message,
             target=target,
             error_category=error_category,
-            no_personal_data_message=no_personal_data_message,
             *args,
             **kwargs,
         )
@@ -335,9 +326,9 @@ class ScheduleException(MlException):
         This will be pushed to telemetry logs.
     :type no_personal_data_message: str
     :param target: The name of the element that caused the exception to be thrown.
-    :type target: ErrorTarget
+    :type target: Union[str, ErrorTarget]
     :param error_category: The error category, defaults to Unknown.
-    :type error_category: ErrorCategory
+    :type error_category: Union[str, ErrorCategory]
     """
 
     def __init__(
@@ -345,15 +336,13 @@ class ScheduleException(MlException):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorCategory] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
         super(ScheduleException, self).__init__(
-            message=message,
             target=target,
             error_category=error_category,
-            no_personal_data_message=no_personal_data_message,
             *args,
             **kwargs,
         )
@@ -366,8 +355,8 @@ class ValidationException(MlException):
         no_personal_data_message: str,
         *args,
         error_type: ValidationErrorType = ValidationErrorType.GENERIC,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.USER_ERROR,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorCategory] = ErrorCategory.USER_ERROR,
         **kwargs,
     ):
         """Class for all exceptions raised as part of client-side schema validation.
@@ -380,17 +369,15 @@ class ValidationException(MlException):
         :param error_type: The error type, chosen from one of the values of ValidationErrorType enum class.
         :type error_type: ValidationErrorType
         :param target: The name of the element that caused the exception to be thrown.
-        :type target: ErrorTarget
+        :type target: Union[str, ErrorTarget]
         :param error_category: The error category, defaults to Unknown.
-        :type error_category: ErrorCategory
+        :type error_category: Union[str, ErrorCategory]
         :param error: The original exception if any.
         :type error: Exception
         """
         super(ValidationException, self).__init__(
-            message=message,
             target=target,
             error_category=error_category,
-            no_personal_data_message=no_personal_data_message,
             *args,
             **kwargs,
         )
@@ -426,9 +413,9 @@ class AssetPathException(MlException):
         This will be pushed to telemetry logs.
     :type no_personal_data_message: str
     :param target: The name of the element that caused the exception to be thrown.
-    :type target: ErrorTarget
+    :type target: Union[str, ErrorTarget]
     :param error_category: The error category, defaults to Unknown.
-    :type error_category: ErrorCategory
+    :type error_category: Union[str, ErrorCategory]
     """
 
     def __init__(
@@ -436,15 +423,13 @@ class AssetPathException(MlException):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorCategory] = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
         super(AssetPathException, self).__init__(
-            message=message,
             target=target,
             error_category=error_category,
-            no_personal_data_message=no_personal_data_message,
             *args,
             **kwargs,
         )
@@ -457,8 +442,8 @@ class EmptyDirectoryError(MlException):
         self,
         message: str,
         no_personal_data_message: str,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
+        target: Union[str, ErrorTarget] = ErrorTarget.UNKNOWN,
+        error_category: Union[str, ErrorCategory] = ErrorCategory.UNKNOWN,
     ):
         self.message = message
         super(EmptyDirectoryError, self).__init__(
@@ -476,8 +461,8 @@ class UserErrorException(MlException):
         self,
         message,
         no_personal_data_message=None,
-        error_category=ErrorCategory.USER_ERROR,
-        target: ErrorTarget = ErrorTarget.PIPELINE,
+        error_category: Union[str, ErrorCategory] = ErrorCategory.USER_ERROR,
+        target: Union[str, ErrorTarget] = ErrorTarget.PIPELINE,
     ):
         super().__init__(
             message=message,
@@ -700,11 +685,8 @@ class CloudArtifactsNotSupportedError(MlException):
             if deployment_name
             else f"local endpoint ({endpoint_name})"
         )
-        err = (
-            "Local endpoints only support local artifacts. '%s' in '%s' referenced cloud artifacts.",
-            invalid_artifact,
-            resource_name,
-        )
+        err = f"Local endpoints only support local artifacts. {invalid_artifact} in {resource_name} \
+            referenced cloud artifacts."
         super().__init__(
             message=err,
             target=ErrorTarget.LOCAL_ENDPOINT,
@@ -729,15 +711,8 @@ class RequiredLocalArtifactsNotFoundError(MlException):
             if deployment_name
             else f"Local endpoint ({endpoint_name})"
         )
-        err = (
-            (
-                "Local endpoints only support local artifacts. '%s' did not contain required local artifact '%s'"
-                " of type '%s'."
-            ),
-            resource_name,
-            required_artifact,
-            required_artifact_type,
-        )
+        err = f"Local endpoints only support local artifacts. {resource_name} did not contain required local artifact \
+            {required_artifact} of type {required_artifact_type}."
         super().__init__(
             message=err,
             target=ErrorTarget.LOCAL_ENDPOINT,

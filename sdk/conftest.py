@@ -27,8 +27,6 @@ import os
 import pytest
 
 from devtools_testutils import environment_variables, recorded_test, test_proxy, variable_recorder
-from devtools_testutils.preparers import AbstractPreparer
-
 
 def pytest_configure(config):
     # register an additional marker
@@ -55,7 +53,12 @@ def pytest_runtest_setup(item):
 @pytest.fixture(scope="session", autouse=True)
 def clean_cached_resources():
     yield
-    AbstractPreparer._perform_pending_deletes()
+    try:
+        from devtools_testutils.preparers import AbstractPreparer
+        AbstractPreparer._perform_pending_deletes()
+    except ImportError:
+        print("Failed to clean up due to missing azure-sdk-tools dependency. \
+              For proper cleanup, install the azure-sdk-tools package from this repo.")
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)

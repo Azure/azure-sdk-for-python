@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access,too-many-instance-attributes
 
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import AmlCompute as AmlComputeRest
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
@@ -38,12 +38,12 @@ class AmlComputeSshSettings:
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/ml_samples_compute.py
-        :start-after: [START aml_compute_ssh_settings]
-        :end-before: [END aml_compute_ssh_settings]
-        :language: python
-        :dedent: 8
-        :caption: Configuring an AmlComputeSshSettings object.
+        .. literalinclude:: ../samples/ml_samples_compute.py
+            :start-after: [START aml_compute_ssh_settings]
+            :end-before: [END aml_compute_ssh_settings]
+            :language: python
+            :dedent: 8
+            :caption: Configuring an AmlComputeSshSettings object.
     """
 
     def __init__(
@@ -138,7 +138,7 @@ class AmlCompute(Compute):
         identity: Optional[IdentityConfiguration] = None,
         tier: Optional[str] = None,
         enable_node_public_ip: bool = True,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         kwargs[TYPE] = ComputeType.AMLCOMPUTE
         super().__init__(
@@ -215,10 +215,11 @@ class AmlCompute(Compute):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return AmlComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = AmlComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs) -> "AmlCompute":
+    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs: Any) -> "AmlCompute":
         loaded_data = load_from_dict(AmlComputeSchema, data, context, **kwargs)
         return AmlCompute(**loaded_data)
 

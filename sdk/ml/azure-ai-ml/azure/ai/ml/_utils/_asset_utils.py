@@ -306,7 +306,7 @@ def get_object_hash(path: Union[str, os.PathLike], ignore_file: IgnoreFile = Ign
         if os.path.islink(path):  # ensure we're hashing the contents of the linked file
             path = _resolve_path(Path(path))
         object_hash = _get_file_hash(filename=path, _hash=_hash)
-    return str(object_hash.hexdigest())
+    return str(object_hash.hexdigest())  # type: ignore[attr-defined]
 
 
 def get_content_hash_version():

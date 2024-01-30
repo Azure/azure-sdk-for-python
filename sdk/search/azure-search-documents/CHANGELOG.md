@@ -1,20 +1,22 @@
 # Release History
 
-## 11.5.0b1 (Unreleased)
+## 11.6.0b1 (2024-01-31)
 
 ### Features Added
 
-- Added `semantic_query` for `Search` method.
-- Added back alias operations to `SearchIndexClient`
+- Added back `semantic_query` for `Search` method.
+- Added back alias operations to `SearchIndexClient`.
+- Added back `AzureOpenAIEmbeddingSkill`, `AzureOpenAIParameters` and `AzureOpenAIVectorizer`.
 - Added back `query_language`, `query_speller`, `semantic_fields` and `debug` for `Search` method.
-
-### Breaking Changes
+- Added `send_request` method for `SearchClient` & `SearchIndexClient` to run a network request using the client's existing pipeline.
 
 ### Bugs Fixed
 
 - Fixed the issue that we added unexpected `retrievable` property for `SearchField`.
 
 ### Other Changes
+
+- Python 3.7 is no longer supported. Please use Python version 3.8 or later.
 
 ## 11.4.0 (2023-10-13)
 
@@ -62,6 +64,7 @@
 - Renamed `query_caption_highlight` to `query_caption_highlight_enabled`.
 - `query_language` and `query_speller` are not available for `Search` method in this stable release.
 - `alias` operations are not available in this stable release.
+- `AzureOpenAIEmbeddingSkill`, `AzureOpenAIParameters` and `AzureOpenAIVectorizer` are not available in 11.4.0.
 
 ### Other Changes
 
