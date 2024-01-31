@@ -13,20 +13,20 @@ import os
 import asyncio
 from datetime import datetime, timezone, timedelta
 from azure.servicebus.aio import ServiceBusClient
-from azure.servicebus import ServiceBusMessage
+from azure.servicebus import ServiceBusMessage, NEXT_AVAILABLE_SESSION
 
 
 CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
-QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
+SESSION_QUEUE_NAME = os.environ["SERVICEBUS_SESSION_QUEUE_NAME"]
 
 async def send_single_message(sender, i):
-    message = ServiceBusMessage(f"Single Message {i}")
+    message = ServiceBusMessage(f"Single Message {i}", session_id="0")
     await sender.send_messages(message)
 
 async def run():
     servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR)
     async with servicebus_client:
-        sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
+        sender = servicebus_client.get_queue_sender(queue_name=SESSION_QUEUE_NAME, session_id=NEXT_AVAILABLE_SESSION)
         async with sender:
             await send_single_message(sender, 1)
             await send_single_message(sender, 2)
@@ -34,7 +34,7 @@ async def run():
         print(f"All messages sent before {datetime.now(timezone.utc)}")
 
 
-        receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)
+        receiver = servicebus_client.get_queue_receiver(queue_name=SESSION_QUEUE_NAME, session_id=NEXT_AVAILABLE_SESSION)
         async with receiver:
 
             # Peek before deleting to see enqueued times

@@ -12,26 +12,26 @@ Example to show sending message(s) to a Service Bus Queue.
 import os
 import time
 from datetime import datetime, timezone, timedelta
-from azure.servicebus import ServiceBusClient, ServiceBusMessage
+from azure.servicebus import ServiceBusClient, ServiceBusMessage, NEXT_AVAILABLE_SESSION
 
 
 CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
-QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
+SESSION_QUEUE_NAME = os.environ["SERVICEBUS_SESSION_QUEUE_NAME"]
 
 def send_single_message(sender, i):
-    message = ServiceBusMessage(f"Single Message {i}")
+    message = ServiceBusMessage(f"Single Message {i}", session_id="0")
     sender.send_messages(message)
 
 servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR, uamqp_transport=False)
 with servicebus_client:
-    sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
+    sender = servicebus_client.get_queue_sender(queue_name=SESSION_QUEUE_NAME, session_id=NEXT_AVAILABLE_SESSION)
     with sender:
         send_single_message(sender, 1)
         send_single_message(sender, 2)
         send_single_message(sender, 3)
     print(f"All messages sent before {datetime.now(timezone.utc)}")
 
-    receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)
+    receiver = servicebus_client.get_queue_receiver(queue_name=SESSION_QUEUE_NAME, session_id=NEXT_AVAILABLE_SESSION)
     with receiver:
 
         # Peek before deleting to see enqueued times
