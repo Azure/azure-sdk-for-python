@@ -2050,8 +2050,8 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         with pytest.raises(ResourceExistsError):
             await file_client.get_ranges_diff(previous_sharesnapshot=previous_snapshot)
         with pytest.raises(ResourceExistsError):
-            await file_client.get_ranges_diff(previous_sharesnapshot=previous_snapshot, support_rename=False)
-        ranges, cleared = await file_client.get_ranges_diff(previous_sharesnapshot=previous_snapshot, support_rename=True)
+            await file_client.get_ranges_diff(previous_sharesnapshot=previous_snapshot, include_renames=False)
+        ranges, cleared = await file_client.get_ranges_diff(previous_sharesnapshot=previous_snapshot, include_renames=True)
         assert ranges is not None
         assert isinstance(ranges, list)
         assert len(ranges) == 1
