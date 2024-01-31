@@ -56,7 +56,6 @@ def semantic_ranking():
             search_text="luxury",
             query_type="semantic",
             semantic_configuration_name="semantic_config_name",
-            query_language="en-us",
         )
     )
 
