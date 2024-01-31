@@ -130,6 +130,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
     def list(
         self,
         connection_type: Optional[str] = None,
+        **kwargs: Any,
     ) -> Iterable[WorkspaceConnection]:
         """List all workspace connections for a workspace.
 
@@ -154,5 +155,6 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
                 cls=lambda objs: [WorkspaceConnection._from_rest_object(obj) for obj in objs],
                 category=_snake_to_camel(connection_type) if connection_type else connection_type,
                 **self._scope_kwargs,
+                **kwargs,
             ),
         )

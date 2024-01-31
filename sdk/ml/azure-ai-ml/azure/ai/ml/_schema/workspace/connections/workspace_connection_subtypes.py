@@ -62,3 +62,22 @@ class AzureAIServiceWorkspaceConnectionSchema(WorkspaceConnectionSchema):
         from azure.ai.ml.entities import AzureAIServiceWorkspaceConnection
 
         return AzureAIServiceWorkspaceConnection(**data)
+
+
+# pylint: disable-next=name-too-long
+class AzureBlobStoreWorkspaceConnectionSchema(WorkspaceConnectionSchema):
+    # type and credentials limited
+    type = StringTransformedEnum(
+        allowed_values=ConnectionCategory.COGNITIVE_SERVICE, casing_transform=camel_to_snake, required=True
+    )
+    credentials = NestedField(ApiKeyConfigurationSchema)
+
+    account_name = fields.Str(required=True, allow_none=False)
+    container_name = fields.Str(required=True, allow_none=False)
+
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities import AzureBlobStoreWorkspaceConnection
+
+        return AzureBlobStoreWorkspaceConnection(**data)

@@ -10,8 +10,9 @@ from azure.ai.ml.entities import WorkspaceConnection
 from azure.ai.ml.entities._credentials import ApiKeyConfiguration
 from azure.core.credentials import TokenCredential
 from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionCategory
-
-
+from azure.ai.ml.constants._common import (
+    WorkspaceConnectionTypes,
+)
 class BaseConnection:
     """A connection to a specific external AI system. This is a base class and should not be
     instantiated directly. Use the child classes that are specialized for connections to different services.
@@ -46,7 +47,8 @@ class BaseConnection:
         **kwargs,
     ):
         # Sneaky short-circuit to allow direct v2 WS conn injection without any
-        # polymorphic required argument hassles.
+        # polymorphic-argument hassles.
+        # See _from_v2_workspace_connection for usage.
         if kwargs.pop("make_empty", False):
             return
         
@@ -87,6 +89,9 @@ class BaseConnection:
             AzureOpenAIConnection,
             AzureAISearchConnection,
             AzureAIServiceConnection,
+            GitHubConnection,
+            CustomConnection,
+            AzureBlobStoreConnection
         )
     
         cat = camel_to_snake(conn_type).lower()
@@ -96,6 +101,15 @@ class BaseConnection:
             return AzureAISearchConnection
         elif cat == camel_to_snake(ConnectionCategory.COGNITIVE_SERVICE).lower():
             return AzureAIServiceConnection
+        elif cat == camel_to_snake(ConnectionCategory.GIT).lower():
+            return GitHubConnection
+        elif cat == camel_to_snake("azure_blob").lower():
+            return AzureBlobStoreConnection
+        elif (cat == camel_to_snake(ConnectionCategory.CUSTOM_KEYS).lower()
+            or cat == camel_to_snake(WorkspaceConnectionTypes.CUSTOM).lower()):
+            # Accept both custom_keys and custom as conversion type in case of
+            # improper input.
+            return CustomConnection
         return BaseConnection
 
 

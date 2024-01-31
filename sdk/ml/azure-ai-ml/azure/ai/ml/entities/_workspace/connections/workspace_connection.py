@@ -28,6 +28,7 @@ from azure.ai.ml._schema.workspace.connections.workspace_connection_subtypes imp
     AzureAISearchWorkspaceConnectionSchema,
     AzureAIServiceWorkspaceConnectionSchema,
     OpenAIWorkspaceConnectionSchema,
+    AzureBlobStoreWorkspaceConnectionSchema,
 )
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake, dump_yaml_to_file
@@ -36,6 +37,8 @@ from azure.ai.ml.constants._common import (
     CONNECTION_API_TYPE_KEY,
     CONNECTION_API_VERSION_KEY,
     CONNECTION_KIND_KEY,
+    CONNECTION_ACCOUNT_NAME_KEY,
+    CONNECTION_CONTAINER_NAME_KEY,
     PARAMS_OVERRIDE_KEY,
     WorkspaceConnectionTypes,
 )
@@ -265,6 +268,7 @@ class WorkspaceConnection(Resource):
             AzureAISearchWorkspaceConnection,
             AzureAIServiceWorkspaceConnection,
             AzureOpenAIWorkspaceConnection,
+            AzureBlobStoreWorkspaceConnection,
         )
 
         if not rest_obj:
@@ -280,11 +284,14 @@ class WorkspaceConnection(Resource):
             popped_tags = [CONNECTION_API_VERSION_KEY]
         elif conn_class == AzureAIServiceWorkspaceConnection:
             popped_tags = [CONNECTION_API_VERSION_KEY, CONNECTION_KIND_KEY]
+        elif conn_class == AzureBlobStoreWorkspaceConnection:
+            popped_tags = [CONNECTION_ACCOUNT_NAME_KEY, CONNECTION_CONTAINER_NAME_KEY]
 
         rest_kwargs = cls._extract_kwargs_from_rest_obj(rest_obj=rest_obj, popped_tags=popped_tags)
         # Renaming for client clarity
         if rest_kwargs["type"] == camel_to_snake(ConnectionCategory.CUSTOM_KEYS):
             rest_kwargs["type"] = WorkspaceConnectionTypes.CUSTOM
+        #import pdb; pdb.set_trace()
         workspace_connection = conn_class(**rest_kwargs)
         return workspace_connection
 
@@ -312,7 +319,7 @@ class WorkspaceConnection(Resource):
         elif auth_type is None:
             workspace_connection_properties_class = NoneAuthTypeWorkspaceConnectionProperties
 
-        # Convert from human readable to api enums if needed.
+        # Convert from human readable type to corresponding api enum if needed.
         conn_type = self.type
         if conn_type == WorkspaceConnectionTypes.CUSTOM:
             conn_type = ConnectionCategory.CUSTOM_KEYS
@@ -396,16 +403,20 @@ class WorkspaceConnection(Resource):
             AzureAISearchWorkspaceConnection,
             AzureAIServiceWorkspaceConnection,
             AzureOpenAIWorkspaceConnection,
+            AzureBlobStoreWorkspaceConnection,
         )
 
         cat = camel_to_snake(conn_type).lower()
         conn_class = WorkspaceConnection
+        #import pdb; pdb.set_trace()
         if cat == camel_to_snake(ConnectionCategory.AZURE_OPEN_AI).lower():
             conn_class = AzureOpenAIWorkspaceConnection
         elif cat == camel_to_snake(ConnectionCategory.COGNITIVE_SEARCH).lower():
             conn_class = AzureAISearchWorkspaceConnection
         elif cat == camel_to_snake(ConnectionCategory.COGNITIVE_SERVICE).lower():
             conn_class = AzureAIServiceWorkspaceConnection
+        elif cat == camel_to_snake("azure_blob").lower(): # TODO replace with real category from new rest.
+            conn_class = AzureBlobStoreWorkspaceConnection
         return conn_class
 
     @classmethod
@@ -431,5 +442,7 @@ class WorkspaceConnection(Resource):
             conn_class = AzureAISearchWorkspaceConnectionSchema
         elif cat == camel_to_snake(ConnectionCategory.COGNITIVE_SERVICE).lower():
             conn_class = AzureAIServiceWorkspaceConnectionSchema
+        elif cat == camel_to_snake("azure_blob").lower():
+            conn_class = AzureBlobStoreWorkspaceConnectionSchema
 
         return conn_class

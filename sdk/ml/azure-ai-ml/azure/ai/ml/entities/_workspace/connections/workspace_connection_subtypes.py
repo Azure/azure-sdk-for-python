@@ -10,6 +10,8 @@ from azure.ai.ml.constants._common import (
     CONNECTION_API_VERSION_KEY,
     CONNECTION_API_TYPE_KEY,
     CONNECTION_KIND_KEY,
+    CONNECTION_ACCOUNT_NAME_KEY,
+    CONNECTION_CONTAINER_NAME_KEY,
 )
 from azure.ai.ml.entities._credentials import (
     ApiKeyConfiguration,
@@ -218,3 +220,66 @@ class AzureAIServiceWorkspaceConnection(WorkspaceConnection):
         :type value: str
         """
         self.tags[CONNECTION_KIND_KEY] = value
+
+
+@experimental
+class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
+    """A connection to an Azure Blob Store. Connections of this type are read-only,
+    creation operations with them are not supported, and this class is only meant to be
+    instantiated from GET and LIST workspace connection operations.
+
+    :param name: Name of the workspace connection.
+    :type name: str
+    :param target: The URL or ARM resource ID of the external resource.
+    :type target: str
+    :param tags: Tag dictionary. Tags can be added, removed, and updated.
+    :type tags: dict
+    :param credentials: The credentials for authenticating to the external resource.
+    :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
+    :param container_name: The name of the container.
+    :type container_name: str
+    :param account_name: The name of the account.
+    :type account_name: str
+    """
+
+    def __init__(
+        self,
+        *,
+        target: str,
+        credentials: ApiKeyConfiguration, # TODO: double check this
+        container_name: str,
+        account_name: str,
+        **kwargs,
+    ):
+        kwargs.pop("type", None)  # make sure we never somehow use wrong type
+        super().__init__(
+            target=target,
+            type="azure_blob",
+            credentials=credentials,
+            **kwargs
+        )
+
+        self.tags[CONNECTION_CONTAINER_NAME_KEY] = container_name
+        self.tags[CONNECTION_ACCOUNT_NAME_KEY] = account_name
+
+    @property
+    def container_name(self) -> str:
+        """The name of the workspace connection's container.
+
+        :return: The name of the container.
+        :rtype: str
+        """
+        if self.tags is not None and CONNECTION_CONTAINER_NAME_KEY in self.tags:
+            return self.tags[CONNECTION_CONTAINER_NAME_KEY]
+        return None
+    
+    @property
+    def account_name(self) -> str:
+        """The name of the workspace connection's account
+
+        :return: The name of the account.
+        :rtype: str
+        """
+        if self.tags is not None and CONNECTION_ACCOUNT_NAME_KEY in self.tags:
+            return self.tags[CONNECTION_ACCOUNT_NAME_KEY]
+        return None

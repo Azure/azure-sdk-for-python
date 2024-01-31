@@ -42,7 +42,7 @@ class ConnectionOperations:
         client = self._resource_ml_client if scope == OperationScope.AI_RESOURCE else self._project_ml_client
         return [
             BaseConnection._from_v2_workspace_connection(conn)
-            for conn in client._workspace_connections.list(connection_type=connection_type)
+            for conn in client._workspace_connections.list(connection_type=connection_type, params={"includeAll": "true"})
         ]
 
     @distributed_trace
@@ -58,11 +58,11 @@ class ConnectionOperations:
         """
         client = self._resource_ml_client if scope == OperationScope.AI_RESOURCE else self._project_ml_client
         workspace_connection = client._workspace_connections.get(name=name, **kwargs)
-        connection = BaseConnection._from_v2_workspace_connection(workspace_connection)
+        connection = BaseConnection._from_v2_workspace_connection(workspace_connection, params={"includeAll": "true"})
 
         # It's by design that both API and V2 SDK don't include the secrets from API response, the following
         # code fills the gap when possible
-        if not connection.credentials.key:
+        if not (connection.credentials and connection.credentials.key):
             list_secrets_response = client.connections._operation.list_secrets(
                 connection_name=name,
                 resource_group_name=client.resource_group_name,
