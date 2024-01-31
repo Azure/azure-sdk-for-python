@@ -42,14 +42,3 @@ class AzureMonitorQueryMetricsTestCase(AzureRecordedTestCase):
 
         return self.create_client_from_credential(client_class, credential, **kwargs)
 
-
-class AzureMonitorQueryBatchMetricsTestCase(AzureRecordedTestCase):
-
-    def get_client(self, client_class, credential, endpoint = None):
-
-        kwargs = {}
-        if not endpoint:
-            region = os.getenv(ENV_MONITOR_LOCATION) or "westus2"
-            kwargs["endpoint"] = f"https://{region}.metrics.monitor.azure.com"
-
-        return self.create_client_from_credential(client_class, credential, **kwargs)

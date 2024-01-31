@@ -26,7 +26,6 @@ modelerfour:
 batch:
   - tag: release_query
   - tag: release_metrics
-  - tag: release_metrics_batch
 ```
 
 ## Query
@@ -53,18 +52,6 @@ input-file:
 output-folder: ../azure/monitor/query/_generated/metrics
 title: MonitorMetricsClient
 description: Azure Monitor Metrics Python Client
-```
-
-### Metrics Batch
-
-These settings apply only when `--tag=release_metrics` is specified on the command line.
-
-```yaml $(tag) == 'release_metrics_batch'
-input-file:
-    - https://github.com/Azure/azure-rest-api-specs/blob/0373f0edc4414fd402603fac51d0df93f1f70507/specification/monitor/data-plane/Microsoft.Insights/stable/2023-10-01/metricBatch.json
-output-folder: ../azure/monitor/query/_generated/metrics/batch
-title: MonitorBatchMetricsClient
-description: Azure Monitor Batch Metrics Python Client
 ```
 
 ### Remove metadata operations
