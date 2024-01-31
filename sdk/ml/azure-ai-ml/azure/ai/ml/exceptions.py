@@ -186,6 +186,8 @@ class DeploymentException(MlException):
     ):
 
         super(DeploymentException, self).__init__(
+            message=message,  # type: ignore[misc]
+            no_personal_data_message=no_personal_data_message,
             target=target,
             error_category=error_category,
             *args,
@@ -217,6 +219,8 @@ class ComponentException(MlException):
         **kwargs,
     ):
         super(ComponentException, self).__init__(
+            message=message,  # type: ignore[misc]
+            no_personal_data_message=no_personal_data_message,
             target=target,
             error_category=error_category,
             *args,
@@ -248,6 +252,8 @@ class JobException(MlException):
         **kwargs,
     ):
         super(JobException, self).__init__(
+            message=message,  # type: ignore[misc]
+            no_personal_data_message=no_personal_data_message,
             target=target,
             error_category=error_category,
             *args,
@@ -279,6 +285,8 @@ class ModelException(MlException):
         **kwargs,
     ):
         super(ModelException, self).__init__(
+            message=message,  # type: ignore[misc]
+            no_personal_data_message=no_personal_data_message,
             target=target,
             error_category=error_category,
             *args,
@@ -310,6 +318,8 @@ class AssetException(MlException):
         **kwargs,
     ):
         super(AssetException, self).__init__(
+            message=message,  # type: ignore[misc]
+            no_personal_data_message=no_personal_data_message,
             target=target,
             error_category=error_category,
             *args,
@@ -341,6 +351,8 @@ class ScheduleException(MlException):
         **kwargs,
     ):
         super(ScheduleException, self).__init__(
+            message=message,  # type: ignore[misc]
+            no_personal_data_message=no_personal_data_message,
             target=target,
             error_category=error_category,
             *args,
@@ -376,6 +388,8 @@ class ValidationException(MlException):
         :type error: Exception
         """
         super(ValidationException, self).__init__(
+            message=message,  # type: ignore[misc]
+            no_personal_data_message=no_personal_data_message,
             target=target,
             error_category=error_category,
             *args,
@@ -428,6 +442,8 @@ class AssetPathException(MlException):
         **kwargs,
     ):
         super(AssetPathException, self).__init__(
+            message=message,  # type: ignore[misc]
+            no_personal_data_message=no_personal_data_message,
             target=target,
             error_category=error_category,
             *args,
