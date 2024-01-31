@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import logging
-from typing import Optional, Union, TypeVar, cast, TYPE_CHECKING
+from typing import Optional, Union, TypeVar, cast, MutableMapping, TYPE_CHECKING
 from urllib3.util.retry import Retry
 from urllib3.exceptions import (
     ProtocolError,
@@ -118,17 +118,22 @@ class RequestsTransport(HttpTransport):
             self._session_owner = False
             self.session = None
 
-    def send(self, request: "RestHttpRequest", **kwargs) -> "RestHttpResponse":
+    def send(
+        self,
+        request: "RestHttpRequest",
+        *,
+        stream: bool = False,
+        proxies: Optional[MutableMapping[str, str]] = None,
+        **kwargs
+    ) -> "RestHttpResponse":
         """Send request object according to configuration.
 
         :param request: The request object to be sent.
         :type request:  ~corehttp.rest.HttpRequest
+        :keyword bool stream: Defaults to False.
+        :keyword MutableMapping proxies: dict of proxies to use based on protocol. Proxy is a dict (protocol, url).
         :return: An HTTPResponse object.
         :rtype: ~corehttp.rest.HttpResponse
-
-        :keyword requests.Session session: will override the driver session and use yours.
-         Should NOT be done unless really required. Anything else is sent straight to requests.
-        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
         response = None
@@ -154,6 +159,8 @@ class RequestsTransport(HttpTransport):
                 timeout=timeout,
                 cert=kwargs.pop("connection_cert", self.connection_config.get("connection_cert")),
                 allow_redirects=False,
+                stream=stream,
+                proxies=proxies,
                 **kwargs
             )
             response.raw.enforce_content_length = True
@@ -189,6 +196,6 @@ class RequestsTransport(HttpTransport):
             internal_response=response,
             block_size=self.connection_config.get("data_block_size"),
         )
-        if not kwargs.get("stream"):
+        if not stream:
             _handle_non_stream_rest_response(retval)
         return retval
