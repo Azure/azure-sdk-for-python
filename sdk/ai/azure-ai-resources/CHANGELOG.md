@@ -6,10 +6,6 @@
 
 - AzureOpenAIConnection.set_current_environment supports openai 1.0 and above.
 
-### Breaking Changes
-
-### Bugs Fixed
-
 ### Other Changes
 
 - Support for Python 3.12

@@ -2,12 +2,6 @@
 
 ## 1.0.0b3 (2024-01-30)
 
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
 ### Other Changes
 
 - Support for Python 3.12
