@@ -137,7 +137,7 @@ class AioHttpTransport(AsyncHttpTransport):
         """
         if request._files:  # pylint: disable=protected-access
             form_data = aiohttp.FormData(request._data or {})  # pylint: disable=protected-access
-            for form_file, data in get_file_items(request.files):
+            for form_file, data in get_file_items(request._files):  # pylint: disable=protected-access
                 content_type = data[2] if len(data) > 2 else None
                 try:
                     form_data.add_field(form_file, data[1], filename=data[0], content_type=content_type)
