@@ -6,6 +6,8 @@
 - Remove `experimental` tag for  `ml_client.jobs.validate`.
 
 ### Bugs Fixed
+- Workspace ListKey operation serialization issue fixed.
+- Workspace Diagnose result now can be print in to Json format.
 
 ### Breaking Changes
 
@@ -18,8 +20,6 @@
 ### Features Added
 
 ### Bugs Fixed
-- Workspace ListKey operation serialization issue fixed.
-- Workspace Diagnose result now can be print in to Json format.
 
 ### Breaking Changes
 
