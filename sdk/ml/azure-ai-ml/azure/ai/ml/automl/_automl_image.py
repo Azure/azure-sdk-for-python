@@ -111,8 +111,8 @@ def image_classification(
                 :dedent: 8
                 :caption: creating an automl image classification job
     """
-    return _create_image_job(
-        job_cls=ImageClassificationJob,  # type: ignore[type-var, return-value]
+    return _create_image_job(  # type: ignore[type-var, return-value]
+        job_cls=ImageClassificationJob,
         training_data=training_data,
         target_column_name=target_column_name,
         primary_metric=primary_metric,

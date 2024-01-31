@@ -816,7 +816,7 @@ class ClusterResourceProperties(_serialization.Model):
     :vartype network_profile: ~azure.mgmt.appplatform.v2021_09_01_preview.models.NetworkProfile
     :ivar version: Version of the Service.
     :vartype version: int
-    :ivar service_id: ServiceInstanceEntity GUID which uniquely identifies a created resource.
+    :ivar service_id: ServiceInstanceEntity Id which uniquely identifies a created resource.
     :vartype service_id: str
     :ivar power_state: Power state of the Service. Known values are: "Running" and "Stopped".
     :vartype power_state: str or ~azure.mgmt.appplatform.v2021_09_01_preview.models.PowerState

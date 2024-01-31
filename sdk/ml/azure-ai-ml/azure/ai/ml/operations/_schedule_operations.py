@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=protected-access
+# pylint: disable=protected-access, too-many-nested-blocks
 from typing import Any, Iterable, List, Optional, Tuple, cast
 
 from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
@@ -92,14 +92,16 @@ class ScheduleOperations(_ScopeDependentOperations):
     def _job_operations(self) -> JobOperations:
         return cast(
             JobOperations,
-            self._all_operations.get_operation(AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations)),
+            self._all_operations.get_operation(  # type: ignore[misc]
+                AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations)
+            ),
         )
 
     @property
     def _online_deployment_operations(self) -> OnlineDeploymentOperations:
         return cast(
             OnlineDeploymentOperations,
-            self._all_operations.get_operation(
+            self._all_operations.get_operation(  # type: ignore[misc]
                 AzureMLResourceType.ONLINE_DEPLOYMENT, lambda x: isinstance(x, OnlineDeploymentOperations)
             ),
         )
@@ -108,7 +110,9 @@ class ScheduleOperations(_ScopeDependentOperations):
     def _data_operations(self) -> DataOperations:
         return cast(
             DataOperations,
-            self._all_operations.get_operation(AzureMLResourceType.DATA, lambda x: isinstance(x, DataOperations)),
+            self._all_operations.get_operation(  # type: ignore[misc]
+                AzureMLResourceType.DATA, lambda x: isinstance(x, DataOperations)
+            ),
         )
 
     @distributed_trace
@@ -387,7 +391,7 @@ class ScheduleOperations(_ScopeDependentOperations):
                                 ),
                                 data_context=MonitorDatasetContext.MODEL_INPUTS,
                                 data_window=BaselineDataRange(
-                                    lookback_window_size="P7D", lookback_window_offset="default"
+                                    lookback_window_size="default", lookback_window_offset="default"
                                 ),
                             )
                     elif not mdc_input_enabled and not (signal.production_data and signal.reference_data):
@@ -422,7 +426,7 @@ class ScheduleOperations(_ScopeDependentOperations):
                                 ),
                                 data_context=MonitorDatasetContext.MODEL_OUTPUTS,
                                 data_window=BaselineDataRange(
-                                    lookback_window_size="P7D", lookback_window_offset="default"
+                                    lookback_window_size="default", lookback_window_offset="default"
                                 ),
                             )
                     elif not mdc_output_enabled and not (signal.production_data and signal.reference_data):
