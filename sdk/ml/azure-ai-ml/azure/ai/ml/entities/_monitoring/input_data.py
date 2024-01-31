@@ -13,13 +13,11 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import FixedInputData as
 from azure.ai.ml._restclient.v2023_06_01_preview.models import MonitoringInputDataBase as RestMonitorInputBase
 from azure.ai.ml._restclient.v2023_06_01_preview.models import StaticInputData as RestStaticInputData
 from azure.ai.ml._restclient.v2023_06_01_preview.models import TrailingInputData as RestTrailingInputData
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
 from azure.ai.ml.constants._monitoring import MonitorDatasetContext, MonitorInputDataType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
-@experimental
 class MonitorInputData(RestTranslatableMixin):
     """Monitor input data.
 
@@ -64,7 +62,6 @@ class MonitorInputData(RestTranslatableMixin):
         return None
 
 
-@experimental
 class FixedInputData(MonitorInputData):
     """
     :ivar type: Specifies the type of monitoring input data. Set automatically to "Fixed" for this class.
@@ -105,7 +102,6 @@ class FixedInputData(MonitorInputData):
         )
 
 
-@experimental
 class TrailingInputData(MonitorInputData):
     """
     :ivar type: Specifies the type of monitoring input data. Set automatically to "Trailing" for this class.
@@ -158,7 +154,6 @@ class TrailingInputData(MonitorInputData):
         )
 
 
-@experimental
 class StaticInputData(MonitorInputData):
     """
     :ivar type: Specifies the type of monitoring input data. Set automatically to "Static" for this class.

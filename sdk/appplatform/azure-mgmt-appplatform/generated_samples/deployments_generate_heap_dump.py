@@ -29,16 +29,15 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.deployments.begin_generate_heap_dump(
+    client.deployments.begin_generate_heap_dump(
         resource_group_name="myResourceGroup",
         service_name="myservice",
         app_name="myapp",
         deployment_name="mydeployment",
         diagnostic_parameters={"appInstance": "myappinstance", "filePath": "/byos/diagnose"},
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/appplatform/resource-manager/Microsoft.AppPlatform/stable/2022-12-01/examples/Deployments_GenerateHeapDump.json
+# x-ms-original-file: specification/appplatform/resource-manager/Microsoft.AppPlatform/stable/2023-12-01/examples/Deployments_GenerateHeapDump.json
 if __name__ == "__main__":
     main()
