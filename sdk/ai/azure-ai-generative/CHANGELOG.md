@@ -9,6 +9,7 @@
 ### Other Changes
 
 - Switched evaluate() function to run on promptflow engine
+- Use openai v1 environment variable
 
 ## 1.0.0b3 (2024-01-30)
 
@@ -25,7 +26,6 @@
 ### Other Changes
 
 - Dependency improvements.
-- Use openai v1 environment variable
 
 ## 1.0.0b1 (2023-11-10)
 

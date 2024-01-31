@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Use openai v1 environment variable
+
 ## 1.0.0b3 (2024-01-30)
 
 ### Features Added
@@ -19,7 +21,6 @@
 ### Other Changes
 
 - Support for Python 3.12
-- Use openai v1 environment variable
 
 ## 1.0.0b2 (2023-11-30)
 
