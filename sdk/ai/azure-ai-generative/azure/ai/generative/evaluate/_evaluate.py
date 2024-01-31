@@ -2,15 +2,18 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import copy
+from hmac import new
 import json
 import os
 import shutil
 import tempfile
 import time
 import logging
+from collections import Counter
 from json import JSONDecodeError
 from pathlib import Path
 from typing import Callable, Optional, Dict, List, Mapping
+from types import FunctionType
 
 import mlflow
 import numpy as np
@@ -24,10 +27,11 @@ from mlflow.protos.databricks_pb2 import ErrorCode, INVALID_PARAMETER_VALUE
 
 from azure.ai.generative.evaluate._metric_handler import MetricHandler
 from azure.ai.generative.evaluate._metrics_handler._code_metric_handler import CodeMetricHandler
-from azure.ai.generative.evaluate._utils import _is_flow, load_jsonl, _get_artifact_dir_path, _copy_artifact
+from azure.ai.generative.evaluate._utils import _is_flow, load_jsonl, _get_artifact_dir_path, _copy_artifact, \
+    is_lambda_function
 from azure.ai.generative.evaluate._mlflow_log_collector import RedirectUserOutputStreams
 from azure.ai.generative.evaluate._constants import SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING, SUPPORTED_TASK_TYPE, CHAT, \
-    TYPE_TO_KWARGS_MAPPING, SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING
+    SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING
 from azure.ai.generative.evaluate._evaluation_result import EvaluationResult
 from ._metrics_handler._prompt_metric_handler import PromptMetricHandler
 
@@ -67,27 +71,6 @@ def _get_metric_handler_class(
     return handler
 
 
-def _validate_data(data, prediction_data, truth_data):
-    errors = []
-    prediction_data_column = ""
-    truth_data_column = ""
-
-    if isinstance(prediction_data, str):
-        prediction_data_column = data[0].get(prediction_data, None)
-
-    if isinstance(truth_data, str):
-        truth_data_column = data[0].get(truth_data, None)
-
-    if prediction_data_column is None:
-        errors.append("prediction_data column not found in data")
-
-    if truth_data_column is None:
-        errors.append("truth_data column not found in data")
-
-    if len(errors) > 1:
-        raise Exception(f'Invalid data {" ,".join(errors)}')
-
-
 def _log_metrics(run_id, metrics):
     """
     Helper method to log metrics into specified run.
@@ -104,25 +87,33 @@ def _log_metrics(run_id, metrics):
 
 
 def _validate_metrics(metrics, task_type):
-    genai_metrics = []
+    prompt_metrics = []
     builtin_metrics =[]
+    code_metrics = []
     unknown_metrics = []
 
     for metric in metrics:
-        if isinstance(metric, GenAIMetric):
-            genai_metrics.append(metric.name)
+        if isinstance(metric, PromptMetric):
+            prompt_metrics.append(metric)
         elif isinstance(metric, str) and metric in SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING[task_type].SUPPORTED_LIST:
             builtin_metrics.append(metric)
+        elif isinstance(metric, FunctionType):
+            if is_lambda_function(metric):
+                raise Exception("Lambda methods are not supported as code metrics")
+            code_metrics.append(metric)
+
         else:
             unknown_metrics.append(metric)
 
     if len(unknown_metrics) > 0:
         raise Exception("Unsupported metric found in the list")
 
-    # if len(set(genai_metrics) & set(builtin_metrics)) > 0:
-    if len(genai_metrics) != len(set(genai_metrics)) or len(builtin_metrics) != len(set(builtin_metrics))\
-            or (len(set(genai_metrics) & set(builtin_metrics)) > 0):
-        raise Exception("Duplicate metric name found. Metric names should be unique")
+    counter = Counter(builtin_metrics + [metric.name for metric in prompt_metrics] + [metric.__name__ for metric in code_metrics])
+    duplicates = [key for key, value in counter.items() if value > 1]
+    if len(duplicates) > 0:
+        raise Exception(f"Duplicate metric name found {duplicates}. Metric names should be unique")
+
+    return builtin_metrics, prompt_metrics, code_metrics
 
 
 @distributed_trace
@@ -135,7 +126,7 @@ def evaluate(
         task_type: Optional[str] = None,
         metrics_list: Optional[List[str]] = None,
         model_config: Optional[Dict[str, str]] = None,
-        data_mapping: Optional[Mapping] = None,
+        data_mapping: Optional[Dict[str, str]] = None,
         output_path: Optional[str] = None,
         **kwargs
 ):
@@ -154,9 +145,9 @@ def evaluate(
     :keyword metrics_list: List of metrics to calculate. A default list is picked based on task_type if not set.
     :paramtype metrics_list: Optional[List[str]]
     :keyword model_config: GPT configuration details needed for AI-assisted metrics.
-    :paramtype model_config: Dict[str, str]
+    :paramtype model_config: Optional[Dict[str, str]]
     :keyword data_mapping: GPT configuration details needed for AI-assisted metrics.
-    :paramtype data_mapping: typing.Mapping
+    :paramtype data_mapping: Optional[Dict[str, str]]
     :keyword output_path: The local folder path to save evaluation artifacts to if set
     :paramtype output_path: Optional[str]
     :keyword tracking_uri: Tracking uri to log evaluation results to AI Studio
@@ -182,8 +173,20 @@ def evaluate(
     if model_config:
         metrics_config.update({"openai_params": model_config})
 
+
     if data_mapping:
-        metrics_config.update(data_mapping)
+        import warnings
+
+        new_data_mapping = dict(data_mapping)
+        if "y_pred" in new_data_mapping:
+            warnings.warn("y_pred is deprecated, please use \"answer\" instead")
+            value = data_mapping.pop("y_pred")
+            new_data_mapping.update({"answer": value})
+        if "y_test" in new_data_mapping:
+            warnings.warn("y_test is deprecated, please use \"ground_truth\" instead")
+            value = data_mapping.pop("y_test")
+            new_data_mapping.update({"ground_truth": value})
+        data_mapping = new_data_mapping
 
     sweep_args = kwargs.pop("sweep_args", None)
     if sweep_args:
@@ -230,8 +233,6 @@ def _evaluate(
         evaluation_name=None,
         target=None,
         data=None,
-        truth_data=None,
-        prediction_data=None,
         task_type=None,
         metrics=None,
         data_mapping=None,
@@ -248,14 +249,8 @@ def _evaluate(
         test_data = data
         _data_is_file = False
 
-    if "y_pred" in data_mapping:
-        prediction_data = data_mapping.get("y_pred")
-
-    if "y_test" in data_mapping:
-        truth_data = data_mapping.get("y_test")
-
-    if target is None and prediction_data is None:
-        raise Exception("target and prediction data cannot be null")
+    if "answer" in data_mapping:
+        prediction_data = data_mapping.get("answer")
 
     if task_type not in SUPPORTED_TASK_TYPE:
         raise Exception(f"task type {task_type} is not supported")
@@ -281,8 +276,6 @@ def _evaluate(
 
         asset_handler = asset_handler_class(
             asset=target,
-            prediction_data=prediction_data,
-            ground_truth=truth_data,
             test_data=test_data,
             metrics_config=metrics_config,
             **kwargs
@@ -293,28 +286,21 @@ def _evaluate(
         if metrics is None:
             metrics = SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING[task_type].DEFAULT_LIST
 
-        _validate_metrics(metrics, task_type)
-
-        inbuilt_metrics = [metric for metric in metrics if not isinstance(metric, GenAIMetric)]
-        custom_prompt_metrics = [metric for metric in metrics if isinstance(metric, PromptMetric)]
-        code_metrics = [metric for metric in metrics if isinstance(metric, CodeMetric)]
+        inbuilt_metrics, custom_prompt_metrics, code_metrics = _validate_metrics(metrics, task_type)
 
         # TODO : Once PF is used for inbuilt metrics parallelize submission of metrics calculation of different kind
 
         if custom_prompt_metrics:
             for metric in custom_prompt_metrics:
-                metrics_config.setdefault(metric.name, {param: param for param in metric.parameters})
+                metrics_config.setdefault(metric.name, {param: param for param in metric._template_variable})
 
             prompt_metric_handler = PromptMetricHandler(
                 task_type="custom-prompt-metric",
                 metrics=custom_prompt_metrics,
                 prediction_data=asset_handler.prediction_data,
-                truth_data=asset_handler.ground_truth,
                 test_data=asset_handler.test_data,
+                input_output_data=asset_handler.input_output_data,
                 metrics_mapping=metrics_config,
-                prediction_data_column_name=prediction_data if isinstance(prediction_data, str) else None,
-                ground_truth_column_name=truth_data if isinstance(truth_data, str) else None,
-                type_to_kwargs="custom-prompt-metric"
             )
 
             prompt_metric_results = prompt_metric_handler.calculate_metrics()
@@ -326,14 +312,11 @@ def _evaluate(
         if code_metrics:
             code_metric_handler = CodeMetricHandler(
                 task_type="custom-code-metric",
-                metrics=code_metrics,
+                metrics=[CodeMetric(name=metric.__name__, calculate=metric) for metric in code_metrics],
                 prediction_data=asset_handler.prediction_data,
-                truth_data=asset_handler.ground_truth,
+                input_output_data=asset_handler.input_output_data,
                 test_data=asset_handler.test_data,
                 metrics_mapping=metrics_config,
-                prediction_data_column_name=prediction_data if isinstance(prediction_data, str) else None,
-                ground_truth_column_name=truth_data if isinstance(truth_data, str) else None,
-                type_to_kwargs="code-prompt-metric"
             )
 
             code_metric_results = code_metric_handler.calculate_metrics()
@@ -347,12 +330,10 @@ def _evaluate(
                 task_type=SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING[task_type],
                 metrics=inbuilt_metrics,
                 prediction_data=asset_handler.prediction_data,
-                truth_data=asset_handler.ground_truth,
+                input_output_data=asset_handler.input_output_data,
                 test_data=asset_handler.test_data,
                 metrics_mapping=metrics_config,
-                prediction_data_column_name=prediction_data if isinstance(prediction_data, str) else None,
-                ground_truth_column_name=truth_data if isinstance(truth_data, str) else None,
-                type_to_kwargs=TYPE_TO_KWARGS_MAPPING[task_type]
+                data_mapping=data_mapping,
             )
 
             inbuilt_metrics_results = inbuilt_metrics_handler.calculate_metrics()
@@ -393,6 +374,7 @@ def _evaluate(
             eval_artifact_df = _get_instance_table(metrics_results, task_type, asset_handler).to_json(orient="records",
                                                                                                       lines=True,
                                                                                                       force_ascii=False)
+            # eval_artifact_df = result.to_json(orient="records", lines=True, force_ascii=False)
             tmp_path = os.path.join(tmpdir, "eval_results.jsonl")
 
             with open(tmp_path, "w", encoding="utf-8") as f:
@@ -480,22 +462,14 @@ def _get_chat_instance_table(metrics):
 
 
 def _get_instance_table(metrics, task_type, asset_handler):
-    if metrics.get("artifacts"):
-        metrics.get("artifacts").pop("bertscore", None)
+
     if task_type == CHAT:
         instance_level_metrics_table = _get_chat_instance_table(metrics.get("artifacts"))
     else:
         instance_level_metrics_table = pd.DataFrame(metrics.get("artifacts"))
 
-    prediction_data = asset_handler.prediction_data
-    for column in asset_handler.prediction_data.columns.values:
-        if column in asset_handler.test_data.columns.values:
-            prediction_data.drop(column, axis=1, inplace=True)
-
     combined_table = pd.concat(
-        [asset_handler.test_data,
-         prediction_data,
-         asset_handler.ground_truth,
+        [asset_handler.input_output_data,
          instance_level_metrics_table
          ],
         axis=1,

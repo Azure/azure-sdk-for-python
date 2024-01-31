@@ -43,9 +43,9 @@ steps:
     condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
 
   - task: UsePythonVersion@0
-    displayName: 'Use Python $(PythonVersion)'
+    displayName: 'Use Python 3.11'
     inputs:
-      versionSpec: $(PythonVersion)
+      versionSpec: '3.11'
 
   - script: |
       python -m pip install setuptools==58.3.0

@@ -13,7 +13,7 @@ def parallel_for(
 ) -> ParallelFor:
     """Build a parallel for loop by specifying the loop body and input items.
 
-    .. remarks::
+    .. note::
         The following example shows how to use parallel for API to create a pipeline with parallel for node.
 
         .. code-block:: python
@@ -59,7 +59,7 @@ def parallel_for(
     :rtype: ~azure.ai.ml.entities._builders.parallel_for.ParallelFor
     """
     parallel_for_node = ParallelFor(
-        body=body,
+        body=body,  # type: ignore[arg-type]
         items=items,
         _from_component_func=True,
         **kwargs,
