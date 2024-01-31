@@ -47,9 +47,9 @@ class _LocalDeploymentHelper(object):
         operation_container: OperationsContainer,
     ):
         self._docker_client = DockerClient()
-        self._model_operations = operation_container.all_operations.get(AzureMLResourceType.MODEL)
-        self._code_operations = operation_container.all_operations.get(AzureMLResourceType.CODE)
-        self._environment_operations = operation_container.all_operations.get(AzureMLResourceType.ENVIRONMENT)
+        self._model_operations: Any = operation_container.all_operations.get(AzureMLResourceType.MODEL)
+        self._code_operations: Any = operation_container.all_operations.get(AzureMLResourceType.CODE)
+        self._environment_operations: Any = operation_container.all_operations.get(AzureMLResourceType.ENVIRONMENT)
 
     def create_or_update(  # type: ignore
         self,
