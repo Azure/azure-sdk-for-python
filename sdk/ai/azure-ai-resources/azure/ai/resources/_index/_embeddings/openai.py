@@ -78,6 +78,7 @@ class OpenAIEmbedder:
                     api_key=self.api_key,
                     api_version=self.api_version,
                     azure_endpoint=self.api_base,
+                    azure_deployment=self.deployment,
                     default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
                 )
             else:

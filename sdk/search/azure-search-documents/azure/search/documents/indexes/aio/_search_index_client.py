@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import Union, Any, List, Optional, MutableMapping, cast
 
+from azure.core.rest import HttpRequest, AsyncHttpResponse
 from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -603,3 +604,16 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
             alias_name=alias.name, alias=alias, prefer="return=representation", error_map=error_map, **kwargs
         )
         return result  # pylint:disable=protected-access
+
+    @distributed_trace_async
+    async def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs) -> AsyncHttpResponse:
+        """Runs a network request using the client's existing pipeline.
+
+        :param request: The network request you want to make.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.AsyncHttpResponse
+        """
+        request.headers = self._merge_client_headers(request.headers)
+        return await self._client._send_request(request, stream=stream, **kwargs)  # pylint:disable=protected-access
