@@ -23,7 +23,7 @@ import pytest
 
 import azure.cosmos
 import test_config
-from azure.cosmos import PartitionKey
+from azure.cosmos import PartitionKey, cosmos_client
 
 
 @pytest.mark.cosmosEmulator

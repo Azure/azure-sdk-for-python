@@ -110,7 +110,8 @@ class TestAutoScale(unittest.TestCase):
         self.client.delete_database(created_database.id)
 
     def test_autoscale_replace_throughput(self):
-        created_database = self.client.create_database("replace_db", offer_throughput=ThroughputProperties(
+        database_id = "replace_db" + str(uuid.uuid4())
+        created_database = self.client.create_database(database_id, offer_throughput=ThroughputProperties(
             auto_scale_max_throughput=5000,
             auto_scale_increment_percent=2))
         created_database.replace_throughput(
@@ -120,10 +121,11 @@ class TestAutoScale(unittest.TestCase):
         assert created_db_properties.auto_scale_max_throughput == 7000
         # Testing the input value of the increment_percentage
         assert created_db_properties.auto_scale_increment_percent == 20
-        self.client.delete_database("replace_db")
+        self.client.delete_database(database_id)
 
+        container_id = "container_with_auto_scale_settings" + str(uuid.uuid4())
         created_container = self.created_database.create_container(
-            id='container_with_replace_functionality',
+            id=container_id,
             partition_key=PartitionKey(path="/id"),
             offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=0))
         created_container.replace_throughput(
@@ -133,7 +135,7 @@ class TestAutoScale(unittest.TestCase):
         assert created_container_properties.auto_scale_max_throughput == 7000
         assert created_container_properties.auto_scale_increment_percent == 20
 
-        self.created_database.delete_container(created_container.id)
+        self.created_database.delete_container(container_id)
 
 
 if __name__ == '__main__':
