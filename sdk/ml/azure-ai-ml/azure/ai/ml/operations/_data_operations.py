@@ -114,7 +114,7 @@ class DataOperations(_ScopeDependentOperations):
         service_client: Union[ServiceClient042023_preview, ServiceClient102021Dataplane],
         service_client_012024_preview: ServiceClient012024_preview,
         datastore_operations: DatastoreOperations,
-        **kwargs: Dict,
+        **kwargs: Any,
     ):
         super(DataOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
