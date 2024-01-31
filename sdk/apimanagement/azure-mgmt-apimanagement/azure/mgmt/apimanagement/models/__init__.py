@@ -12,6 +12,8 @@ from ._models_py3 import AccessInformationCreateParameters
 from ._models_py3 import AccessInformationSecretsContract
 from ._models_py3 import AccessInformationUpdateParameters
 from ._models_py3 import AdditionalLocation
+from ._models_py3 import AllPoliciesCollection
+from ._models_py3 import AllPoliciesContract
 from ._models_py3 import ApiCollection
 from ._models_py3 import ApiContactInformation
 from ._models_py3 import ApiContract
@@ -87,10 +89,14 @@ from ._models_py3 import AuthorizationServerUpdateContract
 from ._models_py3 import AuthorizationServerUpdateContractProperties
 from ._models_py3 import BackendAuthorizationHeaderCredentials
 from ._models_py3 import BackendBaseParameters
+from ._models_py3 import BackendBaseParametersPool
+from ._models_py3 import BackendCircuitBreaker
 from ._models_py3 import BackendCollection
 from ._models_py3 import BackendContract
 from ._models_py3 import BackendContractProperties
 from ._models_py3 import BackendCredentialsContract
+from ._models_py3 import BackendPool
+from ._models_py3 import BackendPoolItem
 from ._models_py3 import BackendProperties
 from ._models_py3 import BackendProxyContract
 from ._models_py3 import BackendReconnectContract
@@ -107,7 +113,10 @@ from ._models_py3 import CertificateConfiguration
 from ._models_py3 import CertificateContract
 from ._models_py3 import CertificateCreateOrUpdateParameters
 from ._models_py3 import CertificateInformation
+from ._models_py3 import CircuitBreakerFailureCondition
+from ._models_py3 import CircuitBreakerRule
 from ._models_py3 import ClientSecretContract
+from ._models_py3 import ConfigurationApi
 from ._models_py3 import ConnectivityCheckRequest
 from ._models_py3 import ConnectivityCheckRequestDestination
 from ._models_py3 import ConnectivityCheckRequestProtocolConfiguration
@@ -140,14 +149,18 @@ from ._models_py3 import EndpointDetail
 from ._models_py3 import ErrorFieldContract
 from ._models_py3 import ErrorResponse
 from ._models_py3 import ErrorResponseBody
+from ._models_py3 import FailureStatusCodeRange
 from ._models_py3 import GatewayCertificateAuthorityCollection
 from ._models_py3 import GatewayCertificateAuthorityContract
 from ._models_py3 import GatewayCollection
 from ._models_py3 import GatewayContract
+from ._models_py3 import GatewayDebugCredentialsContract
 from ._models_py3 import GatewayHostnameConfigurationCollection
 from ._models_py3 import GatewayHostnameConfigurationContract
 from ._models_py3 import GatewayKeyRegenerationRequestContract
 from ._models_py3 import GatewayKeysContract
+from ._models_py3 import GatewayListDebugCredentialsContract
+from ._models_py3 import GatewayListTraceContract
 from ._models_py3 import GatewayTokenContract
 from ._models_py3 import GatewayTokenRequestContract
 from ._models_py3 import GenerateSsoUrlResult
@@ -185,6 +198,7 @@ from ._models_py3 import KeyVaultLastAccessStatusContractProperties
 from ._models_py3 import LoggerCollection
 from ._models_py3 import LoggerContract
 from ._models_py3 import LoggerUpdateContract
+from ._models_py3 import MigrateToStv2Contract
 from ._models_py3 import NamedValueCollection
 from ._models_py3 import NamedValueContract
 from ._models_py3 import NamedValueContractProperties
@@ -226,6 +240,11 @@ from ._models_py3 import PolicyDescriptionCollection
 from ._models_py3 import PolicyDescriptionContract
 from ._models_py3 import PolicyFragmentCollection
 from ._models_py3 import PolicyFragmentContract
+from ._models_py3 import PolicyRestrictionCollection
+from ._models_py3 import PolicyRestrictionContract
+from ._models_py3 import PolicyRestrictionUpdateContract
+from ._models_py3 import PolicyWithComplianceCollection
+from ._models_py3 import PolicyWithComplianceContract
 from ._models_py3 import PortalConfigCollection
 from ._models_py3 import PortalConfigContract
 from ._models_py3 import PortalConfigCorsProperties
@@ -250,10 +269,14 @@ from ._models_py3 import PrivateEndpointConnectionRequestProperties
 from ._models_py3 import PrivateLinkResource
 from ._models_py3 import PrivateLinkResourceListResult
 from ._models_py3 import PrivateLinkServiceConnectionState
+from ._models_py3 import ProductApiLinkCollection
+from ._models_py3 import ProductApiLinkContract
 from ._models_py3 import ProductCollection
 from ._models_py3 import ProductContract
 from ._models_py3 import ProductContractProperties
 from ._models_py3 import ProductEntityBaseParameters
+from ._models_py3 import ProductGroupLinkCollection
+from ._models_py3 import ProductGroupLinkContract
 from ._models_py3 import ProductTagResourceContractProperties
 from ._models_py3 import ProductUpdateParameters
 from ._models_py3 import ProductUpdateProperties
@@ -304,6 +327,8 @@ from ._models_py3 import SubscriptionKeysContract
 from ._models_py3 import SubscriptionUpdateParameters
 from ._models_py3 import SubscriptionsDelegationSettingsProperties
 from ._models_py3 import SystemData
+from ._models_py3 import TagApiLinkCollection
+from ._models_py3 import TagApiLinkContract
 from ._models_py3 import TagCollection
 from ._models_py3 import TagContract
 from ._models_py3 import TagCreateUpdateParameters
@@ -312,6 +337,10 @@ from ._models_py3 import TagDescriptionCollection
 from ._models_py3 import TagDescriptionContract
 from ._models_py3 import TagDescriptionContractProperties
 from ._models_py3 import TagDescriptionCreateParameters
+from ._models_py3 import TagOperationLinkCollection
+from ._models_py3 import TagOperationLinkContract
+from ._models_py3 import TagProductLinkCollection
+from ._models_py3 import TagProductLinkContract
 from ._models_py3 import TagResourceCollection
 from ._models_py3 import TagResourceContract
 from ._models_py3 import TagResourceContractProperties
@@ -338,6 +367,8 @@ from ._models_py3 import WikiCollection
 from ._models_py3 import WikiContract
 from ._models_py3 import WikiDocumentationContract
 from ._models_py3 import WikiUpdateContract
+from ._models_py3 import WorkspaceCollection
+from ._models_py3 import WorkspaceContract
 from ._models_py3 import X509CertificateName
 
 from ._api_management_client_enums import AccessIdName
@@ -354,6 +385,7 @@ from ._api_management_client_enums import AsyncResolverStatus
 from ._api_management_client_enums import AuthorizationMethod
 from ._api_management_client_enums import AuthorizationType
 from ._api_management_client_enums import BackendProtocol
+from ._api_management_client_enums import BackendType
 from ._api_management_client_enums import BearerTokenSendingMethod
 from ._api_management_client_enums import BearerTokenSendingMethods
 from ._api_management_client_enums import CertificateConfigurationStoreName
@@ -368,9 +400,11 @@ from ._api_management_client_enums import ConnectivityStatusType
 from ._api_management_client_enums import ContentFormat
 from ._api_management_client_enums import CreatedByType
 from ._api_management_client_enums import DataMaskingMode
+from ._api_management_client_enums import DeveloperPortalStatus
 from ._api_management_client_enums import ExportApi
 from ._api_management_client_enums import ExportFormat
 from ._api_management_client_enums import ExportResultFormat
+from ._api_management_client_enums import GatewayListDebugCredentialsContractPurpose
 from ._api_management_client_enums import GrantType
 from ._api_management_client_enums import GroupType
 from ._api_management_client_enums import HostnameType
@@ -378,8 +412,12 @@ from ._api_management_client_enums import HttpCorrelationProtocol
 from ._api_management_client_enums import IdentityProviderType
 from ._api_management_client_enums import IssueType
 from ._api_management_client_enums import KeyType
+from ._api_management_client_enums import KeyVaultRefreshState
+from ._api_management_client_enums import LegacyApiState
+from ._api_management_client_enums import LegacyPortalStatus
 from ._api_management_client_enums import LoggerType
 from ._api_management_client_enums import Method
+from ._api_management_client_enums import MigrateToStv2Mode
 from ._api_management_client_enums import NameAvailabilityReason
 from ._api_management_client_enums import NatGatewayState
 from ._api_management_client_enums import NotificationName
@@ -387,10 +425,12 @@ from ._api_management_client_enums import OAuth2GrantType
 from ._api_management_client_enums import OperationNameFormat
 from ._api_management_client_enums import Origin
 from ._api_management_client_enums import PlatformVersion
+from ._api_management_client_enums import PolicyComplianceState
 from ._api_management_client_enums import PolicyContentFormat
 from ._api_management_client_enums import PolicyExportFormat
 from ._api_management_client_enums import PolicyFragmentContentFormat
 from ._api_management_client_enums import PolicyIdName
+from ._api_management_client_enums import PolicyRestrictionRequireBase
 from ._api_management_client_enums import PolicyScopeContract
 from ._api_management_client_enums import PortalRevisionStatus
 from ._api_management_client_enums import PortalSettingsCspMode
@@ -426,6 +466,8 @@ __all__ = [
     "AccessInformationSecretsContract",
     "AccessInformationUpdateParameters",
     "AdditionalLocation",
+    "AllPoliciesCollection",
+    "AllPoliciesContract",
     "ApiCollection",
     "ApiContactInformation",
     "ApiContract",
@@ -501,10 +543,14 @@ __all__ = [
     "AuthorizationServerUpdateContractProperties",
     "BackendAuthorizationHeaderCredentials",
     "BackendBaseParameters",
+    "BackendBaseParametersPool",
+    "BackendCircuitBreaker",
     "BackendCollection",
     "BackendContract",
     "BackendContractProperties",
     "BackendCredentialsContract",
+    "BackendPool",
+    "BackendPoolItem",
     "BackendProperties",
     "BackendProxyContract",
     "BackendReconnectContract",
@@ -521,7 +567,10 @@ __all__ = [
     "CertificateContract",
     "CertificateCreateOrUpdateParameters",
     "CertificateInformation",
+    "CircuitBreakerFailureCondition",
+    "CircuitBreakerRule",
     "ClientSecretContract",
+    "ConfigurationApi",
     "ConnectivityCheckRequest",
     "ConnectivityCheckRequestDestination",
     "ConnectivityCheckRequestProtocolConfiguration",
@@ -554,14 +603,18 @@ __all__ = [
     "ErrorFieldContract",
     "ErrorResponse",
     "ErrorResponseBody",
+    "FailureStatusCodeRange",
     "GatewayCertificateAuthorityCollection",
     "GatewayCertificateAuthorityContract",
     "GatewayCollection",
     "GatewayContract",
+    "GatewayDebugCredentialsContract",
     "GatewayHostnameConfigurationCollection",
     "GatewayHostnameConfigurationContract",
     "GatewayKeyRegenerationRequestContract",
     "GatewayKeysContract",
+    "GatewayListDebugCredentialsContract",
+    "GatewayListTraceContract",
     "GatewayTokenContract",
     "GatewayTokenRequestContract",
     "GenerateSsoUrlResult",
@@ -599,6 +652,7 @@ __all__ = [
     "LoggerCollection",
     "LoggerContract",
     "LoggerUpdateContract",
+    "MigrateToStv2Contract",
     "NamedValueCollection",
     "NamedValueContract",
     "NamedValueContractProperties",
@@ -640,6 +694,11 @@ __all__ = [
     "PolicyDescriptionContract",
     "PolicyFragmentCollection",
     "PolicyFragmentContract",
+    "PolicyRestrictionCollection",
+    "PolicyRestrictionContract",
+    "PolicyRestrictionUpdateContract",
+    "PolicyWithComplianceCollection",
+    "PolicyWithComplianceContract",
     "PortalConfigCollection",
     "PortalConfigContract",
     "PortalConfigCorsProperties",
@@ -664,10 +723,14 @@ __all__ = [
     "PrivateLinkResource",
     "PrivateLinkResourceListResult",
     "PrivateLinkServiceConnectionState",
+    "ProductApiLinkCollection",
+    "ProductApiLinkContract",
     "ProductCollection",
     "ProductContract",
     "ProductContractProperties",
     "ProductEntityBaseParameters",
+    "ProductGroupLinkCollection",
+    "ProductGroupLinkContract",
     "ProductTagResourceContractProperties",
     "ProductUpdateParameters",
     "ProductUpdateProperties",
@@ -718,6 +781,8 @@ __all__ = [
     "SubscriptionUpdateParameters",
     "SubscriptionsDelegationSettingsProperties",
     "SystemData",
+    "TagApiLinkCollection",
+    "TagApiLinkContract",
     "TagCollection",
     "TagContract",
     "TagCreateUpdateParameters",
@@ -726,6 +791,10 @@ __all__ = [
     "TagDescriptionContract",
     "TagDescriptionContractProperties",
     "TagDescriptionCreateParameters",
+    "TagOperationLinkCollection",
+    "TagOperationLinkContract",
+    "TagProductLinkCollection",
+    "TagProductLinkContract",
     "TagResourceCollection",
     "TagResourceContract",
     "TagResourceContractProperties",
@@ -752,6 +821,8 @@ __all__ = [
     "WikiContract",
     "WikiDocumentationContract",
     "WikiUpdateContract",
+    "WorkspaceCollection",
+    "WorkspaceContract",
     "X509CertificateName",
     "AccessIdName",
     "AccessType",
@@ -767,6 +838,7 @@ __all__ = [
     "AuthorizationMethod",
     "AuthorizationType",
     "BackendProtocol",
+    "BackendType",
     "BearerTokenSendingMethod",
     "BearerTokenSendingMethods",
     "CertificateConfigurationStoreName",
@@ -781,9 +853,11 @@ __all__ = [
     "ContentFormat",
     "CreatedByType",
     "DataMaskingMode",
+    "DeveloperPortalStatus",
     "ExportApi",
     "ExportFormat",
     "ExportResultFormat",
+    "GatewayListDebugCredentialsContractPurpose",
     "GrantType",
     "GroupType",
     "HostnameType",
@@ -791,8 +865,12 @@ __all__ = [
     "IdentityProviderType",
     "IssueType",
     "KeyType",
+    "KeyVaultRefreshState",
+    "LegacyApiState",
+    "LegacyPortalStatus",
     "LoggerType",
     "Method",
+    "MigrateToStv2Mode",
     "NameAvailabilityReason",
     "NatGatewayState",
     "NotificationName",
@@ -800,10 +878,12 @@ __all__ = [
     "OperationNameFormat",
     "Origin",
     "PlatformVersion",
+    "PolicyComplianceState",
     "PolicyContentFormat",
     "PolicyExportFormat",
     "PolicyFragmentContentFormat",
     "PolicyIdName",
+    "PolicyRestrictionRequireBase",
     "PolicyScopeContract",
     "PortalRevisionStatus",
     "PortalSettingsCspMode",

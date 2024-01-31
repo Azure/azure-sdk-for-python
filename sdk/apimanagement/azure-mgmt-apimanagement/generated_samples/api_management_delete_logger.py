@@ -26,18 +26,17 @@ from azure.mgmt.apimanagement import ApiManagementClient
 def main():
     client = ApiManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.logger.delete(
+    client.logger.delete(
         resource_group_name="rg1",
         service_name="apimService1",
         logger_id="loggerId",
         if_match="*",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementDeleteLogger.json
+# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2023-05-01-preview/examples/ApiManagementDeleteLogger.json
 if __name__ == "__main__":
     main()

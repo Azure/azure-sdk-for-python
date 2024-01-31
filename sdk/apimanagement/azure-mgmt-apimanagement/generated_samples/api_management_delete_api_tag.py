@@ -26,18 +26,17 @@ from azure.mgmt.apimanagement import ApiManagementClient
 def main():
     client = ApiManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.tag.detach_from_api(
+    client.tag.detach_from_api(
         resource_group_name="rg1",
         service_name="apimService1",
         api_id="59d5b28d1f7fab116c282650",
         tag_id="59d5b28e1f7fab116402044e",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementDeleteApiTag.json
+# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2023-05-01-preview/examples/ApiManagementDeleteApiTag.json
 if __name__ == "__main__":
     main()

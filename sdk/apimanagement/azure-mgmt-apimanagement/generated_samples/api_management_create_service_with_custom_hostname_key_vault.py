@@ -26,7 +26,7 @@ from azure.mgmt.apimanagement import ApiManagementClient
 def main():
     client = ApiManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     response = client.api_management_service.begin_create_or_update(
@@ -36,7 +36,7 @@ def main():
             "identity": {
                 "type": "UserAssigned",
                 "userAssignedIdentities": {
-                    "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id1": {}
+                    "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id1": {}
                 },
             },
             "location": "North Europe",
@@ -62,6 +62,12 @@ def main():
                         "keyVaultId": "https://rpbvtkeyvaultintegration.vault.azure.net/secrets/msitestingCert",
                         "type": "Portal",
                     },
+                    {
+                        "certificatePassword": "Password",
+                        "encodedCertificate": "****** Base 64 Encoded Certificate ************",
+                        "hostName": "configuration-api.msitesting.net",
+                        "type": "ConfigurationApi",
+                    },
                 ],
                 "publisherEmail": "apim@autorestsdk.com",
                 "publisherName": "autorestsdk",
@@ -74,6 +80,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementCreateServiceWithCustomHostnameKeyVault.json
+# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2023-05-01-preview/examples/ApiManagementCreateServiceWithCustomHostnameKeyVault.json
 if __name__ == "__main__":
     main()

@@ -73,8 +73,8 @@ class ApiExportOperations:
          instance. Non-current revision has ;rev=n as a suffix where n is the revision number. Required.
         :type api_id: str
         :param format: Format in which to export the Api Details to the Storage Blob with Sas Key valid
-         for 5 minutes. Known values are: "swagger-link", "wsdl-link", "wadl-link", "openapi-link", and
-         "openapi+json-link". Required.
+         for 5 minutes. New formats can be added in the future. Known values are: "swagger-link",
+         "wsdl-link", "wadl-link", "openapi-link", and "openapi+json-link". Required.
         :type format: str or ~azure.mgmt.apimanagement.models.ExportFormat
         :param export: Query parameter required to export the API details. "true" Required.
         :type export: str or ~azure.mgmt.apimanagement.models.ExportApi

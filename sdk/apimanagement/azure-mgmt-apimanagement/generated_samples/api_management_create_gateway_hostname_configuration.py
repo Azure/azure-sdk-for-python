@@ -26,7 +26,7 @@ from azure.mgmt.apimanagement import ApiManagementClient
 def main():
     client = ApiManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     response = client.gateway_hostname_configuration.create_or_update(
@@ -36,7 +36,7 @@ def main():
         hc_id="default",
         parameters={
             "properties": {
-                "certificateId": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.ApiManagement/service/apimService1/certificates/cert1",
+                "certificateId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.ApiManagement/service/apimService1/certificates/cert1",
                 "hostname": "*",
                 "http2Enabled": True,
                 "negotiateClientCertificate": False,
@@ -48,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementCreateGatewayHostnameConfiguration.json
+# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2023-05-01-preview/examples/ApiManagementCreateGatewayHostnameConfiguration.json
 if __name__ == "__main__":
     main()
