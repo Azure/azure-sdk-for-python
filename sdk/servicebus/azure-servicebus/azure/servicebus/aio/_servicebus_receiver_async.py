@@ -674,6 +674,10 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         self._check_live()
         if max_wait_time is not None and max_wait_time <= 0:
             raise ValueError("The max_wait_time must be greater than 0.")
+        if max_wait_time is not None and self._session_id is not None:
+            warnings.warn(f"Setting max_wait_time on receive_messages when NEXT_AVAILABLE_SESSION"
+                " is specified will not impact the timeout for connecting to a session. Please use"
+                " max_wait_time on the constructor to set the timeout for connecting to a session.")
         if max_message_count is not None and max_message_count <= 0:
             raise ValueError("The max_message_count must be greater than 0")
         start_time = time.time_ns()
