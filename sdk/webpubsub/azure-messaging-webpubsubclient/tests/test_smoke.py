@@ -8,8 +8,16 @@ from typing import List, Any
 import time
 import pytest
 from devtools_testutils import recorded_by_proxy
-from testcase import WebpubsubClientTest, WebpubsubClientPowerShellPreparer, on_group_message, TEST_RESULT
-from azure.messaging.webpubsubclient.models import OnGroupDataMessageArgs, StartNotStoppedClientError
+from testcase import (
+    WebpubsubClientTest,
+    WebpubsubClientPowerShellPreparer,
+    on_group_message,
+    TEST_RESULT,
+)
+from azure.messaging.webpubsubclient.models import (
+    OnGroupDataMessageArgs,
+    OpenClientError,
+)
 
 
 @pytest.mark.live_test_only
@@ -25,11 +33,11 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
 
         with client:
             client.join_group(group_name)
-            client.on("group-message", on_group_message)
+            client.subscribe("group-message", on_group_message)
             client.send_to_group(group_name, "hello test_call_back_deadlock1", "text")
             client.send_to_group(group_name, "hello test_call_back_deadlock2", "text")
             client.send_to_group(group_name, "hello test_call_back_deadlock3", "text")
-            # sleep to make sure the callback has enough time to execute before stop
+            # sleep to make sure the callback has enough time to execute before close
             time.sleep(0.001)
 
     @WebpubsubClientPowerShellPreparer()
@@ -50,19 +58,19 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
         client = self.create_client(connection_string=webpubsubclient_connection_string)
 
         def on_stop():
-            client._start()
+            client.open()
 
         with client:
-            # start client again after stop
-            client.on("stopped", on_stop)
+            # open client again after close
+            client.subscribe("stopped", on_stop)
             assert client._is_connected()
-            client._stop()
+            client.close()
             time.sleep(1.0)
             assert client._is_connected()
 
-            # remove stopped event and stop again
-            client.off("stopped", on_stop)
-            client._stop()
+            # remove stopped event and close again
+            client.unsubscribe("stopped", on_stop)
+            client.close()
             time.sleep(1.0)
             assert not client._is_connected()
 
@@ -70,9 +78,9 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
     @recorded_by_proxy
     def test_duplicated_start(self, webpubsubclient_connection_string):
         client = self.create_client(connection_string=webpubsubclient_connection_string)
-        with pytest.raises(StartNotStoppedClientError):
+        with pytest.raises(OpenClientError):
             with client:
-                client._start()
+                client.open()
         assert not client._is_connected()
 
     @WebpubsubClientPowerShellPreparer()
@@ -80,13 +88,15 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
     def test_duplicated_stop(self, webpubsubclient_connection_string):
         client = self.create_client(connection_string=webpubsubclient_connection_string)
         with client:
-            client._stop()
+            client.close()
         assert not client._is_connected()
 
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy
     def test_send_event(self, webpubsubclient_connection_string):
-        client = self.create_client(connection_string=webpubsubclient_connection_string, message_retry_total=0)
+        client = self.create_client(
+            connection_string=webpubsubclient_connection_string, message_retry_total=0
+        )
         with client:
             # please register event handler in azure portal before run this test
             client.send_event("event", "test_send_event", "text")
@@ -96,10 +106,11 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
     def test_rejoin_group(self, webpubsubclient_connection_string):
         def _test(enable_auto_rejoin, test_group_name, assert_func):
             client = self.create_client(
-                connection_string=webpubsubclient_connection_string, auto_rejoin_groups=enable_auto_rejoin
+                connection_string=webpubsubclient_connection_string,
+                auto_rejoin_groups=enable_auto_rejoin,
             )
             group_name = test_group_name
-            client.on("group-message", on_group_message)
+            client.subscribe("group-message", on_group_message)
             with client:
                 client.join_group(group_name)
 
@@ -109,7 +120,11 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
                 time.sleep(1)  # wait for on_group_message to be called
                 assert assert_func(test_group_name)
 
-        _test(enable_auto_rejoin=True, test_group_name="test_rejoin_group", assert_func=lambda x: x in TEST_RESULT)
+        _test(
+            enable_auto_rejoin=True,
+            test_group_name="test_rejoin_group",
+            assert_func=lambda x: x in TEST_RESULT,
+        )
         _test(
             enable_auto_rejoin=False,
             test_group_name="test_disable_rejoin_group",
