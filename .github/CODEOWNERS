@@ -255,9 +255,9 @@
 /sdk/ml/production-experiences.tests.yml                                      @hugoaponte @Man-MSFT @nancy-mejia @TajiHarrisMicrosoft
 
 # PRLabel: %ML-Workspace
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/                            @mingweihe @seanyao1
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_workspace/                          @mingweihe @seanyao1
-/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_workspace_operations.py           @mingweihe @seanyao1
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/                            @mingweihe @seanyao1 @debuggerXi
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_workspace/                          @mingweihe @seanyao1 @debuggerXi
+/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_workspace_operations.py           @mingweihe @seanyao1 @debuggerXi
 
 # PRLabel: %ML-WorkspaceConnections
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/connections/                @paulshealy1 @singankit @diondrapeck @luigiw @kdestin @MilesHolland @needuv @ninghu @YusakuNo1
