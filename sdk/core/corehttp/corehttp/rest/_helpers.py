@@ -44,6 +44,7 @@ from typing import (
 )
 import xml.etree.ElementTree as ET
 from ..serialization import CoreJSONEncoder
+from ..utils._utils import get_file_items
 
 
 ################################### TYPES SECTION #########################
@@ -141,9 +142,8 @@ def set_urlencoded_body(data, has_files):
 
 
 def set_multipart_body(files: FilesType):
-    file_items = files.items() if isinstance(files, Mapping) else files
-    formatted_files = {f: _format_data_helper(d) for f, d in file_items if d is not None}
-    return {}, formatted_files
+    formatted_files = [(f, _format_data_helper(d)) for f, d in get_file_items(files) if d is not None]
+    return {}, dict(formatted_files) if isinstance(files, Mapping) else formatted_files
 
 
 def set_xml_body(content):
