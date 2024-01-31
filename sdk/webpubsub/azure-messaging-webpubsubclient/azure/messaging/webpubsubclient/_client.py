@@ -39,13 +39,14 @@ from .models._models import (
     LeaveGroupMessage,
     AckMessageError,
     AckMap,
-    StartStoppingClientError,
-    StartClientError,
-    OpenWebSocketError,
-    StartNotStoppedClientError,
-    DisconnectedError,
+    OpenClientError,
 )
-from .models._enums import WebPubSubDataType, WebPubSubClientState, CallbackType, WebPubSubProtocolType
+from .models._enums import (
+    WebPubSubDataType,
+    WebPubSubClientState,
+    CallbackType,
+    WebPubSubProtocolType,
+)
 from ._util import format_user_agent
 
 _LOGGER = logging.getLogger(__name__)
@@ -72,6 +73,10 @@ class WebPubSubClientCredential:
             self._client_access_url_provider = client_access_url_provider
 
     def get_client_access_url(self) -> str:
+        """Get client access url.
+        :return: Client access url.
+        :rtype: str
+        """
         return self._client_access_url_provider()
 
 
@@ -91,7 +96,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
     :param credential: The url to connect or credential to use when connecting. Required.
     :type credential: str or WebPubSubClientCredential
     :keyword bool auto_rejoin_groups: Whether to enable restoring group after reconnecting
-    :keyword azure.messaging.webpubsubclient.WebPubSubProtocolType protocol_type: Subprotocol type
+    :keyword azure.messaging.webpubsubclient.models.WebPubSubProtocolType protocol_type: Subprotocol type
     :keyword int reconnect_retry_total: total number of retries to allow for reconnect. If 0, it means disable
      reconnect. Default is 3.
     :keyword float reconnect_retry_backoff_factor: A backoff factor to apply between attempts after the second try
@@ -112,7 +117,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
     :keyword bool auto_rejoin_groups: auto_rejoin_groups, default is True
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword float ack_timeout: Time limit to wait for ack message from server. The default value is 30.0 seconds.
-    :keyword float start_timeout: Time limit to wait for successful client start. The default value is 30.0 seconds.
+    :keyword float start_timeout: Time limit to wait for successful client open. The default value is 30.0 seconds.
     :keyword str user_agent: The user agent to be used for the request. If specified, this will be added in front of
      the default user agent string.
     """
@@ -206,7 +211,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
     def _send_message(self, message: WebPubSubMessage, **kwargs: Any) -> None:
         pay_load = self._protocol.write_message(message)
         if not self._ws or not self._ws.sock:
-            raise DisconnectedError("The connection is not connected.")
+            raise SendMessageError("The websocket connection is not connected.")
 
         self._ws.send(pay_load)
         if kwargs.pop("logging_enable", False) or self._logging_enable:
@@ -241,7 +246,10 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             raise SendMessageError(
                 message="Failed to send message.",
                 ack_id=ack_id,
-                error_detail=AckMessageError(name="", message="there may be disconnection during sending message."),
+                error_detail=AckMessageError(
+                    name="NoAckMessageReceivedFromServer",
+                    message="The connection may have been lost during message sending or service don't send ack message.",
+                ),
             )
         with message_ack.cv:
             _LOGGER.debug("wait for ack message with ackId: %s", ack_id)
@@ -249,7 +257,9 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             self._ack_map.pop(ack_id)
             if message_ack.error_detail is not None:
                 raise SendMessageError(
-                    message="Failed to send message.", ack_id=message_ack.ack_id, error_detail=message_ack.error_detail
+                    message="Failed to send message.",
+                    ack_id=message_ack.ack_id,
+                    error_detail=message_ack.error_detail,
                 )
 
     def _get_or_add_group(self, name: str) -> WebPubSubGroup:
@@ -300,10 +310,86 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
         self._retry(leave_group_attempt)
 
+    @overload
     def send_event(
         self,
         event_name: str,
-        content: Any,
+        content: str,
+        data_type: Union[Literal[WebPubSubDataType.TEXT], Literal["text"]],
+        **kwargs: Any,
+    ) -> None:
+        """Send custom event to server. For more info about event handler in web pubsub, please refer
+        to https://learn.microsoft.com/en-us/azure/azure-web-pubsub/howto-develop-eventhandler
+
+        :param event_name: The event name. Required.
+        :type event_name: str.
+        :param content: The data content that you want to send to event handler that registered in web
+         pubsub. Required.
+        :type content: str.
+        :param data_type: The data type. Required.
+        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.TEXT or Literal["text"].
+        :keyword int ack_id: The optional ackId. If not specified, client will generate one.
+        :keyword bool ack: If False, the message won't contains ackId and no AckMessage
+         will be returned from the service. Default is True.
+        """
+
+    @overload
+    def send_event(
+        self,
+        event_name: str,
+        content: memoryview,
+        data_type: Union[
+            Literal[WebPubSubDataType.BINARY],
+            Literal[WebPubSubDataType.PROTOBUF],
+            Literal["binary"],
+            Literal["protobuf"],
+        ],
+        **kwargs: Any,
+    ) -> None:
+        """Send custom event to server. For more info about event handler in web pubsub, please refer
+        to https://learn.microsoft.com/en-us/azure/azure-web-pubsub/howto-develop-eventhandler
+
+        :param event_name: The event name. Required.
+        :type event_name: str.
+        :param content: The data content that you want to send to event handler that registered in web
+         pubsub. Required.
+        :type content: memoryview.
+        :param data_type: The data type. Required.
+        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.BINARY or
+         ~azure.messaging.webpubsubclient.models.WebPubSubDataType.PROTOBUF or
+         Literal["binary"] or Literal["protobuf"].
+        :keyword int ack_id: The optional ackId. If not specified, client will generate one.
+        :keyword bool ack: If False, the message won't contains ackId and no AckMessage
+         will be returned from the service. Default is True.
+        """
+
+    @overload
+    def send_event(
+        self,
+        event_name: str,
+        content: Dict[str, Any],
+        data_type: Union[Literal[WebPubSubDataType.JSON], Literal["json"]],
+        **kwargs: Any,
+    ) -> None:
+        """Send custom event to server. For more info about event handler in web pubsub, please refer
+        to https://learn.microsoft.com/en-us/azure/azure-web-pubsub/howto-develop-eventhandler
+
+        :param event_name: The event name. Required.
+        :type event_name: str.
+        :param content: The data content that you want to send to event handler that registered in web
+         pubsub. Required.
+        :type content: Dict[str, Any].
+        :param data_type: The data type. Required.
+        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.JSON or Literal["json"].
+        :keyword int ack_id: The optional ackId. If not specified, client will generate one.
+        :keyword bool ack: If False, the message won't contains ackId and no AckMessage
+         will be returned from the service. Default is True.
+        """
+
+    def send_event(
+        self,
+        event_name: str,
+        content: Union[str, memoryview, Dict[str, Any]],
         data_type: Union[WebPubSubDataType, str],
         **kwargs: Any,
     ) -> None:
@@ -314,9 +400,9 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         :type event_name: str.
         :param content: The data content that you want to send to event handler that registered in web
          pubsub. Required.
-        :type content: Any.
+        :type content: Union[str, memoryview, Dict[str, Any]].
         :param data_type: The data type. Required.
-        :type data_type: Union[WebPubSubDataType, str].
+        :type data_type: Union[~azure.messaging.webpubsubclient.models.WebPubSubDataType, str].
         :keyword int ack_id: The optional ackId. If not specified, client will generate one.
         :keyword bool ack: If False, the message won't contains ackId and no AckMessage
          will be returned from the service. Default is True.
@@ -335,15 +421,83 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                 )
             else:
                 self._send_message(
-                    message=SendEventMessage(data_type=data_type, data=content, event=event_name), **kwargs
+                    message=SendEventMessage(data_type=data_type, data=content, event=event_name),
+                    **kwargs,
                 )
 
         self._retry(send_event_attempt)
 
+    @overload
     def send_to_group(
         self,
         group_name: str,
-        content: Any,
+        content: str,
+        data_type: Union[Literal[WebPubSubDataType.TEXT], Literal["text"]],
+        **kwargs: Any,
+    ) -> None:
+        """Send message to group.
+        :param group_name: The group name. Required.
+        :type group_name: str.
+        :param content: The data content. Required.
+        :type content: str.
+        :param data_type: The data type. Required.
+        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.TEXT or Literal["text"].
+        :keyword bool ack: If False, the message won't contains ackId and no AckMessage
+         will be returned from the service. Default is True.
+        :keyword bool no_echo: Whether the message needs to echo to sender. Default is False.
+        """
+
+    @overload
+    def send_to_group(
+        self,
+        group_name: str,
+        content: Dict[str, Any],
+        data_type: Union[Literal[WebPubSubDataType.JSON], Literal["json"]],
+        **kwargs: Any,
+    ) -> None:
+        """Send message to group.
+        :param group_name: The group name. Required.
+        :type group_name: str.
+        :param content: The data content. Required.
+        :type content: Dict[str, Any].
+        :param data_type: The data type. Required.
+        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.JSON or Literal["json"].
+        :keyword bool ack: If False, the message won't contains ackId and no AckMessage
+         will be returned from the service. Default is True.
+        :keyword bool no_echo: Whether the message needs to echo to sender. Default is False.
+        """
+
+    @overload
+    def send_to_group(
+        self,
+        group_name: str,
+        content: memoryview,
+        data_type: Union[
+            Literal[WebPubSubDataType.BINARY],
+            Literal[WebPubSubDataType.PROTOBUF],
+            Literal["binary"],
+            Literal["protobuf"],
+        ],
+        **kwargs: Any,
+    ) -> None:
+        """Send message to group.
+        :param group_name: The group name. Required.
+        :type group_name: str.
+        :param content: The data content. Required.
+        :type content: memoryview.
+        :param data_type: The data type. Required.
+        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.BINARY or
+         ~azure.messaging.webpubsubclient.models.WebPubSubDataType.PROTOBUF or
+         Literal["binary"] or Literal["protobuf"].
+        :keyword bool ack: If False, the message won't contains ackId and no AckMessage
+         will be returned from the service. Default is True.
+        :keyword bool no_echo: Whether the message needs to echo to sender. Default is False.
+        """
+
+    def send_to_group(
+        self,
+        group_name: str,
+        content: Union[str, memoryview, Dict[str, Any]],
         data_type: Union[WebPubSubDataType, str],
         **kwargs: Any,
     ) -> None:
@@ -351,9 +505,9 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         :param group_name: The group name. Required.
         :type group_name: str.
         :param content: The data content. Required.
-        :type content: Any.
+        :type content: Union[str, memoryview, Dict[str, Any]].
         :param data_type: The data type. Required.
-        :type data_type: Any.
+        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType or str.
         :keyword bool ack: If False, the message won't contains ackId and no AckMessage
          will be returned from the service. Default is True.
         :keyword bool no_echo: Whether the message needs to echo to sender. Default is False.
@@ -365,13 +519,22 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             if ack:
                 self._send_message_with_ack_id(
                     message_provider=lambda id: SendToGroupMessage(
-                        group=group_name, data_type=data_type, data=content, ack_id=id, no_echo=no_echo
+                        group=group_name,
+                        data_type=data_type,
+                        data=content,
+                        ack_id=id,
+                        no_echo=no_echo,
                     ),
                     **kwargs,
                 )
             else:
                 self._send_message(
-                    message=SendToGroupMessage(group=group_name, data_type=data_type, data=content, no_echo=no_echo),
+                    message=SendToGroupMessage(
+                        group=group_name,
+                        data_type=data_type,
+                        data=content,
+                        no_echo=no_echo,
+                    ),
                     **kwargs,
                 )
 
@@ -388,7 +551,11 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                 delay_seconds = self._message_retry_policy.next_retry_delay(retry_attempt)
                 if delay_seconds is None:
                     raise e
-                _LOGGER.debug("will retry %sth times after %s seconds", retry_attempt, delay_seconds)
+                _LOGGER.debug(
+                    "will retry %sth times after %s seconds",
+                    retry_attempt,
+                    delay_seconds,
+                )
                 time.sleep(delay_seconds)
 
     def _call_back(self, callback_type: Union[CallbackType, str], *args):
@@ -453,7 +620,10 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
     def _build_recovery_url(self) -> Union[str, None]:
         if self._connection_id and self._reconnection_token and self._url:
-            params = {"awps_connection_id": self._connection_id, "awps_reconnection_token": self._reconnection_token}
+            params = {
+                "awps_connection_id": self._connection_id,
+                "awps_reconnection_token": self._reconnection_token,
+            }
             url_parse = urllib.parse.urlparse(self._url)
             url_dict = dict(urllib.parse.parse_qsl(url_parse.query))
             url_dict.update(params)
@@ -464,7 +634,11 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         return None
 
     def _is_connected(self) -> bool:
-        """check whether the client is still connected to server after start"""
+        """check whether the client is still connected to server after open
+
+        :return: True if the client is connected to server, otherwise False
+        :rtype: bool
+        """
         return bool(
             self._state == WebPubSubClientState.CONNECTED
             and self._thread
@@ -484,8 +658,8 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                     CallbackType.REJOIN_GROUP_FAILED,
                     OnRejoinGroupFailedArgs(group=group_name, error=e),
                 )
-        threading.Thread(target=_rejoin_group, daemon=True).start()
 
+        threading.Thread(target=_rejoin_group, daemon=True).start()
 
     def _connect(self, url: str):  # pylint: disable=too-many-statements
         def on_open(_: Any):
@@ -494,7 +668,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                     if self._ws:
                         self._ws.close()
                 finally:
-                    raise StartStoppingClientError("Can't start a client during stopping")
+                    raise OpenClientError("Can't open a client during stopping")
 
             _LOGGER.debug("WebSocket connection has opened")
             self._state = WebPubSubClientState.CONNECTED
@@ -561,7 +735,9 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                 self._call_back(
                     CallbackType.SERVER_MESSAGE,
                     OnServerDataMessageArgs(
-                        data_type=message.data_type, data=message.data, sequence_id=message.sequence_id
+                        data_type=message.data_type,
+                        data=message.data,
+                        sequence_id=message.sequence_id,
                     ),
                 )
 
@@ -584,7 +760,11 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
         def on_close(_: Any, close_status_code: int, close_msg: str):
             if self._state == WebPubSubClientState.CONNECTED:
-                _LOGGER.info("WebSocket connection closed. Code: %s, Reason: %s", close_status_code, close_msg)
+                _LOGGER.info(
+                    "WebSocket connection closed. Code: %s, Reason: %s",
+                    close_status_code,
+                    close_msg,
+                )
 
                 self._last_close_event = CloseEvent(close_status_code=close_status_code, close_reason=close_msg)
                 # clean ack cache
@@ -624,12 +804,9 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
                 _LOGGER.warning("Recovery attempts failed after 30 seconds or the client is stopping")
                 self._handle_connection_close_and_no_recovery()
-            else:
-                _LOGGER.debug("WebSocket closed before open")
-                raise OpenWebSocketError(f"Fail to open Websocket: {close_status_code}")
 
         if self._is_stopping:
-            raise StartStoppingClientError("Can't start a client during stopping")
+            raise OpenClientError("Can't open a client during closing")
 
         self._ws = websocket.WebSocketApp(
             url=url,
@@ -646,7 +823,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         with self._cv:
             self._cv.wait(timeout=self._start_timeout)
         if not self._is_connected():
-            raise StartClientError("Fail to start client")
+            raise OpenClientError("Fail to open client")
 
         # set thread to check sequence id if needed
         if self._protocol.is_reliable_sub_protocol and (
@@ -664,7 +841,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
             self._thread_seq_ack = threading.Thread(target=sequence_id_ack_periodically, daemon=True)
             self._thread_seq_ack.start()
-        
+
         _LOGGER.info("connected successfully")
 
     def _start_core(self):
@@ -683,13 +860,13 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._url = self._credential.get_client_access_url()
         self._connect(self._url)
 
-    def _start(self) -> None:
-        """start the client and connect to service"""
+    def open(self) -> None:
+        """open the client and connect to service"""
 
         if self._is_stopping:
-            raise StartStoppingClientError("Can't start a client during stopping")
+            raise OpenClientError("Can't open a client during stopping")
         if self._state != WebPubSubClientState.STOPPED:
-            raise StartNotStoppedClientError("Client can be only started when it's Stopped")
+            raise OpenClientError("Client can be only started when it's Stopped")
 
         try:
             self._start_core()
@@ -698,8 +875,8 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             self._is_stopping = False
             raise e
 
-    def _stop(self) -> None:
-        """stop the client"""
+    def close(self) -> None:
+        """close the client"""
 
         if self._state == WebPubSubClientState.STOPPED or self._is_stopping:
             return
@@ -713,7 +890,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         if self._ws and self._ws.sock:
             self._ws.sock.close()
 
-        # users may call start the client again after stop so we need to wait for old thread join
+        # users may open the client again after close so we need to wait for old thread join
         if old_thread_seq_ack and old_thread_seq_ack.is_alive():
             _LOGGER.debug("wait for seq thread stop")
             old_thread_seq_ack.join()
@@ -721,28 +898,36 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             _LOGGER.debug("wait for listener thread stop")
             old_thread.join()
 
-        _LOGGER.info("stop client successfully")
+        _LOGGER.info("close client successfully")
 
     @overload
-    def on(self, event: Literal[CallbackType.CONNECTED], listener: Callable[[OnConnectedArgs], None]) -> None:
+    def subscribe(
+        self,
+        event: Union[Literal[CallbackType.CONNECTED], str],
+        listener: Callable[[OnConnectedArgs], None],
+    ) -> None:
         """Add handler for connected event.
         :param event: The event name. Required.
-        :type event: str
+        :type event: str or ~azure.messaging.webpubsubclient.models.CallbackType.CONNECTED
         :param listener: The handler
         :type listener: callable.
         """
 
     @overload
-    def on(self, event: Literal[CallbackType.DISCONNECTED], listener: Callable[[OnDisconnectedArgs], None]) -> None:
+    def subscribe(
+        self,
+        event: Union[Literal[CallbackType.DISCONNECTED], str],
+        listener: Callable[[OnDisconnectedArgs], None],
+    ) -> None:
         """Add handler for disconnected event.
         :param event: The event name. Required.
-        :type event: str
+        :type event: str or ~azure.messaging.webpubsubclient.models.CallbackType.DISCONNECTED
         :param listener: The handler
         :type listener: callable.
         """
 
     @overload
-    def on(self, event: Literal[CallbackType.STOPPED], listener: Callable[[], None]) -> None:
+    def subscribe(self, event: Literal[CallbackType.STOPPED], listener: Callable[[], None]) -> None:
         """Add handler for stopped event.
         :param event: The event name. Required.
         :type event: str
@@ -751,117 +936,147 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """
 
     @overload
-    def on(
+    def subscribe(
         self,
-        event: Literal[CallbackType.SERVER_MESSAGE],
+        event: Union[Literal[CallbackType.SERVER_MESSAGE], str],
         listener: Callable[[OnServerDataMessageArgs], None],
     ) -> None:
         """Add handler for server messages.
         :param event: The event name. Required.
-        :type event: str
+        :type event: str or ~azure.messaging.webpubsubclient.models.CallbackType.SERVER_MESSAGE
         :param listener: The handler
         :type listener: callable.
         """
 
     @overload
-    def on(
-        self, event: Literal[CallbackType.GROUP_MESSAGE], listener: Callable[[OnGroupDataMessageArgs], None]
+    def subscribe(
+        self,
+        event: Union[Literal[CallbackType.GROUP_MESSAGE], str],
+        listener: Callable[[OnGroupDataMessageArgs], None],
     ) -> None:
         """Add handler for group messages.
         :param event: The event name. Required.
-        :type event: str
+        :type event: str or ~azure.messaging.webpubsubclient.models.CallbackType.GROUP_MESSAGE
         :param listener: The handler
         :type listener: callable.
         """
 
     @overload
-    def on(
+    def subscribe(
         self,
-        event: Literal[CallbackType.REJOIN_GROUP_FAILED],
+        event: Union[Literal[CallbackType.REJOIN_GROUP_FAILED], str],
         listener: Callable[[OnRejoinGroupFailedArgs], None],
     ) -> None:
         """Add handler for rejoining group failed.
         :param event: The event name. Required.
-        :type event: str
+        :type event: str or ~azure.messaging.webpubsubclient.models.CallbackType.REJOIN_GROUP_FAILED
         :param listener: The handler
         :type listener: callable.
         """
 
-    def on(
-        self, event: Union[CallbackType, str], listener: Callable, **kwargs: Any  # pylint: disable=unused-argument
+    def subscribe(
+        self,
+        event: Union[CallbackType, str],
+        listener: Callable,
+        **kwargs: Any,  # pylint: disable=unused-argument
     ) -> None:
+        """Add handler.
+        :param event: The event name. Required.
+        :type event: ~azure.messaging.webpubsubclient.models.CallbackType or str
+        :param listener: The handler
+        :type listener: callable.
+        """
         if event in self._handler:
             self._handler[event].append(listener)
         else:
             _LOGGER.error("wrong event type: %s", event)
 
     @overload
-    def off(self, event: Literal[CallbackType.CONNECTED], listener: Callable[[OnConnectedArgs], None]) -> None:
+    def unsubscribe(
+        self,
+        event: Union[Literal[CallbackType.CONNECTED], str],
+        listener: Callable[[OnConnectedArgs], None],
+    ) -> None:
         """Remove handler for connected event.
         :param event: The event name. Required.
-        :type event: str
+        :type event: str or ~azure.messaging.webpubsubclient.models.CallbackType.CONNECTED
         :param listener: The handler
         :type listener: callable.
         """
 
     @overload
-    def off(self, event: Literal[CallbackType.DISCONNECTED], listener: Callable[[OnDisconnectedArgs], None]) -> None:
+    def unsubscribe(
+        self,
+        event: Union[Literal[CallbackType.DISCONNECTED], str],
+        listener: Callable[[OnDisconnectedArgs], None],
+    ) -> None:
         """Remove handler for connected event.
         :param event: The event name. Required.
-        :type event: str
+        :type event: str or ~azure.messaging.webpubsubclient.models.CallbackType.DISCONNECTED
         :param listener: The handler
         :type listener: callable.
         """
 
     @overload
-    def off(self, event: Literal[CallbackType.STOPPED], listener: Callable[[], None]) -> None:
+    def unsubscribe(self, event: Union[Literal[CallbackType.STOPPED], str], listener: Callable[[], None]) -> None:
         """Remove handler for stopped event.
         :param event: The event name. Required.
-        :type event: str
+        :type event: str or ~azure.messaging.webpubsubclient.models.CallbackType.STOPPED
         :param listener: The handler
         :type listener: callable.
         """
 
     @overload
-    def off(
+    def unsubscribe(
         self,
-        event: Literal[CallbackType.SERVER_MESSAGE],
+        event: Union[Literal[CallbackType.SERVER_MESSAGE], str],
         listener: Callable[[OnServerDataMessageArgs], None],
     ) -> None:
         """Remove handler for server message.
         :param event: The event name. Required.
-        :type event: str
+        :type event: str or ~azure.messaging.webpubsubclient.models.CallbackType.SERVER_MESSAGE
         :param listener: The handler
         :type listener: callable.
         """
 
     @overload
-    def off(
-        self, event: Literal[CallbackType.GROUP_MESSAGE], listener: Callable[[OnGroupDataMessageArgs], None]
+    def unsubscribe(
+        self,
+        event: Union[Literal[CallbackType.GROUP_MESSAGE], str],
+        listener: Callable[[OnGroupDataMessageArgs], None],
     ) -> None:
         """Remove handler for group message.
         :param event: The event name. Required.
-        :type event: str
+        :type event: str or ~azure.messaging.webpubsubclient.models.CallbackType.GROUP_MESSAGE
         :param listener: The handler
         :type listener: callable.
         """
 
     @overload
-    def off(
+    def unsubscribe(
         self,
-        event: Literal[CallbackType.REJOIN_GROUP_FAILED],
+        event: Union[Literal[CallbackType.REJOIN_GROUP_FAILED], str],
         listener: Callable[[OnRejoinGroupFailedArgs], None],
     ) -> None:
         """Remove handler for rejoining group failed.
         :param event: The event name. Required.
-        :type event: str
+        :type event: str or ~azure.messaging.webpubsubclient.models.CallbackType.REJOIN_GROUP_FAILED
         :param listener: The handler
         :type listener: callable.
         """
 
-    def off(
-        self, event: Union[CallbackType, str], listener: Callable, **kwargs: Any  # pylint: disable=unused-argument
+    def unsubscribe(
+        self,
+        event: Union[CallbackType, str],
+        listener: Callable,
+        **kwargs: Any,  # pylint: disable=unused-argument
     ) -> None:
+        """Remove handler for rejoining group failed.
+        :param event: The event name. Required.
+        :type event: ~azure.messaging.webpubsubclient.models.CallbackType or str
+        :param listener: The handler
+        :type listener: callable.
+        """
         if event in self._handler:
             if listener in self._handler[event]:
                 self._handler[event].remove(listener)
@@ -871,7 +1086,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             _LOGGER.error("wrong event type: %s", event)
 
     def __enter__(self):
-        self._start()
+        self.open()
 
     def __exit__(self, exc_type, exc_val, exc_tb):  # pylint: disable=unused-argument
-        self._stop()
+        self.close()

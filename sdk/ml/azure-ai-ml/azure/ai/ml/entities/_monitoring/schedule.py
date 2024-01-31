@@ -13,7 +13,6 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import CreateMonitorActi
 from azure.ai.ml._restclient.v2023_06_01_preview.models import Schedule as RestSchedule
 from azure.ai.ml._restclient.v2023_06_01_preview.models import ScheduleProperties
 from azure.ai.ml._schema.monitoring.schedule import MonitorScheduleSchema
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ScheduleType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
@@ -26,7 +25,6 @@ from azure.ai.ml.entities._util import load_from_dict
 module_logger = logging.getLogger(__name__)
 
 
-@experimental
 class MonitorSchedule(Schedule, RestTranslatableMixin):
     """Monitor schedule.
 
@@ -98,17 +96,23 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
         # by default 7 days if user provides incorrect recurrence frequency
         # or a cron expression
         default_data_window_size = "P7D"
+        ref_data_window_size = "P14D"
         if isinstance(self.trigger, RecurrenceTrigger):
             frequency = self.trigger.frequency.lower()
             interval = self.trigger.interval
             if frequency == RecurrenceFrequency.MINUTE.lower() or frequency == RecurrenceFrequency.HOUR.lower():
                 default_data_window_size = "P1D"
+                ref_data_window_size = "P2D"
             elif frequency == RecurrenceFrequency.DAY.lower():
                 default_data_window_size = f"P{interval}D"
+                ref_data_window_size = f"P{interval * 2}D"
             elif frequency == RecurrenceFrequency.WEEK.lower():
                 default_data_window_size = f"P{interval * 7}D"
+                ref_data_window_size = f"P{(interval * 7) * 2}D"
             elif frequency == RecurrenceFrequency.MONTH.lower():
                 default_data_window_size = f"P{interval * 30}D"
+                ref_data_window_size = f"P{(interval * 30) * 2}D"
+
         return RestSchedule(
             properties=ScheduleProperties(
                 description=self.description,
@@ -116,7 +120,7 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
                 tags=tags,
                 action=CreateMonitorAction(
                     monitor_definition=self.create_monitor._to_rest_object(
-                        default_data_window_size=default_data_window_size
+                        default_data_window_size=default_data_window_size, ref_data_window_size=ref_data_window_size
                     )
                 ),
                 display_name=self.display_name,
