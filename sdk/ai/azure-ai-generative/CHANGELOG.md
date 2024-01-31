@@ -1,12 +1,16 @@
 # Release History
 
-## 1.0.0b3 (Unreleased)
+## 1.0.0b4 (Unreleased)
 
 ### Features Added
 
-### Breaking Changes
+- Support custom metrics for evaluation
 
-### Bugs Fixed
+### Other Changes
+
+- Switched evaluate() function to run on promptflow engine
+
+## 1.0.0b3 (2024-01-30)
 
 ### Other Changes
 
