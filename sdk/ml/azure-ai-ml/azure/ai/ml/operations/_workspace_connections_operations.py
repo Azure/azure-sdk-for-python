@@ -47,7 +47,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         self._init_kwargs = kwargs
 
     @monitor_with_activity(logger, "WorkspaceConnections.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, **kwargs: Dict) -> WorkspaceConnection:
+    def get(self, name: str, **kwargs: Dict) -> Optional[WorkspaceConnection]:
         """Get a workspace connection by name.
 
         :param name: Name of the workspace connection.
@@ -75,7 +75,9 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         return WorkspaceConnection._from_rest_object(rest_obj=obj)
 
     @monitor_with_activity(logger, "WorkspaceConnections.CreateOrUpdate", ActivityType.PUBLICAPI)
-    def create_or_update(self, workspace_connection: WorkspaceConnection, **kwargs: Any) -> WorkspaceConnection:
+    def create_or_update(
+        self, workspace_connection: WorkspaceConnection, **kwargs: Any
+    ) -> Optional[WorkspaceConnection]:
         """Create or update a workspace connection.
 
         :param workspace_connection: Workspace Connection definition
