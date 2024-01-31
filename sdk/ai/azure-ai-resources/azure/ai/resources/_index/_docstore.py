@@ -83,7 +83,7 @@ class FileBasedDocstore:
 
         fs, uri = url_to_fs(input_path)
 
-        documents = Optional[Dict[str, Document]] = {}
+        documents: Optional[Dict[str, Document]] = {}
         with fs.open(f"{input_path.rstrip('/')}/docs.jsonl") as f:
             for line in f:
                 document = StaticDocument.loads(line.strip())
