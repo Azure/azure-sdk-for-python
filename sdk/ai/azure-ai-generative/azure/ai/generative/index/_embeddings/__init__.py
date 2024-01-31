@@ -32,53 +32,6 @@ from azure.ai.generative.index._utils.tokens import tiktoken_cache_dir
 
 logger = get_logger(__name__)
 
-
-def _args_to_openai_embedder(arguments: dict):
-    import openai
-    from azure.ai.generative.index._langchain.vendor.embeddings.openai import OpenAIEmbeddings
-    from azure.ai.generative.index._utils.logging import langchain_version
-
-    arguments = init_open_ai_from_config(arguments, credential=None)
-
-    if langchain_version > "0.0.154":
-        embedder = OpenAIEmbeddings(
-            openai_api_base=arguments.get("api_base", openai.api_base if hasattr(openai, "api_base") else openai.base_url),
-            openai_api_type=arguments.get("api_type", openai.api_type),
-            openai_api_version=arguments.get("api_version", openai.api_version),
-            openai_api_key=arguments.get("api_key", openai.api_key),
-            max_retries=100,  # TODO: Make this configurable
-        )
-    else:
-        if hasattr(openai, "api_base"):
-            openai.api_base = arguments.get("api_base", openai.api_base)
-        else:
-            openai.base_url = arguments.get("api_base", openai.base_url)
-        openai.api_type = arguments.get("api_type", openai.api_type)
-        openai.api_version = arguments.get("api_version", openai.api_version)
-        embedder = OpenAIEmbeddings(
-            openai_api_key=arguments.get("api_key", openai.api_key),
-            max_retries=100,  # TODO: Make this configurable
-        )
-
-    if "model_name" in arguments:
-        embedder.model = arguments["model_name"]
-
-    if "model" in arguments:
-        embedder.model = arguments["model"]
-
-    # Embeddings endpoint for AOAI uses deployment name and no model name.
-    if "deployment" in arguments and hasattr(embedder, "deployment"):
-        embedder.deployment = arguments["deployment"]
-
-    if "batch_size" in arguments:
-        embedder.chunk_size = int(arguments["batch_size"])
-
-    if "embedding_ctx_length" in arguments:
-        embedder.embedding_ctx_length = arguments["embedding_ctx_length"]
-
-    return embedder
-
-
 def get_langchain_embeddings(embedding_kind: str, arguments: dict, credential: Optional[TokenCredential] = None) -> Union[OpenAIEmbedder, Embedder]:
     """Get an instance of Embedder from the given arguments."""
     if "open_ai" in embedding_kind:
