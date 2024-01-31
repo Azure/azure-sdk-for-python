@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._all_policies_operations import AllPoliciesOperations
 from ._api_operations import ApiOperations
 from ._api_revision_operations import ApiRevisionOperations
 from ._api_release_operations import ApiReleaseOperations
@@ -27,11 +28,11 @@ from ._api_wiki_operations import ApiWikiOperations
 from ._api_wikis_operations import ApiWikisOperations
 from ._api_export_operations import ApiExportOperations
 from ._api_version_set_operations import ApiVersionSetOperations
-from ._authorization_server_operations import AuthorizationServerOperations
 from ._authorization_provider_operations import AuthorizationProviderOperations
 from ._authorization_operations import AuthorizationOperations
 from ._authorization_login_links_operations import AuthorizationLoginLinksOperations
 from ._authorization_access_policy_operations import AuthorizationAccessPolicyOperations
+from ._authorization_server_operations import AuthorizationServerOperations
 from ._backend_operations import BackendOperations
 from ._cache_operations import CacheOperations
 from ._certificate_operations import CertificateOperations
@@ -43,6 +44,7 @@ from ._api_management_operations_operations import ApiManagementOperationsOperat
 from ._api_management_service_skus_operations import ApiManagementServiceSkusOperations
 from ._api_management_service_operations import ApiManagementServiceOperations
 from ._diagnostic_operations import DiagnosticOperations
+from ._documentation_operations import DocumentationOperations
 from ._email_template_operations import EmailTemplateOperations
 from ._gateway_operations import GatewayOperations
 from ._gateway_hostname_configuration_operations import GatewayHostnameConfigurationOperations
@@ -63,6 +65,8 @@ from ._outbound_network_dependencies_endpoints_operations import OutboundNetwork
 from ._policy_operations import PolicyOperations
 from ._policy_description_operations import PolicyDescriptionOperations
 from ._policy_fragment_operations import PolicyFragmentOperations
+from ._policy_restriction_operations import PolicyRestrictionOperations
+from ._policy_restriction_validations_operations import PolicyRestrictionValidationsOperations
 from ._portal_config_operations import PortalConfigOperations
 from ._portal_revision_operations import PortalRevisionOperations
 from ._portal_settings_operations import PortalSettingsOperations
@@ -77,6 +81,8 @@ from ._product_subscriptions_operations import ProductSubscriptionsOperations
 from ._product_policy_operations import ProductPolicyOperations
 from ._product_wiki_operations import ProductWikiOperations
 from ._product_wikis_operations import ProductWikisOperations
+from ._product_api_link_operations import ProductApiLinkOperations
+from ._product_group_link_operations import ProductGroupLinkOperations
 from ._quota_by_counter_keys_operations import QuotaByCounterKeysOperations
 from ._quota_by_period_keys_operations import QuotaByPeriodKeysOperations
 from ._region_operations import RegionOperations
@@ -86,6 +92,9 @@ from ._tenant_settings_operations import TenantSettingsOperations
 from ._api_management_skus_operations import ApiManagementSkusOperations
 from ._subscription_operations import SubscriptionOperations
 from ._tag_resource_operations import TagResourceOperations
+from ._tag_api_link_operations import TagApiLinkOperations
+from ._tag_operation_link_operations import TagOperationLinkOperations
+from ._tag_product_link_operations import TagProductLinkOperations
 from ._tenant_access_operations import TenantAccessOperations
 from ._tenant_access_git_operations import TenantAccessGitOperations
 from ._tenant_configuration_operations import TenantConfigurationOperations
@@ -94,13 +103,41 @@ from ._user_group_operations import UserGroupOperations
 from ._user_subscription_operations import UserSubscriptionOperations
 from ._user_identities_operations import UserIdentitiesOperations
 from ._user_confirmation_password_operations import UserConfirmationPasswordOperations
-from ._documentation_operations import DocumentationOperations
+from ._workspace_operations import WorkspaceOperations
+from ._workspace_policy_operations import WorkspacePolicyOperations
+from ._workspace_named_value_operations import WorkspaceNamedValueOperations
+from ._workspace_global_schema_operations import WorkspaceGlobalSchemaOperations
+from ._workspace_notification_operations import WorkspaceNotificationOperations
+from ._workspace_notification_recipient_user_operations import WorkspaceNotificationRecipientUserOperations
+from ._workspace_notification_recipient_email_operations import WorkspaceNotificationRecipientEmailOperations
+from ._workspace_policy_fragment_operations import WorkspacePolicyFragmentOperations
+from ._workspace_group_operations import WorkspaceGroupOperations
+from ._workspace_group_user_operations import WorkspaceGroupUserOperations
+from ._workspace_subscription_operations import WorkspaceSubscriptionOperations
+from ._workspace_api_version_set_operations import WorkspaceApiVersionSetOperations
+from ._workspace_api_operations import WorkspaceApiOperations
+from ._workspace_api_revision_operations import WorkspaceApiRevisionOperations
+from ._workspace_api_release_operations import WorkspaceApiReleaseOperations
+from ._workspace_api_operation_operations import WorkspaceApiOperationOperations
+from ._workspace_api_operation_policy_operations import WorkspaceApiOperationPolicyOperations
+from ._workspace_api_policy_operations import WorkspaceApiPolicyOperations
+from ._workspace_api_schema_operations import WorkspaceApiSchemaOperations
+from ._workspace_product_operations import WorkspaceProductOperations
+from ._workspace_product_api_link_operations import WorkspaceProductApiLinkOperations
+from ._workspace_product_group_link_operations import WorkspaceProductGroupLinkOperations
+from ._workspace_product_policy_operations import WorkspaceProductPolicyOperations
+from ._workspace_tag_operations import WorkspaceTagOperations
+from ._workspace_tag_api_link_operations import WorkspaceTagApiLinkOperations
+from ._workspace_tag_operation_link_operations import WorkspaceTagOperationLinkOperations
+from ._workspace_tag_product_link_operations import WorkspaceTagProductLinkOperations
+from ._workspace_api_export_operations import WorkspaceApiExportOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AllPoliciesOperations",
     "ApiOperations",
     "ApiRevisionOperations",
     "ApiReleaseOperations",
@@ -122,11 +159,11 @@ __all__ = [
     "ApiWikisOperations",
     "ApiExportOperations",
     "ApiVersionSetOperations",
-    "AuthorizationServerOperations",
     "AuthorizationProviderOperations",
     "AuthorizationOperations",
     "AuthorizationLoginLinksOperations",
     "AuthorizationAccessPolicyOperations",
+    "AuthorizationServerOperations",
     "BackendOperations",
     "CacheOperations",
     "CertificateOperations",
@@ -138,6 +175,7 @@ __all__ = [
     "ApiManagementServiceSkusOperations",
     "ApiManagementServiceOperations",
     "DiagnosticOperations",
+    "DocumentationOperations",
     "EmailTemplateOperations",
     "GatewayOperations",
     "GatewayHostnameConfigurationOperations",
@@ -158,6 +196,8 @@ __all__ = [
     "PolicyOperations",
     "PolicyDescriptionOperations",
     "PolicyFragmentOperations",
+    "PolicyRestrictionOperations",
+    "PolicyRestrictionValidationsOperations",
     "PortalConfigOperations",
     "PortalRevisionOperations",
     "PortalSettingsOperations",
@@ -172,6 +212,8 @@ __all__ = [
     "ProductPolicyOperations",
     "ProductWikiOperations",
     "ProductWikisOperations",
+    "ProductApiLinkOperations",
+    "ProductGroupLinkOperations",
     "QuotaByCounterKeysOperations",
     "QuotaByPeriodKeysOperations",
     "RegionOperations",
@@ -181,6 +223,9 @@ __all__ = [
     "ApiManagementSkusOperations",
     "SubscriptionOperations",
     "TagResourceOperations",
+    "TagApiLinkOperations",
+    "TagOperationLinkOperations",
+    "TagProductLinkOperations",
     "TenantAccessOperations",
     "TenantAccessGitOperations",
     "TenantConfigurationOperations",
@@ -189,7 +234,34 @@ __all__ = [
     "UserSubscriptionOperations",
     "UserIdentitiesOperations",
     "UserConfirmationPasswordOperations",
-    "DocumentationOperations",
+    "WorkspaceOperations",
+    "WorkspacePolicyOperations",
+    "WorkspaceNamedValueOperations",
+    "WorkspaceGlobalSchemaOperations",
+    "WorkspaceNotificationOperations",
+    "WorkspaceNotificationRecipientUserOperations",
+    "WorkspaceNotificationRecipientEmailOperations",
+    "WorkspacePolicyFragmentOperations",
+    "WorkspaceGroupOperations",
+    "WorkspaceGroupUserOperations",
+    "WorkspaceSubscriptionOperations",
+    "WorkspaceApiVersionSetOperations",
+    "WorkspaceApiOperations",
+    "WorkspaceApiRevisionOperations",
+    "WorkspaceApiReleaseOperations",
+    "WorkspaceApiOperationOperations",
+    "WorkspaceApiOperationPolicyOperations",
+    "WorkspaceApiPolicyOperations",
+    "WorkspaceApiSchemaOperations",
+    "WorkspaceProductOperations",
+    "WorkspaceProductApiLinkOperations",
+    "WorkspaceProductGroupLinkOperations",
+    "WorkspaceProductPolicyOperations",
+    "WorkspaceTagOperations",
+    "WorkspaceTagApiLinkOperations",
+    "WorkspaceTagOperationLinkOperations",
+    "WorkspaceTagProductLinkOperations",
+    "WorkspaceApiExportOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

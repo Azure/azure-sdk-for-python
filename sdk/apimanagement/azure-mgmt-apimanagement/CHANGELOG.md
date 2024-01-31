@@ -1,5 +1,96 @@
 # Release History
 
+## 5.0.0b1 (2024-02-19)
+
+### Features Added
+
+  - Added operation GatewayOperations.invalidate_debug_credentials
+  - Added operation GatewayOperations.list_debug_credentials
+  - Added operation GatewayOperations.list_trace
+  - Added operation group AllPoliciesOperations
+  - Added operation group PolicyRestrictionOperations
+  - Added operation group PolicyRestrictionValidationsOperations
+  - Added operation group ProductApiLinkOperations
+  - Added operation group ProductGroupLinkOperations
+  - Added operation group TagApiLinkOperations
+  - Added operation group TagOperationLinkOperations
+  - Added operation group TagProductLinkOperations
+  - Added operation group WorkspaceApiExportOperations
+  - Added operation group WorkspaceApiOperationOperations
+  - Added operation group WorkspaceApiOperationPolicyOperations
+  - Added operation group WorkspaceApiOperations
+  - Added operation group WorkspaceApiPolicyOperations
+  - Added operation group WorkspaceApiReleaseOperations
+  - Added operation group WorkspaceApiRevisionOperations
+  - Added operation group WorkspaceApiSchemaOperations
+  - Added operation group WorkspaceApiVersionSetOperations
+  - Added operation group WorkspaceGlobalSchemaOperations
+  - Added operation group WorkspaceGroupOperations
+  - Added operation group WorkspaceGroupUserOperations
+  - Added operation group WorkspaceNamedValueOperations
+  - Added operation group WorkspaceNotificationOperations
+  - Added operation group WorkspaceNotificationRecipientEmailOperations
+  - Added operation group WorkspaceNotificationRecipientUserOperations
+  - Added operation group WorkspaceOperations
+  - Added operation group WorkspacePolicyFragmentOperations
+  - Added operation group WorkspacePolicyOperations
+  - Added operation group WorkspaceProductApiLinkOperations
+  - Added operation group WorkspaceProductGroupLinkOperations
+  - Added operation group WorkspaceProductOperations
+  - Added operation group WorkspaceProductPolicyOperations
+  - Added operation group WorkspaceSubscriptionOperations
+  - Added operation group WorkspaceTagApiLinkOperations
+  - Added operation group WorkspaceTagOperationLinkOperations
+  - Added operation group WorkspaceTagOperations
+  - Added operation group WorkspaceTagProductLinkOperations
+  - Model ApiContract has a new parameter provisioning_state
+  - Model ApiContractProperties has a new parameter provisioning_state
+  - Model ApiCreateOrUpdateParameter has a new parameter provisioning_state
+  - Model ApiCreateOrUpdateProperties has a new parameter provisioning_state
+  - Model ApiManagementServiceBaseProperties has a new parameter configuration_api
+  - Model ApiManagementServiceBaseProperties has a new parameter developer_portal_status
+  - Model ApiManagementServiceBaseProperties has a new parameter legacy_portal_status
+  - Model ApiManagementServiceProperties has a new parameter configuration_api
+  - Model ApiManagementServiceProperties has a new parameter developer_portal_status
+  - Model ApiManagementServiceProperties has a new parameter legacy_portal_status
+  - Model ApiManagementServiceResource has a new parameter configuration_api
+  - Model ApiManagementServiceResource has a new parameter developer_portal_status
+  - Model ApiManagementServiceResource has a new parameter legacy_portal_status
+  - Model ApiManagementServiceUpdateParameters has a new parameter configuration_api
+  - Model ApiManagementServiceUpdateParameters has a new parameter developer_portal_status
+  - Model ApiManagementServiceUpdateParameters has a new parameter legacy_portal_status
+  - Model ApiManagementServiceUpdateProperties has a new parameter configuration_api
+  - Model ApiManagementServiceUpdateProperties has a new parameter developer_portal_status
+  - Model ApiManagementServiceUpdateProperties has a new parameter legacy_portal_status
+  - Model AuthorizationAccessPolicyContract has a new parameter app_ids
+  - Model BackendBaseParameters has a new parameter circuit_breaker
+  - Model BackendBaseParameters has a new parameter pool
+  - Model BackendBaseParameters has a new parameter type
+  - Model BackendContract has a new parameter circuit_breaker
+  - Model BackendContract has a new parameter pool
+  - Model BackendContract has a new parameter type_properties_type
+  - Model BackendContractProperties has a new parameter circuit_breaker
+  - Model BackendContractProperties has a new parameter pool
+  - Model BackendContractProperties has a new parameter type
+  - Model BackendUpdateParameterProperties has a new parameter circuit_breaker
+  - Model BackendUpdateParameterProperties has a new parameter pool
+  - Model BackendUpdateParameterProperties has a new parameter type
+  - Model BackendUpdateParameters has a new parameter circuit_breaker
+  - Model BackendUpdateParameters has a new parameter pool
+  - Model BackendUpdateParameters has a new parameter type
+  - Model GlobalSchemaContract has a new parameter provisioning_state
+  - Model NamedValueContract has a new parameter provisioning_state
+  - Model NamedValueContractProperties has a new parameter provisioning_state
+  - Model PolicyFragmentContract has a new parameter provisioning_state
+  - Model PortalRevisionContract has a new parameter provisioning_state
+  - Model SchemaContract has a new parameter provisioning_state
+  - Operation ApiManagementServiceOperations.begin_migrate_to_stv2 has a new optional parameter parameters
+
+### Breaking Changes
+
+  - Renamed operation ApiOperations.delete to ApiOperations.begin_delete
+  - Renamed operation UserOperations.delete to UserOperations.begin_delete
+
 ## 4.0.0 (2023-04-20)
 
 ### Features Added

@@ -76,6 +76,8 @@ class ApiType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SOAP = "soap"
     WEBSOCKET = "websocket"
     GRAPHQL = "graphql"
+    ODATA = "odata"
+    GRPC = "grpc"
 
 
 class AppType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -132,6 +134,15 @@ class BackendProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Backend is a RESTful service."""
     SOAP = "soap"
     """The Backend is a SOAP service."""
+
+
+class BackendType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the backend. A backend can be either Single or Pool."""
+
+    SINGLE = "Single"
+    """supports single backend"""
+    POOL = "Pool"
+    """supports pool backend"""
 
 
 class BearerTokenSendingMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -228,7 +239,9 @@ class ConnectivityStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ContentFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Format of the Content in which the API is getting imported."""
+    """Format of the Content in which the API is getting imported. New formats can be added in the
+    future.
+    """
 
     WADL_XML = "wadl-xml"
     """The contents are inline and Content type is a WADL document."""
@@ -252,6 +265,14 @@ class ContentFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The OpenAPI 3.0 JSON document is hosted on a publicly accessible internet address."""
     GRAPHQL_LINK = "graphql-link"
     """The GraphQL API endpoint hosted on a publicly accessible internet address."""
+    ODATA = "odata"
+    """The contents are inline and Content Type is a OData XML Document."""
+    ODATA_LINK = "odata-link"
+    """The OData metadata document hosted on a publicly accessible internet address."""
+    GRPC = "grpc"
+    """The contents are inline and Content Type is a gRPC protobuf file."""
+    GRPC_LINK = "grpc-link"
+    """The gRPC protobuf file is hosted on a publicly accessible internet address."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -270,6 +291,15 @@ class DataMaskingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Mask the value of an entity."""
     HIDE = "Hide"
     """Hide the presence of an entity."""
+
+
+class DeveloperPortalStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of developer portal in this API Management service."""
+
+    ENABLED = "Enabled"
+    """Developer Portal is enabled for the service."""
+    DISABLED = "Disabled"
+    """Developer Portal is disabled for the service."""
 
 
 class ExportApi(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -310,6 +340,13 @@ class ExportResultFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Export the API Definition in OpenAPI Specification 3.0 to Storage Blob."""
 
 
+class GatewayListDebugCredentialsContractPurpose(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Purpose of debug credential."""
+
+    TRACING = "tracing"
+    """The tracing purpose."""
+
+
 class GrantType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """GrantType."""
 
@@ -340,6 +377,7 @@ class HostnameType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MANAGEMENT = "Management"
     SCM = "Scm"
     DEVELOPER_PORTAL = "DeveloperPortal"
+    CONFIGURATION_API = "ConfigurationApi"
 
 
 class HttpCorrelationProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -392,6 +430,39 @@ class KeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SECONDARY = "secondary"
 
 
+class KeyVaultRefreshState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KeyVaultRefreshState."""
+
+    TRUE = "true"
+    """Entities for which KeyVault refresh failed."""
+    FALSE = "false"
+    """Entities for which KeyVault refresh succeeded"""
+
+
+class LegacyApiState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indication whether or not the legacy Configuration API (v1) should be exposed on the API
+    Management service. Value is optional but must be 'Enabled' or 'Disabled'. If 'Disabled',
+    legacy Configuration API (v1) will not be available for self-hosted gateways. Default value is
+    'Enabled'.
+    """
+
+    ENABLED = "Enabled"
+    """Legacy Configuration API (v1) is enabled for the service and self-hosted gateways can connect
+    #: to it."""
+    DISABLED = "Disabled"
+    """Legacy Configuration API (v1) is disabled for the service and self-hosted gateways can not
+    #: connect to it."""
+
+
+class LegacyPortalStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of legacy portal in the API Management service."""
+
+    ENABLED = "Enabled"
+    """Legacy Portal is enabled for the service."""
+    DISABLED = "Disabled"
+    """Legacy Portal is disabled for the service."""
+
+
 class LoggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Logger type."""
 
@@ -408,6 +479,18 @@ class Method(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     GET = "GET"
     POST = "POST"
+
+
+class MigrateToStv2Mode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Mode of Migration to stv2. Default is PreserveIp."""
+
+    PRESERVE_IP = "PreserveIp"
+    """Migrate API Management service to stv2 from stv1, by reserving the IP Address of the service.
+    #: This will have a downtime of upto 15 minutes, while the IP address is getting migrate to new
+    #: infrastructure."""
+    NEW_IP = "NewIP"
+    """Migrate API Management service to stv2 from stv1. This will have no downtime as the service
+    #: configuration will be migrated to new infrastructure, but the IP address will changed."""
 
 
 class NameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -492,6 +575,19 @@ class PlatformVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Platform running the service on Single Tenant V2 platform."""
     MTV1 = "mtv1"
     """Platform running the service on Multi Tenant V1 platform."""
+    STV2_1 = "stv2.1"
+    """Platform running the service on Single Tenant V2 platform on newer Hardware."""
+
+
+class PolicyComplianceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Policy Restriction Compliance State."""
+
+    PENDING = "Pending"
+    """The policy restriction compliance state has not yet been determined."""
+    NON_COMPLIANT = "NonCompliant"
+    """The scope in restriction is out of compliance."""
+    COMPLIANT = "Compliant"
+    """The scope in restriction is in compliance."""
 
 
 class PolicyContentFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -531,6 +627,15 @@ class PolicyIdName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """PolicyIdName."""
 
     POLICY = "policy"
+
+
+class PolicyRestrictionRequireBase(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates if base policy should be enforced for the policy document."""
+
+    TRUE = "true"
+    """The policy is required to have base policy"""
+    FALSE = "false"
+    """The policy does not require to have base policy"""
 
 
 class PolicyScopeContract(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -674,6 +779,10 @@ class SkuType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Consumption SKU of Api Management."""
     ISOLATED = "Isolated"
     """Isolated SKU of Api Management."""
+    BASIC_V2 = "BasicV2"
+    """BasicV2 SKU of Api Management."""
+    STANDARD_V2 = "StandardV2"
+    """StandardV2 SKU of Api Management."""
 
 
 class SoapApiType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -684,6 +793,7 @@ class SoapApiType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     * ``soap`` creates a SOAP pass-through API
     * ``websocket`` creates websocket API
     * ``graphql`` creates GraphQL API.
+      New types can be added in the future.
     """
 
     SOAP_TO_REST = "http"
@@ -694,6 +804,10 @@ class SoapApiType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Imports the API having a Websocket front end."""
     GRAPH_QL = "graphql"
     """Imports the API having a GraphQL front end."""
+    O_DATA = "odata"
+    """Imports the API having a OData front end."""
+    G_RPC = "grpc"
+    """Imports the API having a gRPC front end."""
 
 
 class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):

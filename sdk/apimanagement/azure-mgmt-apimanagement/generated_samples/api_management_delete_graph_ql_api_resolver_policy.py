@@ -26,10 +26,10 @@ from azure.mgmt.apimanagement import ApiManagementClient
 def main():
     client = ApiManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.graph_ql_api_resolver_policy.delete(
+    client.graph_ql_api_resolver_policy.delete(
         resource_group_name="rg1",
         service_name="apimService1",
         api_id="testapi",
@@ -37,9 +37,8 @@ def main():
         policy_id="policy",
         if_match="*",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementDeleteGraphQLApiResolverPolicy.json
+# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2023-05-01-preview/examples/ApiManagementDeleteGraphQLApiResolverPolicy.json
 if __name__ == "__main__":
     main()
