@@ -4,6 +4,7 @@
 
 from pathlib import Path
 from typing import Dict, Optional, Union
+from packaging import version
 
 import yaml  # type: ignore[import]
 
@@ -89,6 +90,12 @@ def build_index(
                 "endpoint": aoai_connection["properties"]["target"]
             }
         else:
+            import openai
+            api_key = "OPENAI_API_KEY"
+            api_base = "OPENAI_API_BASE"
+            if version.parse(openai.version.VERSION) >= version.parse("1.0.0"):
+                api_key = "AZURE_OPENAI_KEY"
+                api_base = "AZURE_OPENAI_ENDPOINT"
             connection_args = {
                 "connection_type": "environment",
                 "connection": {"key": "OPENAI_API_KEY"},

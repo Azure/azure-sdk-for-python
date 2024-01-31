@@ -47,9 +47,9 @@ class AIEvaluateSamples(object):
             },
             model_config={
                 "api_version": "2023-05-15",
-                "api_base": os.getenv("OPENAI_API_BASE"),
+                "api_base": os.getenv("AZURE_OPENAI_ENDPOINT"),
                 "api_type": "azure",
-                "api_key": os.getenv("OPENAI_API_KEY"),
+                "api_key": os.getenv("AZURE_OPENAI_KEY"),
                 "deployment_id": os.getenv("AZURE_OPENAI_EVALUATION_DEPLOYMENT")
             },
             tracking_uri=client.tracking_uri,

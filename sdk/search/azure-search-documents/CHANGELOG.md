@@ -1,5 +1,15 @@
 # Release History
 
+## 11.6.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 11.6.0b1 (2024-01-31)
 
 ### Features Added
