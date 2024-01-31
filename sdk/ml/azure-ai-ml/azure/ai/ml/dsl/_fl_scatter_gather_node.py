@@ -5,7 +5,7 @@
 import importlib
 
 # pylint: disable=protected-access
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities import CommandComponent, PipelineJob
@@ -13,7 +13,7 @@ from azure.ai.ml.entities._assets.federated_learning_silo import FederatedLearni
 from azure.ai.ml.entities._builders.fl_scatter_gather import FLScatterGather
 
 
-def _check_for_import(package_name):
+def _check_for_import(package_name: str) -> None:
     try:
         # pylint: disable=unused-import
         importlib.import_module(package_name)
@@ -31,16 +31,16 @@ def fl_scatter_gather(
     silo_configs: List[FederatedLearningSilo],
     silo_component: Union[PipelineJob, CommandComponent],
     aggregation_component: Union[PipelineJob, CommandComponent],
-    aggregation_compute: str = None,
-    aggregation_datastore: str = None,
+    aggregation_compute: Optional[str] = None,
+    aggregation_datastore: Optional[str] = None,
     shared_silo_kwargs: Optional[Dict] = None,
     aggregation_kwargs: Optional[Dict] = None,
     silo_to_aggregation_argument_map: Optional[Dict] = None,
     aggregation_to_silo_argument_map: Optional[Dict] = None,
     max_iterations: int = 1,
     _create_default_mappings_if_needed: bool = False,
-    **kwargs,
-):
+    **kwargs: Any,
+) -> FLScatterGather:
     """A federated learning scatter-gather subgraph node.
 
     It's assumed that this will be used inside of a `@pipeline`-decorated function in order to create a subgraph which
@@ -136,8 +136,8 @@ def fl_scatter_gather(
     # Like other DSL nodes, this is just a wrapper around a node builder entity initializer.
     return FLScatterGather(
         silo_configs=silo_configs,
-        silo_component=silo_component,
-        aggregation_component=aggregation_component,
+        silo_component=silo_component,  # type: ignore[arg-type]
+        aggregation_component=aggregation_component,  # type: ignore[arg-type]
         shared_silo_kwargs=shared_silo_kwargs,
         aggregation_compute=aggregation_compute,
         aggregation_datastore=aggregation_datastore,

@@ -43,7 +43,7 @@ def build_put_request(connected_cluster_resource_uri: str, **kwargs: Any) -> Htt
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -75,7 +75,7 @@ def build_get_request(connected_cluster_resource_uri: str, **kwargs: Any) -> Htt
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -104,7 +104,7 @@ def build_delete_request(connected_cluster_resource_uri: str, **kwargs: Any) -> 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -133,7 +133,7 @@ def build_list_by_cluster_request(connected_cluster_resource_uri: str, **kwargs:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -191,10 +191,10 @@ class HybridIdentityMetadataOperations:
         Creates the hybrid identity metadata proxy resource that facilitates the managed identity
         provisioning.
 
-        :param connected_cluster_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param connected_cluster_resource_uri: The fully qualified Azure Resource Manager identifier of
          the connected cluster resource. Required.
         :type connected_cluster_resource_uri: str
-        :param body: Required.
+        :param body: Hybrid Identity Metadata resource definition. Required.
         :type body: ~azure.mgmt.hybridcontainerservice.models.HybridIdentityMetadata
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -214,10 +214,10 @@ class HybridIdentityMetadataOperations:
         Creates the hybrid identity metadata proxy resource that facilitates the managed identity
         provisioning.
 
-        :param connected_cluster_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param connected_cluster_resource_uri: The fully qualified Azure Resource Manager identifier of
          the connected cluster resource. Required.
         :type connected_cluster_resource_uri: str
-        :param body: Required.
+        :param body: Hybrid Identity Metadata resource definition. Required.
         :type body: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -237,10 +237,11 @@ class HybridIdentityMetadataOperations:
         Creates the hybrid identity metadata proxy resource that facilitates the managed identity
         provisioning.
 
-        :param connected_cluster_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param connected_cluster_resource_uri: The fully qualified Azure Resource Manager identifier of
          the connected cluster resource. Required.
         :type connected_cluster_resource_uri: str
-        :param body: Is either a HybridIdentityMetadata type or a IO type. Required.
+        :param body: Hybrid Identity Metadata resource definition. Is either a HybridIdentityMetadata
+         type or a IO type. Required.
         :type body: ~azure.mgmt.hybridcontainerservice.models.HybridIdentityMetadata or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -319,7 +320,7 @@ class HybridIdentityMetadataOperations:
 
         Get the hybrid identity metadata proxy resource.
 
-        :param connected_cluster_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param connected_cluster_resource_uri: The fully qualified Azure Resource Manager identifier of
          the connected cluster resource. Required.
         :type connected_cluster_resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -430,7 +431,7 @@ class HybridIdentityMetadataOperations:
 
         Deletes the hybrid identity metadata proxy resource.
 
-        :param connected_cluster_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param connected_cluster_resource_uri: The fully qualified Azure Resource Manager identifier of
          the connected cluster resource. Required.
         :type connected_cluster_resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -497,7 +498,7 @@ class HybridIdentityMetadataOperations:
 
         Lists the hybrid identity metadata proxy resource in a provisioned cluster instance.
 
-        :param connected_cluster_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param connected_cluster_resource_uri: The fully qualified Azure Resource Manager identifier of
          the connected cluster resource. Required.
         :type connected_cluster_resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response

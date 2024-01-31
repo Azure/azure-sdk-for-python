@@ -92,7 +92,7 @@
         "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
-        "governance_rules": "GovernanceRulesOperations",
-        "governance_assignments": "GovernanceAssignmentsOperations"
+        "governance_assignments": "GovernanceAssignmentsOperations",
+        "governance_rules": "GovernanceRulesOperations"
     }
 }

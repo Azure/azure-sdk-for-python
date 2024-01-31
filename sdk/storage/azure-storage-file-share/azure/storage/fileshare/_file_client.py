@@ -525,7 +525,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
-       :keyword file_change_time:
+        :keyword file_change_time:
             Change time for the file. If not specified, change time will be set to the current date/time.
 
             .. versionadded:: 12.8.0

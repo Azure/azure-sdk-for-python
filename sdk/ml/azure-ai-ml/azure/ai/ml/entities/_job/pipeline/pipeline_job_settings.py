@@ -2,13 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Optional
+from typing import Any, Dict, Generator, Optional
 
 from azure.ai.ml.entities._job.pipeline._attr_dict import _AttrDict
 
 
 class PipelineJobSettings(_AttrDict):
-    """Settings of PipelineJob, include default_datastore, default_compute, continue_on_step_failure and force_rerun.
+    """Settings of PipelineJob.
 
     :param default_datastore: The default datastore of the pipeline.
     :type default_datastore: str
@@ -22,8 +22,8 @@ class PipelineJobSettings(_AttrDict):
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/ml_samples_pipeline_job_configurations.py
-            :start-after: [START configure_PipelineJob_and_PipelineJobSettings]
-            :end-before: [END configure_PipelineJob_and_PipelineJobSettings]
+            :start-after: [START configure_pipeline_job_and_settings]
+            :end-before: [END configure_pipeline_job_and_settings]
             :language: python
             :dedent: 8
             :caption: Shows how to set pipeline properties using this class.
@@ -35,12 +35,12 @@ class PipelineJobSettings(_AttrDict):
         default_compute: Optional[str] = None,
         continue_on_step_failure: Optional[bool] = None,
         force_rerun: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         self._init = True
         super().__init__()
-        self.default_compute = default_compute
-        self.default_datastore = default_datastore
+        self.default_compute: Any = default_compute
+        self.default_datastore: Any = default_datastore
         self.continue_on_step_failure = continue_on_step_failure
         self.force_rerun = force_rerun
         self.on_init = kwargs.get("on_init", None)
@@ -49,7 +49,7 @@ class PipelineJobSettings(_AttrDict):
             setattr(self, k, v)
         self._init = False
 
-    def _get_valid_keys(self):
+    def _get_valid_keys(self) -> Generator[str, Any, None]:
         for k, v in self.__dict__.items():
             if v is None:
                 continue
@@ -58,17 +58,17 @@ class PipelineJobSettings(_AttrDict):
                 continue
             yield k
 
-    def _to_dict(self):
+    def _to_dict(self) -> Dict:
         result = {}
         for k in self._get_valid_keys():
             result[k] = self.__dict__[k]
         result.update(self._get_attrs())
         return result
 
-    def _initializing(self):
+    def _initializing(self) -> bool:
         return self._init
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         for _ in self._get_valid_keys():
             return True
         # _attr_dict will return False if no extra attributes are set

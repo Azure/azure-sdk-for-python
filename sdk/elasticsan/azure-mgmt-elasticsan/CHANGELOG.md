@@ -1,5 +1,66 @@
 # Release History
 
+## 1.0.0 (2024-01-25)
+
+### Features Added
+
+  - Model ElasticSanUpdate has a new parameter properties
+  - Model PrivateLinkResource has a new parameter properties
+  - Model VolumeGroup has a new parameter properties
+  - Model VolumeGroupUpdate has a new parameter properties
+  - Model VolumeUpdate has a new parameter properties
+
+### Breaking Changes
+
+  - Model ElasticSan has a new required parameter properties
+  - Model ElasticSan no longer has parameter availability_zones
+  - Model ElasticSan no longer has parameter base_size_ti_b
+  - Model ElasticSan no longer has parameter extended_capacity_size_ti_b
+  - Model ElasticSan no longer has parameter private_endpoint_connections
+  - Model ElasticSan no longer has parameter provisioning_state
+  - Model ElasticSan no longer has parameter public_network_access
+  - Model ElasticSan no longer has parameter sku
+  - Model ElasticSan no longer has parameter total_iops
+  - Model ElasticSan no longer has parameter total_m_bps
+  - Model ElasticSan no longer has parameter total_size_ti_b
+  - Model ElasticSan no longer has parameter total_volume_size_gi_b
+  - Model ElasticSan no longer has parameter volume_group_count
+  - Model ElasticSanUpdate no longer has parameter base_size_ti_b
+  - Model ElasticSanUpdate no longer has parameter extended_capacity_size_ti_b
+  - Model ElasticSanUpdate no longer has parameter public_network_access
+  - Model PrivateEndpointConnection has a new required parameter properties
+  - Model PrivateEndpointConnection no longer has parameter group_ids
+  - Model PrivateEndpointConnection no longer has parameter private_endpoint
+  - Model PrivateEndpointConnection no longer has parameter private_link_service_connection_state
+  - Model PrivateEndpointConnection no longer has parameter provisioning_state
+  - Model PrivateLinkResource no longer has parameter group_id
+  - Model PrivateLinkResource no longer has parameter required_members
+  - Model PrivateLinkResource no longer has parameter required_zone_names
+  - Model Snapshot has a new required parameter properties
+  - Model Snapshot no longer has parameter creation_data
+  - Model Snapshot no longer has parameter provisioning_state
+  - Model Snapshot no longer has parameter source_volume_size_gi_b
+  - Model Snapshot no longer has parameter volume_name
+  - Model Volume has a new required parameter properties
+  - Model Volume no longer has parameter creation_data
+  - Model Volume no longer has parameter managed_by
+  - Model Volume no longer has parameter provisioning_state
+  - Model Volume no longer has parameter size_gi_b
+  - Model Volume no longer has parameter storage_target
+  - Model Volume no longer has parameter volume_id
+  - Model VolumeGroup no longer has parameter encryption
+  - Model VolumeGroup no longer has parameter encryption_properties
+  - Model VolumeGroup no longer has parameter network_acls
+  - Model VolumeGroup no longer has parameter private_endpoint_connections
+  - Model VolumeGroup no longer has parameter protocol_type
+  - Model VolumeGroup no longer has parameter provisioning_state
+  - Model VolumeGroupUpdate no longer has parameter encryption
+  - Model VolumeGroupUpdate no longer has parameter encryption_properties
+  - Model VolumeGroupUpdate no longer has parameter network_acls
+  - Model VolumeGroupUpdate no longer has parameter protocol_type
+  - Model VolumeUpdate no longer has parameter managed_by
+  - Model VolumeUpdate no longer has parameter size_gi_b
+
 ## 1.0.0b3 (2023-10-23)
 
 ### Features Added

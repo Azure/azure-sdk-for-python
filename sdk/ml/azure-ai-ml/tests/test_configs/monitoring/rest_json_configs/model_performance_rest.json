@@ -1,46 +1,90 @@
 {
     "properties": {
-        "action": {
-            "actionType": "CreateMonitor",
-            "monitorDefinition": {
-                "computeId": "spark",
-                "monitoringTarget": "fake_endpoint_id",
-                "signals": {
-                    "testSignal": {
-                        "signalType": "ModelPerformanceSignalBase",
-                        "lookbackPeriod": "P60D",
-                        "mode": "Enabled",
-                        "targetData": {"dataContext": "test", "asset": {"jobInputType": "mltable", "uri": "Direct:1"}},
-                        "baselineData": {
-                            "dataContext": "test",
-                            "asset": {"jobInputType": "mltable", "uri": "Direct:1"},
-                        },
-                        "metricThreshold": {
-                            "modelType": "Regression",
-                            "metric": "RootMeanSquaredError",
-                            "threshold": {"value": 0.5},
-                        },
-                        "dataSegment": {"feature": "foo", "values": ["a", "b", "c"]},
-                    }
+      "action": {
+        "actionType": "CreateMonitor",
+        "monitorDefinition": {
+          "computeConfiguration": {
+            "computeType": "ServerlessSpark",
+            "instanceType": "standard_e4s_v3",
+            "runtimeVersion": "3.3",
+            "computeIdentity": {
+              "computeIdentityType": "AmlToken"
+            }
+          },
+          "monitoringTarget": {
+            "taskType": "classification",
+            "deploymentId": "fake_endpoint_id"
+          },
+          "signals": {
+            "testSignal": {
+              "signalType": "ModelPerformance",
+              "mode": "Disabled",
+              "productionData": [{
+                "dataContext": "model_inputs",
+                "inputDataType": "Trailing",
+                "jobInputType": "mltable",
+                "uri": "Direct:1",
+                "windowSize": "P7D",
+                "windowOffset": "P0D",
+                "columns": {
+                    "join_column": "correlationid",
+                    "target_column": "classification-targetvalue"
+                }
+              }],
+              "referenceData": {
+                "dataContext": "model_inputs",
+                "inputDataType": "Trailing",
+                "jobInputType": "mltable",
+                "uri": "Direct:1",
+                "windowSize": "P7D",
+                "windowOffset": "P0D",
+                "columns": {
+                    "join_column": "correlationid",
+                    "target_column": "classification"
+                }
+              },
+              "metricThreshold": {
+                    "modelType": "Classification",
+                    "threshold": {
+                      "value": 0.9
+                    },
+                    "metric": "Accuracy"
                 },
-            },
+              "properties": {
+                "azureml.modelmonitor.model_performance_thresholds": "[{\"modelType\":\"classification\",\"metric\":\"Accuracy\",\"threshold\":{\"value\":0.9}}]"
+              }
+            }
+          }
+        }
+      },
+      "trigger": {
+        "triggerType": "Recurrence",
+        "timeZone": "utc",
+        "frequency": "week",
+        "interval": 1,
+        "schedule": {
+          "hours": [
+            22,
+            20
+          ],
+          "minutes": [
+            0,
+            30
+          ],
+          "weekDays": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday"
+          ]
+        }
         },
-        "trigger": {
-            "triggerType": "Recurrence",
-            "timeZone": "utc",
-            "frequency": "week",
-            "interval": 1,
-            "schedule": {
-                "hours": [22, 20],
-                "minutes": [0, 0],
-                "weekDays": ["monday", "tuesday", "wednesday", "thursday", "friday"],
-            },
+        "properties":{
+            "prop1": "value"
         },
-        "properties": {"prop1": "value"},
         "tags": {
-            "tag1": "tag",
-            "compute.spark.resources.instance_type": "standard_e8s_v3",
-            "compute.spark.resources.runtime_version": "3.2",
-        },
+            "tag1": "tag"
+        }
+      }
     }
-}
