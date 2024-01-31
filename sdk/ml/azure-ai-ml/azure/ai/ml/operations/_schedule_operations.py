@@ -92,14 +92,16 @@ class ScheduleOperations(_ScopeDependentOperations):
     def _job_operations(self) -> JobOperations:
         return cast(
             JobOperations,
-            self._all_operations.get_operation(AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations)),
+            self._all_operations.get_operation(  # type: ignore[misc]
+                AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations)
+            ),
         )
 
     @property
     def _online_deployment_operations(self) -> OnlineDeploymentOperations:
         return cast(
             OnlineDeploymentOperations,
-            self._all_operations.get_operation(
+            self._all_operations.get_operation(  # type: ignore[misc]
                 AzureMLResourceType.ONLINE_DEPLOYMENT, lambda x: isinstance(x, OnlineDeploymentOperations)
             ),
         )
@@ -108,7 +110,9 @@ class ScheduleOperations(_ScopeDependentOperations):
     def _data_operations(self) -> DataOperations:
         return cast(
             DataOperations,
-            self._all_operations.get_operation(AzureMLResourceType.DATA, lambda x: isinstance(x, DataOperations)),
+            self._all_operations.get_operation(  # type: ignore[misc]
+                AzureMLResourceType.DATA, lambda x: isinstance(x, DataOperations)
+            ),
         )
 
     @distributed_trace
