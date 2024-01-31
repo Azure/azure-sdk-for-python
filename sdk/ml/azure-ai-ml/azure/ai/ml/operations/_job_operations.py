@@ -184,7 +184,7 @@ class JobOperations(_ScopeDependentOperations):
     def _component_operations(self) -> ComponentOperations:
         return cast(
             ComponentOperations,
-            self._all_operations.get_operation(
+            self._all_operations.get_operation(  # type: ignore[misc]
                 AzureMLResourceType.COMPONENT, lambda x: isinstance(x, ComponentOperations)
             ),
         )
@@ -193,14 +193,16 @@ class JobOperations(_ScopeDependentOperations):
     def _compute_operations(self) -> ComputeOperations:
         return cast(
             ComputeOperations,
-            self._all_operations.get_operation(AzureMLResourceType.COMPUTE, lambda x: isinstance(x, ComputeOperations)),
+            self._all_operations.get_operation(  # type: ignore[misc]
+                AzureMLResourceType.COMPUTE, lambda x: isinstance(x, ComputeOperations)
+            ),
         )
 
     @property
     def _virtual_cluster_operations(self) -> VirtualClusterOperations:
         return cast(
             VirtualClusterOperations,
-            self._all_operations.get_operation(
+            self._all_operations.get_operation(  # type: ignore[misc]
                 AzureMLResourceType.VIRTUALCLUSTER, lambda x: isinstance(x, VirtualClusterOperations)
             ),
         )

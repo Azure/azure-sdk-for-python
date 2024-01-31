@@ -212,14 +212,14 @@ class MLClient:
         if registry_name or registry_reference:
             # get the workspace location here if workspace_reference is provided
             self._ws_operation_scope = OperationScope(
-                subscription_id,
-                resource_group_name,
+                str(subscription_id),
+                str(resource_group_name),
                 workspace_name,
             )
             workspace_reference = kwargs.pop("workspace_reference", None)
             if workspace_reference or registry_reference:
                 ws_ops = WorkspaceOperations(
-                    OperationScope(subscription_id, resource_group_name, workspace_reference),
+                    OperationScope(str(subscription_id), str(resource_group_name), workspace_reference),
                     ServiceClient042023Preview(
                         credential=self._credential,
                         subscription_id=subscription_id,
@@ -246,8 +246,8 @@ class MLClient:
                 workspace_name = workspace_reference
 
         self._operation_scope = OperationScope(
-            subscription_id,
-            resource_group_name,
+            str(subscription_id),
+            str(resource_group_name),
             workspace_name,
             registry_name,
             workspace_id,
@@ -426,7 +426,7 @@ class MLClient:
             dataplane_client=self._service_client_workspace_dataplane,
             **app_insights_handler_kwargs,
         )
-        self._operation_container.add(AzureMLResourceType.WORKSPACE, self._workspaces)
+        self._operation_container.add(AzureMLResourceType.WORKSPACE, self._workspaces)  # type: ignore[arg-type]
 
         self._workspace_outbound_rules = WorkspaceOutboundRuleOperations(
             self._operation_scope,
@@ -444,7 +444,7 @@ class MLClient:
             self._credential,
             **app_insights_handler_kwargs,
         )
-        self._operation_container.add(AzureMLResourceType.REGISTRY, self._registries)
+        self._operation_container.add(AzureMLResourceType.REGISTRY, self._registries)  # type: ignore[arg-type]
 
         self._workspace_connections = WorkspaceConnectionsOperations(
             self._operation_scope,
@@ -604,7 +604,9 @@ class MLClient:
                 _service_client_kwargs=kwargs,
                 **ops_kwargs,
             )
-            self._operation_container.add(AzureMLResourceType.VIRTUALCLUSTER, self._virtual_clusters)
+            self._operation_container.add(
+                AzureMLResourceType.VIRTUALCLUSTER, self._virtual_clusters  # type: ignore[arg-type]
+            )
         except Exception as ex:  # pylint: disable=broad-except
             module_logger.debug("Virtual Cluster operations could not be initialized due to %s ", ex)
 
@@ -639,9 +641,9 @@ class MLClient:
             self._credential,
             **app_insights_handler_kwargs,
         )
-        self._operation_container.add(AzureMLResourceType.WORKSPACE_HUB, self._workspace_hubs)
+        self._operation_container.add(AzureMLResourceType.WORKSPACE_HUB, self._workspace_hubs)  # type: ignore[arg-type]
 
-        self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)
+        self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)  # type: ignore[arg-type]
         self._operation_container.add(AzureMLResourceType.FEATURE_SET, self._featuresets)
         self._operation_container.add(AzureMLResourceType.FEATURE_STORE_ENTITY, self._featurestoreentities)
 
