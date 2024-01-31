@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Use openai v1 environment variable
+
 ## 1.0.0b3 (2024-01-30)
 
 ### Features Added
