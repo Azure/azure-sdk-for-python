@@ -1196,3 +1196,14 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
                 async for msg in receiver:
                     pass
             assert time.time() - start_time2 < 65 # Default service timeout value is 65 seconds
+
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE_SESSION, max_wait_time=70)
+            start_time = time.time()
+            with pytest.raises(OperationTimeoutError):
+                await receiver.receive_messages(max_wait_time=5)
+            assert time.time() - start_time > 65 # Default service timeout value is 65 seconds
+            start_time2 = time.time()
+            with pytest.raises(OperationTimeoutError):
+                async for msg in receiver:
+                    pass
+            assert time.time() - start_time2 > 65 # Default service timeout value is 65 seconds
