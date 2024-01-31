@@ -29,7 +29,7 @@ from .._pyamqp.utils import amqp_long_value, amqp_array_value, amqp_string_value
 from .._pyamqp._encode import encode_payload
 from .._pyamqp._decode import decode_payload
 from .._pyamqp.message import Message, BatchMessage, Header, Properties
-from .._pyamqp.authentication import JWTTokenAuth
+from .._pyamqp.authentication import AccessToken, JWTTokenAuth
 from .._pyamqp.endpoints import Source
 from .._pyamqp._connection import Connection, _CLOSING_STATES
 
@@ -838,7 +838,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     @staticmethod
     def create_token_auth(
         auth_uri: str,
-        get_token: Callable,
+        get_token: Callable[..., AccessToken],
         token_type: bytes,
         config: "Configuration",
         **kwargs: Any

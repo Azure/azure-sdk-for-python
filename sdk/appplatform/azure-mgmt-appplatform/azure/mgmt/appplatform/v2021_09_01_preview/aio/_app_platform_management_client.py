@@ -98,22 +98,38 @@ class AppPlatformManagementClient:  # pylint: disable=client-accepts-api-version
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.services = ServicesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.config_servers = ConfigServersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.services = ServicesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2021-09-01-preview"
+        )
+        self.config_servers = ConfigServersOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2021-09-01-preview"
+        )
         self.monitoring_settings = MonitoringSettingsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-09-01-preview"
         )
-        self.apps = AppsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.bindings = BindingsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.storages = StoragesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.certificates = CertificatesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.custom_domains = CustomDomainsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.apps = AppsOperations(self._client, self._config, self._serialize, self._deserialize, "2021-09-01-preview")
+        self.bindings = BindingsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2021-09-01-preview"
+        )
+        self.storages = StoragesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2021-09-01-preview"
+        )
+        self.certificates = CertificatesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2021-09-01-preview"
+        )
+        self.custom_domains = CustomDomainsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2021-09-01-preview"
+        )
+        self.deployments = DeploymentsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2021-09-01-preview"
+        )
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize, "2021-09-01-preview"
+        )
         self.runtime_versions = RuntimeVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-09-01-preview"
         )
-        self.skus = SkusOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.skus = SkusOperations(self._client, self._config, self._serialize, self._deserialize, "2021-09-01-preview")
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.

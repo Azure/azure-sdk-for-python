@@ -85,8 +85,8 @@ setup(
         "azure-core<2.0.0,>=1.23.0",
         "fixedint==0.1.6",
         "msrest>=0.6.10",
-        "opentelemetry-api~=1.20",
-        "opentelemetry-sdk~=1.20",
+        "opentelemetry-api~=1.21",
+        "opentelemetry-sdk~=1.21",
     ],
     entry_points={
         "opentelemetry_traces_exporter": [

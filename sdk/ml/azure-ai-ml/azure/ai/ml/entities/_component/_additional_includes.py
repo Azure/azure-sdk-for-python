@@ -11,7 +11,7 @@ from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
 from multiprocessing import cpu_count
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Tuple, Union
+from typing import Any, Dict, Generator, List, Optional, Tuple, Union
 
 from azure.ai.ml.constants._common import AzureDevopsArtifactsType
 from azure.ai.ml.entities._validation import MutableValidationResult, ValidationResultBuilder
@@ -42,14 +42,14 @@ class AdditionalIncludes:
         *,
         origin_code_value: Optional[str],
         base_path: Path,
-        configs: List[Union[str, dict]] = None,
+        configs: Optional[List[Union[str, dict]]] = None,
     ) -> None:
         self._base_path = base_path
         self._origin_code_value = origin_code_value
         self._origin_configs = configs
 
     @property
-    def origin_configs(self):
+    def origin_configs(self) -> List:
         """The origin additional include configs.
         Artifact additional include configs haven't been resolved in this property.
 
@@ -82,7 +82,7 @@ class AdditionalIncludes:
         return self._base_path
 
     @property
-    def with_includes(self):
+    def with_includes(self) -> bool:
         """Whether the additional include configs have been provided.
 
         :return: True if additional include configs have been provided, False otherwise.
@@ -91,9 +91,9 @@ class AdditionalIncludes:
         return len(self.origin_configs) != 0
 
     @classmethod
-    def _get_artifacts_by_config(cls, artifact_config: Dict[str, str]) -> Optional[Path]:
+    def _get_artifacts_by_config(cls, artifact_config: Dict[str, str]) -> Union[str, os.PathLike]:
         # config key existence has been validated in _validate_additional_include_config
-        return ArtifactCache().get(
+        res: Union[str, os.PathLike] = ArtifactCache().get(
             organization=artifact_config.get("organization", None),
             project=artifact_config.get("project", None),
             feed=artifact_config["feed"],
@@ -102,8 +102,11 @@ class AdditionalIncludes:
             scope=artifact_config.get("scope", "organization"),
             resolve=True,
         )
+        return res
 
-    def _validate_additional_include_config(self, additional_include_config):
+    def _validate_additional_include_config(
+        self, additional_include_config: Union[Dict, str]
+    ) -> MutableValidationResult:
         validation_result = ValidationResultBuilder.success()
         if (
             isinstance(additional_include_config, dict)
@@ -154,7 +157,9 @@ class AdditionalIncludes:
             result.append((os.path.join(artifact_path, item), config_info))
         return result
 
-    def _resolve_artifact_additional_include_configs(self, artifact_additional_includes_configs: List[Dict[str, str]]):
+    def _resolve_artifact_additional_include_configs(
+        self, artifact_additional_includes_configs: List[Dict[str, str]]
+    ) -> List:
         additional_include_info_tuples = []
         # Unlike component registration, artifact downloading is a pure download progress; so we can use
         # more threads to speed up the downloading process.
@@ -166,19 +171,24 @@ class AdditionalIncludes:
             and is_private_preview_enabled()
         ):
             with ThreadPoolExecutor(max_workers=num_threads) as executor:
-                all_artifact_pairs = executor.map(
+                all_artifact_pairs_itr = executor.map(
                     self._resolve_artifact_additional_include_config, artifact_additional_includes_configs
                 )
+
+            for artifact_pairs in all_artifact_pairs_itr:
+                additional_include_info_tuples.extend(artifact_pairs)
         else:
-            all_artifact_pairs = list(
+            all_artifact_pairs_list = list(
                 map(self._resolve_artifact_additional_include_config, artifact_additional_includes_configs)
             )
-        for artifact_pairs in all_artifact_pairs:
-            additional_include_info_tuples.extend(artifact_pairs)
+
+            for artifact_pairs in all_artifact_pairs_list:
+                additional_include_info_tuples.extend(artifact_pairs)
+
         return additional_include_info_tuples
 
     @staticmethod
-    def _copy(src: Path, dst: Path, *, ignore_file=None) -> None:
+    def _copy(src: Path, dst: Path, *, ignore_file: Optional[Any] = None) -> None:
         if ignore_file and ignore_file.is_file_excluded(src):
             return
         if not src.exists():
@@ -191,7 +201,8 @@ class AdditionalIncludes:
             # for same folder, the expected behavior is merging
             # ignore will be also applied during this process
             for name in src.glob("*"):
-                AdditionalIncludes._copy(name, dst / name.name, ignore_file=ignore_file.merge(name))
+                if ignore_file is not None:
+                    AdditionalIncludes._copy(name, dst / name.name, ignore_file=ignore_file.merge(name))
 
     @staticmethod
     def _is_folder_to_compress(path: Path) -> bool:
@@ -287,7 +298,7 @@ class AdditionalIncludes:
 
         # check file conflicts among artifact package
         # given this is not in validate stage, we will raise error if there are conflict files
-        conflict_files = defaultdict(set)
+        conflict_files: dict = defaultdict(set)
         for local_path, config_info in artifact_additional_include_info_tuples:
             file_name = Path(local_path).name
             conflict_files[file_name].add(config_info)
@@ -394,7 +405,7 @@ class AdditionalIncludes:
         return root_ignore_file
 
     @contextmanager
-    def merge_local_code_and_additional_includes(self) -> Path:
+    def merge_local_code_and_additional_includes(self) -> Generator:
         """Merge code and potential additional includes into a temporary folder and return the absolute path of it.
 
         If no additional includes are specified, just return the absolute path of the original code path.
@@ -484,15 +495,17 @@ class AdditionalIncludesMixin(ComponentCodeMixin):
         return getattr(self, self._get_additional_includes_field_name(), [])
 
     def _append_diagnostics_and_check_if_origin_code_reliable_for_local_path_validation(
-        self, base_validation_result: MutableValidationResult = None
+        self, base_validation_result: Optional[MutableValidationResult] = None
     ) -> bool:
-        is_reliable = super()._append_diagnostics_and_check_if_origin_code_reliable_for_local_path_validation(
+        is_reliable: bool = super()._append_diagnostics_and_check_if_origin_code_reliable_for_local_path_validation(
             base_validation_result
         )
         additional_includes_obj = self._generate_additional_includes_obj()
-        base_validation_result.merge_with(
-            additional_includes_obj.validate(), field_name=self._get_additional_includes_field_name()
-        )
+
+        if base_validation_result is not None:
+            base_validation_result.merge_with(
+                additional_includes_obj.validate(), field_name=self._get_additional_includes_field_name()
+            )
         # if additional includes is specified, origin code will be merged with additional includes into a temp folder
         # before registered as a code asset, so origin code value is not reliable for local path validation
         if additional_includes_obj.with_includes:
@@ -507,7 +520,7 @@ class AdditionalIncludesMixin(ComponentCodeMixin):
         )
 
     @contextmanager
-    def _try_build_local_code(self) -> Iterable[Optional[Code]]:
+    def _try_build_local_code(self) -> Generator:
         """Build final code when origin code is a local code.
 
         Will merge code path with additional includes into a temp folder if additional includes is specified.
@@ -516,6 +529,7 @@ class AdditionalIncludesMixin(ComponentCodeMixin):
         :rtype: Iterable[Optional[Code]]
         """
         # will try to merge code and additional includes even if code is None
+        tmp_code_dir: Any
         with self._generate_additional_includes_obj().merge_local_code_and_additional_includes() as tmp_code_dir:
             if tmp_code_dir is None:
                 yield None

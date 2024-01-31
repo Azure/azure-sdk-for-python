@@ -90,6 +90,7 @@
     "sdk/translation/azure-ai-translation-document/samples/assets/**",
     "sdk/translation/azure-ai-translation-document/tests/glossaries-valid.csv",
     "sdk/storage/azure-storage-blob/**",
+    "sdk/storage/azure-storage-extensions/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_utils/_virtual_cluster_utils/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
@@ -98,6 +99,8 @@
     "sdk/ml/azure-ai-ml/swagger/**",
     "sdk/ml/azure-ai-ml/NOTICE.txt",
     "sdk/ml/azure-ai-ml/.pre-commit-config.yaml",
+    "sdk/monitor/azure-monitor-opentelemetry/samples/tracing/django/sample/db.sqlite3",
+    "sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/django/sample/db.sqlite3",
     "sdk/loadtestservice/azure-developer-loadtesting/**",
     "sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_serialization.py",
     "sdk/translation/azure-ai-translation-text/tests/test_break_sentence.py",
@@ -545,6 +548,13 @@
       "words": [
         "Rlcw",
         "Jwcmlud"
+      ]
+    },
+    {
+      "filename": "sdk/identity/test-resources*",
+      "words": [
+        "kubelet",
+        "otsv"
       ]
     },
     {
@@ -1244,6 +1254,13 @@
         "RMSE",
         "azmonitoring",
         "smirnov"
+      ]
+    },
+    {
+      "filename": "sdk/ai/azure-ai-generative/**",
+      "words": [
+        "tqdm",
+        "genai"
       ]
     },
     {

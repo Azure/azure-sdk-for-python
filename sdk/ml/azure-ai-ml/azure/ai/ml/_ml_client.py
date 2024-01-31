@@ -24,9 +24,6 @@ from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
 )
-from azure.ai.ml._restclient.workspace_dataplane import (
-    AzureMachineLearningWorkspaces as ServiceClientWorkspaceDataplane,
-)
 from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
@@ -39,6 +36,10 @@ from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWork
 
 # Same object, but was renamed starting in v2023_08_01_preview
 from azure.ai.ml._restclient.v2023_10_01 import AzureMachineLearningServices as ServiceClient102023
+from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
+from azure.ai.ml._restclient.workspace_dataplane import (
+    AzureMachineLearningWorkspaces as ServiceClientWorkspaceDataplane,
+)
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
 from azure.ai.ml._user_agent import USER_AGENT
@@ -169,8 +170,8 @@ class MLClient:
             )
 
         self._credential = credential
-        self._ws_rg = None
-        self._ws_sub = None
+        self._ws_rg: Any = None
+        self._ws_sub: Any = None
         show_progress = kwargs.pop("show_progress", True)
         enable_telemetry = kwargs.pop("enable_telemetry", True)
         self._operation_config = OperationConfig(show_progress=show_progress, enable_telemetry=enable_telemetry)
@@ -407,6 +408,15 @@ class MLClient:
             **kwargs,
         )
 
+        self._service_client_01_2024_preview = ServiceClient012024Preview(
+            credential=self._credential,
+            subscription_id=self._ws_operation_scope._subscription_id
+            if registry_reference
+            else self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
         self._workspaces = WorkspaceOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
             self._service_client_08_2023_preview,
@@ -460,6 +470,7 @@ class MLClient:
             operation_scope=self._operation_scope,
             operation_config=self._operation_config,
             serviceclient_2023_04_01_preview=self._service_client_04_2023_preview,
+            serviceclient_2024_01_01_preview=self._service_client_01_2024_preview,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.DATASTORE, self._datastores)
@@ -531,7 +542,7 @@ class MLClient:
         self._batch_deployments = BatchDeploymentOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_05_2022,
+            self._service_client_10_2023,
             self._operation_container,
             credentials=self._credential,
             requests_pipeline=self._requests_pipeline,
@@ -545,6 +556,7 @@ class MLClient:
             self._operation_scope,
             self._operation_config,
             self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview,
+            self._service_client_01_2024_preview,
             self._datastores,
             requests_pipeline=self._requests_pipeline,
             all_operations=self._operation_container,
@@ -741,7 +753,7 @@ class MLClient:
                     error_category=ErrorCategory.USER_ERROR,
                 )
 
-        subscription_id, resource_group, workspace_name = MLClient._get_workspace_info(found_path)
+        subscription_id, resource_group, workspace_name = MLClient._get_workspace_info(str(found_path))
 
         module_logger.info("Found the config file in: %s", found_path)
         return MLClient(
@@ -997,7 +1009,7 @@ class MLClient:
 
     @classmethod
     def _get_workspace_info(cls, found_path: Optional[str]) -> Tuple[str, str, str]:
-        with open(found_path, encoding=DefaultOpenEncoding.READ) as config_file:
+        with open(str(found_path), encoding=DefaultOpenEncoding.READ) as config_file:
             config = json.load(config_file)
 
         # Checking the keys in the config.json file to check for required parameters.

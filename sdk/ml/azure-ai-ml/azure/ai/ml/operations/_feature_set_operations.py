@@ -9,7 +9,7 @@ import os
 from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -91,7 +91,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :param name: Name of a specific FeatureSet asset, optional.
         :type name: Optional[str]
         :keyword list_view_type: View type for including/excluding (for example) archived FeatureSet assets.
-        Default: ACTIVE_ONLY.
+            Defaults to ACTIVE_ONLY.
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of FeatureSet objects
         :rtype: ~azure.core.paging.ItemPaged[FeatureSet]
@@ -113,7 +113,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-    def _get(self, name: str, version: str = None, **kwargs: Dict) -> FeaturesetVersion:
+    def _get(self, name: str, version: Optional[str] = None, **kwargs: Dict) -> FeaturesetVersion:
         return self._operation.get(
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
@@ -125,7 +125,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "FeatureSet.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: str, **kwargs: Dict) -> FeatureSet:
+    def get(self, name: str, version: str, **kwargs: Dict) -> Optional[FeatureSet]:  # type: ignore
         """Get the specified FeatureSet asset.
 
         :param name: Name of FeatureSet asset.
@@ -162,7 +162,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         sas_uri = None
 
         if not is_url(featureset_copy.path):
-            with open(os.path.join(featureset_copy.path, ".amlignore"), mode="w", encoding="utf-8") as f:
+            with open(os.path.join(str(featureset_copy.path), ".amlignore"), mode="w", encoding="utf-8") as f:
                 f.write(".*\n*.amltmp\n*.amltemp")
 
         featureset_copy, _ = _check_and_upload_path(
@@ -334,17 +334,19 @@ class FeatureSetOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "FeatureSet.GetFeature", ActivityType.PUBLICAPI)
-    def get_feature(self, feature_set_name: str, version: str, *, feature_name: str, **kwargs: Dict) -> "Feature":
+    def get_feature(
+        self, feature_set_name: str, version: str, *, feature_name: str, **kwargs: Dict
+    ) -> Optional["Feature"]:
         """Get Feature
 
         :param feature_set_name: Feature set name.
         :type feature_set_name: str
         :param version: Feature set version.
         :type version: str
-        :keyword feature_name. This is case-sensitive.
+        :keyword feature_name: This is case-sensitive.
         :paramtype feature_name: str
-        :keyword tags: String representation of a comma-separated list of tag names
-            (and optionally values). Example: "tag1,tag2=value2".
+        :keyword tags: String representation of a comma-separated list of tag names, and optionally, values.
+            For example, "tag1,tag2=value2". If provided, only features matching the specified tags are returned.
         :paramtype tags: str
         :return: Feature object
         :rtype: ~azure.ai.ml.entities.Feature
@@ -424,7 +426,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-        featureset_spec_path = str(featureset.specification.path)
+        featureset_spec_path: Any = str(featureset.specification.path)
         if is_url(featureset_spec_path):
             try:
                 featureset_spec_contents = read_remote_feature_set_spec_metadata(

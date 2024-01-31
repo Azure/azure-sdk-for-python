@@ -4,10 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 import base64
-import os
 import tempfile
-import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import pytest
 import requests
@@ -830,6 +828,39 @@ class TestStorageFile(StorageRecordedTestCase):
         assert properties.last_write_time is not None
         assert properties.creation_time is not None
         assert properties.permission_key is not None
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_set_datetime_all_ms_precision(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_client = self._create_file()
+
+        date_times = [
+            datetime(3005, 5, 11, 12, 24, 7),
+            datetime(3005, 5, 11, 12, 24, 7, 0),
+            datetime(3005, 5, 11, 12, 24, 7, 1),
+            datetime(3005, 5, 11, 12, 24, 7, 12),
+            datetime(3005, 5, 11, 12, 24, 7, 123),
+            datetime(3005, 5, 11, 12, 24, 7, 1234),
+            datetime(3005, 5, 11, 12, 24, 7, 12345),
+            datetime(3005, 5, 11, 12, 24, 7, 123456),
+            datetime(2023, 12, 8, tzinfo=timezone(-timedelta(hours=7))),
+            datetime(2023, 12, 8, tzinfo=timezone(-timedelta(hours=8))),
+        ]
+
+        # Act / Assert
+        content_settings = ContentSettings(
+            content_language='spanish',
+            content_disposition='inline')
+        for date1, date2 in zip(date_times[::2], date_times[1::2]):
+            file_client.set_http_headers(
+                content_settings=content_settings,
+                file_creation_time=date1,
+                file_last_write_time=date2
+            )
 
     @FileSharePreparer()
     @recorded_by_proxy

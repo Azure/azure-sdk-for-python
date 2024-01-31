@@ -30,7 +30,7 @@ class RedirectUserOutputStreams(object):
     def __enter__(self):
         self.logger.debug("Redirecting user output to {0}".format(self.user_log_path))
 
-        self.user_log_fp = open(self.user_log_path, "at+")
+        self.user_log_fp = open(self.user_log_path, "at+", encoding="utf-8")
         self.original_stdout = sys.stdout
         self.original_stderr = sys.stderr
         sys.stdout = OutputCollector(sys.stdout, self.user_log_fp.write)

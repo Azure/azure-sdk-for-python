@@ -4,7 +4,7 @@
 import re
 from os import PathLike
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -258,7 +258,7 @@ class CodeOperations(_ScopeDependentOperations):
         m = re.match(
             r"https://(?P<account_name>.+)\.blob\.core\.windows\.net"
             r"(:[0-9]+)?/(?P<container_name>.+)/(?P<blob_name>.*)",
-            code.path,
+            str(code.path),
         )
         if not m:
             raise ValueError(f"Invalid code path: {code.path}")
@@ -292,7 +292,7 @@ class CodeOperations(_ScopeDependentOperations):
         if not output_dir.is_dir() or not any(output_dir.iterdir()):
             raise RuntimeError(f"Failed to download code to {output_dir}")
 
-    def _get(self, name: str, version: str = None) -> Code:
+    def _get(self, name: str, version: Optional[str] = None) -> Code:
         if not version:
             msg = "Code asset version must be specified as part of name parameter, in format 'name:version'."
             raise ValidationException(
