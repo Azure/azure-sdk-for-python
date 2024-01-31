@@ -27,40 +27,40 @@ class DeletionRecoveryLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     PURGEABLE = "Purgeable"
     """Denotes a vault state in which deletion is an irreversible operation, without the possibility
-    #: for recovery. This level corresponds to no protection being available against a Delete
-    #: operation; the data is irretrievably lost upon accepting a Delete operation at the entity level
-    #: or higher (vault, resource group, subscription etc.)"""
+    for recovery. This level corresponds to no protection being available against a Delete
+    operation; the data is irretrievably lost upon accepting a Delete operation at the entity level
+    or higher (vault, resource group, subscription etc.)"""
     RECOVERABLE_PURGEABLE = "Recoverable+Purgeable"
     """Denotes a vault state in which deletion is recoverable, and which also permits immediate and
-    #: permanent deletion (i.e. purge). This level guarantees the recoverability of the deleted entity
-    #: during the retention interval (90 days), unless a Purge operation is requested, or the
-    #: subscription is cancelled. System wil permanently delete it after 90 days, if not recovered"""
+    permanent deletion (i.e. purge). This level guarantees the recoverability of the deleted entity
+    during the retention interval (90 days), unless a Purge operation is requested, or the
+    subscription is cancelled. System wil permanently delete it after 90 days, if not recovered"""
     RECOVERABLE = "Recoverable"
     """Denotes a vault state in which deletion is recoverable without the possibility for immediate
-    #: and permanent deletion (i.e. purge). This level guarantees the recoverability of the deleted
-    #: entity during the retention interval(90 days) and while the subscription is still available.
-    #: System wil permanently delete it after 90 days, if not recovered"""
+    and permanent deletion (i.e. purge). This level guarantees the recoverability of the deleted
+    entity during the retention interval(90 days) and while the subscription is still available.
+    System wil permanently delete it after 90 days, if not recovered"""
     RECOVERABLE_PROTECTED_SUBSCRIPTION = "Recoverable+ProtectedSubscription"
     """Denotes a vault and subscription state in which deletion is recoverable within retention
-    #: interval (90 days), immediate and permanent deletion (i.e. purge) is not permitted, and in
-    #: which the subscription itself  cannot be permanently canceled. System wil permanently delete it
-    #: after 90 days, if not recovered"""
+    interval (90 days), immediate and permanent deletion (i.e. purge) is not permitted, and in
+    which the subscription itself  cannot be permanently canceled. System wil permanently delete it
+    after 90 days, if not recovered"""
     CUSTOMIZED_RECOVERABLE_PURGEABLE = "CustomizedRecoverable+Purgeable"
     """Denotes a vault state in which deletion is recoverable, and which also permits immediate and
-    #: permanent deletion (i.e. purge when 7<= SoftDeleteRetentionInDays < 90). This level guarantees
-    #: the recoverability of the deleted entity during the retention interval, unless a Purge
-    #: operation is requested, or the subscription is cancelled."""
+    permanent deletion (i.e. purge when 7<= SoftDeleteRetentionInDays < 90). This level guarantees
+    the recoverability of the deleted entity during the retention interval, unless a Purge
+    operation is requested, or the subscription is cancelled."""
     CUSTOMIZED_RECOVERABLE = "CustomizedRecoverable"
     """Denotes a vault state in which deletion is recoverable without the possibility for immediate
-    #: and permanent deletion (i.e. purge when 7<= SoftDeleteRetentionInDays < 90).This level
-    #: guarantees the recoverability of the deleted entity during the retention interval and while the
-    #: subscription is still available."""
+    and permanent deletion (i.e. purge when 7<= SoftDeleteRetentionInDays < 90).This level
+    guarantees the recoverability of the deleted entity during the retention interval and while the
+    subscription is still available."""
     CUSTOMIZED_RECOVERABLE_PROTECTED_SUBSCRIPTION = "CustomizedRecoverable+ProtectedSubscription"
     """Denotes a vault and subscription state in which deletion is recoverable, immediate and
-    #: permanent deletion (i.e. purge) is not permitted, and in which the subscription itself cannot
-    #: be permanently canceled when 7<= SoftDeleteRetentionInDays < 90. This level guarantees the
-    #: recoverability of the deleted entity during the retention interval, and also reflects the fact
-    #: that the subscription itself cannot be cancelled."""
+    permanent deletion (i.e. purge) is not permitted, and in which the subscription itself cannot
+    be permanently canceled when 7<= SoftDeleteRetentionInDays < 90. This level guarantees the
+    recoverability of the deleted entity during the retention interval, and also reflects the fact
+    that the subscription itself cannot be cancelled."""
 
 
 class JsonWebKeyCurveName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -107,7 +107,6 @@ class JsonWebKeyOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNWRAP_KEY = "unwrapKey"
     IMPORT = "import"
     EXPORT = "export"
-    IMPORT_ENUM = "import"
 
 
 class JsonWebKeySignatureAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -117,13 +116,13 @@ class JsonWebKeySignatureAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta)
 
     PS256 = "PS256"
     """RSASSA-PSS using SHA-256 and MGF1 with SHA-256, as described in
-    #: https://tools.ietf.org/html/rfc7518"""
+    https://tools.ietf.org/html/rfc7518"""
     PS384 = "PS384"
     """RSASSA-PSS using SHA-384 and MGF1 with SHA-384, as described in
-    #: https://tools.ietf.org/html/rfc7518"""
+    https://tools.ietf.org/html/rfc7518"""
     PS512 = "PS512"
     """RSASSA-PSS using SHA-512 and MGF1 with SHA-512, as described in
-    #: https://tools.ietf.org/html/rfc7518"""
+    https://tools.ietf.org/html/rfc7518"""
     RS256 = "RS256"
     """RSASSA-PKCS1-v1_5 using SHA-256, as described in https://tools.ietf.org/html/rfc7518"""
     RS384 = "RS384"
