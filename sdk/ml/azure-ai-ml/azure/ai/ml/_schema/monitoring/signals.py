@@ -75,6 +75,7 @@ class ProductionDataSchema(metaclass=PatchedSchemaMeta):
     data_context = StringTransformedEnum(allowed_values=[o.value for o in MonitorDatasetContext])
     pre_processing_component = fields.Str()
     data_window = NestedField(BaselineDataRangeSchema)
+    data_column_names = fields.Dict(keys=fields.Str(), values=fields.Str())
 
     @post_load
     def make(self, data, **kwargs):
@@ -89,6 +90,7 @@ class ReferenceDataSchema(metaclass=PatchedSchemaMeta):
     pre_processing_component = fields.Str()
     target_column_name = fields.Str()
     data_window = NestedField(BaselineDataRangeSchema)
+    data_column_names = fields.Dict(keys=fields.Str(), values=fields.Str())
 
     @post_load
     def make(self, data, **kwargs):
@@ -221,10 +223,14 @@ class FeatureAttributionDriftSignalSchema(metaclass=PatchedSchemaMeta):
         return FeatureAttributionDriftSignal(**data)
 
 
-class ModelPerformanceSignalSchema(ModelSignalSchema):
+class ModelPerformanceSignalSchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(allowed_values=MonitorSignalType.MODEL_PERFORMANCE, required=True)
+    production_data = NestedField(ProductionDataSchema)
+    reference_data = NestedField(ReferenceDataSchema)
     data_segment = NestedField(DataSegmentSchema)
+    alert_enabled = fields.Bool()
     metric_thresholds = NestedField(ModelPerformanceMetricThresholdSchema)
+    properties = fields.Dict()
 
     @pre_dump
     def predump(self, data, **kwargs):
@@ -299,7 +305,7 @@ class GenerationSafetyQualitySchema(metaclass=PatchedSchemaMeta):
     metric_thresholds = NestedField(GenerationSafetyQualityMetricThresholdSchema)
     alert_enabled = fields.Bool()
     properties = fields.Dict()
-    sampling_rate = fields.Int()
+    sampling_rate = fields.Float()
 
     @pre_dump
     def predump(self, data, **kwargs):
