@@ -98,9 +98,9 @@ def build_index(
                 api_base = "AZURE_OPENAI_ENDPOINT"
             connection_args = {
                 "connection_type": "environment",
-                "connection": {"key": "OPENAI_API_KEY"},
-                "endpoint": [os.getenv("OPENAI_API_BASE")],
-            }
+                "connection": {"key": api_key},
+                "endpoint": os.getenv(api_base),
+            }      
     embedder = EmbeddingsContainer.from_uri(
         uri=embeddings_model,
         **connection_args,
