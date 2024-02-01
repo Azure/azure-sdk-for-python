@@ -6,7 +6,7 @@
 from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurationKeyVaultOptions
 from devtools_testutils import recorded_by_proxy
 from preparers import app_config_decorator_aad
-from testcase import AppConfigTestCase
+from testcase import AppConfigTestCase, has_feature_flag
 
 
 class TestAppConfigurationProvider(AppConfigTestCase):
@@ -22,7 +22,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert client["message"] == "hi"
         assert client["my_json"]["key"] == "value"
         assert "FeatureManagement" in client
-        assert "Alpha" in client["FeatureManagement"]["FeatureFlags"]
+        assert has_feature_flag(client, "Alpha")
 
     # method: provider_trim_prefixes
     @recorded_by_proxy
@@ -40,7 +40,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert client["trimmed"] == "key"
         assert "test.trimmed" not in client
         assert "FeatureManagement" in client
-        assert "Alpha" in client["FeatureManagement"]["FeatureFlags"]
+        assert has_feature_flag(client, "Alpha")
 
     # method: provider_selectors
     @recorded_by_proxy

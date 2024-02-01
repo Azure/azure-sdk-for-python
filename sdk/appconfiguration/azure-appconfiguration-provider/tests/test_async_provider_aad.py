@@ -8,7 +8,7 @@ from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurati
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.appconfiguration.aio import AzureAppConfigurationClient
 from async_preparers import app_config_decorator_async
-from asynctestcase import AppConfigTestCase
+from asynctestcase import AppConfigTestCase, has_feature_flag
 
 
 class TestAppConfigurationProvider(AppConfigTestCase):
@@ -24,7 +24,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             assert client.get("message") == "hi"
             assert client["my_json"]["key"] == "value"
             assert "FeatureManagement" in client
-            assert "Alpha" in client["FeatureManagement"]
+            assert has_feature_flag(client, "Alpha")
 
     # method: provider_trim_prefixes
     @app_config_decorator_async
@@ -41,7 +41,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             assert client["my_json"]["key"] == "value"
             assert client["trimmed"] == "key"
             assert "FeatureManagement" in client
-            assert "Alpha" in client["FeatureManagement"]
+            assert has_feature_flag(client, "Alpha")
 
     # method: provider_selectors
     @app_config_decorator_async

@@ -142,3 +142,9 @@ async def setup_configs(client, keyvault_secret_url):
     async with client:
         for config in get_configs(keyvault_secret_url):
             await client.set_configuration_setting(config)
+
+def has_feature_flag(client, feature_id):
+    for feature_flag in client["FeatureManagement"]["FeatureFlags"]:
+        if feature_flag["id"] == feature_id:
+            return True
+    return False

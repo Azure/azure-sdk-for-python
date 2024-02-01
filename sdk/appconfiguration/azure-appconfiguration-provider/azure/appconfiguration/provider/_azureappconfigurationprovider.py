@@ -35,6 +35,7 @@ from azure.keyvault.secrets import SecretClient, KeyVaultSecretIdentifier
 from ._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
 from ._constants import (
     FEATURE_MANAGEMENT_KEY,
+    FEATURE_FLAG_KEY,
     FEATURE_FLAG_PREFIX,
     REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE,
     ServiceFabricEnvironmentVariable,
@@ -548,7 +549,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         feature_flags, feature_flag_sentinel_keys = self._load_feature_flags(**kwargs)
         if self._feature_flag_enabled:
             configuration_settings[FEATURE_MANAGEMENT_KEY] = {}
-            configuration_settings[FEATURE_MANAGEMENT_KEY]["FeatureFlags"] = feature_flags
+            configuration_settings[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags
             self._refresh_on_feature_flags = feature_flag_sentinel_keys
         with self._update_lock:
             self._refresh_on = sentinel_keys
@@ -579,7 +580,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
 
     def _load_feature_flags(self, **kwargs):
         feature_flag_sentinel_keys = {}
-        loaded_feature_flags = {}
+        loaded_feature_flags = []
         kwargs.pop("sentinel_keys", None)
         if self._feature_flag_enabled:
             for select in self._feature_flag_selectors:
@@ -587,9 +588,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     key_filter=FEATURE_FLAG_PREFIX + select.key_filter, label_filter=select.label_filter, **kwargs
                 )
                 for feature_flag in feature_flags:
-                    key = self._process_key_name(feature_flag)
-                    value = json.loads(feature_flag.value)
-                    loaded_feature_flags[key] = value
+                    loaded_feature_flags.append(json.loads(feature_flag.value))
 
                     if self._feature_flag_refresh_enabled:
                         feature_flag_sentinel_keys[(feature_flag.key, feature_flag.label)] = feature_flag.etag
@@ -598,17 +597,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
     def _process_key_name(self, config):
         trimmed_key = config.key
         # Trim the key if it starts with one of the prefixes provided
-
-        # Feature Flags have there own prefix, so we need to trim that first
-        if isinstance(config, FeatureFlagConfigurationSetting):
-            if trimmed_key.startswith(FEATURE_FLAG_PREFIX):
-                trimmed_key = trimmed_key[len(FEATURE_FLAG_PREFIX) :]
-            for trim in self._feature_flag_trim_prefixes:
-                if trimmed_key.startswith(trim):
-                    trimmed_key = trimmed_key[len(trim) :]
-                    break
-            return trimmed_key
-
         for trim in self._trim_prefixes:
             if config.key.startswith(trim):
                 trimmed_key = config.key[len(trim) :]

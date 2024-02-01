@@ -11,7 +11,7 @@ import sys
 from azure.appconfiguration.provider import WatchKey
 from devtools_testutils.aio import recorded_by_proxy_async
 from async_preparers import app_config_decorator_async
-from asynctestcase import AppConfigTestCase
+from asynctestcase import AppConfigTestCase, has_feature_flag
 
 
 try:
@@ -37,7 +37,7 @@ try:
                 assert client["refresh_message"] == "original value"
                 assert client["my_json"]["key"] == "value"
                 assert "FeatureManagement" in client
-                assert "Alpha" in client["FeatureManagement"]
+                assert has_feature_flag(client, "Alpha")
                 setting = await client._client.get_configuration_setting(key="refresh_message")
                 setting.value = "updated value"
                 await client._client.set_configuration_setting(setting)
@@ -91,7 +91,7 @@ try:
                 assert client["non_refreshed_message"] == "Static"
                 assert client["my_json"]["key"] == "value"
                 assert "FeatureManagement" in client
-                assert "Alpha" in client["FeatureManagement"]
+                assert has_feature_flag(client, "Alpha")
                 setting = await client._client.get_configuration_setting(key="refresh_message")
                 setting.value = "updated value"
                 await client._client.set_configuration_setting(setting)

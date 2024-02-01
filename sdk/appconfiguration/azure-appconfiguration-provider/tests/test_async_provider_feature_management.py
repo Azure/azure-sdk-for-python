@@ -8,7 +8,7 @@ from azure.appconfiguration.provider.aio import load
 from azure.appconfiguration.aio import AzureAppConfigurationClient
 from devtools_testutils.aio import recorded_by_proxy_async
 from async_preparers import app_config_decorator_async
-from asynctestcase import AppConfigTestCase, setup_configs
+from asynctestcase import AppConfigTestCase, setup_configs, has_feature_flag
 
 
 from azure.appconfiguration.provider._azureappconfigurationprovider import _delay_failure
@@ -26,7 +26,7 @@ class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
         ) as client:
             assert len(client.keys()) == 1
             assert "FeatureManagement" in client
-            assert "Alpha" in client["FeatureManagement"]
+            assert has_feature_flag(client, "Alpha")
 
     # method: load
     @app_config_decorator_async
@@ -44,23 +44,4 @@ class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
         ) as client:
             assert len(client.keys()) == 1
             assert "FeatureManagement" in client
-            assert "Alpha" not in client["FeatureManagement"]
-
-    # method: load
-    @app_config_decorator_async
-    @recorded_by_proxy_async
-    async def test_trim_feature_flags(self, appconfiguration_connection_string):
-        client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
-        await setup_configs(client, None)
-
-        async with await load(
-            connection_string=appconfiguration_connection_string,
-            selects=[],
-            feature_flag_enabled=True,
-            feature_flag_trim_prefixes=["Al"],
-            user_agent="SDK/Integration",
-        ) as client:
-            assert len(client.keys()) == 1
-            assert "FeatureManagement" in client
-            assert "Alpha" not in client["FeatureManagement"]
-            assert "pha" in client["FeatureManagement"]
+            assert not has_feature_flag(client, "Alpha")
