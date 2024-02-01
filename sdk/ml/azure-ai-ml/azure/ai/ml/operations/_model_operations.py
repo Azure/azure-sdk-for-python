@@ -85,8 +85,8 @@ class ModelOperations(_ScopeDependentOperations):
     :param service_client: Service client to allow end users to operate on Azure Machine Learning Workspace
         resources (ServiceClient082023Preview or ServiceClient102021Dataplane).
     :type service_client: typing.Union[
-        ~azure.ai.ml._restclient.v2023_04_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces,
-        ~azure.ai.ml._restclient.v2021_10_01_dataplanepreview._azure_machine_learning_workspaces.
+        azure.ai.ml._restclient.v2023_04_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces,
+        azure.ai.ml._restclient.v2021_10_01_dataplanepreview._azure_machine_learning_workspaces.
         AzureMachineLearningWorkspaces]
     :param datastore_operations: Represents a client for performing operations on Datastores.
     :type datastore_operations: ~azure.ai.ml.operations._datastore_operations.DatastoreOperations
@@ -101,7 +101,7 @@ class ModelOperations(_ScopeDependentOperations):
         operation_config: OperationConfig,
         service_client: Union[ServiceClient082023Preview, ServiceClient102021Dataplane],
         datastore_operations: DatastoreOperations,
-        all_operations: OperationsContainer = None,
+        all_operations: Optional[OperationsContainer] = None,
         **kwargs: Dict,
     ):
         super(ModelOperations, self).__init__(operation_scope, operation_config)
@@ -121,7 +121,7 @@ class ModelOperations(_ScopeDependentOperations):
         self._managed_label_resolver = {"latest": self._get_latest_version}
 
     @monitor_with_activity(logger, "Model.CreateOrUpdate", ActivityType.PUBLICAPI)
-    def create_or_update(
+    def create_or_update(  # type: ignore
         self, model: Union[Model, WorkspaceAssetReference]
     ) -> Model:  # TODO: Are we going to implement job_name?
         """Returns created or updated model asset.
@@ -135,15 +135,6 @@ class ModelOperations(_ScopeDependentOperations):
         :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :return: Model asset object.
         :rtype: ~azure.ai.ml.entities.Model
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/ml_samples_misc.py
-                :start-after: [START model_operations_create_or_update]
-                :end-before: [END model_operations_create_or_update]
-                :language: python
-                :dedent: 8
-                :caption: Create model example.
         """
         try:
             name = model.name
@@ -193,7 +184,7 @@ class ModelOperations(_ScopeDependentOperations):
                     ).result()
 
                     if not result:
-                        model_rest_obj = self._get(name=model.name, version=model.version)
+                        model_rest_obj = self._get(name=str(model.name), version=model.version)
                         return Model._from_rest_object(model_rest_obj)
 
                 sas_uri = get_sas_uri_for_registry_asset(
@@ -213,8 +204,8 @@ class ModelOperations(_ScopeDependentOperations):
                 show_progress=self._show_progress,
             )
 
-            model.path = resolve_short_datastore_url(model.path, self._operation_scope)
-            validate_ml_flow_folder(model.path, model.type)
+            model.path = resolve_short_datastore_url(model.path, self._operation_scope)  # type: ignore
+            validate_ml_flow_folder(model.path, model.type)  # type: ignore
             model_version_resource = model._to_rest_object()
             auto_increment_version = model._auto_increment_version
             try:
@@ -237,7 +228,7 @@ class ModelOperations(_ScopeDependentOperations):
                 )
 
                 if not result and self._registry_name:
-                    result = self._get(name=model.name, version=model.version)
+                    result = self._get(name=str(model.name), version=model.version)
 
             except Exception as e:  # pylint: disable=broad-except
                 # service side raises an exception if we attempt to update an existing asset's path
@@ -294,23 +285,14 @@ class ModelOperations(_ScopeDependentOperations):
 
         :param name: Name of the model.
         :type name: str
-        :param version: Version of the model.
-        :type version: str
-        :param label: Label of the model. (mutually exclusive with version)
-        :type label: str
+        :keyword version: Version of the model.
+        :paramtype version: str
+        :keyword label: Label of the model. (mutually exclusive with version)
+        :paramtype label: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Model cannot be successfully validated.
             Details will be provided in the error message.
         :return: Model asset object.
         :rtype: ~azure.ai.ml.entities.Model
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/ml_samples_misc.py
-                :start-after: [START model_operations_get]
-                :end-before: [END model_operations_get]
-                :language: python
-                :dedent: 8
-                :caption: Get model example.
         """
         if version and label:
             msg = "Cannot specify both version and label."
@@ -347,19 +329,10 @@ class ModelOperations(_ScopeDependentOperations):
         :type name: str
         :param version: Version of the model.
         :type version: str
-        :param download_path: Local path as download destination, defaults to current working directory of the current
+        :keyword download_path: Local path as download destination, defaults to current working directory of the current
             user. Contents will be overwritten.
-        :type download_path: Union[PathLike, str]
+        :paramtype download_path: Union[PathLike, str]
         :raises ResourceNotFoundError: if can't find a model matching provided name.
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/ml_samples_misc.py
-                :start-after: [START model_operations_download]
-                :end-before: [END model_operations_download]
-                :language: python
-                :dedent: 8
-                :caption: Download files to model example.
         """
 
         model_uri = self.get(name=name, version=version).path
@@ -430,10 +403,10 @@ class ModelOperations(_ScopeDependentOperations):
 
         :param name: Name of model asset.
         :type name: str
-        :param version: Version of model asset.
-        :type version: str
-        :param label: Label of the model asset. (mutually exclusive with version)
-        :type label: str
+        :keyword version: Version of model asset.
+        :paramtype version: str
+        :keyword label: Label of the model asset. (mutually exclusive with version)
+        :paramtype label: str
 
         .. admonition:: Example:
 
@@ -466,10 +439,10 @@ class ModelOperations(_ScopeDependentOperations):
 
         :param name: Name of model asset.
         :type name: str
-        :param version: Version of model asset.
-        :type version: str
-        :param label: Label of the model asset. (mutually exclusive with version)
-        :type label: str
+        :keyword version: Version of model asset.
+        :paramtype version: str
+        :keyword label: Label of the model asset. (mutually exclusive with version)
+        :paramtype label: str
 
         .. admonition:: Example:
 
@@ -500,24 +473,15 @@ class ModelOperations(_ScopeDependentOperations):
     ) -> Iterable[Model]:
         """List all model assets in workspace.
 
-        :param name: Name of the model.
-        :type name: Optional[str]
-        :param stage: The Model stage
-        :type stage: Optional[str]
-        :keyword list_view_type: View type for including/excluding (for example) archived models. Defaults to
-             :attr:`ListViewType.ACTIVE_ONLY`.
-        :type list_view_type: ListViewType
+        :keyword name: Name of the model.
+        :paramtype name: Optional[str]
+        :keyword stage: The Model stage
+        :paramtype stage: Optional[str]
+        :keyword list_view_type: View type for including/excluding (for example) archived models.
+            Defaults to :attr:`ListViewType.ACTIVE_ONLY`.
+        :paramtype list_view_type: ListViewType
         :return: An iterator like instance of Model objects
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.Model]
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/ml_samples_misc.py
-                :start-after: [START model_operations_list]
-                :end-before: [END model_operations_list]
-                :language: python
-                :dedent: 8
-                :caption: List all models example.
         """
         if name:
             return cast(
@@ -579,15 +543,6 @@ class ModelOperations(_ScopeDependentOperations):
         :paramtype registry_name: str
         :return: Model asset object.
         :rtype: ~azure.ai.ml.entities.Model
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/ml_samples_misc.py
-                :start-after: [START model_operations_share]
-                :end-before: [END model_operations_share]
-                :language: python
-                :dedent: 8
-                :caption: Share a model example.
         """
 
         #  Get workspace info to get workspace GUID
@@ -671,21 +626,12 @@ class ModelOperations(_ScopeDependentOperations):
         :type package_request: ~azure.ai.ml.entities.ModelPackage
         :return: Environment object
         :rtype: ~azure.ai.ml.entities.Environment
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/ml_samples_misc.py
-                :start-after: [START model_operations_package]
-                :end-before: [END model_operations_package]
-                :language: python
-                :dedent: 8
-                :caption: Package a model example.
         """
 
         is_deployment_flow = kwargs.pop("skip_to_rest", False)
         if not is_deployment_flow:
             orchestrators = OperationOrchestrator(
-                operation_container=self._all_operations,
+                operation_container=self._all_operations,  # type: ignore[arg-type]
                 operation_scope=self._operation_scope,
                 operation_config=self._operation_config,
             )
@@ -735,13 +681,14 @@ class ModelOperations(_ScopeDependentOperations):
             if self._operation_scope._workspace_location and self._operation_scope._workspace_id:
                 package_request.target_environment_id = f"azureml://locations/{self._operation_scope._workspace_location}/workspaces/{self._operation_scope._workspace_id}/environments/{package_request.target_environment_id}"
             else:
-                ws = self._all_operations.all_operations.get("workspaces")
-                ws_details = ws.get(self._workspace_name)
-                workspace_location, workspace_id = (
-                    ws_details.location,
-                    ws_details._workspace_id,
-                )
-                package_request.target_environment_id = f"azureml://locations/{workspace_location}/workspaces/{workspace_id}/environments/{package_request.target_environment_id}"
+                if self._all_operations is not None:
+                    ws: Any = self._all_operations.all_operations.get("workspaces")
+                    ws_details = ws.get(self._workspace_name)
+                    workspace_location, workspace_id = (
+                        ws_details.location,
+                        ws_details._workspace_id,
+                    )
+                    package_request.target_environment_id = f"azureml://locations/{workspace_location}/workspaces/{workspace_id}/environments/{package_request.target_environment_id}"
 
             if package_request.environment_version is not None:
                 package_request.target_environment_id = (
@@ -801,7 +748,8 @@ class ModelOperations(_ScopeDependentOperations):
                 package_out = Environment._from_rest_object(env_out)
                 self._scope_kwargs["resource_group_name"] = current_rg
             else:
-                environment_operation = self._all_operations.all_operations[AzureMLResourceType.ENVIRONMENT]
-                package_out = environment_operation.get(name=environment_name, version=environment_version)
+                if self._all_operations is not None:
+                    environment_operation = self._all_operations.all_operations[AzureMLResourceType.ENVIRONMENT]
+                    package_out = environment_operation.get(name=environment_name, version=environment_version)
 
         return package_out

@@ -58,8 +58,10 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         credentials: Optional[TokenCredential] = None,
         **kwargs: Any,
     ):
-        self.dataplane_workspace_operations = kwargs.pop("dataplane_client").workspaces
-        self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
+        self.dataplane_workspace_operations = (
+            kwargs.pop("dataplane_client").workspaces if kwargs.get("dataplane_client") else None
+        )
+        self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline", None)
         ops_logger.update_info(kwargs)
         self._provision_network_operation = service_client.managed_network_provisions
         super().__init__(
@@ -107,7 +109,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
     @monitor_with_activity(logger, "Workspace.Get", ActivityType.PUBLICAPI)
     @distributed_trace
     # pylint: disable=arguments-renamed
-    def get(self, name: Optional[str] = None, **kwargs: Dict) -> Workspace:
+    def get(self, name: Optional[str] = None, **kwargs: Dict) -> Optional[Workspace]:
         """Get a Workspace by name.
 
         :param name: Name of the workspace.
@@ -130,7 +132,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
     @monitor_with_activity(logger, "Workspace.Get_Keys", ActivityType.PUBLICAPI)
     @distributed_trace
     # pylint: disable=arguments-differ
-    def get_keys(self, name: Optional[str] = None) -> WorkspaceKeys:
+    def get_keys(self, name: Optional[str] = None) -> Optional[WorkspaceKeys]:
         """Get WorkspaceKeys by workspace name.
 
         :param name: Name of the workspace.
@@ -402,7 +404,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         workspace_base_uri = _get_workspace_base_url(workspace_operations, workspace_hub_name, self._requests_pipeline)
 
         # pylint:disable=unused-argument
-        def callback(_: Any, deserialized: Any, args: Any) -> Workspace:
+        def callback(_: Any, deserialized: Any, args: Any) -> Optional[Workspace]:
             return Workspace._from_rest_object(deserialized)
 
         with modified_operation_client(self.dataplane_workspace_operations, workspace_base_uri):

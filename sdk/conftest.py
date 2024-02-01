@@ -26,9 +26,12 @@
 import os
 import pytest
 
-from devtools_testutils import environment_variables, recorded_test, test_proxy, variable_recorder
-from devtools_testutils.preparers import AbstractPreparer
-
+# In instances where packages do not require azure-sdk-tools we need to make sure that the following imports do not fail.
+# This is because this conftest is always activated, and we don't want to fail the pytest run if azure-sdk-tools is not installed.
+try:
+    from devtools_testutils import environment_variables, recorded_test, test_proxy, variable_recorder
+except ImportError:
+    print("Failed to import test-proxy fixtures from azure-sdk-tools. If these are necessary, install tools/azure-sdk-tools.")
 
 def pytest_configure(config):
     # register an additional marker
@@ -55,7 +58,12 @@ def pytest_runtest_setup(item):
 @pytest.fixture(scope="session", autouse=True)
 def clean_cached_resources():
     yield
-    AbstractPreparer._perform_pending_deletes()
+    try:
+        from devtools_testutils.preparers import AbstractPreparer
+        AbstractPreparer._perform_pending_deletes()
+    except ImportError:
+        print("Failed to clean up due to missing azure-sdk-tools dependency. \
+              For proper cleanup, install the azure-sdk-tools package from this repo.")
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)

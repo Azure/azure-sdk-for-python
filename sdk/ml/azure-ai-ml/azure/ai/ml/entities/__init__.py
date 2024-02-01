@@ -169,6 +169,7 @@ from ._monitoring.signals import (
     PredictionDriftSignal,
     ProductionData,
     ReferenceData,
+    ModelPerformanceSignal,
 )
 from ._monitoring.target import MonitoringTarget
 from ._monitoring.thresholds import (
@@ -182,6 +183,9 @@ from ._monitoring.thresholds import (
     GenerationSafetyQualityMonitoringMetricThreshold,
     NumericalDriftMetrics,
     PredictionDriftMetricThreshold,
+    ModelPerformanceMetricThreshold,
+    ModelPerformanceClassificationThresholds,
+    ModelPerformanceRegressionThresholds,
 )
 from ._notification.notification import Notification
 from ._registry.registry import Registry
@@ -434,6 +438,7 @@ __all__ = [
     "FeatureAttributionDriftSignal",
     "CustomMonitoringSignal",
     "GenerationSafetyQualitySignal",
+    "ModelPerformanceSignal",
     "MonitorFeatureFilter",
     "DataSegment",
     "FADProductionData",
@@ -455,6 +460,9 @@ __all__ = [
     "NumericalDriftMetrics",
     "DataQualityMetricsNumerical",
     "DataQualityMetricsCategorical",
+    "ModelPerformanceMetricThreshold",
+    "ModelPerformanceClassificationThresholds",
+    "ModelPerformanceRegressionThresholds",
     "DataCollector",
     "IntellectualProperty",
     "DeploymentCollection",

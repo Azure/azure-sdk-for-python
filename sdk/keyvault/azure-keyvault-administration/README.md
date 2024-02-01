@@ -124,7 +124,7 @@ A `KeyVaultSettingsClient` manages Managed HSM account settings.
 This section contains code snippets covering common tasks:
 * Access control
     * [List all role definitions](#list-all-role-definitions)
-    * [Set, get, and delete a role definition](#set-get-and-delete-a-role-defintion)
+    * [Set, get, and delete a role definition](#set-get-and-delete-a-role-definition)
     * [List all role assignments](#list-all-role-assignments)
     * [Create, get, and delete a role assignment](#create-get-and-delete-a-role-assignment)
 * Backup and restore
@@ -149,7 +149,6 @@ for definition in role_definitions:
 <!-- END SNIPPET -->
 
 ### Set, get, and delete a role definition
-
 `set_role_definition` can be used by a `KeyVaultAccessControlClient` to either create a custom role definition or update
 an existing definition with the specified unique `name` (a UUID).
 
@@ -346,14 +345,10 @@ Clients from the Administration library can only be used to perform operations o
 
 ## Next steps
 Several samples are available in the Azure SDK for Python GitHub repository. These samples provide example code for additional Key Vault scenarios:
-| File | Description |
-|-------------|-------------|
-| [access_control_operations.py][access_control_operations_sample] | create/update/delete role definitions and role assignments |
-| [access_control_operations_async.py][access_control_operations_async_sample] | create/update/delete role definitions and role assignments with an async client |
-| [backup_restore_operations.py][backup_operations_sample] | full backup and restore |
-| [backup_restore_operations_async.py][backup_operations_async_sample] | full backup and restore with an async client |
-| [settings_operations.py][settings_operations_sample] | list and update Key Vault settings |
-| [settings_operations_async.py][settings_operations_async_sample] | list and update Key Vault settings with an async client |
+
+- [Create/update/delete role definitions and role assignments][access_control_operations_sample] ([async version][access_control_operations_async_sample])
+- [Full backup and restore][backup_operations_sample] ([async version][backup_operations_async_sample])
+- [List and update Key Vault settings][settings_operations_sample] ([async version][settings_operations_async_sample])
 
 ###  Additional documentation
 For more extensive documentation on Azure Key Vault, see the [API reference documentation][reference_docs].

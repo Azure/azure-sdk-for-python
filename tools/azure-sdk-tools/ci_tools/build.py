@@ -156,7 +156,7 @@ def build_packages(
         dist_dir = os.path.join(distribution_directory, package_name_in_artifacts)
 
         if is_dev_build:
-            process_requires(package_root)
+            process_requires(package_root, True)
 
             new_version = get_dev_version(setup_parsed.version, build_id)
 
@@ -187,8 +187,8 @@ def create_package(
         raise NotImplementedError("Building with pyproject is not yet supported")
     else:
         if setup_parsed.ext_modules:
-            run_logged(
-                [sys.executable, "-m", "cibuildwheel", "--output-dir", dist], prefix="cibuildwheel", cwd=setup_parsed.folder
+            run(
+                [sys.executable, "-m", "cibuildwheel", "--output-dir", dist], cwd=setup_parsed.folder
             )
 
         if enable_wheel:
