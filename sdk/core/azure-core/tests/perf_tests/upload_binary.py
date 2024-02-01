@@ -18,13 +18,6 @@ from azure.core.pipeline.transport import (
 )
 from ._test_base import _BlobTest
 
-import logging
-import sys
-handler = logging.StreamHandler(stream=sys.stdout)
-logger = logging.getLogger('azure')
-logger.setLevel(logging.DEBUG)
-logger.addHandler(handler)
-
 class UploadBinaryDataTest(_BlobTest):
     def __init__(self, arguments):
         super().__init__(arguments)
