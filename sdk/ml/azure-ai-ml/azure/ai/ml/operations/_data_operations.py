@@ -865,7 +865,7 @@ class DataOperations(_ScopeDependentOperations):
 
 def _assert_local_path_matches_asset_type(
     local_path: str,
-    asset_type: Union[AssetTypes.URI_FILE, AssetTypes.URI_FOLDER],
+    asset_type: str,
 ) -> None:
     # assert file system type matches asset type
     if asset_type == AssetTypes.URI_FOLDER and not os.path.isdir(local_path):

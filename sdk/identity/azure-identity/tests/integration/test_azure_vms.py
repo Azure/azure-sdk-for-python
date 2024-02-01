@@ -3,10 +3,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-import subprocess
 import sys
-
 import pytest
+import subprocess
 
 
 def run_command(command, exit_on_failure=True) -> str:
@@ -21,41 +20,50 @@ def run_command(command, exit_on_failure=True) -> str:
         return result
 
 
-class TestAzureKubernetesServiceIntegration:
+class TestAzureVirtualMachinesIntegration:
     @pytest.mark.live_test_only
     @pytest.mark.skipif(
         not os.environ.get("IDENTITY_LIVE_RESOURCES_PROVISIONED"), reason="Integration resources not provisioned."
     )
-    def test_azure_kubernetes(self):
+    def test_azure_virtual_machine(self):
 
         client_id = os.environ.get("IDENTITY_CLIENT_ID")
         client_secret = os.environ.get("IDENTITY_CLIENT_SECRET")
         tenant_id = os.environ.get("IDENTITY_TENANT_ID")
         resource_group = os.environ.get("IDENTITY_RESOURCE_GROUP")
-        aks_cluster_name = os.environ.get("IDENTITY_AKS_CLUSTER_NAME")
         subscription_id = os.environ.get("IDENTITY_SUBSCRIPTION_ID")
-        pod_name = os.environ.get("IDENTITY_AKS_POD_NAME", "python-test-app")
+
+        user_assigned_client_id = os.environ.get("IDENTITY_USER_DEFINED_IDENTITY_CLIENT_ID")
+        storage_1 = os.environ.get("IDENTITY_STORAGE_NAME_1")
+        storage_2 = os.environ.get("IDENTITY_STORAGE_NAME_2")
+        vm_name = os.environ.get("IDENTITY_VM_NAME", "python-test-app")
 
         az_path = run_command(["which", "az"])
-        kubectl_path = run_command(["which", "kubectl"])
         run_command(
             [az_path, "login", "--service-principal", "-u", client_id, "-p", client_secret, "--tenant", tenant_id]
         )
         run_command([az_path, "account", "set", "--subscription", subscription_id])
-        run_command(
+
+        script_string = (
+            f"export IDENTITY_USER_DEFINED_IDENTITY_CLIENT_ID={user_assigned_client_id} && "
+            f"export IDENTITY_STORAGE_NAME_1={storage_1} && "
+            f"export IDENTITY_STORAGE_NAME_2={storage_2} && "
+            "python3 /sdk/sdk/identity/azure-identity/tests/integration/azure-vms/app.py"
+        )
+        output = run_command(
             [
                 az_path,
-                "aks",
-                "get-credentials",
-                "--resource-group",
+                "vm",
+                "run-command",
+                "invoke",
+                "-n",
+                vm_name,
+                "-g",
                 resource_group,
-                "--name",
-                aks_cluster_name,
-                "--overwrite-existing",
+                "--command-id",
+                "RunShellScript",
+                "--scripts",
+                script_string,
             ]
         )
-        pod_output = run_command([kubectl_path, "get", "pods", "-o", "jsonpath='{.items[0].metadata.name}'"])
-        assert pod_name in pod_output
-
-        output = run_command([kubectl_path, "exec", pod_name, "--", "python", "/app.py"])
         assert "Passed!" in output
