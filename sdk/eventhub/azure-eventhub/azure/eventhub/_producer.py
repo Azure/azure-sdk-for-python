@@ -130,6 +130,8 @@ class EventHubProducer(
         self._link_properties = self._amqp_transport.create_link_properties(
             {TIMEOUT_SYMBOL: int(self._timeout * self._amqp_transport.TIMEOUT_FACTOR)}
         )
+        self._use_tls = kwargs.get("use_tls", True)
+
 
         super(EventHubProducer, self).__init__()
 
@@ -151,6 +153,7 @@ class EventHubProducer(
                 amqp_transport=self._amqp_transport,
             ),
             msg_timeout=self._timeout * self._amqp_transport.TIMEOUT_FACTOR,
+            use_tls=self._use_tls,
         )
 
     def _open_with_retry(self) -> None:
