@@ -64,7 +64,7 @@ With the value of the `endpoint`, `credential` and a `region`, you can create th
 
 ```python
 credential = TranslatorCredential(apikey, region)
-text_translator = TextTranslationClient(credential, endpoint)
+text_translator = TextTranslationClient(credential, endpoint=endpoint)
 ```
 
 <!-- END SNIPPET -->

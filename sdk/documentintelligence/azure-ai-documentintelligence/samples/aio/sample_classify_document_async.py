@@ -45,27 +45,28 @@ async def classify_document(classifier_id):
     # [START classify_document]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
+    from azure.ai.documentintelligence.models import AnalyzeResult
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
     classifier_id = os.getenv("CLASSIFIER_ID", classifier_id)
 
-    document_intelligence_client = DocumentIntelligenceClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     async with document_intelligence_client:
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_intelligence_client.begin_classify_document(
                 classifier_id, classify_request=f, content_type="application/octet-stream"
             )
-        result = await poller.result()
+        result: AnalyzeResult = await poller.result()
 
     print("----Classified documents----")
-    for doc in result.documents:
-        print(
-            f"Found document of type '{doc.doc_type or 'N/A'}' with a confidence of {doc.confidence} contained on "
-            f"the following pages: {[region.page_number for region in doc.bounding_regions]}"
-        )
+    if result.documents:
+        for doc in result.documents:
+            if doc.bounding_regions:
+                print(
+                    f"Found document of type '{doc.doc_type or 'N/A'}' with a confidence of {doc.confidence} contained on "
+                    f"the following pages: {[region.page_number for region in doc.bounding_regions]}"
+                )
     # [END classify_document]
 
 
@@ -109,6 +110,7 @@ async def main():
             classifier = await poller.result()
         classifier_id = classifier.classifier_id
     await classify_document(classifier_id)
+
 
 if __name__ == "__main__":
     from azure.core.exceptions import HttpResponseError

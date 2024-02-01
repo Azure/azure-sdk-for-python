@@ -5,7 +5,7 @@
 # pylint: disable=protected-access,no-value-for-parameter
 
 from contextlib import contextmanager
-from typing import Any, Iterable, Optional, Union
+from typing import Any, Generator, Iterable, Optional, Union, cast
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -88,7 +88,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         self._managed_label_resolver = {"latest": self._get_latest_version}
 
     @monitor_with_activity(logger, "Environment.CreateOrUpdate", ActivityType.PUBLICAPI)
-    def create_or_update(self, environment: Environment) -> Environment:
+    def create_or_update(self, environment: Environment) -> Environment:  # type: ignore
         """Returns created or updated environment asset.
 
         :param environment: Environment object
@@ -196,7 +196,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 )
             )
             if not env_rest_obj and self._registry_name:
-                env_rest_obj = self._get(name=environment.name, version=environment.version)
+                env_rest_obj = self._get(name=str(environment.name), version=environment.version)
             return Environment._from_rest_object(env_rest_obj)
         except Exception as ex:  # pylint: disable=broad-except
             if isinstance(ex, SchemaValidationError):
@@ -317,39 +317,45 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 :caption: List example.
         """
         if name:
-            return (
-                self._version_operations.list(
-                    name=name,
+            return cast(
+                Iterable[Environment],
+                (
+                    self._version_operations.list(
+                        name=name,
+                        registry_name=self._registry_name,
+                        cls=lambda objs: [Environment._from_rest_object(obj) for obj in objs],
+                        **self._scope_kwargs,
+                        **self._kwargs,
+                    )
+                    if self._registry_name
+                    else self._version_operations.list(
+                        name=name,
+                        workspace_name=self._workspace_name,
+                        cls=lambda objs: [Environment._from_rest_object(obj) for obj in objs],
+                        list_view_type=list_view_type,
+                        **self._scope_kwargs,
+                        **self._kwargs,
+                    )
+                ),
+            )
+        return cast(
+            Iterable[Environment],
+            (
+                self._containers_operations.list(
                     registry_name=self._registry_name,
-                    cls=lambda objs: [Environment._from_rest_object(obj) for obj in objs],
+                    cls=lambda objs: [Environment._from_container_rest_object(obj) for obj in objs],
                     **self._scope_kwargs,
                     **self._kwargs,
                 )
                 if self._registry_name
-                else self._version_operations.list(
-                    name=name,
+                else self._containers_operations.list(
                     workspace_name=self._workspace_name,
-                    cls=lambda objs: [Environment._from_rest_object(obj) for obj in objs],
+                    cls=lambda objs: [Environment._from_container_rest_object(obj) for obj in objs],
                     list_view_type=list_view_type,
                     **self._scope_kwargs,
                     **self._kwargs,
                 )
-            )
-        return (
-            self._containers_operations.list(
-                registry_name=self._registry_name,
-                cls=lambda objs: [Environment._from_container_rest_object(obj) for obj in objs],
-                **self._scope_kwargs,
-                **self._kwargs,
-            )
-            if self._registry_name
-            else self._containers_operations.list(
-                workspace_name=self._workspace_name,
-                cls=lambda objs: [Environment._from_container_rest_object(obj) for obj in objs],
-                list_view_type=list_view_type,
-                **self._scope_kwargs,
-                **self._kwargs,
-            )
+            ),
         )
 
     @monitor_with_activity(logger, "Environment.Delete", ActivityType.PUBLICAPI)
@@ -358,7 +364,8 @@ class EnvironmentOperations(_ScopeDependentOperations):
         name: str,
         version: Optional[str] = None,
         label: Optional[str] = None,
-        **kwargs,  # pylint:disable=unused-argument
+        # pylint:disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         """Archive an environment or an environment version.
 
@@ -395,7 +402,8 @@ class EnvironmentOperations(_ScopeDependentOperations):
         name: str,
         version: Optional[str] = None,
         label: Optional[str] = None,
-        **kwargs,  # pylint:disable=unused-argument
+        # pylint:disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         """Restore an archived environment version.
 
@@ -501,7 +509,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
     @contextmanager
     # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
-    def _set_registry_client(self, registry_name: str) -> Iterable[None]:
+    def _set_registry_client(self, registry_name: str) -> Generator:
         """Sets the registry client for the environment operations.
 
         :param registry_name: Name of the registry.

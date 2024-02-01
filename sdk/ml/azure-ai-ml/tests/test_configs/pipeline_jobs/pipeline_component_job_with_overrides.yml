@@ -1,0 +1,27 @@
+type: pipeline
+
+description: The hello world pipeline job
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+settings:
+  default_compute: azureml:cpu-cluster
+
+inputs:
+  # examples of inputs that take values such as int, string, etc.
+  component_in_number: 20
+  component_in_path:
+    path: https://dprepdata.blob.core.windows.net/demo/Titanic.csv
+    type: uri_file
+
+
+outputs:
+  output_path:
+    type: uri_file
+    path: azureml://datastores/mock/paths/my_output_file.txt
+  not_exists:
+    type: uri_file
+    path: azureml://datastores/mock/paths/not_exists.txt
+
+component: ../components/helloworld_pipeline_component.yml

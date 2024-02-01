@@ -1,10 +1,18 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import copy
+import pandas as pd
+import logging
 
-from azure.ai.generative.evaluate._constants import TYPE_TO_KWARGS_MAPPING
+from os import path
+from typing import Dict, Optional
+
 from azure.ai.generative.evaluate._constants import TASK_TYPE_TO_METRICS_MAPPING
+from ._user_agent import USER_AGENT
+
+from ._utils import run_pf_flow_with_dict_list, df_to_dict_list, wait_for_pf_run_to_complete
+
+LOGGER = logging.getLogger(__name__)
 
 
 class MetricHandler(object):
@@ -12,78 +20,87 @@ class MetricHandler(object):
     def __init__(
             self,
             task_type,
-            prediction_data,
+            prediction_data: pd.DataFrame,
+            input_output_data: pd.DataFrame,
             test_data,
-            truth_data=None,
-            prediction_data_column_name=None,
-            ground_truth_column_name=None,
             metrics_mapping=None,
-            metrics=None
+            metrics=None,
+            data_mapping: Optional[Dict]=None,
     ):
         self.task_type = task_type
         self.prediction_data = prediction_data
-        self.truth_data = truth_data
+        self.input_output_data = input_output_data
         self.test_data = test_data
         self.metrics_mapping = metrics_mapping
-        self.prediction_data_column_name = prediction_data_column_name
-        self.ground_truth_column_name = ground_truth_column_name
-        self._metrics_mapping_to_log = {}
         self.metrics = metrics
+        self.data_mapping = data_mapping
+    
+    def _get_data_for_pf(self) -> pd.DataFrame:
+        if self.data_mapping:
+            rename_map = {v: k for k, v in self.data_mapping.items()}
+            return self.input_output_data.rename(columns=rename_map)
+        else:
+            return self.input_output_data
 
-    def _get_data_for_metrics(self):
-        metrics_mapping = copy.deepcopy(self.metrics_mapping)
-        metrics_mapping_to_log = {}
+    def calculate_metrics(self) -> Dict:
 
-        if self.prediction_data_column_name:
-            metrics_mapping.update(
-                {"y_pred": self.prediction_data_column_name}
-            )
-
-        if self.ground_truth_column_name:
-            metrics_mapping.update(
-                {"y_test": self.ground_truth_column_name}
-            )
-
-        metrics_data = {}
-        data_columns = TYPE_TO_KWARGS_MAPPING[self.task_type]
-        for data_column in data_columns:
-            if data_column in metrics_mapping.keys():
-                data_source = None
-                if metrics_mapping[data_column] in self.test_data.columns.values:
-                    data_source = self.test_data
-                elif metrics_mapping[data_column] in self.prediction_data.columns:
-                    data_source = self.prediction_data
-                elif self.truth_data is not None and metrics_mapping[data_column] in self.truth_data.columns:
-                    data_source = self.truth_data
-
-                if data_column is None:
-                    raise Exception(f"{data_column} data needed for metric calculation not found")
-
-                if data_source is not None:
-                    metrics_data.update(
-                        {
-                            data_column: data_source[metrics_mapping[data_column]].values.tolist()
-                        }
-                    )
-                popped_value = metrics_mapping.pop(data_column, None)
-                metrics_mapping_to_log[data_column] = popped_value
-
-        metrics_data.update(metrics_mapping)
-
-        self._metrics_mapping_to_log = metrics_mapping_to_log
-
-        return metrics_data
-
-    def calculate_metrics(self):
-        from azureml.metrics import compute_metrics, constants
-
-        metrics_calculation_data = self._get_data_for_metrics()
+        metrics_calculation_data = self._get_data_for_pf()
 
         metrics = self.metrics if self.metrics is not None else TASK_TYPE_TO_METRICS_MAPPING[self.task_type].DEFAULT_LIST
+        
+        dict_list = df_to_dict_list(metrics_calculation_data, {"metrics": ','.join(metrics)}) # The PF eval template expects metrics names to be passed in as a input parameter 
+        
+        flow_path = path.join(path.dirname(__file__), "pf_templates", "built_in_metrics")
 
-        return compute_metrics(
-            metrics=metrics,
-            task_type=self.task_type,
-            use_chat_completion_api=True,
-            **metrics_calculation_data,
+        from promptflow import PFClient
+        from promptflow.entities import AzureOpenAIConnection, OpenAIConnection
+
+        pf_client = PFClient(
+            user_agent=USER_AGENT
         )
+
+        openai_config = self.metrics_mapping["openai_params"]
+        conn_name = "openai_connection"
+        deployment_id = openai_config["deployment_id"]
+        if not openai_config["api_type"] or openai_config["api_type"] == "azure":
+
+            connection = AzureOpenAIConnection(
+                name=conn_name,
+                api_key=openai_config["api_key"],
+                api_base=openai_config["api_base"],
+                api_type="azure",
+                api_version=openai_config["api_version"],
+            )
+        else:
+            connection = OpenAIConnection(
+                name=conn_name,
+                api_key=openai_config["api_key"],
+            )
+        pf_client.connections.create_or_update(connection)
+        
+        connection_override = {
+            "connection": conn_name,
+            "deployment_name": deployment_id,
+        }
+        nodes_list = ["gpt_coherence", "gpt_similarity", "gpt_relevance", "gpt_fluency", "gpt_groundedness"]
+
+        pf_run = run_pf_flow_with_dict_list(flow_path, dict_list, flow_params={"connections": {node: connection_override for node in nodes_list}})
+        wait_for_pf_run_to_complete(pf_run.name)
+
+        result_df = pf_client.get_details(pf_run.name, all_results=True)
+        result_metrics = pf_client.get_metrics(pf_run.name)
+
+        # Drop unselected output columns
+        columns_to_drop = [col for col in result_df.columns if col.replace("outputs.", "") not in metrics]
+        result_df.drop(columns_to_drop, axis=1, inplace=True)
+
+        # Rename inputs/outputs columns. E.g. inputs.question -> question, outputs.gpt_fluency -> gpt_fluency
+        column_mapping = {col: col.replace("outputs.", "").replace("inputs.", "") for col in result_df.columns}
+        result_df.rename(columns=column_mapping, inplace=True)
+
+        artifacts = {col: result_df[col].tolist() for col in result_df.columns}
+
+        return {
+            "metrics": result_metrics,
+            "artifacts": artifacts
+        }
