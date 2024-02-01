@@ -107,7 +107,7 @@ def _get_cloud_environment_artifacts(
     """
     if environment_asset.build and environment_asset.build.path and is_url(environment_asset.build.path):
         environment_build_directory = download_artifact_from_storage_url(
-            blob_url=environment_asset.build.path,
+            blob_url=str(environment_asset.build.path),
             destination=download_path,
             datastore_operation=environment_operations._datastore_operation,
             datastore_name="workspaceartifactstore",
