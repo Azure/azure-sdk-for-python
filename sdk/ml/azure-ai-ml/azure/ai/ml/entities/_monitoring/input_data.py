@@ -38,8 +38,8 @@ class MonitorInputData(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        type: MonitorInputDataType = None,
-        data_context: MonitorDatasetContext = None,
+        type: Optional[MonitorInputDataType] = None,
+        data_context: Optional[MonitorDatasetContext] = None,
         target_columns: Optional[Dict] = None,
         job_type: Optional[str] = None,
         uri: Optional[str] = None,
