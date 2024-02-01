@@ -707,7 +707,7 @@ class MLClient:
         """
 
         path = Path(".") if path is None else Path(path)
-        found_path: Any
+        found_path: Optional[Union[Path, str]]
 
         if path.is_file():
             found_path = path
