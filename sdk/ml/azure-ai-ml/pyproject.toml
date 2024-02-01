@@ -34,7 +34,6 @@ exclude = [
   "azure/ai/ml/_local_endpoints/",
   "azure/ai/ml/_logging/",
   "azure/ai/ml/_utils",
-  "azure/ai/ml/parallel/",
   "azure/ai/ml/exceptions.py",
   "azure/ai/ml/_exception_helper.py",
 ]   
