@@ -449,6 +449,7 @@ class WebSocketTransportAsync(
         self._http_proxy = kwargs.get("http_proxy", None)
         self.connected = False
         self.network_trace_params = kwargs.get('network_trace_params')
+        self._use_tls = kwargs.get("use_tls", True)
 
     async def connect(self):
         self.sslopts = self._build_ssl_opts(self.sslopts)
@@ -478,9 +479,9 @@ class WebSocketTransportAsync(
 
         self.session = ClientSession()
         if self._custom_endpoint:
-            url = f"wss://{self._custom_endpoint}"
+            url = f"wss://{self._custom_endpoint}" if self._use_tls else f"ws://{self._custom_endpoint}"
         else:
-            url = f"wss://{self.host}"
+            url = f"wss://{self.host}" if self._use_tls else f"ws://{self.host}"
             parsed_url = urlsplit(url)
             url = f"{parsed_url.scheme}://{parsed_url.netloc}:{self.port}{parsed_url.path}"
 
