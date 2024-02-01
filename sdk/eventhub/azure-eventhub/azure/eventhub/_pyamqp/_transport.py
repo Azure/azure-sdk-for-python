@@ -714,6 +714,7 @@ class WebSocketTransport(_AbstractTransport):
         super().__init__(host, port=port, socket_timeout=socket_timeout, **kwargs)
         self.sock = None
         self._http_proxy = kwargs.get("http_proxy", None)
+        self._use_tls = kwargs.get("use_tls", True)
 
     def connect(self):
         http_proxy_host, http_proxy_port, http_proxy_auth = None, None, None
@@ -737,7 +738,9 @@ class WebSocketTransport(_AbstractTransport):
             ) from None
         try:
             self.sock = create_connection(
-                url="wss://{}".format(self._custom_endpoint or self._host),
+                url="wss://{}".format(self._custom_endpoint or self._host)
+                    if self._use_tls 
+                    else "ws://{}".format(self._custom_endpoint or self._host,
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
                 timeout=self.socket_timeout,    # timeout for read/write operations
                 skip_utf8_validation=True,
