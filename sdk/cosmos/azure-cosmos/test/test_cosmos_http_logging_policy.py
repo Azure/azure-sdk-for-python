@@ -23,6 +23,7 @@
 """Tests for the CosmosHttpLoggingPolicy."""
 import logging
 import unittest
+import uuid
 
 import pytest
 
@@ -87,7 +88,8 @@ class TestCosmosHttpLogger(unittest.TestCase):
 
     def test_default_http_logging_policy(self):
         # Test if we can log into from creating a database
-        self.client_default.create_database(id="database_test")
+        database_id = "database_test-" + str(uuid.uuid4())
+        self.client_default.create_database(id=database_id)
         assert all(m.levelname == 'INFO' for m in self.mock_handler_default.messages)
         messages_request = self.mock_handler_default.messages[0].message.split("\n")
         messages_response = self.mock_handler_default.messages[1].message.split("\n")
@@ -100,11 +102,12 @@ class TestCosmosHttpLogger(unittest.TestCase):
         self.mock_handler_default.reset()
 
         # delete database
-        self.client_default.delete_database("database_test")
+        self.client_default.delete_database(database_id)
 
     def test_cosmos_http_logging_policy(self):
         # Test if we can log into from creating a database
-        self.client_diagnostic.create_database(id="database_test")
+        database_id = "database_test-" + str(uuid.uuid4())
+        self.client_diagnostic.create_database(id=database_id)
         assert all(m.levelname == 'INFO' for m in self.mock_handler_diagnostic.messages)
         messages_request = self.mock_handler_diagnostic.messages[3].message.split("\n")
         messages_response = self.mock_handler_diagnostic.messages[4].message.split("\n")
@@ -120,7 +123,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         self.mock_handler_diagnostic.reset()
         # now test in case of an error
         try:
-            self.client_diagnostic.create_database(id="database_test")
+            self.client_diagnostic.create_database(id=database_id)
         except:
             pass
         assert all(m.levelname == 'INFO' for m in self.mock_handler_diagnostic.messages)
@@ -136,7 +139,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         assert "Response headers" in messages_response[1]
 
         # delete database
-        self.client_diagnostic.delete_database("database_test")
+        self.client_diagnostic.delete_database(database_id)
 
         self.mock_handler_diagnostic.reset()
 

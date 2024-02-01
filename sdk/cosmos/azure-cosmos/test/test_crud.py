@@ -585,7 +585,7 @@ class TestCRUDOperations(unittest.TestCase):
                     '   });}')
         }
 
-        created_sproc = created_collection.scripts.create_stored_procedure(body=sproc)
+        created_sproc = created_collection.scripts.create_stored_procedure(sproc)
 
         # Partiton Key value same as what is specified in the stored procedure body
         result = created_collection.scripts.execute_stored_procedure(sproc=created_sproc['id'], partition_key=2)
@@ -1511,7 +1511,7 @@ class TestCRUDOperations(unittest.TestCase):
             'id': 'sample sproc',
             'serverScript': 'function() {var x = 10;}'
         }
-        sproc = collection.scripts.create_stored_procedure(body=sproc_definition)
+        sproc = collection.scripts.create_stored_procedure(sproc_definition)
         for property in sproc_definition:
             if property != "serverScript":
                 self.assertEqual(
@@ -1577,7 +1577,7 @@ class TestCRUDOperations(unittest.TestCase):
                     '}')
         }
 
-        created_sproc = created_collection.scripts.create_stored_procedure(body=sproc)
+        created_sproc = created_collection.scripts.create_stored_procedure(sproc)
 
         result = created_collection.scripts.execute_stored_procedure(
             sproc=created_sproc['id'],
@@ -2147,7 +2147,7 @@ class TestCRUDOperations(unittest.TestCase):
                     '}')
         }
 
-        retrieved_sproc = collection.scripts.create_stored_procedure(body=sproc1)
+        retrieved_sproc = collection.scripts.create_stored_procedure(sproc1)
         result = collection.scripts.execute_stored_procedure(
             sproc=retrieved_sproc['id'],
             partition_key=1
@@ -2163,7 +2163,7 @@ class TestCRUDOperations(unittest.TestCase):
                     '  }' +
                     '}')
         }
-        retrieved_sproc2 = collection.scripts.create_stored_procedure(body=sproc2)
+        retrieved_sproc2 = collection.scripts.create_stored_procedure(sproc2)
         result = collection.scripts.execute_stored_procedure(
             sproc=retrieved_sproc2['id'],
             partition_key=1
@@ -2178,7 +2178,7 @@ class TestCRUDOperations(unittest.TestCase):
                     '      \'a\' + input.temp);' +
                     '}')
         }
-        retrieved_sproc3 = collection.scripts.create_stored_procedure(body=sproc3)
+        retrieved_sproc3 = collection.scripts.create_stored_procedure(sproc3)
         result = collection.scripts.execute_stored_procedure(
             sproc=retrieved_sproc3['id'],
             params={'temp': 'so'},
