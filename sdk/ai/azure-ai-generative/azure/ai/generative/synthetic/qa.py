@@ -11,12 +11,15 @@ try:
     import time
     from enum import Enum
     from functools import lru_cache
+    from packaging import version
     from typing import Dict, List, Tuple, Any, Union, Optional
     from collections import defaultdict
     from azure.ai.resources.entities import BaseConnection
+    from azure.ai.generative.constants._common import USER_AGENT_HEADER_KEY
     from azure.identity import DefaultAzureCredential
     from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, ActivityLogger
     from azure.core.tracing.decorator import distributed_trace
+    from azure.ai.generative._user_agent import USER_AGENT
 except ImportError as e:
     print("In order to use qa, please install the 'qa_generation' extra of azure-ai-generative")
     raise e
@@ -64,13 +67,15 @@ def _completion_with_retries(*args, **kwargs):
                     client = AzureOpenAI(
                         azure_endpoint = kwargs["api_base"], 
                         api_key=kwargs["api_key"],  
-                        api_version=kwargs["api_version"]
+                        api_version=kwargs["api_version"],
+                        default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
                     )
                     response = client.chat.completions.create(messages=kwargs["messages"], model=kwargs["deployment_id"], temperature=kwargs["temperature"], max_tokens=kwargs["max_tokens"])
                 else:
                     from openai import OpenAI
                     client = OpenAI(
-                        api_key=kwargs["api_key"],  
+                        api_key=kwargs["api_key"],
+                        default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},  
                     )
                     response = client.chat.completions.create(messages=kwargs["messages"], model=kwargs["model"], temperature=kwargs["temperature"], max_tokens=kwargs["max_tokens"])
                 return response.choices[0].message.content, dict(response.usage)
@@ -97,13 +102,15 @@ async def _completion_with_retries_async(*args, **kwargs):
                     client = AsyncAzureOpenAI(
                         azure_endpoint = kwargs["api_base"], 
                         api_key=kwargs["api_key"],  
-                        api_version=kwargs["api_version"]
+                        api_version=kwargs["api_version"],
+                        default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
                     )
                     response = await client.chat.completions.create(messages=kwargs["messages"], model=kwargs["deployment_id"], temperature=kwargs["temperature"], max_tokens=kwargs["max_tokens"])
                 else:
                     from openai import AsyncOpenAI
                     client = AsyncOpenAI(
-                        api_key=kwargs["api_key"],  
+                        api_key=kwargs["api_key"],
+                        default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
                     )
                     response = await client.chat.completions.create(messages=kwargs["messages"], model=kwargs["model"], temperature=kwargs["temperature"], max_tokens=kwargs["max_tokens"])
                 return response.choices[0].message.content, dict(response.usage)
@@ -149,13 +156,19 @@ class QADataGenerator:
     _PARSING_ERR_FIRST_LINE = "Parsing error: First line must be a question"
 
     def __init__(self, model_config: Dict, **kwargs: Any):
-        """Initialize QADataGenerator using Azure OpenAI details."""        
+        """Initialize QADataGenerator using Azure OpenAI details."""
+        import openai
+        api_key = "OPENAI_API_KEY"
+        api_base = "OPENAI_API_BASE"
+        if version.parse(openai.version.VERSION) >= version.parse("1.0.0"):
+            api_key = "AZURE_OPENAI_KEY"
+            api_base = "AZURE_OPENAI_ENDPOINT"        
         self._chat_completion_params = dict(
             # AOAI connection params
             api_type=model_config["api_type"] if "api_type" in model_config else os.getenv("OPENAI_API_TYPE", "azure"),
             api_version=model_config["api_version"] if "api_version" in model_config else os.getenv("OPENAI_API_VERSION", _DEFAULT_AOAI_VERSION),
-            api_base=model_config["api_base"] if "api_base" in model_config else os.getenv("OPENAI_API_BASE"),
-            api_key=model_config["api_key"] if "api_key" in model_config else os.getenv("OPENAI_API_KEY"),
+            api_base=model_config["api_base"] if "api_base" in model_config else os.getenv(api_base),
+            api_key=model_config["api_key"] if "api_key" in model_config else os.getenv(api_key),
 
             # AOAI model params
             deployment_id=model_config["deployment"],
@@ -254,10 +267,9 @@ class QADataGenerator:
     @distributed_trace
     @monitor_with_activity(logger, "QADataGenerator.Export", ActivityType.INTERNALCALL)
     def export_to_file(self, output_path: str, qa_type: QAType, results: Union[List, List[List]], output_format: OutputStructure = OutputStructure.PROMPTFLOW, field_mapping: Dict[str,str] = {"chat_history_key": "chat_history", "question_key": "question"}):
-        """
-            Writes results from QA gen to a jsonl file for Promptflow batch run
-            results is either a list of questions and answers or list of list of questions and answers grouped by their chunk
-                e.g. [("How are you?", "I am good.")]    or [ [("How are you?", "I am good.")], [("What can I do?", "Tell me a joke.")]
+        """Writes results from QA gen to a jsonl file for Promptflow batch run results is either a list of questions
+        and answers or list of list of questions and answers grouped by their chunk e.g. [("How are you?",
+        "I am good.")] or [ [("How are you?", "I am good.")], [("What can I do?", "Tell me a joke.")]
         """
         data_dict = defaultdict(list)
         

@@ -17,7 +17,7 @@ from azure.keyvault.keys import ApiVersion, JsonWebKey, KeyCurveName, KeyOperati
 from azure.keyvault.keys.crypto._providers import NoLocalCryptography, get_local_cryptography_provider
 from azure.keyvault.keys.crypto.aio import (
     CryptographyClient,
-    EncryptionAlgorithm,
+    EncryptionAlgorithm,  # Shouldn't be imported from aio namespace, but do so to test backwards compatibility
     KeyWrapAlgorithm,
     SignatureAlgorithm,
 )

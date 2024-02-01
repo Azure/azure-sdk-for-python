@@ -51,6 +51,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
@@ -93,6 +94,11 @@ setup(
         # so user can submit @dsl.pipeline with @mldesigner.command_component inside it.
         "designer": [
             "mldesigner",
+        ],
+        # user can run `pip install azure-ai-ml[mount]` to install azureml-dataprep-rslex alone with this package
+        # so user can call data.mount() and datastore.mount() operations supported by it.
+        "mount": [
+            "azureml-dataprep-rslex>=2.22.0",
         ],
     },
     project_urls={

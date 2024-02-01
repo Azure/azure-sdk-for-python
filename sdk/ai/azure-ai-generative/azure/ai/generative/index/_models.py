@@ -8,12 +8,14 @@ import os
 from typing import Dict, Optional, Union
 
 from azure.core.credentials import TokenCredential
+from azure.ai.generative.constants._common import USER_AGENT_HEADER_KEY
 from azure.ai.generative.index._utils.connections import (
     connection_to_credential,
     get_connection_by_id_v2,
     get_connection_credential,
 )
 from azure.ai.generative.index._utils.logging import get_logger
+from azure.ai.generative._user_agent import USER_AGENT
 
 try:
     from azure.ai.resources.entities import BaseConnection
@@ -43,7 +45,7 @@ def parse_model_uri(uri: str, **kwargs) -> dict:
         config = {**split_details(details), **config}
         config["kind"] = "open_ai"
         if "endpoint" in config:
-            if ".openai." in config["endpoint"] or ".api.cognitive." in config["endpoint"]:
+            if config["endpoint"] and (".openai." in config["endpoint"] or ".api.cognitive." in config["endpoint"] or ".cognitiveservices." in config["endpoint"]):
                 config["api_base"] = config["endpoint"].rstrip("/")
             else:
                 config["api_base"] = f"https://{config['endpoint']}.openai.azure.com"
@@ -127,15 +129,21 @@ def init_open_ai_from_config(config: dict, credential: Optional[TokenCredential]
                 config["api_type"] = "azure_ad"
     except Exception as e:
         if "OPENAI_API_KEY" in os.environ:
-            logger.warning(f"Failed to get credential for ACS with {e}, falling back to env vars.")
+            logger.warning(f"Failed to get credential for ACS with {e}, falling back to openai 0.x env vars.")
             config["api_key"] = os.environ["OPENAI_API_KEY"]
             config["api_type"] = os.environ.get("OPENAI_API_TYPE", "azure")
             config["api_base"] = os.environ.get("OPENAI_API_BASE", openai.api_base if hasattr(openai, "api_base") else openai.base_url)
             config["api_version"] = os.environ.get("OPENAI_API_VERSION", openai.api_version)
+        elif "AZURE_OPENAI_KEY" in os.environ:
+            logger.warning(f"Failed to get credential for ACS with {e}, falling back to openai 1.x env vars.")
+            config["api_key"] = os.environ["AZURE_OPENAI_KEY"]
+            config["api_type"] = os.environ.get("OPENAI_API_TYPE", "azure")
+            config["azure_endpoint"] = os.environ.get("AZURE_OPENAI_ENDPOINT")
+            config["api_version"] = os.environ.get("OPENAI_API_VERSION", openai.api_version)
         else:
             raise e
 
-    if "azure" in openai.api_type:
+    if openai.api_type and "azure" in openai.api_type:
         config["api_version"] = config.get("api_version", "2023-03-15-preview")
 
     return config
@@ -171,6 +179,7 @@ def init_llm(model_config: dict, **kwargs):
                 openai_api_type=model_config.get("api_type"),
                 openai_api_version=model_config.get("api_version"),
                 max_retries=model_config.get("max_retries", 3),
+                default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
                 **kwargs
             )  # type: ignore
             if model_config.get("temperature", None) is not None:
@@ -185,6 +194,7 @@ def init_llm(model_config: dict, **kwargs):
                 model_kwargs=model_kwargs,
                 openai_api_key=model_config.get("api_key"),
                 max_retries=model_config.get("max_retries", 3),
+                default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
                 **kwargs
             )  # type: ignore
             if model_config.get("temperature", None) is not None:
@@ -197,6 +207,7 @@ def init_llm(model_config: dict, **kwargs):
             max_tokens=model_config.get("max_tokens"),
             model_kwargs=model_kwargs,
             openai_api_key=model_config.get("api_key"),
+            default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
             **kwargs
         )  # type: ignore
         if model_config.get("temperature", None) is not None:

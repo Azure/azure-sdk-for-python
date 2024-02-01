@@ -1,14 +1,17 @@
 # Release History
 
-## 1.29.7 (Unreleased)
+## 1.30.0 (2024-02-01)
 
 ### Features Added
 
-### Breaking Changes
+- Support tuple input for file values  to `azure.core.rest.HttpRequest`  #33948
+- Support tuple input to `files` with duplicate field names  `azure.core.rest.HttpRequest`  #34021
 
-### Bugs Fixed
+## 1.29.7 (2024-01-18)
 
 ### Other Changes
+
+- Removed dependency on `anyio`.  #33282
 
 ## 1.29.6 (2023-12-14)
 

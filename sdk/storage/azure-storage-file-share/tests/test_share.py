@@ -172,25 +172,6 @@ class TestStorageShare(StorageRecordedTestCase):
         assert snapshot_props.metadata == metadata2
         self._delete_shares(share.share_name)
 
-    @FileSharePreparer()
-    @recorded_by_proxy
-    def test_delete_share_with_snapshots(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        self._setup(storage_account_name, storage_account_key)
-        share = self._get_share_reference()
-        share.create_share()
-        snapshot = share.create_snapshot()
-
-        # Act
-        with pytest.raises(HttpResponseError):
-            share.delete_share()
-
-        deleted = share.delete_share(delete_snapshots=True)
-        assert deleted is None
-        self._delete_shares()
-
     @pytest.mark.playback_test_only
     @FileSharePreparer()
     @recorded_by_proxy
@@ -833,6 +814,37 @@ class TestStorageShare(StorageRecordedTestCase):
         self.assertNamedItemInContainer(all_shares, snapshot2['snapshot'])
         share.delete_share(delete_snapshots=True)
         self._delete_shares()
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_delete_snapshots_options(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        share = self._create_share('prefix')
+        share.create_snapshot()
+        share.create_snapshot()
+
+        # Act / Assert
+
+        # Test backwards compatibility (False)
+        with pytest.raises(ResourceExistsError):
+            share.delete_share(delete_snapshots=False)
+
+        # Test backwards compatibility (True)
+        share.delete_share(delete_snapshots=True)
+
+        # Test "include"
+        share = self._create_share('prefix2')
+        share.create_snapshot()
+        share.delete_share(delete_snapshots='include')
+
+        # Test "include-leased"
+        share = self._create_share('prefix3')
+        lease = share.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        share.create_snapshot()
+        share.delete_share(delete_snapshots='include-leased', lease='00000000-1111-2222-3333-444444444444')
 
     @FileSharePreparer()
     @recorded_by_proxy
