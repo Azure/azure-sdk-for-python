@@ -366,7 +366,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         )
         self._feature_flag_enabled = kwargs.pop("feature_flag_enabled", False)
         self._feature_flag_selectors = kwargs.pop("feature_flag_selectors", [SettingSelector(key_filter="*")])
-        self._refresh_on_feature_flags = None
+        self._refresh_on_feature_flags: Mapping[Tuple[str, str], Optional[str]] = {}
         self._feature_flag_refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._feature_flag_refresh_enabled = kwargs.pop("feature_flag_refresh_enabled", False)
         self._update_lock = Lock()
@@ -454,8 +454,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
 
     async def _load_all(self, **kwargs):
         configuration_settings, sentinel_keys = await self._load_configuration_settings(**kwargs)
-        feature_flags, feature_flag_sentinel_keys = await self._load_feature_flags(**kwargs)
         if self._feature_flag_enabled:
+            feature_flags, feature_flag_sentinel_keys = await self._load_feature_flags(**kwargs)
             configuration_settings[FEATURE_MANAGEMENT_KEY] = {}
             configuration_settings[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags
             self._refresh_on_feature_flags = feature_flag_sentinel_keys
@@ -490,17 +490,16 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         feature_flag_sentinel_keys = {}
         loaded_feature_flags = []
         # Needs to be removed unknown keyword argument for list_configuration_settings
-        kwargs.pop("sentinel_keys", self._refresh_on)
-        if self._feature_flag_enabled:
-            for select in self._feature_flag_selectors:
-                feature_flags = self._client.list_configuration_settings(
-                    key_filter=FEATURE_FLAG_PREFIX + select.key_filter, label_filter=select.label_filter, **kwargs
-                )
-                async for feature_flag in feature_flags:
-                    loaded_feature_flags.append(json.loads(feature_flag.value))
+        kwargs.pop("sentinel_keys", None)
+        for select in self._feature_flag_selectors:
+            feature_flags = self._client.list_configuration_settings(
+                key_filter=FEATURE_FLAG_PREFIX + select.key_filter, label_filter=select.label_filter, **kwargs
+            )
+            async for feature_flag in feature_flags:
+                loaded_feature_flags.append(json.loads(feature_flag.value))
 
-                    if self._feature_flag_refresh_enabled:
-                        feature_flag_sentinel_keys[(feature_flag.key, feature_flag.label)] = feature_flag.etag
+                if self._feature_flag_refresh_enabled:
+                    feature_flag_sentinel_keys[(feature_flag.key, feature_flag.label)] = feature_flag.etag
         return loaded_feature_flags, feature_flag_sentinel_keys
 
     def _process_key_name(self, config):
