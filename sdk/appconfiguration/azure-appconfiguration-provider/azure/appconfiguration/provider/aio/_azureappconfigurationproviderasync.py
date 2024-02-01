@@ -115,9 +115,6 @@ async def load(
     :paramtype feature_flag_refresh_enabled: bool
     :keyword feature_flag_refresh_enabled: Optional flag to enable or disable the refresh of feature flags. Default is
     False.
-    :paramtype feature_flag_trim_prefixes: List[str]
-    :keyword feature_flag_trim_prefixes: After the FEATURE_FLAG_PREFIX is trimmed, the first match in
-    feature_flag_trim_prefixes will be trimmed, if there is one.
     """
 
 
@@ -173,17 +170,11 @@ async def load(
     :paramtype feature_flag_refresh_enabled: bool
     :keyword feature_flag_refresh_enabled: Optional flag to enable or disable the refresh of feature flags. Default is
      False.
-    :paramtype feature_flag_trim_prefixes: List[str]
-    :keyword feature_flag_trim_prefixes: After the FEATURE_FLAG_PREFIX is trimmed, the first match in
-     feature_flag_trim_prefixes will be trimmed, if there is one.
     """
 
 
 async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     # pylint:disable=protected-access
-    # Will remove when merged with Refresh Async PR
-    # pylint:disable=too-many-statements
-    # pylint:disable=too-many-branches
 
     # Start by parsing kwargs
     endpoint: Optional[str] = kwargs.pop("endpoint", None)
@@ -223,7 +214,9 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
         raise ValueError("A keyvault credential and secret resolver can't both be configured.")
 
     headers = _get_headers("Startup", **kwargs)
-    provider = _buildprovider(connection_string, endpoint, credential, **kwargs)
+    provider = _buildprovider(
+        connection_string, endpoint, credential, uses_key_vault="UsesKeyVault" in headers, **kwargs
+    )
 
     try:
         await provider._load_all(headers=headers)
@@ -347,7 +340,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
 
     def __init__(self, **kwargs) -> None:
         self._dict: Dict[str, str] = {}
-        self._trim_prefixes: List[str] = []
         self._client: Optional[AzureAppConfigurationClient] = None
         self._secret_clients: Dict[str, SecretClient] = {}
         self._selects: List[SettingSelector] = kwargs.pop(
@@ -355,12 +347,10 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         )
 
         trim_prefixes: List[str] = kwargs.pop("trim_prefixes", [])
-        self._trim_prefixes = sorted(trim_prefixes, key=len, reverse=True)
+        self._trim_prefixes: List[str] = sorted(trim_prefixes, key=len, reverse=True)
 
         refresh_on: List[Tuple[str, str]] = kwargs.pop("refresh_on", None) or []
-        self._refresh_on: Mapping[Tuple[str, str], Optional[str]] = {
-            _build_sentinel(s): None for s in refresh_on
-        }  # type:ignore
+        self._refresh_on: Mapping[Tuple[str, str], Optional[str]] = {_build_sentinel(s): None for s in refresh_on}
         self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._on_refresh_success: Optional[Callable] = kwargs.pop("on_refresh_success", None)
         self._on_refresh_error: Optional[Union[Callable[[Exception], Awaitable[None]], None]] = kwargs.pop(
@@ -379,8 +369,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         self._refresh_on_feature_flags = None
         self._feature_flag_refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._feature_flag_refresh_enabled = kwargs.pop("feature_flag_refresh_enabled", False)
-        feature_flag_trim_prefixes = kwargs.pop("feature_flag_trim_prefixes", [])
-        self._feature_flag_trim_prefixes: List[str] = sorted(feature_flag_trim_prefixes, key=len, reverse=True)
         self._update_lock = Lock()
         self._refresh_lock = Lock()
 
@@ -398,31 +386,53 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         need_refresh = False
         try:
             updated_sentinel_keys = dict(self._refresh_on)
+            feature_flag_sentinel_keys = dict(self._refresh_on_feature_flags)
             headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
-            for (key, label), etag in updated_sentinel_keys.items():
-                try:
-                    updated_sentinel = await self._client.get_configuration_setting(  # type: ignore
-                        key=key,
-                        label=label,
-                        etag=etag,
-                        match_condition=MatchConditions.IfModified,
-                        headers=headers,
-                        **kwargs
-                    )
-                    if updated_sentinel is not None:
-                        logging.debug("Refresh all triggered by key: %s label %s.", key, label)
-                        need_refresh = True
-
-                        updated_sentinel_keys[(key, label)] = updated_sentinel.etag
-                except HttpResponseError as e:
-                    if e.status_code == 404:
-                        if etag is not None:
-                            # If the sentinel is not found, it means the key/label was deleted, so we should refresh
-                            logging.debug("Refresh all triggered by key: %s label %s.", key, label)
+            if self._refresh_on:
+                for (key, label), etag in updated_sentinel_keys.items():
+                    try:
+                        updated_sentinel = await self._client.get_configuration_setting(  # type: ignore
+                            key=key,
+                            label=label,
+                            etag=etag,
+                            match_condition=MatchConditions.IfModified,
+                            headers=headers,
+                            **kwargs
+                        )
+                        if updated_sentinel:
                             need_refresh = True
-                            updated_sentinel_keys[(key, label)] = None
-                    else:
-                        raise e
+                            updated_sentinel_keys[(key, label)] = updated_sentinel.etag
+                    except HttpResponseError as e:
+                        if e.status_code == 404:
+                            if etag is not None:
+                                # If the sentinel is not found, it means the key/label was deleted, so we should refresh
+                                logging.debug("Refresh all triggered by key: %s label %s.", key, label)
+                                need_refresh = True
+                                updated_sentinel_keys[(key, label)] = None
+                        else:
+                            raise e
+            if not need_refresh and self._feature_flag_refresh_enabled:
+                for (key, label), etag in feature_flag_sentinel_keys.items():
+                    try:
+                        updated_sentinel = await self._client.get_configuration_setting(  # type: ignore
+                            key=key,
+                            label=label,
+                            etag=etag,
+                            match_condition=MatchConditions.IfModified,
+                            headers=headers,
+                            **kwargs
+                        )
+                        if updated_sentinel:
+                            need_refresh = True
+                            break
+                    except HttpResponseError as e:
+                        if e.status_code == 404:
+                            if etag is not None:
+                                # If the sentinel is not found, it means the key/label was deleted, so we should refresh
+                                logging.debug("Refresh all triggered by key: %s label %s.", key, label)
+                                need_refresh = True
+                        else:
+                            raise e
             # Need to only update once, no matter how many sentinels are updated
             if need_refresh:
                 await self._load_all(headers=headers, sentinel_keys=updated_sentinel_keys, **kwargs)
@@ -441,65 +451,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 self._refresh_timer.backoff()
             elif need_refresh and self._on_refresh_success:
                 await self._on_refresh_success()
-
-    def refresh_configuration_settings(self, configuration_settings, sentinel_keys, timer, **kwargs) -> None:
-        success = False
-        need_refresh = False
-        updated_feature_flags = False
-        headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
-        try:
-            for (key, label), etag in sentinel_keys.items():
-                etag, update, is_feature_flag, configuration_settings = self._check_configuration_settings(
-                    key, label, etag, headers, configuration_settings, **kwargs
-                )
-                if update and not is_feature_flag:
-                    need_refresh = True
-                elif update and is_feature_flag:
-                    updated_feature_flags = True
-
-                sentinel_keys[(key, label)] = etag
-            # Need to only update once, no matter how many sentinels are updated
-            if need_refresh:
-                configuration_settings, sentinel_keys = self._load_configuration_settings(
-                    headers=headers, sentinel_keys=sentinel_keys, **kwargs
-                )
-            success = True
-            # Even if we don't need to refresh, we should reset the timer
-            timer.reset()
-        except (ServiceRequestError, ServiceResponseError, HttpResponseError) as e:
-            # If a call back is provided, we should call it, otherwise raise the error
-            if not self._on_refresh_error:
-                raise
-            self._on_refresh_error(e)
-        finally:
-            # If we get an error we should retry sooner than the next refresh interval
-            if not success:
-                timer.backoff()
-        return configuration_settings, sentinel_keys, need_refresh or updated_feature_flags
-
-    def _check_configuration_settings(self, key, label, etag, headers, configuration_settings, **kwargs) -> None:
-        is_feature_flag = False
-        try:
-            updated_config = self._client.get_configuration_setting(
-                key=key, label=label, etag=etag, match_condition=MatchConditions.IfModified, headers=headers, **kwargs
-            )
-            is_feature_flag = not isinstance(updated_config, FeatureFlagConfigurationSetting)
-            if updated_config is not None:
-                if not is_feature_flag:
-                    logging.debug("Refresh all triggered by key: %s label %s.", key, label)
-                elif is_feature_flag:
-                    configuration_settings[self._process_key_name(updated_config)] = updated_config.value
-                return updated_config.etag, True, is_feature_flag, configuration_settings
-        except HttpResponseError as e:
-            if e.status_code == 404:
-                if etag is not None and not is_feature_flag:
-                    # If the sentinel is not found, it means the key/label was deleted, so we should refresh
-                    logging.debug("Refresh all triggered by key: %s label %s.", key, label)
-                elif etag is not None and is_feature_flag:
-                    configuration_settings[key] = None
-                return None, True, is_feature_flag, configuration_settings
-            raise e
-        return etag, False, is_feature_flag, configuration_settings
 
     async def _load_all(self, **kwargs):
         configuration_settings, sentinel_keys = await self._load_configuration_settings(**kwargs)
@@ -547,6 +498,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 )
                 async for feature_flag in feature_flags:
                     loaded_feature_flags.append(json.loads(feature_flag.value))
+
                     if self._feature_flag_refresh_enabled:
                         feature_flag_sentinel_keys[(feature_flag.key, feature_flag.label)] = feature_flag.etag
         return loaded_feature_flags, feature_flag_sentinel_keys

@@ -15,7 +15,9 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     @recorded_by_proxy_async
     async def test_provider_creation(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
         async with await self.create_client(
-            appconfiguration_connection_string, keyvault_secret_url=appconfiguration_keyvault_secret_url
+            appconfiguration_connection_string,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
+            feature_flag_enabled=True,
         ) as client:
             assert client["message"] == "hi"
             assert client["my_json"]["key"] == "value"
@@ -33,6 +35,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             appconfiguration_connection_string,
             trim_prefixes=trimmed,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
+            feature_flag_enabled=True,
         ) as client:
             assert client["message"] == "hi"
             assert client["my_json"]["key"] == "value"
@@ -53,7 +56,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         ) as client:
             assert client["message"] == "test"
             assert "test.trimmed" not in client
-            assert "FeatureManagementFeatureFlags" not in client
+            assert "FeatureManagement" not in client
 
     # method: provider_selectors
     @app_config_decorator_async

@@ -7,7 +7,6 @@
 * Enable loading of feature flags with `feature_flag_enabled`
 * Select Feature Flags to load with `feature_flag_selectors`
 * Enable/Disable Feature Flag Refresh with `feature_flag_refresh_enabled`
-* Trim Prefixes from Feature Flag Keys with `feature_flag_trim_prefixes`
 
 ### Breaking Changes
 
