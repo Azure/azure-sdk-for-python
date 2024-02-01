@@ -31,7 +31,7 @@ from azure.cosmos import DatabaseProxy
 
 
 @pytest.mark.cosmosEmulator
-class PartitionKeyTests(unittest.TestCase):
+class TestPartitionKey(unittest.TestCase):
     """Tests to verify if non-partitioned collections are properly accessed on migration with version 2018-12-31.
     """
 

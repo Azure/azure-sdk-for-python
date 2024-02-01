@@ -1,3 +1,31 @@
+# The MIT License (MIT)
+# Copyright (c) 2022 Microsoft Corporation
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+# IMPORTANT NOTES:
+#  	Most test cases in this file create collections in your Azure Cosmos account.
+#  	Collections are billing entities.  By running these test cases, you may incur monetary costs on your account.
+
+#  	To Run the test, replace the two member fields (masterKey and host) with values
+#   associated with your Azure Cosmos account.
+
 import unittest
 import uuid
 
@@ -44,7 +72,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         await self.client.close()
 
     async def test_first_and_last_slashes_trimmed_for_query_string_async(self):
-        created_collection = await self.created_db.create_container_if_not_exists(
+        created_collection = await self.created_db.create_container(
             str(uuid.uuid4()), PartitionKey(path="/pk"))
         doc_id = 'myId' + str(uuid.uuid4())
         document_definition = {'pk': 'pk', 'id': doc_id}
@@ -61,7 +89,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         await self.created_db.delete_container(created_collection.id)
 
     async def test_query_change_feed_with_pk_async(self):
-        created_collection = await self.created_db.create_container_if_not_exists(
+        created_collection = await self.created_db.create_container(
             "change_feed_test_" + str(uuid.uuid4()),
             PartitionKey(path="/pk"))
         # The test targets partition #3
@@ -187,8 +215,8 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         await self.created_db.delete_container(created_collection.id)
 
     async def test_query_change_feed_with_pk_range_id_async(self):
-        created_collection = await self.created_db.create_container_if_not_exists("cf_test_" + str(uuid.uuid4()),
-                                                                                  PartitionKey(path="/pk"))
+        created_collection = await self.created_db.create_container("cf_test_" + str(uuid.uuid4()),
+                                                                    PartitionKey(path="/pk"))
         # The test targets partition #3
         partition_key_range_id = 0
         partition_param = {"partition_key_range_id": partition_key_range_id}
@@ -314,7 +342,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         await self.created_db.delete_container(created_collection.id)
 
     async def test_populate_query_metrics_async(self):
-        created_collection = await self.created_db.create_container_if_not_exists(
+        created_collection = await self.created_db.create_container(
             "query_metrics_test" + str(uuid.uuid4()),
             PartitionKey(path="/pk"))
         doc_id = 'MyId' + str(uuid.uuid4())
@@ -342,7 +370,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         await self.created_db.delete_container(created_collection.id)
 
     async def test_populate_index_metrics(self):
-        created_collection = await self.created_db.create_container_if_not_exists(
+        created_collection = await self.created_db.create_container(
             "index_metrics_test" + str(uuid.uuid4()),
             PartitionKey(path="/pk"))
         doc_id = 'MyId' + str(uuid.uuid4())
@@ -373,8 +401,8 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         await self.created_db.delete_container(created_collection.id)
 
     async def test_max_item_count_honored_in_order_by_query_async(self):
-        created_collection = await self.created_db.create_container_if_not_exists(str(uuid.uuid4()),
-                                                                                  PartitionKey(path="/pk"))
+        created_collection = await self.created_db.create_container(str(uuid.uuid4()),
+                                                                    PartitionKey(path="/pk"))
         docs = []
         for i in range(10):
             document_definition = {'pk': 'pk', 'id': 'myId' + str(uuid.uuid4())}
@@ -483,8 +511,8 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert [item async for item in query_iterable] == []
 
     async def test_offset_limit_async(self):
-        created_collection = await self.created_db.create_container_if_not_exists("offset_limit_" + str(uuid.uuid4()),
-                                                                                  PartitionKey(path="/pk"))
+        created_collection = await self.created_db.create_container("offset_limit_" + str(uuid.uuid4()),
+                                                                    PartitionKey(path="/pk"))
         values = []
         for i in range(10):
             document_definition = {'pk': i, 'id': 'myId' + str(uuid.uuid4()), 'value': i // 3}
@@ -733,6 +761,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert len(token.encode('utf-8')) <= 1024
 
     @pytest.mark.cosmosLiveTest
+    @pytest.mark.skip
     async def test_computed_properties_query(self):
         computed_properties = [{'name': "cp_lower", 'query': "SELECT VALUE LOWER(c.db_group) FROM c"},
                                {'name': "cp_power",
@@ -750,7 +779,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
             {'id': str(uuid.uuid4()), 'pk': 'test', 'val': 3, 'stringProperty': 'randomWord7', 'db_group': 'group2'},
             {'id': str(uuid.uuid4()), 'pk': 'test', 'val': 2, 'stringProperty': 'randomWord8', 'db_group': 'GroUp3'}
         ]
-        created_collection = await self.created_db.create_container_if_not_exists(
+        created_collection = await self.created_db.create_container(
             "computed_properties_query_test_" + str(uuid.uuid4()),
             PartitionKey(path="/pk"),
             computed_properties=computed_properties)

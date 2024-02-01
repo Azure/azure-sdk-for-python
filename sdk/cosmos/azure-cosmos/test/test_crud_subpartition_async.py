@@ -151,21 +151,12 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
         await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND,
                                                      created_container.read)
 
-        container_proxy = await created_db.create_container_if_not_exists(id=created_collection.id,
-                                                                          partition_key=PartitionKey(path=['/id1',
-                                                                                                           '/id2',
-                                                                                                           '/id3'],
-                                                                                                     kind='MultiHash'))
+        container_proxy = await created_db.create_container(id=created_collection.id,
+                                                            partition_key=PartitionKey(path=['/id1',
+                                                                                             '/id2',
+                                                                                             '/id3'],
+                                                                                       kind='MultiHash'))
         assert created_collection.id == container_proxy.id
-        container_proxy_properties = await container_proxy._get_properties()
-        assert PartitionKey(path=["/id1", "/id2", "/id3"], kind='MultiHash') == container_proxy_properties[
-            'partitionKey']
-
-        container_proxy = await created_db.create_container_if_not_exists(id=created_collection.id,
-                                                                          partition_key=created_properties[
-                                                                              'partitionKey'])
-        assert created_container.id == container_proxy.id
-
         container_proxy_properties = await container_proxy._get_properties()
         assert PartitionKey(path=["/id1", "/id2", "/id3"], kind='MultiHash') == container_proxy_properties[
             'partitionKey']

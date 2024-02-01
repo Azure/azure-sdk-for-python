@@ -15,7 +15,7 @@ from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
 
 
 @pytest.mark.cosmosEmulator
-class SessionTests(unittest.TestCase):
+class TestSession(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 
     created_db: DatabaseProxy = None

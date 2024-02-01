@@ -73,7 +73,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
     def setUpClass(cls):
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
-        cls.container = cls.database.create_container_if_not_exists(
+        cls.container = cls.database.create_container(
             id=cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/id"))
 

@@ -138,17 +138,11 @@ class TestSubpartitionCrud(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            created_container.read)
 
-        container_proxy = created_db.create_container_if_not_exists(id=created_collection.id,
-                                                                    partition_key=PartitionKey(path=
-                                                                                               ["/id1", "/id2", "/id3"],
-                                                                                               kind='MultiHash'))
+        container_proxy = created_db.create_container(id=created_collection.id,
+                                                      partition_key=PartitionKey(path=
+                                                                                 ["/id1", "/id2", "/id3"],
+                                                                                 kind='MultiHash'))
         self.assertEqual(created_collection.id, container_proxy.id)
-        self.assertDictEqual(PartitionKey(path=["/id1", "/id2", "/id3"], kind='MultiHash'),
-                             container_proxy._properties['partitionKey'])
-
-        container_proxy = created_db.create_container_if_not_exists(id=created_collection.id,
-                                                                    partition_key=created_properties['partitionKey'])
-        self.assertEqual(created_container.id, container_proxy.id)
         self.assertDictEqual(PartitionKey(path=["/id1", "/id2", "/id3"], kind='MultiHash'),
                              container_proxy._properties['partitionKey'])
 

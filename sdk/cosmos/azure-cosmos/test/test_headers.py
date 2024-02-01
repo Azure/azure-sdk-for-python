@@ -30,7 +30,7 @@ from azure.cosmos import DatabaseProxy
 
 
 @pytest.mark.cosmosEmulator
-class HeadersTest(unittest.TestCase):
+class TestHeaders(unittest.TestCase):
     database: DatabaseProxy = None
     client: cosmos_client.CosmosClient = None
     configs = test_config.TestConfig

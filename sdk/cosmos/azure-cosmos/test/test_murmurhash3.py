@@ -29,7 +29,7 @@ from azure.cosmos._cosmos_murmurhash3 import murmurhash3_128
 
 
 @pytest.mark.cosmosEmulator
-class MurmurHash3Test(unittest.TestCase):
+class TestMurmurHash3(unittest.TestCase):
     """Python Murmurhash3 Tests and its compatibility with backend implementation..
         """
     string_low_value = 2792699143512860960

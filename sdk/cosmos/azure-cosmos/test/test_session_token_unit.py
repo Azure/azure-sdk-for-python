@@ -1,9 +1,12 @@
 import unittest
 
+import pytest
+
 from azure.cosmos._vector_session_token import VectorSessionToken
 from azure.cosmos.exceptions import CosmosHttpResponseError
 
 
+@pytest.mark.cosmosEmulator
 class TestSessionTokenUnitTest(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 

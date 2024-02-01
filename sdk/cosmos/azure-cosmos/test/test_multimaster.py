@@ -11,7 +11,7 @@ from azure.cosmos.http_constants import HttpHeaders
 
 
 @pytest.mark.cosmosEmulator
-class MultiMasterTests(unittest.TestCase):
+class TestMultiMaster(unittest.TestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
@@ -33,9 +33,9 @@ class MultiMasterTests(unittest.TestCase):
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
         _retry_utility.ExecuteFunction = self._MockExecuteFunction
 
-        connectionPolicy = MultiMasterTests.connectionPolicy
+        connectionPolicy = TestMultiMaster.connectionPolicy
         connectionPolicy.UseMultipleWriteLocations = True
-        client = cosmos_client.CosmosClient(MultiMasterTests.host, MultiMasterTests.masterKey,
+        client = cosmos_client.CosmosClient(TestMultiMaster.host, TestMultiMaster.masterKey,
                                             consistency_level="Session",
                                             connection_policy=connectionPolicy)
 

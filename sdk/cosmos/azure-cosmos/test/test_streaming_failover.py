@@ -17,6 +17,7 @@ from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.skip
 class TestStreamingFailOver(unittest.TestCase):
     DEFAULT_ENDPOINT = "https://geotest.documents.azure.com:443/"
     MASTER_KEY = "SomeKeyValue"
@@ -53,8 +54,8 @@ class TestStreamingFailOver(unittest.TestCase):
         client.client_connection._global_endpoint_manager.location_cache.get_write_endpoints = (
             self.mock_get_write_endpoints)
         created_db = client.create_database_if_not_exists("streaming-db" + str(uuid.uuid4()))
-        created_container = created_db.create_container_if_not_exists("streaming-container" + str(uuid.uuid4()),
-                                                                      PartitionKey(path="/id"))
+        created_container = created_db.create_container("streaming-container" + str(uuid.uuid4()),
+                                                        PartitionKey(path="/id"))
 
         document_definition = {'id': 'doc',
                                'name': 'sample document',

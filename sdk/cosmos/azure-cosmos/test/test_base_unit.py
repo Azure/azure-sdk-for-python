@@ -1,8 +1,11 @@
 import unittest
 
+import pytest
+
 import azure.cosmos._base as base
 
 
+@pytest.mark.cosmosEmulator
 class TestIdAndNameBased(unittest.TestCase):
     def test_is_name_based(self):
         self.assertFalse(base.IsNameBased("dbs/xjwmAA==/"))

@@ -47,10 +47,10 @@ class TestResourceIds(unittest.TestCase):
 
     def test_id_unicode_validation(self):
         # unicode chars in Hindi for Id which translates to: "Hindi is the national language of India"
-        resource_id1 = u'हिन्दी भारत की राष्ट्रीय भाषा है'  # cspell:disable-line
+        resource_id1 = u'हिन्दी भारत की राष्ट्रीय भाषा है' + str(uuid.uuid4())  # cspell:disable-line
 
         # Special allowed chars for Id
-        resource_id2 = "!@$%^&*()-~`'_[]{}|;:,.<>"
+        resource_id2 = "!@$%^&*()-~`'_[]{}|;:,.<>" + str(uuid.uuid4())
 
         # verify that databases are created with specified IDs
         created_db1 = self.client.create_database_if_not_exists(resource_id1)
@@ -60,10 +60,10 @@ class TestResourceIds(unittest.TestCase):
         assert resource_id2 == created_db2.id
 
         # verify that collections are created with specified IDs
-        created_collection1 = created_db1.create_container_if_not_exists(
+        created_collection1 = created_db1.create_container(
             id=resource_id1,
             partition_key=PartitionKey(path='/id', kind='Hash'))
-        created_collection2 = created_db2.create_container_if_not_exists(
+        created_collection2 = created_db2.create_container(
             id=resource_id2,
             partition_key=PartitionKey(path='/id', kind='Hash'))
 

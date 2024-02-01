@@ -26,7 +26,7 @@ class RefreshThread(threading.Thread):
 
 
 @pytest.mark.cosmosEmulator
-class LocationCacheTest(unittest.TestCase):
+class TestLocationCache(unittest.TestCase):
     DEFAULT_ENDPOINT = "https://default.documents.azure.com"
     LOCATION_1_ENDPOINT = "https://location1.documents.azure.com"
     LOCATION_2_ENDPOINT = "https://location2.documents.azure.com"

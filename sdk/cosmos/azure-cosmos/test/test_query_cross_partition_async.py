@@ -59,7 +59,7 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         self.client = CosmosClient(self.host, self.masterKey)
         self.created_db = self.client.get_database_client(self.TEST_DATABASE_ID)
-        self.created_container = await self.created_db.create_container_if_not_exists(
+        self.created_container = await self.created_db.create_container(
             self.TEST_CONTAINER_ID,
             PartitionKey(path="/pk"),
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS)

@@ -71,7 +71,7 @@ class TimeoutTransport(AsyncioRequestsTransport):
         return response
 
 
-class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
+class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
     """Python CRUD Tests.
     """
     client: CosmosClient = None
@@ -516,7 +516,7 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
         resource_tokens["dbs/" + created_db.id + "/colls/" + read_collection.id] = (
             read_permission.properties['_token'])
 
-        async with CosmosClient(TestCRUDAsync.host, resource_tokens) as restricted_client:
+        async with CosmosClient(TestCRUDOperationsAsync.host, resource_tokens) as restricted_client:
             print('Async Initialization')
 
             document_definition = {'id': 'document1',
@@ -1235,21 +1235,21 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
 
         # Client without any authorization will fail.
         try:
-            async with CosmosClient(TestCRUDAsync.host, {}) as client:
+            async with CosmosClient(TestCRUDOperationsAsync.host, {}) as client:
                 [db async for db in client.list_databases()]
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == StatusCodes.UNAUTHORIZED
 
         # Client with master key.
-        async with CosmosClient(TestCRUDAsync.host,
-                                TestCRUDAsync.masterKey) as client:
+        async with CosmosClient(TestCRUDOperationsAsync.host,
+                                TestCRUDOperationsAsync.masterKey) as client:
             # setup entities
             entities = await __setup_entities()
             resource_tokens = {"dbs/" + entities['db'].id + "/colls/" + entities['coll'].id:
                                    entities['permissionOnColl'].properties['_token']}
 
         async with CosmosClient(
-                TestCRUDAsync.host, resource_tokens) as col_client:
+                TestCRUDOperationsAsync.host, resource_tokens) as col_client:
             db = entities['db']
 
             old_client_connection = db.client_connection
@@ -1283,7 +1283,7 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
                                    entities['permissionOnDoc'].properties['_token']}
 
         async with CosmosClient(
-                TestCRUDAsync.host, resource_tokens) as doc_client:
+                TestCRUDOperationsAsync.host, resource_tokens) as doc_client:
 
             # 6. Success-- Use Doc permission to read doc
             read_doc = await doc_client.get_database_client(db.id).get_container_client(success_coll.id).read_item(
@@ -1714,7 +1714,7 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
 
             with self.assertRaises(Exception):
                 # client does a getDatabaseAccount on initialization, which will time out
-                async with CosmosClient(TestCRUDAsync.host, TestCRUDAsync.masterKey,
+                async with CosmosClient(TestCRUDOperationsAsync.host, TestCRUDOperationsAsync.masterKey,
                                         connection_policy=connection_policy) as client:
                     print('Async initialization')
 
@@ -1724,7 +1724,7 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
         connection_policy.RequestTimeout = 0.000000000001
         with self.assertRaises(AzureError):
             # client does a getDatabaseAccount on initialization, which will time out
-            async with CosmosClient(TestCRUDAsync.host, TestCRUDAsync.masterKey,
+            async with CosmosClient(TestCRUDOperationsAsync.host, TestCRUDOperationsAsync.masterKey,
                                     connection_policy=connection_policy,
                                     retry_total=3, retry_connect=3, retry_read=3, retry_backoff_max=0.3,
                                     retry_on_status_codes=[500, 502, 504]) as client:
@@ -1742,7 +1742,7 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
     async def initialize_client_with_connection_urllib_retry_config(self, retries):
         start_time = time.time()
         try:
-            async with CosmosClient("https://localhost:9999", TestCRUDAsync.masterKey,
+            async with CosmosClient("https://localhost:9999", TestCRUDOperationsAsync.masterKey,
                                     retry_total=retries, retry_connect=retries, retry_read=retries,
                                     retry_backoff_max=0.3, retry_on_status_codes=[500, 502, 504]) as client:
                 print('Async initialization')
@@ -1756,7 +1756,7 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
         try:
             async with CosmosClient(
                     "https://localhost:9999",
-                    TestCRUDAsync.masterKey,
+                    TestCRUDOperationsAsync.masterKey,
                     retry_total=retries,
                     retry_read=retries,
                     retry_connect=retries,
@@ -1773,7 +1773,7 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
         with self.assertRaises(exceptions.CosmosClientTimeoutError):
             async with CosmosClient(
                     "https://localhost:9999",
-                    TestCRUDAsync.masterKey,
+                    TestCRUDOperationsAsync.masterKey,
                     retry_total=3,
                     timeout=1) as client:
                 print('Async initialization')
@@ -1816,8 +1816,8 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_query_iterable_functionality_async(self):
 
-        collection = await self.database_for_test.create_container_if_not_exists("query-iterable-container-async",
-                                                                                 PartitionKey(path="/pk"))
+        collection = await self.database_for_test.create_container("query-iterable-container-async",
+                                                                   PartitionKey(path="/pk"))
         doc1 = await collection.upsert_item(body={'id': 'doc1', 'prop1': 'value1'})
         doc2 = await collection.upsert_item(body={'id': 'doc2', 'prop1': 'value2'})
         doc3 = await collection.upsert_item(body={'id': 'doc3', 'prop1': 'value3'})

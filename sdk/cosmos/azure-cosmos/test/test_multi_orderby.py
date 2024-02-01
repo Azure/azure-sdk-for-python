@@ -40,7 +40,7 @@ from azure.cosmos.partition_key import PartitionKey
 
 
 @pytest.mark.cosmosEmulator
-class MultiOrderbyTests(unittest.TestCase):
+class TestMultiOrderBy(unittest.TestCase):
     """Multi Orderby and Composite Indexes Tests.
     """
 

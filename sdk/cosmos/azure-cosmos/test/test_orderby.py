@@ -41,7 +41,7 @@ from azure.cosmos.partition_key import PartitionKey
 
 
 @pytest.mark.cosmosEmulator
-class CrossPartitionTopOrderByTest(unittest.TestCase):
+class TestCrossPartitionTopOrderBy(unittest.TestCase):
     """Orderby Tests.
     """
 

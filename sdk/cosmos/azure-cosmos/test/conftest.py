@@ -21,48 +21,10 @@
 
 # pytest fixture 'teardown' is called at the end of a test run to clean up resources
 
-import pytest
-
 import test_config
 from azure.cosmos import CosmosClient as CosmosSyncClient
-from azure.cosmos.aio import CosmosClient as CosmosAsyncClient
 
 cosmos_sync_client = CosmosSyncClient(test_config.TestConfig.host, test_config.TestConfig.masterKey)
-cosmos_async_client = CosmosAsyncClient(test_config.TestConfig.host, test_config.TestConfig.masterKey)
-
-
-@pytest.fixture(scope="session", autouse=True)
-def get_cosmos_sync_client():
-    return cosmos_sync_client
-
-
-@pytest.fixture(scope="session", autouse=True)
-def get_cosmos_async_client():
-    return cosmos_async_client
-
-
-@pytest.fixture(scope="session")
-def create_test_database():
-    config = test_config.TestConfig
-    config.create_database_if_not_exist(cosmos_sync_client)
-
-
-@pytest.fixture(scope="session")
-def create_multi_partition_container():
-    config = test_config.TestConfig
-    config.create_multi_partition_container_if_not_exist(cosmos_sync_client)
-
-
-@pytest.fixture(scope="session")
-def create_single_partition_container():
-    config = test_config.TestConfig
-    config.create_single_partition_container_if_not_exist(cosmos_sync_client)
-
-
-@pytest.fixture(scope="session")
-def delete_test_database():
-    config = test_config.TestConfig
-    config.try_delete_database(cosmos_sync_client)
 
 
 def pytest_configure(config):

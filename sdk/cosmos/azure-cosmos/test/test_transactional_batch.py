@@ -59,8 +59,8 @@ class TestTransactionalBatch(unittest.TestCase):
         cls.test_database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
 
     def test_invalid_batch_sizes(self):
-        container = self.test_database.create_container_if_not_exists(id="invalid_batch_size" + str(uuid.uuid4()),
-                                                                      partition_key=PartitionKey(path="/company"))
+        container = self.test_database.create_container(id="invalid_batch_size" + str(uuid.uuid4()),
+                                                        partition_key=PartitionKey(path="/company"))
 
         # empty batch
         try:
@@ -98,8 +98,8 @@ class TestTransactionalBatch(unittest.TestCase):
         self.test_database.delete_container(container.id)
 
     def test_batch_create(self):
-        container = self.test_database.create_container_if_not_exists(id="batch_create" + str(uuid.uuid4()),
-                                                                      partition_key=PartitionKey(path="/company"))
+        container = self.test_database.create_container(id="batch_create" + str(uuid.uuid4()),
+                                                        partition_key=PartitionKey(path="/company"))
         batch = []
         for i in range(100):
             batch.append(("create", ({"id": "item" + str(i), "company": "Microsoft"},)))
@@ -156,8 +156,8 @@ class TestTransactionalBatch(unittest.TestCase):
         self.test_database.delete_container(container.id)
 
     def test_batch_read(self):
-        container = self.test_database.create_container_if_not_exists(id="batch_read" + str(uuid.uuid4()),
-                                                                      partition_key=PartitionKey(path="/company"))
+        container = self.test_database.create_container(id="batch_read" + str(uuid.uuid4()),
+                                                        partition_key=PartitionKey(path="/company"))
         batch = []
         for i in range(100):
             container.create_item({"id": "item" + str(i), "company": "Microsoft"})
@@ -186,8 +186,8 @@ class TestTransactionalBatch(unittest.TestCase):
         self.test_database.delete_container(container.id)
 
     def test_batch_replace(self):
-        container = self.test_database.create_container_if_not_exists(id="batch_replace" + str(uuid.uuid4()),
-                                                                      partition_key=PartitionKey(path="/company"))
+        container = self.test_database.create_container(id="batch_replace" + str(uuid.uuid4()),
+                                                        partition_key=PartitionKey(path="/company"))
         batch = [("create", ({"id": "new-item", "company": "Microsoft"},)),
                  ("replace", ("new-item", {"id": "new-item", "company": "Microsoft", "message": "item was replaced"}))]
 
@@ -231,8 +231,8 @@ class TestTransactionalBatch(unittest.TestCase):
         self.test_database.delete_container(container.id)
 
     def test_batch_upsert(self):
-        container = self.test_database.create_container_if_not_exists(id="batch_upsert" + str(uuid.uuid4()),
-                                                                      partition_key=PartitionKey(path="/company"))
+        container = self.test_database.create_container(id="batch_upsert" + str(uuid.uuid4()),
+                                                        partition_key=PartitionKey(path="/company"))
         item_id = str(uuid.uuid4())
         batch = [("upsert", ({"id": item_id, "company": "Microsoft"},)),
                  ("upsert", ({"id": item_id, "company": "Microsoft", "message": "item was upsert"},)),
@@ -245,8 +245,8 @@ class TestTransactionalBatch(unittest.TestCase):
         self.test_database.delete_container(container.id)
 
     def test_batch_patch(self):
-        container = self.test_database.create_container_if_not_exists(id="batch_patch" + str(uuid.uuid4()),
-                                                                      partition_key=PartitionKey(path="/company"))
+        container = self.test_database.create_container(id="batch_patch" + str(uuid.uuid4()),
+                                                        partition_key=PartitionKey(path="/company"))
         item_id = str(uuid.uuid4())
         batch = [("upsert", ({"id": item_id,
                               "company": "Microsoft",
@@ -313,8 +313,8 @@ class TestTransactionalBatch(unittest.TestCase):
         self.test_database.delete_container(container.id)
 
     def test_batch_delete(self):
-        container = self.test_database.create_container_if_not_exists(id="batch_delete" + str(uuid.uuid4()),
-                                                                      partition_key=PartitionKey(path="/company"))
+        container = self.test_database.create_container(id="batch_delete" + str(uuid.uuid4()),
+                                                        partition_key=PartitionKey(path="/company"))
         create_batch = []
         delete_batch = []
         for i in range(10):
@@ -348,8 +348,8 @@ class TestTransactionalBatch(unittest.TestCase):
         self.test_database.delete_container(container.id)
 
     def test_batch_lsn(self):
-        container = self.test_database.create_container_if_not_exists(id="batch_lsn" + str(uuid.uuid4()),
-                                                                      partition_key=PartitionKey(path="/company"))
+        container = self.test_database.create_container(id="batch_lsn" + str(uuid.uuid4()),
+                                                        partition_key=PartitionKey(path="/company"))
         # create test items
         container.upsert_item({"id": "read_item", "company": "Microsoft"})
         container.upsert_item({"id": "replace_item", "company": "Microsoft", "value": 0})
@@ -373,7 +373,7 @@ class TestTransactionalBatch(unittest.TestCase):
         self.test_database.delete_container(container.id)
 
     def test_batch_subpartition(self):
-        container = self.test_database.create_container_if_not_exists(
+        container = self.test_database.create_container(
             id="batch_subpartition" + str(uuid.uuid4()),
             partition_key=PartitionKey(path=["/state", "/city", "/zipcode"], kind="MultiHash"))
         item_ids = [str(uuid.uuid4()), str(uuid.uuid4()), str(uuid.uuid4())]

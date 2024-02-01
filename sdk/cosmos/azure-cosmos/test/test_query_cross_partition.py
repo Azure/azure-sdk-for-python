@@ -35,7 +35,7 @@ from azure.cosmos.partition_key import PartitionKey
 
 
 @pytest.mark.cosmosEmulator
-class CrossPartitionQueryTest(unittest.TestCase):
+class TestCrossPartitionQuery(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 
     created_db: DatabaseProxy = None
@@ -60,7 +60,7 @@ class CrossPartitionQueryTest(unittest.TestCase):
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
 
     def setUp(self):
-        self.created_container = self.created_db.create_container_if_not_exists(
+        self.created_container = self.created_db.create_container(
             id=self.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS)

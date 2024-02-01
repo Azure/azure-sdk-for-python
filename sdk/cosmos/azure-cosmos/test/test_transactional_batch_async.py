@@ -20,7 +20,6 @@ import uuid
 
 import pytest
 
-import azure.cosmos
 import test_config
 from azure.cosmos import exceptions, PartitionKey
 from azure.cosmos.aio import CosmosClient
@@ -43,7 +42,6 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
     configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
-    sync_client: azure.cosmos.CosmosClient = None
     TEST_DATABASE_ID = configs.TEST_DATABASE_ID
 
     @classmethod
@@ -63,8 +61,8 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
         await self.client.close()
 
     async def test_invalid_batch_sizes_async(self):
-        container = await self.test_database.create_container_if_not_exists(
-            id="invalid_batch_size" + str(uuid.uuid4()),
+        container = await self.test_database.create_container(
+            id="invalid_batch_size_async" + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/company"))
 
         # empty batch
@@ -103,8 +101,8 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
         await self.test_database.delete_container(container.id)
 
     async def test_batch_create_async(self):
-        container = await self.test_database.create_container_if_not_exists(id="batch_create" + str(uuid.uuid4()),
-                                                                            partition_key=PartitionKey(path="/company"))
+        container = await self.test_database.create_container(id="batch_create_async" + str(uuid.uuid4()),
+                                                              partition_key=PartitionKey(path="/company"))
         batch = []
         for i in range(100):
             batch.append(("create", ({"id": "item" + str(i), "company": "Microsoft"},)))
@@ -161,8 +159,8 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
         await self.test_database.delete_container(container.id)
 
     async def test_batch_read_async(self):
-        container = await self.test_database.create_container_if_not_exists(id="batch_read" + str(uuid.uuid4()),
-                                                                            partition_key=PartitionKey(path="/company"))
+        container = await self.test_database.create_container(id="batch_read_async" + str(uuid.uuid4()),
+                                                              partition_key=PartitionKey(path="/company"))
         batch = []
         for i in range(100):
             await container.create_item({"id": "item" + str(i), "company": "Microsoft"})
@@ -191,8 +189,8 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
         await self.test_database.delete_container(container.id)
 
     async def test_batch_replace_async(self):
-        container = await self.test_database.create_container_if_not_exists(id="batch_replace" + str(uuid.uuid4()),
-                                                                            partition_key=PartitionKey(path="/company"))
+        container = await self.test_database.create_container(id="batch_replace_async" + str(uuid.uuid4()),
+                                                              partition_key=PartitionKey(path="/company"))
         batch = [("create", ({"id": "new-item", "company": "Microsoft"},)),
                  ("replace", ("new-item", {"id": "new-item", "company": "Microsoft", "message": "item was replaced"}))]
 
@@ -236,8 +234,8 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
         await self.test_database.delete_container(container.id)
 
     async def test_batch_upsert_async(self):
-        container = await self.test_database.create_container_if_not_exists(id="batch_upsert" + str(uuid.uuid4()),
-                                                                            partition_key=PartitionKey(path="/company"))
+        container = await self.test_database.create_container(id="batch_upsert_async" + str(uuid.uuid4()),
+                                                              partition_key=PartitionKey(path="/company"))
         item_id = str(uuid.uuid4())
         batch = [("upsert", ({"id": item_id, "company": "Microsoft"},)),
                  ("upsert", ({"id": item_id, "company": "Microsoft", "message": "item was upsert"},)),
@@ -250,8 +248,8 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
         await self.test_database.delete_container(container.id)
 
     async def test_batch_patch_async(self):
-        container = await self.test_database.create_container_if_not_exists(id="batch_patch" + str(uuid.uuid4()),
-                                                                            partition_key=PartitionKey(path="/company"))
+        container = await self.test_database.create_container(id="batch_patch_async" + str(uuid.uuid4()),
+                                                              partition_key=PartitionKey(path="/company"))
         item_id = str(uuid.uuid4())
         batch = [("upsert", ({"id": item_id,
                               "company": "Microsoft",
@@ -319,8 +317,8 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
         await self.test_database.delete_container(container.id)
 
     async def test_batch_delete_async(self):
-        container = await self.test_database.create_container_if_not_exists(id="batch_delete" + str(uuid.uuid4()),
-                                                                            partition_key=PartitionKey(path="/company"))
+        container = await self.test_database.create_container(id="batch_delete_async" + str(uuid.uuid4()),
+                                                              partition_key=PartitionKey(path="/company"))
         create_batch = []
         delete_batch = []
         for i in range(10):
@@ -356,8 +354,8 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
         await self.test_database.delete_container(container.id)
 
     async def test_batch_lsn_async(self):
-        container = await self.test_database.create_container_if_not_exists(id="batch_lsn" + str(uuid.uuid4()),
-                                                                            partition_key=PartitionKey(path="/company"))
+        container = await self.test_database.create_container(id="batch_lsn_async" + str(uuid.uuid4()),
+                                                              partition_key=PartitionKey(path="/company"))
         # Create test items
         await container.upsert_item({"id": "read_item", "company": "Microsoft"})
         await container.upsert_item({"id": "replace_item", "company": "Microsoft", "value": 0})
@@ -381,7 +379,7 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
         await self.test_database.delete_container(container.id)
 
     async def test_batch_subpartition(self):
-        container = await self.test_database.create_container_if_not_exists(
+        container = await self.test_database.create_container(
             id="batch_subpartition" + str(uuid.uuid4()),
             partition_key=PartitionKey(path=["/state", "/city", "/zipcode"], kind="MultiHash"))
         item_ids = [str(uuid.uuid4()), str(uuid.uuid4()), str(uuid.uuid4())]

@@ -48,7 +48,7 @@ def get_document_collection_link(database, document_collection):
 
 
 @pytest.mark.cosmosEmulator
-class QueryExecutionContextEndToEndTests(unittest.TestCase):
+class TestQueryExecutionContextEndToEnd(unittest.TestCase):
     """Routing Map Functionalities end-to-end Tests.
     """
 

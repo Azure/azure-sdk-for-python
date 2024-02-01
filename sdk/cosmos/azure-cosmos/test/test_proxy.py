@@ -67,7 +67,7 @@ class Server(Thread):
 
 
 @pytest.mark.cosmosEmulator
-class ProxyTests(unittest.TestCase):
+class TestProxy(unittest.TestCase):
     """Proxy Tests.
     """
     host = 'http://localhost:8081'

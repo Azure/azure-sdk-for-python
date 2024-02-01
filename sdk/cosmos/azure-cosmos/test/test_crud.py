@@ -74,7 +74,7 @@ class TimeoutTransport(RequestsTransport):
 
 
 @pytest.mark.cosmosEmulator
-class CRUDTests(unittest.TestCase):
+class TestCRUDOperations(unittest.TestCase):
     """Python CRUD Tests.
     """
 
@@ -533,7 +533,7 @@ class CRUDTests(unittest.TestCase):
             read_permission.properties['_token'])
 
         restricted_client = cosmos_client.CosmosClient(
-            CRUDTests.host, resource_tokens, "Session", connection_policy=CRUDTests.connectionPolicy)
+            TestCRUDOperations.host, resource_tokens, "Session", connection_policy=TestCRUDOperations.connectionPolicy)
 
         document_definition = {'id': 'document1',
                                'key': 1
@@ -1322,22 +1322,22 @@ class CRUDTests(unittest.TestCase):
 
         # Client without any authorization will fail.
         try:
-            cosmos_client.CosmosClient(CRUDTests.host, {}, "Session", connection_policy=CRUDTests.connectionPolicy)
+            cosmos_client.CosmosClient(TestCRUDOperations.host, {}, "Session", connection_policy=TestCRUDOperations.connectionPolicy)
             raise Exception("Test did not fail as expected.")
         except exceptions.CosmosHttpResponseError as error:
             self.assertEqual(error.status_code, StatusCodes.UNAUTHORIZED)
 
         # Client with master key.
-        client = cosmos_client.CosmosClient(CRUDTests.host,
-                                            CRUDTests.masterKey,
+        client = cosmos_client.CosmosClient(TestCRUDOperations.host,
+                                            TestCRUDOperations.masterKey,
                                             "Session",
-                                            connection_policy=CRUDTests.connectionPolicy)
+                                            connection_policy=TestCRUDOperations.connectionPolicy)
         # setup entities
         entities = __SetupEntities(client)
         resource_tokens = {"dbs/" + entities['db'].id + "/colls/" + entities['coll'].id:
                                entities['permissionOnColl'].properties['_token']}
         col_client = cosmos_client.CosmosClient(
-            CRUDTests.host, resource_tokens, "Session", connection_policy=CRUDTests.connectionPolicy)
+            TestCRUDOperations.host, resource_tokens, "Session", connection_policy=TestCRUDOperations.connectionPolicy)
         db = entities['db']
 
         old_client_connection = db.client_connection
@@ -1377,7 +1377,7 @@ class CRUDTests(unittest.TestCase):
                                entities['permissionOnDoc'].properties['_token']}
 
         doc_client = cosmos_client.CosmosClient(
-            CRUDTests.host, resource_tokens, "Session", connection_policy=CRUDTests.connectionPolicy)
+            TestCRUDOperations.host, resource_tokens, "Session", connection_policy=TestCRUDOperations.connectionPolicy)
 
         # 6. Success-- Use Doc permission to read doc
         read_doc = doc_client.get_database_client(db.id).get_container_client(success_coll.id).read_item(docId, docId)
@@ -1843,7 +1843,7 @@ class CRUDTests(unittest.TestCase):
 
             with self.assertRaises(Exception):
                 # client does a getDatabaseAccount on initialization, which will time out
-                cosmos_client.CosmosClient(CRUDTests.host, CRUDTests.masterKey, "Session",
+                cosmos_client.CosmosClient(TestCRUDOperations.host, TestCRUDOperations.masterKey, "Session",
                                            connection_policy=connection_policy)
 
     @pytest.mark.cosmosLiveTest
@@ -1860,7 +1860,7 @@ class CRUDTests(unittest.TestCase):
         )
         with self.assertRaises(AzureError):
             # client does a getDatabaseAccount on initialization, which will time out
-            cosmos_client.CosmosClient(CRUDTests.host, CRUDTests.masterKey, "Session",
+            cosmos_client.CosmosClient(TestCRUDOperations.host, TestCRUDOperations.masterKey, "Session",
                                        connection_policy=connection_policy)
 
     def test_client_connection_retry_configuration(self):
@@ -1873,7 +1873,7 @@ class CRUDTests(unittest.TestCase):
         try:
             cosmos_client.CosmosClient(
                 "https://localhost:9999",
-                CRUDTests.masterKey,
+                TestCRUDOperations.masterKey,
                 "Session",
                 retry_total=retries,
                 retry_read=retries,
@@ -1890,7 +1890,7 @@ class CRUDTests(unittest.TestCase):
         with self.assertRaises(exceptions.CosmosClientTimeoutError):
             cosmos_client.CosmosClient(
                 "https://localhost:9999",
-                CRUDTests.masterKey,
+                TestCRUDOperations.masterKey,
                 "Session",
                 retry_total=3,
                 timeout=1)
