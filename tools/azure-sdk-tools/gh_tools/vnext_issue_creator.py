@@ -158,3 +158,18 @@ def create_vnext_issue(package_name: str, check_type: CHECK_TYPE) -> None:
         title=title,
         body=template,
     )
+
+
+def close_vnext_issue(package_name: str, check_type: CHECK_TYPE) -> None:
+    """This is called when a client library passes a vnext check. If an issue exists for the library, it is closed."""
+
+    auth = Auth.Token(os.environ["GH_TOKEN"])
+    g = Github(auth=auth)
+
+    repo = g.get_repo("Azure/azure-sdk-for-python")
+
+    issues = repo.get_issues(state="open", labels=[check_type], creator="azure-sdk")
+    vnext_issue = [issue for issue in issues if issue.title.split("needs")[0].strip() == package_name]
+    if vnext_issue:
+        logging.info(f"{package_name} passes {check_type}. Closing existing GH issue #{vnext_issue[0].number}...")
+        vnext_issue[0].edit(state="closed")

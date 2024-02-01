@@ -792,7 +792,12 @@
         "racwd",
         "rrggbb",
         "UPCA",
-        "UPCE"
+        "UPCE",
+        "mros",
+        "Nify",
+        "deserializers",
+        "ctxt",
+        "wday"
       ]
     },
     {
@@ -1239,6 +1244,13 @@
         "RMSE",
         "azmonitoring",
         "smirnov"
+      ]
+    },
+    {
+      "filename": "sdk/ai/azure-ai-generative/**",
+      "words": [
+        "tqdm",
+        "genai"
       ]
     },
     {
