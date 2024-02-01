@@ -148,16 +148,6 @@ def _parse_conn_str(
         raise ValueError(
             "At least one of the SharedAccessKey or SharedAccessSignature must be present."
         )
-    
-    # Check if the connection string is for an emulator
-    # if use_development_emulator:
-    #     if shared_access_key_name or shared_access_key or shared_access_signature:
-    #         raise ValueError(
-    #             "Invalid connection string. When using the development emulator, "
-    #             "neither SharedAccessKeyName, SharedAccessKey, nor SharedAccessSignature should be present."
-    #         )
-    #     host = "localhost:5671"
-    #     entity = "eventhub"
 
     return (
         host,
@@ -349,7 +339,7 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
 
         # Check if emulator is in use, unset tls if it is, and set the endpoint 
         # as a custom endpoint address unless otherwise specified.
-        if emulator:
+        if emulator or "localhost" in host:
             # kwargs["custom_endpoint_address"] = host
             kwargs["use_tls"] = False
         
