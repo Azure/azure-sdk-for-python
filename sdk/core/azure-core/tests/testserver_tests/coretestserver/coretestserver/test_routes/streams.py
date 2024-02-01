@@ -60,7 +60,7 @@ def string():
 
 @streams_api.route("/plain_header", methods=["GET"])
 def plain_header():
-   return Response(streaming_test(), status=200, mimetype="text/plain", headers={"Content-Type": "text/plain"})
+   return Response(streaming_test(), status=200, mimetype="text/plain", headers={"Content-Encoding": "gzip"})
 
 
 @streams_api.route("/compressed_no_header", methods=["GET"])

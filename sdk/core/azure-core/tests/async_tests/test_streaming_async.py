@@ -190,15 +190,9 @@ async def test_compress_compressed_no_header_offline(port, http_request):
         pipeline_response = await client._pipeline.run(request,stream=True)
         response = pipeline_response.http_response
         data = response.stream_download(client._pipeline,decompress=False)
-        content = b""
-        async for d in data:
-            content += d
-        try:
-            decoded = content.decode("utf-8")
-            assert False
-        except UnicodeDecodeError:
-            pass  
-       
+        with pytest.raises(UnicodeDecodeError):
+            b''.join([d async for d in data]).decode("utf-8") 
+        
               
 @pytest.mark.live_test_only
 @pytest.mark.asyncio
@@ -214,14 +208,8 @@ async def test_compress_compressed_header(http_request):
         pipeline_response = await client._pipeline.run(request, stream=True)
         response = pipeline_response.http_response
         data = response.stream_download(client._pipeline, decompress=False)
-        content = b""
-        async for d in data:
-            content += d
-        try:
-            decoded = content.decode("utf-8")
-            assert False
-        except UnicodeDecodeError:
-            pass
+        with pytest.raises(UnicodeDecodeError):
+            b''.join([d async for d in data]).decode("utf-8") 
 
 
                 
@@ -235,10 +223,7 @@ async def test_decompress_plain_no_header_offline(port, http_request):
         pipeline_response = await client._pipeline.run(request, stream=True)
         response = pipeline_response.http_response
         data = response.stream_download(client._pipeline, decompress=True)
-        content = b""
-        async for d in data:
-            content += d
-        decoded = content.decode("utf-8")
+        decoded = b''.join([d async for d in data]).decode("utf-8") 
         assert decoded == "test"
 
 
@@ -253,10 +238,7 @@ async def test_compress_plain_header_offline(port, http_request):
         pipeline_response = await client._pipeline.run(request,stream=True)
         response = pipeline_response.http_response
         data = response.stream_download(client._pipeline,decompress=False)
-        content = b""
-        async for d in data:
-            content += d
-        decoded = content.decode("utf-8")
+        decoded = b''.join([d async for d in data]).decode("utf-8") 
         assert decoded == "test" 
 
 
@@ -270,11 +252,9 @@ async def test_decompress_compressed_no_header_offline(port, http_request):
         pipeline_response = await client._pipeline.run(request,stream=True)
         response = pipeline_response.http_response
         data = response.stream_download(client._pipeline,decompress=True)
-        content = b""
-        async for d in data:
-            content += d
+
         with pytest.raises(UnicodeDecodeError):
-            content.decode("utf-8")
+            b''.join([d async for d in data]).decode("utf-8")    
 
 
 @pytest.mark.asyncio
@@ -287,11 +267,8 @@ async def test_compress_compressed_header_offline(port, http_request):
         pipeline_response = await client._pipeline.run(request,stream=True)
         response = pipeline_response.http_response
         data = response.stream_download(client._pipeline,decompress=False)
-        content = b""
-        async for d in data:
-            content += d
         with pytest.raises(UnicodeDecodeError):
-            content.decode("utf-8")         
+            b''.join([d async for d in data]).decode("utf-8")           
 
 
 @pytest.mark.asyncio
@@ -303,15 +280,10 @@ async def test_decompress_plain_header_offline(port, http_request):
         request = http_request(method="GET", url="http://localhost:{}/streams/compressed".format(port))
         pipeline_response = await client._pipeline.run(request,stream=True)
         response = pipeline_response.http_response
-        print(f"this is the pipeline respone {response}")
         data = response.stream_download(client._pipeline,decompress=True)
-        try:
-            content = b""
-            async for d in data:
-                content += d
-            assert False
-        except (zlib.error, DecodeError):
-            pass
+        with pytest.raises((zlib.error, DecodeError)):
+             b''.join([d async for d in data])
+            
  
 
 @pytest.mark.asyncio
@@ -323,10 +295,7 @@ async def test_compress_plain_no_header_offline(port, http_request):
         pipeline_response = await client._pipeline.run(request,stream=True)
         response = pipeline_response.http_response
         data = response.stream_download(client._pipeline,decompress=False)
-        content = b""
-        async for d in data:
-            content += d
-        decoded = content.decode("utf-8")
+        decoded = b''.join([d async for d in data]).decode("utf-8") 
         assert decoded == "test"
 
 
@@ -340,8 +309,5 @@ async def test_decompress_compressed_header_offline(port, http_request):
         pipeline_response = await client._pipeline.run(request, stream=True)
         response = pipeline_response.http_response
         data = response.stream_download(client._pipeline , decompress=True)
-        content = b""
-        async for d in data:
-            content += d
-        decoded = content.decode("utf-8")
+        decoded = b''.join([d async for d in data]).decode("utf-8") 
         assert decoded == "test"  
