@@ -77,7 +77,7 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
                     error_category=ErrorCategory.USER_ERROR,
                     error_type=ValidationErrorType.INVALID_VALUE,
                 )
-            valid_keys = list(enum_class.ENTITY_TO_REST.keys())
+            valid_keys = list(enum_class.ENTITY_TO_REST.keys())  # type: ignore[attr-defined]
             if value and value.lower() not in valid_keys:
                 msg = f"{key} should be one of {valid_keys}, but received '{value}'."
                 raise ValidationException(
