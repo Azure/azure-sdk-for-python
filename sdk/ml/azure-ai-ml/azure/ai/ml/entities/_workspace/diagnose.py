@@ -1,7 +1,9 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Any, Dict, List, Optional
+
+import json
+from typing import Any, Dict, Optional, List
 
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     DiagnoseRequestProperties as RestDiagnoseRequestProperties,
@@ -144,6 +146,15 @@ class DiagnoseResponseResultValue:
             application_insights_results=self.application_insights_results,
             other_results=self.other_results,
         )
+
+    def __json__(self):
+        results = self.__dict__.copy()
+        for k, v in results.items():
+            results[k] = [item.__dict__ for item in v]
+        return results
+
+    def __str__(self) -> str:
+        return json.dumps(self, default=lambda o: o.__json__(), indent=2)
 
 
 class DiagnoseResult:
