@@ -37,7 +37,6 @@ exclude = [
   "azure/ai/ml/_utils",
   "azure/ai/ml/data_transfer/",
   "azure/ai/ml/parallel/",
-  "azure/ai/ml/_azure_environments.py",
   "azure/ai/ml/exceptions.py",
   "azure/ai/ml/_exception_helper.py",
 ]   
