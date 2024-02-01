@@ -230,6 +230,7 @@ class EventHubConsumerClient(
             track_last_enqueued_event_properties=track_last_enqueued_event_properties,
             amqp_transport=self._amqp_transport,
             **self._internal_kwargs,
+            use_tls=self._use_tls,
         )
         return handler
 
