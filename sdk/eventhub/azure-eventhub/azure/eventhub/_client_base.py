@@ -95,6 +95,7 @@ def _parse_conn_str(
             # only sas check is non case sensitive for both conn str properties and internal use
             if key.lower() == "sharedaccesssignature":
                 shared_access_signature = value
+        use_development_emulator = conn_settings.get("UseDevelopmentEmulator")
 
     if not check_case:
         endpoint = conn_settings.get("endpoint") or conn_settings.get("hostname")
@@ -104,6 +105,7 @@ def _parse_conn_str(
         shared_access_key = conn_settings.get("sharedaccesskey")
         entity_path = conn_settings.get("entitypath")
         shared_access_signature = conn_settings.get("sharedaccesssignature")
+        use_development_emulator = conn_settings.get("usedevelopmentemulator")
 
     if shared_access_signature:
         try:
@@ -146,6 +148,16 @@ def _parse_conn_str(
         raise ValueError(
             "At least one of the SharedAccessKey or SharedAccessSignature must be present."
         )
+    
+    # Check if the connection string is for an emulator
+    # if use_development_emulator:
+    #     if shared_access_key_name or shared_access_key or shared_access_signature:
+    #         raise ValueError(
+    #             "Invalid connection string. When using the development emulator, "
+    #             "neither SharedAccessKeyName, SharedAccessKey, nor SharedAccessSignature should be present."
+    #         )
+    #     host = "localhost:5671"
+    #     entity = "eventhub"
 
     return (
         host,
@@ -154,6 +166,7 @@ def _parse_conn_str(
         entity,
         str(shared_access_signature) if shared_access_signature else None,
         shared_access_signature_expiry,
+        bool(use_development_emulator) if use_development_emulator else None,
     )
 
 
@@ -324,12 +337,22 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
             amqp_transport=self._amqp_transport,
             **kwargs)
         self._idle_timeout = kwargs.get("idle_timeout", None)
+        self._use_tls = kwargs.get("use_tls", True)
 
     @staticmethod
     def _from_connection_string(conn_str: str, **kwargs: Any) -> Dict[str, Any]:
-        host, policy, key, entity, token, token_expiry = _parse_conn_str(
+
+
+        host, policy, key, entity, token, token_expiry, emulator = _parse_conn_str(
             conn_str, **kwargs
         )
+
+        # Check if emulator is in use, unset tls if it is, and set the endpoint 
+        # as a custom endpoint address unless otherwise specified.
+        if emulator:
+            # kwargs["custom_endpoint_address"] = host
+            kwargs["use_tls"] = False
+        
         kwargs["fully_qualified_namespace"] = host
         kwargs["eventhub_name"] = entity
         if token and token_expiry:
