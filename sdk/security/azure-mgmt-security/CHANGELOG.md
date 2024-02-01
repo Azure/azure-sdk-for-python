@@ -1,5 +1,20 @@
 # Release History
 
+## 6.0.0 (2024-01-19)
+
+### Features Added
+
+  - Added operation group APICollectionsOperations
+  - Added operation group DefenderForStorageOperations
+  - Model SecurityContact has a new parameter emails
+  - Model SecurityContact has a new parameter notifications_by_role
+
+### Breaking Changes
+
+  - Model SecurityContact no longer has parameter alerts_to_admins
+  - Model SecurityContact no longer has parameter email
+  - Removed operation SecurityContactsOperations.update
+
 ## 5.0.0 (2023-04-20)
 
 ### Features Added

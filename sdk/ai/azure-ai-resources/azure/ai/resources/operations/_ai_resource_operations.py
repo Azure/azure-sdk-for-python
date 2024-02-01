@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Any, Iterable
+from typing import Any, Iterable, Optional
 
 from azure.core.tracing.decorator import distributed_trace
 
@@ -40,7 +40,7 @@ class AIResourceOperations:
         :paramtype name: str
 
         :return: The AI resource with the provided name.
-        :rtype: AIResource
+        :rtype: ~azure.ai.resources.entities.AIResource
         """
         workspace_hub = self._ml_client._workspace_hubs.get(name=name, **kwargs)
         resource = AIResource._from_v2_workspace_hub(workspace_hub)
@@ -55,7 +55,7 @@ class AIResourceOperations:
         :paramtype scope: str
 
         :return: An iterator like instance of AI resource objects
-        :rtype: Iterable[AIResource]
+        :rtype: Iterable[~azure.ai.resources.entities.AIResource]
         """
         return [AIResource._from_v2_workspace_hub(wh) for wh in self._ml_client._workspace_hubs.list(scope=scope)]
 
@@ -66,7 +66,7 @@ class AIResourceOperations:
         *,
         ai_resource: AIResource,
         update_dependent_resources: bool = False,
-        endpoint_resource_id: str = None,
+        endpoint_resource_id: Optional[str] = None,
         endpoint_kind: str = ENDPOINT_AI_SERVICE_KIND,
         **kwargs,
     ) -> LROPoller[AIResource]:

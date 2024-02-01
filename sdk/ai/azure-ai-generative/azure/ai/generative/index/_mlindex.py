@@ -9,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Iterator, Optional, Union
 
-import yaml
+import yaml  # type: ignore[import]
 from azure.core.credentials import TokenCredential
 from azure.ai.generative.index._documents import Document, DocumentChunksIterator
 from azure.ai.generative.index._embeddings import EmbeddingsContainer
@@ -57,7 +57,7 @@ class MLIndex:
     index_config: dict
     embeddings_config: dict
 
-    def __init__(self, uri: Optional[Union[str, Path, object]] = None, mlindex_config: Optional[dict] = None):
+    def __init__(self, uri: Optional[Union[str, Path]] = None, mlindex_config: Optional[dict] = None):
         """
         Initialize MLIndex from a URI or AzureML Data Asset.
 
@@ -238,7 +238,7 @@ class MLIndex:
                     )
 
                     return AzureCognitiveSearchVectorStore(
-                        index_name=self.index_config.get("index"),
+                        index_name=self.index_config.get("index", ""),
                         endpoint=index_endpoint,
                         embeddings=self.get_langchain_embeddings(credential=credential),
                         field_mapping=self.index_config.get("field_mapping", {}),
@@ -248,7 +248,7 @@ class MLIndex:
                 from fsspec.core import url_to_fs
 
                 store = None
-                engine = self.index_config.get("engine")
+                engine: str = self.index_config.get("engine", "")
                 if engine == "langchain.vectorstores.FAISS":
                     embeddings = EmbeddingsContainer.from_metadata(
                         self.embeddings_config.copy()
@@ -287,7 +287,7 @@ class MLIndex:
                         from azure.ai.generative.index._langchain.faiss import azureml_faiss_as_langchain_faiss
                     except Exception as e:
                         logger.warning(error_fmt_str.format(e=e))
-                        azureml_faiss_as_langchain_faiss = None
+                        azureml_faiss_as_langchain_faiss = None  # type: ignore[assignment]
 
                     embeddings = EmbeddingsContainer.from_metadata(
                         self.embeddings_config.copy()
@@ -362,7 +362,7 @@ class MLIndex:
                         get_connection_by_id_v2(self.index_config["connection"]["id"], credential=credential)
                     )
                 return AzureCognitiveSearchVectorStore(
-                    index_name=self.index_config.get("index"),
+                    index_name=self.index_config.get("index", ""),
                     endpoint=endpoint,
                     embeddings=self.get_langchain_embeddings(),
                     field_mapping=self.index_config.get("field_mapping", {}),
@@ -446,12 +446,13 @@ class MLIndex:
                 self.embeddings_config.pop("key")
 
             if embedding_connection.__class__.__name__ == "AzureOpenAIConnection":
+                embedding_connection: Union[BaseConnection, WorkspaceConnection]  # type: ignore[no-redef]
                 # PromptFlow Connection
                 self.embeddings_config["connection_type"] = "inline"
                 self.embeddings_config["connection"] = {
-                    "key": embedding_connection.secrets.get("api_key"),
-                    "api_base": embedding_connection.api_base,
-                    "api_type": embedding_connection.api_type,
+                    "key": embedding_connection.secrets.get("api_key"),  # type: ignore[union-attr]
+                    "api_base": embedding_connection.api_base,  # type: ignore[union-attr]
+                    "api_type": embedding_connection.api_type,  # type: ignore[union-attr]
                 }
             else:
                 self.embeddings_config["connection_type"] = "workspace_connection"
@@ -468,7 +469,8 @@ class MLIndex:
                     from azure.ai.generative.index._utils.connections import get_connection_by_id_v2
                     index_connection = get_connection_by_id_v2(index_connection, credential=credential)
                 self.index_config["connection"] = {"id": get_id_from_connection(index_connection)}
-        self.save(just_config=True)
+        self.save(just_config=True)  # type: ignore[call-arg]
+        # TODO: Bug 2877747
         return self
 
     def set_embeddings_connection(
@@ -621,7 +623,7 @@ class MLIndex:
 
                         if embeddings_connection:
                             if isinstance(embeddings_connection, str):
-                                embeddings_connection = get_connection_by_id_v2(
+                                embeddings_connection: Union[Dict[str, Dict[str, Dict[str, Any]]], Any] = get_connection_by_id_v2(  # type: ignore[no-redef]
                                     embeddings_connection, credential=credential
                                 )
                             connection_args = {
@@ -629,13 +631,19 @@ class MLIndex:
                                 "connection": {"id": get_id_from_connection(embeddings_connection)},
                                 "endpoint": embeddings_connection.target
                                 if hasattr(embeddings_connection, "target")
-                                else embeddings_connection["properties"]["target"],
+                                else embeddings_connection["properties"]["target"],  # type: ignore[index]
                             }
                         else:
+                            import openai
+                            api_key = "OPENAI_API_KEY"
+                            api_base = "OPENAI_API_BASE"
+                            if pkg_version.parse(openai.version.VERSION) >= pkg_version.parse("1.0.0"):
+                                api_key = "AZURE_OPENAI_KEY"
+                                api_base = "AZURE_OPENAI_ENDPOINT"
                             connection_args = {
                                 "connection_type": "environment",
-                                "connection": {"key": "OPENAI_API_KEY"},
-                                "endpoint": os.getenv("OPENAI_API_BASE"),
+                                "connection": {"key": api_key},
+                                "endpoint": os.getenv(api_base),
                             }
                             if os.getenv("OPENAI_API_TYPE"):
                                 connection_args["api_type"] = os.getenv("OPENAI_API_TYPE")
@@ -664,7 +672,7 @@ class MLIndex:
             # TODO: This means new snapshots will be created for every run, ideally there'd be a use container as readonly vs persist snapshot option
             embeddings.save(
                 str(
-                    embeddings_container
+                    Path(embeddings_container)
                     / f"{now.strftime('%Y%m%d')}_{now.strftime('%H%M%S')}_{str(uuid.uuid4()).split('-')[0]}"
                 )
             )
@@ -733,16 +741,16 @@ class MLIndex:
                 }
             else:
                 if isinstance(index_connection, str):
-                    index_connection = get_connection_by_id_v2(index_connection, credential=credential)
+                    index_connection: Union[Dict[str, Dict[str, Dict[str, Any]]], Any] = get_connection_by_id_v2(index_connection, credential=credential)  # type: ignore[no-redef]
                 index_config = {
                     **index_config,
                     **{
-                        "endpoint": index_connection.target
+                        "endpoint": (index_connection.target
                         if hasattr(index_connection, "target")
-                        else index_connection["properties"]["target"],
-                        "api_version": index_connection.metadata.get("apiVersion", "2023-07-01-preview")
+                        else index_connection["properties"]["target"]),  # type: ignore[index]
+                        "api_version": (index_connection.metadata.get("apiVersion", "2023-07-01-preview")
                         if hasattr(index_connection, "metadata")
-                        else index_connection["properties"]["metadata"].get("apiVersion", "2023-07-01-preview"),
+                        else index_connection["properties"]["metadata"].get("apiVersion", "2023-07-01-preview")),  # type: ignore
                     },
                 }
                 connection_args = {
@@ -758,17 +766,17 @@ class MLIndex:
                 credential=credential,
             )
         elif index_type == "pinecone":
-            from azure.ai.generative.index._tasks.update_pinecone import create_index_from_raw_embeddings
+            from azure.ai.generative.index._tasks.update_pinecone import create_index_from_raw_embeddings  # type: ignore[assignment]
 
             if not index_connection:
                 index_config = {**index_config, **{"environment": os.getenv("PINECONE_ENVIRONMENT")}}
                 connection_args = {"connection_type": "environment", "connection": {"key": "PINECONE_API_KEY"}}
             else:
                 if isinstance(index_connection, str):
-                    index_connection = get_connection_by_id_v2(index_connection, credential=credential)
+                    index_connection = get_connection_by_id_v2(index_connection, credential=credential)  # type: ignore[assignment,used-before-def]
                 index_config = {
                     **index_config,
-                    **{"environment": index_connection["properties"]["metadata"]["environment"]},
+                    **{"environment": index_connection["properties"]["metadata"]["environment"]},  # type: ignore[index]
                 }
                 connection_args = {
                     "connection_type": "workspace_connection",
@@ -787,7 +795,7 @@ class MLIndex:
 
         return mlindex
 
-    def save(self, output_uri: Optional[str], just_config: bool = False):
+    def save(self, output_uri: str, just_config: bool = False):
         """
         Save the MLIndex to a uri.
 

@@ -5,7 +5,7 @@
 import os
 import re
 import logging
-from typing import List, Optional, Union
+from typing import List, Optional, Pattern
 
 # Image types supported by Azure Cognitive Services: JPEG, PNG, GIF, BMP, WEBP, ICO, TIFF, or MPO format
 IMAGE_TYPES = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'ico', 'tiff', 'mpo']
@@ -101,7 +101,8 @@ def format_multimodal_prompt(
 def _compile_prompt_images_pattern() -> None:
     global IMAGES_PATTERN
     if isinstance(IMAGES_PATTERN, str):
-        IMAGES_PATTERN = re.compile(IMAGES_PATTERN)
+        images_pattern_text: str = IMAGES_PATTERN
+        IMAGES_PATTERN = re.compile(images_pattern_text)  # type: ignore[assignment]
 
 
 def _format_image_captions(image_name, captions):

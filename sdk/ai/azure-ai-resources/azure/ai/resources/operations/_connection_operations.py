@@ -30,7 +30,7 @@ class ConnectionOperations:
 
     @distributed_trace
     @monitor_with_activity(logger, "Connection.List", ActivityType.PUBLICAPI)
-    def list(self, connection_type: Optional[str] = None, scope: OperationScope=OperationScope.AI_RESOURCE) -> Iterable[BaseConnection]:
+    def list(self, connection_type: Optional[str] = None, scope: str = OperationScope.AI_RESOURCE) -> Iterable[BaseConnection]:
         """List all connection assets in a project.
 
         :param connection_type: If set, return only connections of the specified type.
@@ -47,7 +47,7 @@ class ConnectionOperations:
 
     @distributed_trace
     @monitor_with_activity(logger, "Connection.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, scope: OperationScope=OperationScope.AI_RESOURCE, **kwargs) -> BaseConnection:
+    def get(self, name: str, scope: str = OperationScope.AI_RESOURCE, **kwargs) -> BaseConnection:
         """Get a connection by name.
 
         :param name: Name of the connection.
@@ -74,7 +74,7 @@ class ConnectionOperations:
 
     @distributed_trace
     @monitor_with_activity(logger, "Connection.CreateOrUpdate", ActivityType.PUBLICAPI)
-    def create_or_update(self, connection: BaseConnection, scope: OperationScope=OperationScope.AI_RESOURCE, **kwargs) -> BaseConnection:
+    def create_or_update(self, connection: BaseConnection, scope: str = OperationScope.AI_RESOURCE, **kwargs) -> BaseConnection:
         """Create or update a connection.
 
         :param connection: Connection definition
@@ -95,7 +95,7 @@ class ConnectionOperations:
 
     @distributed_trace
     @monitor_with_activity(logger, "Connection.Delete", ActivityType.PUBLICAPI)
-    def delete(self, name: str, scope: OperationScope=OperationScope.AI_RESOURCE) -> None:
+    def delete(self, name: str, scope: str = OperationScope.AI_RESOURCE) -> None:
         """Delete the connection.
 
         :param name: Name of the connection to delete.

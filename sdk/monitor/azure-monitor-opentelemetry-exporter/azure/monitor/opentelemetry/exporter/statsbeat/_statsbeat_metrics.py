@@ -27,6 +27,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP_LOCK,
     _REQUESTS_MAP,
+    get_statsbeat_custom_events_feature_set,
 )
 from azure.monitor.opentelemetry.exporter import _utils
 
@@ -51,6 +52,8 @@ class _StatsbeatFeature:
     NONE = 0
     DISK_RETRY = 1
     AAD = 2
+    CUSTOM_EVENTS_EXTENSION = 4
+    DISTRO = 8
 
 
 class _AttachTypes:
@@ -68,7 +71,7 @@ class _StatsbeatMetrics:
         "cikey": None,
         "runtimeVersion": platform.python_version(),
         "os": platform.system(),
-        "language": "Python",
+        "language": "python",
         "version": VERSION
     }
 
@@ -95,6 +98,7 @@ class _StatsbeatMetrics:
         disable_offline_storage: bool,
         long_interval_threshold: int,
         has_credential: bool,
+        distro_version: str = "",
     ) -> None:
         self._ikey = instrumentation_key
         self._feature = _StatsbeatFeature.NONE
@@ -102,6 +106,10 @@ class _StatsbeatMetrics:
             self._feature |= _StatsbeatFeature.DISK_RETRY
         if has_credential:
             self._feature |= _StatsbeatFeature.AAD
+        if distro_version:
+            self._feature |= _StatsbeatFeature.DISTRO
+        if get_statsbeat_custom_events_feature_set():
+            self._feature |= _StatsbeatFeature.CUSTOM_EVENTS_EXTENSION
         self._ikey = instrumentation_key
         self._meter_provider = meter_provider
         self._meter = self._meter_provider.get_meter(__name__)
@@ -215,6 +223,11 @@ class _StatsbeatMetrics:
         if not self._meets_long_interval_threshold(_FEATURE_METRIC_NAME[0]):
             return observations
         # Feature metric
+        # Check if any features were enabled during runtime
+        if get_statsbeat_custom_events_feature_set():
+            self._feature |= _StatsbeatFeature.CUSTOM_EVENTS_EXTENSION
+            _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = self._feature
+
         # Don't send observation if no features enabled
         if self._feature is not _StatsbeatFeature.NONE:
             attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)

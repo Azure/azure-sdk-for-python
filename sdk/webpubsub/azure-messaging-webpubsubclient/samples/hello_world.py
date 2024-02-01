@@ -1,3 +1,8 @@
+# coding=utf-8
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------
 import os
 from azure.messaging.webpubsubclient import WebPubSubClient, WebPubSubClientCredential
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
@@ -42,9 +47,9 @@ def main():
     )
 
     with client:
-        client.on("connected", on_connected)
-        client.on("disconnected", on_disconnected)
-        client.on("group-message", on_group_message)
+        client.subscribe("connected", on_connected)
+        client.subscribe("disconnected", on_disconnected)
+        client.subscribe("group-message", on_group_message)
         group_name = "test"
         client.join_group(group_name)
         client.send_to_group(group_name, "hello text", "text", no_echo=False, ack=False)
@@ -52,6 +57,11 @@ def main():
         client.send_to_group(group_name, "hello json", "json")
         content = memoryview("hello binary".encode())
         client.send_to_group(group_name, content, "binary")
+
+    # If you can't run client in context, please open/close client manually like:
+    # client.open()
+    # ...
+    # client.close()
 
 
 if __name__ == "__main__":

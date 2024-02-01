@@ -62,7 +62,7 @@ def main():
                                     "primary": True,
                                 },
                             }
-                        ]
+                        ],
                     },
                     "osProfile": {
                         "adminPassword": "{your-password}",

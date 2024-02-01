@@ -15,9 +15,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     @app_config_decorator_aad
     def test_provider_creation_aad(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         client = self.create_aad_client(
-            appconfiguration_endpoint_string,
-            keyvault_secret_url=appconfiguration_keyvault_secret_url,
-            feature_flag_enabled=True,
+            appconfiguration_endpoint_string, keyvault_secret_url=appconfiguration_keyvault_secret_url
         )
         assert client["message"] == "hi"
         assert client["my_json"]["key"] == "value"
@@ -33,7 +31,6 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             appconfiguration_endpoint_string,
             trim_prefixes=trimmed,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
-            feature_flag_enabled=True,
         )
         assert client["message"] == "hi"
         assert client["my_json"]["key"] == "value"
@@ -52,7 +49,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         )
         assert client["message"] == "test"
         assert "test.trimmed" not in client
-        assert "FeatureManagement" not in client
+        assert "FeatureManagementFeatureFlags" not in client
 
     # method: provider_selectors
     @recorded_by_proxy

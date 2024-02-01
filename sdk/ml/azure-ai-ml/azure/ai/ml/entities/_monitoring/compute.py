@@ -2,16 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml._restclient.v2023_06_01_preview.models import (
-    MonitorServerlessSparkCompute,
-    AmlTokenComputeIdentity,
-)
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml._exception_helper import log_and_raise_error
+from azure.ai.ml._restclient.v2023_06_01_preview.models import AmlTokenComputeIdentity, MonitorServerlessSparkCompute
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 
-@experimental
 class ServerlessSparkCompute:
     """Serverless Spark compute.
 
@@ -47,7 +42,7 @@ class ServerlessSparkCompute:
             instance_type=obj.instance_type,
         )
 
-    def validate(self):
+    def validate(self) -> None:
         if self.runtime_version != "3.3":
             msg = "Compute runtime version must be 3.3"
             err = ValidationException(
