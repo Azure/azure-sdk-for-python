@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict
+from typing import Any, Dict
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeResource
 from azure.ai.ml.constants._common import TYPE
@@ -17,7 +17,7 @@ class UnsupportedCompute(Compute):
 
     def __init__(
         self,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         kwargs[TYPE] = "*** Unsupported Compute Type ***"
         super().__init__(**kwargs)
@@ -44,7 +44,7 @@ class UnsupportedCompute(Compute):
 
     @classmethod
     # pylint: disable=unused-argument
-    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs) -> "UnsupportedCompute":
+    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs: Any) -> "UnsupportedCompute":
         msg = "Cannot create unsupported compute type."
         raise ValidationException(
             message=msg,

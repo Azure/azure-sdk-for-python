@@ -1,5 +1,12 @@
 # Release History
 
+## 1.0.0b3 (2024-02-01)
+
+### Features Added
+
+- Support tuple input for `files` values to `corehttp.rest.HttpRequest` #34082
+- Support simultaneous `files` and `data` field entry into `corehttp.rest.HttpRequest` #34082
+
 ## 1.0.0b2 (2023-11-14)
 
 ### Features Added

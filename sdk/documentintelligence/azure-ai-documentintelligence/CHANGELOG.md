@@ -6,11 +6,14 @@
 
 ### Breaking Changes
 
+- Changed property name from `items` to `items_property` in model `DocumentFieldSchema` and `DocumentList`.
+
 ### Bugs Fixed
 
 ### Other Changes
 
 - Changed the default polling interval from 30s to 5s.
+- Python 3.7 is no longer supported. Please use Python version 3.8 or later.
 
 ## 1.0.0b1 (2023-11-17)
 

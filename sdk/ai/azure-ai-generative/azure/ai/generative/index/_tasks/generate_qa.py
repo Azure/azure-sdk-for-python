@@ -7,7 +7,7 @@ import time
 import traceback
 from argparse import ArgumentParser
 from logging import Logger
-from typing import Dict
+from typing import Dict, Union
 
 import openai
 import pandas as pd
@@ -24,7 +24,7 @@ LLM_MAX_RETRIES = 15
 logger = get_logger("generate_qa")
 
 
-def get_model_config(llm_config: Dict[str, str], openai_api_type: str, openai_api_version: str, activity_logger: Logger):
+def get_model_config(llm_config: Dict[str, Union[str, int]], openai_api_type: str, openai_api_version: str, activity_logger: Logger):
     """Get model_config from llm_config. llm_config format is used in Baker pipelines.
     model_config format is accepted by `azure.ai.generative.index._models.init_llm()`."""
     model_config = llm_config.copy()
@@ -53,7 +53,7 @@ def get_model_config(llm_config: Dict[str, str], openai_api_type: str, openai_ap
         connection = get_connection_by_id_v2(connection_id)
         # Only change base, version, and type in AOAI case, otherwise trust input
         if connection.get('properties', {}).get("category", None) == "AzureOpenAI":
-            model_config["api_base"] = connection['properties'].get('target', {})
+            model_config["api_base"] = connection['properties'].get('target', {})  # type: ignore[assignment]
             model_config["api_type"] = connection['properties'].get('metadata', {}).get('apiType', "azure")
             model_config["api_version"] = connection['properties'].get('metadata', {}).get('apiVersion', "2023-03-15-preview")
         credential = connection_to_credential(connection)
@@ -97,7 +97,7 @@ def main(parser_args, run, logger: Logger, activity_logger: Logger):
                                        chunk_batch_size=parser_args.chunk_batch_size,
                                        qa_types=qa_types)
     except (Exception, KeyboardInterrupt) as e:
-        result: GenerationResult = getattr(e, "generation_result", None)
+        result: GenerationResult = getattr(e, "generation_result", None)  # type: ignore[no-redef]
         if result is None or result.data_df.empty:
             raise
         activity_logger.warn(f"Ignoring exception in QADataGenerator since partial result is available. Exception: {traceback.format_exc()}")

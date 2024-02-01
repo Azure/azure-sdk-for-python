@@ -84,10 +84,10 @@ def init_open_ai_from_config(config: dict, credential: Optional[TokenCredential]
                 # Only change base, version, and type in AOAI case
                 if hasattr(connection, "type"):
                     if connection.type == "azure_open_ai":
-                        config["api_base"] = connection.target
-                        connection_metadata = connection.metadata
-                        config["api_version"] = connection.metadata.get("apiVersion", connection_metadata.get("ApiVersion", "2023-07-01-preview"))
-                        config["api_type"] = connection.metadata.get("apiType", connection_metadata.get("ApiType", "azure")).lower()
+                        config["api_base"] = getattr(connection, "target", None)
+                        connection_metadata = getattr(connection, "metadata", {})
+                        config["api_version"] = connection_metadata.get("apiVersion", connection_metadata.get("ApiVersion", "2023-07-01-preview"))
+                        config["api_type"] = connection_metadata.get("apiType", connection_metadata.get("ApiType", "azure")).lower()
                 elif isinstance(connection, dict) and connection.get("properties", {}).get("category", None) == "AzureOpenAI":
                     config["api_base"] = connection.get("properties", {}).get("target")
                     connection_metadata = connection.get("properties", {}).get("metadata", {})
@@ -117,10 +117,15 @@ def init_open_ai_from_config(config: dict, credential: Optional[TokenCredential]
                 config["api_type"] = "azure_ad"
     except Exception as e:
         if "OPENAI_API_KEY" in os.environ:
-            logger.warning(f"Failed to get credential for ACS with {e}, falling back to env vars.")
+            logger.warning(f"Failed to get credential for ACS with {e}, falling back to openai 0.x env vars.")
             config["api_key"] = os.environ["OPENAI_API_KEY"]
             config["api_type"] = os.environ.get("OPENAI_API_TYPE", "azure")
             config["api_base"] = os.environ.get("OPENAI_API_BASE", openai.api_base if hasattr(openai, "api_base") else openai.base_url)
+            config["api_version"] = os.environ.get("OPENAI_API_VERSION", openai.api_version)
+        elif "AZURE_OPENAI_KEY" in os.environ:
+            logger.warning(f"Failed to get credential for ACS with {e}, falling back to openai 1.x env vars.")
+            config["api_key"] = os.environ["AZURE_OPENAI_KEY"]
+            config["azure_endpoint"] = os.environ.get("AZURE_OPENAI_ENDPOINT")
             config["api_version"] = os.environ.get("OPENAI_API_VERSION", openai.api_version)
         else:
             raise e

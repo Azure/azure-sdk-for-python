@@ -6,6 +6,9 @@
 # General todo: move these to more permanent locations?
 
 # Defines stuff related to the resulting created index, like the index type.
+
+from typing import Optional
+
 class ACSOutputConfig:
     """Config class for creating an Azure Cognitive Services index.
 
@@ -24,8 +27,8 @@ class ACSOutputConfig:
     def __init__(
         self,
         *,
-        acs_index_name: str = None,
-        acs_connection_id: str = None,
-    ):
+        acs_index_name: Optional[str] = None,
+        acs_connection_id: Optional[str] = None,
+    ) -> None:
         self.acs_index_name = acs_index_name
         self.acs_connection_id = acs_connection_id

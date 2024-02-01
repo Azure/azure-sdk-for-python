@@ -56,17 +56,6 @@ class IssueProcessPython(IssueProcess):
     def is_multiapi(self):
         return _MultiAPI in self.issue_package.labels_name
 
-    def get_content(self, file_name: str) -> str:
-        patterns = [r'/specification/([\w-]+/)+resource-manager', r'/specification/([\w-]+/)+resource-manager/.*']
-        for item in patterns:
-            try:
-                readme_path = re.compile(item).search(self.readme_link).group() + file_name
-                contents = str(self.issue_package.rest_repo.get_contents(readme_path).decoded_content)
-                return contents
-            except:
-                pass
-        raise Exception(f"can not get content with {self.readme_link}")
-
     @property
     def readme_comparison(self) -> bool:
         # to see whether need change readme
@@ -74,7 +63,7 @@ class IssueProcessPython(IssueProcess):
             return False
         if 'package-' not in self.target_readme_tag:
             return True
-        contents = self.get_content('/readme.md')
+        contents = self.get_local_file_content()
         pattern_tag = re.compile(r'tag: package-[\w+-.]+')
         package_tags = pattern_tag.findall(contents)
         whether_same_tag = self.target_readme_tag in package_tags[0]
@@ -149,7 +138,7 @@ class IssueProcessPython(IssueProcess):
         self.python_tag = self.get_specefied_param("->Readme Tag:", issue_body_list[:5])
 
         try:
-            contents = self.get_content('/readme.python.md')
+            contents = self.get_local_file_content('readme.python.md')
         except Exception as e:
             raise Exception(f"fail to read readme.python.md: {e}")
         pattern_package = re.compile(r'package-name: [\w+-.]+')

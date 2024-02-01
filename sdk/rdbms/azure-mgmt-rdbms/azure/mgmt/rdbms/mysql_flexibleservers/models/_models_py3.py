@@ -135,6 +135,126 @@ class ProxyResource(Resource):
         super().__init__(**kwargs)
 
 
+class AdvancedThreatProtection(ProxyResource):
+    """A server's Advanced Threat Protection.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.rdbms.mysql_flexibleservers.models.SystemData
+    :ivar creation_time: Specifies the UTC creation time of the policy.
+    :vartype creation_time: ~datetime.datetime
+    :ivar state: Specifies the state of the Advanced Threat Protection, whether it is enabled or
+     disabled or a state has not been applied yet on the specific database or server. Known values
+     are: "Enabled" and "Disabled".
+    :vartype state: str or
+     ~azure.mgmt.rdbms.mysql_flexibleservers.models.AdvancedThreatProtectionState
+    :ivar provisioning_state: Provisioning state of the Threat Protection. Known values are:
+     "Succeeded", "Updating", "Canceled", and "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.rdbms.mysql_flexibleservers.models.AdvancedThreatProtectionProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "state": {"key": "properties.state", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self, *, state: Optional[Union[str, "_models.AdvancedThreatProtectionState"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword state: Specifies the state of the Advanced Threat Protection, whether it is enabled or
+         disabled or a state has not been applied yet on the specific database or server. Known values
+         are: "Enabled" and "Disabled".
+        :paramtype state: str or
+         ~azure.mgmt.rdbms.mysql_flexibleservers.models.AdvancedThreatProtectionState
+        """
+        super().__init__(**kwargs)
+        self.creation_time = None
+        self.state = state
+        self.provisioning_state = None
+
+
+class AdvancedThreatProtectionForUpdate(_serialization.Model):
+    """Parameters allowed to update advanced threat protection for a server.
+
+    :ivar state: Specifies the state of the Advanced Threat Protection, whether it is enabled or
+     disabled or a state has not been applied yet on the specific database or server. Known values
+     are: "Enabled" and "Disabled".
+    :vartype state: str or
+     ~azure.mgmt.rdbms.mysql_flexibleservers.models.AdvancedThreatProtectionState
+    """
+
+    _attribute_map = {
+        "state": {"key": "properties.state", "type": "str"},
+    }
+
+    def __init__(
+        self, *, state: Optional[Union[str, "_models.AdvancedThreatProtectionState"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword state: Specifies the state of the Advanced Threat Protection, whether it is enabled or
+         disabled or a state has not been applied yet on the specific database or server. Known values
+         are: "Enabled" and "Disabled".
+        :paramtype state: str or
+         ~azure.mgmt.rdbms.mysql_flexibleservers.models.AdvancedThreatProtectionState
+        """
+        super().__init__(**kwargs)
+        self.state = state
+
+
+class AdvancedThreatProtectionListResult(_serialization.Model):
+    """A list of the server's Advanced Threat Protection configurations.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.rdbms.mysql_flexibleservers.models.AdvancedThreatProtection]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[AdvancedThreatProtection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
 class AzureADAdministrator(ProxyResource):
     """Represents a Administrator.
 
@@ -540,6 +660,66 @@ class CapabilitiesListResult(_serialization.Model):
         self.next_link = None
 
 
+class Capability(ProxyResource):
+    """Represents a location capability set.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.rdbms.mysql_flexibleservers.models.SystemData
+    :ivar supported_geo_backup_regions: supported geo backup regions.
+    :vartype supported_geo_backup_regions: list[str]
+    :ivar supported_flexible_server_editions: A list of supported flexible server editions.
+    :vartype supported_flexible_server_editions:
+     list[~azure.mgmt.rdbms.mysql_flexibleservers.models.ServerEditionCapabilityV2]
+    :ivar supported_server_versions: A list of supported server versions.
+    :vartype supported_server_versions:
+     list[~azure.mgmt.rdbms.mysql_flexibleservers.models.ServerVersionCapabilityV2]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "supported_geo_backup_regions": {"readonly": True},
+        "supported_flexible_server_editions": {"readonly": True},
+        "supported_server_versions": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "supported_geo_backup_regions": {"key": "properties.supportedGeoBackupRegions", "type": "[str]"},
+        "supported_flexible_server_editions": {
+            "key": "properties.supportedFlexibleServerEditions",
+            "type": "[ServerEditionCapabilityV2]",
+        },
+        "supported_server_versions": {
+            "key": "properties.supportedServerVersions",
+            "type": "[ServerVersionCapabilityV2]",
+        },
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.supported_geo_backup_regions = None
+        self.supported_flexible_server_editions = None
+        self.supported_server_versions = None
+
+
 class CapabilityProperties(_serialization.Model):
     """Location capabilities.
 
@@ -580,6 +760,34 @@ class CapabilityProperties(_serialization.Model):
         self.supported_ha_mode = None
         self.supported_geo_backup_regions = None
         self.supported_flexible_server_editions = None
+
+
+class CapabilitySetsList(_serialization.Model):
+    """location capability set.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: A list of supported capability sets.
+    :vartype value: list[~azure.mgmt.rdbms.mysql_flexibleservers.models.Capability]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Capability]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value = None
+        self.next_link = None
 
 
 class Configuration(ProxyResource):  # pylint: disable=too-many-instance-attributes
@@ -1014,52 +1222,6 @@ class ErrorDetail(_serialization.Model):
         "message": {"key": "message", "type": "str"},
         "target": {"key": "target", "type": "str"},
         "details": {"key": "details", "type": "[ErrorDetail]"},
-        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
-
-
-class ErrorResponseAutoGenerated(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations. (This also follows the OData error response format.).
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: The error details.
-    :vartype details:
-     list[~azure.mgmt.rdbms.mysql_flexibleservers.models.ErrorResponseAutoGenerated]
-    :ivar additional_info: The error additional info.
-    :vartype additional_info:
-     list[~azure.mgmt.rdbms.mysql_flexibleservers.models.ErrorAdditionalInfo]
-    """
-
-    _validation = {
-        "code": {"readonly": True},
-        "message": {"readonly": True},
-        "target": {"readonly": True},
-        "details": {"readonly": True},
-        "additional_info": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-        "target": {"key": "target", "type": "str"},
-        "details": {"key": "details", "type": "[ErrorResponseAutoGenerated]"},
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
@@ -2513,6 +2675,50 @@ class ServerEditionCapability(_serialization.Model):
         self.supported_server_versions = None
 
 
+class ServerEditionCapabilityV2(_serialization.Model):
+    """Server edition capabilities.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: Server edition name.
+    :vartype name: str
+    :ivar default_sku: Default Sku name.
+    :vartype default_sku: str
+    :ivar default_storage_size: Default storage size.
+    :vartype default_storage_size: int
+    :ivar supported_storage_editions: A list of supported storage editions.
+    :vartype supported_storage_editions:
+     list[~azure.mgmt.rdbms.mysql_flexibleservers.models.StorageEditionCapability]
+    :ivar supported_skus: A list of supported Skus.
+    :vartype supported_skus: list[~azure.mgmt.rdbms.mysql_flexibleservers.models.SkuCapabilityV2]
+    """
+
+    _validation = {
+        "name": {"readonly": True},
+        "default_sku": {"readonly": True},
+        "default_storage_size": {"readonly": True},
+        "supported_storage_editions": {"readonly": True},
+        "supported_skus": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "default_sku": {"key": "defaultSku", "type": "str"},
+        "default_storage_size": {"key": "defaultStorageSize", "type": "int"},
+        "supported_storage_editions": {"key": "supportedStorageEditions", "type": "[StorageEditionCapability]"},
+        "supported_skus": {"key": "supportedSkus", "type": "[SkuCapabilityV2]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.name = None
+        self.default_sku = None
+        self.default_storage_size = None
+        self.supported_storage_editions = None
+        self.supported_skus = None
+
+
 class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Parameters allowed to update for a server.
 
@@ -2731,6 +2937,29 @@ class ServerVersionCapability(_serialization.Model):
         self.supported_skus = None
 
 
+class ServerVersionCapabilityV2(_serialization.Model):
+    """Server version capabilities.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: server version.
+    :vartype name: str
+    """
+
+    _validation = {
+        "name": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.name = None
+
+
 class SkuCapability(_serialization.Model):
     """Sku capability.
 
@@ -2767,6 +2996,54 @@ class SkuCapability(_serialization.Model):
         self.v_cores = None
         self.supported_iops = None
         self.supported_memory_per_v_core_mb = None
+
+
+class SkuCapabilityV2(_serialization.Model):
+    """Sku capability.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: vCore name.
+    :vartype name: str
+    :ivar v_cores: supported vCores.
+    :vartype v_cores: int
+    :ivar supported_iops: supported IOPS.
+    :vartype supported_iops: int
+    :ivar supported_memory_per_v_core_mb: supported memory per vCore in MB.
+    :vartype supported_memory_per_v_core_mb: int
+    :ivar supported_zones: Supported zones.
+    :vartype supported_zones: list[str]
+    :ivar supported_ha_mode: Supported high availability mode.
+    :vartype supported_ha_mode: list[str]
+    """
+
+    _validation = {
+        "name": {"readonly": True},
+        "v_cores": {"readonly": True},
+        "supported_iops": {"readonly": True},
+        "supported_memory_per_v_core_mb": {"readonly": True},
+        "supported_zones": {"readonly": True},
+        "supported_ha_mode": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "v_cores": {"key": "vCores", "type": "int"},
+        "supported_iops": {"key": "supportedIops", "type": "int"},
+        "supported_memory_per_v_core_mb": {"key": "supportedMemoryPerVCoreMB", "type": "int"},
+        "supported_zones": {"key": "supportedZones", "type": "[str]"},
+        "supported_ha_mode": {"key": "supportedHAMode", "type": "[str]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.name = None
+        self.v_cores = None
+        self.supported_iops = None
+        self.supported_memory_per_v_core_mb = None
+        self.supported_zones = None
+        self.supported_ha_mode = None
 
 
 class Storage(_serialization.Model):

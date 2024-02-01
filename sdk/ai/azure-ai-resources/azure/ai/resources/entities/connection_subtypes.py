@@ -34,8 +34,7 @@ class AzureOpenAIConnection(BaseConnection):
     :param api_type: The api type that this connection was created for. Defaults to "Azure" and currently rarely changes.
     :type api_type: str
     :param is_shared: For connections created for a project, this determines if the connection
-        is shared amongst other connections with that project's parent AI resource.
-        Defaults to true.
+        is shared amongst other connections with that project's parent AI resource. Defaults to True.
     :type is_shared: bool
     """
 
@@ -47,24 +46,24 @@ class AzureOpenAIConnection(BaseConnection):
         api_version: Optional[str] = None,
         api_type: str = "Azure",
         **kwargs,
-    ):
+    ) -> None:
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="azure_open_ai", credentials=credentials, api_version=api_version, api_type=api_type, **kwargs)
 
 
     @property
-    def api_version(self) -> str:
+    def api_version(self) -> Optional[str]:
         """The API version of the connection.
 
         :return: the API version of the connection.
-        :rtype: str
+        :rtype: Optional[str]
         """
         if self._workspace_connection.tags is not None and CONNECTION_API_VERSION_KEY in self._workspace_connection.tags:
             return self._workspace_connection.tags[CONNECTION_API_VERSION_KEY]
         return None
 
     @api_version.setter
-    def api_version(self, value: str) -> str:
+    def api_version(self, value: str) -> None:
         """Set the API version of the connection.
 
         :return: the API version of the connection.
@@ -73,18 +72,18 @@ class AzureOpenAIConnection(BaseConnection):
         self._workspace_connection.tags[CONNECTION_API_VERSION_KEY] = value
 
     @property
-    def api_type(self) -> str:
+    def api_type(self) -> Optional[str]:
         """The API type of the connection.
 
-        :return: the API type of the connection.
-        :rtype: str
+        :return: The API type of the connection.
+        :rtype: Optional[str]
         """
         if self._workspace_connection.tags is not None and CONNECTION_API_TYPE_KEY in self._workspace_connection.tags:
             return self._workspace_connection.tags[CONNECTION_API_TYPE_KEY]
         return None
 
     @api_type.setter
-    def api_type(self, value: str) -> str:
+    def api_type(self, value: str) -> None:
         """Set the API type of the connection.
 
         :return: the API type of the connection.
@@ -162,8 +161,7 @@ class AzureAISearchConnection(BaseConnection):
     :param api_version: The api version that this connection was created for. Only applies to certain connection types.
     :type api_version: Optional[str]
     :param is_shared: For connections created for a project, this determines if the connection
-        is shared amongst other connections with that project's parent AI resource.
-        Defaults to true.
+        is shared amongst other connections with that project's parent AI resource. Defaults to True.
     :type is_shared: bool
     """
 
@@ -174,24 +172,24 @@ class AzureAISearchConnection(BaseConnection):
         credentials: ApiKeyConfiguration,
         api_version: Optional[str] = None,
         **kwargs,
-    ):
+    ) -> None:
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="cognitive_search", credentials=credentials, api_version=api_version, **kwargs)
 
 
     @property
-    def api_version(self) -> str:
+    def api_version(self) -> Optional[str]:
         """The API version of the connection.
 
         :return: the API version of the connection.
-        :rtype: str
+        :rtype: Optional[str]
         """
         if self._workspace_connection.tags is not None and CONNECTION_API_VERSION_KEY in self._workspace_connection.tags:
             return self._workspace_connection.tags[CONNECTION_API_VERSION_KEY]
         return None
 
     @api_version.setter
-    def api_version(self, value: str) -> str:
+    def api_version(self, value: str) -> None:
         """Set the API version of the connection.
 
         :return: the API version of the connection.
@@ -233,11 +231,10 @@ class AzureAIServiceConnection(BaseConnection):
     :param api_version: The api version that this connection was created for.
     :type api_version: Optional[str]
     :param kind: The kind of ai service that this connection points to. Valid inputs include:
-        "AzureOpenAI", "ContentSafety", and "Speech"
+        "AzureOpenAI", "ContentSafety", and "Speech".
     :type kind: str
     :param is_shared: For connections created for a project, this determines if the connection
-        is shared amongst other connections with that project's parent AI resource.
-        Defaults to true.
+        is shared amongst other connections with that project's parent AI resource. Defaults to True.
     :type is_shared: bool
     """
 
@@ -249,23 +246,23 @@ class AzureAIServiceConnection(BaseConnection):
         api_version: Optional[str] = None,
         kind: str,
         **kwargs,
-    ):
+    ) -> None:
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="cognitive_service", credentials=credentials, api_version=api_version, kind=kind, **kwargs)
 
     @property
-    def api_version(self) -> str:
+    def api_version(self) -> Optional[str]:
         """The API version of the connection.
 
-        :return: the API version of the connection.
-        :rtype: str
+        :return: The API version of the connection.
+        :rtype: Optional[str]
         """
         if self._workspace_connection.tags is not None and CONNECTION_API_VERSION_KEY in self._workspace_connection.tags:
             return self._workspace_connection.tags[CONNECTION_API_VERSION_KEY]
         return None
 
     @api_version.setter
-    def api_version(self, value: str) -> str:
+    def api_version(self, value: str) -> None:
         """Set the API version of the connection.
 
         :return: the API version of the connection.
@@ -274,18 +271,18 @@ class AzureAIServiceConnection(BaseConnection):
         self._workspace_connection.tags[CONNECTION_API_VERSION_KEY] = value
 
     @property
-    def kind(self) -> str:
+    def kind(self) -> Optional[str]:
         """The kind of the connection.
 
         :return: the kind of the connection.
-        :rtype: str
+        :rtype: Optional[str]
         """
         if self._workspace_connection.tags is not None and CONNECTION_KIND_KEY in self._workspace_connection.tags:
             return self._workspace_connection.tags[CONNECTION_KIND_KEY]
         return None
 
     @kind.setter
-    def kind(self, value: str) -> str:
+    def kind(self, value: str) -> None:
         """Set the kind of the connection.
 
         :return: the kind of the connection.
@@ -305,8 +302,7 @@ class GitHubConnection(BaseConnection):
     :param credentials: The credentials for authenticating the external resource.
     :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
     :param is_shared: For connections created for a project, this determines if the connection
-        is shared amongst other connections with that project's parent AI resource.
-        Defaults to true.
+        is shared amongst other connections with that project's parent AI resource. Defaults to True.
     :type is_shared: bool
     """
 
@@ -316,7 +312,7 @@ class GitHubConnection(BaseConnection):
         target: str,
         credentials: ApiKeyConfiguration,
         **kwargs,
-    ):
+    ) -> None:
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="git", credentials=credentials, **kwargs)
 
@@ -332,8 +328,7 @@ class CustomConnection(BaseConnection):
     :param credentials: The credentials for authenticating the external resource.
     :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
     :param is_shared: For connections created for a project, this determines if the connection
-        is shared amongst other connections with that project's parent AI resource.
-        Defaults to true.
+        is shared amongst other connections with that project's parent AI resource. Defaults to True.
     :type is_shared: bool
     """
     def __init__(
@@ -342,6 +337,6 @@ class CustomConnection(BaseConnection):
         target: str,
         credentials: ApiKeyConfiguration,
         **kwargs,
-    ):
+    )  -> None:
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="custom", credentials=credentials, **kwargs)

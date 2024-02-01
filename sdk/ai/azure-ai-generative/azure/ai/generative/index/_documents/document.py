@@ -5,7 +5,8 @@
 import json
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any, Optional, Union
+from pathlib import Path
 
 import mmh3
 from azure.ai.generative.index._utils.tokens import token_length_function
@@ -15,7 +16,7 @@ from azure.ai.generative.index._utils.tokens import token_length_function
 class DocumentSource:
     """Document Source."""
 
-    path: str
+    path: Optional[Path]
     filename: str
     url: str
     mtime: float
@@ -151,7 +152,7 @@ class StaticDocument(Document):
         return json.dumps({"content": self.data, "metadata": self._metadata, "document_id": self.document_id})
 
     @classmethod
-    def loads(cls, data: str) -> "Document":
+    def loads(cls, data: str) -> "StaticDocument":
         """Load the document from a json string."""
         data_dict = json.loads(data)
         metadata = data_dict["metadata"]

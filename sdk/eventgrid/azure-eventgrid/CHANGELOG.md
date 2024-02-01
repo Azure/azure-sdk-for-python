@@ -1,6 +1,7 @@
 # Release History
 
 ## 4.16.1 (Unreleased)
+This version and all future versions will require Python 3.8+.
 
 ### Features Added
 
