@@ -14,24 +14,17 @@ from azure.core.exceptions import (
 from azure.core.paging import ItemPaged
 from azure.core.async_paging import AsyncItemPaged
 
-from azure.data.tables.aio import TableClient
 from .custom_iterator import CustomIterator, AsyncCustomIterator
 from ._test_base import _TableTest
-from random import randint
 
 
 class ListEntitiesPageableTest(_TableTest):
     def __init__(self, arguments):
         super().__init__(arguments)
-        self.table_name = f"updateentitytest{randint(1,1000)}"
-        self.connection_string = self.get_from_env("AZURE_STORAGE_CONN_STR")
-        self.async_table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
         self.url = f"{self.account_endpoint}{self.table_name}()"
-        self.times = {"0": 0}
 
     async def global_setup(self):
         await super().global_setup()
-        await self.async_table_client.create_table()
         batch_size = 0
         batch = []
         for row in range(self.args.count):
@@ -120,10 +113,6 @@ class ListEntitiesPageableTest(_TableTest):
             page_size=self.args.page_size,
         ):
             pass
-
-
-    async def global_cleanup(self):
-        await self.async_table_client.delete_table()
 
     async def close(self):
         await self.async_table_client.close()

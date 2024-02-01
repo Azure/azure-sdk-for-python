@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import uuid
-from random import randint
 from time import time
 from wsgiref.handlers import format_date_time
 
@@ -12,28 +11,23 @@ from azure.core.exceptions import (
     HttpResponseError,
     map_error,
 )
-from azure.data.tables.aio import TableClient
 from ._test_base import _TableTest
 
+
 class UpdateEntityJSONTest(_TableTest):
+    partition_key = str(uuid.uuid4())
+    row_key = str(uuid.uuid4())
+
     def __init__(self, arguments):
         super().__init__(arguments)
-        self.table_name = f"updateentitytest{randint(1, 1000)}"
-        self.connection_string = self.get_from_env("AZURE_STORAGE_CONN_STR")
-        self.async_table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
-
         # base entity
-        partition_key = str(uuid.uuid4())
-        row_key = str(uuid.uuid4())
-        self.base_entity = self.get_base_entity(partition_key, row_key, self.args.size)
-        self.url = f"{self.account_endpoint}{self.table_name}(PartitionKey='{partition_key}',RowKey='{row_key}')"
+        self.base_entity = self.get_base_entity(UpdateEntityJSONTest.partition_key, UpdateEntityJSONTest.row_key, self.args.size)
+        self.url = f"{self.account_endpoint}{self.table_name}(PartitionKey='{UpdateEntityJSONTest.partition_key}',RowKey='{UpdateEntityJSONTest.row_key}')"
 
     async def global_setup(self):
         await super().global_setup()
-        await self.async_table_client.create_table()
         # create entity to be updated
         await self.async_table_client.create_entity(self.base_entity)
-
 
     def run_sync(self):
         current_time = format_date_time(time())
@@ -82,9 +76,6 @@ class UpdateEntityJSONTest(_TableTest):
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
             raise HttpResponseError(response=response)
-
-    async def global_cleanup(self):
-        await self.async_table_client.delete_table()
 
     async def close(self):
         await self.async_table_client.close()

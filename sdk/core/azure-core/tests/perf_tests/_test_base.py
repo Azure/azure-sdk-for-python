@@ -5,7 +5,8 @@
 
 import os
 import uuid
-import ast
+import string
+import random
 
 from devtools_testutils.perfstress_tests import PerfStressTest
 
@@ -43,10 +44,12 @@ from azure.core.exceptions import (
 )
 from azure.identity import ClientSecretCredential
 from azure.identity.aio import ClientSecretCredential as AsyncClientSecretCredential
+from azure.data.tables.aio import TableClient
 
 from azure.storage.blob._shared.authentication import SharedKeyCredentialPolicy as BlobSharedKeyCredentialPolicy
 from azure.data.tables._authentication import SharedKeyCredentialPolicy as TableSharedKeyCredentialPolicy
 
+_LETTERS = string.ascii_letters
 
 class _ServiceTest(PerfStressTest):
     transport = None
@@ -246,7 +249,7 @@ class _BlobTest(_ServiceTest):
         await super().close()
 
 class _TableTest(_ServiceTest):
-    container_name = "perfstress-" + str(uuid.uuid4())
+    table_name = ''.join(random.choice(_LETTERS) for i in range(30))
 
     def __init__(self, arguments):
         super().__init__(arguments)
@@ -262,6 +265,16 @@ class _TableTest(_ServiceTest):
         self.async_pipeline_client = self._build_async_pipeline_client(
             self.async_auth_policy
         )
+
+        self.connection_string = self.get_from_env("AZURE_STORAGE_CONN_STR")
+        self.async_table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
+
+    async def global_setup(self):
+        await super().global_setup()
+        await self.async_table_client.create_table()
+
+    async def global_cleanup(self):
+        await self.async_table_client.delete_table()
 
     def get_base_entity(self, pk, rk, size):
         # 227 is the length of the entity with Data of length 0
