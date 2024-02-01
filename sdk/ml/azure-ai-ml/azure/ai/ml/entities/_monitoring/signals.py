@@ -252,7 +252,7 @@ class ReferenceData(RestTranslatableMixin):
         self,
         *,
         input_data: Input,
-        data_context: MonitorDatasetContext = None,
+        data_context: Optional[MonitorDatasetContext] = None,
         pre_processing_component: Optional[str] = None,
         data_window: Optional[BaselineDataRange] = None,
         data_column_names: Optional[Dict[str, str]] = None,
@@ -540,7 +540,7 @@ class DataDriftSignal(DataSignal):
     @classmethod
     def _get_default_data_drift_signal(cls) -> "DataDriftSignal":
         return cls(
-            features=ALL_FEATURES,
+            features=ALL_FEATURES,  # type: ignore[arg-type]
             metric_thresholds=DataDriftMetricThreshold._get_default_thresholds(),
         )
 
@@ -715,7 +715,7 @@ class DataQualitySignal(DataSignal):
         cls,
     ) -> "DataQualitySignal":
         return cls(
-            features=ALL_FEATURES,
+            features=ALL_FEATURES,  # type: ignore[arg-type]
             metric_thresholds=DataQualityMetricThreshold._get_default_thresholds(),
         )
 
@@ -1168,7 +1168,7 @@ def _from_rest_features(
         _restFeatureSubset: List[str] = obj.features
         return _restFeatureSubset
     if isinstance(obj, RestAllFeatures):
-        _restAllFeatures: Literal["all_features"] = ALL_FEATURES
+        _restAllFeatures: Literal["all_features"] = ALL_FEATURES  # type: ignore[assignment]
         return _restAllFeatures
 
     return None
