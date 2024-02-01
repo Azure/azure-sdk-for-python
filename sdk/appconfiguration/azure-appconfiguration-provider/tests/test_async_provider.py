@@ -14,7 +14,6 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_provider_creation(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
-        breakpoint()
         async with await self.create_client(
             appconfiguration_connection_string,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
