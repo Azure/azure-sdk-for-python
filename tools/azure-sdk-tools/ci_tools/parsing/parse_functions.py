@@ -294,7 +294,7 @@ def parse_pyproject(pyproject_filename: str) -> Tuple[str, str, str, List[str], 
             sys.path.insert(0, os.path.dirname(pyproject_filename))
 
             try:
-                dynamic_version = toml_dict["tool"]["setuptools"]["dynamic"]["version"]
+                dynamic_version = get_value_from_dict(toml_dict, "tool.setuptools.dynamic.version")
 
                 if "attr" in dynamic_version:
                     attr_string = dynamic_version["attr"]
@@ -317,7 +317,7 @@ def parse_pyproject(pyproject_filename: str) -> Tuple[str, str, str, List[str], 
         is_new_sdk = name in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x)[0] in NEW_REQ_PACKAGES), requires))
         name_space = name.replace("-", ".")
         # package_data = project_config.get("package_data", None) TODO
-        # include_package_data = project_config.get("include_package_data", None) TODO
+        include_package_data = get_value_from_dict(toml_dict, "tool.setuptools.include-package-data", True)
         classifiers = project_config.get("classifiers", [])
         keywords = project_config.get("keywords", [])
         # ext_package = project_config.get("ext_package", None) TODO
@@ -332,7 +332,7 @@ def parse_pyproject(pyproject_filename: str) -> Tuple[str, str, str, List[str], 
             pyproject_filename,
             name_space,
             None,
-            None,
+            include_package_data,
             classifiers,
             keywords,
             None,
@@ -347,7 +347,7 @@ def get_pyproject(folder: str) -> Union[str, None]:
     pyproject_filename = os.path.join(folder, "pyproject.toml")
 
     if os.path.exists(pyproject_filename):
-        project_config = get_pyproject_config(pyproject_filename, "project")
+        project_config = get_value_from_dict(get_pyproject_dict(pyproject_filename), "project", None)
         if project_config:
             return pyproject_filename
 
@@ -393,7 +393,6 @@ def parse_setup(
     if setup_filename_or_folder.endswith(".toml"):
         return parse_pyproject(setup_filename_or_folder)
     else:
-        breakpoint()
         return parse_setup_py(setup_filename_or_folder)
 
 def get_pyproject_dict(pyproject_file) -> Dict[str, Any]:
@@ -406,16 +405,25 @@ def get_pyproject_dict(pyproject_file) -> Dict[str, Any]:
     return pyproject_dict
 
 
-def get_pyproject_config(pyproject_file: str, section: str = "project") -> Dict[str, Any]:
+def get_value_from_dict(pyproject_dict: Dict[str, Any], keystring: str, default_if_not_present: Any = None) -> Any:
     """
-    Given a pyproject.toml file, returns a dictionary of a target section. Defaults to `project` section.
+    Given a dictionary, offers an easy interface for nested objects via `.` notation.
+
+    Example usage -> get_value_from_dict(pyproject_dict, "tool.setuptools.include-package-data", True)
     """
-    pyproject_dict = get_pyproject_dict(pyproject_file)
+    keys = keystring.split(".")
 
-    if section not in pyproject_dict:
-        return None
+    current_selection = pyproject_dict
 
-    return pyproject_dict[section]
+    for index, key in enumerate(keys):
+        if index == len(keys) - 1:
+            return current_selection.get(key, default_if_not_present)
+        if key in current_selection:
+            current_selection = current_selection[key]
+        else:
+            return default_if_not_present
+
+    return default_if_not_present
 
 
 def get_install_requires(setup_path: str) -> List[str]:
