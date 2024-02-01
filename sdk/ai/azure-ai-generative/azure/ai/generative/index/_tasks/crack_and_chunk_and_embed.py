@@ -17,7 +17,6 @@ from azure.ai.generative.index._documents import (
     DocumentChunksIterator,
     DocumentSource,
 )
-
 from azure.ai.generative.index._documents.chunking import file_extension_splitters, split_documents
 from azure.ai.generative.index._documents.cracking import crack_documents, file_extension_loaders, files_to_document_source
 from azure.ai.generative.index._embeddings import DataEmbeddedDocument, EmbeddedDocumentSource, EmbeddingsContainer
