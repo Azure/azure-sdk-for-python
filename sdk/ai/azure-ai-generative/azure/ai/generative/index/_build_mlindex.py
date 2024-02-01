@@ -100,7 +100,7 @@ def build_index(
                 "connection_type": "environment",
                 "connection": {"key": api_key},
                 "endpoint": os.getenv(api_base),
-            }      
+            }
     embedder = EmbeddingsContainer.from_uri(
         uri=embeddings_model,
         **connection_args,
