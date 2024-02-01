@@ -83,7 +83,10 @@ class TestRetryPolicy(unittest.TestCase):
                                                                          partition_key=PartitionKey("/pk"))
 
     def tearDown(self) -> None:
-        self.created_database.delete_container(self.TEST_CONTAINER_SINGLE_PARTITION_ID)
+        try:
+            self.created_database.delete_container(self.TEST_CONTAINER_SINGLE_PARTITION_ID)
+        except exceptions.CosmosHttpResponseError:
+            pass
 
     def test_resource_throttle_retry_policy_default_retry_after(self):
         connection_policy = TestRetryPolicy.connectionPolicy

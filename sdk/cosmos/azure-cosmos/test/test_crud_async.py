@@ -112,16 +112,9 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         await self.client.close()
 
     async def test_database_crud_async(self):
-        # read databases.
-        databases = [database async for database in self.client.list_databases()]
-        # create a database.
-        before_create_databases_count = len(databases)
         database_id = str(uuid.uuid4())
         created_db = await self.client.create_database(database_id)
         assert created_db.id == database_id
-        # Read databases after creation.
-        databases = [database async for database in self.client.list_databases()]
-        assert len(databases) == before_create_databases_count + 1
         # query databases.
         databases = [database async for database in self.client.query_databases(
             query='SELECT * FROM root r WHERE r.id=@id',

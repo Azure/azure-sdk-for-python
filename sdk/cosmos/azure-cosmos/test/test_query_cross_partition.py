@@ -66,7 +66,10 @@ class TestCrossPartitionQuery(unittest.TestCase):
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS)
 
     def tearDown(self):
-        self.created_db.delete_container(self.TEST_CONTAINER_ID)
+        try:
+            self.created_db.delete_container(self.TEST_CONTAINER_ID)
+        except exceptions.CosmosHttpResponseError:
+            pass
 
     def test_first_and_last_slashes_trimmed_for_query_string(self):
         doc_id = 'myId' + str(uuid.uuid4())

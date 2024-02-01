@@ -28,12 +28,10 @@ import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos import http_constants, exceptions, PartitionKey
 from test_config import TestConfig
 
+
 # This test class serves to test user-configurable options and verify they are
 # properly set and saved into the different object instances that use these
 # user-configurable settings.
-
-DATABASE_ID = "PythonSDKUserConfigTesters"
-CONTAINER_ID = "PythonSDKTestContainer"
 
 
 def get_test_item():
@@ -74,14 +72,16 @@ class TestUserConfigs(unittest.TestCase):
             self.assertEqual(e.status_code, http_constants.StatusCodes.UNAUTHORIZED)
 
     def test_default_account_consistency(self):
+        database_id = "PythonSDKUserConfigTesters-" + str(uuid.uuid4())
+        container_id = "PythonSDKTestContainer-" + str(uuid.uuid4())
         client = cosmos_client.CosmosClient(url=TestConfig.host, credential=TestConfig.masterKey)
         database_account = client.get_database_account()
         account_consistency_level = database_account.ConsistencyPolicy["defaultConsistencyLevel"]
         self.assertEqual(account_consistency_level, "Session")
 
         # Testing the session token logic works without user passing in Session explicitly
-        database = client.create_database(DATABASE_ID)
-        container = database.create_container(id=CONTAINER_ID, partition_key=PartitionKey(path="/id"))
+        database = client.create_database(database_id)
+        container = database.create_container(id=container_id, partition_key=PartitionKey(path="/id"))
         container.create_item(body=get_test_item())
         session_token = client.client_connection.last_response_headers[http_constants.CookieHeaders.SessionToken]
         item2 = get_test_item()
@@ -96,7 +96,7 @@ class TestUserConfigs(unittest.TestCase):
 
         # Check Session token remains the same for read operation as with previous create item operation
         self.assertEqual(session_token2, read_session_token)
-        client.delete_database(DATABASE_ID)
+        client.delete_database(database_id)
 
         # Now testing a user-defined consistency level as opposed to using the account one
         custom_level = "Eventual"
@@ -117,7 +117,7 @@ class TestUserConfigs(unittest.TestCase):
                                                                credential=TestConfig.masterKey,
                                                                consistency_level=custom_level)
         try:
-            strong_consistency_client.create_database(DATABASE_ID)
+            strong_consistency_client.create_database(database_id)
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, http_constants.StatusCodes.BAD_REQUEST)
 

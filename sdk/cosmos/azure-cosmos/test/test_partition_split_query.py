@@ -29,7 +29,7 @@ import uuid
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 from azure.cosmos import DatabaseProxy, PartitionKey, ContainerProxy
-from azure.cosmos.exceptions import CosmosClientTimeoutError
+from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
 
 
 def get_test_item():
@@ -79,7 +79,10 @@ class TestPartitionSplitQuery(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls) -> None:
-        cls.database.delete_container(cls.container.id)
+        try:
+            cls.database.delete_container(cls.container.id)
+        except CosmosHttpResponseError:
+            pass
 
     def test_partition_split_query(self):
         for i in range(100):

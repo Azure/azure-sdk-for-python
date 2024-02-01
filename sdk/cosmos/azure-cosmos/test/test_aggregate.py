@@ -58,7 +58,10 @@ class TestAggregateQuery(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls) -> None:
-        cls.created_db.delete_container(cls.created_collection.id)
+        try:
+            cls.created_db.delete_container(cls.created_collection.id)
+        except CosmosHttpResponseError:
+            pass
 
     @classmethod
     def _setup(cls):

@@ -37,6 +37,7 @@ import azure.cosmos._base as base
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 from azure.cosmos import _query_iterable as query_iterable, DatabaseProxy, ContainerProxy
+from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.partition_key import PartitionKey
 
 
@@ -107,7 +108,10 @@ class TestCrossPartitionTopOrderBy(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.created_db.delete_container(cls.created_container.id)
+        try:
+            cls.created_db.delete_container(cls.created_container.id)
+        except CosmosHttpResponseError:
+            pass
 
     def test_orderby_query(self):
         # test a simple order by query

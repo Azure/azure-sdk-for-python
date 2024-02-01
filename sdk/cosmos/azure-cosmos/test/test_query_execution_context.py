@@ -36,6 +36,7 @@ import azure.cosmos._base as base
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 from azure.cosmos._execution_context import base_execution_context as base_execution_context
+from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.partition_key import PartitionKey
 
 
@@ -90,7 +91,10 @@ class TestQueryExecutionContextEndToEnd(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.created_db.delete_container(cls.created_collection.id)
+        try:
+            cls.created_db.delete_container(cls.created_collection.id)
+        except CosmosHttpResponseError:
+            pass
 
     def setUp(self):
         # sanity check:

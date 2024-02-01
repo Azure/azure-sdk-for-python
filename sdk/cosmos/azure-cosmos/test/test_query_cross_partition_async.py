@@ -30,6 +30,7 @@ import test_config
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 from azure.cosmos.aio import CosmosClient, DatabaseProxy, ContainerProxy
 from azure.cosmos.documents import _DistinctType
+from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.partition_key import PartitionKey
 
 
@@ -65,8 +66,12 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS)
 
     async def asyncTearDown(self):
-        await self.created_db.delete_container(self.TEST_CONTAINER_ID)
-        await self.client.close()
+        try:
+            await self.created_db.delete_container(self.TEST_CONTAINER_ID)
+        except CosmosHttpResponseError:
+            pass
+        finally:
+            await self.client.close()
 
     async def test_first_and_last_slashes_trimmed_for_query_string_async(self):
         doc_id = 'myId' + str(uuid.uuid4())
