@@ -35,8 +35,8 @@ pip install azure-communication-callautomation
 from azure.communication.callautomation import (CallAutomationClient)
 
 # Your unique Azure Communication service endpoint
-endpoint_url = '<ENDPOINT>'
-client = CallAutomationClient.from_connection_string(endpoint_url)
+connection_string = '<CONNECTION STRING>'
+client = CallAutomationClient.from_connection_string(connection_string)
 ```
 
 ### Create Call
@@ -55,7 +55,7 @@ callback_url = "https://<MY-EVENT-HANDLER-URL>/events"
 # send out the invitation, creating call
 result = client.create_call(
     target_participant=user,
-    callback_url=callback_uri
+    callback_url=callback_url
 )
 
 # this id can be used to do further actions in the call
