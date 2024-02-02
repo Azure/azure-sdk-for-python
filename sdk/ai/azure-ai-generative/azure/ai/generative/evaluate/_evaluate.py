@@ -463,10 +463,7 @@ def _get_chat_instance_table(metrics):
 
 def _get_instance_table(metrics, task_type, asset_handler):
 
-    if task_type == CHAT:
-        instance_level_metrics_table = _get_chat_instance_table(metrics.get("artifacts"))
-    else:
-        instance_level_metrics_table = pd.DataFrame(metrics.get("artifacts"))
+    instance_level_metrics_table = pd.DataFrame(metrics.get("artifacts"))
 
     combined_table = pd.concat(
         [asset_handler.input_output_data,
