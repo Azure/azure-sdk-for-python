@@ -23,7 +23,7 @@ class AIEvaluateSamples(object):
 
         # [START evaluate_task_type_qa]
         import os
-        from azure.ai.generative import evaluate
+        from azure.ai.generative.evaluate import evaluate
         from azure.ai.resources.client import AIClient
         from azure.identity import DefaultAzureCredential
 
