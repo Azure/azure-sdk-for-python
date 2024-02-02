@@ -10,6 +10,7 @@
 ### Other Changes
 
 - `AzureCliCredential` utilizes the new `expires_on` property returned by `az` CLI versions >= 2.54.0 to determine token expiration. ([#33947](https://github.com/Azure/azure-sdk-for-python/issues/33947))
+- Azure-identity is supported on Python 3.8 or later.
 
 ## 1.15.0 (2023-10-26)
 
