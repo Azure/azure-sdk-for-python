@@ -539,6 +539,9 @@ class RecoveryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INVALID = "Invalid"
     FILE_RECOVERY = "FileRecovery"
     WORKLOAD_RECOVERY = "WorkloadRecovery"
+    SNAPSHOT_ATTACH = "SnapshotAttach"
+    RECOVERY_USING_SNAPSHOT = "RecoveryUsingSnapshot"
+    SNAPSHOT_ATTACH_AND_RECOVER = "SnapshotAttachAndRecover"
 
 
 class RecoveryPointTierStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):

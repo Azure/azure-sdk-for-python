@@ -1,14 +1,21 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from typing import Dict, Optional, Union
+
+from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._builders.do_while import DoWhile
+from azure.ai.ml.entities._builders.pipeline import Pipeline
+from azure.ai.ml.entities._inputs_outputs import Output
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput
 
 
-def do_while(body, mapping, max_iteration_count: int, condition=None):
+def do_while(
+    body: Union[Pipeline, Command], mapping: Dict, max_iteration_count: int, condition: Optional[Output] = None
+) -> DoWhile:
     """Build a do_while node by specifying the loop body, output-input mapping, and termination condition.
 
-    .. remarks::
+    .. note::
         The following example shows how to use the `do_while` function to create a pipeline with a `do_while` node.
 
         .. code-block:: python
@@ -57,13 +64,13 @@ def do_while(body, mapping, max_iteration_count: int, condition=None):
     """
     do_while_node = DoWhile(
         body=body,
-        condition=condition,
+        condition=condition,  # type: ignore[arg-type]
         mapping=mapping,
         _from_component_func=True,
     )
     do_while_node.set_limits(max_iteration_count=max_iteration_count)
 
-    def _infer_and_update_body_input_from_mapping():
+    def _infer_and_update_body_input_from_mapping() -> None:
         # pylint: disable=protected-access
         for source_output, body_input in mapping.items():
             # handle case that mapping key is a NodeOutput
@@ -84,8 +91,8 @@ def do_while(body, mapping, max_iteration_count: int, condition=None):
                 single_input.type = inferred_type
                 # update node corresponding component input
                 input_name = single_input._meta.name
-                body.component.inputs[input_name]._is_inferred_optional = True
-                body.component.inputs[input_name].type = inferred_type
+                body.component.inputs[input_name]._is_inferred_optional = True  # type: ignore[union-attr]
+                body.component.inputs[input_name].type = inferred_type  # type: ignore[union-attr]
 
     # when mapping is a dictionary, infer and update for dynamic input
     if isinstance(mapping, dict):

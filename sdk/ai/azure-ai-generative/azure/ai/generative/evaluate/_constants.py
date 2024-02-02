@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+from typing import Dict, Union
+
 QA = "qa"
 CHAT = "chat"
 
@@ -10,11 +12,6 @@ SUPPORTED_TASK_TYPE = [QA, CHAT]
 SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING = {
     QA: "qa",
     CHAT: "rag-evaluation",
-}
-
-TYPE_TO_KWARGS_MAPPING = {
-    "qa": ["questions", "contexts", "y_pred", "y_test"],
-    "rag-evaluation": ["y_pred"]
 }
 
 
@@ -71,7 +68,12 @@ class ChatMetrics:
     ]
 
 
-TASK_TYPE_TO_METRICS_MAPPING = {
-    "qa": QaMetrics,
-    "rag-evaluation": ChatMetrics
+TASK_TYPE_TO_METRICS_MAPPING: Dict[str, Union[QaMetrics, ChatMetrics]] = {
+    "qa": QaMetrics(),
+    "rag-evaluation": ChatMetrics()
+}
+
+SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING = {
+    QA: QaMetrics,
+    CHAT: ChatMetrics
 }

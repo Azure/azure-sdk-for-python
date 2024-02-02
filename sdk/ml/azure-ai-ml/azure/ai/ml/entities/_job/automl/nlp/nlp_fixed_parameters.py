@@ -97,7 +97,7 @@ class NlpFixedParameters(RestTranslatableMixin):
             weight_decay=obj.weight_decay,
         )
 
-    def __eq__(self, other: object):
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, NlpFixedParameters):
             return NotImplemented
 

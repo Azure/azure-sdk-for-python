@@ -16,7 +16,7 @@ from ci_tools.functions import (
 )
 from ci_tools.build import cleanup_build_artifacts, create_package
 from ci_tools.parsing import ParsedSetup, parse_require
-from ci_tools.functions import get_package_from_repo, find_whl, get_pip_list_output, pytest
+from ci_tools.functions import get_package_from_repo_or_folder, find_whl, get_pip_list_output, pytest
 from .managed_virtual_env import ManagedVirtualEnv
 
 
@@ -71,6 +71,8 @@ def create_package_and_install(
         setup_py_path, distribution_directory, target_setup, package_type, force_create
     )
 
+    target_package = ParsedSetup.from_path(setup_py_path)
+
     if skip_install:
         logging.info("Flag to skip install whl is passed. Skipping package installation")
     else:
@@ -116,6 +118,7 @@ def create_package_and_install(
                         addition_necessary = True
                         # get all installed packages
                         installed_pkgs = get_pip_list_output(python_exe)
+                        logging.info("Installed packages: {}".format(installed_pkgs))
 
                         # parse the specifier
                         req_name, req_specifier = parse_require(req)
@@ -150,7 +153,12 @@ def create_package_and_install(
 
                         additional_downloaded_reqs = [
                             os.path.abspath(os.path.join(tmp_dl_folder, pth)) for pth in os.listdir(tmp_dl_folder)
-                        ] + [get_package_from_repo(relative_req).folder for relative_req in non_present_reqs]
+                        ] + [
+                            get_package_from_repo_or_folder(
+                                package_name, os.path.join(target_package.folder, ".tmp_whl_dir")
+                            )
+                            for package_name in non_present_reqs
+                        ]
 
             commands = [python_exe, "-m", "pip", "install", built_pkg_path]
             commands.extend(additional_downloaded_reqs)
@@ -343,7 +351,9 @@ def prepare_and_test_optional(mapped_args: argparse.Namespace) -> int:
 
         if mapped_args.optional:
             if env_name != mapped_args.optional:
-                logging.info(f"{env_name} does not match targeted environment {mapped_args.optional}, skipping this environment.")
+                logging.info(
+                    f"{env_name} does not match targeted environment {mapped_args.optional}, skipping this environment."
+                )
                 continue
 
         environment_exe = prepare_environment(mapped_args.target, mapped_args.temp_dir, env_name)
