@@ -18,6 +18,9 @@ class WorkspaceConnectionCredentials(RestTranslatableMixin):
     def __init__(self) -> None:
         self.type = None
 
+    def _get_rest_properties_class(self): 
+        raise NotImplementedError("Base class method")
+
 
 class SasTokenCredentials(WorkspaceConnectionCredentials):
     """Shared Access Signatures Token Credentials.
@@ -42,6 +45,9 @@ class SasTokenCredentials(WorkspaceConnectionCredentials):
         if not isinstance(other, SasTokenCredentials):
             return NotImplemented
         return self.sas == other.sas
+    
+    def _get_rest_properties_class(self):
+        return SharedAccessSignature
 
 
 class UsernamePasswordCredentials(WorkspaceConnectionCredentials):
@@ -79,6 +85,8 @@ class UsernamePasswordCredentials(WorkspaceConnectionCredentials):
             return NotImplemented
         return self.username == other.username and self.password == other.password
 
+    def _get_rest_properties_class(self):
+        return UsernamePassword
 
 class ManagedIdentityCredentials(WorkspaceConnectionCredentials):
     """Managed Identity Credentials.
@@ -110,6 +118,9 @@ class ManagedIdentityCredentials(WorkspaceConnectionCredentials):
         if not isinstance(other, ManagedIdentityCredentials):
             return NotImplemented
         return self.client_id == other.client_id and self.resource_id == other.resource_id
+    
+    def _get_rest_properties_class(self):
+        return ManagedIdentity
 
 
 class ServicePrincipalCredentials(WorkspaceConnectionCredentials):
@@ -159,6 +170,9 @@ class ServicePrincipalCredentials(WorkspaceConnectionCredentials):
             and self.client_secret == other.client_secret
             and self.tenant_id == other.tenant_id
         )
+    
+    def _get_rest_properties_class(self):
+        return ServicePrincipal
 
 
 class AccessKeyCredentials(WorkspaceConnectionCredentials):
@@ -195,3 +209,6 @@ class AccessKeyCredentials(WorkspaceConnectionCredentials):
         if not isinstance(other, AccessKeyCredentials):
             return NotImplemented
         return self.access_key_id == other.access_key_id and self.secret_access_key == other.secret_access_key
+
+    def _get_rest_properties_class(self):
+        return UsernamePassword

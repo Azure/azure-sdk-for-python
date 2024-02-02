@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, Optional
+from typing import Any, List, Optional
 
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import (
@@ -55,6 +55,10 @@ class AzureOpenAIWorkspaceConnection(WorkspaceConnection):
             self.tags[CONNECTION_API_VERSION_KEY] = api_version
             self.tags[CONNECTION_API_TYPE_KEY] = api_type
 
+    @classmethod
+    def _get_required_metadata_fields(cls) -> List[str]:
+        return [CONNECTION_API_VERSION_KEY, CONNECTION_API_TYPE_KEY]
+
     @property
     def api_version(self) -> Optional[str]:
         """The API version of the workspace connection.
@@ -99,7 +103,6 @@ class AzureOpenAIWorkspaceConnection(WorkspaceConnection):
         if self.tags is not None:
             self.tags[CONNECTION_API_TYPE_KEY] = value
 
-
 @experimental
 class AzureAISearchWorkspaceConnection(WorkspaceConnection):
     """A Workspace Connection that is specifically designed for handling connections to
@@ -130,6 +133,10 @@ class AzureAISearchWorkspaceConnection(WorkspaceConnection):
 
         if self.tags is not None:
             self.tags[CONNECTION_API_VERSION_KEY] = api_version
+
+    @classmethod
+    def _get_required_metadata_fields(cls) -> List[str]:
+        return [CONNECTION_API_VERSION_KEY]
 
     @property
     def api_version(self) -> Optional[str]:
@@ -189,6 +196,10 @@ class AzureAIServiceWorkspaceConnection(WorkspaceConnection):
             self.tags[CONNECTION_API_VERSION_KEY] = api_version
             self.tags[CONNECTION_KIND_KEY] = kind
 
+    @classmethod
+    def _get_required_metadata_fields(cls) -> List[str]:
+        return [CONNECTION_API_VERSION_KEY, CONNECTION_KIND_KEY]
+
     @property
     def api_version(self) -> Optional[str]:
         """The API version of the workspace connection.
@@ -230,7 +241,6 @@ class AzureAIServiceWorkspaceConnection(WorkspaceConnection):
         :param value: The new kind to set.
         :type value: str
         """
-<<<<<<< HEAD
         self.tags[CONNECTION_KIND_KEY] = value
 
 
@@ -274,6 +284,10 @@ class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
         self.tags[CONNECTION_CONTAINER_NAME_KEY] = container_name
         self.tags[CONNECTION_ACCOUNT_NAME_KEY] = account_name
 
+    @classmethod
+    def _get_required_metadata_fields(cls) -> List[str]:
+        return [CONNECTION_CONTAINER_NAME_KEY, CONNECTION_ACCOUNT_NAME_KEY]
+
     @property
     def container_name(self) -> str:
         """The name of the workspace connection's container.
@@ -295,7 +309,103 @@ class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
         if self.tags is not None and CONNECTION_ACCOUNT_NAME_KEY in self.tags:
             return self.tags[CONNECTION_ACCOUNT_NAME_KEY]
         return None
-=======
-        if self.tags is not None:
-            self.tags[CONNECTION_KIND_KEY] = value
->>>>>>> main
+
+# copilot shush AzureOneLake,  
+
+       "PythonFeed",
+        "ContainerRegistry",
+        "Git",
+        "S3",
+        "Snowflake",
+        "AzureSqlDb",
+        "AzureSynapseAnalytics",
+        "AzureMySqlDb",
+        "AzurePostgresDb",
+        "ADLSGen2",
+        "Redis",
+        "ApiKey",
+        "AzureOpenAI",
+        "CognitiveSearch",
+        "CognitiveService",
+        "CustomKeys",
+        "AzureBlob",
+        "AzureOneLake",
+        "CosmosDb",
+        "CosmosDbMongoDbApi",
+        "AzureDataExplorer",
+        "AzureMariaDb",
+        "AzureDatabricksDeltaLake",
+        "AzureSqlMi",
+        "AzureTableStorage",
+        "AmazonRdsForOracle",
+        "AmazonRdsForSqlServer",
+        "AmazonRedshift",
+        "Db2",
+        "Drill",
+        "GoogleBigQuery",
+        "Greenplum",
+        "Hbase",
+        "Hive",
+        "Impala",
+        "Informix",
+        "MariaDb",
+        "MicrosoftAccess",
+        "MySql",
+        "Netezza",
+        "Oracle",
+        "Phoenix",
+        "PostgreSql",
+        "Presto",
+        "SapOpenHub",
+        "SapBw",
+        "SapHana",
+        "SapTable",
+        "Spark",
+        "SqlServer",
+        "Sybase",
+        "Teradata",
+        "Vertica",
+        "Cassandra",
+        "Couchbase",
+        "MongoDbV2",
+        "MongoDbAtlas",
+        "AmazonS3Compatible",
+        "FileServer",
+        "FtpServer",
+        "GoogleCloudStorage",
+        "Hdfs",
+        "OracleCloudStorage",
+        "Sftp",
+        "GenericHttp",
+        "ODataRest",
+        "Odbc",
+        "GenericRest",
+        "AmazonMws",
+        "Concur",
+        "Dynamics",
+        "DynamicsAx",
+        "DynamicsCrm",
+        "GoogleAdWords",
+        "Hubspot",
+        "Jira",
+        "Magento",
+        "Marketo",
+        "Office365",
+        "Eloqua",
+        "Responsys",
+        "OracleServiceCloud",
+        "PayPal",
+        "QuickBooks",
+        "Salesforce",
+        "SalesforceServiceCloud",
+        "SalesforceMarketingCloud",
+        "SapCloudForCustomer",
+        "SapEcc",
+        "ServiceNow",
+        "SharePointOnlineList",
+        "Shopify",
+        "Square",
+        "WebTable",
+        "Xero",
+        "Zoho",
+        "GenericContainerRegistry"

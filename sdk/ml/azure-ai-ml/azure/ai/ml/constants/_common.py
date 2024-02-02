@@ -189,7 +189,18 @@ CONNECTION_KIND_KEY = "Kind"
 CONNECTION_CONTAINER_NAME_KEY = "ContainerName"
 CONNECTION_ACCOUNT_NAME_KEY = "AccountName"
 
-
+#transform the above if-else block into a map from ConnectionAuthType to a tuple
+# of the property class and the entity class
+CONNECTION_AUTH_TYPE_PROPERTY_CLASS_MAP = {
+    ConnectionAuthType.PAT: (PATAuthTypeWorkspaceConnectionProperties, PatTokenConfiguration),
+    ConnectionAuthType.MANAGED_IDENTITY: (ManagedIdentityAuthTypeWorkspaceConnectionProperties, ManagedIdentityConfiguration),
+    ConnectionAuthType.USERNAME_PASSWORD: (UsernamePasswordAuthTypeWorkspaceConnectionProperties, UsernamePasswordConfiguration),
+    ConnectionAuthType.ACCESS_KEY: (AccessKeyAuthTypeWorkspaceConnectionProperties, AccessKeyConfiguration),
+    ConnectionAuthType.SAS: (SASAuthTypeWorkspaceConnectionProperties, SasTokenConfiguration),
+    ConnectionAuthType.SERVICE_PRINCIPAL: (ServicePrincipalAuthTypeWorkspaceConnectionProperties, ServicePrincipalConfiguration),
+    ConnectionAuthType.API_KEY: (ApiKeyAuthWorkspaceConnectionProperties, ApiKeyConfiguration),
+    None: (NoneAuthTypeWorkspaceConnectionProperties, None),
+}
 class DefaultOpenEncoding:
     """Enum that captures SDK's default values for the encoding param of open(...)"""
 

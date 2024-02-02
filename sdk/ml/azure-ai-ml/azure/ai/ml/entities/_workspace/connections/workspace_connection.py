@@ -40,6 +40,7 @@ from azure.ai.ml.constants._common import (
     CONNECTION_ACCOUNT_NAME_KEY,
     CONNECTION_CONTAINER_NAME_KEY,
     PARAMS_OVERRIDE_KEY,
+    WORKSPACE_CONNECTION_TYPE_SUBCLASS_MAP,
     WorkspaceConnectionTypes,
 )
 from azure.ai.ml.entities._credentials import (
@@ -54,7 +55,6 @@ from azure.ai.ml.entities._credentials import (
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
-
 
 # Dev note: The acceptable strings for the type field are all snake_cased versions of the string constants defined
 # In the rest client enum defined at _azure_machine_learning_services_enums.ConnectionCategory.
@@ -76,7 +76,7 @@ class WorkspaceConnection(Resource):
     :param type: The category of external resource for this connection.
     :type type: The type of workspace connection, possible values are: "git", "python_feed", "container_registry",
         "feature_store", "s3", "snowflake", "azure_sql_db", "azure_synapse_analytics", "azure_my_sql_db",
-        "azure_postgres_db", "custom".
+        "azure_postgres_db", "adls_gen_2", "azure_one_lake", "custom".
     :param credentials: The credentials for authenticating to the external resource. Note that certain connection
         types (as defined by the type input) only accept certain types of credentials.
     :type credentials: Union[
@@ -265,28 +265,13 @@ class WorkspaceConnection(Resource):
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestWorkspaceConnection) -> Optional["WorkspaceConnection"]:
-        from .workspace_connection_subtypes import (
-            AzureAISearchWorkspaceConnection,
-            AzureAIServiceWorkspaceConnection,
-            AzureOpenAIWorkspaceConnection,
-            AzureBlobStoreWorkspaceConnection,
-        )
-
         if not rest_obj:
             return None
 
         conn_cat = rest_obj.properties.category
         conn_class = cls._get_entity_class_from_type(conn_cat)
 
-        popped_tags = []
-        if conn_class == AzureOpenAIWorkspaceConnection:
-            popped_tags = [CONNECTION_API_VERSION_KEY, CONNECTION_API_TYPE_KEY]
-        elif conn_class == AzureAISearchWorkspaceConnection:
-            popped_tags = [CONNECTION_API_VERSION_KEY]
-        elif conn_class == AzureAIServiceWorkspaceConnection:
-            popped_tags = [CONNECTION_API_VERSION_KEY, CONNECTION_KIND_KEY]
-        elif conn_class == AzureBlobStoreWorkspaceConnection:
-            popped_tags = [CONNECTION_ACCOUNT_NAME_KEY, CONNECTION_CONTAINER_NAME_KEY]
+        popped_tags = conn_class._get_required_metadata_fields()
 
         rest_kwargs = cls._extract_kwargs_from_rest_obj(rest_obj=rest_obj, popped_tags=popped_tags)
         # Renaming for client clarity
@@ -406,22 +391,18 @@ class WorkspaceConnection(Resource):
             AzureOpenAIWorkspaceConnection,
             AzureBlobStoreWorkspaceConnection,
         )
-
-        cat = camel_to_snake(conn_type).lower()
-<<<<<<< HEAD
-        conn_class = WorkspaceConnection
-        #import pdb; pdb.set_trace()
-=======
+        # Same for this mapping, it's not in the constants file to avoid imports in said file.
+        WORKSPACE_CONNECTION_TYPE_SUBCLASS_MAP = {
+            ConnectionCategory.AZURE_OPEN_AI: AzureOpenAIWorkspaceConnection,
+            ConnectionCategory.COGNITIVE_SEARCH: AzureAISearchWorkspaceConnection,
+            ConnectionCategory.COGNITIVE_SERVICE: AzureAIServiceWorkspaceConnection,
+            ConnectionCategory.AZURE_BLOB: AzureBlobStoreWorkspaceConnection,
+        }
+        # Connection category enums are snake-cased.
+        cat = camel_to_snake(conn_type)
         conn_class: Type = WorkspaceConnection
->>>>>>> main
-        if cat == camel_to_snake(ConnectionCategory.AZURE_OPEN_AI).lower():
-            conn_class = AzureOpenAIWorkspaceConnection
-        elif cat == camel_to_snake(ConnectionCategory.COGNITIVE_SEARCH).lower():
-            conn_class = AzureAISearchWorkspaceConnection
-        elif cat == camel_to_snake(ConnectionCategory.COGNITIVE_SERVICE).lower():
-            conn_class = AzureAIServiceWorkspaceConnection
-        elif cat == camel_to_snake("azure_blob").lower(): # TODO replace with real category from new rest.
-            conn_class = AzureBlobStoreWorkspaceConnection
+        if cat in WORKSPACE_CONNECTION_TYPE_SUBCLASS_MAP:
+            conn_class = WORKSPACE_CONNECTION_TYPE_SUBCLASS_MAP[cat]
         return conn_class
 
     @classmethod
@@ -451,3 +432,12 @@ class WorkspaceConnection(Resource):
             conn_class = AzureBlobStoreWorkspaceConnectionSchema
 
         return conn_class
+    
+    @classmethod
+    def _get_required_metadata_fields(cls) -> List[str]:
+        """ Helper function that returns the required metadata fields for specific workspace
+        connection type. This parent function returns nothing, but needs to be overwritten by child
+        classes, which are created under the expectation that they have extra fields that need to be
+        accounted for."""
+
+        return []
