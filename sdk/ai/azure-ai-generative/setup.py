@@ -68,7 +68,7 @@ setup(
         "azure.ai.generative": [
             "azure/ai/generative/index/_utils/encodings/*",
             "azure/ai/generative/synthetic/templates/*",
-            "azure/ai/generative/evaluate/pf_templates/*",
+            "azure/ai/generative/evaluate/pf_templates/built_in_metrics/*",
             "azure/ai/generative/py.typed",
         ]
     },
