@@ -11,10 +11,7 @@ import random
 from devtools_testutils.perfstress_tests import PerfStressTest
 
 from azure.core import PipelineClient, AsyncPipelineClient
-from azure.core.pipeline import (
-    Pipeline,
-    AsyncPipeline
-)
+from azure.core.pipeline import Pipeline, AsyncPipeline
 from azure.core.pipeline.transport import (
     RequestsTransport,
     AioHttpTransport,
@@ -51,6 +48,7 @@ from azure.data.tables._authentication import SharedKeyCredentialPolicy as Table
 
 _LETTERS = string.ascii_letters
 
+
 class _ServiceTest(PerfStressTest):
     transport = None
     async_transport = None
@@ -64,7 +62,7 @@ class _ServiceTest(PerfStressTest):
         self.tenant_id = os.environ["CORE_TENANT_ID"]
         self.client_id = os.environ["CORE_CLIENT_ID"]
         self.client_secret = os.environ["CORE_CLIENT_SECRET"]
-        self.storage_scope = 'https://storage.azure.com/.default'
+        self.storage_scope = "https://storage.azure.com/.default"
 
         # defaults transports
         self.sync_transport = RequestsTransport
@@ -83,7 +81,9 @@ class _ServiceTest(PerfStressTest):
                 try:
                     self.async_transport = async_transport_types[self.args.transport]
                 except KeyError:
-                    raise ValueError(f"Invalid async transport:{self.args.transport}\n Valid options are:\n- aiohttp\n- requests\n")
+                    raise ValueError(
+                        f"Invalid async transport:{self.args.transport}\n Valid options are:\n- aiohttp\n- requests\n"
+                    )
 
         self.error_map = {
             401: ClientAuthenticationError,
@@ -91,7 +91,7 @@ class _ServiceTest(PerfStressTest):
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
-    
+
     def _build_sync_pipeline_client(self, auth_policy):
         default_policies = [
             UserAgentPolicy,
@@ -99,40 +99,31 @@ class _ServiceTest(PerfStressTest):
             ProxyPolicy,
             NetworkTraceLoggingPolicy,
             HttpLoggingPolicy,
-            RetryPolicy, 
+            RetryPolicy,
             CustomHookPolicy,
-            RedirectPolicy
+            RedirectPolicy,
         ]
 
         if self.args.policies is None:
             # if None, only auth policy is passed in
-            sync_pipeline = Pipeline(
-                transport=self.sync_transport(),
-                policies=[auth_policy]
-            )
+            sync_pipeline = Pipeline(transport=self.sync_transport(), policies=[auth_policy])
         elif self.args.policies == "all":
             # if all, autorest default policies + auth policy
             sync_policies = [auth_policy]
             sync_policies.extend([policy(sdk_moniker=self.sdk_moniker) for policy in default_policies])
-            sync_pipeline = Pipeline(
-                transport=self.sync_transport(),
-                policies=sync_policies
-            )
+            sync_pipeline = Pipeline(transport=self.sync_transport(), policies=sync_policies)
         else:
             sync_policies = [auth_policy]
-            for p in self.args.policies.split(','):
+            for p in self.args.policies.split(","):
                 try:
                     policy = getattr(policies, p)
                 except AttributeError as exc:
-                    raise ValueError(f"Azure Core has no policy named {exc.name}. Please use policies from the following list: {policies.__all__}") from exc
+                    raise ValueError(
+                        f"Azure Core has no policy named {exc.name}. Please use policies from the following list: {policies.__all__}"
+                    ) from exc
                 sync_policies.append(policy(sdk_moniker=self.sdk_moniker))
-            sync_pipeline = Pipeline(
-                transport=self.sync_transport(),
-                policies=sync_policies
-            )
-        return PipelineClient(
-            self.account_endpoint, pipeline=sync_pipeline
-        )
+            sync_pipeline = Pipeline(transport=self.sync_transport(), policies=sync_policies)
+        return PipelineClient(self.account_endpoint, pipeline=sync_pipeline)
 
     def _build_async_pipeline_client(self, auth_policy):
         default_policies = [
@@ -141,40 +132,31 @@ class _ServiceTest(PerfStressTest):
             ProxyPolicy,
             NetworkTraceLoggingPolicy,
             HttpLoggingPolicy,
-            AsyncRetryPolicy, 
+            AsyncRetryPolicy,
             CustomHookPolicy,
-            AsyncRedirectPolicy
+            AsyncRedirectPolicy,
         ]
         if self.args.policies is None:
             # if None, only auth policy is passed in
-            async_pipeline = AsyncPipeline(
-                transport=self.async_transport(),
-                policies=[auth_policy]
-            )
+            async_pipeline = AsyncPipeline(transport=self.async_transport(), policies=[auth_policy])
         elif self.args.policies == "all":
             # if all, autorest default policies + auth policy
             async_policies = [auth_policy]
             async_policies.extend([policy(sdk_moniker=self.sdk_moniker) for policy in default_policies])
-            async_pipeline = AsyncPipeline(
-                transport=self.async_transport(),
-                policies=async_policies
-            )
+            async_pipeline = AsyncPipeline(transport=self.async_transport(), policies=async_policies)
         else:
             async_policies = [auth_policy]
             # if custom list of policies, pass in custom list + auth policy
-            for p in self.args.policies.split(','):
+            for p in self.args.policies.split(","):
                 try:
                     policy = getattr(policies, p)
                 except AttributeError as exc:
-                    raise ValueError(f"Azure Core has no policy named {exc.name}. Please use policies from the following list: {policies.__all__}") from exc
+                    raise ValueError(
+                        f"Azure Core has no policy named {exc.name}. Please use policies from the following list: {policies.__all__}"
+                    ) from exc
                 async_policies.append(policy(sdk_moniker=self.sdk_moniker))
-            async_pipeline = AsyncPipeline(
-                transport=self.async_transport(),
-                policies=async_policies
-            )
-        return AsyncPipelineClient(
-            self.account_endpoint, pipeline=async_pipeline
-        )
+            async_pipeline = AsyncPipeline(transport=self.async_transport(), policies=async_policies)
+        return AsyncPipelineClient(self.account_endpoint, pipeline=async_pipeline)
 
     def _set_auth_policies(self):
         if not self.args.aad:
@@ -188,46 +170,37 @@ class _ServiceTest(PerfStressTest):
                 self.sync_auth_policy = BlobSharedKeyCredentialPolicy(self.account_name, self.account_key)
                 self.async_auth_policy = self.sync_auth_policy
         else:
-            sync_credential = ClientSecretCredential(
-                self.tenant_id,
-                self.client_id,
-                self.client_secret
-            )
-            self.sync_auth_policy = BearerTokenCredentialPolicy(
-                sync_credential,
-                self.storage_scope
-            )
-            async_credential = AsyncClientSecretCredential(
-                self.tenant_id,
-                self.client_id,
-                self.client_secret
-            )
-            self.async_auth_policy = AsyncBearerTokenCredentialPolicy(
-                async_credential,
-                self.storage_scope
-            )
+            sync_credential = ClientSecretCredential(self.tenant_id, self.client_id, self.client_secret)
+            self.sync_auth_policy = BearerTokenCredentialPolicy(sync_credential, self.storage_scope)
+            async_credential = AsyncClientSecretCredential(self.tenant_id, self.client_id, self.client_secret)
+            self.async_auth_policy = AsyncBearerTokenCredentialPolicy(async_credential, self.storage_scope)
 
     @staticmethod
     def add_arguments(parser):
         super(_ServiceTest, _ServiceTest).add_arguments(parser)
         parser.add_argument(
-            '--transport',
-            nargs='?',
+            "--transport",
+            nargs="?",
             type=str,
             help="""Underlying HttpTransport type. Defaults to `aiohttp` if async, `requests` if sync. Other possible values for async:\n"""
-                 """ - `requests`\n""",
-            default=None
+            """ - `requests`\n""",
+            default=None,
         )
-        parser.add_argument('-s', '--size', nargs='?', type=int, help='Size of data to transfer.  Default is 10240.', default=10240)
-        parser.add_argument('--policies',
-                            nargs='?',
-                            type=str,
-                            help="""List of policies to pass in to the pipeline. Options:"""
-                            """\n- None: No extra policies passed in, except for authentication policy. This is the default."""
-                            """\n- 'all': All policies added automatically by autorest."""
-                            """\n- 'policy1,policy2': Comma-separated list of policies, such as 'RetryPolicy,HttpLoggingPolicy'""",
-                            default=None)
-        parser.add_argument('--aad', action='store_true', help='Use AAD authentication instead of shared key.')
+        parser.add_argument(
+            "-s", "--size", nargs="?", type=int, help="Size of data to transfer.  Default is 10240.", default=10240
+        )
+        parser.add_argument(
+            "--policies",
+            nargs="?",
+            type=str,
+            help="""List of policies to pass in to the pipeline. Options:"""
+            """\n- None: No extra policies passed in, except for authentication policy. This is the default."""
+            """\n- 'all': All policies added automatically by autorest."""
+            """\n- 'policy1,policy2': Comma-separated list of policies, such as 'RetryPolicy,HttpLoggingPolicy'""",
+            default=None,
+        )
+        parser.add_argument("--aad", action="store_true", help="Use AAD authentication instead of shared key.")
+
 
 class _BlobTest(_ServiceTest):
     container_name = "perfstress-" + str(uuid.uuid4())
@@ -248,23 +221,20 @@ class _BlobTest(_ServiceTest):
         await self.async_pipeline_client.close()
         await super().close()
 
+
 class _TableTest(_ServiceTest):
-    table_name = ''.join(random.choice(_LETTERS) for i in range(30))
+    table_name = "".join(random.choice(_LETTERS) for i in range(30))
 
     def __init__(self, arguments):
         super().__init__(arguments)
         self.account_endpoint = self.get_from_env("AZURE_STORAGE_TABLES_ENDPOINT")
-        self.api_version = '2019-02-02'
-        self.data_service_version = '3.0'
+        self.api_version = "2019-02-02"
+        self.data_service_version = "3.0"
         self.sdk_moniker = f"tables/{self.api_version}"
         self._set_auth_policies()
 
-        self.pipeline_client = self._build_sync_pipeline_client(
-            self.sync_auth_policy
-        )
-        self.async_pipeline_client = self._build_async_pipeline_client(
-            self.async_auth_policy
-        )
+        self.pipeline_client = self._build_sync_pipeline_client(self.sync_auth_policy)
+        self.async_pipeline_client = self._build_async_pipeline_client(self.async_auth_policy)
 
         self.connection_string = self.get_from_env("AZURE_STORAGE_CONN_STR")
         self.async_table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
@@ -284,16 +254,11 @@ class _TableTest(_ServiceTest):
         return {
             "PartitionKey": pk,
             "RowKey": rk,
-            "Data": 'a' * data_length,
+            "Data": "a" * data_length,
         }
-    
+
     def get_entity(self, rk=0):
-        return {
-            "PartitionKey": 'pk',
-            "RowKey": str(rk),
-            "Property1": f'a{rk}',
-            "Property2": f'b{rk}'
-        }
+        return {"PartitionKey": "pk", "RowKey": str(rk), "Property1": f"a{rk}", "Property2": f"b{rk}"}
 
     async def close(self):
         self.pipeline_client.close()

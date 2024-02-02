@@ -42,60 +42,56 @@ class ListEntitiesPageableTest(_TableTest):
         current_time = format_date_time(time())
         params = {}
         if top:
-            params['$top'] = top
+            params["$top"] = top
         if next_partition_key:
-            params['NextPartitionKey'] = quote(next_partition_key)
+            params["NextPartitionKey"] = quote(next_partition_key)
         if next_row_key:
-            params['NextRowKey'] = quote(next_row_key)
-        
+            params["NextRowKey"] = quote(next_row_key)
+
         request = HttpRequest(
             method="GET",
             url=self.url,
             params=params,
             headers={
-                'x-ms-version': self.api_version,
-                'DataServiceVersion': self.data_service_version,
-                'Accept': 'application/json;odata=minimalmetadata;',
-                'x-ms-date': current_time
+                "x-ms-version": self.api_version,
+                "DataServiceVersion": self.data_service_version,
+                "Accept": "application/json;odata=minimalmetadata;",
+                "x-ms-date": current_time,
             },
         )
-        response = self.pipeline_client._pipeline.run(
-            request
-        ).http_response
+        response = self.pipeline_client._pipeline.run(request).http_response
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
             raise HttpResponseError(response=response)
-        
+
         return response
 
     async def _get_list_entities_async(self, *, top=None, next_partition_key=None, next_row_key=None, **kwargs):
         current_time = format_date_time(time())
         params = {}
         if top:
-            params['$top'] = top
+            params["$top"] = top
         if next_partition_key:
-            params['NextPartitionKey'] = quote(next_partition_key)
+            params["NextPartitionKey"] = quote(next_partition_key)
         if next_row_key:
-            params['NextRowKey'] = quote(next_row_key)
-        
+            params["NextRowKey"] = quote(next_row_key)
+
         request = HttpRequest(
             method="GET",
             url=self.url,
             params=params,
             headers={
-                'x-ms-version': self.api_version,
-                'DataServiceVersion': self.data_service_version,
-                'Accept': 'application/json;odata=minimalmetadata;',
-                'x-ms-date': current_time
+                "x-ms-version": self.api_version,
+                "DataServiceVersion": self.data_service_version,
+                "Accept": "application/json;odata=minimalmetadata;",
+                "x-ms-date": current_time,
             },
         )
-        response = (await self.async_pipeline_client._pipeline.run(
-            request
-        )).http_response
+        response = (await self.async_pipeline_client._pipeline.run(request)).http_response
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
             raise HttpResponseError(response=response)
-        
+
         return response
 
     def run_sync(self):
@@ -104,7 +100,7 @@ class ListEntitiesPageableTest(_TableTest):
             page_iterator_class=CustomIterator,
             page_size=self.args.page_size,
         ):
-            pass    
+            pass
 
     async def run_async(self):
         async for _ in AsyncItemPaged(
@@ -122,11 +118,13 @@ class ListEntitiesPageableTest(_TableTest):
     def add_arguments(parser):
         super(ListEntitiesPageableTest, ListEntitiesPageableTest).add_arguments(parser)
         parser.add_argument(
-            '--page-size',
-            nargs='?',
+            "--page-size",
+            nargs="?",
             type=int,
             help="""Max number of entities to list per page. """
             """Default is None, which will return all possible results per page.""",
-            default=None
+            default=None,
         )
-        parser.add_argument('-c', '--count', nargs='?', type=int, help='Number of table entities to list. Defaults to 100', default=100)
+        parser.add_argument(
+            "-c", "--count", nargs="?", type=int, help="Number of table entities to list. Defaults to 100", default=100
+        )

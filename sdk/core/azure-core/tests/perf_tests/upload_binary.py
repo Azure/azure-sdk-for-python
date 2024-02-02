@@ -14,6 +14,7 @@ from azure.core.exceptions import (
 )
 from ._test_base import _BlobTest
 
+
 class UploadBinaryDataTest(_BlobTest):
     def __init__(self, arguments):
         super().__init__(arguments)
@@ -30,17 +31,15 @@ class UploadBinaryDataTest(_BlobTest):
             url=self.blob_endpoint,
             params={},
             headers={
-                'x-ms-date': current_time,
-                'x-ms-blob-type': 'BlockBlob',
-                'Content-Length': str(self.args.size),
-                'x-ms-version': self.api_version,
-                'Content-Type': 'application/octet-stream',
+                "x-ms-date": current_time,
+                "x-ms-blob-type": "BlockBlob",
+                "Content-Length": str(self.args.size),
+                "x-ms-version": self.api_version,
+                "Content-Type": "application/octet-stream",
             },
-            content=self.upload_stream
+            content=self.upload_stream,
         )
-        response = self.pipeline_client._pipeline.run(
-            request
-        ).http_response
+        response = self.pipeline_client._pipeline.run(request).http_response
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
             raise HttpResponseError(response=response)
@@ -54,17 +53,15 @@ class UploadBinaryDataTest(_BlobTest):
             url=self.blob_endpoint,
             params={},
             headers={
-                'x-ms-date': current_time,
-                'x-ms-blob-type': 'BlockBlob',
-                'Content-Length': str(self.args.size),
-                'x-ms-version': self.api_version,
-                'Content-Type': 'application/octet-stream',
+                "x-ms-date": current_time,
+                "x-ms-blob-type": "BlockBlob",
+                "Content-Length": str(self.args.size),
+                "x-ms-version": self.api_version,
+                "Content-Type": "application/octet-stream",
             },
-            content=self.upload_stream_async
+            content=self.upload_stream_async,
         )
-        pipeline_response = await self.async_pipeline_client._pipeline.run(
-            request
-        )
+        pipeline_response = await self.async_pipeline_client._pipeline.run(request)
         response = pipeline_response.http_response
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)

@@ -12,9 +12,7 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.rest import HttpRequest
-from azure.storage.blob._generated.operations._block_blob_operations import (
-    build_upload_request
-)
+from azure.storage.blob._generated.operations._block_blob_operations import build_upload_request
 from ._test_base import _BlobTest
 
 
@@ -32,16 +30,13 @@ class DownloadBinaryDataTest(_BlobTest):
             url=self.blob_endpoint,
             content=data,
             content_length=self.args.size,
-            content_type='application/octet-stream',
+            content_type="application/octet-stream",
             headers={
-                'x-ms-version': self.api_version,
-                'x-ms-date': current_time,
+                "x-ms-version": self.api_version,
+                "x-ms-date": current_time,
             },
         )
-        response = (await self.async_pipeline_client._pipeline.run(
-            request,
-            stream=False
-        )).http_response
+        response = (await self.async_pipeline_client._pipeline.run(request, stream=False)).http_response
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
@@ -51,15 +46,15 @@ class DownloadBinaryDataTest(_BlobTest):
         current_time = format_date_time(time())
         response = self.pipeline_client._pipeline.run(
             HttpRequest(
-                'GET',
+                "GET",
                 self.blob_endpoint,
                 headers={
-                    'x-ms-version': self.api_version,
-                    'Accept': 'application/octet-stream',
-                    'x-ms-date': current_time,
-                }
+                    "x-ms-version": self.api_version,
+                    "Accept": "application/octet-stream",
+                    "x-ms-date": current_time,
+                },
             ),
-            stream=True
+            stream=True,
         ).http_response
         response.read()
         if response.status_code not in [200]:
@@ -68,18 +63,20 @@ class DownloadBinaryDataTest(_BlobTest):
 
     async def run_async(self):
         current_time = format_date_time(time())
-        response = (await self.async_pipeline_client._pipeline.run(
-            HttpRequest(
-                'GET',
-                self.blob_endpoint,
-                headers={
-                    'x-ms-version': self.api_version,
-                    'Accept': 'application/octet-stream',
-                    'x-ms-date': current_time,
-                }
-            ),
-            stream=True
-        )).http_response
+        response = (
+            await self.async_pipeline_client._pipeline.run(
+                HttpRequest(
+                    "GET",
+                    self.blob_endpoint,
+                    headers={
+                        "x-ms-version": self.api_version,
+                        "Accept": "application/octet-stream",
+                        "x-ms-date": current_time,
+                    },
+                ),
+                stream=True,
+            )
+        ).http_response
         await response.read()
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=self.error_map)
