@@ -29,14 +29,9 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ...operations._operations import (
-    build_phone_numbers_browse_available_numbers_request,
     build_phone_numbers_cancel_operation_request,
-    build_phone_numbers_create_reservation_request,
-    build_phone_numbers_delete_reservation_request,
     build_phone_numbers_get_by_number_request,
     build_phone_numbers_get_operation_request,
-    build_phone_numbers_get_reservation_request,
-    build_phone_numbers_get_reservations_request,
     build_phone_numbers_get_search_result_request,
     build_phone_numbers_list_area_codes_request,
     build_phone_numbers_list_available_countries_request,
@@ -47,16 +42,14 @@ from ...operations._operations import (
     build_phone_numbers_purchase_phone_numbers_request,
     build_phone_numbers_release_phone_number_request,
     build_phone_numbers_search_available_phone_numbers_request,
-    build_phone_numbers_start_reservation_purchase_request,
     build_phone_numbers_update_capabilities_request,
-    build_phone_numbers_update_reservation_request,
 )
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
+class PhoneNumbersOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.

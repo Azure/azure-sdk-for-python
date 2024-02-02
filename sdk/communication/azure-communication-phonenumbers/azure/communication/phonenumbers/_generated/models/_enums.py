@@ -72,12 +72,3 @@ class PhoneNumberType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     GEOGRAPHIC = "geographic"
     TOLL_FREE = "tollFree"
-
-
-class ReservationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ReservationStatus."""
-
-    ACTIVE = "active"
-    SUBMITTED = "submitted"
-    COMPLETED = "completed"
-    EXPIRED = "expired"

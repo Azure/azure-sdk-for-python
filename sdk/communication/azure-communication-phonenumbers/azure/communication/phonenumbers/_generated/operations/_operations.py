@@ -229,7 +229,7 @@ def build_phone_numbers_get_search_result_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -290,10 +290,6 @@ def build_phone_numbers_get_operation_request(  # pylint: disable=name-too-long
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if skip is not None:
-        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -307,14 +303,13 @@ def build_phone_numbers_cancel_operation_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/availablePhoneNumbers/reservations/{reservationId}"
+    _url = "/phoneNumbers/operations/{operationId}"
     path_format_arguments = {
-        "reservationId": _SERIALIZER.url("reservation_id", reservation_id, "str"),
+        "operationId": _SERIALIZER.url("operation_id", operation_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -323,11 +318,9 @@ def build_phone_numbers_cancel_operation_request(  # pylint: disable=name-too-lo
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_phone_numbers_update_capabilities_request(  # pylint: disable=name-too-long
@@ -341,9 +334,9 @@ def build_phone_numbers_update_capabilities_request(  # pylint: disable=name-too
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/availablePhoneNumbers/reservations/{reservationId}"
+    _url = "/phoneNumbers/{phoneNumber}/capabilities"
     path_format_arguments = {
-        "reservationId": _SERIALIZER.url("reservation_id", reservation_id, "str"),
+        "phoneNumber": _SERIALIZER.url("phone_number", phone_number, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -369,9 +362,9 @@ def build_phone_numbers_get_by_number_request(  # pylint: disable=name-too-long
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/availablePhoneNumbers/reservations/{reservationId}"
+    _url = "/phoneNumbers/{phoneNumber}"
     path_format_arguments = {
-        "reservationId": _SERIALIZER.url("reservation_id", reservation_id, "str"),
+        "phoneNumber": _SERIALIZER.url("phone_number", phone_number, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -395,9 +388,9 @@ def build_phone_numbers_release_phone_number_request(  # pylint: disable=name-to
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/availablePhoneNumbers/reservations/{reservationId}"
+    _url = "/phoneNumbers/{phoneNumber}"
     path_format_arguments = {
-        "reservationId": _SERIALIZER.url("reservation_id", reservation_id, "str"),
+        "phoneNumber": _SERIALIZER.url("phone_number", phone_number, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -417,7 +410,7 @@ def build_phone_numbers_list_phone_numbers_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
