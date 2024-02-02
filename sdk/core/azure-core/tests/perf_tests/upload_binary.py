@@ -12,10 +12,6 @@ from azure.core.exceptions import (
     HttpResponseError,
     map_error,
 )
-from azure.core.pipeline.transport import (
-    RequestsTransport,
-    AsyncioRequestsTransport,
-)
 from ._test_base import _BlobTest
 
 class UploadBinaryDataTest(_BlobTest):
@@ -25,17 +21,7 @@ class UploadBinaryDataTest(_BlobTest):
         self.blob_endpoint = f"{self.account_endpoint}{self.container_name}/{blob_name}"
         self.upload_stream = RandomStream(self.args.size)
         self.upload_stream_async = AsyncRandomStream(self.args.size)
-        # TODO: investigate size-1 issue for requests transports - https://github.com/Azure/azure-sdk-for-python/issues/33997
-        if self.sync_transport == RequestsTransport:
-            self.sync_size = self.args.size - 1
-        else:
-            self.sync_size = self.args.size
-        if self.async_transport == AsyncioRequestsTransport:
-            self.async_size = self.args.size - 1
-        else:
-            self.async_size = self.args.size
 
-    # TODO: If seeing "the request verb is invalid" error frequently: https://github.com/Azure/azure-sdk-for-python/issues/33999
     def run_sync(self):
         self.upload_stream.reset()
         current_time = format_date_time(time())
@@ -46,7 +32,7 @@ class UploadBinaryDataTest(_BlobTest):
             headers={
                 'x-ms-date': current_time,
                 'x-ms-blob-type': 'BlockBlob',
-                'Content-Length': str(self.sync_size),
+                'Content-Length': str(self.args.size),
                 'x-ms-version': self.api_version,
                 'Content-Type': 'application/octet-stream',
             },
@@ -70,7 +56,7 @@ class UploadBinaryDataTest(_BlobTest):
             headers={
                 'x-ms-date': current_time,
                 'x-ms-blob-type': 'BlockBlob',
-                'Content-Length': str(self.async_size),
+                'Content-Length': str(self.args.size),
                 'x-ms-version': self.api_version,
                 'Content-Type': 'application/octet-stream',
             },

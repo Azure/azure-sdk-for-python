@@ -24,6 +24,9 @@ class RandomStream:
         self._position = 0
         self._remaining = length
 
+    def __len__(self):
+        return self._remaining
+
     def reset(self):
         self._position = 0
         self._remaining = self._data_length
