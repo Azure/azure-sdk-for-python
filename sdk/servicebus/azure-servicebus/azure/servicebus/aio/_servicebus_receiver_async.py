@@ -850,7 +850,6 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
 
         await self._open()
         message = {
-            # MGMT_REQUEST_ENQUEUED_TIME_UTC: self._amqp_transport.AMQP_TIMESTAMP_VALUE(enqueued_time_older_than_utc),
             MGMT_REQUEST_ENQUEUED_TIME_UTC: enqueued_time_older_than_utc,
             MGMT_REQUEST_MAX_MESSAGE_COUNT: max_message_count,
         }
