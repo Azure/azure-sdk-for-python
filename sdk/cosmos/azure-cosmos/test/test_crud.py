@@ -1507,8 +1507,9 @@ class TestCRUDOperations(unittest.TestCase):
         sprocs = list(collection.scripts.list_stored_procedures())
         # create a sproc
         before_create_sprocs_count = len(sprocs)
+        sproc_id = 'sample sproc-' + str(uuid.uuid4())
         sproc_definition = {
-            'id': 'sample sproc',
+            'id': sproc_id,
             'serverScript': 'function() {var x = 10;}'
         }
         sproc = collection.scripts.create_stored_procedure(sproc_definition)
