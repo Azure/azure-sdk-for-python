@@ -13,7 +13,7 @@ DESCRIPTION:
 USAGE:
     python sample_authentication.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - Communication Service connection_string
+    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - Communication Service connection string
 """
 
 import os
