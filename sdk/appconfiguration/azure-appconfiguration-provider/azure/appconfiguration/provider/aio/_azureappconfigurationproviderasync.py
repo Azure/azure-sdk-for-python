@@ -391,7 +391,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
             if self._refresh_on:
                 for (key, label), etag in updated_sentinel_keys.items():
-                    changed, updated_sentinel = await self._check_configuration_settings(
+                    changed, updated_sentinel = await self._check_configuration_setting(
                         key=key, label=label, etag=etag, headers=headers, **kwargs
                     )
                     if changed:
@@ -400,7 +400,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                         updated_sentinel_keys[(key, label)] = updated_sentinel.etag
             if not need_refresh and self._feature_flag_refresh_enabled:
                 for (key, label), etag in feature_flag_sentinel_keys.items():
-                    changed, updated_sentinel = await self._check_configuration_settings(
+                    changed, updated_sentinel = await self._check_configuration_setting(
                         key=key, label=label, etag=etag, headers=headers, **kwargs
                     )
                     if changed:
@@ -425,7 +425,13 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             elif need_refresh and self._on_refresh_success:
                 await self._on_refresh_success()
 
-    async def _check_configuration_settings(self, key, label, etag, headers, **kwargs) -> Tuple[bool, Union[ConfigurationSetting,  None]]:
+    async def _check_configuration_setting(
+        self, key, label, etag, headers, **kwargs
+    ) -> Tuple[bool, Union[ConfigurationSetting, None]]:
+        """
+        Checks if the configuration setting have been updated since the last refresh.
+        Returns a tuple of a boolean indicating if change has been detected and the updated sentinel.
+        """
         try:
             updated_sentinel = await self._client.get_configuration_setting(  # type: ignore
                 key=key, label=label, etag=etag, match_condition=MatchConditions.IfModified, headers=headers, **kwargs
@@ -442,7 +448,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 if etag is not None:
                     # If the sentinel is not found, it means the key/label was deleted, so we should refresh
                     logging.debug("Refresh all triggered by key: %s label %s.", key, label)
-                    return True, updated_sentinel
+                    return True, None
             else:
                 raise e
         return False, None
@@ -466,13 +472,13 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 key_filter=select.key_filter, label_filter=select.label_filter, **kwargs
             )
             async for config in configurations:
-                key = self._process_key_name(config)
-                value = await self._process_key_value(config)
                 if isinstance(config, FeatureFlagConfigurationSetting):
                     # Feature flags are ignored when loaded by Selects, as they are selected from
                     # `feature_flag_selectors`
                     pass
                 else:
+                    key = self._process_key_name(config)
+                    value = await self._process_key_value(config)
                     configuration_settings[key] = value
                 # Every time we run load_all, we should update the etag of our refresh sentinels
                 # so they stay up-to-date.
