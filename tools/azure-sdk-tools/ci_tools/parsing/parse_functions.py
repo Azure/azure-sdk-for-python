@@ -283,7 +283,7 @@ def parse_pyproject(pyproject_filename: str) -> Tuple[str, str, str, List[str], 
     project_config = toml_dict.get("project", None)
 
     # This stilted dynamic evaluation is necessary because the setuptools.configuration.read_configuration doesn't properly
-    # evaulate a valid pyproject.toml...or at least I am unable to get it to do so properly. I just get an empty dict
+    # evaluate a valid pyproject.toml...or at least I am unable to get it to do so properly. I just get an empty dict
     # of values. Using read_configuration is preferred because it will handle all of the setuptools dynamic evaluation for us.
     # however, in my experience, I have been unable to make this happen.
     #
@@ -291,7 +291,7 @@ def parse_pyproject(pyproject_filename: str) -> Tuple[str, str, str, List[str], 
     # the project metadata into a dist-info folder, which is more work than I want to do to get the values I need. (Including needing the package dependencies to
     # be installed, as we actually import the __init__ to evaluate the VERSION value.)
     #
-    # I really want this to be a straightfoward "read from disk" without needing the package to actually be installed to build it, so we're just going to go after
+    # I really want this to be a straightforward "read from disk" without needing the package to actually be installed to build it, so we're just going to go after
     # the version.py if the `version` attribute isn't set in the project config.
     #
     # Unfortunately our build phase will need to install _dependencies_ of the package prior to building, that will be taken care of in 

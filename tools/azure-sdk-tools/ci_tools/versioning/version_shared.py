@@ -51,7 +51,7 @@ def is_metapackage(package_path):
 
 def get_setup_py_paths(glob_string, base_path, additional_excludes):
     setup_paths = discover_targeted_packages(glob_string, base_path)
-    filtered_paths = [path.join(p, "setup.py") for p in setup_paths if not path_excluded(p, additional_excludes)]
+    filtered_paths = [p for p in setup_paths if not path_excluded(p, additional_excludes)]
     return filtered_paths
 
 
