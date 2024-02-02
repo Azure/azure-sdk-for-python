@@ -114,8 +114,7 @@ setup(
         ],
         "promptflow": [
             "promptflow[azure]",
-            "promptflow-tools",
-            "promptflow-vectordb"
+            "promptflow-tools"
         ],
         "qa_generation": [
             "openai>=0.27.8"
