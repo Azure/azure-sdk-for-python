@@ -4,7 +4,7 @@ import os, tempfile, shutil
 import pytest
 
 from typing import List
-from ci_tools.generation import replace_dev_reqs
+from ci_tools.scenario.generation import replace_dev_reqs
 
 integration_folder = os.path.join(os.path.dirname(__file__), "integration")
 sample_dev_reqs_folder = os.path.join(integration_folder, "scenarios", "dev_requirement_samples")
@@ -74,8 +74,8 @@ def test_replace_dev_reqs_relative(tmp_directory_create):
         os.path.join(expected_output_folder, "azure_mgmt_core-1.4.0-py3-none-any.whl"),
         os.path.join(expected_output_folder, "azure_sdk_tools-0.0.0-py3-none-any.whl[build]"),
         os.path.join(expected_output_folder, "azure_sdk_tools-0.0.0-py3-none-any.whl[build]"),
-        os.path.join(expected_output_folder, "azure_core-1.29.6-py3-none-any.whl"),
-        os.path.join(expected_output_folder, "azure_core-1.29.6-py3-none-any.whl"),
+        os.path.join(expected_output_folder, "azure_core-1.30.0-py3-none-any.whl"),
+        os.path.join(expected_output_folder, "azure_core-1.30.0-py3-none-any.whl"),
     ]
 
     requirements_before = get_requirements_from_file(requirements_file)

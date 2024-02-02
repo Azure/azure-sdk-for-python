@@ -240,10 +240,10 @@ def apply_inactive_filter(collected_packages: List[str]) -> List[str]:
     return packages
 
 
-def update_requires(setup_py_path, requires_dict):
+def update_requires(setup_path, requires_dict):
     # This method changes package requirement by overriding the specifier
     contents = []
-    with open(setup_py_path, "r") as setup_file:
+    with open(setup_path, "r") as setup_file:
         contents = setup_file.readlines()
 
     # find and replace all existing package requirement with new requirement
@@ -252,7 +252,7 @@ def update_requires(setup_py_path, requires_dict):
         for key in keys:
             contents[i] = contents[i].replace(key, requires_dict[key])
 
-    with open(setup_py_path, "w") as setup_file:
+    with open(setup_path, "w") as setup_file:
         setup_file.writelines(contents)
 
 

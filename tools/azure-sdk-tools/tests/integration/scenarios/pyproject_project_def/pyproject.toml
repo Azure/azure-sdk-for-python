@@ -38,6 +38,9 @@ repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvau
 version = {attr = "azure.keyvault.keys.__version__"}
 readme = {file = ["README.md"]}
 
+[tool.setuptools.package-data]
+"py.typed" = ["py.typed"]
+
 [tool.setuptools.packages.find]
 exclude = ["samples", "tests", "azure", "azure.keyvault"]
 

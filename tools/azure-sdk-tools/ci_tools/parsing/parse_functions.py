@@ -25,6 +25,11 @@ from packaging.specifiers import SpecifierSet
 import setuptools
 from setuptools import Extension
 
+VERSION_PY = "_version.py"
+# Auto generated code has version maintained in version.py.
+# We need to handle this old file name until generated code creates _version.py for all packages
+OLD_VERSION_PY = "version.py"
+VERSION_REGEX = r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]'
 NEW_REQ_PACKAGES = ["azure-core", "azure-mgmt-core"]
 
 
@@ -277,37 +282,29 @@ def parse_pyproject(pyproject_filename: str) -> Tuple[str, str, str, List[str], 
 
     project_config = toml_dict.get("project", None)
 
-    # This stilted dynamic evaluation is necessary because setuptools.configuration.read_configuration doesn't properly
+    # This stilted dynamic evaluation is necessary because the setuptools.configuration.read_configuration doesn't properly
     # evaulate a valid pyproject.toml...or at least I am unable to get it to do so properly. I just get an empty dict
     # of values. Using read_configuration is preferred because it will handle all of the setuptools dynamic evaluation for us.
     # however, in my experience, I have been unable to make this happen.
-    # 
+    #
     # I have been able to successfully call build.ProjectBuilder.prepare() and get a valid result, but that actually partially builds
-    # the project metadata into a dist-info folder, which is more work than I want to do to get the values I need.
-    # I'd rather just use read_configuration and be done with it.
-    # - scbedd 1/26/2024.
-    for value in project_config.get("dynamic", None):
-        if value == "version":
-            # check if the version exists in dynamic and is implemented using setuptools dynamic
-            original_path = sys.path.copy()
+    # the project metadata into a dist-info folder, which is more work than I want to do to get the values I need. (Including needing the package dependencies to
+    # be installed, as we actually import the __init__ to evaluate the VERSION value.)
+    #
+    # I really want this to be a straightfoward "read from disk" without needing the package to actually be installed to build it, so we're just going to go after
+    # the version.py if the `version` attribute isn't set in the project config.
+    #
+    # Unfortunately our build phase will need to install _dependencies_ of the package prior to building, that will be taken care of in 
+    # build.py create_package()
+    # - scbedd 1/26/2024 - 2/2/2024.
+    parsed_version = project_config.get("version", None)
+    if not parsed_version:
+        # go after the value from _version.py or version.py
+        parsed_version_py = get_version_py(pyproject_filename)
 
-            sys.path.insert(0, os.path.dirname(pyproject_filename))
-
-            try:
-                dynamic_version = get_value_from_dict(toml_dict, "tool.setuptools.dynamic.version")
-
-                if "attr" in dynamic_version:
-                    attr_string = dynamic_version["attr"]
-                    module_ending = attr_string.rindex(".")
-
-                    module, attribute = attr_string[:module_ending], attr_string[module_ending + 1:]
-
-                    module = importlib.import_module(module)
-                    parsed_version = getattr(module, attribute)
-                else:
-                    raise NotImplementedError("Unable to parse dynamic version that is not a python attr.")
-            finally:
-                sys.path = original_path
+        if parsed_version_py:
+            with open(parsed_version_py, 'r') as f:
+                parsed_version = re.search(VERSION_REGEX, f.read(), re.MULTILINE).group(1)
 
     if project_config:
         name = project_config.get("name")
@@ -316,10 +313,11 @@ def parse_pyproject(pyproject_filename: str) -> Tuple[str, str, str, List[str], 
         requires = project_config.get("dependencies")
         is_new_sdk = name in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x)[0] in NEW_REQ_PACKAGES), requires))
         name_space = name.replace("-", ".")
-        # package_data = project_config.get("package_data", None) TODO
+        package_data = get_value_from_dict(toml_dict, "tool.setuptools.package-data", None)
         include_package_data = get_value_from_dict(toml_dict, "tool.setuptools.include-package-data", True)
         classifiers = project_config.get("classifiers", [])
         keywords = project_config.get("keywords", [])
+        # TODO we need to evaluate the setup.py and grab ext_package/ext_modules kwarg values
         # ext_package = project_config.get("ext_package", None) TODO
         # ext_modules = project_config.get("ext_modules", []) TODO
 
@@ -331,7 +329,7 @@ def parse_pyproject(pyproject_filename: str) -> Tuple[str, str, str, List[str], 
             is_new_sdk,
             pyproject_filename,
             name_space,
-            None,
+            package_data,
             include_package_data,
             classifiers,
             keywords,
@@ -339,6 +337,17 @@ def parse_pyproject(pyproject_filename: str) -> Tuple[str, str, str, List[str], 
             [],
         )
 
+def get_version_py(setup_path: str):
+    file_path, _ = os.path.split(setup_path)
+    # Find path to _version.py recursively in azure folder of package
+    azure_root_path = os.path.join(file_path, "azure")
+    for root, _, files in os.walk(azure_root_path):
+        if VERSION_PY in files:
+            return os.path.join(root, VERSION_PY)
+        elif OLD_VERSION_PY in files:
+            return os.path.join(root, OLD_VERSION_PY)
+
+    return None
 
 def get_pyproject(folder: str) -> Union[str, None]:
     """
@@ -395,7 +404,7 @@ def parse_setup(
     else:
         return parse_setup_py(setup_filename_or_folder)
 
-def get_pyproject_dict(pyproject_file) -> Dict[str, Any]:
+def get_pyproject_dict(pyproject_file: str) -> Dict[str, Any]:
     """
     Given a pyproject.toml file, returns a dictionary of a target section. Defaults to `project` section.
     """

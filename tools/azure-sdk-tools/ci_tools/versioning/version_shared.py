@@ -19,16 +19,11 @@ from packaging.version import parse
 
 from datetime import date
 from ci_tools.functions import discover_targeted_packages
-from ci_tools.parsing import ParsedSetup
+from ci_tools.parsing import ParsedSetup, get_version_py, VERSION_REGEX
 from ci_tools.variables import discover_repo_root
 
 from subprocess import run
 
-VERSION_PY = "_version.py"
-# Auto generated code has version maintained in version.py.
-# We need to handle this old file name until generated code creates _version.py for all packages
-OLD_VERSION_PY = "version.py"
-VERSION_REGEX = r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]'
 VERSION_STRING = 'VERSION = "%s"'
 
 DEV_STATUS_REGEX = r'(classifiers=\[(\s)*)(["\']Development Status :: .*["\'])'
@@ -90,22 +85,8 @@ def get_packages(
     return packages
 
 
-def get_version_py(setup_py_location):
-    file_path, _ = path.split(setup_py_location)
-    # Find path to _version.py recursively in azure folder of package
-    azure_root_path = path.join(file_path, "azure")
-    for root, _, files in os.walk(azure_root_path):
-        if VERSION_PY in files:
-            return path.join(root, VERSION_PY)
-        elif OLD_VERSION_PY in files:
-            return path.join(root, OLD_VERSION_PY)
-
-
-def set_version_py(setup_py_location, new_version):
-    if setup_py_location.endswith(".toml"):
-        raise NotImplementedError("This method does not yet support pyproject.toml files, only setup.py files.")
-
-    version_py_location = get_version_py(setup_py_location)
+def set_version_py(setup_path, new_version):
+    version_py_location = get_version_py(setup_path)
 
     version_contents = ""
     with open(version_py_location, "r") as version_py_file:
@@ -131,14 +112,11 @@ def get_classification(version):
         return "Development Status :: 4 - Beta"
 
 
-def set_dev_classifier(setup_py_location, version):
-    if setup_py_location.endswith(".toml"):
-        raise NotImplementedError("This method does not yet support pyproject.toml files, only setup.py files.")
-
+def set_dev_classifier(setup_path, version):
     classification = get_classification(version)
 
     setup_contents = ""
-    with open(setup_py_location, "r+") as setup_py_file:
+    with open(setup_path, "r+") as setup_py_file:
         setup_contents = setup_py_file.read()
 
         # Reset position and truncate the file for new contents

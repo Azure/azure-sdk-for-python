@@ -3,8 +3,6 @@ import pytest
 
 from ci_tools.parsing import ParsedSetup
 from ci_tools.functions import get_config_setting
-from ci_tools.scenario.generation import create_scenario_file
-
 integration_folder = os.path.join(os.path.dirname(__file__), 'integration')
 
 def test_toml_result():
