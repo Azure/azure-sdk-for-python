@@ -30,6 +30,7 @@ from typing import (
 from azure.appconfiguration import (  # type: ignore # pylint:disable=no-name-in-module
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
+    ConfigurationSetting,
 )
 from azure.appconfiguration.aio import AzureAppConfigurationClient
 from azure.keyvault.secrets.aio import SecretClient
@@ -390,49 +391,21 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
             if self._refresh_on:
                 for (key, label), etag in updated_sentinel_keys.items():
-                    try:
-                        updated_sentinel = await self._client.get_configuration_setting(  # type: ignore
-                            key=key,
-                            label=label,
-                            etag=etag,
-                            match_condition=MatchConditions.IfModified,
-                            headers=headers,
-                            **kwargs
-                        )
-                        if updated_sentinel:
-                            need_refresh = True
-                            updated_sentinel_keys[(key, label)] = updated_sentinel.etag
-                    except HttpResponseError as e:
-                        if e.status_code == 404:
-                            if etag is not None:
-                                # If the sentinel is not found, it means the key/label was deleted, so we should refresh
-                                logging.debug("Refresh all triggered by key: %s label %s.", key, label)
-                                need_refresh = True
-                                updated_sentinel_keys[(key, label)] = None
-                        else:
-                            raise e
+                    changed, updated_sentinel = await self._check_configuration_settings(
+                        key=key, label=label, etag=etag, headers=headers, **kwargs
+                    )
+                    if changed:
+                        need_refresh = True
+                    if updated_sentinel is not None:
+                        updated_sentinel_keys[(key, label)] = updated_sentinel.etag
             if not need_refresh and self._feature_flag_refresh_enabled:
                 for (key, label), etag in feature_flag_sentinel_keys.items():
-                    try:
-                        updated_sentinel = await self._client.get_configuration_setting(  # type: ignore
-                            key=key,
-                            label=label,
-                            etag=etag,
-                            match_condition=MatchConditions.IfModified,
-                            headers=headers,
-                            **kwargs
-                        )
-                        if updated_sentinel:
-                            need_refresh = True
-                            break
-                    except HttpResponseError as e:
-                        if e.status_code == 404:
-                            if etag is not None:
-                                # If the sentinel is not found, it means the key/label was deleted, so we should refresh
-                                logging.debug("Refresh all triggered by key: %s label %s.", key, label)
-                                need_refresh = True
-                        else:
-                            raise e
+                    changed, updated_sentinel = await self._check_configuration_settings(
+                        key=key, label=label, etag=etag, headers=headers, **kwargs
+                    )
+                    if changed:
+                        need_refresh = True
+                        break
             # Need to only update once, no matter how many sentinels are updated
             if need_refresh:
                 await self._load_all(headers=headers, sentinel_keys=updated_sentinel_keys, **kwargs)
@@ -451,6 +424,28 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 self._refresh_timer.backoff()
             elif need_refresh and self._on_refresh_success:
                 await self._on_refresh_success()
+
+    async def _check_configuration_settings(self, key, label, etag, headers, **kwargs) -> Tuple[bool, Union[ConfigurationSetting,  None]]:
+        try:
+            updated_sentinel = await self._client.get_configuration_setting(  # type: ignore
+                key=key, label=label, etag=etag, match_condition=MatchConditions.IfModified, headers=headers, **kwargs
+            )
+            if updated_sentinel is not None:
+                logging.debug(
+                    "Refresh all triggered by key: %s label %s.",
+                    key,
+                    label,
+                )
+                return True, updated_sentinel
+        except HttpResponseError as e:
+            if e.status_code == 404:
+                if etag is not None:
+                    # If the sentinel is not found, it means the key/label was deleted, so we should refresh
+                    logging.debug("Refresh all triggered by key: %s label %s.", key, label)
+                    return True, updated_sentinel
+            else:
+                raise e
+        return False, None
 
     async def _load_all(self, **kwargs):
         configuration_settings, sentinel_keys = await self._load_configuration_settings(**kwargs)
