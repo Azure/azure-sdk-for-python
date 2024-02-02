@@ -35,7 +35,6 @@ from ._models import PurchasedPhoneNumber
 from ._models import PurchasedPhoneNumberCapabilities
 
 from ._enums import BillingFrequency
-from ._enums import Error
 from ._enums import OperatorNumberType
 from ._enums import PhoneNumberAssignmentType
 from ._enums import PhoneNumberCapabilityType
@@ -77,7 +76,6 @@ __all__ = [
     "PurchasedPhoneNumber",
     "PurchasedPhoneNumberCapabilities",
     "BillingFrequency",
-    "Error",
     "OperatorNumberType",
     "PhoneNumberAssignmentType",
     "PhoneNumberCapabilityType",

@@ -3,10 +3,11 @@
 # ---------------------------------------------------------
 
 from typing import Any, Union
+
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoDeleteSetting as RestAutoDeleteSetting
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import AutoDeleteCondition
 from azure.ai.ml.entities._mixins import DictMixin
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoDeleteSetting as RestAutoDeleteSetting
 
 
 @experimental

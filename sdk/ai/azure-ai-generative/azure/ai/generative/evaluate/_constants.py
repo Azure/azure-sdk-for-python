@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from azureml.metrics import constants
+from typing import Dict, Union
 
 QA = "qa"
 CHAT = "chat"
@@ -10,13 +10,8 @@ CHAT = "chat"
 SUPPORTED_TASK_TYPE = [QA, CHAT]
 
 SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING = {
-    QA: constants.QUESTION_ANSWERING,
-    CHAT: constants.RAG_EVALUATION,
-}
-
-TYPE_TO_KWARGS_MAPPING = {
-    constants.QUESTION_ANSWERING: ["questions", "contexts", "y_pred", "y_test"],
-    constants.RAG_EVALUATION: ["y_pred"]
+    QA: "qa",
+    CHAT: "rag-evaluation",
 }
 
 
@@ -73,7 +68,12 @@ class ChatMetrics:
     ]
 
 
-TASK_TYPE_TO_METRICS_MAPPING = {
-    constants.QUESTION_ANSWERING: QaMetrics,
-    constants.RAG_EVALUATION: ChatMetrics
+TASK_TYPE_TO_METRICS_MAPPING: Dict[str, Union[QaMetrics, ChatMetrics]] = {
+    "qa": QaMetrics(),
+    "rag-evaluation": ChatMetrics()
+}
+
+SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING = {
+    QA: QaMetrics,
+    CHAT: ChatMetrics
 }

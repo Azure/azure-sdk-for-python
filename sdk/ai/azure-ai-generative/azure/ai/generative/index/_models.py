@@ -45,7 +45,7 @@ def parse_model_uri(uri: str, **kwargs) -> dict:
         config = {**split_details(details), **config}
         config["kind"] = "open_ai"
         if "endpoint" in config:
-            if ".openai." in config["endpoint"] or ".api.cognitive." in config["endpoint"]:
+            if config["endpoint"] and (".openai." in config["endpoint"] or ".api.cognitive." in config["endpoint"] or ".cognitiveservices." in config["endpoint"]):
                 config["api_base"] = config["endpoint"].rstrip("/")
             else:
                 config["api_base"] = f"https://{config['endpoint']}.openai.azure.com"
@@ -137,7 +137,7 @@ def init_open_ai_from_config(config: dict, credential: Optional[TokenCredential]
         else:
             raise e
 
-    if "azure" in openai.api_type:
+    if openai.api_type and "azure" in openai.api_type:
         config["api_version"] = config.get("api_version", "2023-03-15-preview")
 
     return config

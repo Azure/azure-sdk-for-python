@@ -6,10 +6,13 @@
 - Remove `experimental` tag for  `ml_client.jobs.validate`.
 
 ### Bugs Fixed
+- Fix pipeline job `outputs` not load correctly when `component: <local-file>` exists in pipeline job yaml.
 
 ### Breaking Changes
 
 ### Other Changes
+
+- Support for Python 3.12
 
 ## 1.13.0 (unreleased)
 

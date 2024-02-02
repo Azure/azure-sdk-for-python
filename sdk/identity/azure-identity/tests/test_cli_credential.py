@@ -92,6 +92,48 @@ def test_get_token():
     assert token.expires_on == expected_expires_on
 
 
+def test_expires_on_used():
+    """Test that 'expires_on' is preferred over 'expiresOn'."""
+    expires_on = 1602015811
+    successful_output = json.dumps(
+        {
+            "expiresOn": datetime.fromtimestamp(1555555555).strftime("%Y-%m-%d %H:%M:%S.%f"),
+            "expires_on": expires_on,
+            "accessToken": "access token",
+            "subscription": "some-guid",
+            "tenant": "some-guid",
+            "tokenType": "Bearer",
+        }
+    )
+
+    with mock.patch("shutil.which", return_value="az"):
+        with mock.patch(CHECK_OUTPUT, mock.Mock(return_value=successful_output)):
+            token = AzureCliCredential().get_token("scope")
+
+    assert token.expires_on == expires_on
+
+
+def test_expires_on_string():
+    """Test that 'expires_on' still works if it's a string."""
+    expires_on = 1602015811
+    successful_output = json.dumps(
+        {
+            "expires_on": f"{expires_on}",
+            "accessToken": "access token",
+            "subscription": "some-guid",
+            "tenant": "some-guid",
+            "tokenType": "Bearer",
+        }
+    )
+
+    with mock.patch("shutil.which", return_value="az"):
+        with mock.patch(CHECK_OUTPUT, mock.Mock(return_value=successful_output)):
+            token = AzureCliCredential().get_token("scope")
+
+    assert type(token.expires_on) == int
+    assert token.expires_on == expires_on
+
+
 def test_cli_not_installed():
     """The credential should raise CredentialUnavailableError when the CLI isn't installed"""
     with mock.patch("shutil.which", return_value=None):
