@@ -13,7 +13,7 @@ DESCRIPTION:
 USAGE:
     python distribution_policy_crud_ops_async.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_ENDPOINT - Communication Service endpoint url
+    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - Communication Service connection string
 """
 
 import os
@@ -21,12 +21,12 @@ import asyncio
 
 
 class DistributionPolicySamplesAsync(object):
-    endpoint = os.environ["AZURE_COMMUNICATION_SERVICE_ENDPOINT"]
+    connection_string = os.environ["AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING"]
 
     _dp_policy_id = "sample_dp_policy"
 
     async def create_distribution_policy(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         policy_id = self._dp_policy_id
         # [START create_distribution_policy_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
@@ -53,7 +53,7 @@ class DistributionPolicySamplesAsync(object):
         # [END create_distribution_policy_async]
 
     async def update_distribution_policy(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         policy_id = self._dp_policy_id
         # [START update_distribution_policy_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
@@ -75,7 +75,7 @@ class DistributionPolicySamplesAsync(object):
         # [END update_distribution_policy_async]
 
     async def get_distribution_policy(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         policy_id = self._dp_policy_id
         # [START get_distribution_policy_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
@@ -89,7 +89,7 @@ class DistributionPolicySamplesAsync(object):
         # [END get_distribution_policy_async]
 
     async def list_distribution_policies(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         # [START list_distribution_policies_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
 
@@ -105,7 +105,7 @@ class DistributionPolicySamplesAsync(object):
         # [END list_distribution_policies_async]
 
     async def list_distribution_policies_batched(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         # [START list_distribution_policies_batched_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
 
@@ -125,7 +125,7 @@ class DistributionPolicySamplesAsync(object):
         # [END list_distribution_policies_batched_async]
 
     async def clean_up(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         policy_id = self._dp_policy_id
 
         # [START delete_distribution_policy_async]

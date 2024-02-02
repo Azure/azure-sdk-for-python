@@ -13,7 +13,7 @@ DESCRIPTION:
 USAGE:
     python exception_policy_crud_ops_async.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_ENDPOINT - Communication Service endpoint url
+    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - Communication Service connection string
 """
 
 import os
@@ -21,7 +21,7 @@ import asyncio
 
 
 class ExceptionPolicySamplesAsync(object):
-    endpoint = os.environ["AZURE_COMMUNICATION_SERVICE_ENDPOINT"]
+    connection_string = os.environ["AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING"]
 
     _ep_policy_id = "sample_ep_policy"
     _cp_policy_ids = [
@@ -30,7 +30,7 @@ class ExceptionPolicySamplesAsync(object):
     ]
 
     async def setup(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
 
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
         from azure.communication.jobrouter.models import (
@@ -71,7 +71,7 @@ class ExceptionPolicySamplesAsync(object):
                 )
 
     async def create_exception_policy(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         policy_id = self._ep_policy_id
         # [START create_exception_policy_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
@@ -138,7 +138,7 @@ class ExceptionPolicySamplesAsync(object):
         # [END create_exception_policy_async]
 
     async def update_exception_policy(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         policy_id = self._ep_policy_id
         # [START update_exception_policy_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
@@ -200,7 +200,7 @@ class ExceptionPolicySamplesAsync(object):
         # [END update_exception_policy_async]
 
     async def get_exception_policy(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         policy_id = self._ep_policy_id
         # [START get_exception_policy_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
@@ -214,7 +214,7 @@ class ExceptionPolicySamplesAsync(object):
         # [END get_exception_policy_async]
 
     async def list_exception_policies(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         # [START list_exception_policies_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
 
@@ -230,7 +230,7 @@ class ExceptionPolicySamplesAsync(object):
         # [END list_exception_policies_async]
 
     async def list_exception_policies_batched(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         # [START list_exception_policies_batched_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
 
@@ -250,7 +250,7 @@ class ExceptionPolicySamplesAsync(object):
         # [END list_exception_policies_batched_async]
 
     async def clean_up(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         policy_id = self._ep_policy_id
 
         # [START delete_exception_policy_async]
