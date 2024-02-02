@@ -11,7 +11,7 @@ SUPPORTED_TASK_TYPE = [QA, CHAT]
 
 SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING = {
     QA: "qa",
-    CHAT: "rag-evaluation",
+    CHAT: "chat",
 }
 
 
