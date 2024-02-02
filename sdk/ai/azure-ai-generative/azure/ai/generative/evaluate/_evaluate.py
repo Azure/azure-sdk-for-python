@@ -177,11 +177,10 @@ def evaluate(
     """
 
     results_list = []
-    metrics_config = {}
     if "tracking_uri" in kwargs:
         mlflow.set_tracking_uri(kwargs.get("tracking_uri"))
 
-    model_config_dict = {}
+    model_config_dict: Dict[str, str] = {}
     if model_config:
         if isinstance(model_config, Dict):
             model_config_dict = model_config
