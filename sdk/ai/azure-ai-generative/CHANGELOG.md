@@ -34,6 +34,7 @@
 
 - Switched evaluate() function to run on promptflow engine
 - Use openai v1 environment variable
+- Recursive Text Splitter is now enabled by default for local index builds which mimics behavior of cloud index builds
 
 ## 1.0.0b3 (2024-01-30)
 
