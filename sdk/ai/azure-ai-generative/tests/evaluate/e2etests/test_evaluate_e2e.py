@@ -10,6 +10,7 @@ import pandas as pd
 import pytest
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from azure.ai.generative.evaluate import evaluate
+from azure.ai.resources.entities import AzureOpenAIModelConfiguration
 
 logger = logging.getLogger(__name__)
 
@@ -97,6 +98,16 @@ class TestEvaluate(AzureRecordedTestCase):
 
 
     def test_custom_metrics_name(self, e2e_openai_api_base, e2e_openai_api_key, e2e_openai_completion_deployment_name, tmpdir):
+
+        aoai_configuration = AzureOpenAIModelConfiguration(
+            api_version="2023-03-15-preview",
+            api_base=e2e_openai_api_base,
+            api_key=e2e_openai_api_key,
+            deployment_name=e2e_openai_completion_deployment_name,
+            model_name=e2e_openai_completion_deployment_name,
+            model_kwargs=None
+        )
+
         test_data = [
             {"question": "How do you create a run?", "context": "AML API only",
              "answer": "To create a run using the Azure Machine Learning API, you first need to create an Experiment. Once you have an experiment, you can create a Run object that is associated with that experiment. Here is some Python code that demonstrates this process:\n\n```\nfrom azureml.core import Experiment, Run\nfrom azureml.core.workspace import Workspace\n\n# Define workspace and experiment\nws = Workspace.from_config()\nexp = Experiment(workspace=ws, name='my_experiment')\n\n# Create a new run\nrun = exp.start_logging()\n```\n\nIn this code, the `from_config()` method reads the configuration file that you created when you set up your Azure Machine Learning workspace. The `Experiment` constructor creates an Experiment object that is associated with your workspace, and the `start_logging()` method creates a new Run object that is associated with the Experiment. Now you can use the `run` object to log metrics, upload files, and track other information related to your machine learning experiment."},
@@ -124,13 +135,7 @@ class TestEvaluate(AzureRecordedTestCase):
                 data=test_data,
                 task_type="qa",
                 metrics_list=[custom_prompt_metric, answer_length],
-                model_config={
-                    "api_version": "2023-07-01-preview",
-                    "api_base": e2e_openai_api_base,
-                    "api_type": "azure",
-                    "api_key": e2e_openai_api_key,
-                    "deployment_id": e2e_openai_completion_deployment_name,
-                },
+                model_config=aoai_configuration,
                 data_mapping={
                     "questions": "question",
                     "contexts": "context",
