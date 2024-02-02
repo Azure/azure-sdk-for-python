@@ -11,7 +11,7 @@ import traceback
 import pandas as pd
 from azure.ai.generative.index._embeddings import EmbeddingsContainer
 from azure.ai.generative.index._tasks.embed import read_chunks_into_documents
-from azure.ai.generative.index._utils.azureml import get_workspace_from_environment
+from azure.ai.resources._index._utils.azureml import get_workspace_from_environment
 from azure.ai.generative.index._utils.logging import (
     _logger_factory,
     enable_appinsights_logging,
