@@ -7,7 +7,7 @@
 import warnings
 import sys
 from typing import ( # pylint: disable=unused-import
-    Optional, Union, Dict, Any, Iterable, TYPE_CHECKING
+    Optional, Union, Dict, Any, Iterable, Literal, TYPE_CHECKING
 )
 
 from azure.core.exceptions import HttpResponseError
@@ -32,11 +32,6 @@ from ._directory_client_async import ShareDirectoryClient
 from ._file_client_async import ShareFileClient
 from ..aio._lease_async import ShareLeaseClient
 from .._models import ShareProtocols
-
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -320,15 +315,16 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
     @distributed_trace_async
     async def delete_share(
-            self, delete_snapshots=False, # type: Optional[bool]
-            **kwargs
-        ):
-        # type: (...) -> None
+        self, delete_snapshots: Optional[Union[bool, Literal['include', 'include-leased']]] = False,
+        **kwargs: Any
+        ) -> None:
         """Marks the specified share for deletion. The share is
         later deleted during garbage collection.
 
-        :param bool delete_snapshots:
+        :param delete_snapshots:
             Indicates if snapshots are to be deleted.
+        :type delete_snapshots:
+            Optional[Union[bool, Literal['include', 'include-leased']]]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
@@ -354,8 +350,13 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         delete_include = None
-        if delete_snapshots:
-            delete_include = DeleteSnapshotsOptionType.include
+        if isinstance(delete_snapshots, bool) and delete_snapshots:
+            delete_include = DeleteSnapshotsOptionType.INCLUDE
+        else:
+            if delete_snapshots == 'include':
+                delete_include = DeleteSnapshotsOptionType.INCLUDE
+            elif delete_snapshots == 'include-leased':
+                delete_include = DeleteSnapshotsOptionType.INCLUDE_LEASED
         try:
             await self._client.share.delete(
                 timeout=timeout,

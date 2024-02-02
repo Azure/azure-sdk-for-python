@@ -6,6 +6,9 @@
 - Remove `experimental` tag for  `ml_client.jobs.validate`.
 
 ### Bugs Fixed
+- Fix pipeline job `outputs` not load correctly when `component: <local-file>` exists in pipeline job yaml.
+- Workspace ListKey operation serialization issue fixed.
+- Workspace Diagnose result now can be print in to Json format.
 
 ### Breaking Changes
 

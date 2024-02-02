@@ -1,7 +1,9 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Any, Dict, List, Optional
+
+import json
+from typing import Any, Dict, Optional, List
 
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     DiagnoseRequestProperties as RestDiagnoseRequestProperties,
@@ -145,6 +147,15 @@ class DiagnoseResponseResultValue:
             other_results=self.other_results,
         )
 
+    def __json__(self):
+        results = self.__dict__.copy()
+        for k, v in results.items():
+            results[k] = [item.__dict__ for item in v]
+        return results
+
+    def __str__(self) -> str:
+        return json.dumps(self, default=lambda o: o.__json__(), indent=2)
+
 
 class DiagnoseResult:
     """Result of Diagnose."""
@@ -190,8 +201,9 @@ class DiagnoseWorkspaceParameters:
     def _from_rest_object(cls, rest_obj: RestDiagnoseWorkspaceParameters) -> "DiagnoseWorkspaceParameters":
         val = None
         if rest_obj.value and isinstance(rest_obj.value, DiagnoseRequestProperties):
+            # TODO: Bug Item number: 2883283
             # pylint: disable=protected-access
-            val = rest_obj.value._from_rest_object()
+            val = rest_obj.value._from_rest_object()  # type: ignore
         return cls(value=val)
 
     def _to_rest_object(self) -> RestDiagnoseWorkspaceParameters:

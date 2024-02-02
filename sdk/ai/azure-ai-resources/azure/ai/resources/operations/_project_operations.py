@@ -47,7 +47,7 @@ class ProjectOperations:
         :keyword name: Name of the project.
         :paramtype name: str
         :return: The project with the provided name.
-        :rtype: Project
+        :rtype: ~azure.ai.resource.entities.Project
         """
 
         workspace = self._ml_client._workspaces.get(name=name, **kwargs)
@@ -62,7 +62,7 @@ class ProjectOperations:
         :keyword scope: The scope of the listing. Can be either "resource_group" or "subscription", and defaults to "resource_group".
         :paramtype scope: str
         :return: An iterator like instance of Project objects
-        :rtype: Iterable[Project]
+        :rtype: Iterable[~azure.ai.resource.entities.Project]
         """
 
         workspaces = []

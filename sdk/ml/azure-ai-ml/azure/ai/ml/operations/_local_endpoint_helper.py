@@ -6,7 +6,7 @@
 
 import json
 import logging
-from typing import Any, Iterable, Optional
+from typing import Any, Iterable, List, Optional
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -40,7 +40,7 @@ class _LocalEndpointHelper(object):
         self._endpoint_stub = EndpointStub()
         self._requests_pipeline = requests_pipeline
 
-    def create_or_update(self, endpoint: OnlineEndpoint) -> OnlineEndpoint:
+    def create_or_update(self, endpoint: OnlineEndpoint) -> OnlineEndpoint:  # type: ignore
         """Create or update an endpoint locally using Docker.
 
         :param endpoint: OnlineEndpoint object with information from user yaml.
@@ -52,7 +52,7 @@ class _LocalEndpointHelper(object):
                 raise InvalidLocalEndpointError(message=msg, no_personal_data_message=msg)
 
             try:
-                self.get(endpoint_name=endpoint.name)
+                self.get(endpoint_name=str(endpoint.name))
                 operation_message = "Updating local endpoint"
             except LocalEndpointNotFoundError:
                 operation_message = "Creating local endpoint"
@@ -62,7 +62,7 @@ class _LocalEndpointHelper(object):
                 message=f"{operation_message} ({endpoint.name}) ",
                 endpoint=endpoint,
             )
-            return self.get(endpoint_name=endpoint.name)
+            return self.get(endpoint_name=str(endpoint.name))
         except Exception as ex:  # pylint: disable=broad-except
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
@@ -116,7 +116,7 @@ class _LocalEndpointHelper(object):
         :return: An iterable of local endpoints
         :rtype: Iterable[OnlineEndpoint]
         """
-        endpoints = []
+        endpoints: List = []
         containers = self._docker_client.list_containers()
         endpoint_stubs = self._endpoint_stub.list()
         # Iterate through all cached endpoint files
@@ -191,7 +191,7 @@ def _convert_container_to_endpoint(
     )
 
 
-def _convert_json_to_endpoint(endpoint_json: dict, **kwargs: Any) -> OnlineEndpoint:
+def _convert_json_to_endpoint(endpoint_json: Optional[dict], **kwargs: Any) -> OnlineEndpoint:
     """Converts metadata json and kwargs to OnlineEndpoint entity.
 
     :param endpoint_json: dictionary representation of OnlineEndpoint entity.
@@ -202,4 +202,4 @@ def _convert_json_to_endpoint(endpoint_json: dict, **kwargs: Any) -> OnlineEndpo
     params_override = []
     for k, v in kwargs.items():
         params_override.append({k: v})
-    return OnlineEndpoint._load(data=endpoint_json, params_override=params_override)
+    return OnlineEndpoint._load(data=endpoint_json, params_override=params_override)  # type: ignore

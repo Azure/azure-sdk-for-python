@@ -110,7 +110,7 @@ def pipeline(
     :keyword description: The description of the built pipeline.
     :paramtype description: str
     :keyword experiment_name: Name of the experiment the job will be created under, \
-                if None is provided, experiment will be set to current directory.
+        if None is provided, experiment will be set to current directory.
     :paramtype experiment_name: str
     :keyword tags: The tags of pipeline component.
     :paramtype tags: dict[str, str]
@@ -119,9 +119,11 @@ def pipeline(
     :return: Either
       * A decorator, if `func` is None
       * The decorated `func`
+
     :rtype: Union[
         Callable[[Callable], Callable[..., ~azure.ai.ml.entities.PipelineJob]],
         Callable[P, ~azure.ai.ml.entities.PipelineJob]
+
       ]
 
     .. admonition:: Example:
@@ -134,7 +136,7 @@ def pipeline(
             :caption: Shows how to create a pipeline using this decorator.
     """
 
-    def pipeline_decorator(func: Callable[P, T]) -> Callable[P, PipelineJob]:
+    def pipeline_decorator(func: Callable[P, T]) -> Callable:
         # pylint: disable=isinstance-second-argument-not-valid-type
         if not isinstance(func, Callable):  # type: ignore
             raise UserErrorException(f"Dsl pipeline decorator accept only function type, got {type(func)}.")
@@ -180,7 +182,7 @@ def pipeline(
         )
 
         @wraps(func)
-        def wrapper(*args: P.args, **kwargs: P.kwargs) -> PipelineJob:
+        def wrapper(*args: P.args, **kwargs: P.kwargs) -> Union[Pipeline, PipelineJob]:
             # Default args will be added here.
             # pylint: disable=abstract-class-instantiated
             # Node: push/pop stack here instead of put it inside build()
@@ -217,12 +219,13 @@ def pipeline(
                 job_settings["on_finalize"] = dsl_settings.finalize_job_name(pipeline_component.jobs)
 
             # TODO: pass compute & default_compute separately?
-            common_init_args = {
+            common_init_args: Any = {
                 "experiment_name": experiment_name,
                 "component": pipeline_component,
                 "inputs": pipeline_parameters,
                 "tags": tags,
             }
+            built_pipeline: Any = None
             if _is_inside_dsl_pipeline_func():
                 # on_init/on_finalize is not supported for pipeline component
                 if job_settings.get("on_init") is not None or job_settings.get("on_finalize") is not None:

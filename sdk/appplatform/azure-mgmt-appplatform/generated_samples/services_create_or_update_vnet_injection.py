@@ -43,7 +43,7 @@ def main():
                     "serviceRuntimeNetworkResourceGroup": "my-service-runtime-network-rg",
                     "serviceRuntimeSubnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myResourceGroup/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/serviceRuntime",
                 },
-                "vnetAddons": {"logStreamPublicEndpoint": True},
+                "vnetAddons": {"dataPlanePublicEndpoint": True, "logStreamPublicEndpoint": True},
             },
             "sku": {"name": "S0", "tier": "Standard"},
             "tags": {"key1": "value1"},
@@ -52,6 +52,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/appplatform/resource-manager/Microsoft.AppPlatform/stable/2022-12-01/examples/Services_CreateOrUpdate_VNetInjection.json
+# x-ms-original-file: specification/appplatform/resource-manager/Microsoft.AppPlatform/stable/2023-12-01/examples/Services_CreateOrUpdate_VNetInjection.json
 if __name__ == "__main__":
     main()
