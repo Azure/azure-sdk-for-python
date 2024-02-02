@@ -137,7 +137,7 @@ class AIEvaluateSamples(object):
             tracking_uri=client.tracking_uri,
         )
 
-        # [END ai_evaluate_custom_metrics]
+        # [END evaluate_custom_metrics]
 
 
 if __name__ == "__main__":
