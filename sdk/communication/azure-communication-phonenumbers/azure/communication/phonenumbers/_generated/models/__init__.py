@@ -14,7 +14,6 @@ from ._models import OperatorInformationRequest
 from ._models import OperatorInformationResult
 from ._models import PhoneNumberAdministrativeDivision
 from ._models import PhoneNumberAreaCode
-from ._models import PhoneNumberBrowseCapabilitiesRequest
 from ._models import PhoneNumberCapabilities
 from ._models import PhoneNumberCapabilitiesRequest
 from ._models import PhoneNumberCost
@@ -49,7 +48,6 @@ __all__ = [
     "OperatorInformationResult",
     "PhoneNumberAdministrativeDivision",
     "PhoneNumberAreaCode",
-    "PhoneNumberBrowseCapabilitiesRequest",
     "PhoneNumberCapabilities",
     "PhoneNumberCapabilitiesRequest",
     "PhoneNumberCost",

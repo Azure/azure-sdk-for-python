@@ -353,42 +353,6 @@ class PhoneNumberAreaCodes(_serialization.Model):
         self.next_link = next_link
 
 
-class PhoneNumberBrowseCapabilitiesRequest(_serialization.Model):
-    """Capabilities of a phone number.
-
-    :ivar calling: Capability value for calling. Known values are: "none", "inbound", "outbound",
-     and "inbound+outbound".
-    :vartype calling: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
-    :ivar sms: Capability value for SMS. Known values are: "none", "inbound", "outbound", and
-     "inbound+outbound".
-    :vartype sms: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
-    """
-
-    _attribute_map = {
-        "calling": {"key": "calling", "type": "str"},
-        "sms": {"key": "sms", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        calling: Optional[Union[str, "_models.PhoneNumberCapabilityType"]] = None,
-        sms: Optional[Union[str, "_models.PhoneNumberCapabilityType"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword calling: Capability value for calling. Known values are: "none", "inbound",
-         "outbound", and "inbound+outbound".
-        :paramtype calling: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
-        :keyword sms: Capability value for SMS. Known values are: "none", "inbound", "outbound", and
-         "inbound+outbound".
-        :paramtype sms: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
-        """
-        super().__init__(**kwargs)
-        self.calling = calling
-        self.sms = sms
-
-
 class PhoneNumberCapabilities(_serialization.Model):
     """Capabilities of a phone number.
 
@@ -934,14 +898,6 @@ class PhoneNumberSearchResult(_serialization.Model):
      longer on hold. A search result expires in less than 15min, e.g. 2020-11-19T16:31:49.048Z.
      Required.
     :vartype search_expires_by: ~datetime.datetime
-    :ivar error_code: The error code of the search.
-    :vartype error_code: int
-    :ivar error: Mapping Error Messages to Codes. Known values are: "NoError", "UnknownErrorCode",
-     "OutOfStock", "AuthorizationDenied", "MissingAddress", "InvalidAddress", "InvalidOfferModel",
-     "NotEnoughLicenses", "NoWallet", "NotEnoughCredit", "NumbersPartiallyAcquired",
-     "AllNumbersNotAcquired", "ReservationExpired", "PurchaseFailed", "BillingUnavailable",
-     "ProvisioningFailed", and "UnknownSearchError".
-    :vartype error: str or ~azure.communication.phonenumbers.models.Error
     """
 
     _validation = {
@@ -962,8 +918,6 @@ class PhoneNumberSearchResult(_serialization.Model):
         "capabilities": {"key": "capabilities", "type": "PhoneNumberCapabilities"},
         "cost": {"key": "cost", "type": "PhoneNumberCost"},
         "search_expires_by": {"key": "searchExpiresBy", "type": "iso-8601"},
-        "error_code": {"key": "errorCode", "type": "int"},
-        "error": {"key": "error", "type": "str"},
     }
 
     def __init__(
@@ -976,8 +930,6 @@ class PhoneNumberSearchResult(_serialization.Model):
         capabilities: "_models.PhoneNumberCapabilities",
         cost: "_models.PhoneNumberCost",
         search_expires_by: datetime.datetime,
-        error_code: Optional[int] = None,
-        error: Optional[Union[str, "_models.Error"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1001,14 +953,6 @@ class PhoneNumberSearchResult(_serialization.Model):
          longer on hold. A search result expires in less than 15min, e.g. 2020-11-19T16:31:49.048Z.
          Required.
         :paramtype search_expires_by: ~datetime.datetime
-        :keyword error_code: The error code of the search.
-        :paramtype error_code: int
-        :keyword error: Mapping Error Messages to Codes. Known values are: "NoError",
-         "UnknownErrorCode", "OutOfStock", "AuthorizationDenied", "MissingAddress", "InvalidAddress",
-         "InvalidOfferModel", "NotEnoughLicenses", "NoWallet", "NotEnoughCredit",
-         "NumbersPartiallyAcquired", "AllNumbersNotAcquired", "ReservationExpired", "PurchaseFailed",
-         "BillingUnavailable", "ProvisioningFailed", and "UnknownSearchError".
-        :paramtype error: str or ~azure.communication.phonenumbers.models.Error
         """
         super().__init__(**kwargs)
         self.search_id = search_id
@@ -1018,8 +962,6 @@ class PhoneNumberSearchResult(_serialization.Model):
         self.capabilities = capabilities
         self.cost = cost
         self.search_expires_by = search_expires_by
-        self.error_code = error_code
-        self.error = error
 
 
 class PurchasedPhoneNumber(_serialization.Model):  # pylint: disable=too-many-instance-attributes
