@@ -16,6 +16,10 @@ Azure AI Document Intelligence ([previously known as Form Recognizer][service-re
 | [Product documentation][python-di-product-docs]
 | [Samples][python-di-samples]
 
+## _Disclaimer_
+
+_The API version 2023-10-31-preview is currently only available in some Azure regions, the available regions can be found from [here][python-di-2023-10-31-preview-available-regions]._
+
 ## Getting started
 
 ### Installating the package
