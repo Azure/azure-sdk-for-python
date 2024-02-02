@@ -1,0 +1,403 @@
+{
+  "package": {},
+  "code": {
+    "parse_service_response.py": {
+      "name": "parse_service_response.py",
+      "type": "python",
+      "inputs": {
+        "batch_response": {
+          "type": [
+            "object"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default"
+        },
+        "selected_label_keys": {
+          "type": [
+            "object"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default"
+        }
+      },
+      "source": "parse_service_response.py",
+      "function": "parse_response",
+      "is_builtin": false,
+      "enable_kwargs": false,
+      "tool_state": "stable",
+      "toolId": "parse_service_response.py"
+    },
+    "evaluate_chat_rag.py": {
+      "name": "evaluate_chat_rag.py",
+      "type": "python",
+      "inputs": {
+        "chat": {
+          "type": [
+            "object"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${inputs.messages}",
+          "id": "zphpxf4u"
+        },
+        "connection": {
+          "type": [
+            "AzureOpenAIConnection"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "Default_AzureOpenAI",
+          "id": "5ivcheb8",
+          "realType": "AzureOpenAIConnection"
+        },
+        "deployment_name": {
+          "type": [
+            "string"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${inputs.deployment_name}",
+          "id": "05td5q7u"
+        },
+        "selected_metrics": {
+          "type": [
+            "object"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${select_metrics.output}",
+          "id": "dak7t5uq"
+        }
+      },
+      "source": "evaluate_chat_rag.py",
+      "function": "evaluate_chat_rag",
+      "is_builtin": false,
+      "enable_kwargs": false,
+      "tool_state": "stable",
+      "toolId": "evaluate_chat_rag.py"
+    },
+    "format_service_output.py": {
+      "name": "format_service_output.py",
+      "type": "python",
+      "inputs": {
+        "parsed_responses": {
+          "type": [
+            "object"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${parse_service_response.output}"
+        }
+      },
+      "source": "format_service_output.py",
+      "function": "format_service_output",
+      "is_builtin": false,
+      "enable_kwargs": false,
+      "tool_state": "stable",
+      "toolId": "format_service_output.py"
+    },
+    "validate_coversation.py": {
+      "name": "validate_coversation.py",
+      "type": "python",
+      "inputs": {
+        "chat": {
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${inputs.messages}",
+          "id": "0km8iacm"
+        },
+        "selected_metrics": {
+          "type": [
+            "object"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${select_metrics.output}",
+          "id": "kkjlnslq"
+        }
+      },
+      "source": "validate_coversation.py",
+      "function": "validate_conversation",
+      "is_builtin": false,
+      "enable_kwargs": false,
+      "tool_state": "stable",
+      "toolId": "validate_coversation.py"
+    },
+    "call_rai_service.py": {
+      "name": "call_rai_service.py",
+      "type": "python",
+      "inputs": {
+        "request_body": {
+          "type": [
+            "object"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${construct_service_request.output}",
+          "id": "ems0x9k4"
+        }
+      },
+      "source": "call_rai_service.py",
+      "function": "call_rai_service",
+      "is_builtin": false,
+      "enable_kwargs": false,
+      "tool_state": "stable",
+      "toolId": "call_rai_service.py"
+    },
+    "validate_service.py": {
+      "name": "validate_service.py",
+      "type": "python",
+      "inputs": {
+        "selected_metrics": {
+          "type": [
+            "object"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${select_metrics.output}",
+          "id": "p3v2pdly"
+        }
+      },
+      "source": "validate_service.py",
+      "function": "validate_safety_metric_input",
+      "is_builtin": false,
+      "enable_kwargs": false,
+      "tool_state": "stable",
+      "toolId": "validate_service.py"
+    },
+    "parse_chat.py": {
+      "name": "parse_chat.py",
+      "type": "python",
+      "inputs": {
+        "chat": {
+          "type": [
+            "list"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${inputs.messages}",
+          "id": "5v17knut"
+        }
+      },
+      "source": "parse_chat.py",
+      "function": "parse_chat",
+      "is_builtin": false,
+      "enable_kwargs": false,
+      "tool_state": "stable",
+      "toolId": "parse_chat.py"
+    },
+    "select_metrics.py": {
+      "name": "select_metrics.py",
+      "type": "python",
+      "inputs": {
+        "metrics": {
+          "type": [
+            "string"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${inputs.metrics}",
+          "id": "a1y4ch1u"
+        }
+      },
+      "source": "select_metrics.py",
+      "function": "select_metrics",
+      "is_builtin": false,
+      "enable_kwargs": false,
+      "tool_state": "stable",
+      "toolId": "select_metrics.py"
+    },
+    "aggregate.py": {
+      "name": "aggregate.py",
+      "type": "python",
+      "inputs": {
+        "metrics": {
+          "type": [
+            "object"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${select_metrics.output}",
+          "id": "n9ym06xy"
+        },
+        "results": {
+          "type": [
+            "object"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${concatenate_metrics.output}",
+          "id": "t0fi62gt"
+        },
+        "thresholds": {
+          "type": [
+            "object"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${inputs.threshold}",
+          "id": "8e8a8j9x"
+        }
+      },
+      "source": "aggregate.py",
+      "function": "aggregate_variants_results",
+      "is_builtin": false,
+      "enable_kwargs": false,
+      "tool_state": "stable",
+      "toolId": "aggregate.py"
+    },
+    "construct_service_request.py": {
+      "name": "construct_service_request.py",
+      "type": "python",
+      "inputs": {
+        "selected_metrics": {
+          "type": [
+            "object"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${select_metrics.output}",
+          "id": "48ca29b7"
+        },
+        "user_text": {
+          "type": [
+            "list"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${inputs.messages}",
+          "id": "2nv0q4xm"
+        }
+      },
+      "source": "construct_service_request.py",
+      "function": "construct_request",
+      "is_builtin": false,
+      "enable_kwargs": false,
+      "tool_state": "stable",
+      "toolId": "construct_service_request.py"
+    },
+    "evaluate_coherence_fluency.py": {
+      "name": "evaluate_coherence_fluency.py",
+      "type": "python",
+      "inputs": {
+        "connection": {
+          "type": [
+            "AzureOpenAIConnection"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "Default_AzureOpenAI",
+          "id": "syquqco3",
+          "realType": "AzureOpenAIConnection"
+        },
+        "deployment_name": {
+          "type": [
+            "string"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${inputs.deployment_name}",
+          "id": "tqq6ut5m"
+        },
+        "parsed_qa": {
+          "type": [
+            "object"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${parse_chat.output}",
+          "id": "t5c9e9j7"
+        },
+        "selected_metrics": {
+          "type": [
+            "object"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${select_metrics.output}",
+          "id": "bemwzgxz"
+        }
+      },
+      "source": "evaluate_coherence_fluency.py",
+      "function": "evaluate_coherence_fluency",
+      "is_builtin": false,
+      "enable_kwargs": false,
+      "tool_state": "stable",
+      "toolId": "evaluate_coherence_fluency.py"
+    },
+    "concatenate_metrics.py": {
+      "name": "concatenate_metrics.py",
+      "type": "python",
+      "inputs": {
+        "non_rag_results": {
+          "type": [
+            "object"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${evaluate_coherence_fluency.output}",
+          "id": "b4gn968s"
+        },
+        "rag_results": {
+          "type": [
+            "object"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${evaluate_chat_rag.output}",
+          "id": "mifo2c8r"
+        },
+        "safety_results": {
+          "type": [
+            "object"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${format_service_output.output}",
+          "id": "zrabwru0"
+        },
+        "selected_metrics": {
+          "type": [
+            "object"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${select_metrics.output}",
+          "id": "hvbsb8mf"
+        }
+      },
+      "source": "concatenate_metrics.py",
+      "function": "concatenate_metrics",
+      "is_builtin": false,
+      "enable_kwargs": false,
+      "tool_state": "stable",
+      "toolId": "concatenate_metrics.py"
+    }
+  }
+}

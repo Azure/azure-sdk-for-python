@@ -1,0 +1,97 @@
+{
+  "orientation": "Vertical",
+  "nodeLayouts": {
+    "inputs": {
+      "x": 334,
+      "y": 62,
+      "index": -1
+    },
+    "outputs": {
+      "x": 293.5,
+      "y": 942,
+      "index": -1
+    },
+    "aggregate": {
+      "x": 874.2993348115299,
+      "y": 916.0576496674058,
+      "height": 95,
+      "index": 0
+    },
+    "select_metrics": {
+      "x": 565,
+      "y": 172,
+      "height": 75,
+      "index": 1
+    },
+    "evaluate_chat_rag": {
+      "x": 30.97330595482546,
+      "y": 498.94045174537985,
+      "height": 75,
+      "index": 2
+    },
+    "evaluate_coherence_fluency": {
+      "x": 337,
+      "y": 502,
+      "height": 75,
+      "index": 3
+    },
+    "parse_chat": {
+      "x": 344,
+      "y": 392,
+      "height": 75,
+      "index": 4
+    },
+    "concatenate_metrics": {
+      "x": 293.5,
+      "y": 832,
+      "height": 75,
+      "index": 5
+    },
+    "validate_coversation": {
+      "x": 233,
+      "y": 282,
+      "height": 75,
+      "index": 6
+    },
+    "validate_service": {
+      "x": 841,
+      "y": 282,
+      "height": 75,
+      "index": 7
+    },
+    "construct_service_request": {
+      "x": 675.5,
+      "y": 392,
+      "height": 75,
+      "index": 8
+    },
+    "call_rai_service": {
+      "x": 902.5,
+      "y": 502,
+      "height": 75,
+      "index": 9
+    },
+    "parse_service_response": {
+      "x": 957.5,
+      "y": 612,
+      "height": 75,
+      "index": 10
+    },
+    "format_service_output": {
+      "x": 841,
+      "y": 722,
+      "height": 75,
+      "index": 11
+    }
+  },
+  "viewport": {
+    "transformMatrix": [
+      0.4625641025641026,
+      0,
+      0,
+      0.4625641025641026,
+      -26.332115384615378,
+      -206.8661436736278
+    ]
+  }
+}

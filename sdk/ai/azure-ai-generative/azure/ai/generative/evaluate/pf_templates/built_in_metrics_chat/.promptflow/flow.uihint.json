@@ -1,0 +1,76 @@
+{
+  "nodes": {
+    "select_metrics": {
+      "variant_0": {
+        "inputs": {},
+        "inputsValue": {}
+      }
+    },
+    "parse_chat": {
+      "variant_0": {
+        "inputs": {},
+        "inputsValue": {}
+      }
+    },
+    "validate_service": {
+      "variant_0": {
+        "inputs": {},
+        "inputsValue": {}
+      }
+    },
+    "call_rai_service": {
+      "variant_0": {
+        "inputs": {},
+        "inputsValue": {}
+      }
+    },
+    "validate_coversation": {
+      "variant_0": {
+        "inputs": {},
+        "inputsValue": {}
+      }
+    },
+    "format_service_output": {
+      "variant_0": {
+        "inputs": {},
+        "inputsValue": {}
+      }
+    },
+    "parse_service_response": {
+      "variant_0": {
+        "inputs": {},
+        "inputsValue": {}
+      }
+    },
+    "evaluate_chat_rag": {
+      "variant_0": {
+        "inputs": {},
+        "inputsValue": {}
+      }
+    },
+    "concatenate_metrics": {
+      "variant_0": {
+        "inputs": {},
+        "inputsValue": {}
+      }
+    },
+    "evaluate_coherence_fluency": {
+      "variant_0": {
+        "inputs": {},
+        "inputsValue": {}
+      }
+    },
+    "construct_service_request": {
+      "variant_0": {
+        "inputs": {},
+        "inputsValue": {}
+      }
+    },
+    "aggregate": {
+      "variant_0": {
+        "inputs": {},
+        "inputsValue": {}
+      }
+    }
+  }
+}
