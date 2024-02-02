@@ -12,7 +12,7 @@ import logging
 from collections import Counter
 from json import JSONDecodeError
 from pathlib import Path
-from typing import Callable, Optional, Dict, List, Mapping
+from typing import Callable, Optional, Dict, List, Mapping, Union
 from types import FunctionType
 
 import mlflow
@@ -37,6 +37,7 @@ from ._metrics_handler._prompt_metric_handler import PromptMetricHandler
 
 from ._utils import _write_properties_to_run_history
 from .metrics._custom_metric import CodeMetric, PromptMetric, Metric as GenAIMetric
+from azure.ai.resources.entities import AzureOpenAIModelConfiguration
 
 LOGGER = logging.getLogger(__name__)
 
@@ -125,7 +126,7 @@ def evaluate(
         data: Optional[str] = None,
         task_type: Optional[str] = None,
         metrics_list: Optional[List[str]] = None,
-        model_config: Optional[Dict[str, str]] = None,
+        model_config: Optional[Union[Dict[str, str], "AzureOpenAIModelConfiguration"]] = None,
         data_mapping: Optional[Dict[str, str]] = None,
         output_path: Optional[str] = None,
         **kwargs
@@ -145,7 +146,7 @@ def evaluate(
     :keyword metrics_list: List of metrics to calculate. A default list is picked based on task_type if not set.
     :paramtype metrics_list: Optional[List[str]]
     :keyword model_config: GPT configuration details needed for AI-assisted metrics.
-    :paramtype model_config: Optional[Dict[str, str]]
+    :paramtype model_config: Dict[str, str]
     :keyword data_mapping: GPT configuration details needed for AI-assisted metrics.
     :paramtype data_mapping: Optional[Dict[str, str]]
     :keyword output_path: The local folder path to save evaluation artifacts to if set
@@ -163,15 +164,34 @@ def evaluate(
             :language: python
             :dedent: 8
             :caption: Evaluates target or data with built-in evaluation metrics.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ai_samples_evaluate.py
+            :start-after: [START evaluate_custom_metrics]
+            :end-before: [END evaluate_custom_metrics]
+            :language: python
+            :dedent: 8
+            :caption: Evaluates target or data with custom evaluation metrics.
+
     """
 
     results_list = []
-    metrics_config = {}
     if "tracking_uri" in kwargs:
         mlflow.set_tracking_uri(kwargs.get("tracking_uri"))
 
+    model_config_dict: Dict[str, str] = {}
     if model_config:
-        metrics_config.update({"openai_params": model_config})
+        if isinstance(model_config, Dict):
+            model_config_dict = model_config
+        elif isinstance(model_config, AzureOpenAIModelConfiguration):
+            model_config_dict.update({
+                "api_version": model_config.api_version,
+                "api_base": model_config.api_base,
+                "api_type": "azure",
+                "api_key": model_config.api_key,
+                "deployment_id": model_config.deployment_name
+            })
 
 
     if data_mapping:
@@ -204,7 +224,7 @@ def evaluate(
                     target=target,
                     data=data,
                     task_type=task_type,
-                    model_config=model_config,
+                    model_config=model_config_dict,
                     data_mapping=data_mapping,
                     params_dict=params_permutations_dict,
                     metrics=metrics_list,
@@ -219,7 +239,7 @@ def evaluate(
             target=target,
             data=data,
             task_type=task_type,
-            model_config=model_config,
+            model_config=model_config_dict,
             data_mapping=data_mapping,
             metrics=metrics_list,
             output_path=output_path,
