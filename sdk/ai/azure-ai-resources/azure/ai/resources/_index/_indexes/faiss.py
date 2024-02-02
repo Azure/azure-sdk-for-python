@@ -149,15 +149,15 @@ class FaissAndDocStore:
 
     def save(self, output_path: Union[str, Path]):
         """Write index and docstore to output_path."""
-        output_path = Path(output_path)
-        output_path.mkdir(exist_ok=True, parents=True)
+        output_path_obj = Path(output_path)
+        output_path_obj.mkdir(exist_ok=True, parents=True)
 
         faiss = import_faiss_or_so_help_me()
-        faiss.write_index(self.index, str(output_path / "index.faiss"))
+        faiss.write_index(self.index, str(output_path_obj / "index.faiss"))
 
-        self.docstore.save(str(output_path / "docstore"))
+        self.docstore.save(str(output_path_obj / "docstore"))
 
-        with (output_path / "index_to_doc_id.json").open("w") as f:
+        with (output_path_obj / "index_to_doc_id.json").open("w") as f:
             json.dump(self.index_to_doc_id, f)
 
     def save_local(self, output_path: str):
