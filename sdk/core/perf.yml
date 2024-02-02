@@ -27,6 +27,7 @@ parameters:
 extends:
   template: /eng/pipelines/templates/jobs/perf.yml
   parameters:
+    TimeoutInMinutes: 720
     ServiceDirectory: core 
     LanguageVersion: ${{ parameters.LanguageVersion }}
     PackageVersions: ${{ parameters.PackageVersions }}
