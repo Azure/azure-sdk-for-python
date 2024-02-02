@@ -42,11 +42,10 @@ def build_list_request(
     # type: (...) -> HttpRequest
     api_version = kwargs.pop('api_version', "2024-01-01-preview")  # type: str
     skip = kwargs.pop('skip', None)  # type: Optional[str]
-    list_view_type = kwargs.pop('list_view_type', None)  # type: Optional[Union[str, "_models.ScheduleListViewType"]]
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/schedules")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/marketplaceSubscriptions")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
@@ -60,8 +59,6 @@ def build_list_request(
     _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
     if skip is not None:
         _query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'str')
-    if list_view_type is not None:
-        _query_parameters['listViewType'] = _SERIALIZER.query("list_view_type", list_view_type, 'str')
 
     # Construct headers
     _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -88,12 +85,12 @@ def build_delete_request_initial(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/schedules/{name}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/marketplaceSubscriptions/{name}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]{2,32}$'),
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "name": _SERIALIZER.url("name", name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,254}$'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -127,7 +124,7 @@ def build_get_request(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/schedules/{name}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/marketplaceSubscriptions/{name}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
@@ -167,7 +164,7 @@ def build_create_or_update_request_initial(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/schedules/{name}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/marketplaceSubscriptions/{name}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
@@ -195,51 +192,9 @@ def build_create_or_update_request_initial(
         **kwargs
     )
 
-
-def build_trigger_request(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    workspace_name,  # type: str
-    name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2024-01-01-preview")  # type: str
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-
-    accept = "application/json"
-    # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/schedules/{name}/trigger")  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]{2,32}$'),
-        "name": _SERIALIZER.url("name", name, 'str'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    if content_type is not None:
-        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
-        **kwargs
-    )
-
 # fmt: on
-class SchedulesOperations(object):
-    """SchedulesOperations operations.
+class MarketplaceSubscriptionsOperations(object):
+    """MarketplaceSubscriptionsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -266,13 +221,12 @@ class SchedulesOperations(object):
         resource_group_name,  # type: str
         workspace_name,  # type: str
         skip=None,  # type: Optional[str]
-        list_view_type=None,  # type: Optional[Union[str, "_models.ScheduleListViewType"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.ScheduleResourceArmPaginatedResult"]
-        """List schedules in specified workspace.
+        # type: (...) -> Iterable["_models.MarketplaceSubscriptionResourceArmPaginatedResult"]
+        """List containers.
 
-        List schedules in specified workspace.
+        List containers.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
@@ -280,18 +234,16 @@ class SchedulesOperations(object):
         :type workspace_name: str
         :param skip: Continuation token for pagination.
         :type skip: str
-        :param list_view_type: Status filter for schedule.
-        :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ScheduleListViewType
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ScheduleResourceArmPaginatedResult or the result
-         of cls(response)
+        :return: An iterator like instance of either MarketplaceSubscriptionResourceArmPaginatedResult
+         or the result of cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.ScheduleResourceArmPaginatedResult]
+         ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.MarketplaceSubscriptionResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2024-01-01-preview")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ScheduleResourceArmPaginatedResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MarketplaceSubscriptionResourceArmPaginatedResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -305,7 +257,6 @@ class SchedulesOperations(object):
                     workspace_name=workspace_name,
                     api_version=api_version,
                     skip=skip,
-                    list_view_type=list_view_type,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -319,7 +270,6 @@ class SchedulesOperations(object):
                     workspace_name=workspace_name,
                     api_version=api_version,
                     skip=skip,
-                    list_view_type=list_view_type,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -328,7 +278,7 @@ class SchedulesOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("ScheduleResourceArmPaginatedResult", pipeline_response)
+            deserialized = self._deserialize("MarketplaceSubscriptionResourceArmPaginatedResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -355,7 +305,7 @@ class SchedulesOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/schedules"}  # type: ignore
+    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/marketplaceSubscriptions"}  # type: ignore
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self,
@@ -392,7 +342,7 @@ class SchedulesOperations(object):
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202, 204]:
+        if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
@@ -406,7 +356,7 @@ class SchedulesOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/schedules/{name}"}  # type: ignore
+    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/marketplaceSubscriptions/{name}"}  # type: ignore
 
 
     @distributed_trace
@@ -418,15 +368,15 @@ class SchedulesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
-        """Delete schedule.
+        """Delete Marketplace Subscription (asynchronous).
 
-        Delete schedule.
+        Delete Marketplace Subscription (asynchronous).
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param workspace_name: Name of Azure Machine Learning workspace.
         :type workspace_name: str
-        :param name: Schedule name.
+        :param name: Marketplace Subscription name.
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -476,7 +426,7 @@ class SchedulesOperations(object):
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/schedules/{name}"}  # type: ignore
+    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/marketplaceSubscriptions/{name}"}  # type: ignore
 
     @distributed_trace
     def get(
@@ -486,23 +436,23 @@ class SchedulesOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.Schedule"
-        """Get schedule.
+        # type: (...) -> "_models.MarketplaceSubscription"
+        """Get container.
 
-        Get schedule.
+        Get container.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param workspace_name: Name of Azure Machine Learning workspace.
         :type workspace_name: str
-        :param name: Schedule name.
+        :param name: Container name.
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Schedule, or the result of cls(response)
-        :rtype: ~azure.mgmt.machinelearningservices.models.Schedule
+        :return: MarketplaceSubscription, or the result of cls(response)
+        :rtype: ~azure.mgmt.machinelearningservices.models.MarketplaceSubscription
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Schedule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MarketplaceSubscription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -534,14 +484,14 @@ class SchedulesOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Schedule', pipeline_response)
+        deserialized = self._deserialize('MarketplaceSubscription', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/schedules/{name}"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/marketplaceSubscriptions/{name}"}  # type: ignore
 
 
     def _create_or_update_initial(
@@ -549,11 +499,11 @@ class SchedulesOperations(object):
         resource_group_name,  # type: str
         workspace_name,  # type: str
         name,  # type: str
-        body,  # type: "_models.Schedule"
+        body,  # type: "_models.MarketplaceSubscription"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.Schedule"
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Schedule"]
+        # type: (...) -> "_models.MarketplaceSubscription"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MarketplaceSubscription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -562,7 +512,7 @@ class SchedulesOperations(object):
         api_version = kwargs.pop('api_version', "2024-01-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'Schedule')
+        _json = self._serialize.body(body, 'MarketplaceSubscription')
 
         request = build_create_or_update_request_initial(
             subscription_id=self._config.subscription_id,
@@ -590,20 +540,20 @@ class SchedulesOperations(object):
 
         response_headers = {}
         if response.status_code == 200:
-            deserialized = self._deserialize('Schedule', pipeline_response)
+            deserialized = self._deserialize('MarketplaceSubscription', pipeline_response)
 
         if response.status_code == 201:
             response_headers['x-ms-async-operation-timeout']=self._deserialize('duration', response.headers.get('x-ms-async-operation-timeout'))
             response_headers['Azure-AsyncOperation']=self._deserialize('str', response.headers.get('Azure-AsyncOperation'))
             
-            deserialized = self._deserialize('Schedule', pipeline_response)
+            deserialized = self._deserialize('MarketplaceSubscription', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/schedules/{name}"}  # type: ignore
+    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/marketplaceSubscriptions/{name}"}  # type: ignore
 
 
     @distributed_trace
@@ -612,22 +562,22 @@ class SchedulesOperations(object):
         resource_group_name,  # type: str
         workspace_name,  # type: str
         name,  # type: str
-        body,  # type: "_models.Schedule"
+        body,  # type: "_models.MarketplaceSubscription"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["_models.Schedule"]
-        """Create or update schedule.
+        # type: (...) -> LROPoller["_models.MarketplaceSubscription"]
+        """Create or update Marketplace Subscription (asynchronous).
 
-        Create or update schedule.
+        Create or update Marketplace Subscription (asynchronous).
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param workspace_name: Name of Azure Machine Learning workspace.
         :type workspace_name: str
-        :param name: Schedule name.
+        :param name: Marketplace Subscription name.
         :type name: str
-        :param body: Schedule definition.
-        :type body: ~azure.mgmt.machinelearningservices.models.Schedule
+        :param body: Marketplace Subscription entity to apply during operation.
+        :type body: ~azure.mgmt.machinelearningservices.models.MarketplaceSubscription
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -636,14 +586,16 @@ class SchedulesOperations(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either Schedule or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.Schedule]
+        :return: An instance of LROPoller that returns either MarketplaceSubscription or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.MarketplaceSubscription]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2024-01-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Schedule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MarketplaceSubscription"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -664,7 +616,7 @@ class SchedulesOperations(object):
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('Schedule', pipeline_response)
+            deserialized = self._deserialize('MarketplaceSubscription', pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
@@ -682,77 +634,4 @@ class SchedulesOperations(object):
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/schedules/{name}"}  # type: ignore
-
-    @distributed_trace
-    def trigger(
-        self,
-        resource_group_name,  # type: str
-        workspace_name,  # type: str
-        name,  # type: str
-        body,  # type: "_models.TriggerOnceRequest"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.TriggerRunSubmissionDto"
-        """Trigger run.
-
-        Trigger run.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
-        :type workspace_name: str
-        :param name: Schedule name.
-        :type name: str
-        :param body: Request body for trigger once.
-        :type body: ~azure.mgmt.machinelearningservices.models.TriggerOnceRequest
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TriggerRunSubmissionDto, or the result of cls(response)
-        :rtype: ~azure.mgmt.machinelearningservices.models.TriggerRunSubmissionDto
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerRunSubmissionDto"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2024-01-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-
-        _json = self._serialize.body(body, 'TriggerOnceRequest')
-
-        request = build_trigger_request(
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            name=name,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            template_url=self.trigger.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('TriggerRunSubmissionDto', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    trigger.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/schedules/{name}/trigger"}  # type: ignore
-
+    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/marketplaceSubscriptions/{name}"}  # type: ignore

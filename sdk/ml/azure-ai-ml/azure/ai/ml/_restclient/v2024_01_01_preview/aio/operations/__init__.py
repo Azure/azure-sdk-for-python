@@ -19,8 +19,10 @@ from ._registry_component_containers_operations import RegistryComponentContaine
 from ._registry_component_versions_operations import RegistryComponentVersionsOperations
 from ._registry_data_containers_operations import RegistryDataContainersOperations
 from ._registry_data_versions_operations import RegistryDataVersionsOperations
+from ._registry_data_references_operations import RegistryDataReferencesOperations
 from ._registry_environment_containers_operations import RegistryEnvironmentContainersOperations
 from ._registry_environment_versions_operations import RegistryEnvironmentVersionsOperations
+from ._marketplace_subscriptions_operations import MarketplaceSubscriptionsOperations
 from ._registry_model_containers_operations import RegistryModelContainersOperations
 from ._registry_model_versions_operations import RegistryModelVersionsOperations
 from ._batch_endpoints_operations import BatchEndpointsOperations
@@ -65,8 +67,10 @@ __all__ = [
     'RegistryComponentVersionsOperations',
     'RegistryDataContainersOperations',
     'RegistryDataVersionsOperations',
+    'RegistryDataReferencesOperations',
     'RegistryEnvironmentContainersOperations',
     'RegistryEnvironmentVersionsOperations',
+    'MarketplaceSubscriptionsOperations',
     'RegistryModelContainersOperations',
     'RegistryModelVersionsOperations',
     'BatchEndpointsOperations',
