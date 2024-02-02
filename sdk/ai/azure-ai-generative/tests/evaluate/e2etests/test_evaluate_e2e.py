@@ -154,3 +154,34 @@ class TestEvaluate(AzureRecordedTestCase):
         assert f"{custom_metric_name}_reason" in columns_in_tabular_data
         assert "answer_length" in columns_in_tabular_data
         assert "answer_length_random" in columns_in_tabular_data
+
+    def test_task_type_chat(self, e2e_openai_api_base, e2e_openai_api_key, e2e_openai_completion_deployment_name, tmpdir):
+
+        data_path = os.getcwd() + "/rag_conversation_data.jsonl"
+        with tmpdir.as_cwd():
+            output_path = tmpdir + "/evaluation_output"
+
+            result = evaluate(  # This will log metric/artifacts using mlflow
+                evaluation_name="rag-chat-1",
+                data=data_path,
+                task_type="chat",
+                model_config={
+                    "api_version": "2023-07-01-preview",
+                    "api_base": e2e_openai_api_base,
+                    "api_type": "azure",
+                    "api_key": e2e_openai_api_key,
+                    "deployment_id": e2e_openai_completion_deployment_name,
+                },
+                data_mapping={
+                    "messages": "messages"
+                },
+                output_path=output_path,
+            )
+
+        metrics_summary = result.metrics_summary
+        tabular_result = pd.read_json(os.path.join(output_path, "eval_results.jsonl"), lines=True)
+
+        columns_in_tabular_data = tabular_result.columns.tolist()
+
+        assert "gpt_groundedness" in columns_in_tabular_data
+        assert "gpt_retrieval_score" in columns_in_tabular_data
