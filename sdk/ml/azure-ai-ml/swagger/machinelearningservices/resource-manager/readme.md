@@ -7,6 +7,14 @@ version of the file used for AzureML's ARM APIs, which is defined [here](https:/
 
 ---
 
+## Usage
+
+For instructions for regenerating the _restclient using these arguments, see the `docs/dev_setup.md` in the AML CLI repo.
+For a quick example, Run this command from azure-sdk-for-python/sdk/ml/azure-ai-ml/:
+```
+python .\scripts\regenerate_restclient.py -a v2022-01-01-preview
+```
+
 ## Configuration
 
 ### Basic Information

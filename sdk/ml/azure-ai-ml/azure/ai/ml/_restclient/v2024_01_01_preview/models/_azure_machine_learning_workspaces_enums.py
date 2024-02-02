@@ -430,6 +430,15 @@ class DataImportSourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DATABASE = "database"
     FILE_SYSTEM = "file_system"
 
+class DataReferenceCredentialType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum to determine the DataReference credentials type.
+    """
+
+    SAS = "SAS"
+    DOCKER_CREDENTIALS = "DockerCredentials"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    NO_CREDENTIALS = "NoCredentials"
+
 class DatastoreType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum to determine the datastore contents type.
     """
@@ -593,6 +602,20 @@ class FeaturizationMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     CUSTOM = "Custom"
     #: Featurization off. 'Forecasting' task cannot use this value.
     OFF = "Off"
+
+class FineTuningTaskType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    CHAT_COMPLETION = "ChatCompletion"
+    TEXT_COMPLETION = "TextCompletion"
+    TEXT_CLASSIFICATION = "TextClassification"
+    QUESTION_ANSWERING = "QuestionAnswering"
+    TEXT_SUMMARIZATION = "TextSummarization"
+    TOKEN_CLASSIFICATION = "TokenClassification"
+    TEXT_TRANSLATION = "TextTranslation"
+    IMAGE_CLASSIFICATION = "ImageClassification"
+    IMAGE_INSTANCE_SEGMENTATION = "ImageInstanceSegmentation"
+    IMAGE_OBJECT_DETECTION = "ImageObjectDetection"
+    VIDEO_MULTI_OBJECT_TRACKING = "VideoMultiObjectTracking"
 
 class ForecastHorizonMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum to determine forecast horizon selection mode.
@@ -891,6 +914,7 @@ class JobType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SWEEP = "Sweep"
     PIPELINE = "Pipeline"
     SPARK = "Spark"
+    FINE_TUNING = "FineTuning"
 
 class KeyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -962,6 +986,35 @@ class ManagedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, En
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
 
+class MarketplaceSubscriptionProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    #: MarketplaceSubscription is being created.
+    CREATING = "Creating"
+    #: MarketplaceSubscription is being deleted.
+    DELETING = "Deleting"
+    #: MarketplaceSubscription is successfully provisioned.
+    SUCCEEDED = "Succeeded"
+    #: MarketplaceSubscription provisioning failed.
+    FAILED = "Failed"
+    #: MarketplaceSubscription is being updated.
+    UPDATING = "Updating"
+    CANCELED = "Canceled"
+
+class MarketplaceSubscriptionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    #: The Marketplace Subscription is being fulfilled.
+    PENDING_FULFILLMENT_START = "PendingFulfillmentStart"
+    #: The customer can now use the Marketplace Subscription's
+    #: model and will be billed.
+    SUBSCRIBED = "Subscribed"
+    #: The customer could not be billed for the Marketplace Subscription.
+    #: The customer will not be able to access the model.
+    SUSPENDED = "Suspended"
+    #: Marketplace Subscriptions reach this state in response to an explicit customer or CSP action.
+    #: A Marketplace Subscription can also be canceled implicitly, as a result of nonpayment of dues,
+    #: after being in the Suspended state for some time.
+    UNSUBSCRIBED = "Unsubscribed"
+
 class MaterializationStoreType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     NONE = "None"
@@ -994,6 +1047,15 @@ class MLFlowAutologgerState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+
+class ModelProvider(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum to determine the type of fine tuning.
+    """
+
+    #: Fine tuning using Azure Open AI model.
+    AZURE_OPEN_AI = "AzureOpenAI"
+    #: Fine tuning using custom model.
+    CUSTOM = "Custom"
 
 class ModelSize(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Image model size.
@@ -1569,6 +1631,15 @@ class ScheduleStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+class ScheduleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    COMPUTE_START_STOP = "ComputeStartStop"
+    CREATE_JOB = "CreateJob"
+    INVOKE_BATCH_ENDPOINT = "InvokeBatchEndpoint"
+    IMPORT_DATA = "ImportData"
+    CREATE_MONITOR = "CreateMonitor"
+    FEATURE_STORE_MATERIALIZATION = "FeatureStoreMaterialization"
+
 class SeasonalityMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Forecasting seasonality mode.
     """
@@ -1588,6 +1659,20 @@ class SecretsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SERVICE_PRINCIPAL = "ServicePrincipal"
     KERBEROS_PASSWORD = "KerberosPassword"
     KERBEROS_KEYTAB = "KerberosKeytab"
+
+class ServerlessEndpointState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """State of the Serverless Endpoint.
+    """
+
+    UNKNOWN = "Unknown"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    SUSPENDING = "Suspending"
+    REINSTATING = "Reinstating"
+    ONLINE = "Online"
+    SUSPENDED = "Suspended"
+    CREATION_FAILED = "CreationFailed"
+    DELETION_FAILED = "DeletionFailed"
 
 class ServerlessInferenceEndpointAuthMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
