@@ -1391,8 +1391,9 @@ class TestCRUDOperations(unittest.TestCase):
         triggers = list(collection.scripts.list_triggers())
         # create a trigger
         before_create_triggers_count = len(triggers)
+        trigger_id = 'sample trigger-' + str(uuid.uuid4())
         trigger_definition = {
-            'id': 'sample trigger',
+            'id': trigger_id,
             'serverScript': 'function() {var x = 10;}',
             'triggerType': documents.TriggerType.Pre,
             'triggerOperation': documents.TriggerOperation.All
