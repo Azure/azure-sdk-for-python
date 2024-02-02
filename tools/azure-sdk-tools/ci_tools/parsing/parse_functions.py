@@ -408,6 +408,7 @@ def get_pyproject_dict(pyproject_file: str) -> Dict[str, Any]:
     """
     Given a pyproject.toml file, returns a dictionary of a target section. Defaults to `project` section.
     """
+
     with open(pyproject_file, "rb") as f:
         pyproject_dict = toml.load(f)
 

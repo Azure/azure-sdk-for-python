@@ -9,6 +9,7 @@ from .parse_functions import (
     get_config_setting,
     update_build_config,
     get_version_py,
+    get_pyproject,
     VERSION_REGEX,
     VERSION_PY,
     OLD_VERSION_PY
@@ -25,6 +26,7 @@ __all__ = [
     "get_config_setting",
     "update_build_config",
     "get_version_py"
+    "get_pyproject"
     "VERSION_REGEX",
     "VERSION_PY",
     "OLD_VERSION_PY"
