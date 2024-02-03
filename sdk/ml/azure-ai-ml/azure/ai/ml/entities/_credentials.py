@@ -5,7 +5,7 @@
 # pylint: disable=protected-access,redefined-builtin
 
 from abc import ABC
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.ai.ml._azure_environments import _get_active_directory_url_from_metadata
 from azure.ai.ml._restclient.v2022_01_01_preview.models import Identity as RestIdentityConfiguration
@@ -66,7 +66,7 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException, Val
 
 class _BaseIdentityConfiguration(ABC, DictMixin, RestTranslatableMixin):
     def __init__(self) -> None:
-        self.type = None
+        self.type: Any = None
 
 
 class AccountKeyConfiguration(RestTranslatableMixin, DictMixin):

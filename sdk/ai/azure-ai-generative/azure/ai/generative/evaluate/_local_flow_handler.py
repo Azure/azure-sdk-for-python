@@ -5,6 +5,7 @@ import logging
 import pandas as pd
 
 from ._base_handler import BaseHandler
+from ._user_agent import USER_AGENT
 from ._utils import df_to_dict_list, run_pf_flow_with_dict_list, wait_for_pf_run_to_complete
 
 
@@ -35,7 +36,9 @@ class LocalFlowHandler(BaseHandler):
         wait_for_pf_run_to_complete(pf_run_result.name)
 
         logger.debug("PF run results: %s", pf_run_result.properties)
-        pf_client = PFClient()
+        pf_client = PFClient(
+            user_agent=USER_AGENT
+        )
         result_df = pf_client.get_details(pf_run_result.name, all_results=True)
 
         # Rename inputs columns. E.g. inputs.question -> question

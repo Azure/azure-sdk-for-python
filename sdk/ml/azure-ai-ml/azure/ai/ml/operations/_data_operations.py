@@ -114,7 +114,7 @@ class DataOperations(_ScopeDependentOperations):
         service_client: Union[ServiceClient042023_preview, ServiceClient102021Dataplane],
         service_client_012024_preview: ServiceClient012024_preview,
         datastore_operations: DatastoreOperations,
-        **kwargs: Dict,
+        **kwargs: Any,
     ):
         super(DataOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
@@ -865,7 +865,7 @@ class DataOperations(_ScopeDependentOperations):
 
 def _assert_local_path_matches_asset_type(
     local_path: str,
-    asset_type: Union[AssetTypes.URI_FILE, AssetTypes.URI_FOLDER],
+    asset_type: str,
 ) -> None:
     # assert file system type matches asset type
     if asset_type == AssetTypes.URI_FOLDER and not os.path.isdir(local_path):

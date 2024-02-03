@@ -23,7 +23,9 @@ def run_command(command, exit_on_failure=True) -> str:
 
 class TestAzureKubernetesServiceIntegration:
     @pytest.mark.live_test_only
-    @pytest.mark.skipif(not sys.platform.startswith("linux"), reason="Test resource deployment only works on Linux.")
+    @pytest.mark.skipif(
+        not os.environ.get("IDENTITY_LIVE_RESOURCES_PROVISIONED"), reason="Integration resources not provisioned."
+    )
     def test_azure_kubernetes(self):
 
         client_id = os.environ.get("IDENTITY_CLIENT_ID")
