@@ -1,21 +1,19 @@
 ## Release History
 
-### 4.5.2b4 (Unreleased)
+### 4.5.2b4 (2024-02-02)
 This version and all future versions will require Python 3.8+.
 
 #### Features Added
 * Added **preview** support for Computed Properties on Python SDK (Must be enabled on the account level before it can be used). See [PR 33626](https://github.com/Azure/azure-sdk-for-python/pull/33626).
 
-#### Breaking Changes
-
 #### Bugs Fixed
-
-#### Other Changes
+* Made use of `response_hook` thread-safe in the sync client. See [PR 33790](https://github.com/Azure/azure-sdk-for-python/pull/33790).
+* Fixed bug with the session container not being properly maintained. See [33738](https://github.com/Azure/azure-sdk-for-python/pull/33738).
 
 ### 4.5.2b3 (2023-11-10)
 
 #### Features Added
-* Added support for capturing Index Metrics in query operations. See [PR 33034](https://github.com/Azure/azure-sdk-for-python/pull/33034)
+* Added support for capturing Index Metrics in query operations. See [PR 33034](https://github.com/Azure/azure-sdk-for-python/pull/33034).
 
 ### 4.5.2b2 (2023-10-31)
 
