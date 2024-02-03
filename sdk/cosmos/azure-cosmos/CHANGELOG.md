@@ -1,5 +1,15 @@
 ## Release History
 
+### 4.5.2b5 (Unreleased)
+
+#### Features Added
+
+#### Breaking Changes
+
+#### Bugs Fixed
+
+#### Other Changes
+
 ### 4.5.2b4 (2024-02-02)
 This version and all future versions will require Python 3.8+.
 
