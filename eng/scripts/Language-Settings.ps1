@@ -319,6 +319,7 @@ $PackageExclusions = @{
   'azure-ai-ml' = 'Docs CI build issues https://github.com/Azure/azure-sdk-for-python/issues/30774';
 
   'azure-keyvault' = 'Metapackages should not be documented';
+  'azure-storage-extensions' = "Pure C-based storage extension package, not generating docs at this moment."
 }
 
 function Update-python-DocsMsPackages($DocsRepoLocation, $DocsMetadata, $PackageSourceOverride, $DocValidationImageId) {
