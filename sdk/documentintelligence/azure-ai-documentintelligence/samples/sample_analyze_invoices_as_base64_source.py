@@ -45,6 +45,7 @@ def analyze_invoice():
 
     document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     with open(path_to_sample_documents, "rb") as f:
+        # It's not expected to pass base64 bytes as the data will be encoded into base64 bytes in our SDK.
         poller = document_intelligence_client.begin_analyze_document(
             "prebuilt-invoice", AnalyzeDocumentRequest(base64_source=f.read()), locale="en-US"
         )

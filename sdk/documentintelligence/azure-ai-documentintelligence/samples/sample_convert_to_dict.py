@@ -34,7 +34,6 @@ def convert_to_and_from_dict():
         )
     )
 
-    from azure.core.serialization import AzureJSONEncoder
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import AnalyzeResult
@@ -42,23 +41,19 @@ def convert_to_and_from_dict():
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
-    document_analysis_client = DocumentIntelligenceClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     with open(path_to_sample_documents, "rb") as f:
-        poller = document_analysis_client.begin_analyze_document(
-            "prebuilt-document", document=f, content_type="application/octet-stream"
+        poller = document_intelligence_client.begin_analyze_document(
+            "prebuilt-layout", analyze_request=f, content_type="application/octet-stream"
         )
     result: AnalyzeResult = poller.result()
 
     # convert the received model to a dictionary
     analyze_result_dict = result.as_dict()
 
-    # save the dictionary as JSON content in a JSON file, use the AzureJSONEncoder
-    # to help make types, such as dates, JSON serializable
-    # NOTE: AzureJSONEncoder is only available with azure.core>=1.18.0.
+    # save the dictionary as JSON content in a JSON file
     with open("data.json", "w") as output_file:
-        json.dump(analyze_result_dict, output_file, cls=AzureJSONEncoder)
+        json.dump(analyze_result_dict, output_file)
 
 
 if __name__ == "__main__":

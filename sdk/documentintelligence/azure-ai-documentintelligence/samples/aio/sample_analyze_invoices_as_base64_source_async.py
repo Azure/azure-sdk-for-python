@@ -39,7 +39,7 @@ async def analyze_invoice():
 
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
-    from azure.ai.documentintelligence.models import AnalyzeResult
+    from azure.ai.documentintelligence.models import AnalyzeResult, AnalyzeDocumentRequest
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -47,8 +47,9 @@ async def analyze_invoice():
     document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     async with document_intelligence_client:
         with open(path_to_sample_documents, "rb") as f:
+            # It's not expected to pass base64 bytes as the data will be encoded into base64 bytes in our SDK.
             poller = await document_intelligence_client.begin_analyze_document(
-                "prebuilt-invoice", analyze_request=AnalyzeResult(base64_source=f.read()), locale="en-US"
+                "prebuilt-invoice", analyze_request=AnalyzeDocumentRequest(base64_source=f.read()), locale="en-US"
             )
         invoices: AnalyzeResult = await poller.result()
 
