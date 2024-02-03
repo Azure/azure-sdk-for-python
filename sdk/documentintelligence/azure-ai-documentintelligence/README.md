@@ -673,7 +673,7 @@ additional questions or comments.
 [azure_sub]: https://azure.microsoft.com/free/
 [python-di-src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/azure/ai/documentintelligence
 [python-di-pypi]: https://pypi.org/project/azure-ai-documentintelligence/
-[python-di-product-docs]: https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/overview?view=doc-intel-4.0.0&viewFallbackFrom=form-recog-3.0.0
+[python-di-product-docs]: https://learn.microsoft.com/azure/ai-services/document-intelligence/overview?view=doc-intel-4.0.0&viewFallbackFrom=form-recog-3.0.0
 [python-di-ref-docs]: https://aka.ms/azsdk/python/documentintelligence/docs
 [python-di-samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples
 [python-di-2023-10-31-preview-available-regions]: https://aka.ms/azsdk/documentintelligence/2023-10-31-preview-supported-regions
