@@ -207,3 +207,11 @@ def _filter_custom_properties(properties: Attributes, filter=None) -> Dict[str, 
             continue
         truncated_properties[key] = str(val)[:8192]
     return truncated_properties
+
+
+class Singleton(type):
+    _instance = None
+    def __call__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instance
