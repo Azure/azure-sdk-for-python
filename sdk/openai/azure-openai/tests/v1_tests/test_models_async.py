@@ -50,10 +50,9 @@ class TestModelsAsync(AzureRecordedTestCase):
             async for file in files:
                 assert file.id
 
-            # Not supported by 2024-01-01-preview yet
-            # files = client_async.files.list(purpose="fine-tune")
-            # async for file in files:
-            #     assert file.id
+            files = client_async.files.list(purpose="fine-tune")
+            async for file in files:
+                assert file.id
 
             files = client_async.files.list(purpose="assistants")
             async for file in files:

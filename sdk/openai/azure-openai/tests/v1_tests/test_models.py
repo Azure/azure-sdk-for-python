@@ -47,10 +47,9 @@ class TestModels(AzureRecordedTestCase):
             for file in files:
                 assert file.id
 
-            # Not supported by 2024-01-01-preview yet
-            # files = client.files.list(purpose="fine-tune")
-            # for file in files:
-            #     assert file.id
+            files = client.files.list(purpose="fine-tune")
+            for file in files:
+                assert file.id
 
             files = client.files.list(purpose="assistants")
             for file in files:

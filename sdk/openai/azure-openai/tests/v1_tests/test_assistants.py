@@ -19,13 +19,13 @@ class TestAssistants(AzureRecordedTestCase):
     @pytest.mark.parametrize("api_type", [ASST_AZURE])
     def test_assistants_crud(self, client, azure_openai_creds, api_type, **kwargs):
 
-        assistant = client.beta.assistants.create(
-            name="python test",
-            instructions="You are a personal math tutor. Write and run code to answer math questions.",
-            tools=[{"type": "code_interpreter"}],
-            **kwargs,
-        )
         try:
+            assistant = client.beta.assistants.create(
+                name="python test",
+                instructions="You are a personal math tutor. Write and run code to answer math questions.",
+                tools=[{"type": "code_interpreter"}],
+                **kwargs,
+            )
             retrieved_assistant = client.beta.assistants.retrieve(
                 assistant_id=assistant.id,
             )
@@ -75,15 +75,16 @@ class TestAssistants(AzureRecordedTestCase):
             purpose="assistants"
         )
 
-        assistant = client.beta.assistants.create(
-            name="python test",
-            instructions="You are a personal math tutor. Write and run code to answer math questions.",
-            tools=[{"type": "code_interpreter"}],
-            file_ids=[file1.id],
-            **kwargs
-        )
-        assert assistant.file_ids == [file1.id]
         try:
+            assistant = client.beta.assistants.create(
+                name="python test",
+                instructions="You are a personal math tutor. Write and run code to answer math questions.",
+                tools=[{"type": "code_interpreter"}],
+                file_ids=[file1.id],
+                **kwargs
+            )
+            assert assistant.file_ids == [file1.id]
+
             created_assistant_file = client.beta.assistants.files.create(
                 assistant_id=assistant.id,
                 file_id=file2.id
@@ -111,27 +112,26 @@ class TestAssistants(AzureRecordedTestCase):
             assert delete_assistant_file.id == retrieved_assistant_file.id
             assert delete_assistant_file.deleted is True
         finally:
+            os.remove(path)
             delete_assistant = client.beta.assistants.delete(
                 assistant_id=assistant.id
             )
             assert delete_assistant.id == assistant.id
             assert delete_assistant.deleted is True
-            os.remove(path)
 
     @configure
     @pytest.mark.parametrize("api_type", [ASST_AZURE])
     def test_assistants_threads_crud(self, client, azure_openai_creds, api_type, **kwargs):
-        thread = client.beta.threads.create(
-            messages=[
-                {
-                    "role": "user",
-                    "content": "I need help with math homework",
-                }
-            ],
-            metadata={"key": "value"},
-        )
-
         try:
+            thread = client.beta.threads.create(
+                messages=[
+                    {
+                        "role": "user",
+                        "content": "I need help with math homework",
+                    }
+                ],
+                metadata={"key": "value"},
+            )
             retrieved_thread = client.beta.threads.retrieve(
                 thread_id=thread.id,
             )
@@ -167,25 +167,24 @@ class TestAssistants(AzureRecordedTestCase):
             purpose="assistants"
         )
 
-        thread = client.beta.threads.create(
-            messages=[
-                {
-                    "role": "user",
-                    "content": "I need help with math homework",
-                }
-            ],
-            metadata={"key": "value"},
-        )
-
-        message = client.beta.threads.messages.create(
-            thread_id=thread.id,
-            role="user",
-            content="what is 2+2?",
-            metadata={"math": "addition"},
-            file_ids=[file.id]
-        )
-
         try:
+            thread = client.beta.threads.create(
+                messages=[
+                    {
+                        "role": "user",
+                        "content": "I need help with math homework",
+                    }
+                ],
+                metadata={"key": "value"},
+            )
+
+            message = client.beta.threads.messages.create(
+                thread_id=thread.id,
+                role="user",
+                content="what is 2+2?",
+                metadata={"math": "addition"},
+                file_ids=[file.id]
+            )
             retrieved_message = client.beta.threads.messages.retrieve(
                 thread_id=thread.id,
                 message_id=message.id
@@ -228,24 +227,24 @@ class TestAssistants(AzureRecordedTestCase):
             assert modify_message.metadata == {"math": "updated"}
 
         finally:
+            os.remove(path)
             delete_thread = client.beta.threads.delete(
                 thread_id=thread.id
             )
             assert delete_thread.id == thread.id
             assert delete_thread.deleted is True
-            os.remove(path)
 
     @configure
     @pytest.mark.parametrize("api_type", [ASST_AZURE])
     def test_assistants_runs_code(self, client, azure_openai_creds, api_type, **kwargs):
-        assistant = client.beta.assistants.create(
-            name="python test",
-            instructions="You are a personal math tutor. Write and run code to answer math questions.",
-            tools=[{"type": "code_interpreter"}],
-            **kwargs,
-        )
-
         try:
+            assistant = client.beta.assistants.create(
+                name="python test",
+                instructions="You are a personal math tutor. Write and run code to answer math questions.",
+                tools=[{"type": "code_interpreter"}],
+                **kwargs,
+            )
+
             thread = client.beta.threads.create()
 
             message = client.beta.threads.messages.create(
@@ -314,15 +313,15 @@ class TestAssistants(AzureRecordedTestCase):
             purpose="assistants"
         )
 
-        assistant = client.beta.assistants.create(
-            name="python test",
-            instructions="You help answer questions about Contoso company policy.",
-            tools=[{"type": "retrieval"}],
-            file_ids=[file.id],
-            **kwargs
-        )
-
         try:
+            assistant = client.beta.assistants.create(
+                name="python test",
+                instructions="You help answer questions about Contoso company policy.",
+                tools=[{"type": "retrieval"}],
+                file_ids=[file.id],
+                **kwargs
+            )
+
             run = client.beta.threads.create_and_run(
                 assistant_id=assistant.id,
                 thread={
@@ -352,6 +351,7 @@ class TestAssistants(AzureRecordedTestCase):
                 time.sleep(5)
 
         finally:
+            os.remove(path)
             delete_assistant = client.beta.assistants.delete(
                 assistant_id=assistant.id
             )
@@ -363,43 +363,41 @@ class TestAssistants(AzureRecordedTestCase):
             )
             assert delete_thread.id
             assert delete_thread.deleted is True
-            
-            os.remove(path)
 
     @configure
     @pytest.mark.parametrize("api_type", [ASST_AZURE])
     def test_assistants_runs_functions(self, client, azure_openai_creds, api_type, **kwargs):
-        assistant = client.beta.assistants.create(
-            name="python test",
-            instructions="You help answer questions about the weather.",
-            tools=[
-                {
-                    "type": "function",
-                    "function": {
-                        "name": "get_current_weather",
-                        "description": "Get the current weather",
-                        "parameters": {
-                            "type": "object",
-                            "properties": {
-                                "location": {
-                                    "type": "string",
-                                    "description": "The city and state, e.g. San Francisco, CA",
+        try:
+            assistant = client.beta.assistants.create(
+                name="python test",
+                instructions="You help answer questions about the weather.",
+                tools=[
+                    {
+                        "type": "function",
+                        "function": {
+                            "name": "get_current_weather",
+                            "description": "Get the current weather",
+                            "parameters": {
+                                "type": "object",
+                                "properties": {
+                                    "location": {
+                                        "type": "string",
+                                        "description": "The city and state, e.g. San Francisco, CA",
+                                    },
+                                    "format": {
+                                        "type": "string",
+                                        "enum": ["celsius", "fahrenheit"],
+                                        "description": "The temperature unit to use. Infer this from the users location.",
+                                    },
                                 },
-                                "format": {
-                                    "type": "string",
-                                    "enum": ["celsius", "fahrenheit"],
-                                    "description": "The temperature unit to use. Infer this from the users location.",
-                                },
-                            },
-                            "required": ["location"],
+                                "required": ["location"],
+                            }
                         }
                     }
-                }
-            ],
-            **kwargs,
-        )
+                ],
+                **kwargs,
+            )
 
-        try:
             run = client.beta.threads.create_and_run(
                 assistant_id=assistant.id,
                 thread={

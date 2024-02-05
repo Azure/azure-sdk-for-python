@@ -19,14 +19,13 @@ class TestAssistantsAsync(AzureRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [ASST_AZURE])
     async def test_assistants_crud(self, client_async, azure_openai_creds, api_type, **kwargs):
-
-        assistant = await client_async.beta.assistants.create(
-            name="python test",
-            instructions="You are a personal math tutor. Write and run code to answer math questions.",
-            tools=[{"type": "code_interpreter"}],
-            **kwargs,
-        )
         try:
+            assistant = await client_async.beta.assistants.create(
+                name="python test",
+                instructions="You are a personal math tutor. Write and run code to answer math questions.",
+                tools=[{"type": "code_interpreter"}],
+                **kwargs,
+            )
             retrieved_assistant = await client_async.beta.assistants.retrieve(
                 assistant_id=assistant.id,
             )
@@ -77,15 +76,15 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             purpose="assistants"
         )
 
-        assistant = await client_async.beta.assistants.create(
-            name="python test",
-            instructions="You are a personal math tutor. Write and run code to answer math questions.",
-            tools=[{"type": "code_interpreter"}],
-            file_ids=[file1.id],
-            **kwargs
-        )
-        assert assistant.file_ids == [file1.id]
         try:
+            assistant = await client_async.beta.assistants.create(
+                name="python test",
+                instructions="You are a personal math tutor. Write and run code to answer math questions.",
+                tools=[{"type": "code_interpreter"}],
+                file_ids=[file1.id],
+                **kwargs
+            )
+            assert assistant.file_ids == [file1.id]
             created_assistant_file = await client_async.beta.assistants.files.create(
                 assistant_id=assistant.id,
                 file_id=file2.id
@@ -113,28 +112,28 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             assert delete_assistant_file.id == retrieved_assistant_file.id
             assert delete_assistant_file.deleted is True
         finally:
+            os.remove(path)
             delete_assistant = await client_async.beta.assistants.delete(
                 assistant_id=assistant.id
             )
             assert delete_assistant.id == assistant.id
             assert delete_assistant.deleted is True
-            os.remove(path)
 
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [ASST_AZURE])
     async def test_assistants_threads_crud(self, client_async, azure_openai_creds, api_type, **kwargs):
-        thread = await client_async.beta.threads.create(
-            messages=[
-                {
-                    "role": "user",
-                    "content": "I need help with math homework",
-                }
-            ],
-            metadata={"key": "value"},
-        )
-
         try:
+            thread = await client_async.beta.threads.create(
+                messages=[
+                    {
+                        "role": "user",
+                        "content": "I need help with math homework",
+                    }
+                ],
+                metadata={"key": "value"},
+            )
+
             retrieved_thread = await client_async.beta.threads.retrieve(
                 thread_id=thread.id,
             )
@@ -171,25 +170,24 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             purpose="assistants"
         )
 
-        thread = await client_async.beta.threads.create(
-            messages=[
-                {
-                    "role": "user",
-                    "content": "I need help with math homework",
-                }
-            ],
-            metadata={"key": "value"},
-        )
-
-        message = await client_async.beta.threads.messages.create(
-            thread_id=thread.id,
-            role="user",
-            content="what is 2+2?",
-            metadata={"math": "addition"},
-            file_ids=[file.id]
-        )
-
         try:
+            thread = await client_async.beta.threads.create(
+                messages=[
+                    {
+                        "role": "user",
+                        "content": "I need help with math homework",
+                    }
+                ],
+                metadata={"key": "value"},
+            )
+
+            message = await client_async.beta.threads.messages.create(
+                thread_id=thread.id,
+                role="user",
+                content="what is 2+2?",
+                metadata={"math": "addition"},
+                file_ids=[file.id]
+            )
             retrieved_message = await client_async.beta.threads.messages.retrieve(
                 thread_id=thread.id,
                 message_id=message.id
@@ -232,25 +230,25 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             assert modify_message.metadata == {"math": "updated"}
 
         finally:
+            os.remove(path)
             delete_thread = await client_async.beta.threads.delete(
                 thread_id=thread.id
             )
             assert delete_thread.id == thread.id
             assert delete_thread.deleted is True
-            os.remove(path)
 
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [ASST_AZURE])
     async def test_assistants_runs_code(self, client_async, azure_openai_creds, api_type, **kwargs):
-        assistant = await client_async.beta.assistants.create(
-            name="python test",
-            instructions="You are a personal math tutor. Write and run code to answer math questions.",
-            tools=[{"type": "code_interpreter"}],
-            **kwargs,
-        )
 
         try:
+            assistant = await client_async.beta.assistants.create(
+                name="python test",
+                instructions="You are a personal math tutor. Write and run code to answer math questions.",
+                tools=[{"type": "code_interpreter"}],
+                **kwargs,
+            )
             thread = await client_async.beta.threads.create()
 
             message = await client_async.beta.threads.messages.create(
@@ -319,16 +317,15 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             file=open(path, "rb"),
             purpose="assistants"
         )
-
-        assistant = await client_async.beta.assistants.create(
-            name="python test",
-            instructions="You help answer questions about Contoso company policy.",
-            tools=[{"type": "retrieval"}],
-            file_ids=[file.id],
-            **kwargs
-        )
-
         try:
+            assistant = await client_async.beta.assistants.create(
+                name="python test",
+                instructions="You help answer questions about Contoso company policy.",
+                tools=[{"type": "retrieval"}],
+                file_ids=[file.id],
+                **kwargs
+            )
+
             run = await client_async.beta.threads.create_and_run(
                 assistant_id=assistant.id,
                 thread={
@@ -358,6 +355,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                 time.sleep(5)
 
         finally:
+            os.remove(path)
             delete_assistant = await client_async.beta.assistants.delete(
                 assistant_id=assistant.id
             )
@@ -369,44 +367,42 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             )
             assert delete_thread.id
             assert delete_thread.deleted is True
-            
-            os.remove(path)
 
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [ASST_AZURE])
     async def test_assistants_runs_functions(self, client_async, azure_openai_creds, api_type, **kwargs):
-        assistant = await client_async.beta.assistants.create(
-            name="python test",
-            instructions="You help answer questions about the weather.",
-            tools=[
-                {
-                    "type": "function",
-                    "function": {
-                        "name": "get_current_weather",
-                        "description": "Get the current weather",
-                        "parameters": {
-                            "type": "object",
-                            "properties": {
-                                "location": {
-                                    "type": "string",
-                                    "description": "The city and state, e.g. San Francisco, CA",
+        try:
+            assistant = await client_async.beta.assistants.create(
+                name="python test",
+                instructions="You help answer questions about the weather.",
+                tools=[
+                    {
+                        "type": "function",
+                        "function": {
+                            "name": "get_current_weather",
+                            "description": "Get the current weather",
+                            "parameters": {
+                                "type": "object",
+                                "properties": {
+                                    "location": {
+                                        "type": "string",
+                                        "description": "The city and state, e.g. San Francisco, CA",
+                                    },
+                                    "format": {
+                                        "type": "string",
+                                        "enum": ["celsius", "fahrenheit"],
+                                        "description": "The temperature unit to use. Infer this from the users location.",
+                                    },
                                 },
-                                "format": {
-                                    "type": "string",
-                                    "enum": ["celsius", "fahrenheit"],
-                                    "description": "The temperature unit to use. Infer this from the users location.",
-                                },
-                            },
-                            "required": ["location"],
+                                "required": ["location"],
+                            }
                         }
                     }
-                }
-            ],
-            **kwargs,
-        )
+                ],
+                **kwargs,
+            )
 
-        try:
             run = await client_async.beta.threads.create_and_run(
                 assistant_id=assistant.id,
                 thread={

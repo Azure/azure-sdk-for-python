@@ -832,9 +832,6 @@ class TestChatCompletions(AzureRecordedTestCase):
         function_call =  completion.choices[0].message.tool_calls[0].function
         assert function_call.name == "get_current_weather"
         assert "Seattle" in function_call.arguments
-        if api_type == GPT_4_AZURE:
-            # workaround to address difference between AOAI and OAI
-            completion.choices[0].message.content = None
         messages.append(completion.choices[0].message)
 
         tool_call_id = completion.choices[0].message.tool_calls[0].id
@@ -992,9 +989,6 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.role
 
         assert len(completion.choices[0].message.tool_calls) == 2
-        if api_type == GPT_4_AZURE:
-            # workaround to address difference between AOAI and OAI
-            completion.choices[0].message.content = None
         messages.append(completion.choices[0].message)
 
         function_call = completion.choices[0].message.tool_calls[0].function
