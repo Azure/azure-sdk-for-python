@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Type
 
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import (
@@ -16,6 +16,12 @@ from azure.ai.ml.constants._common import (
 )
 from azure.ai.ml.entities._credentials import ApiKeyConfiguration
 from .workspace_connection import WorkspaceConnection
+from azure.ai.ml._schema.workspace.connections.workspace_connection_subtypes import (
+    AzureAISearchWorkspaceConnectionSchema,
+    AzureAIServiceWorkspaceConnectionSchema,
+    OpenAIWorkspaceConnectionSchema,
+    AzureBlobStoreWorkspaceConnectionSchema,
+)
 
 
 # Dev notes: Any new classes require modifying the elif chains in the following functions in the
@@ -58,6 +64,10 @@ class AzureOpenAIWorkspaceConnection(WorkspaceConnection):
     @classmethod
     def _get_required_metadata_fields(cls) -> List[str]:
         return [CONNECTION_API_VERSION_KEY, CONNECTION_API_TYPE_KEY]
+
+    @classmethod
+    def _get_schema_class(cls) -> Type:
+        return OpenAIWorkspaceConnectionSchema
 
     @property
     def api_version(self) -> Optional[str]:
@@ -138,6 +148,10 @@ class AzureAISearchWorkspaceConnection(WorkspaceConnection):
     def _get_required_metadata_fields(cls) -> List[str]:
         return [CONNECTION_API_VERSION_KEY]
 
+    @classmethod
+    def _get_schema_class(cls) -> Type:
+        return AzureAISearchWorkspaceConnectionSchema
+
     @property
     def api_version(self) -> Optional[str]:
         """The API version of the workspace connection.
@@ -199,6 +213,10 @@ class AzureAIServiceWorkspaceConnection(WorkspaceConnection):
     @classmethod
     def _get_required_metadata_fields(cls) -> List[str]:
         return [CONNECTION_API_VERSION_KEY, CONNECTION_KIND_KEY]
+
+    @classmethod
+    def _get_schema_class(cls) -> Type:
+        return AzureAIServiceWorkspaceConnectionSchema
 
     @property
     def api_version(self) -> Optional[str]:
@@ -288,6 +306,10 @@ class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
     def _get_required_metadata_fields(cls) -> List[str]:
         return [CONNECTION_CONTAINER_NAME_KEY, CONNECTION_ACCOUNT_NAME_KEY]
 
+    @classmethod
+    def _get_schema_class(cls) -> Type:
+        return AzureBlobStoreWorkspaceConnectionSchema
+
     @property
     def container_name(self) -> str:
         """The name of the workspace connection's container.
@@ -309,103 +331,3 @@ class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
         if self.tags is not None and CONNECTION_ACCOUNT_NAME_KEY in self.tags:
             return self.tags[CONNECTION_ACCOUNT_NAME_KEY]
         return None
-
-# copilot shush AzureOneLake,  
-
-       "PythonFeed",
-        "ContainerRegistry",
-        "Git",
-        "S3",
-        "Snowflake",
-        "AzureSqlDb",
-        "AzureSynapseAnalytics",
-        "AzureMySqlDb",
-        "AzurePostgresDb",
-        "ADLSGen2",
-        "Redis",
-        "ApiKey",
-        "AzureOpenAI",
-        "CognitiveSearch",
-        "CognitiveService",
-        "CustomKeys",
-        "AzureBlob",
-        "AzureOneLake",
-        "CosmosDb",
-        "CosmosDbMongoDbApi",
-        "AzureDataExplorer",
-        "AzureMariaDb",
-        "AzureDatabricksDeltaLake",
-        "AzureSqlMi",
-        "AzureTableStorage",
-        "AmazonRdsForOracle",
-        "AmazonRdsForSqlServer",
-        "AmazonRedshift",
-        "Db2",
-        "Drill",
-        "GoogleBigQuery",
-        "Greenplum",
-        "Hbase",
-        "Hive",
-        "Impala",
-        "Informix",
-        "MariaDb",
-        "MicrosoftAccess",
-        "MySql",
-        "Netezza",
-        "Oracle",
-        "Phoenix",
-        "PostgreSql",
-        "Presto",
-        "SapOpenHub",
-        "SapBw",
-        "SapHana",
-        "SapTable",
-        "Spark",
-        "SqlServer",
-        "Sybase",
-        "Teradata",
-        "Vertica",
-        "Cassandra",
-        "Couchbase",
-        "MongoDbV2",
-        "MongoDbAtlas",
-        "AmazonS3Compatible",
-        "FileServer",
-        "FtpServer",
-        "GoogleCloudStorage",
-        "Hdfs",
-        "OracleCloudStorage",
-        "Sftp",
-        "GenericHttp",
-        "ODataRest",
-        "Odbc",
-        "GenericRest",
-        "AmazonMws",
-        "Concur",
-        "Dynamics",
-        "DynamicsAx",
-        "DynamicsCrm",
-        "GoogleAdWords",
-        "Hubspot",
-        "Jira",
-        "Magento",
-        "Marketo",
-        "Office365",
-        "Eloqua",
-        "Responsys",
-        "OracleServiceCloud",
-        "PayPal",
-        "QuickBooks",
-        "Salesforce",
-        "SalesforceServiceCloud",
-        "SalesforceMarketingCloud",
-        "SapCloudForCustomer",
-        "SapEcc",
-        "ServiceNow",
-        "SharePointOnlineList",
-        "Shopify",
-        "Square",
-        "WebTable",
-        "Xero",
-        "Zoho",
-        "GenericContainerRegistry"

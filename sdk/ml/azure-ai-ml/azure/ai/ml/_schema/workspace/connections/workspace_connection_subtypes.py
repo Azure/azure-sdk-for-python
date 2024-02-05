@@ -68,7 +68,7 @@ class AzureAIServiceWorkspaceConnectionSchema(WorkspaceConnectionSchema):
 class AzureBlobStoreWorkspaceConnectionSchema(WorkspaceConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
-        allowed_values=ConnectionCategory.COGNITIVE_SERVICE, casing_transform=camel_to_snake, required=True
+        allowed_values="azure_blob", casing_transform=camel_to_snake, required=True
     )
     credentials = NestedField(ApiKeyConfigurationSchema)
 
