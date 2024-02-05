@@ -157,7 +157,7 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
         else:
             message = "Exception"
         exc_details = TelemetryExceptionDetails(
-            type_name=str(exc_type)[:1024],
+            type_name=str(exc_type)[:1024], # type: ignore
             message=str(message)[:32768],
             has_full_stack=has_full_stack,
             stack=str(stack_trace)[:32768],
