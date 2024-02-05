@@ -215,6 +215,9 @@ stages:
 
                           - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
 
+
+                          - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
+
                           - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
                             parameters:
                               PackageInfoLocations:
@@ -333,6 +336,8 @@ stages:
           displayName: 'Use Python 3.11'
           inputs:
             versionSpec: '3.11'
+
+        - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
 
         - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
 
