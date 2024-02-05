@@ -4,13 +4,21 @@
 # IMPORTANT: Do not invoke this file directly. Please instead run eng/New-TestResources.ps1 from the repository root.
 
 param (
-  [hashtable] $DeploymentOutputs
+  [Parameter(ValueFromRemainingArguments = $true)]
+  $RemainingArguments,
+
+  [Parameter()]
+  [hashtable] $DeploymentOutputs,
+
+  [Parameter()]
+  [hashtable] $AdditionalParameters = @{}
 )
 
-# If not Linux, skip this script.
-if ($isLinux -ne "Linux") {
-  Write-Host "Skipping post-deployment because not running on Linux."
-  return
+$ProvisionLiveResources = $AdditionalParameters['ProvisionLiveResources']
+Write-Host "ProvisionLiveResources: $ProvisionLiveResources"
+if ($CI -and !$ProvisionLiveResources) {
+    Write-Host "Skipping test resource post-provisioning."
+    return
 }
 
 $ErrorActionPreference = 'Stop'
@@ -110,4 +118,13 @@ Write-Host $kubeConfig
 # Apply the config
 kubectl apply -f "$workingFolder/kubeconfig.yaml" --overwrite=true
 Write-Host "Applied kubeconfig.yaml"
+
+# Virtual machine setup
+$vmScript = @"
+sudo apt update && sudo apt install python3-pip -y --no-install-recommends &&
+git clone https://github.com/Azure/azure-sdk-for-python.git --depth 1 --single-branch --branch main /sdk &&
+cd /sdk/sdk/identity/azure-identity/tests/integration/azure-vms &&
+pip install -r requirements.txt
+"@
+az vm run-command invoke -n $DeploymentOutputs['IDENTITY_VM_NAME'] -g $DeploymentOutputs['IDENTITY_RESOURCE_GROUP'] --command-id RunShellScript --scripts "$vmScript"
 az logout

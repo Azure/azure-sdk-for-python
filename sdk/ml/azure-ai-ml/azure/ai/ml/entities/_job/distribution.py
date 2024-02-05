@@ -33,7 +33,7 @@ class DistributionConfiguration(RestTranslatableMixin):
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        self.type = None
+        self.type: Any = None
 
     @classmethod
     def _from_rest_object(

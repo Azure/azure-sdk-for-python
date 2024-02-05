@@ -1,6 +1,30 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
+## 1.0.0b6 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b5 (2024-02-02)
+
+### Features Added
+
+- Supports evaluate() on chat
+
+### Bugs Fixed
+
+- Fix promptflow evaluation bugs
+
+### Other Changes
+
+- Duplicate cleanup
+
+## 1.0.0b4 (2024-02-01)
 
 ### Features Added
 
@@ -9,6 +33,7 @@
 ### Other Changes
 
 - Switched evaluate() function to run on promptflow engine
+- Use openai v1 environment variable
 
 ## 1.0.0b3 (2024-01-30)
 
@@ -19,7 +44,8 @@
 ## 1.0.0b2 (2023-11-30)
 
 ### Features Added
- - Added new format to export data to in qa generator.
+
+- Added new format to export data to in qa generator.
 
 ### Other Changes
 
@@ -28,6 +54,7 @@
 ## 1.0.0b1 (2023-11-10)
 
 ### Features Added
+
 - Try use langchain VectorStore and fallback to vendor.
 - Add azure-search-documents 11.4.0b11 and above support.
 - Invoke OpenAI with dynamic batch size.

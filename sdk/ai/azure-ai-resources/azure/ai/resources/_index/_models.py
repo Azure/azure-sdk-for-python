@@ -8,12 +8,14 @@ import os
 from typing import Optional
 
 from azure.core.credentials import TokenCredential
+from azure.ai.resources.constants._common import USER_AGENT_HEADER_KEY
 from azure.ai.resources._index._utils.connections import (
     connection_to_credential,
     get_connection_by_id_v2,
     get_connection_credential,
 )
 from azure.ai.resources._index._utils.logging import get_logger
+from azure.ai.resources._user_agent import USER_AGENT
 
 logger = get_logger(__name__)
 
@@ -117,15 +119,88 @@ def init_open_ai_from_config(config: dict, credential: Optional[TokenCredential]
                 config["api_type"] = "azure_ad"
     except Exception as e:
         if "OPENAI_API_KEY" in os.environ:
-            logger.warning(f"Failed to get credential for ACS with {e}, falling back to env vars.")
+            logger.warning(f"Failed to get credential for ACS with {e}, falling back to openai 0.x env vars.")
             config["api_key"] = os.environ["OPENAI_API_KEY"]
             config["api_type"] = os.environ.get("OPENAI_API_TYPE", "azure")
             config["api_base"] = os.environ.get("OPENAI_API_BASE", openai.api_base if hasattr(openai, "api_base") else openai.base_url)
             config["api_version"] = os.environ.get("OPENAI_API_VERSION", openai.api_version)
+        elif "AZURE_OPENAI_KEY" in os.environ:
+            logger.warning(f"Failed to get credential for ACS with {e}, falling back to openai 1.x env vars.")
+            config["api_key"] = os.environ["AZURE_OPENAI_KEY"]
+            config["azure_endpoint"] = os.environ.get("AZURE_OPENAI_ENDPOINT")
+            config["api_version"] = os.environ.get("OPENAI_API_VERSION", openai.api_version)
         else:
             raise e
 
-    if "azure" in openai.api_type:
+    if openai.api_type and "azure" in openai.api_type:
         config["api_version"] = config.get("api_version", "2023-03-15-preview")
 
     return config
+
+# TODO: Vendor langchain deps or move to langchain module.
+def init_llm(model_config: dict, **kwargs):
+    """Initialize a language model from a model configuration."""
+    from langchain.chat_models.azure_openai import AzureChatOpenAI
+    from langchain.chat_models.openai import ChatOpenAI
+    from langchain.llms import AzureOpenAI
+
+    llm = None
+    logger.debug(f"model_config: {json.dumps(model_config, indent=2)}")
+    model_kwargs = {
+        "frequency_penalty": model_config.get("frequency_penalty", 0),
+        "presence_penalty": model_config.get("presence_penalty", 0),
+    }
+    if model_config.get("stop") is not None:
+        model_kwargs["stop"] = model_config.get("stop")
+    if model_config.get("kind") == "open_ai" and model_config.get("api_type") == "azure":
+        model_config = init_open_ai_from_config(model_config, credential=None)
+        if model_config["model"].startswith("gpt-3.5-turbo") or model_config["model"].startswith("gpt-35-turbo") or model_config["model"].startswith("gpt-4"):
+            logger.info(f"Initializing AzureChatOpenAI with model {model_config['model']} with kwargs: {model_kwargs}")
+
+            llm = AzureChatOpenAI(
+                deployment_name=model_config["deployment"],
+                model=model_config["model"],
+                max_tokens=model_config.get("max_tokens"),
+                model_kwargs=model_kwargs,
+                openai_api_key=model_config.get("api_key"),
+                openai_api_base=model_config.get("api_base"),
+                openai_api_type=model_config.get("api_type"),
+                openai_api_version=model_config.get("api_version"),
+                max_retries=model_config.get("max_retries", 3),
+                default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
+                **kwargs
+            )  # type: ignore
+            if model_config.get("temperature", None) is not None:
+                llm.temperature = model_config.get("temperature")
+        else:
+            logger.info(f"Initializing AzureOpenAI with model {model_config['model']} with kwargs: {model_kwargs}")
+
+            llm = AzureOpenAI(
+                deployment_name=model_config["deployment"],
+                model=model_config["model"],
+                max_tokens=model_config.get("max_tokens"),
+                model_kwargs=model_kwargs,
+                openai_api_key=model_config.get("api_key"),
+                max_retries=model_config.get("max_retries", 3),
+                default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
+                **kwargs
+            )  # type: ignore
+            if model_config.get("temperature", None) is not None:
+                llm.temperature = model_config.get("temperature")
+    elif model_config.get("kind") == "open_ai" and model_config.get("api_type") == "open_ai":
+        logger.info(f"Initializing OpenAI with model {model_config['model']} with kwargs: {model_kwargs}")
+        model_config = init_open_ai_from_config(model_config, credential=None)
+        llm = ChatOpenAI(
+            model=model_config["model"],
+            max_tokens=model_config.get("max_tokens"),
+            model_kwargs=model_kwargs,
+            openai_api_key=model_config.get("api_key"),
+            default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
+            **kwargs
+        )  # type: ignore
+        if model_config.get("temperature", None) is not None:
+            llm.temperature = model_config.get("temperature")
+    else:
+        raise ValueError(f"Unsupported llm kind: {model_config.get('kind')}")
+
+    return llm

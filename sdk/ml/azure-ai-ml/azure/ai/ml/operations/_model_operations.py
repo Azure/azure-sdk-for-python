@@ -101,7 +101,7 @@ class ModelOperations(_ScopeDependentOperations):
         operation_config: OperationConfig,
         service_client: Union[ServiceClient082023Preview, ServiceClient102021Dataplane],
         datastore_operations: DatastoreOperations,
-        all_operations: OperationsContainer = None,
+        all_operations: Optional[OperationsContainer] = None,
         **kwargs: Dict,
     ):
         super(ModelOperations, self).__init__(operation_scope, operation_config)
@@ -196,7 +196,7 @@ class ModelOperations(_ScopeDependentOperations):
                     body=get_asset_body_for_registry_storage(self._registry_name, "models", model.name, model.version),
                 )
 
-            model, indicator_file = _check_and_upload_path(
+            model, indicator_file = _check_and_upload_path(  # type: ignore[type-var]
                 artifact=model,
                 asset_operations=self,
                 sas_uri=sas_uri,
@@ -631,7 +631,7 @@ class ModelOperations(_ScopeDependentOperations):
         is_deployment_flow = kwargs.pop("skip_to_rest", False)
         if not is_deployment_flow:
             orchestrators = OperationOrchestrator(
-                operation_container=self._all_operations,
+                operation_container=self._all_operations,  # type: ignore[arg-type]
                 operation_scope=self._operation_scope,
                 operation_config=self._operation_config,
             )
@@ -681,13 +681,14 @@ class ModelOperations(_ScopeDependentOperations):
             if self._operation_scope._workspace_location and self._operation_scope._workspace_id:
                 package_request.target_environment_id = f"azureml://locations/{self._operation_scope._workspace_location}/workspaces/{self._operation_scope._workspace_id}/environments/{package_request.target_environment_id}"
             else:
-                ws = self._all_operations.all_operations.get("workspaces")
-                ws_details = ws.get(self._workspace_name)
-                workspace_location, workspace_id = (
-                    ws_details.location,
-                    ws_details._workspace_id,
-                )
-                package_request.target_environment_id = f"azureml://locations/{workspace_location}/workspaces/{workspace_id}/environments/{package_request.target_environment_id}"
+                if self._all_operations is not None:
+                    ws: Any = self._all_operations.all_operations.get("workspaces")
+                    ws_details = ws.get(self._workspace_name)
+                    workspace_location, workspace_id = (
+                        ws_details.location,
+                        ws_details._workspace_id,
+                    )
+                    package_request.target_environment_id = f"azureml://locations/{workspace_location}/workspaces/{workspace_id}/environments/{package_request.target_environment_id}"
 
             if package_request.environment_version is not None:
                 package_request.target_environment_id = (
@@ -747,7 +748,8 @@ class ModelOperations(_ScopeDependentOperations):
                 package_out = Environment._from_rest_object(env_out)
                 self._scope_kwargs["resource_group_name"] = current_rg
             else:
-                environment_operation = self._all_operations.all_operations[AzureMLResourceType.ENVIRONMENT]
-                package_out = environment_operation.get(name=environment_name, version=environment_version)
+                if self._all_operations is not None:
+                    environment_operation = self._all_operations.all_operations[AzureMLResourceType.ENVIRONMENT]
+                    package_out = environment_operation.get(name=environment_name, version=environment_version)
 
         return package_out

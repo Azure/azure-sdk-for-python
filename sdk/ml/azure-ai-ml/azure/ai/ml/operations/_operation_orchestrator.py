@@ -276,10 +276,10 @@ class OperationOrchestrator(object):
         try:
             self._validate_datastore_name(code_asset.path)
             if register_asset:
-                code_asset = self._code_assets.create_or_update(code_asset)
+                code_asset = self._code_assets.create_or_update(code_asset)  # type: ignore[attr-defined]
                 return str(code_asset.id)
             sas_info = get_storage_info_for_non_registry_asset(
-                service_client=self._code_assets._service_client,
+                service_client=self._code_assets._service_client,  # type: ignore[attr-defined]
                 workspace_name=self._operation_scope.workspace_name,
                 name=code_asset.name,
                 version=code_asset.version,
@@ -287,7 +287,7 @@ class OperationOrchestrator(object):
             )
             uploaded_code_asset, _ = _check_and_upload_path(
                 artifact=code_asset,
-                asset_operations=self._code_assets,
+                asset_operations=self._code_assets,  # type: ignore[arg-type]
                 artifact_type=ErrorTarget.CODE,
                 show_progress=self._operation_config.show_progress,
                 sas_uri=sas_info["sas_uri"],
@@ -315,10 +315,12 @@ class OperationOrchestrator(object):
         if register_asset:
             if environment.id:
                 return environment.id
-            env_response = self._environments.create_or_update(environment)
+            env_response = self._environments.create_or_update(environment)  # type: ignore[attr-defined]
             return env_response.id
         environment = _check_and_upload_env_build_context(
-            environment=environment, operations=self._environments, show_progress=self._operation_config.show_progress
+            environment=environment,
+            operations=self._environments,  # type: ignore[arg-type]
+            show_progress=self._operation_config.show_progress,
         )
         environment._id = get_arm_id_with_version(
             self._operation_scope,
@@ -335,10 +337,10 @@ class OperationOrchestrator(object):
             if register_asset:
                 if model.id:
                     return model.id
-                return self._model.create_or_update(model).id
+                return self._model.create_or_update(model).id  # type: ignore[attr-defined]
             uploaded_model, _ = _check_and_upload_path(
                 artifact=model,
-                asset_operations=self._model,
+                asset_operations=self._model,  # type: ignore[arg-type]
                 artifact_type=ErrorTarget.MODEL,
                 show_progress=self._operation_config.show_progress,
             )
@@ -364,10 +366,10 @@ class OperationOrchestrator(object):
         self._validate_datastore_name(data_asset.path)
 
         if register_asset:
-            return self._data.create_or_update(data_asset).id
+            return self._data.create_or_update(data_asset).id  # type: ignore[attr-defined]
         data_asset, _ = _check_and_upload_path(
             artifact=data_asset,
-            asset_operations=self._data,
+            asset_operations=self._data,  # type: ignore[arg-type]
             artifact_type=ErrorTarget.DATA,
             show_progress=self._operation_config.show_progress,
         )
@@ -385,7 +387,7 @@ class OperationOrchestrator(object):
         # If component arm id is already resolved, return the id otherwise get arm id via remote call.
         # Register the component if necessary, and FILL BACK the arm id to component to reduce remote call.
         if not component.id:
-            component._id = self._component.create_or_update(
+            component._id = self._component.create_or_update(  # type: ignore[attr-defined]
                 component, is_anonymous=True, show_progress=self._operation_config.show_progress
             ).id
         return str(component.id)
@@ -396,14 +398,14 @@ class OperationOrchestrator(object):
         resource_group_name = match.group("resource_group_name") if match is not None else ""
         vc_name = match.group("name") if match is not None else ""
         arm_id = SINGULARITY_ID_FORMAT.format(subscription_id, resource_group_name, vc_name)
-        vc = self._virtual_cluster.get(arm_id)
+        vc = self._virtual_cluster.get(arm_id)  # type: ignore[attr-defined]
         return str(vc["id"])
 
     def _get_singularity_arm_id_from_short_name(self, singularity: str) -> str:
         match = re.match(SINGULARITY_SHORT_NAME_REGEX_FORMAT, singularity)
         vc_name = match.group("name") if match is not None else ""
         # below list operation can be time-consuming, may need an optimization on this
-        match_vcs = [vc for vc in self._virtual_cluster.list() if vc["name"] == vc_name]
+        match_vcs = [vc for vc in self._virtual_cluster.list() if vc["name"] == vc_name]  # type: ignore[attr-defined]
         num_match_vc = len(match_vcs)
         if num_match_vc != 1:
             if num_match_vc == 0:
@@ -524,7 +526,7 @@ class OperationOrchestrator(object):
                 if datastore_name.startswith(ARM_ID_PREFIX):
                     datastore_name = datastore_name[len(ARM_ID_PREFIX) :]
 
-                self._datastore_operation.get(datastore_name)
+                self._datastore_operation.get(datastore_name)  # type: ignore[attr-defined]
             except ResourceNotFoundError as e:
                 msg = "The datastore {} could not be found in this workspace."
                 raise ValidationException(
