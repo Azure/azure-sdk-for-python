@@ -199,6 +199,12 @@ stages:
                                 - .github/CODEOWNERS
                           - download: current
 
+                          # py2docfx requires python >= 3.11
+                          - task: UsePythonVersion@0
+                            displayName: 'Use Python 3.11'
+                            inputs:
+                              versionSpec: '3.11'
+
                           - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
 
                           - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
@@ -309,6 +315,12 @@ stages:
         - pwsh: |
             Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/
           displayName: Show visible artifacts
+
+        # py2docfx requires python >= 3.11
+        - task: UsePythonVersion@0
+          displayName: 'Use Python 3.11'
+          inputs:
+            versionSpec: '3.11'
 
         - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
 
