@@ -6,7 +6,6 @@ def format_rag_results(rag_results: dict, supported_metrics):
     result_per_chat = {}
     result_per_turn = {}
     if rag_results:
-        #result_per_chat = rag_results['metrics']
         for metric, value in rag_results['artifacts'].items():
             result_per_chat[metric] = rag_results['metrics']["mean_" + metric]
             result_per_turn[metric] = {"reason": value['reason'], "score": value['score_per_turn']}

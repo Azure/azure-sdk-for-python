@@ -18,13 +18,13 @@
         "inputsValue": {}
       }
     },
-    "call_rai_service": {
+    "validate_conversation": {
       "variant_0": {
         "inputs": {},
         "inputsValue": {}
       }
     },
-    "validate_coversation": {
+    "call_rai_service": {
       "variant_0": {
         "inputs": {},
         "inputsValue": {}

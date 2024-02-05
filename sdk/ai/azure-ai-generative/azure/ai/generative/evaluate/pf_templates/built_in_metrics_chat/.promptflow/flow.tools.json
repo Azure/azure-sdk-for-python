@@ -103,35 +103,6 @@
       "tool_state": "stable",
       "toolId": "format_service_output.py"
     },
-    "validate_coversation.py": {
-      "name": "validate_coversation.py",
-      "type": "python",
-      "inputs": {
-        "chat": {
-          "allow_manual_entry": false,
-          "is_multi_select": false,
-          "input_type": "default",
-          "value": "${inputs.messages}",
-          "id": "0km8iacm"
-        },
-        "selected_metrics": {
-          "type": [
-            "object"
-          ],
-          "allow_manual_entry": false,
-          "is_multi_select": false,
-          "input_type": "default",
-          "value": "${select_metrics.output}",
-          "id": "kkjlnslq"
-        }
-      },
-      "source": "validate_coversation.py",
-      "function": "validate_conversation",
-      "is_builtin": false,
-      "enable_kwargs": false,
-      "tool_state": "stable",
-      "toolId": "validate_coversation.py"
-    },
     "call_rai_service.py": {
       "name": "call_rai_service.py",
       "type": "python",
@@ -144,7 +115,7 @@
           "is_multi_select": false,
           "input_type": "default",
           "value": "${construct_service_request.output}",
-          "id": "ems0x9k4"
+          "id": "rtjyfmy4"
         }
       },
       "source": "call_rai_service.py",
@@ -153,6 +124,35 @@
       "enable_kwargs": false,
       "tool_state": "stable",
       "toolId": "call_rai_service.py"
+    },
+    "validate_conversation.py": {
+      "name": "validate_conversation.py",
+      "type": "python",
+      "inputs": {
+        "chat": {
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${inputs.messages}",
+          "id": "xh6ntnac"
+        },
+        "selected_metrics": {
+          "type": [
+            "object"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${select_metrics.output}",
+          "id": "5xztbxz2"
+        }
+      },
+      "source": "validate_conversation.py",
+      "function": "validate_conversation",
+      "is_builtin": false,
+      "enable_kwargs": false,
+      "tool_state": "stable",
+      "toolId": "validate_conversation.py"
     },
     "validate_service.py": {
       "name": "validate_service.py",
@@ -210,7 +210,7 @@
           "is_multi_select": false,
           "input_type": "default",
           "value": "${inputs.metrics}",
-          "id": "a1y4ch1u"
+          "id": "2z6mvphs"
         }
       },
       "source": "select_metrics.py",

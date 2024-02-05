@@ -11,7 +11,7 @@ def format_service_output(parsed_responses: List[List[dict]]) -> dict:
     supported_metrics = constants.CONTENT_HARM_METRICS
 
     result = {}
-    if parsed_responses:
+    if parsed_responses and parsed_responses[0]:
         parsed_response = parsed_responses[0]
         for metric_dict in parsed_response:
             for key in metric_dict.keys():
@@ -21,8 +21,6 @@ def format_service_output(parsed_responses: List[List[dict]]) -> dict:
                     result[key + "_reasoning"] = metric_dict["reasoning"]
     for metric_name in supported_metrics:
         if metric_name not in result:
-            print(metric_name)
             result[metric_name] = np.nan
             result[metric_name + "_reasoning"] = np.nan
     return result
-    #return parsed_response

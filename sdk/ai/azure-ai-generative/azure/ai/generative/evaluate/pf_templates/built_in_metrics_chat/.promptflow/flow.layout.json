@@ -12,8 +12,8 @@
       "index": -1
     },
     "aggregate": {
-      "x": 874.2993348115299,
-      "y": 916.0576496674058,
+      "x": 1084,
+      "y": 942,
       "height": 95,
       "index": 0
     },
@@ -24,8 +24,8 @@
       "index": 1
     },
     "evaluate_chat_rag": {
-      "x": 30.97330595482546,
-      "y": 498.94045174537985,
+      "x": 12,
+      "y": 392,
       "height": 75,
       "index": 2
     },
@@ -47,29 +47,17 @@
       "height": 75,
       "index": 5
     },
-    "validate_coversation": {
+    "validate_conversation": {
       "x": 233,
       "y": 282,
       "height": 75,
       "index": 6
-    },
-    "validate_service": {
-      "x": 841,
-      "y": 282,
-      "height": 75,
-      "index": 7
     },
     "construct_service_request": {
       "x": 675.5,
       "y": 392,
       "height": 75,
       "index": 8
-    },
-    "call_rai_service": {
-      "x": 902.5,
-      "y": 502,
-      "height": 75,
-      "index": 9
     },
     "parse_service_response": {
       "x": 957.5,
@@ -82,6 +70,18 @@
       "y": 722,
       "height": 75,
       "index": 11
+    },
+    "validate_service": {
+      "x": 841,
+      "y": 282,
+      "height": 75,
+      "index": 7
+    },
+    "call_rai_service": {
+      "x": 902.5,
+      "y": 502,
+      "height": 75,
+      "index": 9
     }
   },
   "viewport": {
@@ -90,8 +90,8 @@
       0,
       0,
       0.4625641025641026,
-      -26.332115384615378,
-      -206.8661436736278
+      -104.55076923076923,
+      -72.57383598132012
     ]
   }
 }

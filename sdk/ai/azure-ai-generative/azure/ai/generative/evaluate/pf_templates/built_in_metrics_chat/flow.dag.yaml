@@ -125,7 +125,7 @@ nodes:
     deployment_name: ${inputs.deployment_name}
     selected_metrics: ${select_metrics.output}
   activate:
-    when: ${validate_coversation.output}
+    when: ${validate_conversation.output}
     is: true
   use_variants: false
 - name: evaluate_coherence_fluency
@@ -139,7 +139,7 @@ nodes:
     parsed_qa: ${parse_chat.output}
     selected_metrics: ${select_metrics.output}
   activate:
-    when: ${validate_coversation.output}
+    when: ${validate_conversation.output}
     is: true
   use_variants: false
 - name: parse_chat
@@ -150,7 +150,7 @@ nodes:
   inputs:
     chat: ${inputs.messages}
   activate:
-    when: ${validate_coversation.output}
+    when: ${validate_conversation.output}
     is: true
   use_variants: false
 - name: concatenate_metrics
@@ -164,11 +164,11 @@ nodes:
     safety_results: ${format_service_output.output}
     selected_metrics: ${select_metrics.output}
   use_variants: false
-- name: validate_coversation
+- name: validate_conversation
   type: python
   source:
     type: code
-    path: validate_coversation.py
+    path: validate_conversation.py
   inputs:
     chat: ${inputs.messages}
     selected_metrics: ${select_metrics.output}

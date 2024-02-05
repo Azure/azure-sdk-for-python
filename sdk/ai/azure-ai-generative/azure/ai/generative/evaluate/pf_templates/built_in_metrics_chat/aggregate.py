@@ -1,5 +1,4 @@
-from typing import List, Union, Optional
-from collections import defaultdict
+from typing import List
 from promptflow import tool, log_metric
 import numpy as np
 from utils import filter_metrics
