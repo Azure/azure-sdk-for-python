@@ -20,10 +20,10 @@ def flatten_outputs(
     output_path: str,
     stability_value: int = 1,
 ):
-    '''Flatten batched outputs from JobManager into a format where each line is a single example.'''
+    """Flatten batched outputs from JobManager into a format where each line is a single example."""
     # loop over the jobs
     # save jobs in array first to sort based on input idx before writing
-    with open(input_path, 'r') as f_in, open(output_path, 'w') as f_out:
+    with open(input_path, "r") as f_in, open(output_path, "w") as f_out:
         output_list = []
         for line_idx, line in enumerate(f_in):
             # skip empty lines
@@ -33,19 +33,19 @@ def flatten_outputs(
             job = dict(json.loads(line.strip()))
             logger.info(f"Processing job found on line #{line_idx} containing inputs: {job['input_idx']}.")
 
-            if 'output_examples' not in job:
-                logger.info(
-                    f"Couldn't find output_examples in job found on line #{line_idx}."
-                )
+            if "output_examples" not in job:
+                logger.info(f"Couldn't find output_examples in job found on line #{line_idx}.")
                 continue
 
             # Ignore samples which failed to parse or decode
-            output_examples: List[List[dict]] = [sample for sample in job['output_examples'] if sample is not None]
+            output_examples: List[List[dict]] = [sample for sample in job["output_examples"] if sample is not None]
 
             # Flip [Sample[Examples]] to [Examples[Sample]]
             output_examples = [list(sample) for sample in zip(*output_examples)]
 
-            for (input_idx, input_example, output_example) in zip(job['input_idx'], job['input_examples'], output_examples):
+            for (input_idx, input_example, output_example) in zip(
+                job["input_idx"], job["input_examples"], output_examples
+            ):
                 example_obj = job.copy()
                 example_obj["input_idx"] = input_idx
                 example_obj["input_examples"] = input_example
@@ -61,7 +61,7 @@ def flatten_outputs(
         # Stabilize values of output samples
         for output in output_list:
             stabilized_parsed_output_samples = []
-            for sample_batch in batch_list(output['parsed_output_samples'], stability_value):
+            for sample_batch in batch_list(output["parsed_output_samples"], stability_value):
                 # Stabilize this sample batch
                 label_list = defaultdict(list)
                 sample_batch_outputs = {}
@@ -75,20 +75,16 @@ def flatten_outputs(
                     majority_value = get_majority_value(values)
                     sample_batch_outputs[label] = majority_value
                 stabilized_parsed_output_samples.append(sample_batch_outputs)
-            output['parsed_output_samples'] = stabilized_parsed_output_samples
+            output["parsed_output_samples"] = stabilized_parsed_output_samples
 
         # Sort outputs based on input index before writing
-        output_list = sorted(output_list, key=lambda x: x['input_idx'])
+        output_list = sorted(output_list, key=lambda x: x["input_idx"])
         for example_obj in output_list:
-            f_out.write(json.dumps(example_obj, quote_keys=True) + '\n')
+            f_out.write(json.dumps(example_obj, quote_keys=True) + "\n")
 
 
-def decode_example(
-    example: str,
-    label_keys: List[str],
-    encoding: Encoding = Encoding.JSON
-) -> Dict[str, Any]:
-    '''
+def decode_example(example: str, label_keys: List[str], encoding: Encoding = Encoding.JSON) -> Dict[str, Any]:
+    """
     Decode example from an encoding format.
 
     Args:
@@ -97,29 +93,30 @@ def decode_example(
         encoding (Encoding): encoding format to use
     Returns:
         Dict[str, Any]: decoded example
-    '''
+    """
     example = example.strip()
     if encoding == Encoding.JSON:
         return try_decode_json(example, label_keys)
     elif encoding == Encoding.XML:
-        raise NotImplementedError('XML encoding not implemented.')
+        raise NotImplementedError("XML encoding not implemented.")
     else:
-        raise ValueError(f'Unknown encoding {encoding}.')
+        raise ValueError(f"Unknown encoding {encoding}.")
 
 
 def try_decode_json(example: str, label_keys: List[str]) -> Dict[str, Any]:
-    '''Try to decode an example in a JSON encoding.'''
-    start = example.find('{')
+    """Try to decode an example in a JSON encoding."""
+    start = example.find("{")
     end_index = start + 1
     last_error = None
-    
-    while -1 < (end_index := example.find('}', end_index + 1)) < len(example):
+
+    while -1 < (end_index := example.find("}", end_index + 1)) < len(example):
         try:
-            example_dict = dict(json.loads(example[start:end_index + 1]))
+            example_dict = dict(json.loads(example[start : end_index + 1]))
 
             # check if any label keys are in example
-            assert any(label_key in example_dict for label_key in label_keys), \
-                f"Failed to decode example.  No label keys found in example: {example_dict}"
+            assert any(
+                label_key in example_dict for label_key in label_keys
+            ), f"Failed to decode example.  No label keys found in example: {example_dict}"
 
             return example_dict
         except Exception as e:
@@ -148,7 +145,7 @@ def get_majority_value(numbers):
                 if key in item:
                     _numbers.append(item[key])
             maj_val = get_majority_value(_numbers)
-            majority_dic[key]=maj_val
+            majority_dic[key] = maj_val
         logger.info(f"Majority value is {majority_dic}")
         return majority_dic
 
@@ -160,13 +157,9 @@ def get_majority_value(numbers):
 
 
 def try_parse_samples(
-    samples: List[str],
-    prompt_template: PromptTemplate,
-    n_inputs: int,
-    n_samples: int,
-    job_idx: int
+    samples: List[str], prompt_template: PromptTemplate, n_inputs: int, n_samples: int, job_idx: int
 ) -> Tuple[int, List[Optional[List[dict]]]]:
-    '''Try to parse a list of samples into a list of examples.
+    """Try to parse a list of samples into a list of examples.
 
     Args:
         samples (List[str]): List of samples to parse.
@@ -177,7 +170,7 @@ def try_parse_samples(
 
     Returns:
         Tuple[int, List[List[dict]]]: Number of failed samples, and list of examples.
-    '''
+    """
     output_examples: List[Optional[List[Dict]]] = []
     num_failed = 0
 
@@ -192,8 +185,7 @@ def try_parse_samples(
 
             sample_examples = sample_examples[:n_inputs]  # truncate to n_inputs
         except Exception as e:
-            logger.info(
-                f"Failed to split: Job #{job_idx} - sample #{sample_idx + 1}/{n_samples}. Error: {e}")
+            logger.info(f"Failed to split: Job #{job_idx} - sample #{sample_idx + 1}/{n_samples}. Error: {e}")
             output_examples.append(None)
             num_failed += 1
             continue
@@ -209,12 +201,11 @@ def try_parse_samples(
             # If we failed to decode, add empty dicts to output examples
             output_examples.append([{} for _ in range(len(sample_examples))])
             num_failed += 1
-            logger.exception(
-                f"Failed to decode: Job #{job_idx} - sample #{sample_idx + 1}/{n_samples}")
+            logger.exception(f"Failed to decode: Job #{job_idx} - sample #{sample_idx + 1}/{n_samples}")
 
     return num_failed, output_examples
 
 
 def batch_list(unbatched: list, batch_size: int) -> List[list]:
-    '''Batch a list into a list of lists of size batch_size.'''
-    return [unbatched[i:(i + batch_size)] for i in range(0, len(unbatched), batch_size)]
+    """Batch a list into a list of lists of size batch_size."""
+    return [unbatched[i : (i + batch_size)] for i in range(0, len(unbatched), batch_size)]
