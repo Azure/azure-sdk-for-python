@@ -116,8 +116,8 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
     def __getstate__(self) -> Dict[str, Any]:
         state = self.__dict__.copy()
         # Remove the non-picklable entries
-        del state['_client_applications']
-        del state['_cae_client_applications']
+        del state["_client_applications"]
+        del state["_cae_client_applications"]
         return state
 
     def __setstate__(self, state: Dict[str, Any]) -> None:

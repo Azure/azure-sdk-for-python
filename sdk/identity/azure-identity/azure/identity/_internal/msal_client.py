@@ -135,7 +135,7 @@ class MsalClient:  # pylint:disable=client-accepts-api-version-keyword
     def __getstate__(self) -> Dict[str, Any]:
         state = self.__dict__.copy()
         # Remove the non-picklable entries
-        del state['_local']
+        del state["_local"]
         return state
 
     def __setstate__(self, state: Dict[str, Any]) -> None:

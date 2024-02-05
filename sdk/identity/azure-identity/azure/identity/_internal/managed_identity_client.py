@@ -100,7 +100,7 @@ class ManagedIdentityClientBase(abc.ABC):
         state = self.__dict__.copy()
         # Remove the non-picklable entries
         if not self._custom_cache:
-            del state['_cache']
+            del state["_cache"]
         return state
 
     def __setstate__(self, state: Dict[str, Any]) -> None:
@@ -108,6 +108,7 @@ class ManagedIdentityClientBase(abc.ABC):
         # Re-create the unpickable entries
         if not self._custom_cache:
             self._cache = TokenCache()
+
 
 class ManagedIdentityClient(ManagedIdentityClientBase):
     def __enter__(self) -> "ManagedIdentityClient":
