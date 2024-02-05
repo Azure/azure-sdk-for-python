@@ -82,6 +82,9 @@ setup(
     extras_require={
         "evaluate": [
             "azureml-metrics[generative-ai]>=0.0.33", # generative-ai extra doesn't exist before this version
+            "azureml-mlflow",
+            "promptflow[azure]",
+            "promptflow-tools",
         ],
         "faiss": [
             "faiss-cpu>=1.7,<1.8"
@@ -111,8 +114,7 @@ setup(
         ],
         "promptflow": [
             "promptflow[azure]",
-            "promptflow-tools",
-            "promptflow-vectordb"
+            "promptflow-tools"
         ],
         "qa_generation": [
             "openai>=0.27.8"

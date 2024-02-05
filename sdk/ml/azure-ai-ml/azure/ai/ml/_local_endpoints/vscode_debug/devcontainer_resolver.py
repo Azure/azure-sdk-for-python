@@ -71,13 +71,13 @@ class DevContainerResolver:
         self._local_path: Optional[str] = None
         self._properties: Optional[dict] = {}
 
-        self._image: str = image
+        self._image: Optional[str] = image
         self._dockerfile_path: str = dockerfile_path
-        self._build_context: str = build_context
-        self._build_target: str = build_target
-        self._environment: dict = environment
-        self._mounts: list = _reformat_mounts(mounts) if mounts else mounts
-        self._labels: list = _reformat_labels(labels) if labels else labels
+        self._build_context: Optional[str] = build_context
+        self._build_target: Optional[str] = build_target
+        self._environment: Optional[dict] = environment
+        self._mounts: list = _reformat_mounts(mounts) if mounts else mounts  # type: ignore[assignment]
+        self._labels: list = _reformat_labels(labels) if labels else labels  # type: ignore[assignment]
         self._port = port
         self._construct()
 
@@ -100,19 +100,20 @@ class DevContainerResolver:
                 target=self._build_target,
             ).to_dict()
 
-        self._properties.update(OverrideCommand().to_dict())
-        self._properties.update(Extensions().to_dict())
-        self._properties.update(Settings().to_dict())
+        if self._properties is not None:
+            self._properties.update(OverrideCommand().to_dict())
+            self._properties.update(Extensions().to_dict())
+            self._properties.update(Settings().to_dict())
 
-        if self._environment:
-            self._properties.update(ContainerEnv(environment_variables=self._environment).to_dict())
-        if self._mounts:
-            self._properties.update(Mounts(mounts=self._mounts).to_dict())
-        if self._labels:
-            self._properties.update(RunArgs(labels=self._labels).to_dict())
-        if self._port:
-            self._properties.update(AppPort(port=self._port).to_dict())
-            self._properties.update(ForwardPorts(port=self._port).to_dict())
+            if self._environment:
+                self._properties.update(ContainerEnv(environment_variables=self._environment).to_dict())
+            if self._mounts:
+                self._properties.update(Mounts(mounts=self._mounts).to_dict())
+            if self._labels:
+                self._properties.update(RunArgs(labels=self._labels).to_dict())
+            if self._port:
+                self._properties.update(AppPort(port=self._port).to_dict())
+                self._properties.update(ForwardPorts(port=self._port).to_dict())
 
     def write_file(self, directory_path: str) -> None:
         """Writes this devcontainer.json to provided directory.
