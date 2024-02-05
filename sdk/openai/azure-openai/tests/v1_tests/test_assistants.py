@@ -9,14 +9,14 @@ import pytest
 import pathlib
 import uuid
 from devtools_testutils import AzureRecordedTestCase
-from conftest import ASST_AZURE, configure
+from conftest import ASST_AZURE, ASST_ALL, GPT_4_OPENAI, configure
 
 TIMEOUT = 300
 
 class TestAssistants(AzureRecordedTestCase):
 
     @configure
-    @pytest.mark.parametrize("api_type", [ASST_AZURE])
+    @pytest.mark.parametrize("api_type", ASST_ALL)
     def test_assistants_crud(self, client, azure_openai_creds, api_type, **kwargs):
 
         try:
@@ -57,7 +57,7 @@ class TestAssistants(AzureRecordedTestCase):
             assert delete_assistant.deleted is True
 
     @configure
-    @pytest.mark.parametrize("api_type", [ASST_AZURE])
+    @pytest.mark.parametrize("api_type", [ASST_AZURE, GPT_4_OPENAI])
     def test_assistants_files_crud(self, client, azure_openai_creds, api_type, **kwargs):
         file_name = f"test{uuid.uuid4()}.txt"
         with open(file_name, "w") as f:
@@ -120,7 +120,7 @@ class TestAssistants(AzureRecordedTestCase):
             assert delete_assistant.deleted is True
 
     @configure
-    @pytest.mark.parametrize("api_type", [ASST_AZURE])
+    @pytest.mark.parametrize("api_type", [ASST_AZURE, GPT_4_OPENAI])
     def test_assistants_threads_crud(self, client, azure_openai_creds, api_type, **kwargs):
         try:
             thread = client.beta.threads.create(
@@ -154,7 +154,7 @@ class TestAssistants(AzureRecordedTestCase):
             assert delete_thread.deleted is True
 
     @configure
-    @pytest.mark.parametrize("api_type", [ASST_AZURE])
+    @pytest.mark.parametrize("api_type", [ASST_AZURE, GPT_4_OPENAI])
     def test_assistants_messages_crud(self, client, azure_openai_creds, api_type, **kwargs):
         file_name = f"test{uuid.uuid4()}.txt"
         with open(file_name, "w") as f:
@@ -235,7 +235,7 @@ class TestAssistants(AzureRecordedTestCase):
             assert delete_thread.deleted is True
 
     @configure
-    @pytest.mark.parametrize("api_type", [ASST_AZURE])
+    @pytest.mark.parametrize("api_type", [ASST_AZURE, GPT_4_OPENAI])
     def test_assistants_runs_code(self, client, azure_openai_creds, api_type, **kwargs):
         try:
             assistant = client.beta.assistants.create(
@@ -257,7 +257,7 @@ class TestAssistants(AzureRecordedTestCase):
                 thread_id=thread.id,
                 assistant_id=assistant.id,
                 instructions="Please address the user as Jane Doe.",
-                # additional_instructions="After solving each equation, say 'Isn't math fun?'",
+                additional_instructions="After solving each equation, say 'Isn't math fun?'",
             )
 
             start_time = time.time()
@@ -300,7 +300,7 @@ class TestAssistants(AzureRecordedTestCase):
             assert delete_thread.deleted is True
 
     @configure
-    @pytest.mark.parametrize("api_type", [ASST_AZURE])
+    @pytest.mark.parametrize("api_type", [ASST_AZURE, GPT_4_OPENAI])
     def test_assistants_runs_retrieval(self, client, azure_openai_creds, api_type, **kwargs):
         file_name = f"test{uuid.uuid4()}.txt"
         with open(file_name, "w") as f:
@@ -365,7 +365,7 @@ class TestAssistants(AzureRecordedTestCase):
             assert delete_thread.deleted is True
 
     @configure
-    @pytest.mark.parametrize("api_type", [ASST_AZURE])
+    @pytest.mark.parametrize("api_type", [ASST_AZURE, GPT_4_OPENAI])
     def test_assistants_runs_functions(self, client, azure_openai_creds, api_type, **kwargs):
         try:
             assistant = client.beta.assistants.create(
