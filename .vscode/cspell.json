@@ -551,6 +551,12 @@
       ]
     },
     {
+      "filename": "sdk/identity/tests/**/*.py",
+      "words": [
+        "infile"
+      ]
+    },
+    {
       "filename": "sdk/identity/test-resources*",
       "words": [
         "kubelet",
