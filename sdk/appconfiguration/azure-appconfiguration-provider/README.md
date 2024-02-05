@@ -192,6 +192,7 @@ To enable refresh for feature flags you need to enable refresh. This will allow 
 
 ```python
 config = load(endpoint=endpoint, credential=DefaultAzureCredential(), feature_flags_enabled=True, feature_flag_refresh_enabled=True)
+config.refresh()
 ```
 
 ## Key concepts
