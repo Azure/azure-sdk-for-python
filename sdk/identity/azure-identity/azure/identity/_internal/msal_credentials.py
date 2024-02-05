@@ -113,14 +113,14 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
 
         return client_applications_map[tenant_id]
 
-    def __getstate__(self):
+    def __getstate__(self) -> Dict[str, Any]:
         state = self.__dict__.copy()
         # Remove the non-picklable entries
         del state['_client_applications']
         del state['_cae_client_applications']
         return state
 
-    def __setstate__(self, state):
+    def __setstate__(self, state: Dict[str, Any]) -> None:
         self.__dict__.update(state)
         # Re-create the unpickable entries
         self._client_applications = {}
