@@ -10,7 +10,7 @@ from tempfile import TemporaryDirectory
 from typing import Dict, Union
 from urllib.parse import urljoin, urlparse
 
-import yaml
+import yaml  # type: ignore[import-untyped]
 from jsonschema import Draft7Validator, ValidationError
 from jsonschema.exceptions import best_match
 
