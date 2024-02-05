@@ -5,6 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from __future__ import absolute_import
+from collections.abc import Mapping
 
 from io import BytesIO
 from email.message import Message
@@ -50,7 +51,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport._base import (
         _HttpResponseBase as PipelineTransportHttpResponseBase,
     )
-    from azure.core.rest._helpers import FileType, FileContent
+    from azure.core.rest._helpers import FilesType, FileType, FileContent
 
 binary_type = str
 
@@ -409,3 +410,11 @@ def _aiohttp_body_helper(
         response._decompressed_content = True
         return response._content
     return response._content
+
+
+def get_file_items(files: "FilesType") -> Sequence[Tuple[str, "FileType"]]:
+    if isinstance(files, Mapping):
+        # casting because ItemsView technically isn't a Sequence, even
+        # though realistically it is ordered python 3.7 and after
+        return cast(Sequence[Tuple[str, "FileType"]], files.items())
+    return files

@@ -10,7 +10,7 @@ import os
 import sys
 import traceback
 import types
-from typing import Iterable, List, Optional, Type
+from typing import Any, Generator, List, Optional, Type
 
 
 class _CustomStackSummary(traceback.StackSummary):
@@ -86,7 +86,7 @@ class _CustomTracebackException(traceback.TracebackException):
         self.exc_type = exc_type
         # Capture now to permit freeing resources: only complication is in the
         # unofficial API _format_final_exc_line
-        self._str = traceback._some_str(exc_value)
+        self._str = traceback._some_str(exc_value)  # pylint: disable=no-member
         if exc_type and issubclass(exc_type, SyntaxError):
             # Handle SyntaxError's specially
             self.filename = exc_value.filename
@@ -97,7 +97,7 @@ class _CustomTracebackException(traceback.TracebackException):
         if lookup_lines:
             self._load_lines()
 
-    def format_exception_only(self) -> Iterable[str]:
+    def format_exception_only(self) -> Generator:
         """Format the exception part of the traceback.
 
         :return: An iterable of strings, each ending in a newline. Normally, the generator emits a single
@@ -116,7 +116,7 @@ class _CustomTracebackException(traceback.TracebackException):
             stype = smod + "." + stype
 
         if not issubclass(self.exc_type, SyntaxError):
-            yield traceback._format_final_exc_line(stype, self._str)
+            yield traceback._format_final_exc_line(stype, self._str)  # type: ignore[attr-defined]
             return
 
         # It was a syntax error; show exactly where the problem was found.
@@ -129,7 +129,7 @@ class _CustomTracebackException(traceback.TracebackException):
         if badline is not None:
             yield "    {}\n".format(badline.strip())
             if offset is not None:
-                caretspace = badline.rstrip("\n")
+                caretspace: Any = badline.rstrip("\n")
                 offset = min(len(caretspace), offset) - 1
                 caretspace = caretspace[:offset].lstrip()
                 # non-space whitespace (likes tabs) must be kept for alignment
@@ -149,7 +149,7 @@ def format_exc(limit: Optional[int] = None, chain: bool = True) -> str:
     :return: The formatted exception string
     :rtype: str
     """
-    return "".join(format_exception(*sys.exc_info(), limit=limit, chain=chain))
+    return "".join(format_exception(*sys.exc_info(), limit=limit, chain=chain))  # type: ignore[misc]
 
 
 def format_exception(  # pylint: disable=unused-argument

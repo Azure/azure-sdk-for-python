@@ -61,6 +61,7 @@ USER_AGENT_PREFIX = "azsdk-python-servicebus"
 CONSUMER_IDENTIFIER = VENDOR + b":receiver-name"
 UAMQP_LIBRARY = "uamqp"
 PYAMQP_LIBRARY = "pyamqp"
+OPERATION_TIMEOUT = VENDOR + b":timeout"
 
 MANAGEMENT_PATH_SUFFIX = "/$management"
 
