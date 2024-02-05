@@ -551,7 +551,7 @@
       ]
     },
     {
-      "filename": "sdk/identity/tests/**/*.py",
+      "filename": "sdk/identity/tests/*.py",
       "words": [
         "infile"
       ]
