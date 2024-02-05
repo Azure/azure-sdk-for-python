@@ -105,7 +105,7 @@ def _ticks_since_dot_net_epoch():
     # 100-nanosecond intervals
     shift_time = int(
         (
-            datetime.datetime(1970, 1, 1, 0, 0, 0) - 
+            datetime.datetime(1970, 1, 1, 0, 0, 0) -
             datetime.datetime(1, 1, 1, 0, 0, 0)).total_seconds()
         ) * (10 ** 7)
     # Add shift time to 100-ns intervals since time.time()
