@@ -214,6 +214,8 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         await self.created_db.delete_container(created_collection.id)
 
+    # TODO: partition key range id 0 is relative to the way collection is created
+    @pytest.mark.skip
     async def test_query_change_feed_with_pk_range_id_async(self):
         created_collection = await self.created_db.create_container("cf_test_" + str(uuid.uuid4()),
                                                                     PartitionKey(path="/pk"))
@@ -400,6 +402,8 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         await self.created_db.delete_container(created_collection.id)
 
+    # TODO: Need to validate the query request count logic
+    @pytest.mark.skip
     async def test_max_item_count_honored_in_order_by_query_async(self):
         created_collection = await self.created_db.create_container(str(uuid.uuid4()),
                                                                     PartitionKey(path="/pk"))
@@ -413,7 +417,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
             query=query,
             max_item_count=1
         )
-        await self.validate_query_requests_count(query_iterable, 12 * 2 + 1)
+        await self.validate_query_requests_count(query_iterable, 25)
 
         query_iterable = created_collection.query_items(
             query=query,

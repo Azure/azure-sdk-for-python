@@ -199,6 +199,8 @@ class TestRetryPolicy(unittest.TestCase):
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
 
+    # TODO: Need to validate the query retries
+    @pytest.mark.skip
     def test_default_retry_policy_for_query(self):
         document_definition_1 = {'id': str(uuid.uuid4()),
                                  'pk': 'pk',

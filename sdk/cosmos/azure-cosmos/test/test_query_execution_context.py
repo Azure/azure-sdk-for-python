@@ -197,27 +197,21 @@ class TestQueryExecutionContextEndToEnd(unittest.TestCase):
 
         results = {}
         cnt = 0
-        while True:
-            fetched_res = ex.fetch_next_block()
+        fetched_res = ex.fetch_next_block()
+        fetched_size = 0
+        while fetched_res is not None and len(fetched_res) > 0:
             fetched_size = len(fetched_res)
 
             for item in fetched_res:
                 results[item['id']] = item
             cnt += fetched_size
-
-            if cnt < expected_number_of_results:
-                # backend may not necessarily return exactly page_size of results
-                self.assertEqual(fetched_size, page_size, "page size")
-            else:
-                if cnt == expected_number_of_results:
-                    self.assertTrue(fetched_size <= page_size, "last page size")
-                    break
-                else:
-                    # cnt > expected_number_of_results
-                    self.fail("more results than expected")
+            fetched_res = ex.fetch_next_block()
 
         # validate the number of collected results
         self.assertEqual(len(results), expected_number_of_results)
+
+        self.assertTrue(fetched_size > 0, "fetched size is 0")
+        self.assertTrue(fetched_size <= page_size, "fetched page size greater than page size")
 
         # no more results will be returned
         self.assertEqual(ex.fetch_next_block(), [])

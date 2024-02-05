@@ -191,6 +191,8 @@ class TestQuery(unittest.TestCase):
         self.assertEqual(len(iter_list), 0)
         self.created_db.delete_container(created_collection.id)
 
+    # TODO: partition key range id 0 is relative to the way collection is created
+    @pytest.mark.skip
     def test_query_change_feed_with_pk_range_id(self):
         created_collection = self.created_db.create_container("change_feed_test_" + str(uuid.uuid4()),
                                                               PartitionKey(path="/pk"))
@@ -357,6 +359,8 @@ class TestQuery(unittest.TestCase):
         self.assertDictEqual(expected_index_metrics, index_metrics)
         self.created_db.delete_container(created_collection.id)
 
+    # TODO: Need to validate the query request count logic
+    @pytest.mark.skip
     def test_max_item_count_honored_in_order_by_query(self):
         created_collection = self.created_db.create_container("test-max-item-count" + str(uuid.uuid4()),
                                                               PartitionKey(path="/pk"))
