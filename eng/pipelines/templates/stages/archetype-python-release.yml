@@ -9,7 +9,6 @@ parameters:
   TargetDocRepoOwner: ''
   TargetDocRepoName: ''
   PackageSourceOverride: "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
-  DocValidationImageId: "azuresdkimages.azurecr.io/pyrefautocr:latest"
 
 stages:
   - ${{if and(in(variables['Build.Reason'], 'Manual', ''), eq(variables['System.TeamProject'], 'internal'))}}:
@@ -211,7 +210,6 @@ stages:
                                 - docs-ref-services/
                                 - metadata/
                               PackageSourceOverride: ${{parameters.PackageSourceOverride}}
-                              DocValidationImageId: ${{parameters.DocValidationImageId}}
           - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
             - deployment: UpdatePackageVersion
               displayName: "Update Package Version"
@@ -324,6 +322,5 @@ stages:
               - docs-ref-services/
               - metadata/
             PackageSourceOverride: ${{parameters.PackageSourceOverride}}
-            DocValidationImageId: ${{parameters.DocValidationImageId}}
 
         - template: /eng/common/pipelines/templates/steps/docsms-ensure-validation.yml
