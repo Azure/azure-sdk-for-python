@@ -12,22 +12,17 @@ jobs:
       DocRepoLocation: $(Pipeline.Workspace)/docs
       DocRepoOwner: MicrosoftDocs
       DocRepoName: azure-docs-sdk-python
-      DocValidationImageId: azuresdkimages.azurecr.io/pyrefautocr:latest
     steps:
-      # Docs CI uses Python 3.9.13
+      # py2docfx requires python >= 3.11
       - task: UsePythonVersion@0
-        displayName: 'Use Python 3.9.13'
+        displayName: 'Use Python 3.11'
         inputs:
-          versionSpec: '3.9.13'
+          versionSpec: '3.11'
 
       # Docs CI upgrades pip, wheel, and setuptools
       - pwsh: python -m pip install --upgrade pip wheel setuptools
         displayName: Update python tools for package verification
 
-      # Pull and build the docker image.
-      - template: /eng/common/pipelines/templates/steps/docker-pull-image.yml
-        parameters:
-          ImageId: "$(DocValidationImageId)"
       # Sync docs repo onboarding files/folders
       - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
         parameters:
@@ -41,6 +36,8 @@ jobs:
             - Name: $(DocRepoOwner)/$(DocRepoName)
               WorkingDirectory: $(DocRepoLocation)
 
+      - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
+
       - task: Powershell@2
         inputs:
           pwsh: true
@@ -53,7 +50,7 @@ jobs:
         inputs:
           pwsh: true
           filePath: eng/common/scripts/Update-DocsMsPackages.ps1
-          arguments: -DocRepoLocation $(DocRepoLocation) -ImageId '$(DocValidationImageId)'
+          arguments: -DocRepoLocation $(DocRepoLocation)
         displayName: Update Docs Onboarding for main branch
         condition: and(succeeded(), or(eq(variables['Build.Reason'], 'Schedule'), eq(variables['Force.MainUpdate'], 'true')))
 
@@ -92,7 +89,7 @@ jobs:
         parameters:
           BaseRepoBranch: $(DefaultBranch)
           BaseRepoOwner: $(DocRepoOwner)
-          CommitMsg: "Update docs CI configuration"
+          CommitMsg: "Update docs CI configuration Build: $(System.CollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)"
           TargetRepoName: $(DocRepoName)
           TargetRepoOwner: $(DocRepoOwner)
           WorkingDirectory: $(DocRepoLocation)

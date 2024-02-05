@@ -9,7 +9,6 @@ parameters:
   TargetDocRepoOwner: ''
   TargetDocRepoName: ''
   PackageSourceOverride: "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
-  DocValidationImageId: "azuresdkimages.azurecr.io/pyrefautocr:latest"
 
 stages:
   - ${{if and(in(variables['Build.Reason'], 'Manual', ''), eq(variables['System.TeamProject'], 'internal'))}}:
@@ -207,6 +206,15 @@ stages:
                                 - sdk/**/*.md
                                 - .github/CODEOWNERS
                           - download: current
+
+                          # py2docfx requires python >= 3.11
+                          - task: UsePythonVersion@0
+                            displayName: 'Use Python 3.11'
+                            inputs:
+                              versionSpec: '3.11'
+
+                          - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
+
                           - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
                             parameters:
                               PackageInfoLocations:
@@ -219,7 +227,7 @@ stages:
                                 - docs-ref-services/
                                 - metadata/
                               PackageSourceOverride: ${{parameters.PackageSourceOverride}}
-                              DocValidationImageId: ${{parameters.DocValidationImageId}}
+
           - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
             - deployment: UpdatePackageVersion
               displayName: "Update Package Version"
@@ -320,21 +328,28 @@ stages:
               Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/
             displayName: Show visible artifacts
 
-          - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
-            parameters:
-              PackageInfoLocations:
-                - ${{ each artifact in parameters.Artifacts }}:
-                  - ${{if ne(artifact.skipPublishDocMs, 'true')}}:
-                    - $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/${{artifact.name}}.json
-              WorkingDirectory: $(System.DefaultWorkingDirectory)
-              TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
-              TargetDocRepoName: ${{parameters.TargetDocRepoName}}
-              Language: 'python'
-              DailyDocsBuild: true
-              SparseCheckoutPaths:
-                - docs-ref-services/
-                - metadata/
-              PackageSourceOverride: ${{parameters.PackageSourceOverride}}
-              DocValidationImageId: ${{parameters.DocValidationImageId}}
+        # py2docfx requires python >= 3.11
+        - task: UsePythonVersion@0
+          displayName: 'Use Python 3.11'
+          inputs:
+            versionSpec: '3.11'
+
+        - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
+
+        - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
+          parameters:
+            PackageInfoLocations:
+              - ${{ each artifact in parameters.Artifacts }}:
+                - ${{if ne(artifact.skipPublishDocMs, 'true')}}:
+                  - $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/${{artifact.name}}.json
+            WorkingDirectory: $(System.DefaultWorkingDirectory)
+            TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
+            TargetDocRepoName: ${{parameters.TargetDocRepoName}}
+            Language: 'python'
+            DailyDocsBuild: true
+            SparseCheckoutPaths:
+              - docs-ref-services/
+              - metadata/
+            PackageSourceOverride: ${{parameters.PackageSourceOverride}}
 
           - template: /eng/common/pipelines/templates/steps/docsms-ensure-validation.yml
