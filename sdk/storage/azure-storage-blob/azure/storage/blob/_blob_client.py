@@ -175,15 +175,16 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         self.container_name = container_name
         self.blob_name = blob_name
 
-        if snapshot is None:
-            self.snapshot = snapshot or path_snapshot
-        elif hasattr(snapshot, 'snapshot'):
-            self.snapshot = snapshot.snapshot
-        elif isinstance(snapshot, dict):
-            if 'snapshot' in snapshot:
-                self.snapshot = snapshot['snapshot']
+        if snapshot is not None:
+            if hasattr(snapshot, 'snapshot'):
+                self.snapshot = snapshot.snapshot
+            elif isinstance(snapshot, dict):
+                if 'snapshot' in snapshot:
+                    self.snapshot = snapshot['snapshot']
+            else:
+                self.snapshot = snapshot
         else:
-            self.snapshot = snapshot or path_snapshot
+            self.snapshot = path_snapshot
         self.version_id = kwargs.pop('version_id', None)
 
         # This parameter is used for the hierarchy traversal. Give precedence to credential.

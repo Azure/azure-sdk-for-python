@@ -338,9 +338,8 @@ def _download_blob_options(
     :returns: A dictionary containing the download blob options.
     :rtype: Dict[str, Any]
     """
-    if length is not None:
-        if offset is None:
-            raise ValueError("Offset must be provided if length is provided.")
+    if length is not None and offset is None:
+        raise ValueError("Offset must be provided if length is provided.")
         length = offset + length - 1  # Service actually uses an end-range inclusive index
 
     validate_content = kwargs.pop('validate_content', False)
@@ -1003,16 +1002,14 @@ def _commit_block_list_options(
     """
     block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
     for block in block_list:
-        if isinstance(block, BlobBlock) and isinstance(block.state, Enum):
-            if block.state.value == 'committed' and block_lookup.committed is not None:
-                block_lookup.committed.append(encode_base64(str(block.id)))
-            elif block.state.value == 'uncommitted' and block_lookup.uncommitted is not None:
-                block_lookup.uncommitted.append(encode_base64(str(block.id)))
+        if isinstance(block, BlobBlock):
+            if block.state.value == 'committed':
+                block_lookup.committed.append(encode_base64(str(block.id)))  # type: ignore [union-attr]
+            elif block.state.value == 'uncommitted':
+                block_lookup.uncommitted.append(encode_base64(str(block.id)))  # type: ignore [union-attr]
             elif block_lookup.latest is not None:
                 block_lookup.latest.append(encode_base64(str(block.id)))
         else:
-            if block_lookup.latest is None:
-                raise ValueError("block_lookup.latest was None or malformed.")
             block_lookup.latest.append(encode_base64(str(block)))
     headers = kwargs.pop('headers', {})
     headers.update(add_metadata_headers(metadata))
