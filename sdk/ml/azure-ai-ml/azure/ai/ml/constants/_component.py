@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+from typing import Dict
+
 DO_WHILE_MAX_ITERATION = 1000
 
 
@@ -106,7 +108,7 @@ class IOConstants:
         ComponentParameterTypes.NUMBER: "Number",
         ComponentParameterTypes.BOOLEAN: "Boolean",
     }
-    PARAM_PARSERS = {
+    PARAM_PARSERS: Dict = {
         ComponentParameterTypes.INTEGER: lambda v: int(float(v)),  # parse case like 10.0 -> 10
         ComponentParameterTypes.BOOLEAN: lambda v: str(v).lower() == "true",
         ComponentParameterTypes.NUMBER: float,

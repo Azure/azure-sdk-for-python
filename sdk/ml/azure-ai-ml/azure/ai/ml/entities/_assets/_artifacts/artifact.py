@@ -4,7 +4,7 @@
 from abc import abstractmethod
 from os import PathLike
 from pathlib import Path, PurePosixPath
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 from urllib.parse import urljoin
 
 from azure.ai.ml._utils.utils import is_mlflow_uri, is_url
@@ -33,13 +33,17 @@ class ArtifactStorageInfo:
         self.indicator_file = indicator_file
 
     @property
-    def full_storage_path(self) -> str:
+    def full_storage_path(self) -> Optional[str]:
+        if self.storage_account_url is None:
+            return f"{self.container_name}/{self.relative_path}"
         return urljoin(self.storage_account_url, f"{self.container_name}/{self.relative_path}")
 
     @property
-    def subdir_path(self) -> str:
+    def subdir_path(self) -> Optional[str]:
         if self.is_file:
             path = PurePosixPath(self.relative_path).parent
+            if self.storage_account_url is None:
+                return f"{self.container_name}/{path}"
             return urljoin(self.storage_account_url, f"{self.container_name}/{path}")
         return self.full_storage_path
 
@@ -74,7 +78,7 @@ class Artifact(Asset):
         properties: Optional[Dict] = None,
         path: Optional[Union[str, PathLike]] = None,
         datastore: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         super().__init__(
             name=name,
@@ -102,7 +106,7 @@ class Artifact(Asset):
     def _to_dict(self) -> Dict:
         pass
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         return (
             type(self) == type(other)  # pylint: disable = unidiomatic-typecheck
             and self.name == other.name
@@ -115,7 +119,7 @@ class Artifact(Asset):
             and self._is_anonymous == other._is_anonymous
         )
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)
 
     @abstractmethod

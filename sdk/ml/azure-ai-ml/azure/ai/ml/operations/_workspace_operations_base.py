@@ -72,7 +72,7 @@ class WorkspaceOperationsBase(ABC):
         self._init_kwargs = kwargs
         self.containerRegistry = "none"
 
-    def get(self, workspace_name: Optional[str] = None, **kwargs: Any) -> Workspace:
+    def get(self, workspace_name: Optional[str] = None, **kwargs: Any) -> Optional[Workspace]:
         """Get a Workspace by name.
 
         :param workspace_name: Name of the workspace.
@@ -120,9 +120,10 @@ class WorkspaceOperationsBase(ABC):
 
         # idempotent behavior
         if existing_workspace:
-            if workspace.tags.get("createdByToolkit") is not None:
+            if workspace.tags is not None and workspace.tags.get("createdByToolkit") is not None:
                 workspace.tags.pop("createdByToolkit")
-            existing_workspace.tags.update(workspace.tags)
+            if existing_workspace.tags is not None:
+                existing_workspace.tags.update(workspace.tags)  # type: ignore
             workspace.tags = existing_workspace.tags
             # TODO do we want projects to do this?
             if workspace._kind != PROJECT_WORKSPACE_KIND:
@@ -163,9 +164,6 @@ class WorkspaceOperationsBase(ABC):
                     workspace.storage_account,
                     workspace.container_registry,
                     workspace.key_vault,
-                    workspace.public_network_access,
-                    workspace.managed_network,
-                    workspace.customer_managed_key,
                 ]
             ):
                 msg = (
@@ -194,7 +192,7 @@ class WorkspaceOperationsBase(ABC):
             wait=False,
         )
 
-        def callback() -> Workspace:
+        def callback() -> Optional[Workspace]:
             """Callback to be called after completion
 
             :return: Result of calling appropriate callback.
@@ -248,7 +246,7 @@ class WorkspaceOperationsBase(ABC):
         identity = kwargs.get("identity", workspace.identity)
         workspace_name = kwargs.get("workspace_name", workspace.name)
         resource_group = kwargs.get("resource_group") or workspace.resource_group or self._resource_group_name
-        existing_workspace = self.get(workspace_name, **kwargs)
+        existing_workspace: Any = self.get(workspace_name, **kwargs)
         if identity:
             identity = identity._to_workspace_rest_object()
             rest_user_assigned_identities = identity.user_assigned_identities
@@ -438,7 +436,7 @@ class WorkspaceOperationsBase(ABC):
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
         """
-        workspace = self.get(name, **kwargs)
+        workspace: Any = self.get(name, **kwargs)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
         # prevent dependent resource delete for lean workspace, only delete appinsight and associated log analytics
@@ -730,10 +728,12 @@ class WorkspaceOperationsBase(ABC):
 
         # Hub related params
         if workspace._kind and workspace._kind.lower() == WORKSPACE_HUB_KIND:
-            if workspace.workspace_hub_config:
-                _set_obj_val(param["workspace_hub_config"], workspace.workspace_hub_config._to_rest_object())
-            if workspace.existing_workspaces:
-                _set_val(param["existing_workspaces"], workspace.existing_workspaces)
+            if workspace.workspace_hub_config:  # type: ignore
+                _set_obj_val(
+                    param["workspace_hub_config"], workspace.workspace_hub_config._to_rest_object()  # type: ignore
+                )
+            if workspace.existing_workspaces:  # type: ignore
+                _set_val(param["existing_workspaces"], workspace.existing_workspaces)  # type: ignore
             # A user-supplied resource ID (either AOAI or AI Services or null)
             # endpoint_kind differentiates between a 'Bring a legacy AOAI resource hub' and 'any other kind of hub'
             # The former doesn't create non-AOAI endpoints, and is set below if the user provided a byo AOAI
@@ -836,7 +836,7 @@ class WorkspaceOperationsBase(ABC):
         return workspace_name
 
 
-def _set_val(dict: dict, val: str) -> None:
+def _set_val(dict: dict, val: Optional[str]) -> None:
     """Sets the value of a reference in parameters dict to a certain value.
 
     :param dict: Dict for a certain parameter.
@@ -865,7 +865,7 @@ def _set_obj_val(dict: dict, val: Any) -> None:
     dict["value"] = deepcopy(json)
 
 
-def _generate_key_vault(name: str, resources_being_deployed: dict) -> str:
+def _generate_key_vault(name: Optional[str], resources_being_deployed: dict) -> str:
     """Generates a name for a key vault resource to be created with workspace based on workspace name,
     sets name and type in resources_being_deployed.
 
@@ -884,7 +884,7 @@ def _generate_key_vault(name: str, resources_being_deployed: dict) -> str:
     return str(key_vault)
 
 
-def _generate_storage(name: str, resources_being_deployed: dict) -> str:
+def _generate_storage(name: Optional[str], resources_being_deployed: dict) -> str:
     """Generates a name for a storage account resource to be created with workspace based on workspace name,
     sets name and type in resources_being_deployed.
 
@@ -900,7 +900,7 @@ def _generate_storage(name: str, resources_being_deployed: dict) -> str:
     return str(storage)
 
 
-def _generate_storage_container(name: str, resources_being_deployed: dict) -> str:
+def _generate_storage_container(name: Optional[str], resources_being_deployed: dict) -> str:
     """Generates a name for a storage container resource to be created with workspace based on workspace name,
     sets name and type in resources_being_deployed.
 
@@ -916,7 +916,7 @@ def _generate_storage_container(name: str, resources_being_deployed: dict) -> st
     return str(storage_container)
 
 
-def _generate_log_analytics(name: str, resources_being_deployed: dict) -> str:
+def _generate_log_analytics(name: Optional[str], resources_being_deployed: dict) -> str:
     """Generates a name for a log analytics resource to be created with workspace based on workspace name,
     sets name and type in resources_being_deployed.
 
@@ -935,7 +935,7 @@ def _generate_log_analytics(name: str, resources_being_deployed: dict) -> str:
     return str(log_analytics)
 
 
-def _generate_app_insights(name: str, resources_being_deployed: dict) -> str:
+def _generate_app_insights(name: Optional[str], resources_being_deployed: dict) -> str:
     """Generates a name for an application insights resource to be created with workspace based on workspace name,
     sets name and type in resources_being_deployed.
 
@@ -956,7 +956,7 @@ def _generate_app_insights(name: str, resources_being_deployed: dict) -> str:
     return str(app_insights)
 
 
-def _generate_container_registry(name: str, resources_being_deployed: dict) -> str:
+def _generate_container_registry(name: Optional[str], resources_being_deployed: dict) -> str:
     """Generates a name for a container registry resource to be created with workspace based on workspace name,
     sets name and type in resources_being_deployed.
 
@@ -996,13 +996,13 @@ def _generate_materialization_identity(
     import uuid
 
     namespace = ""
-    namespace_raw = f"{subscription_id[:12]}_{workspace.resource_group[:12]}_{workspace.location}"
+    namespace_raw = f"{subscription_id[:12]}_{str(workspace.resource_group)[:12]}_{workspace.location}"
     for char in namespace_raw.lower():
         if char.isalpha() or char.isdigit():
             namespace = namespace + char
     namespace = namespace.encode("utf-8").hex()
     uuid_namespace = uuid.UUID(namespace[:32].ljust(32, "0"))
-    materialization_identity = f"materialization-uai-" f"{uuid.uuid3(uuid_namespace, workspace.name.lower()).hex}"
+    materialization_identity = f"materialization-uai-" f"{uuid.uuid3(uuid_namespace, str(workspace.name).lower()).hex}"
     resources_being_deployed[materialization_identity] = (
         ArmConstants.USER_ASSIGNED_IDENTITIES,
         None,

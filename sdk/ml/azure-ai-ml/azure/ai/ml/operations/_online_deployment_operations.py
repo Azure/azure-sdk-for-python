@@ -189,7 +189,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                     deployment = package_deployment(deployment, self._all_operations.all_operations["models"])
                     module_logger.info("\nStarting deployment")
 
-                deployment_rest = deployment._to_rest_object(location=location)
+                deployment_rest = deployment._to_rest_object(location=location)  # type: ignore
 
                 poller = self._online_deployment.begin_create_or_update(
                     resource_group_name=self._resource_group_name,
@@ -303,7 +303,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 endpoint_name=endpoint_name, deployment_name=name, lines=lines
             )
         if container_type:
-            container_type = self._validate_deployment_log_container_type(container_type)
+            container_type = self._validate_deployment_log_container_type(container_type)  # type: ignore
         log_request = DeploymentLogsRequest(container_type=container_type, tail=lines)
         return str(
             self._online_deployment.get_logs(
@@ -338,9 +338,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             **self._init_kwargs,
         )
 
-    def _validate_deployment_log_container_type(
-        self, container_type: EndpointDeploymentLogContainerType
-    ) -> EndpointDeploymentLogContainerType:
+    def _validate_deployment_log_container_type(self, container_type: EndpointDeploymentLogContainerType) -> str:
         if container_type == EndpointDeploymentLogContainerType.INFERENCE_SERVER:
             return EndpointDeploymentLogContainerType.INFERENCE_SERVER_REST
 

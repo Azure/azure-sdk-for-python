@@ -1,5 +1,79 @@
 # Release History
 
+## 10.0.0b2 (2024-01-26)
+
+### Features Added
+
+  - Added operation CassandraClustersOperations.begin_invoke_command_async
+  - Added operation CassandraClustersOperations.get_command_async
+  - Added operation CassandraClustersOperations.list_command
+  - Added operation group ThroughputPoolAccountOperations
+  - Added operation group ThroughputPoolAccountsOperations
+  - Added operation group ThroughputPoolOperations
+  - Added operation group ThroughputPoolsOperations
+  - Model BackupResource has a new parameter backup_expiry_timestamp
+  - Model BackupResource has a new parameter backup_id
+  - Model BackupResource has a new parameter backup_start_timestamp
+  - Model BackupResource has a new parameter backup_state
+  - Model BackupResource has a new parameter backup_stop_timestamp
+  - Model CassandraClusterDataCenterNodeItem has a new parameter is_latest_model
+  - Model ClusterResourceProperties has a new parameter auto_replicate
+  - Model ClusterResourceProperties has a new parameter azure_connection_method
+  - Model ClusterResourceProperties has a new parameter backup_schedules
+  - Model ClusterResourceProperties has a new parameter cluster_type
+  - Model ClusterResourceProperties has a new parameter extensions
+  - Model ClusterResourceProperties has a new parameter external_data_centers
+  - Model ClusterResourceProperties has a new parameter private_link_resource_id
+  - Model ClusterResourceProperties has a new parameter scheduled_event_strategy
+  - Model CommandPostBody has a new parameter read_write
+  - Model CosmosCassandraDataTransferDataSourceSink has a new parameter remote_account_name
+  - Model CosmosMongoDataTransferDataSourceSink has a new parameter remote_account_name
+  - Model CosmosSqlDataTransferDataSourceSink has a new parameter remote_account_name
+  - Model DataCenterResourceProperties has a new parameter private_endpoint_ip_address
+  - Model DataTransferJobGetResults has a new parameter duration
+  - Model DataTransferJobGetResults has a new parameter mode
+  - Model DataTransferJobProperties has a new parameter duration
+  - Model DataTransferJobProperties has a new parameter mode
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter customer_managed_key_status
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter default_priority_level
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter enable_priority_based_execution
+  - Model DatabaseAccountGetResults has a new parameter customer_managed_key_status
+  - Model DatabaseAccountGetResults has a new parameter default_priority_level
+  - Model DatabaseAccountGetResults has a new parameter enable_priority_based_execution
+  - Model DatabaseAccountUpdateParameters has a new parameter customer_managed_key_status
+  - Model DatabaseAccountUpdateParameters has a new parameter default_priority_level
+  - Model DatabaseAccountUpdateParameters has a new parameter enable_priority_based_execution
+  - Model RestorableGremlinDatabasePropertiesResource has a new parameter can_undelete
+  - Model RestorableGremlinDatabasePropertiesResource has a new parameter can_undelete_reason
+  - Model RestorableGremlinGraphPropertiesResource has a new parameter can_undelete
+  - Model RestorableGremlinGraphPropertiesResource has a new parameter can_undelete_reason
+  - Model RestorableMongodbCollectionPropertiesResource has a new parameter can_undelete
+  - Model RestorableMongodbCollectionPropertiesResource has a new parameter can_undelete_reason
+  - Model RestorableMongodbDatabasePropertiesResource has a new parameter can_undelete
+  - Model RestorableMongodbDatabasePropertiesResource has a new parameter can_undelete_reason
+  - Model RestorableSqlContainerPropertiesResource has a new parameter can_undelete
+  - Model RestorableSqlContainerPropertiesResource has a new parameter can_undelete_reason
+  - Model RestorableSqlContainerPropertiesResourceContainer has a new parameter computed_properties
+  - Model RestorableSqlDatabasePropertiesResource has a new parameter can_undelete
+  - Model RestorableSqlDatabasePropertiesResource has a new parameter can_undelete_reason
+  - Model RestorableTablePropertiesResource has a new parameter can_undelete
+  - Model RestorableTablePropertiesResource has a new parameter can_undelete_reason
+  - Model SqlContainerGetPropertiesResource has a new parameter computed_properties
+  - Model SqlContainerResource has a new parameter computed_properties
+  - Model ThroughputSettingsGetPropertiesResource has a new parameter instant_maximum_throughput
+  - Model ThroughputSettingsGetPropertiesResource has a new parameter soft_allowed_maximum_throughput
+  - Model ThroughputSettingsResource has a new parameter instant_maximum_throughput
+  - Model ThroughputSettingsResource has a new parameter soft_allowed_maximum_throughput
+  - Operation CassandraClustersOperations.begin_deallocate has a new optional parameter x_ms_force_deallocate
+
+### Breaking Changes
+
+  - Model BackupResource no longer has parameter id
+  - Model BackupResource no longer has parameter name
+  - Model BackupResource no longer has parameter properties
+  - Model BackupResource no longer has parameter type
+  - Model CommandPostBody no longer has parameter readwrite
+
 ## 9.4.0 (2023-12-19)
 
 ### Features Added

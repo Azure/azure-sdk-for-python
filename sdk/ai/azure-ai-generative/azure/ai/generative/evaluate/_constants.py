@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+from typing import Dict, Union
+
 QA = "qa"
 CHAT = "chat"
 
@@ -9,12 +11,7 @@ SUPPORTED_TASK_TYPE = [QA, CHAT]
 
 SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING = {
     QA: "qa",
-    CHAT: "rag-evaluation",
-}
-
-TYPE_TO_KWARGS_MAPPING = {
-    "qa": ["questions", "contexts", "y_pred", "y_test"],
-    "rag-evaluation": ["y_pred"]
+    CHAT: "chat",
 }
 
 
@@ -37,6 +34,9 @@ class EvaluationMetrics:
     RETRIEVAL_SCORE = "retrieval_score"
     GROUNDING_SCORE = "grounding_score"
     GENERATION_SCORE = "generation_score"
+    HATE_FAIRNESS = "hate_fairness"
+    VIOLENCE = "violence"
+    SELF_HARM = "self_harm"
 
 
 class QaMetrics:
@@ -54,7 +54,11 @@ class QaMetrics:
         EvaluationMetrics.F1_SCORE,
         EvaluationMetrics.EXACT_MATCH,
         EvaluationMetrics.ADA_SIMILARITY,
-        EvaluationMetrics.BERTSCORE
+        EvaluationMetrics.BERTSCORE,
+        EvaluationMetrics.BERTSCORE,
+        EvaluationMetrics.HATE_FAIRNESS,
+        EvaluationMetrics.VIOLENCE,
+        EvaluationMetrics.SELF_HARM
     ]
 
 
@@ -67,13 +71,16 @@ class ChatMetrics:
     SUPPORTED_LIST = [
         EvaluationMetrics.GPT_GROUNDEDNESS,
         EvaluationMetrics.GPT_RELEVANCE,
-        EvaluationMetrics.GPT_RETRIEVAL_SCORE
+        EvaluationMetrics.GPT_RETRIEVAL_SCORE,
+        EvaluationMetrics.HATE_FAIRNESS,
+        EvaluationMetrics.VIOLENCE,
+        EvaluationMetrics.SELF_HARM
     ]
 
 
-TASK_TYPE_TO_METRICS_MAPPING = {
-    "qa": QaMetrics,
-    "rag-evaluation": ChatMetrics
+TASK_TYPE_TO_METRICS_MAPPING: Dict[str, Union[QaMetrics, ChatMetrics]] = {
+    "qa": QaMetrics(),
+    "rag-evaluation": ChatMetrics()
 }
 
 SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING = {
