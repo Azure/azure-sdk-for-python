@@ -38,14 +38,20 @@ def main(args, logger, activity_logger):
             if hasattr(activity_logger, "activity_info"):
                 activity_logger.activity_info["completionStatus"] = "Failure"
             from azureml.dataprep.fuse.dprepfuse import MountOptions, rslex_uri_volume_mount
-            mnt_options = MountOptions(
-                default_permission=0o555, allow_other=False, read_only=True)
+
+            mnt_options = MountOptions(default_permission=0o555, allow_other=False, read_only=True)
             try:
-                with rslex_uri_volume_mount(args.embeddings_container, f"{os.getcwd()}/embeddings_container", options=mnt_options) as mount_context:
-                    embeddings_container = EmbeddingsContainer.load_latest_snapshot(mount_context.mount_point, activity_logger=activity_logger)
+                with rslex_uri_volume_mount(
+                    args.embeddings_container, f"{os.getcwd()}/embeddings_container", options=mnt_options
+                ) as mount_context:
+                    embeddings_container = EmbeddingsContainer.load_latest_snapshot(
+                        mount_context.mount_point, activity_logger=activity_logger
+                    )
             except Exception as e:
                 activity_logger.warn("Failed to load from embeddings_container. Creating new Embeddings.")
-                logger.warn(f"Failed to load previous embeddings from mount with {e}, proceeding to create new embeddings.")
+                logger.warn(
+                    f"Failed to load previous embeddings from mount with {e}, proceeding to create new embeddings."
+                )
 
     connection_args = {}
     connection_id = os.environ.get("AZUREML_WORKSPACE_CONNECTION_ID_AOAI")
@@ -60,10 +66,14 @@ def main(args, logger, activity_logger):
                 "subscription": ws.subscription_id if ws is not None else "",
                 "resource_group": ws.resource_group if ws is not None else "",
                 "workspace": ws.name if ws is not None else "",
-                "key": "OPENAI-API-KEY"
+                "key": "OPENAI-API-KEY",
             }
 
-    embeddings_container = embeddings_container if embeddings_container is not None else EmbeddingsContainer.from_uri(args.embeddings_model, **connection_args)
+    embeddings_container = (
+        embeddings_container
+        if embeddings_container is not None
+        else EmbeddingsContainer.from_uri(args.embeddings_model, **connection_args)
+    )
 
 
 def main_wrapper(args, logger):
@@ -72,7 +82,9 @@ def main_wrapper(args, logger):
         try:
             main(args, logger, activity_logger)
         except Exception:
-            activity_logger.error(f"embed_prs failed with exception: {traceback.format_exc()}")  # activity_logger doesn't log traceback
+            activity_logger.error(
+                f"embed_prs failed with exception: {traceback.format_exc()}"
+            )  # activity_logger doesn't log traceback
             raise
 
 
@@ -112,7 +124,9 @@ def _run_internal(mini_batch, output_data, embeddings):
 
     # read chunks
     pre_embed = time.time()
-    embeddings = embeddings.embed_and_create_new_instance(read_chunks_into_documents((pathlib.Path(p) for p in mini_batch), chunk_format))
+    embeddings = embeddings.embed_and_create_new_instance(
+        read_chunks_into_documents((pathlib.Path(p) for p in mini_batch), chunk_format)
+    )
     post_embed = time.time()
     logger.info(f"Embedding took {post_embed - pre_embed} seconds")
 

@@ -5,7 +5,6 @@ import abc
 
 
 class Metric(metaclass=abc.ABCMeta):
-
     def __init__(self, *, name, description, **kwargs):
         self.name = name
         self.description = description
@@ -105,10 +104,7 @@ class PromptMetric(Metric):
 
         template_variables = meta.find_undeclared_variables(template)
 
-        metric = PromptMetric(
-            name=name,
-            prompt=template_content
-        )
+        metric = PromptMetric(name=name, prompt=template_content)
 
         metric._template_variable = template_variables
         return metric

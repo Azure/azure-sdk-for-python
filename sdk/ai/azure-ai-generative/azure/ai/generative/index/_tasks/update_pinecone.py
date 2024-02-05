@@ -63,8 +63,10 @@ def create_pinecone_index_sdk(pinecone_config: dict, api_key: str, embeddings: E
     pinecone.init(api_key=api_key, environment=pinecone_config["environment"])
 
     if pinecone_config["index_name"] not in pinecone.list_indexes():
-        logger.info(f"Creating {pinecone_config['index_name']} Pinecone index with dimensions {embeddings.get_embedding_dimensions()}")
-        pinecone.create_index(pinecone_config['index_name'], embeddings.get_embedding_dimensions())
+        logger.info(
+            f"Creating {pinecone_config['index_name']} Pinecone index with dimensions {embeddings.get_embedding_dimensions()}"
+        )
+        pinecone.create_index(pinecone_config["index_name"], embeddings.get_embedding_dimensions())
         logger.info(f"Created {pinecone_config['index_name']} Pinecone index")
     else:
         logger.info(f"Pinecone index {pinecone_config['index_name']} already exists")
@@ -94,7 +96,9 @@ def create_index_from_raw_embeddings(
         credential (TokenCredential): Azure credential to use for authentication.
         verbosity (int): Defaults to 1, which will log aggregate information about documents and IDs of deleted documents. 2 will log all document_ids as they are processed.
     """
-    with track_activity(logger, "create_index_from_raw_embeddings", custom_dimensions={"num_documents": len(emb._document_embeddings)}) as activity_logger:
+    with track_activity(
+        logger, "create_index_from_raw_embeddings", custom_dimensions={"num_documents": len(emb._document_embeddings)}
+    ) as activity_logger:
         logger.info("Updating Pinecone index")
 
         if MLIndex.INDEX_FIELD_MAPPING_KEY not in pinecone_config:
@@ -110,7 +114,9 @@ def create_index_from_raw_embeddings(
 
         connection_credential = get_connection_credential(connection, credential=credential)
         if not isinstance(connection_credential, AzureKeyCredential):
-            raise ValueError(f"Expected credential to Pinecone index to be an AzureKeyCredential, instead got: {type(connection_credential)}")
+            raise ValueError(
+                f"Expected credential to Pinecone index to be an AzureKeyCredential, instead got: {type(connection_credential)}"
+            )
 
         create_pinecone_index_sdk(pinecone_config, connection_credential.key, embeddings=emb)
 
@@ -126,16 +132,25 @@ def create_index_from_raw_embeddings(
             else:
                 response_code = results["code"] if "code" in results else ""
                 response_msg = results["message"] if "message" in results else ""
-                logger.error(f"Deleting documents failed with code {response_code} and message '{response_msg}'", extra={"properties": {"code": response_code, "message": response_msg}})
+                logger.error(
+                    f"Deleting documents failed with code {response_code} and message '{response_msg}'",
+                    extra={"properties": {"code": response_code, "message": response_msg}},
+                )
                 return False
 
         def process_upsert_results(results, batch_size, start_time):
-            if results['upserted_count'] == batch_size:
+            if results["upserted_count"] == batch_size:
                 duration = time.time() - start_time
-                activity_logger.info("Upserting documents succeeded", extra={"properties": {"num_docs_upserted": batch_size, "duration": duration}})
+                activity_logger.info(
+                    "Upserting documents succeeded",
+                    extra={"properties": {"num_docs_upserted": batch_size, "duration": duration}},
+                )
                 return True
             else:
-                logger.error("Failed to upsert all documents", extra={"properties": {"num_docs_upserted": results['upserted_count'], "duration": duration}})
+                logger.error(
+                    "Failed to upsert all documents",
+                    extra={"properties": {"num_docs_upserted": results["upserted_count"], "duration": duration}},
+                )
                 return False
 
         # Delete removed documents
@@ -147,7 +162,9 @@ def create_index_from_raw_embeddings(
                 if verbosity > 1:
                     logger.info(f"Marked document for deletion: {doc_id}")
 
-        logger.info(f"Total {len(deleted_ids)} documents from sources marked for deletion, adding individual documents marked for deletion")
+        logger.info(
+            f"Total {len(deleted_ids)} documents from sources marked for deletion, adding individual documents marked for deletion"
+        )
         for doc_id in emb._deleted_documents:
             deleted_ids.append(base64.urlsafe_b64encode(doc_id.encode("utf-8")).decode("utf-8"))
             if verbosity > 1:
@@ -182,10 +199,12 @@ def create_index_from_raw_embeddings(
                 doc_prefix = doc_id.split(".")[0]
                 if doc_prefix != last_doc_prefix:
                     if doc_prefix_count > 0:
-                        logger.info(f"Processed source: {last_doc_prefix}\n"
+                        logger.info(
+                            f"Processed source: {last_doc_prefix}\n"
                             f"Total Documents: {doc_prefix_count}\n"
                             f"Skipped: {skipped_doc_prefix_count}\n"
-                            f"Added: {doc_prefix_count - skipped_doc_prefix_count}")
+                            f"Added: {doc_prefix_count - skipped_doc_prefix_count}"
+                        )
 
                     doc_prefix_count = 1
                     skipped_doc_prefix_count = 0
@@ -216,17 +235,34 @@ def create_index_from_raw_embeddings(
                     }
                 pinecone_doc = {
                     "id": base64.urlsafe_b64encode(doc_id.encode("utf-8")).decode("utf-8"),
-                    "values": emb_doc.get_embeddings()
+                    "values": emb_doc.get_embeddings(),
                 }
-                pinecone_doc_metadata = { pinecone_config[MLIndex.INDEX_FIELD_MAPPING_KEY]["content"]: emb_doc.get_data() }
+                pinecone_doc_metadata = {
+                    pinecone_config[MLIndex.INDEX_FIELD_MAPPING_KEY]["content"]: emb_doc.get_data()
+                }
                 if "url" in pinecone_config[MLIndex.INDEX_FIELD_MAPPING_KEY]:
-                    pinecone_doc_metadata[pinecone_config[MLIndex.INDEX_FIELD_MAPPING_KEY]["url"]] = doc_source["url"] if "url" in doc_source else f"No {pinecone_config[MLIndex.INDEX_FIELD_MAPPING_KEY]['url']}"
+                    pinecone_doc_metadata[pinecone_config[MLIndex.INDEX_FIELD_MAPPING_KEY]["url"]] = (
+                        doc_source["url"]
+                        if "url" in doc_source
+                        else f"No {pinecone_config[MLIndex.INDEX_FIELD_MAPPING_KEY]['url']}"
+                    )
                 if "filename" in pinecone_config[MLIndex.INDEX_FIELD_MAPPING_KEY]:
-                    pinecone_doc_metadata[pinecone_config[MLIndex.INDEX_FIELD_MAPPING_KEY]["filename"]] = doc_source["filename"] if "filename" in doc_source else f"No {pinecone_config[MLIndex.INDEX_FIELD_MAPPING_KEY]['filename']}"
+                    pinecone_doc_metadata[pinecone_config[MLIndex.INDEX_FIELD_MAPPING_KEY]["filename"]] = (
+                        doc_source["filename"]
+                        if "filename" in doc_source
+                        else f"No {pinecone_config[MLIndex.INDEX_FIELD_MAPPING_KEY]['filename']}"
+                    )
                 if "title" in pinecone_config[MLIndex.INDEX_FIELD_MAPPING_KEY]:
-                    pinecone_doc_metadata[pinecone_config[MLIndex.INDEX_FIELD_MAPPING_KEY]["title"]] = doc_source.get("title", emb_doc.metadata.get("title", f"No {pinecone_config[MLIndex.INDEX_FIELD_MAPPING_KEY]['title']}"))
+                    pinecone_doc_metadata[pinecone_config[MLIndex.INDEX_FIELD_MAPPING_KEY]["title"]] = doc_source.get(
+                        "title",
+                        emb_doc.metadata.get(
+                            "title", f"No {pinecone_config[MLIndex.INDEX_FIELD_MAPPING_KEY]['title']}"
+                        ),
+                    )
                 if "metadata" in pinecone_config[MLIndex.INDEX_FIELD_MAPPING_KEY]:
-                    pinecone_doc_metadata[pinecone_config[MLIndex.INDEX_FIELD_MAPPING_KEY]["metadata"]] = json.dumps(emb_doc.metadata)
+                    pinecone_doc_metadata[pinecone_config[MLIndex.INDEX_FIELD_MAPPING_KEY]["metadata"]] = json.dumps(
+                        emb_doc.metadata
+                    )
                 # Metadata value must be a string, number, boolean or list of strings
                 pinecone_doc["metadata"] = pinecone_doc_metadata
 
@@ -236,9 +272,11 @@ def create_index_from_raw_embeddings(
                     start_time = time.time()
                     results = pinecone_index_client.upsert(batch)
                     if not process_upsert_results(results, len(batch), start_time):
-                        logger.info("Retrying upsert documents since not all documents were upserted. "
-                                    "Documents that were upserted will simply be overwritten with the same values. "
-                                    "This retry will be idempotent.")
+                        logger.info(
+                            "Retrying upsert documents since not all documents were upserted. "
+                            "Documents that were upserted will simply be overwritten with the same values. "
+                            "This retry will be idempotent."
+                        )
                         results = pinecone_index_client.upsert(batch)
                         if not process_upsert_results(results, len(batch), start_time):
                             raise RuntimeError("Failed to upsert documents")
@@ -250,26 +288,30 @@ def create_index_from_raw_embeddings(
                 start_time = time.time()
                 results = pinecone_index_client.upsert(batch)
                 if not process_upsert_results(results, len(batch), start_time):
-                    logger.info("Retrying upsert documents since not all documents were upserted. "
-                                "Documents that were upserted will simply be overwritten with the same values. "
-                                "This retry will be idempotent.")
+                    logger.info(
+                        "Retrying upsert documents since not all documents were upserted. "
+                        "Documents that were upserted will simply be overwritten with the same values. "
+                        "This retry will be idempotent."
+                    )
                     results = pinecone_index_client.upsert(batch)
                     if not process_upsert_results(results, len(batch), start_time):
                         raise RuntimeError("Failed to upsert documents")
                 num_source_docs += len(batch)
 
-            duration = time.time()-t1
-            logger.info(f"Built index from {num_source_docs} documents and {len(emb._document_embeddings)} chunks, took {duration:.4f} seconds")
-            activity_logger.info("Built index", extra={"properties": {"num_source_docs": num_source_docs, "duration": duration}})
+            duration = time.time() - t1
+            logger.info(
+                f"Built index from {num_source_docs} documents and {len(emb._document_embeddings)} chunks, took {duration:.4f} seconds"
+            )
+            activity_logger.info(
+                "Built index", extra={"properties": {"num_source_docs": num_source_docs, "duration": duration}}
+            )
             activity_logger.activity_info["num_source_docs"] = num_source_docs
         else:
             logger.error("Documents do not have embeddings and therefore cannot upload to Pinecone index")
             raise RuntimeError("Failed to upload to Pinecone index since documents do not have embeddings")
 
         logger.info("Writing MLIndex yaml")
-        mlindex_config = {
-            "embeddings": emb.get_metadata()
-        }
+        mlindex_config = {"embeddings": emb.get_metadata()}
         mlindex_config["index"] = {
             "kind": "pinecone",
             "engine": "pinecone-sdk",
@@ -315,25 +357,32 @@ def main(args, logger, activity_logger):
         raw_embeddings_uri = args.embeddings
         logger.info(f"got embeddings uri as input: {raw_embeddings_uri}")
         splits = raw_embeddings_uri.split("/")
-        embeddings_dir_name = splits.pop(len(splits)-2)
+        embeddings_dir_name = splits.pop(len(splits) - 2)
         logger.info(f"extracted embeddings directory name: {embeddings_dir_name}")
         parent = "/".join(splits)
         logger.info(f"extracted embeddings container path: {parent}")
 
         from azureml.dataprep.fuse.dprepfuse import MountOptions, rslex_uri_volume_mount
 
-        mnt_options = MountOptions(
-            default_permission=0o555, allow_other=False, read_only=True)
+        mnt_options = MountOptions(default_permission=0o555, allow_other=False, read_only=True)
         logger.info(f"mounting embeddings container from: \n{parent} \n   to: \n{os.getcwd()}/embeddings_mount")
         with rslex_uri_volume_mount(parent, f"{os.getcwd()}/embeddings_mount", options=mnt_options) as mount_context:
             emb = EmbeddingsContainer.load(embeddings_dir_name, mount_context.mount_point)
-            create_index_from_raw_embeddings(emb, pinecone_config=pinecone_config, connection=connection_args, output_path=args.output, verbosity=args.verbosity)
+            create_index_from_raw_embeddings(
+                emb,
+                pinecone_config=pinecone_config,
+                connection=connection_args,
+                output_path=args.output,
+                verbosity=args.verbosity,
+            )
 
     except Exception as e:
         logger.error("Failed to update Pinecone index")
         exception_str = str(e)
         if "Cannot find nested property" in exception_str:
-            logger.error(f'The vector index provided "{pinecone_config["index_name"]}" has a different schema than outlined in this components description. This can happen if a different embedding model was used previously when updating this index.')
+            logger.error(
+                f'The vector index provided "{pinecone_config["index_name"]}" has a different schema than outlined in this components description. This can happen if a different embedding model was used previously when updating this index.'
+            )
             activity_logger.activity_info["error_classification"] = "UserError"
             activity_logger.activity_info["error"] = f"{e.__class__.__name__}: Cannot find nested property"
         elif "Failed to upsert" in exception_str:
@@ -352,7 +401,9 @@ def main_wrapper(args, logger):
         try:
             main(args, logger, activity_logger)
         except Exception:
-            activity_logger.error(f"update_pinecone failed with exception: {traceback.format_exc()}")  # activity_logger doesn't log traceback
+            activity_logger.error(
+                f"update_pinecone failed with exception: {traceback.format_exc()}"
+            )  # activity_logger doesn't log traceback
             raise
 
 
@@ -364,7 +415,12 @@ if __name__ == "__main__":
     parser.add_argument("--pinecone_config", type=str)
     parser.add_argument("--connection_id", type=str, required=False)
     parser.add_argument("--output", type=str)
-    parser.add_argument("--verbosity", type=int, default=1, help="Defaults to 1, which will log aggregate information about documents and IDs of deleted documents. 2 will log all document_ids as they are processed.")
+    parser.add_argument(
+        "--verbosity",
+        type=int,
+        default=1,
+        help="Defaults to 1, which will log aggregate information about documents and IDs of deleted documents. 2 will log all document_ids as they are processed.",
+    )
     args = parser.parse_args()
 
     print("\n".join(f"{k}={v}" for k, v in vars(args).items()))

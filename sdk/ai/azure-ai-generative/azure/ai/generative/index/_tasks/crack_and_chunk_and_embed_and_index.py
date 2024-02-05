@@ -68,6 +68,7 @@ def crack_and_chunk_and_embed_and_index(
         # New embeddings_container code ideally would handle this?
         if embeddings_cache is not None:
             import uuid
+
             # TODO: Handle embeddings_container being a remote path using fsspec
             now = datetime.datetime.now()
             snapshot_name = f"{now.strftime('%Y%m%d')}_{now.strftime('%H%M%S')}_{str(uuid.uuid4()).split('-')[0]}"
@@ -107,7 +108,9 @@ def crack_and_chunk_and_embed_and_index(
             )
         elif index_type == "faiss":
             logger.info(f"Creating Faiss index from embeddings_container with config {index_config}")
-            mlindex = embeddings_container.write_as_faiss_mlindex(output_path, engine="azure.ai.resources._index._indexes.faiss.FaissAndDocStore")
+            mlindex = embeddings_container.write_as_faiss_mlindex(
+                output_path, engine="azure.ai.resources._index._indexes.faiss.FaissAndDocStore"
+            )
         else:
             raise ValueError(f"Unsupported index_type {index_type}")
 
@@ -145,7 +148,9 @@ def main_wrapper(args, logger):
         try:
             main(args, logger, activity_logger)
         except Exception as e:
-            activity_logger.error(f"crack_and_chunk failed with exception: {traceback.format_exc()}")  # activity_logger doesn't log traceback
+            activity_logger.error(
+                f"crack_and_chunk failed with exception: {traceback.format_exc()}"
+            )  # activity_logger doesn't log traceback
             raise e
 
 

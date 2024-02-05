@@ -70,11 +70,18 @@ def clone_repo(git_url: str, local_path: Path, branch: Optional[str] = None, aut
         git_repo_branch.branch_name = branch
 
     if authentication is not None:
-        git_repo_branch.git_url = git_repo_branch.git_url.replace("https://", f'https://{authentication["username"]}:{authentication["password"]}@')
+        git_repo_branch.git_url = git_repo_branch.git_url.replace(
+            "https://", f'https://{authentication["username"]}:{authentication["password"]}@'
+        )
 
     logger.info(f"Cloning with depth={1 if git_repo_branch.branch_name is None else None}")
     try:
-        repo = git.Repo.clone_from(git_repo_branch.git_url, local_path, progress=GitCloneProgress(), depth=1 if git_repo_branch.branch_name is None else None)
+        repo = git.Repo.clone_from(
+            git_repo_branch.git_url,
+            local_path,
+            progress=GitCloneProgress(),
+            depth=1 if git_repo_branch.branch_name is None else None,
+        )
     except git.exc.GitError as e:
         logger.error(f"Failed to clone to {local_path}\ngit stdout: {e.stdout}\ngit stderr: {e.stderr}")
 

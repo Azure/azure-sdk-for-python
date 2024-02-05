@@ -24,7 +24,7 @@ def main(args, logger, activity_logger):
     raw_embeddings_uri = args.embeddings
     logger.info(f"got embeddings uri as input: {raw_embeddings_uri}")
     splits = raw_embeddings_uri.split("/")
-    embeddings_dir_name = splits.pop(len(splits)-2)
+    embeddings_dir_name = splits.pop(len(splits) - 2)
     logger.info(f"extracted embeddings directory name: {embeddings_dir_name}")
     parent = "/".join(splits)
     logger.info(f"extracted embeddings container path: {parent}")
@@ -34,9 +34,10 @@ def main(args, logger, activity_logger):
 
     from azureml.dataprep.fuse.dprepfuse import MountOptions, rslex_uri_volume_mount
 
-    mnt_options = MountOptions(
-        default_permission=0o555, allow_other=False, read_only=True)
-    logger.info(f"mounting embeddings container from: \n{parent} \n   to: \n{os.getcwd()}/raw_embeddings", extra={"print": True})
+    mnt_options = MountOptions(default_permission=0o555, allow_other=False, read_only=True)
+    logger.info(
+        f"mounting embeddings container from: \n{parent} \n   to: \n{os.getcwd()}/raw_embeddings", extra={"print": True}
+    )
     activity_logger.info("Mounting embeddings container")
     try:
         with rslex_uri_volume_mount(parent, f"{os.getcwd()}/raw_embeddings", options=mnt_options) as mount_context:
@@ -56,8 +57,11 @@ def main_wrapper(args, logger):
         try:
             main(args, logger, activity_logger)
         except Exception:
-            activity_logger.error(f"build_faiss failed with exception: {traceback.format_exc()}")  # activity_logger doesn't log traceback
+            activity_logger.error(
+                f"build_faiss failed with exception: {traceback.format_exc()}"
+            )  # activity_logger doesn't log traceback
             raise
+
 
 if __name__ == "__main__":
     from argparse import ArgumentParser

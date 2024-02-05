@@ -19,7 +19,12 @@ import mlflow
 import numpy as np
 import pandas as pd
 from azure.core.tracing.decorator import distributed_trace
-from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, ActivityLogger
+from azure.ai.generative._telemetry import (
+    ActivityType,
+    monitor_with_activity,
+    monitor_with_telemetry_mixin,
+    ActivityLogger,
+)
 
 from mlflow.entities import Metric
 from mlflow.exceptions import MlflowException
@@ -27,11 +32,20 @@ from mlflow.protos.databricks_pb2 import ErrorCode, INVALID_PARAMETER_VALUE
 
 from azure.ai.generative.evaluate._metric_handler import MetricHandler
 from azure.ai.generative.evaluate._metrics_handler._code_metric_handler import CodeMetricHandler
-from azure.ai.generative.evaluate._utils import _is_flow, load_jsonl, _get_artifact_dir_path, _copy_artifact, \
-    is_lambda_function
+from azure.ai.generative.evaluate._utils import (
+    _is_flow,
+    load_jsonl,
+    _get_artifact_dir_path,
+    _copy_artifact,
+    is_lambda_function,
+)
 from azure.ai.generative.evaluate._mlflow_log_collector import RedirectUserOutputStreams
-from azure.ai.generative.evaluate._constants import SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING, SUPPORTED_TASK_TYPE, CHAT, \
-    SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING
+from azure.ai.generative.evaluate._constants import (
+    SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING,
+    SUPPORTED_TASK_TYPE,
+    CHAT,
+    SUPPORTED_TASK_TYPE_TO_METRICS_MAPPING,
+)
 from azure.ai.generative.evaluate._evaluation_result import EvaluationResult
 from ._metrics_handler._prompt_metric_handler import PromptMetricHandler
 
@@ -47,26 +61,30 @@ package_logger, module_logger = activity_logger.package_logger, activity_logger.
 
 
 def _get_handler_class(
-        asset,
+    asset,
 ):
     if _is_flow(asset):
         from azure.ai.generative.evaluate._local_flow_handler import LocalFlowHandler
+
         handler = LocalFlowHandler
     else:
         from azure.ai.generative.evaluate._local_code_handler import LocalCodeHandler
+
         handler = LocalCodeHandler
 
     return handler
 
 
 def _get_metric_handler_class(
-        asset,
+    asset,
 ):
     if _is_flow(asset):
         from azure.ai.generative.evaluate._local_flow_handler import LocalFlowHandler
+
         handler = LocalFlowHandler
     else:
         from azure.ai.generative.evaluate._local_code_handler import LocalCodeHandler
+
         handler = LocalCodeHandler
 
     return handler
@@ -80,16 +98,13 @@ def _log_metrics(run_id, metrics):
     timestamp = int(time.time() * 1000)
     client.log_batch(
         run_id,
-        metrics=[
-            Metric(key=key, value=value, timestamp=timestamp, step=0)
-            for key, value in metrics.items()
-        ],
+        metrics=[Metric(key=key, value=value, timestamp=timestamp, step=0) for key, value in metrics.items()],
     )
 
 
 def _validate_metrics(metrics, task_type):
     prompt_metrics = []
-    builtin_metrics =[]
+    builtin_metrics = []
     code_metrics = []
     unknown_metrics = []
 
@@ -109,7 +124,9 @@ def _validate_metrics(metrics, task_type):
     if len(unknown_metrics) > 0:
         raise Exception("Unsupported metric found in the list")
 
-    counter = Counter(builtin_metrics + [metric.name for metric in prompt_metrics] + [metric.__name__ for metric in code_metrics])
+    counter = Counter(
+        builtin_metrics + [metric.name for metric in prompt_metrics] + [metric.__name__ for metric in code_metrics]
+    )
     duplicates = [key for key, value in counter.items() if value > 1]
     if len(duplicates) > 0:
         raise Exception(f"Duplicate metric name found {duplicates}. Metric names should be unique")
@@ -120,16 +137,16 @@ def _validate_metrics(metrics, task_type):
 @distributed_trace
 @monitor_with_activity(package_logger, "Evaluate", ActivityType.PUBLICAPI)
 def evaluate(
-        *,
-        evaluation_name: Optional[str] = None,
-        target: Optional[Callable] = None,
-        data: Optional[str] = None,
-        task_type: Optional[str] = None,
-        metrics_list: Optional[List[str]] = None,
-        model_config: Optional[Union[Dict[str, str], "AzureOpenAIModelConfiguration"]] = None,
-        data_mapping: Optional[Dict[str, str]] = None,
-        output_path: Optional[str] = None,
-        **kwargs
+    *,
+    evaluation_name: Optional[str] = None,
+    target: Optional[Callable] = None,
+    data: Optional[str] = None,
+    task_type: Optional[str] = None,
+    metrics_list: Optional[List[str]] = None,
+    model_config: Optional[Union[Dict[str, str], "AzureOpenAIModelConfiguration"]] = None,
+    data_mapping: Optional[Dict[str, str]] = None,
+    output_path: Optional[str] = None,
+    **kwargs,
 ):
     """Evaluates target or data with built-in evaluation metrics
 
@@ -185,25 +202,26 @@ def evaluate(
         if isinstance(model_config, Dict):
             model_config_dict = model_config
         elif isinstance(model_config, AzureOpenAIModelConfiguration):
-            model_config_dict.update({
-                "api_version": model_config.api_version,
-                "api_base": model_config.api_base,
-                "api_type": "azure",
-                "api_key": model_config.api_key,
-                "deployment_id": model_config.deployment_name
-            })
-
+            model_config_dict.update(
+                {
+                    "api_version": model_config.api_version,
+                    "api_base": model_config.api_base,
+                    "api_type": "azure",
+                    "api_key": model_config.api_key,
+                    "deployment_id": model_config.deployment_name,
+                }
+            )
 
     if data_mapping:
         import warnings
 
         new_data_mapping = dict(data_mapping)
         if "y_pred" in new_data_mapping:
-            warnings.warn("y_pred is deprecated, please use \"answer\" instead")
+            warnings.warn('y_pred is deprecated, please use "answer" instead')
             value = data_mapping.pop("y_pred")
             new_data_mapping.update({"answer": value})
         if "y_test" in new_data_mapping:
-            warnings.warn("y_test is deprecated, please use \"ground_truth\" instead")
+            warnings.warn('y_test is deprecated, please use "ground_truth" instead')
             value = data_mapping.pop("y_test")
             new_data_mapping.update({"ground_truth": value})
         data_mapping = new_data_mapping
@@ -211,13 +229,16 @@ def evaluate(
     sweep_args = kwargs.pop("sweep_args", None)
     if sweep_args:
         import itertools
+
         keys, values = zip(*sweep_args.items())
         params_permutations_dicts = [dict(zip(keys, v)) for v in itertools.product(*values)]
 
         with mlflow.start_run(run_name=evaluation_name) as run:
             log_property_and_tag("_azureml.evaluation_run", "azure-ai-generative-parent")
             for index, params_permutations_dict in enumerate(params_permutations_dicts):
-                evaluation_name_variant = f"{evaluation_name}_{index}" if evaluation_name else f"{run.info.run_name}_{index}"
+                evaluation_name_variant = (
+                    f"{evaluation_name}_{index}" if evaluation_name else f"{run.info.run_name}_{index}"
+                )
 
                 evaluation_results = _evaluate(
                     evaluation_name=evaluation_name_variant,
@@ -229,7 +250,7 @@ def evaluate(
                     params_dict=params_permutations_dict,
                     metrics=metrics_list,
                     output_path=output_path,
-                    **kwargs
+                    **kwargs,
                 )
             results_list.append(evaluation_results)
         return results_list
@@ -243,22 +264,22 @@ def evaluate(
             data_mapping=data_mapping,
             metrics=metrics_list,
             output_path=output_path,
-            **kwargs
+            **kwargs,
         )
 
         return evaluation_result
 
 
 def _evaluate(
-        evaluation_name=None,
-        target=None,
-        data=None,
-        task_type=None,
-        metrics=None,
-        data_mapping=None,
-        model_config=None,
-        output_path=None,
-        **kwargs
+    evaluation_name=None,
+    target=None,
+    data=None,
+    task_type=None,
+    metrics=None,
+    data_mapping=None,
+    model_config=None,
+    output_path=None,
+    **kwargs,
 ):
     try:
         if Path(data).exists():
@@ -282,24 +303,20 @@ def _evaluate(
     if data_mapping:
         metrics_config.update({"data_mapping": data_mapping})
 
-    with mlflow.start_run(nested=True if mlflow.active_run() else False, run_name=evaluation_name) as run, \
-            RedirectUserOutputStreams(logger=LOGGER) as _:
+    with mlflow.start_run(
+        nested=True if mlflow.active_run() else False, run_name=evaluation_name
+    ) as run, RedirectUserOutputStreams(logger=LOGGER) as _:
 
         log_property_and_tag(
             "_azureml.evaluation_run",
-            "azure-ai-generative-parent" if run.data.tags.get("mlflow.parentRunId") is None else "azure-ai-generative"
+            "azure-ai-generative-parent" if run.data.tags.get("mlflow.parentRunId") is None else "azure-ai-generative",
         )
         # Log input is a preview feature behind an allowlist. Uncomment this line once the feature is broadly available.
         # log_input(data=data, data_is_file=_data_is_file)
 
         asset_handler_class = _get_handler_class(target)
 
-        asset_handler = asset_handler_class(
-            asset=target,
-            test_data=test_data,
-            metrics_config=metrics_config,
-            **kwargs
-        )
+        asset_handler = asset_handler_class(asset=target, test_data=test_data, metrics_config=metrics_config, **kwargs)
 
         metrics_results = {"artifacts": {}, "metrics": {}}
 
@@ -377,10 +394,11 @@ def _evaluate(
 
                     if ex.error_code == ErrorCode.Name(INVALID_PARAMETER_VALUE):
                         LOGGER.warning(
-                            f"Parameter {param_name} value is too long to log. Truncating and logging it as an artifact.")
+                            f"Parameter {param_name} value is too long to log. Truncating and logging it as an artifact."
+                        )
 
                         # Truncate the value to 500 bytes and log it.
-                        truncated_value = param_value.encode('utf-8')[:500].decode('utf-8', 'ignore')
+                        truncated_value = param_value.encode("utf-8")[:500].decode("utf-8", "ignore")
                         mlflow.log_param(param_name, truncated_value)
 
                         # Log the full value as an artifact.
@@ -391,9 +409,9 @@ def _evaluate(
                     else:
                         raise ex
 
-            eval_artifact_df = _get_instance_table(metrics_results, task_type, asset_handler).to_json(orient="records",
-                                                                                                      lines=True,
-                                                                                                      force_ascii=False)
+            eval_artifact_df = _get_instance_table(metrics_results, task_type, asset_handler).to_json(
+                orient="records", lines=True, force_ascii=False
+            )
             # eval_artifact_df = result.to_json(orient="records", lines=True, force_ascii=False)
             tmp_path = os.path.join(tmpdir, "eval_results.jsonl")
 
@@ -401,8 +419,9 @@ def _evaluate(
                 f.write(eval_artifact_df)
 
             mlflow.log_artifact(tmp_path)
-            log_property_and_tag("_azureml.evaluate_artifacts",
-                                 json.dumps([{"path": "eval_results.jsonl", "type": "table"}]))
+            log_property_and_tag(
+                "_azureml.evaluate_artifacts", json.dumps([{"path": "eval_results.jsonl", "type": "table"}])
+            )
             mlflow.log_param("task_type", task_type)
             if task_type == CHAT:
                 log_property("_azureml.chat_history_column", data_mapping.get("y_pred"))
@@ -412,9 +431,7 @@ def _evaluate(
 
     evaluation_result = EvaluationResult(
         metrics_summary=metrics_results.get("metrics"),
-        artifacts={
-            "eval_results.jsonl": f"runs:/{run.info.run_id}/eval_results.jsonl"
-        },
+        artifacts={"eval_results.jsonl": f"runs:/{run.info.run_id}/eval_results.jsonl"},
         tracking_uri=kwargs.get("tracking_uri"),
         evaluation_id=run.info.run_id,
     )
@@ -441,9 +458,7 @@ def log_input(data, data_is_file):
                     mlflow.data.from_pandas(pd.read_json(destination_file, lines=True), source=artifact_aml_uri)
                 )
             else:
-                mlflow.log_input(
-                    mlflow.data.from_pandas(pd.DataFrame.from_dict(data))
-                )
+                mlflow.log_input(mlflow.data.from_pandas(pd.DataFrame.from_dict(data)))
     except Exception as ex:
         LOGGER.error("Error logging data as dataset, continuing without it")
         LOGGER.exception(ex, stack_info=True)
@@ -473,9 +488,7 @@ def _get_chat_instance_table(metrics):
     instance_table_metrics_dict = {}
     for artifact, value in metrics.items():
         if "score_per_conversation" in value.keys():
-            instance_table_metrics_dict.update({
-                artifact: value["score_per_conversation"]
-            })
+            instance_table_metrics_dict.update({artifact: value["score_per_conversation"]})
 
     instance_level_metrics_table = pd.DataFrame(instance_table_metrics_dict)
     return instance_level_metrics_table
@@ -486,10 +499,6 @@ def _get_instance_table(metrics, task_type, asset_handler):
     instance_level_metrics_table = pd.DataFrame(metrics.get("artifacts"))
 
     combined_table = pd.concat(
-        [asset_handler.input_output_data,
-         instance_level_metrics_table
-         ],
-        axis=1,
-        verify_integrity=True
+        [asset_handler.input_output_data, instance_level_metrics_table], axis=1, verify_integrity=True
     )
     return combined_table

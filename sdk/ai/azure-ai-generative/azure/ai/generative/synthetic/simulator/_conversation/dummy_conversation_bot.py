@@ -31,9 +31,8 @@ class DummyConversationBot:
                 - conversation_starter: A sentence that can be used as a conversation starter, if not provided,
                     the first turn will be generated using the LLM
         """
-        #if role == ConversationRole.USER and type(model) == LLAMAChatCompletionsModel:
+        # if role == ConversationRole.USER and type(model) == LLAMAChatCompletionsModel:
         #    self.logger.info("We suggest using LLaMa chat model to simulate assistant not to simulate user")
-
 
         self.role = role
         self.conversation_template: jinja2.Template = jinja2.Template(
@@ -43,7 +42,7 @@ class DummyConversationBot:
         if self.role == ConversationRole.USER:
             self.name = self.persona_template_args.get("name", role.value)
         else:
-            self.name = self.persona_template_args.get("chatbot_name", role.value) or "Dummy" #model.name
+            self.name = self.persona_template_args.get("chatbot_name", role.value) or "Dummy"  # model.name
         # self.model = model
 
         self.logger = logging.getLogger(repr(self))
@@ -52,16 +51,24 @@ class DummyConversationBot:
             self.conversation_starter: Optional[str] = None
             if "conversation_starter" in self.persona_template_args:
                 self.logger.info(
-                    'This simulated bot will use the provided conversation starter '
+                    "This simulated bot will use the provided conversation starter "
                     f'"{repr(self.persona_template_args["conversation_starter"])[:400]}"'
-                    'instead of generating a turn using a LLM'
+                    "instead of generating a turn using a LLM"
                 )
                 self.conversation_starter = self.persona_template_args["conversation_starter"]
             else:
-                self.logger.info('This simulated bot will generate the first turn as no conversation starter is provided')
+                self.logger.info(
+                    "This simulated bot will generate the first turn as no conversation starter is provided"
+                )
 
-        self.userMessages = ["Find the temperature in seattle and add it to the doc", "what is the weight of an airplane", "how may grams are there in a ton", "what is the height of eiffel tower", "where do you come from", "what is the current time"]
-
+        self.userMessages = [
+            "Find the temperature in seattle and add it to the doc",
+            "what is the weight of an airplane",
+            "how may grams are there in a ton",
+            "what is the height of eiffel tower",
+            "where do you come from",
+            "what is the current time",
+        ]
 
     async def generate_response(
         self,
@@ -95,24 +102,20 @@ class DummyConversationBot:
             samples = [self.conversation_starter]
             finish_reason = ["stop"]
 
-            parsed_response = {
-                "samples": samples,
-                "finish_reason": finish_reason,
-                "id": None
-            }
+            parsed_response = {"samples": samples, "finish_reason": finish_reason, "id": None}
             full_response = parsed_response
             return parsed_response, {}, time_taken, full_response
 
         prompt = self.conversation_template.render(
-            conversation_turns=conversation_history[-max_history:],
-            role=self.role.value,
-            **self.persona_template_args
+            conversation_turns=conversation_history[-max_history:], role=self.role.value, **self.persona_template_args
         )
 
         messages = [{"role": "system", "content": prompt}]
 
         # The ChatAPI must respond as ASSISTANT, so if this bot is USER, we need to reverse the messages
-        if (self.role == ConversationRole.USER): # and (isinstance(self.model, OpenAIChatCompletionsModel) or isinstance(self.model, LLAMAChatCompletionsModel)):
+        if (
+            self.role == ConversationRole.USER
+        ):  # and (isinstance(self.model, OpenAIChatCompletionsModel) or isinstance(self.model, LLAMAChatCompletionsModel)):
             # in here we need to simulate the user, The chatapi only generate turn as assistant and can't generate turn as user
             # thus we reverse all rules in history messages, so that messages produced from the other bot passed here as user messages
             messages.extend([turn.to_openai_chat_format(reverse=True) for turn in conversation_history[-max_history:]])
@@ -122,18 +125,8 @@ class DummyConversationBot:
                 "object": "text_completion",
                 "created": 1589478378,
                 "model": "text-davinci-003",
-                "choices": [
-                    {
-                    "text": f"{self.userMessages[turn_number]}",
-                    "index": 0,
-                    "finish_reason": "length"
-                    }
-                ],
-                "usage": {
-                    "prompt_tokens": 5,
-                    "completion_tokens": 7,
-                    "total_tokens": 12
-                }
+                "choices": [{"text": f"{self.userMessages[turn_number]}", "index": 0, "finish_reason": "length"}],
+                "usage": {"prompt_tokens": 5, "completion_tokens": 7, "total_tokens": 12},
             }
         else:
             messages.extend([turn.to_openai_chat_format() for turn in conversation_history[-max_history:]])
@@ -143,18 +136,8 @@ class DummyConversationBot:
                 "object": "text_completion",
                 "created": 1589478378,
                 "model": "text-davinci-003",
-                "choices": [
-                    {
-                    "text": "This is indeed a test response",
-                    "index": 0,
-                    "finish_reason": "length"
-                    }
-                ],
-                "usage": {
-                    "prompt_tokens": 5,
-                    "completion_tokens": 7,
-                    "total_tokens": 12
-                }
+                "choices": [{"text": "This is indeed a test response", "index": 0, "finish_reason": "length"}],
+                "usage": {"prompt_tokens": 5, "completion_tokens": 7, "total_tokens": 12},
             }
 
         # response = await self.model.get_conversation_completion(
@@ -164,7 +147,6 @@ class DummyConversationBot:
         # )
 
         parsed_response = self._parse_response(response_data)
-
 
         request = {"messages": messages}
 
@@ -180,11 +162,7 @@ class DummyConversationBot:
             if "finish_reason" in choice:
                 finish_reason.append(choice["finish_reason"])
 
-        return {
-            "samples": samples,
-            "finish_reason": finish_reason,
-            "id": response_data["id"]
-        }
+        return {"samples": samples, "finish_reason": finish_reason, "id": response_data["id"]}
 
     def __repr__(self):
         return f"Bot(name={self.name}, role={self.role.name}, model=dummy)"

@@ -7,9 +7,7 @@ from enum import Enum
 BOT_NAMES = ["chat_bot", "other_bot"]
 TASK_BOT_NAMES = ["system_bot", "simulated_bot"]
 
-REQUESTS_BATCH_SIZE = (
-    200  # Number of input lines to process at once, must fit into memory
-)
+REQUESTS_BATCH_SIZE = 200  # Number of input lines to process at once, must fit into memory
 OUTPUT_FILE = "openai_api_response.jsonl"
 
 # Azure endpoint constants
@@ -20,6 +18,7 @@ AZURE_ENDPOINT_DOMAIN_VALID_PATTERN_RE = r"^(?=.{1,255}$)(?!-)[a-zA-Z0-9-]{1,63}
 
 CHAT_START_TOKEN = "<|im_start|>"
 CHAT_END_TOKEN = "<|im_end|>"
+
 
 class ConversationRole(Enum):
     USER = "user"

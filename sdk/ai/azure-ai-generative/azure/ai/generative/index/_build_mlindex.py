@@ -32,8 +32,7 @@ def build_index(
     embeddings_cache_path: Optional[str] = None,
 ) -> Index:
 
-    """Generates embeddings locally and stores Index reference in memory
-    """
+    """Generates embeddings locally and stores Index reference in memory"""
     try:
         from azure.ai.generative.index._documents import DocumentChunksIterator, split_documents
         from azure.ai.generative.index._embeddings import EmbeddingsContainer
@@ -41,7 +40,9 @@ def build_index(
         from azure.ai.generative.index._utils.logging import disable_mlflow
         from azure.ai.resources._index._utils.connections import get_connection_by_id_v2
     except ImportError as e:
-        print("In order to use build_index to build an Index locally, you must have azure-ai-generative[index] installed")
+        print(
+            "In order to use build_index to build an Index locally, you must have azure-ai-generative[index] installed"
+        )
         raise e
 
     disable_mlflow()
@@ -56,10 +57,10 @@ def build_index(
             acs_config=index_input_config,
         )
     embeddings_cache_path = str(Path(embeddings_cache_path) if embeddings_cache_path else Path.cwd())
-    save_path = str(Path(embeddings_cache_path)/f"{output_index_name}-mlindex")
-    splitter_args= {
-        'chunk_size': chunk_size,
-        'chunk_overlap': chunk_overlap,
+    save_path = str(Path(embeddings_cache_path) / f"{output_index_name}-mlindex")
+    splitter_args = {
+        "chunk_size": chunk_size,
+        "chunk_overlap": chunk_overlap,
     }
     if max_sample_files is not None:
         splitter_args["max_sample_files"] = max_sample_files
@@ -82,15 +83,17 @@ def build_index(
     connection_args = {}
     if "open_ai" in embeddings_model:
         import os
+
         if aoai_connection_id:
             aoai_connection = get_connection_by_id_v2(aoai_connection_id)
             connection_args = {
                 "connection_type": "workspace_connection",
                 "connection": {"id": aoai_connection_id},
-                "endpoint": aoai_connection["properties"]["target"]
+                "endpoint": aoai_connection["properties"]["target"],
             }
         else:
             import openai
+
             api_key = "OPENAI_API_KEY"
             api_base = "OPENAI_API_BASE"
             if version.parse(openai.version.VERSION) >= version.parse("1.0.0"):
@@ -122,29 +125,31 @@ def build_index(
         }
         if not acs_config.acs_connection_id:
             import os
+
             acs_args = {
                 **acs_args,
                 **{
-                    "endpoint": os.getenv("AZURE_AI_SEARCH_ENDPOINT") if "AZURE_AI_SEARCH_ENDPOINT" in os.environ else os.getenv("AZURE_COGNITIVE_SEARCH_TARGET"),
+                    "endpoint": os.getenv("AZURE_AI_SEARCH_ENDPOINT")
+                    if "AZURE_AI_SEARCH_ENDPOINT" in os.environ
+                    else os.getenv("AZURE_COGNITIVE_SEARCH_TARGET"),
                     "api_version": "2023-07-01-preview",
-                }
+                },
             }
-            connection_args = {
-                "connection_type": "environment",
-                "connection": {"key": "AZURE_AI_SEARCH_KEY"}
-            }
+            connection_args = {"connection_type": "environment", "connection": {"key": "AZURE_AI_SEARCH_KEY"}}
         else:
             acs_connection = get_connection_by_id_v2(acs_config.acs_connection_id)
             acs_args = {
                 **acs_args,
                 **{
                     "endpoint": acs_connection["properties"]["target"],
-                    "api_version": acs_connection['properties'].get('metadata', {}).get('apiVersion', "2023-07-01-preview")
-                }
+                    "api_version": acs_connection["properties"]
+                    .get("metadata", {})
+                    .get("apiVersion", "2023-07-01-preview"),
+                },
             }
             connection_args = {
                 "connection_type": "workspace_connection",
-                "connection": {"id": acs_config.acs_connection_id}
+                "connection": {"id": acs_config.acs_connection_id},
             }
 
         create_index_from_raw_embeddings(
@@ -177,16 +182,21 @@ def _create_mlindex_from_existing_acs(
         from azure.ai.generative.index._embeddings import EmbeddingsContainer
         from azure.ai.resources._index._utils.connections import get_connection_by_id_v2
     except ImportError as e:
-        print("In order to use build_index to build an Index locally, you must have azure-ai-generative[index] installed")
+        print(
+            "In order to use build_index to build an Index locally, you must have azure-ai-generative[index] installed"
+        )
         raise e
     mlindex_config = {}
     connection_info = {}
     if not acs_config.acs_connection_id:
         import os
+
         connection_info = {
-            "endpoint": os.getenv("AZURE_AI_SEARCH_ENDPOINT") if "AZURE_AI_SEARCH_ENDPOINT" in os.environ else os.getenv("AZURE_COGNITIVE_SEARCH_TARGET"),
+            "endpoint": os.getenv("AZURE_AI_SEARCH_ENDPOINT")
+            if "AZURE_AI_SEARCH_ENDPOINT" in os.environ
+            else os.getenv("AZURE_COGNITIVE_SEARCH_TARGET"),
             "connection_type": "environment",
-            "connection": {"key": "AZURE_AI_SEARCH_KEY"}
+            "connection": {"key": "AZURE_AI_SEARCH_KEY"},
         }
     else:
         acs_connection = get_connection_by_id_v2(acs_config.acs_connection_id)
@@ -195,7 +205,7 @@ def _create_mlindex_from_existing_acs(
             "connection_type": "workspace_connection",
             "connection": {
                 "id": acs_config.acs_connection_id,
-            }
+            },
         }
     mlindex_config["index"] = {
         "kind": "acs",
@@ -206,7 +216,7 @@ def _create_mlindex_from_existing_acs(
             "content": acs_config.acs_content_key,
             "embedding": acs_config.acs_embedding_key,
         },
-        **connection_info
+        **connection_info,
     }
 
     if acs_config.acs_title_key:
@@ -217,14 +227,12 @@ def _create_mlindex_from_existing_acs(
     model_connection_args: Dict[str, Optional[Union[str, Dict]]]
     if not aoai_connection:
         import openai
+
         model_connection_args = {
             "key": openai.api_key,
         }
     else:
-        model_connection_args = {
-            "connection_type": "workspace_connection",
-            "connection": {"id": aoai_connection}
-        }
+        model_connection_args = {"connection_type": "workspace_connection", "connection": {"id": aoai_connection}}
 
     embedding = EmbeddingsContainer.from_uri(embedding_model, credential=None, **model_connection_args)
     mlindex_config["embeddings"] = embedding.get_metadata()
@@ -242,5 +250,5 @@ def _create_mlindex_from_existing_acs(
             "azureml.mlIndexAssetKind": "acs",
             "azureml.mlIndexAsset": "true",
             "azureml.mlIndexAssetPipelineRunId": "Local",
-        }
+        },
     )

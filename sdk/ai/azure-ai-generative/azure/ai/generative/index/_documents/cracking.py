@@ -20,19 +20,17 @@ logger = get_logger(__name__)
 # TODO: Should handle uris via fsspec/MLTable
 # https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.spec.AbstractFileSystem.glob
 def files_to_document_source(
-        files_source: Union[str, Path],
-        glob: str = "**/*",
-        base_url: Optional[str] = None,
-        process_url: Optional[Callable[[str], str]] = None) -> Iterator[DocumentSource]:
+    files_source: Union[str, Path],
+    glob: str = "**/*",
+    base_url: Optional[str] = None,
+    process_url: Optional[Callable[[str], str]] = None,
+) -> Iterator[DocumentSource]:
     """Convert files to DocumentSource."""
     file_source_path = Path(files_source)
     if file_source_path.is_file():
         url: str = base_url  # type: ignore[assignment]
         yield DocumentSource(
-            path=file_source_path,
-            filename=file_source_path.name,
-            url=url,
-            mtime=file_source_path.stat().st_mtime
+            path=file_source_path, filename=file_source_path.name, url=url, mtime=file_source_path.stat().st_mtime
         )
         return
     for file in file_source_path.glob(glob):
@@ -45,12 +43,7 @@ def files_to_document_source(
         if process_url:
             url = process_url(url)
 
-        yield DocumentSource(
-            path=file,
-            filename=str(relative_path),
-            url=url,
-            mtime=file.stat().st_mtime
-        )
+        yield DocumentSource(path=file, filename=str(relative_path), url=url, mtime=file.stat().st_mtime)
 
 
 class BaseDocumentLoader(ABC):
@@ -70,11 +63,7 @@ class BaseDocumentLoader(ABC):
         else:
             self.metadata["source"] = {"title": Path(self.document_source.filename).name}
         pages = self.load()
-        return ChunkedDocument(
-            chunks=pages,
-            source=self.document_source,
-            metadata=self.metadata
-        )
+        return ChunkedDocument(chunks=pages, source=self.document_source, metadata=self.metadata)
 
     @classmethod
     def file_io_mode(self) -> str:
@@ -124,7 +113,9 @@ class TextFileIOLoader(BaseDocumentLoader):
 class UnstructuredHTMLFileIOLoader(UnstructuredFileIOLoader, BaseDocumentLoader):
     """Loader that uses unstructured to load HTML files."""
 
-    def __init__(self, file: IO, document_source: DocumentSource, metadata: dict, mode="single", **unstructured_kwargs: Any):
+    def __init__(
+        self, file: IO, document_source: DocumentSource, metadata: dict, mode="single", **unstructured_kwargs: Any
+    ):
         """Initialize a text file loader."""
         self.metadata = metadata
         self.document_source = document_source
@@ -164,9 +155,7 @@ class PDFFileLoader(BaseDocumentLoader):
         pages = self.load()
         chunk_prefix = f"Title: {Path(self.document_source.filename).name}"
         return ChunkedDocument(
-            chunks=pages,
-            source=self.document_source,
-            metadata={**self.metadata, "chunk_prefix": chunk_prefix}
+            chunks=pages, source=self.document_source, metadata={**self.metadata, "chunk_prefix": chunk_prefix}
         )
 
     def load(self) -> List[Document]:
@@ -187,7 +176,9 @@ class PDFFileLoader(BaseDocumentLoader):
                 metadata = {"page_number": reader.get_page_number(page), **self.metadata}
                 docs.append(StaticDocument(page_text, metadata=metadata))
         if len(docs) == 0:
-            logger.warning(f"Unable to extract text from file: {self.document_source.filename} This can happen if a PDF contains only images.")
+            logger.warning(
+                f"Unable to extract text from file: {self.document_source.filename} This can happen if a PDF contains only images."
+            )
         return docs
 
     @classmethod
@@ -213,14 +204,13 @@ class TikaLoader(BaseDocumentLoader):
         doc = self.load()
         chunk_prefix = f"Title: {Path(self.document_source.filename).name}"
         return ChunkedDocument(
-            chunks=doc,
-            source=self.document_source,
-            metadata={"chunk_prefix": chunk_prefix, **self.metadata}
+            chunks=doc, source=self.document_source, metadata={"chunk_prefix": chunk_prefix, **self.metadata}
         )
 
     def load(self) -> List[Document]:
         """Load file content into Document(s)."""
         from tika import parser
+
         parsed = parser.from_file(self.file)
         content = parsed["content"]
         if content is None:
@@ -228,6 +218,7 @@ class TikaLoader(BaseDocumentLoader):
             return []
 
         import re
+
         try:
             text = re.sub(r"\n{3,}", "\n\n", content)
         except TypeError as e:
@@ -258,6 +249,7 @@ def extract_text_document_title(text: str, file_name: str) -> Tuple[str, str]:
 
         import markdown  # type: ignore[import]
         from bs4 import BeautifulSoup
+
         html_content = markdown.markdown(text)
         soup = BeautifulSoup(html_content, "html.parser")
         title = ""
@@ -266,7 +258,7 @@ def extract_text_document_title(text: str, file_name: str) -> Tuple[str, str]:
             title = next(soup.stripped_strings)
             for entry in title.split("\n"):
                 if entry.startswith("title") and not entry.startswith("titleSuffix"):
-                    clean_title += entry[len("title: "):].rstrip()
+                    clean_title += entry[len("title: ") :].rstrip()
                     break
         except StopIteration:
             title = file_name
@@ -291,6 +283,7 @@ def extract_text_document_title(text: str, file_name: str) -> Tuple[str, str]:
         return f"Title: {title}", title
     elif file_extension == ".html" or file_extension == ".htm":
         from bs4 import BeautifulSoup
+
         soup = BeautifulSoup(text, "html.parser")
         try:
             title = next(soup.stripped_strings)
@@ -303,7 +296,7 @@ def extract_text_document_title(text: str, file_name: str) -> Tuple[str, str]:
         title_prefix = "title: "
         for line in text.splitlines():
             if line.startswith(title_prefix):
-                title = line[len(title_prefix):].strip()
+                title = line[len(title_prefix) :].strip()
                 break
             if first_text_line is None and any(c.isalnum() for c in line):
                 first_text_line = line.strip()
@@ -334,12 +327,12 @@ file_extension_loaders = {
 SUPPORTED_EXTENSIONS = list(file_extension_loaders.keys())
 
 
-def crack_documents(sources: Iterator[DocumentSource], file_extension_loaders=file_extension_loaders) -> Iterator[ChunkedDocument]:
+def crack_documents(
+    sources: Iterator[DocumentSource], file_extension_loaders=file_extension_loaders
+) -> Iterator[ChunkedDocument]:
     """Crack documents into chunks."""
     total_time: float = 0.0
-    files_by_extension = {
-        str(ext): 0.0 for ext in file_extension_loaders
-    }
+    files_by_extension = {str(ext): 0.0 for ext in file_extension_loaders}
     log_batch_size = 100
     for i, source in enumerate(sources):
         file_start_time = time.time()
@@ -361,11 +354,7 @@ def crack_documents(sources: Iterator[DocumentSource], file_extension_loaders=fi
 
         try:
             with open(source.path, mode=mode) as f:  # type: ignore[arg-type]
-                loader = loader_cls(**{
-                    "file": f,
-                    "document_source": source,
-                    "metadata": {}
-                })
+                loader = loader_cls(**{"file": f, "document_source": source, "metadata": {}})
                 file_pre_yield_time = time.time()
                 total_time += file_pre_yield_time - file_start_time
                 yield loader.load_chunked_document()
@@ -374,11 +363,7 @@ def crack_documents(sources: Iterator[DocumentSource], file_extension_loaders=fi
             if hasattr(loader_cls, "fallback_loader"):
                 fallback_loader_cls = loader_cls.fallback_loader()
                 with open(source.path, mode=mode) as f:  # type: ignore[arg-type]
-                    loader = fallback_loader_cls(**{
-                        "file": f,
-                        "document_source": source,
-                        "metadata": {}
-                    })
+                    loader = fallback_loader_cls(**{"file": f, "document_source": source, "metadata": {}})
                     file_pre_yield_time = time.time()
                     total_time += file_pre_yield_time - file_start_time
                     yield loader.load_chunked_document()
@@ -388,4 +373,6 @@ def crack_documents(sources: Iterator[DocumentSource], file_extension_loaders=fi
     for ext in files_by_extension:
         if files_by_extension[ext] > 0:
             safe_mlflow_log_metric(ext, files_by_extension[ext], logger=logger, step=int(time.time() * 1000))
-    logger.info(f"[DocumentChunksIterator::crack_documents] Total time to load files: {total_time}\n{json.dumps(files_by_extension, indent=2)}")
+    logger.info(
+        f"[DocumentChunksIterator::crack_documents] Total time to load files: {total_time}\n{json.dumps(files_by_extension, indent=2)}"
+    )

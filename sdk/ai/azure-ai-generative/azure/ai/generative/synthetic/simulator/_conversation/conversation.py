@@ -28,6 +28,7 @@ def is_closing_message(response: str):
         return False
     return True
 
+
 async def simulate_conversation(
     bots: List[ConversationBot],
     session: RetryClient,
@@ -52,7 +53,7 @@ async def simulate_conversation(
         max_history=history_limit,
         turn_number=0,
     )
-    if 'id' in first_response:
+    if "id" in first_response:
         conversation_id = first_response["id"]
     else:
         conversation_id = None
@@ -77,10 +78,7 @@ async def simulate_conversation(
 
     # Keep iterating and alternate between bots until a stopping word is
     # generated or maximum number of turns is reached.
-    while (
-        (not stopping_criteria(conversation_history[-1].message)) and
-        (current_turn < turn_limit)
-    ):
+    while (not stopping_criteria(conversation_history[-1].message)) and (current_turn < turn_limit):
         try:
             current_character_idx = current_turn % 2
             # if there is only one bot, means using customized simulate callback
@@ -95,7 +93,8 @@ async def simulate_conversation(
                         role=ConversationRole.ASSISTANT,
                         name="ChatBot",
                         message=response,
-                    ))
+                    )
+                )
             else:
                 current_bot = bots[current_character_idx]
                 # invoke Bot to generate response given the input request
@@ -115,18 +114,17 @@ async def simulate_conversation(
                         message=response["samples"][0],
                         full_response=full_response,
                         request=request,
-                    ))
+                    )
+                )
 
             # check if conversation id is null, which means conversation starter was used. use id from next turn
-            if conversation_id is None and 'id' in response:
+            if conversation_id is None and "id" in response:
                 conversation_id = response["id"]
-            
+
             logger.info(f"Last turn: {conversation_history[-1]}")
             if mlflow_logger is not None:
                 logger_tasks.append(  # schedule logging but don't get blocked by it
-                    asyncio.create_task(
-                        mlflow_logger.log_successful_response(time_taken)
-                    )
+                    asyncio.create_task(mlflow_logger.log_successful_response(time_taken))
                 )
         except Exception as e:
             logger.warning(f"Error: {e}")
@@ -148,6 +146,7 @@ async def simulate_conversation(
     else:
         return conversation_id, conversation_history
 
+
 def play_conversation(conversation_id: str, conversation_history: List[ConversationTurn]):
     """
     Play the given conversation.
@@ -158,39 +157,40 @@ def play_conversation(conversation_id: str, conversation_history: List[Conversat
         else:
             print(f"{turn.role.value}: {turn.message}")
 
+
 def debug_conversation(conversation_history: List[ConversationTurn]):
     """
     Debug the requests, responses, and extracted messages from a conversation history.
     """
     for i, turn in enumerate(conversation_history):
-        print('=' * 80)
+        print("=" * 80)
         print(f"Request #{i}:")
-        if turn.request and 'prompt' in turn.request:
-            print(turn.request['prompt'])
-        elif turn.request and 'messages' in turn.request:
-            print(turn.request['messages'])
-        elif turn.request and 'transcript' in turn.request:
-            transcript = turn.request['transcript']
+        if turn.request and "prompt" in turn.request:
+            print(turn.request["prompt"])
+        elif turn.request and "messages" in turn.request:
+            print(turn.request["messages"])
+        elif turn.request and "transcript" in turn.request:
+            transcript = turn.request["transcript"]
             for item in transcript:
-                if item['type'] == 'image':
+                if item["type"] == "image":
                     item = item.copy()
-                    item['data'] = '... (image data)'
+                    item["data"] = "... (image data)"
                 print(item)
         else:
             print(turn.request)
-        print('=' * 80)
+        print("=" * 80)
         print(f"Response #{i}:")
-        if turn.full_response and 'choices' in turn.full_response:
-            response = turn.full_response['choices'][0]
-            if 'text' in response:
-                print(response['text'])
+        if turn.full_response and "choices" in turn.full_response:
+            response = turn.full_response["choices"][0]
+            if "text" in response:
+                print(response["text"])
             else:
-                print(response['message'])
-        elif turn.full_response and 'samples' in turn.full_response:
-            print(turn.full_response['samples'][0])
+                print(response["message"])
+        elif turn.full_response and "samples" in turn.full_response:
+            print(turn.full_response["samples"][0])
         else:
             print(turn.full_response)
-        print('=' * 80)
+        print("=" * 80)
         print(f"Extracted Message #{i}: ")
         print(turn.message)
-        print('=' * 80)
+        print("=" * 80)

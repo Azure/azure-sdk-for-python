@@ -26,16 +26,17 @@ class DocumentChunksIterator(Iterator):
     """Iterate over document chunks."""
 
     def __init__(
-            self,
-            files_source: Union[str, Path],
-            glob: str,
-            base_url: Optional[str],
-            document_path_replacement_regex: Optional[Dict[str, str]] = None,
-            file_filter: Optional[Callable[[Iterable[DocumentSource]], Iterator[DocumentSource]]]=None,
-            source_loader: Callable[[Iterator[DocumentSource], Any], Iterator[ChunkedDocument]]=crack_documents,
-            chunked_document_processors: Optional[List[Callable[[Iterable[ChunkedDocument]], Iterator[ChunkedDocument]]]] = [
-                lambda docs: split_documents(docs, splitter_args={"chunk_size": 1024, "chunk_overlap": 0})
-            ]):
+        self,
+        files_source: Union[str, Path],
+        glob: str,
+        base_url: Optional[str],
+        document_path_replacement_regex: Optional[Dict[str, str]] = None,
+        file_filter: Optional[Callable[[Iterable[DocumentSource]], Iterator[DocumentSource]]] = None,
+        source_loader: Callable[[Iterator[DocumentSource], Any], Iterator[ChunkedDocument]] = crack_documents,
+        chunked_document_processors: Optional[
+            List[Callable[[Iterable[ChunkedDocument]], Iterator[ChunkedDocument]]]
+        ] = [lambda docs: split_documents(docs, splitter_args={"chunk_size": 1024, "chunk_overlap": 0})],
+    ):
         """Initialize a document chunks iterator."""
         self.files_source = files_source
         self.glob = glob
@@ -59,7 +60,9 @@ class DocumentChunksIterator(Iterator):
 
             def process_url(url):
                 return url_replacement_match.sub(document_path_replacement["replacement_pattern"], url)
+
         else:
+
             def process_url(url):
                 return url
 
@@ -101,14 +104,16 @@ class DocumentChunksIterator(Iterator):
         """
         return self.__document_statistics
 
-    def _document_statistics(self, sources: Iterable[DocumentSource], allowed_extensions=SUPPORTED_EXTENSIONS) -> Generator[DocumentSource, None, None]:
+    def _document_statistics(
+        self, sources: Iterable[DocumentSource], allowed_extensions=SUPPORTED_EXTENSIONS
+    ) -> Generator[DocumentSource, None, None]:
         """Filter out sources with extensions not in allowed_extensions."""
         if self.__document_statistics is None:
             self.__document_statistics = {  # type: ignore
                 "total_files": 0,
                 "skipped_files": 0,
                 "skipped_extensions": {},
-                "kept_extensions": {}
+                "kept_extensions": {},
             }
         for source in sources:
             source_path: Path = Path(source.path)  # type: ignore[arg-type]
@@ -119,16 +124,14 @@ class DocumentChunksIterator(Iterator):
                     self.__document_statistics["skipped_files"] += 1  # type: ignore[index]
                     ext_skipped = self.__document_statistics["skipped_extensions"].get(source_path.suffix.lower(), 0)  # type: ignore[index]
                     self.__document_statistics["skipped_extensions"][source_path.suffix.lower()] = ext_skipped + 1  # type: ignore[index]
-                    logger.debug(f'Filtering out extension "{source_path.suffix.lower()}" source: {source.filename}') 
+                    logger.debug(f'Filtering out extension "{source_path.suffix.lower()}" source: {source.filename}')
                     continue
             ext_kept = self.__document_statistics["kept_extensions"].get(source_path.suffix.lower(), 0)  # type: ignore[index]
             self.__document_statistics["kept_extensions"][source_path.suffix.lower()] = ext_kept + 1  # type: ignore[index]
             yield source
         logger.info(f"[DocumentChunksIterator::filter_extensions] Filtered {self.__document_statistics['skipped_files']} files out of {self.__document_statistics['total_files']}")  # type: ignore[index]
         if self.span is not None:
-            self.span.set_attributes({
-                f"document_statistics.{k}": v for k, v in self.__document_statistics.items()
-            })
+            self.span.set_attributes({f"document_statistics.{k}": v for k, v in self.__document_statistics.items()})
 
     @staticmethod
     def _infer_base_url_from_git(files_source: Union[str, Path]) -> Optional[str]:
@@ -152,7 +155,9 @@ class DocumentChunksIterator(Iterator):
                     # TODO: url encode `repo.active_branch.name`
                     remote_url = f"https://{org}.visualstudio.com/DefaultCollection/{project}/_git/{repository}?version=GB{repo.active_branch.name}&path="
                 except Exception as e:
-                    logger.warning(f"Failed to parse org, project and repo from Azure DevOps remote url: {remote_url}\nbecause: {e}")
+                    logger.warning(
+                        f"Failed to parse org, project and repo from Azure DevOps remote url: {remote_url}\nbecause: {e}"
+                    )
                     pass
             else:
                 # Infer branch from repo

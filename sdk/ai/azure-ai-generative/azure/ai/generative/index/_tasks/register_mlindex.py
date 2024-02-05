@@ -22,6 +22,7 @@ from azure.ai.generative.index._utils.logging import (
 
 logger = get_logger("register_mlindex")
 
+
 def main(args, run, logger, activity_logger):
     ws = run.experiment.workspace
 
@@ -55,22 +56,35 @@ def main(args, run, logger, activity_logger):
             "azureml.mlIndexAssetKind": index_kind,
             "azureml.mlIndexAsset": "true",
             "azureml.mlIndexAssetSource": run.properties.get("azureml.mlIndexAssetSource", "Unknown"),
-            "azureml.mlIndexAssetPipelineRunId": run.properties.get("azureml.pipelinerunid", "Unknown")
-        })
+            "azureml.mlIndexAssetPipelineRunId": run.properties.get("azureml.pipelinerunid", "Unknown"),
+        },
+    )
 
-    asset_id = re.sub("azureml://locations/(.*)/workspaces/(.*)/data", f"azureml://subscriptions/{ws._subscription_id}/resourcegroups/{ws._resource_group}/providers/Microsoft.MachineLearningServices/workspaces/{ws._workspace_name}/data", data_version.asset_id)
+    asset_id = re.sub(
+        "azureml://locations/(.*)/workspaces/(.*)/data",
+        f"azureml://subscriptions/{ws._subscription_id}/resourcegroups/{ws._resource_group}/providers/Microsoft.MachineLearningServices/workspaces/{ws._workspace_name}/data",
+        data_version.asset_id,
+    )
     with open(args.output_asset_id, "w") as f:
         f.write(asset_id)
 
     logger.info(f"Finished Registering MLIndex Asset '{args.asset_name}', version = {data_version.version_id}")
 
+
 def main_wrapper(args, run, logger):
-    with track_activity(logger, "register_mlindex", custom_dimensions={"source": run.properties.get("azureml.mlIndexAssetSource", "Unknown")}) as activity_logger, safe_mlflow_start_run(logger=logger):
+    with track_activity(
+        logger,
+        "register_mlindex",
+        custom_dimensions={"source": run.properties.get("azureml.mlIndexAssetSource", "Unknown")},
+    ) as activity_logger, safe_mlflow_start_run(logger=logger):
         try:
             main(args, run, logger, activity_logger)
         except Exception:
-            activity_logger.error(f"register_mlindex failed with exception: {traceback.format_exc()}")  # activity_logger doesn't log traceback
+            activity_logger.error(
+                f"register_mlindex failed with exception: {traceback.format_exc()}"
+            )  # activity_logger doesn't log traceback
             raise
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

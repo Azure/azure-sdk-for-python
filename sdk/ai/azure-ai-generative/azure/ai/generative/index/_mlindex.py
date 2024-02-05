@@ -76,7 +76,7 @@ class MLIndex:
                 else:
                     # Assume given AzureML Data Asset
                     uri = uri.path
-                
+
                 if find_spec("fsspec") is None:
                     raise ValueError(
                         "fsspec python package not installed. Please install it with `pip install fsspec`."
@@ -96,6 +96,7 @@ class MLIndex:
                 mlindex_uri = f"{uri}/MLIndex" if not uri.endswith("MLIndex") else uri
                 try:
                     import fsspec
+
                     mlindex_file = fsspec.open(mlindex_uri, "r")
                     if hasattr(mlindex_file.fs, "_path"):
                         # File on azureml filesystem has path relative to container root so need to get underlying fs path
@@ -171,28 +172,28 @@ class MLIndex:
                     connection_credential = get_connection_credential(self.index_config, credential=credential)
                 except Exception as e:
                     # azure.ai.generative has workflow where env vars are set before doing stuff.
-					# AZURE_AI_SEARCH_KEY is new key, but fall back to AZURE_COGNITIVE_SEARCH_KEY for backward compat.
+                    # AZURE_AI_SEARCH_KEY is new key, but fall back to AZURE_COGNITIVE_SEARCH_KEY for backward compat.
                     if "AZURE_AI_SEARCH_KEY" in os.environ or "AZURE_COGNITIVE_SEARCH_KEY" in os.environ:
                         from azure.core.credentials import AzureKeyCredential
 
                         logger.warning(f"Failed to get credential for ACS with {e}, falling back to env vars.")
-                        connection_credential = AzureKeyCredential(os.environ["AZURE_AI_SEARCH_KEY"] if "AZURE_AI_SEARCH_KEY" in os.environ else os.environ["AZURE_COGNITIVE_SEARCH_KEY"])
+                        connection_credential = AzureKeyCredential(
+                            os.environ["AZURE_AI_SEARCH_KEY"]
+                            if "AZURE_AI_SEARCH_KEY" in os.environ
+                            else os.environ["AZURE_COGNITIVE_SEARCH_KEY"]
+                        )
                     else:
                         raise e
 
                 index_endpoint = self.index_config.get("endpoint", None)
                 if not index_endpoint:
                     index_endpoint = get_target_from_connection(
-                        get_connection_by_id_v2(
-                            self.index_config["connection"]["id"],
-                            credential=credential
-                            )
-                        )
+                        get_connection_by_id_v2(self.index_config["connection"]["id"], credential=credential)
+                    )
 
                 azure_search_documents_version = packages_versions_for_compatibility["azure-search-documents"]
                 search_client_version = pkg_version.parse(azure_search_documents_version)
                 langchain_pkg_version = pkg_version.parse(langchain_version)
-
 
                 if (
                     search_client_version > pkg_version.parse("11.4.0b6")
@@ -221,7 +222,9 @@ class MLIndex:
 
                     return AzureSearch(
                         azure_search_endpoint=index_endpoint,
-                        azure_search_key=connection_credential.key if isinstance(connection_credential, AzureKeyCredential) else None,
+                        azure_search_key=connection_credential.key
+                        if isinstance(connection_credential, AzureKeyCredential)
+                        else None,
                         index_name=self.index_config.get("index"),
                         embedding_function=self.get_langchain_embeddings(credential=credential).embed_query,
                         search_type="hybrid",
@@ -254,7 +257,6 @@ class MLIndex:
                         self.embeddings_config.copy()
                     ).as_langchain_embeddings(credential=credential)
 
-
                     # langchain fix https://github.com/langchain-ai/langchain/pull/10823 released in 0.0.318
                     if langchain_pkg_version >= pkg_version.parse("0.0.318"):
                         embeddings = embeddings.embed_query
@@ -273,12 +275,14 @@ class MLIndex:
                             logger.warning(
                                 f"Failed to load FAISS Index using installed version of langchain, retrying with vendored FAISS VectorStore.\n{e}"
                             )
-                            
+
                             from azure.ai.resources._index._langchain.vendor.vectorstores.faiss import FAISS
+
                             store = FAISS.load_local(str(tmpdir), embeddings)
-                            
+
                 elif engine.endswith("indexes.faiss.FaissAndDocStore"):
                     from azure.ai.resources._index._indexes.faiss import FaissAndDocStore
+
                     error_fmt_str = """Failed to import langchain faiss bridge module with: {e}\n"
                         This could be due to an incompatible change in langchain since this bridge was implemented.
                         If you understand what has changed you could implement your own wrapper of azure.ai.tools.mlindex._indexes.faiss.FaissAndDocStore.
@@ -388,6 +392,7 @@ class MLIndex:
             connection_credential = get_connection_credential(self.index_config, credential=credential)
 
             from azure.search.documents import SearchClient
+
             return SearchClient(
                 endpoint=self.index_config.get("endpoint"),
                 index_name=self.index_config.get("index"),
@@ -458,6 +463,7 @@ class MLIndex:
                 self.embeddings_config["connection_type"] = "workspace_connection"
                 if isinstance(embedding_connection, str):
                     from azure.ai.resources._index._utils.connections import get_connection_by_id_v2
+
                     embedding_connection = get_connection_by_id_v2(embedding_connection, credential=credential)
                 self.embeddings_config["connection"] = {"id": get_id_from_connection(embedding_connection)}
         if index_connection:
@@ -467,6 +473,7 @@ class MLIndex:
                 self.index_config["connection_type"] = "workspace_connection"
                 if isinstance(index_connection, str):
                     from azure.ai.resources._index._utils.connections import get_connection_by_id_v2
+
                     index_connection = get_connection_by_id_v2(index_connection, credential=credential)
                 self.index_config["connection"] = {"id": get_id_from_connection(index_connection)}
         self.save(just_config=True)  # type: ignore[call-arg]
@@ -635,6 +642,7 @@ class MLIndex:
                             }
                         else:
                             import openai
+
                             api_key = "OPENAI_API_KEY"
                             api_base = "OPENAI_API_BASE"
                             if pkg_version.parse(openai.version.VERSION) >= pkg_version.parse("1.0.0"):
@@ -733,24 +741,25 @@ class MLIndex:
                     **{
                         "endpoint": os.getenv("AZURE_AI_SEARCH_ENDPOINT"),
                         "api_version": "2023-07-01-preview",
-                    }
+                    },
                 }
-                connection_args = {
-                    "connection_type": "environment",
-                    "connection": {"key": "AZURE_AI_SEARCH_KEY"}
-                }
+                connection_args = {"connection_type": "environment", "connection": {"key": "AZURE_AI_SEARCH_KEY"}}
             else:
                 if isinstance(index_connection, str):
                     index_connection: Union[Dict[str, Dict[str, Dict[str, Any]]], Any] = get_connection_by_id_v2(index_connection, credential=credential)  # type: ignore[no-redef]
                 index_config = {
                     **index_config,
                     **{
-                        "endpoint": (index_connection.target
-                        if hasattr(index_connection, "target")
-                        else index_connection["properties"]["target"]),  # type: ignore[index]
-                        "api_version": (index_connection.metadata.get("apiVersion", "2023-07-01-preview")
-                        if hasattr(index_connection, "metadata")
-                        else index_connection["properties"]["metadata"].get("apiVersion", "2023-07-01-preview")),  # type: ignore
+                        "endpoint": (
+                            index_connection.target
+                            if hasattr(index_connection, "target")
+                            else index_connection["properties"]["target"]
+                        ),  # type: ignore[index]
+                        "api_version": (
+                            index_connection.metadata.get("apiVersion", "2023-07-01-preview")
+                            if hasattr(index_connection, "metadata")
+                            else index_connection["properties"]["metadata"].get("apiVersion", "2023-07-01-preview")
+                        ),  # type: ignore
                     },
                 }
                 connection_args = {

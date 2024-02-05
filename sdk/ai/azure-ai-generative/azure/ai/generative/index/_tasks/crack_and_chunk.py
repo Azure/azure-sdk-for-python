@@ -40,10 +40,7 @@ def chunks_to_dataframe(chunks) -> pd.DataFrame:
     for chunk in chunks:
         metadata.append(json.dumps(chunk.get_metadata()))
         data.append(chunk.load_data())
-    chunks_dict = {
-        "Metadata": metadata,
-        "Chunk": data
-    }
+    chunks_dict = {"Metadata": metadata, "Chunk": data}
 
     return pd.DataFrame(chunks_dict)
 
@@ -86,7 +83,11 @@ def custom_loading(python_file_path: str, ext_loaders, ext_splitters):
     spec.loader.exec_module(module)  # type: ignore
     for _, obj in inspect.getmembers(module):
         logger.debug(f"Found {obj} in {module_name}")
-        if inspect.isclass(obj) and obj != BaseDocumentLoader and (issubclass(obj, BaseDocumentLoader) or (hasattr(obj, "file_extensions") and hasattr(obj, "load"))):
+        if (
+            inspect.isclass(obj)
+            and obj != BaseDocumentLoader
+            and (issubclass(obj, BaseDocumentLoader) or (hasattr(obj, "file_extensions") and hasattr(obj, "load")))
+        ):
             loader = obj(None, None, None)  # type: ignore[arg-type]
             file_extensions = loader.file_extensions()
             logger.info(f"Registering custom loader for {file_extensions}")
@@ -96,9 +97,14 @@ def custom_loading(python_file_path: str, ext_loaders, ext_splitters):
                 ext_splitters[file_extension] = file_extension_splitters[".txt"]
 
 
-def get_activity_logging_filter(activity_logger, source_glob) -> Callable[[Iterator[DocumentSource], Any], Iterator[DocumentSource]]:
+def get_activity_logging_filter(
+    activity_logger, source_glob
+) -> Callable[[Iterator[DocumentSource], Any], Iterator[DocumentSource]]:
     """Get a filter function with activity logging."""
-    def filter_and_log_extensions(sources: Iterator[DocumentSource], allowed_extensions=SUPPORTED_EXTENSIONS) -> Iterator[DocumentSource]:
+
+    def filter_and_log_extensions(
+        sources: Iterator[DocumentSource], allowed_extensions=SUPPORTED_EXTENSIONS
+    ) -> Iterator[DocumentSource]:
         """Filter out sources with extensions not in allowed_extensions."""
         total_files = 0
         skipped_files = 0
@@ -119,8 +125,12 @@ def get_activity_logging_filter(activity_logger, source_glob) -> Callable[[Itera
             logger.info(f"Processing file: {source.filename}")
             yield source
         logger.info(f"[DocumentChunksIterator::filter_extensions] Filtered {skipped_files} files out of {total_files}")
-        logger.info(f"[DocumentChunksIterator::filter_extensions] Skipped extensions: {json.dumps(skipped_extensions, indent=2)}")
-        logger.info(f"[DocumentChunksIterator::filter_extensions] Kept extensions: {json.dumps(kept_extension, indent=2)}")
+        logger.info(
+            f"[DocumentChunksIterator::filter_extensions] Skipped extensions: {json.dumps(skipped_extensions, indent=2)}"
+        )
+        logger.info(
+            f"[DocumentChunksIterator::filter_extensions] Kept extensions: {json.dumps(kept_extension, indent=2)}"
+        )
         activity_logger.activity_info["total_files"] = total_files
         activity_logger.activity_info["skipped_files"] = skipped_files
         activity_logger.activity_info["skipped_extensions"] = json.dumps(skipped_extensions)
@@ -128,7 +138,9 @@ def get_activity_logging_filter(activity_logger, source_glob) -> Callable[[Itera
         if total_files == 0:
             raise Exception(f"No files found in input path using glob {source_glob}")
         if skipped_files == total_files:
-            raise Exception(f"None of the provided file extensions are supported. List of supported file extensions is {allowed_extensions}")
+            raise Exception(
+                f"None of the provided file extensions are supported. List of supported file extensions is {allowed_extensions}"
+            )
 
     return filter_and_log_extensions
 
@@ -151,9 +163,15 @@ def main(args, logger, activity_logger):
         glob=args.input_glob,
         base_url=args.data_source_url,
         document_path_replacement_regex=args.document_path_replacement_regex,
-        file_filter=lambda sources: filter_and_log_extensions(sources=sources, allowed_extensions=list(extension_loaders.keys())),
+        file_filter=lambda sources: filter_and_log_extensions(
+            sources=sources, allowed_extensions=list(extension_loaders.keys())
+        ),
         source_loader=lambda sources: crack_documents(sources, file_extension_loaders=extension_loaders),
-        chunked_document_processors=[lambda docs: split_documents(docs, splitter_args=splitter_args, file_extension_splitters=extension_splitters)],
+        chunked_document_processors=[
+            lambda docs: split_documents(
+                docs, splitter_args=splitter_args, file_extension_splitters=extension_splitters
+            )
+        ],
     )
     file_count = 0
     total_time = 0
@@ -161,28 +179,37 @@ def main(args, logger, activity_logger):
         file_start_time = time.time()
         file_count += 1
         # TODO: Ideally make it easy to limit number of files with a `- take: n` operation on input URI in MLTable
-        if (args.max_sample_files != -1 and file_count >= args.max_sample_files):
-            logger.info(f"file count: {file_count} - reached max sample file count: {args.max_sample_files}", extra={"print": True})
+        if args.max_sample_files != -1 and file_count >= args.max_sample_files:
+            logger.info(
+                f"file count: {file_count} - reached max sample file count: {args.max_sample_files}",
+                extra={"print": True},
+            )
             break
 
         if args.output_format == "csv":
             write_chunks_to_csv(
                 chunks_to_dataframe(chunked_document.chunks),
-                generate_file_name(args.output_chunks, chunked_document, "csv"))
+                generate_file_name(args.output_chunks, chunked_document, "csv"),
+            )
         elif args.output_format == "jsonl":
             write_chunks_to_csv(
                 chunks_to_dataframe(chunked_document.chunks),
-                generate_file_name(args.output_chunks, chunked_document, "jsonl"))
+                generate_file_name(args.output_chunks, chunked_document, "jsonl"),
+            )
         file_end_time = time.time()
         total_time += file_end_time - file_start_time
 
-    logger.info(f"Processed {file_count} files",)
+    logger.info(
+        f"Processed {file_count} files",
+    )
     activity_logger.activity_info["file_count"] = str(file_count)
 
     if file_count == 0:
         logger.info(f"No chunked documents found in {args.input_data} with glob {args.input_glob}")
         activity_logger.activity_info["error"] = "No chunks found"
-        activity_logger.activity_info["glob"] = args.input_glob if re.match("^[*/\\\"']+$", args.input_glob) is not None else "[REDACTED]"
+        activity_logger.activity_info["glob"] = (
+            args.input_glob if re.match("^[*/\\\"']+$", args.input_glob) is not None else "[REDACTED]"
+        )
         raise ValueError(f"No chunked documents found in {args.input_data} with glob {args.input_glob}.")
 
     logger.info(f"Wrote chunks to {file_count} files in {total_time} seconds (chunk generation time excluded)")
@@ -194,7 +221,9 @@ def main_wrapper(args, logger):
         try:
             main(args, logger, activity_logger)
         except Exception:
-            activity_logger.error(f"crack_and_chunk failed with exception: {traceback.format_exc()}")  # activity_logger doesn't log traceback
+            activity_logger.error(
+                f"crack_and_chunk failed with exception: {traceback.format_exc()}"
+            )  # activity_logger doesn't log traceback
             raise
 
 
@@ -236,9 +265,13 @@ def __main__(arg_parser, main_func):
         raise ValueError("output_chunks or output_title_chunk is required")
 
     if args.openai_api_version is not None:
-        logger.warning("openai_api_version is deprecated, this argument is not used and will be removed in a future release.")
+        logger.warning(
+            "openai_api_version is deprecated, this argument is not used and will be removed in a future release."
+        )
     if args.openai_api_type is not None:
-        logger.warning("openai_api_type is deprecated, this argument is not used and will be removed in a future release.")
+        logger.warning(
+            "openai_api_type is deprecated, this argument is not used and will be removed in a future release."
+        )
 
     try:
         main_func(args, logger)

@@ -26,15 +26,13 @@ except ImportError as e:
 
 try:
     import pkg_resources  # type: ignore[import]
+
     openai_version_str = pkg_resources.get_distribution("openai").version
     openai_version = pkg_resources.parse_version(openai_version_str)
     import openai
+
     if openai_version >= pkg_resources.parse_version("1.0.0"):
-        _RETRY_ERRORS: Tuple = (
-            openai.APIConnectionError ,
-            openai.APIError,
-            openai.APIStatusError
-        )
+        _RETRY_ERRORS: Tuple = (openai.APIConnectionError, openai.APIError, openai.APIStatusError)
     else:
         _RETRY_ERRORS: Tuple = (  # type: ignore[no-redef]
             openai.error.ServiceUnavailableError,
@@ -43,7 +41,7 @@ try:
             openai.error.APIConnectionError,
             openai.error.Timeout,
         )
-        
+
 except ImportError as e:
     print("In order to use qa, please install the 'qa_generation' extra of azure-ai-generative")
     raise e
@@ -56,7 +54,6 @@ _DEFAULT_AOAI_VERSION = "2023-07-01-preview"
 _MAX_RETRIES = 7
 
 
-
 def _completion_with_retries(*args, **kwargs):
     n = 1
     while True:
@@ -64,20 +61,32 @@ def _completion_with_retries(*args, **kwargs):
             if openai_version >= pkg_resources.parse_version("1.0.0"):
                 if kwargs["api_type"].lower() == "azure":
                     from openai import AzureOpenAI
+
                     client = AzureOpenAI(
-                        azure_endpoint = kwargs["api_base"], 
-                        api_key=kwargs["api_key"],  
+                        azure_endpoint=kwargs["api_base"],
+                        api_key=kwargs["api_key"],
                         api_version=kwargs["api_version"],
                         default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
                     )
-                    response = client.chat.completions.create(messages=kwargs["messages"], model=kwargs["deployment_id"], temperature=kwargs["temperature"], max_tokens=kwargs["max_tokens"])
+                    response = client.chat.completions.create(
+                        messages=kwargs["messages"],
+                        model=kwargs["deployment_id"],
+                        temperature=kwargs["temperature"],
+                        max_tokens=kwargs["max_tokens"],
+                    )
                 else:
                     from openai import OpenAI
+
                     client = OpenAI(
                         api_key=kwargs["api_key"],
-                        default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},  
+                        default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
                     )
-                    response = client.chat.completions.create(messages=kwargs["messages"], model=kwargs["model"], temperature=kwargs["temperature"], max_tokens=kwargs["max_tokens"])
+                    response = client.chat.completions.create(
+                        messages=kwargs["messages"],
+                        model=kwargs["model"],
+                        temperature=kwargs["temperature"],
+                        max_tokens=kwargs["max_tokens"],
+                    )
                 return response.choices[0].message.content, dict(response.usage)
             else:
                 response = openai.ChatCompletion.create(*args, **kwargs)
@@ -85,7 +94,7 @@ def _completion_with_retries(*args, **kwargs):
         except _RETRY_ERRORS as e:
             if n > _MAX_RETRIES:
                 raise
-            secs = 2 ** n
+            secs = 2**n
             logger.warning(f"Retrying after {secs}s. API call failed due to {e.__class__.__name__}: {e}")
             time.sleep(secs)
             n += 1
@@ -99,20 +108,32 @@ async def _completion_with_retries_async(*args, **kwargs):
             if openai_version >= pkg_resources.parse_version("1.0.0"):
                 if kwargs["api_type"].lower() == "azure":
                     from openai import AsyncAzureOpenAI
+
                     client = AsyncAzureOpenAI(
-                        azure_endpoint = kwargs["api_base"], 
-                        api_key=kwargs["api_key"],  
+                        azure_endpoint=kwargs["api_base"],
+                        api_key=kwargs["api_key"],
                         api_version=kwargs["api_version"],
                         default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
                     )
-                    response = await client.chat.completions.create(messages=kwargs["messages"], model=kwargs["deployment_id"], temperature=kwargs["temperature"], max_tokens=kwargs["max_tokens"])
+                    response = await client.chat.completions.create(
+                        messages=kwargs["messages"],
+                        model=kwargs["deployment_id"],
+                        temperature=kwargs["temperature"],
+                        max_tokens=kwargs["max_tokens"],
+                    )
                 else:
                     from openai import AsyncOpenAI
+
                     client = AsyncOpenAI(
                         api_key=kwargs["api_key"],
                         default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
                     )
-                    response = await client.chat.completions.create(messages=kwargs["messages"], model=kwargs["model"], temperature=kwargs["temperature"], max_tokens=kwargs["max_tokens"])
+                    response = await client.chat.completions.create(
+                        messages=kwargs["messages"],
+                        model=kwargs["model"],
+                        temperature=kwargs["temperature"],
+                        max_tokens=kwargs["max_tokens"],
+                    )
                 return response.choices[0].message.content, dict(response.usage)
             else:
                 response = openai.ChatCompletion.create(*args, **kwargs)
@@ -120,11 +141,12 @@ async def _completion_with_retries_async(*args, **kwargs):
         except _RETRY_ERRORS as e:
             if n > _MAX_RETRIES:
                 raise
-            secs = 2 ** n
+            secs = 2**n
             logger.warning(f"Retrying after {secs}s. API call failed due to {e.__class__.__name__}: {e}")
             await asyncio.sleep(secs)
             n += 1
             continue
+
 
 class OutputStructure(str, Enum):
     """OutputStructure defines what structure the QAs should be written to file in."""
@@ -133,6 +155,7 @@ class OutputStructure(str, Enum):
     """Chat history will be in format used by promptflow"""
     CHAT_PROTOCOL = "CHAT_PROTOCOL"
     """QAs will be in OpenAI message format"""
+
 
 class QAType(str, Enum):
     """QAType defines different types of QAs that can be generated."""
@@ -149,8 +172,10 @@ class QAType(str, Enum):
     """Conversation QAs have questions that might reference words or ideas from previous QAs. ex. If previous conversation was about
     some topicX from text, next question might reference it without using its name: How does *it* compare to topicY?"""
 
+
 class QADataGenerator:
     """Class for generating Question-Answer data from text."""
+
     _PARSING_ERR_UNEQUAL_QA = "Parsing error: Unequal question answer count"
     _PARSING_ERR_UNEQUAL_Q_AFTER_MOD = "Parsing error: Unequal question count after modification"
     _PARSING_ERR_FIRST_LINE = "Parsing error: First line must be a question"
@@ -158,18 +183,20 @@ class QADataGenerator:
     def __init__(self, model_config: Dict, **kwargs: Any):
         """Initialize QADataGenerator using Azure OpenAI details."""
         import openai
+
         api_key = "OPENAI_API_KEY"
         api_base = "OPENAI_API_BASE"
         if version.parse(openai.version.VERSION) >= version.parse("1.0.0"):
             api_key = "AZURE_OPENAI_KEY"
-            api_base = "AZURE_OPENAI_ENDPOINT"        
+            api_base = "AZURE_OPENAI_ENDPOINT"
         self._chat_completion_params = dict(
             # AOAI connection params
             api_type=model_config["api_type"] if "api_type" in model_config else os.getenv("OPENAI_API_TYPE", "azure"),
-            api_version=model_config["api_version"] if "api_version" in model_config else os.getenv("OPENAI_API_VERSION", _DEFAULT_AOAI_VERSION),
+            api_version=model_config["api_version"]
+            if "api_version" in model_config
+            else os.getenv("OPENAI_API_VERSION", _DEFAULT_AOAI_VERSION),
             api_base=model_config["api_base"] if "api_base" in model_config else os.getenv(api_base),
             api_key=model_config["api_key"] if "api_key" in model_config else os.getenv(api_key),
-
             # AOAI model params
             deployment_id=model_config["deployment"],
             model=model_config["model"],
@@ -192,7 +219,7 @@ class QADataGenerator:
             QAType.LONG_ANSWER: "prompt_qa_long_answer.txt",
             QAType.BOOLEAN: "prompt_qa_boolean.txt",
             QAType.SUMMARY: "prompt_qa_summary.txt",
-            QAType.CONVERSATION: "prompt_qa_conversation.txt"
+            QAType.CONVERSATION: "prompt_qa_conversation.txt",
         }
         filename = template_filename[qa_type]
         messages = self._get_messages_from_file(filename)
@@ -236,10 +263,10 @@ class QADataGenerator:
         questions, answers = [], []
         for line in response_text.split("\n"):
             if line.startswith(q_prefix):
-                questions.append(line[len(q_prefix):])
+                questions.append(line[len(q_prefix) :])
                 last_updated = "Q"
             elif line.startswith(a_prefix):
-                answers.append(line[len(a_prefix):])
+                answers.append(line[len(a_prefix) :])
                 last_updated = "A"
             else:  # Q or A spread across multiple lines
                 assert last_updated is not None, self._PARSING_ERR_FIRST_LINE
@@ -266,23 +293,36 @@ class QADataGenerator:
 
     @distributed_trace
     @monitor_with_activity(logger, "QADataGenerator.Export", ActivityType.INTERNALCALL)
-    def export_to_file(self, output_path: str, qa_type: QAType, results: Union[List, List[List]], output_format: OutputStructure = OutputStructure.PROMPTFLOW, field_mapping: Dict[str,str] = {"chat_history_key": "chat_history", "question_key": "question"}):
+    def export_to_file(
+        self,
+        output_path: str,
+        qa_type: QAType,
+        results: Union[List, List[List]],
+        output_format: OutputStructure = OutputStructure.PROMPTFLOW,
+        field_mapping: Dict[str, str] = {"chat_history_key": "chat_history", "question_key": "question"},
+    ):
         """Writes results from QA gen to a jsonl file for Promptflow batch run results is either a list of questions
         and answers or list of list of questions and answers grouped by their chunk e.g. [("How are you?",
         "I am good.")] or [ [("How are you?", "I am good.")], [("What can I do?", "Tell me a joke.")]
         """
         data_dict = defaultdict(list)
-        
+
         if not isinstance(results[0], List):
             results = [results]
-        
+
         if output_format == OutputStructure.PROMPTFLOW:
-            
-            if qa_type == QAType.CONVERSATION and not ("chat_history_key" in field_mapping and "question_key" in field_mapping):
-                raise Exception("Field mapping for Promptflow output with Conversation must contain following keys: chat_history_key, question_key")
+
+            if qa_type == QAType.CONVERSATION and not (
+                "chat_history_key" in field_mapping and "question_key" in field_mapping
+            ):
+                raise Exception(
+                    "Field mapping for Promptflow output with Conversation must contain following keys: chat_history_key, question_key"
+                )
             # Only the question key is required in non-conversation cases, we can default to chat_history as chat_history_key
             elif not ("question_key" in field_mapping):
-                raise Exception(f"Field mapping for Promptflow output with {qa_type} must contain following keys: question_key")
+                raise Exception(
+                    f"Field mapping for Promptflow output with {qa_type} must contain following keys: question_key"
+                )
 
             question_key = field_mapping["question_key"]
             # Set this here for parity with eval flows
@@ -290,7 +330,7 @@ class QADataGenerator:
             chat_history_key = field_mapping.get("chat_history_key", "chat_history")
             for qs_and_as in results:
                 chat_history: List = []
-                for question, answer in qs_and_as: 
+                for question, answer in qs_and_as:
                     data_dict[chat_history_key].append(list(chat_history))
                     if qa_type == QAType.CONVERSATION:
                         # Chat History columns:
@@ -298,13 +338,13 @@ class QADataGenerator:
                         chat_history.append({"inputs": {question_key: question}, "outputs": {answer_key: answer}})
                     else:
                         # QnA columns:
-                        data_dict[question_key].append(question)   
+                        data_dict[question_key].append(question)
 
                     data_dict[answer_key].append(answer)  # Consider generated answer as the ground truth
         else:
             for qs_and_as in results:
                 chat_history = []
-                for question, answer in qs_and_as: 
+                for question, answer in qs_and_as:
                     if qa_type == QAType.CONVERSATION:
                         print(f"Chat data dict: {data_dict['messages']}\n\n")
                         chat_history.append({"role": "user", "content": question})
@@ -328,7 +368,7 @@ class QADataGenerator:
     @distributed_trace
     @monitor_with_activity(logger, "QADataGenerator.Generate", ActivityType.INTERNALCALL)
     def generate(self, text: str, qa_type: QAType, num_questions: Optional[int] = None) -> Dict:
-        self._validate(qa_type, num_questions)  
+        self._validate(qa_type, num_questions)
         validated_num_questions: int = num_questions  # type: ignore[assignment]
         content, token_usage = _completion_with_retries(
             messages=self._get_messages_for_qa_type(qa_type, text, validated_num_questions),
@@ -369,7 +409,7 @@ class QADataGenerator:
         assert len(questions) == len(answers), self._PARSING_ERR_UNEQUAL_QA
         if qa_type == QAType.CONVERSATION:
             questions, token_usage2 = await self._modify_conversation_questions_async(questions)
-            token_usage = self._merge_token_usage(token_usage, token_usage2) 
+            token_usage = self._merge_token_usage(token_usage, token_usage2)
         return {
             "question_answers": list(zip(questions, answers)),
             "token_usage": token_usage,

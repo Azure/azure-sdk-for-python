@@ -16,11 +16,7 @@ instrumentation_key = ""
 
 # Gather versions of packages that are used in the RAG codebase to aid in discovering
 # compatibility issues and advising users on how to determine compatible versions
-packages_versions_for_compatibility = {
-    "azure-ai-generative": "",
-    "langchain": "",
-    "azure-search-documents": ""
-}
+packages_versions_for_compatibility = {"azure-ai-generative": "", "langchain": "", "azure-search-documents": ""}
 
 for package in packages_versions_for_compatibility:
     with suppress(Exception):
@@ -29,7 +25,12 @@ for package in packages_versions_for_compatibility:
 langchain_version = packages_versions_for_compatibility["langchain"]
 version = packages_versions_for_compatibility["azure-ai-generative"]
 
-default_custom_dimensions = {"source": COMPONENT_NAME, "version": version, "langchain_version": langchain_version, "azure-search-documents_version": packages_versions_for_compatibility.get("azure-search-documents")}
+default_custom_dimensions = {
+    "source": COMPONENT_NAME,
+    "version": version,
+    "langchain_version": langchain_version,
+    "azure-search-documents_version": packages_versions_for_compatibility.get("azure-search-documents"),
+}
 STACK_FMT = "%s, line %d in function %s."
 DEFAULT_ACTIVITY_TYPE = "InternalCall"
 
@@ -88,7 +89,7 @@ known_modules = [
     "generate_embeddings_parallel",
     "qa_data_generation",
     "register_mlindex_asset",
-    "update_acs_index"
+    "update_acs_index",
 ]
 
 
@@ -105,6 +106,7 @@ class LoggerFactory:
         self.azuremonitor = None
         try:
             import mlflow
+
             self.mlflow = mlflow
         except Exception:
             self.mlflow = False
@@ -113,6 +115,7 @@ class LoggerFactory:
         """Set whether to log to mlflow."""
         try:
             import mlflow
+
             self.mlflow = mlflow
         except Exception:
             print("MLFlow is not installed, skipping mlflow logging.")
@@ -125,7 +128,12 @@ class LoggerFactory:
             # Add stdout handler to any loggers created before enabling stdout.
             self.stdout = logging.StreamHandler(stream=sys.stdout)
             self.stdout.setLevel(verbosity)
-            self.stdout.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)-8s %(name)s - %(message)s (%(filename)s:%(lineno)s)", "%Y-%m-%d %H:%M:%S"))
+            self.stdout.setFormatter(
+                logging.Formatter(
+                    "[%(asctime)s] %(levelname)-8s %(name)s - %(message)s (%(filename)s:%(lineno)s)",
+                    "%Y-%m-%d %H:%M:%S",
+                )
+            )
             for logger in self.loggers.values():
                 if self.stdout:
                     logger.addHandler(self.stdout)
@@ -217,10 +225,11 @@ class LoggerFactory:
             "run_id": os.environ.get("AZUREML_RUN_ID", ""),
             "resource_group": os.environ.get("AZUREML_ARM_RESOURCEGROUP", ""),
             "workspace_name": os.environ.get("AZUREML_ARM_WORKSPACE_NAME", ""),
-            "experiment_id": os.environ.get("AZUREML_EXPERIMENT_ID", "")
+            "experiment_id": os.environ.get("AZUREML_EXPERIMENT_ID", ""),
         }
         try:
             import re
+
             location = os.environ.get("AZUREML_SERVICE_ENDPOINT")
             location = re.compile("//(.*?)\\.").search(location).group(1)
         except Exception:
@@ -228,13 +237,16 @@ class LoggerFactory:
         info["location"] = location
         try:
             from azureml.core import Run
+
             run: Run = Run.get_context()
             if hasattr(run, "experiment"):
                 info["parent_run_id"] = run.properties.get("azureml.pipelinerunid", "Unknown")
                 info["mlIndexAssetKind"] = run.properties.get("azureml.mlIndexAssetKind", "Unknown")
                 info["mlIndexAssetSource"] = run.properties.get("azureml.mlIndexAssetSource", "Unknown")
                 module_name = run.properties.get("azureml.moduleName", "Unknown")
-                info["moduleName"] = module_name if module_name in known_modules or module_name.startswith("llm_") else "Unknown"
+                info["moduleName"] = (
+                    module_name if module_name in known_modules or module_name.startswith("llm_") else "Unknown"
+                )
                 if info["moduleName"] != "Unknown":
                     info["moduleVersion"] = run.properties.get("azureml.moduleVersion", "Unknown")
         except Exception:
@@ -295,6 +307,7 @@ def safe_mlflow_log_metric(*args, logger, **kwargs):
     """Log metric to mlflow if enabled."""
     if mlflow_enabled():
         import mlflow
+
         try:
             if mlflow.active_run():
                 mlflow.log_metric(*args, **kwargs)
@@ -311,6 +324,7 @@ def safe_mlflow_start_run(*args, logger, **kwargs):
     """Start mlflow run if enabled."""
     if mlflow_enabled():
         import mlflow
+
         try:
             with mlflow.start_run() as run:
                 yield run

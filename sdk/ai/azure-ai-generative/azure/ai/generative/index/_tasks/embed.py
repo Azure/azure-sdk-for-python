@@ -64,26 +64,54 @@ def read_chunks_into_documents(files: List[pathlib.Path], chunk_format: str = "c
                 metadata_dict = json.loads(metadata)
                 max_chunk_len = max(max_chunk_len, len(chunk))
                 num_chunks += 1
-                yield StaticDocument(data=chunk, metadata=metadata_dict, document_id=metadata_dict["source"]["filename"] + str(chunk_idx), mtime=metadata_dict["source"].get("mtime"))
+                yield StaticDocument(
+                    data=chunk,
+                    metadata=metadata_dict,
+                    document_id=metadata_dict["source"]["filename"] + str(chunk_idx),
+                    mtime=metadata_dict["source"].get("mtime"),
+                )
 
-        logger.info(f"==== Read {num_chunks} chunks file {i+1}/{num_files}: {file_name}, max_chunk_len = {max_chunk_len}")
+        logger.info(
+            f"==== Read {num_chunks} chunks file {i+1}/{num_files}: {file_name}, max_chunk_len = {max_chunk_len}"
+        )
         file_max_chunk_len = max(file_max_chunk_len, max_chunk_len)
     logger.info(f"longest chunk seen was {file_max_chunk_len}", extra={"print": True})
 
 
-def load_embeddings_container(embeddings_model_uri: str, connection_args: dict, logger, embeddings_container_path: Optional[str] = None, worker_id=0):
+def load_embeddings_container(
+    embeddings_model_uri: str,
+    connection_args: dict,
+    logger,
+    embeddings_container_path: Optional[str] = None,
+    worker_id=0,
+):
     """Loads embeddings container from uri or from previous run."""
     embeddings_container = None
     if embeddings_container_path is not None:
         with track_activity(logger, "init.load_embeddings_container") as activity_logger:
             if hasattr(activity_logger, "activity_info"):
                 activity_logger.activity_info["completionStatus"] = "Failure"
-            embeddings_container = EmbeddingsContainer.load_latest_snapshot(embeddings_container_path, activity_logger=activity_logger)
+            embeddings_container = EmbeddingsContainer.load_latest_snapshot(
+                embeddings_container_path, activity_logger=activity_logger
+            )
 
-    return embeddings_container if embeddings_container is not None else EmbeddingsContainer.from_uri(embeddings_model_uri, **connection_args)
+    return (
+        embeddings_container
+        if embeddings_container is not None
+        else EmbeddingsContainer.from_uri(embeddings_model_uri, **connection_args)
+    )
 
 
-def chunk_embedder(worker_id, chunk_queue, results_queue, embeddings_model_uri, connection_args, embeddings_container, output, logger_queue):
+def chunk_embedder(
+    worker_id,
+    chunk_queue,
+    results_queue,
+    embeddings_model_uri,
+    connection_args,
+    embeddings_container,
+    output,
+    logger_queue,
+):
     """Embeds chunks from queue and writes to output path."""
     try:
         enable_appinsights_logging()
@@ -92,7 +120,9 @@ def chunk_embedder(worker_id, chunk_queue, results_queue, embeddings_model_uri, 
         # logger.addHandler(handler)
         logger.info(f"chunk_embedder_{worker_id} started")
 
-        embedder = load_embeddings_container(embeddings_model_uri, connection_args, logger, embeddings_container, worker_id)
+        embedder = load_embeddings_container(
+            embeddings_model_uri, connection_args, logger, embeddings_container, worker_id
+        )
 
         with track_activity(logger, f"embed.chunk_embedder_{worker_id}") as activity_logger:
             activity_logger.activity_info["chunk_batches"] = 0
@@ -116,7 +146,12 @@ def chunk_embedder(worker_id, chunk_queue, results_queue, embeddings_model_uri, 
                 logger.info(f"Embedding took {post_embed - pre_embed} seconds")
                 activity_logger.activity_info["embed_time"] += post_embed - pre_embed
                 try:
-                    results_queue.put({"documents_embedded": embeddings.statistics["documents_embedded"], "documents_reused": embeddings.statistics["documents_reused"]})
+                    results_queue.put(
+                        {
+                            "documents_embedded": embeddings.statistics["documents_embedded"],
+                            "documents_reused": embeddings.statistics["documents_reused"],
+                        }
+                    )
                 except Exception as e:
                     logger.warning(f"Failed to put results in results_queue: {e}")
 
@@ -163,20 +198,28 @@ def _merge_and_log_worker_results(results_queue, merged_results: dict, activity_
             break
 
     if got_results:
-        safe_mlflow_log_metric("Documents Embedded", merged_results["documents_embedded"], logger=activity_logger, step=int(time.time() * 1000))
-        safe_mlflow_log_metric("Documents Reused", merged_results["documents_reused"], logger=activity_logger, step=int(time.time() * 1000))
+        safe_mlflow_log_metric(
+            "Documents Embedded",
+            merged_results["documents_embedded"],
+            logger=activity_logger,
+            step=int(time.time() * 1000),
+        )
+        safe_mlflow_log_metric(
+            "Documents Reused", merged_results["documents_reused"], logger=activity_logger, step=int(time.time() * 1000)
+        )
     return merged_results
 
 
-def create_embeddings(chunks: Iterator[Document],
-                      embeddings_model_uri: str,
-                      connection_args: dict,
-                      embeddings_container: str,
-                      output: str,
-                      activity_logger=None,
-                      batch_size: int = 100,
-                      num_workers: int = -1,
-    ):
+def create_embeddings(
+    chunks: Iterator[Document],
+    embeddings_model_uri: str,
+    connection_args: dict,
+    embeddings_container: str,
+    output: str,
+    activity_logger=None,
+    batch_size: int = 100,
+    num_workers: int = -1,
+):
     """Queues chunks for embedding by process workers."""
     num_workers = num_workers if num_workers > 0 else max(mp.cpu_count() // 2, 2)
     if activity_logger:
@@ -197,7 +240,22 @@ def create_embeddings(chunks: Iterator[Document],
             # Replace concurrent futures with multiprocessing Pool
             with mp.Pool(processes=num_workers) as pool:
                 # Start processes to take chunks from the queue and embed them
-                embedder_futures = [pool.apply_async(chunk_embedder, (i, chunk_queue, results_queue, embeddings_model_uri, connection_args, embeddings_container, output, logger_queue)) for i in range(num_workers)]
+                embedder_futures = [
+                    pool.apply_async(
+                        chunk_embedder,
+                        (
+                            i,
+                            chunk_queue,
+                            results_queue,
+                            embeddings_model_uri,
+                            connection_args,
+                            embeddings_container,
+                            output,
+                            logger_queue,
+                        ),
+                    )
+                    for i in range(num_workers)
+                ]
 
                 # Read chunks and put them in the queue
                 chunk_batch = []
@@ -208,7 +266,9 @@ def create_embeddings(chunks: Iterator[Document],
                         logger.info(f"==== Putting batch_id={batch_id} with {len(chunk_batch)} chunks in queue")
                         while True:
                             _check_workers(embedder_futures, activity_logger)
-                            merged_results = _merge_and_log_worker_results(results_queue, merged_results, activity_logger)
+                            merged_results = _merge_and_log_worker_results(
+                                results_queue, merged_results, activity_logger
+                            )
                             try:
                                 chunk_queue.put((batch_id, chunk_batch), timeout=3)
                                 break
@@ -231,7 +291,9 @@ def create_embeddings(chunks: Iterator[Document],
                     batch_id += 1
                     chunk_batch = []
 
-                logger.info(f"==== Waiting for embedders to finish, {num_workers if batch_id > num_workers else batch_id}/{batch_id} batches remaining")
+                logger.info(
+                    f"==== Waiting for embedders to finish, {num_workers if batch_id > num_workers else batch_id}/{batch_id} batches remaining"
+                )
 
                 # Put sentinel values in the queue to stop the embedder processes
                 for _ in range(num_workers):
@@ -284,7 +346,7 @@ def main(args, logger, activity_logger):
                 "subscription": ws.subscription_id if ws is not None else "",
                 "resource_group": ws.resource_group if ws is not None else "",
                 "workspace": ws.name if ws is not None else "",
-                "key": "OPENAI-API-KEY"
+                "key": "OPENAI-API-KEY",
             }
 
     if args.embeddings_container is not None:
@@ -292,19 +354,25 @@ def main(args, logger, activity_logger):
             if hasattr(embeddings_container_activity_logger, "activity_info"):
                 embeddings_container_activity_logger.activity_info["completionStatus"] = "Failure"
             from azureml.dataprep.fuse.dprepfuse import MountOptions, rslex_uri_volume_mount
+
             mnt_options = MountOptions(
-                default_permission=0o555, read_only=False, allow_other=False, create_destination=True) # read_only=True,
+                default_permission=0o555, read_only=False, allow_other=False, create_destination=True
+            )  # read_only=True,
             try:
                 create_embeddings_failed = False
-                with rslex_uri_volume_mount(args.embeddings_container, f"{os.getcwd()}/embeddings_container", options=mnt_options) as mount_context:
+                with rslex_uri_volume_mount(
+                    args.embeddings_container, f"{os.getcwd()}/embeddings_container", options=mnt_options
+                ) as mount_context:
                     try:
-                        create_embeddings(chunks,
-                                        args.embeddings_model,
-                                        connection_args,
-                                        mount_context.mount_point,
-                                        args.output,
-                                        activity_logger,
-                                        args.batch_size)
+                        create_embeddings(
+                            chunks,
+                            args.embeddings_model,
+                            connection_args,
+                            mount_context.mount_point,
+                            args.output,
+                            activity_logger,
+                            args.batch_size,
+                        )
                     except Exception:
                         create_embeddings_failed = True
                         raise
@@ -315,14 +383,16 @@ def main(args, logger, activity_logger):
                     logger.warn(f"Failed to mount embeddings_container with {e}.")
                 raise
     else:
-        create_embeddings(chunks,
-                            args.embeddings_model,
-                            connection_args,
-                            None,
-                            args.output,
-                            activity_logger,
-                            args.batch_size,
-                            args.num_workers)
+        create_embeddings(
+            chunks,
+            args.embeddings_model,
+            connection_args,
+            None,
+            args.output,
+            activity_logger,
+            args.batch_size,
+            args.num_workers,
+        )
 
 
 def main_wrapper(args, logger):
@@ -331,7 +401,9 @@ def main_wrapper(args, logger):
         try:
             main(args, logger, activity_logger)
         except Exception:
-            activity_logger.error(f"embed failed with exception: {traceback.format_exc()}")  # activity_logger doesn't log traceback
+            activity_logger.error(
+                f"embed failed with exception: {traceback.format_exc()}"
+            )  # activity_logger doesn't log traceback
             raise
 
 
@@ -345,7 +417,11 @@ if __name__ == "__main__":
     parser.add_argument("--embeddings_container", required=False, type=str, default=None)
     parser.add_argument("--output", type=str)
     # Embeddings settings
-    parser.add_argument("--embeddings_model", type=str, default="azure_oen_ai://deployment/text-embedding-ada-002/model/text-embedding-ada-002")
+    parser.add_argument(
+        "--embeddings_model",
+        type=str,
+        default="azure_oen_ai://deployment/text-embedding-ada-002/model/text-embedding-ada-002",
+    )
     parser.add_argument("--batch_size", type=int, default=-1)
     parser.add_argument("--num_workers", type=int, default=-1)
     args = parser.parse_args()

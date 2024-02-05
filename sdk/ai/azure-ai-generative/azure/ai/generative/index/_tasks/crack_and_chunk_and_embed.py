@@ -17,7 +17,11 @@ from azure.ai.generative.index._documents import (
     DocumentSource,
 )
 from azure.ai.generative.index._documents.chunking import file_extension_splitters, split_documents
-from azure.ai.generative.index._documents.cracking import crack_documents, file_extension_loaders, files_to_document_source
+from azure.ai.generative.index._documents.cracking import (
+    crack_documents,
+    file_extension_loaders,
+    files_to_document_source,
+)
 from azure.ai.generative.index._embeddings import DataEmbeddedDocument, EmbeddedDocumentSource, EmbeddingsContainer
 from azure.ai.generative.index._mlindex import MLIndex
 from azure.ai.generative.index._tasks.crack_and_chunk import custom_loading, get_activity_logging_filter, str2bool
@@ -75,7 +79,9 @@ def crack_and_chunk_and_embed(
 
         def process_url(url):
             return url_replacement_match.sub(document_path_replacement["replacement_pattern"], url)
+
     else:
+
         def process_url(url):
             return url
 
@@ -83,13 +89,13 @@ def crack_and_chunk_and_embed(
         source_uri,
         source_glob,
         citation_url if citation_url is not None else DocumentChunksIterator._infer_base_url_from_git(source_uri),
-        process_url
+        process_url,
     )
     filter_and_log_extensions = get_activity_logging_filter(activity_logger, source_glob)
 
     # Below is destructive to EmbeddingsContainer in-memory tables
     # TODO: log metrics for reused_sources, deleted_sources, and sources_to_embed
-    sources_to_embed: Dict[str, DocumentSource] = OrderedDict() 
+    sources_to_embed: Dict[str, DocumentSource] = OrderedDict()
     reused_sources = OrderedDict()
     for source_doc in filter_and_log_extensions(source_documents):  # type: ignore
         # TODO: Bug 2879646
@@ -100,11 +106,15 @@ def crack_and_chunk_and_embed(
         if existing_embedded_source:
             if existing_embedded_source.source.mtime is not None and existing_embedded_source.source.mtime >= mtime:
                 if verbosity >= SOURCE_LOGGING_VERBOSITY:
-                    logger.info(f"REUSING: source '{source_doc.filename}' embedding as mtime {mtime} is older than existing mtime {existing_embedded_source.source.mtime}")
+                    logger.info(
+                        f"REUSING: source '{source_doc.filename}' embedding as mtime {mtime} is older than existing mtime {existing_embedded_source.source.mtime}"
+                    )
                 reused_sources[source_doc.filename] = existing_embedded_source
             else:
                 if verbosity >= SOURCE_LOGGING_VERBOSITY:
-                    logger.info(f"EMBEDDING: source '{source_doc.filename}' as mtime {mtime} is newer than existing mtime {existing_embedded_source.source.mtime}")
+                    logger.info(
+                        f"EMBEDDING: source '{source_doc.filename}' as mtime {mtime} is newer than existing mtime {existing_embedded_source.source.mtime}"
+                    )
                 sources_to_embed[source_doc.filename] = source_doc
             del embeddings_container._document_sources[source_doc.filename]
         else:
@@ -115,16 +125,20 @@ def crack_and_chunk_and_embed(
     deleted_sources = embeddings_container._document_sources
     for deleted_source in deleted_sources.values():
         if verbosity >= SOURCE_LOGGING_VERBOSITY:
-            logger.info(f"REMOVING: source '{deleted_source.source.filename}' from EmbeddingsContainer as it no longer exists in source")
+            logger.info(
+                f"REMOVING: source '{deleted_source.source.filename}' from EmbeddingsContainer as it no longer exists in source"
+            )
 
     # Reset EmbeddingsContainer._document_sources, ready to add reused sources
     embeddings_container._document_sources = OrderedDict()
     embeddings_container._deleted_sources = deleted_sources
 
-    logger.info("Finished processing sources:\n"
-                f"Sources to embed: {len(sources_to_embed)}\n"
-                f"Sources reused: {len(reused_sources)}\n"
-                f"Sources deleted: {len(deleted_sources)}")
+    logger.info(
+        "Finished processing sources:\n"
+        f"Sources to embed: {len(sources_to_embed)}\n"
+        f"Sources reused: {len(reused_sources)}\n"
+        f"Sources deleted: {len(deleted_sources)}"
+    )
 
     documents_embedded = OrderedDict()
     for reused_source in reused_sources.values():
@@ -149,7 +163,9 @@ def crack_and_chunk_and_embed(
     splitter_args = {"chunk_size": chunk_size, "chunk_overlap": chunk_overlap, "use_rcts": use_rcts}
     sources_to_embed_values: Iterator[DocumentSource] = iter(sources_to_embed.values())
     cracked_sources = crack_documents(sources_to_embed_values, file_extension_loaders=extension_loaders)
-    chunked_docs = split_documents(cracked_sources, splitter_args=splitter_args, file_extension_splitters=extension_splitters)
+    chunked_docs = split_documents(
+        cracked_sources, splitter_args=splitter_args, file_extension_splitters=extension_splitters
+    )
 
     documents_to_embed: List[Document] = []
     for chunked_doc in chunked_docs:
@@ -157,6 +173,7 @@ def crack_and_chunk_and_embed(
         source_doc_ids = []
         for document in chunked_doc.chunks:
             import hashlib
+
             document_data = document.load_data()
             document_hash = hashlib.sha256(document_data.encode("utf-8")).hexdigest()
             document.metadata["content_hash"] = document_hash
@@ -165,11 +182,15 @@ def crack_and_chunk_and_embed(
             if existing_embedded_document:
                 if existing_embedded_document.document_hash == document_hash:
                     if verbosity >= DOCUMENT_LOGGING_VERBOSITY:
-                        logger.info(f"SKIPPING: chunk '{document.document_id}' embedding as hash {document_hash} is the same as existing hash {existing_embedded_document.document_hash}")
+                        logger.info(
+                            f"SKIPPING: chunk '{document.document_id}' embedding as hash {document_hash} is the same as existing hash {existing_embedded_document.document_hash}"
+                        )
                     documents_embedded[document.document_id] = existing_embedded_document
                 else:
                     if verbosity >= DOCUMENT_LOGGING_VERBOSITY:
-                        logger.info(f"EMBEDDING: chunk '{document.document_id}' as hash {document_hash} is different than existing hash {existing_embedded_document.document_hash}")
+                        logger.info(
+                            f"EMBEDDING: chunk '{document.document_id}' as hash {document_hash} is different than existing hash {existing_embedded_document.document_hash}"
+                        )
                     documents_to_embed.append(document)
                 del embeddings_container._document_embeddings[document.document_id]
             else:
@@ -178,17 +199,23 @@ def crack_and_chunk_and_embed(
                 documents_to_embed.append(document)
             source_doc_ids.append(document.document_id)
 
-        embeddings_container._document_sources[chunked_doc.source.filename] = EmbeddedDocumentSource(chunked_doc.source, source_doc_ids)
+        embeddings_container._document_sources[chunked_doc.source.filename] = EmbeddedDocumentSource(
+            chunked_doc.source, source_doc_ids
+        )
 
     deleted_documents = embeddings_container._document_embeddings
     for document in deleted_documents.values():
         if verbosity >= DOCUMENT_LOGGING_VERBOSITY:
-            logger.debug(f"REMOVING: chunk '{document.document_id}' from EmbeddingsContainer as it no longer exists in source")
+            logger.debug(
+                f"REMOVING: chunk '{document.document_id}' from EmbeddingsContainer as it no longer exists in source"
+            )
 
-    logger.info("Finished determining Documents to embed:\n"
-                f"Documents to embed: {len(documents_to_embed)}\n"
-                f"Documents reused: {len(documents_embedded.keys())}\n"
-                f"Documents deleted: {len(deleted_documents.keys())}")
+    logger.info(
+        "Finished determining Documents to embed:\n"
+        f"Documents to embed: {len(documents_to_embed)}\n"
+        f"Documents reused: {len(documents_embedded.keys())}\n"
+        f"Documents deleted: {len(deleted_documents.keys())}"
+    )
 
     # TODO: Making this a generator breaks `_embed` on OpenAIEmbedder because it calls `len()`.
     # Likely need to batch here if can't use generator as could be way too much data and embeddings to hold in memory.
@@ -204,7 +231,7 @@ def crack_and_chunk_and_embed(
             "deleted_documents": len(deleted_documents.keys()),
             "kind": embeddings_container.kind,
             "model": embeddings_container.arguments.get("model", ""),
-        }
+        },
     ) as activity_logger:
         embeddings = embeddings_container._embed_fn(data_to_embed, activity_logger=activity_logger)  # type: ignore[call-arg]
 
@@ -218,13 +245,17 @@ def crack_and_chunk_and_embed(
     embeddings_container._deleted_documents = deleted_documents
 
     file_count = len(sources_to_embed) + len(reused_sources)
-    logger.info(f"Processed {file_count} files",)
+    logger.info(
+        f"Processed {file_count} files",
+    )
     activity_logger.activity_info["file_count"] = str(file_count)
 
     if file_count == 0:
         logger.info(f"No chunked documents found in {source_uri} with glob {source_glob}")
         activity_logger.activity_info["error"] = "No chunks found"
-        activity_logger.activity_info["glob"] = source_glob if re.match("^[*/\\\"']+$", source_glob) is not None else "[REDACTED]"
+        activity_logger.activity_info["glob"] = (
+            source_glob if re.match("^[*/\\\"']+$", source_glob) is not None else "[REDACTED]"
+        )
         raise ValueError(f"No chunked documents found in {source_uri} with glob {source_glob}.")
 
     return embeddings_container
@@ -262,7 +293,9 @@ def main_wrapper(args, logger):
         try:
             main(args, logger, activity_logger)
         except Exception as e:
-            activity_logger.error(f"crack_and_chunk failed with exception: {traceback.format_exc()}")  # activity_logger doesn't log traceback
+            activity_logger.error(
+                f"crack_and_chunk failed with exception: {traceback.format_exc()}"
+            )  # activity_logger doesn't log traceback
             raise e
 
 
@@ -285,8 +318,13 @@ if __name__ == "__main__":
     parser.add_argument("--num_workers", type=int, default=-1)
     parser.add_argument("--output_path", type=str, required=False)
 
-    parser.add_argument("--verbosity", type=int, default=2, choices=[0, 1, 2],
-                        help="0: Aggregate Source/Document Info, 1: Source Ids logged as processed, 2: Document Ids logged as processed.")
+    parser.add_argument(
+        "--verbosity",
+        type=int,
+        default=2,
+        choices=[0, 1, 2],
+        help="0: Aggregate Source/Document Info, 1: Source Ids logged as processed, 2: Document Ids logged as processed.",
+    )
 
     # Legacy
     parser.add_argument("--max_sample_files", type=int, default=-1)

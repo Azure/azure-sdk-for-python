@@ -222,7 +222,7 @@ def create_index_from_raw_embeddings(
     emb: EmbeddingsContainer,
     acs_config={},
     connection={},
-    output_path: Optional[Union[Path,str]] = None,
+    output_path: Optional[Union[Path, str]] = None,
     credential: Optional[TokenCredential] = None,
     verbosity: int = 1,
 ) -> MLIndex:
@@ -367,7 +367,7 @@ def create_index_from_raw_embeddings(
             # is_local=False when the EmbeddedDocuments data/embeddings are referenced from a remote source,
             # which is the case when the data was reused from a previous snapshot. is_local=True means the data
             # was generated for this snapshot and needs to pushed to the index.
-            
+
             # TODO: Bug 2878426
             if syncing_index and isinstance(emb_doc, ReferenceEmbeddedDocument) and not emb_doc.is_local:  # type: ignore[attr-defined]
                 skipped_prefix_documents += 1

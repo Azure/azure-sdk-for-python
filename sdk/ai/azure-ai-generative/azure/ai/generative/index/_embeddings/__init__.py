@@ -33,7 +33,10 @@ from azure.ai.resources._index._models import init_open_ai_from_config, parse_mo
 
 logger = get_logger(__name__)
 
-def get_langchain_embeddings(embedding_kind: str, arguments: dict, credential: Optional[TokenCredential] = None) -> Union[OpenAIEmbedder, Embedder]:
+
+def get_langchain_embeddings(
+    embedding_kind: str, arguments: dict, credential: Optional[TokenCredential] = None
+) -> Union[OpenAIEmbedder, Embedder]:
     """Get an instance of Embedder from the given arguments."""
     if "open_ai" in embedding_kind:
         # return _args_to_openai_embedder(arguments)
@@ -85,6 +88,7 @@ def get_langchain_embeddings(embedding_kind: str, arguments: dict, credential: O
 
         return ActivitySafeHuggingFaceEmbeddings(HuggingFaceEmbeddings(model_name=model_name))
     elif embedding_kind == "none":
+
         class NoneEmbeddings(Embedder):
             def embed_documents(self, documents: List[str], **kwargs) -> List[List[float]]:
                 return [[]] * len(documents)
@@ -99,7 +103,9 @@ def get_langchain_embeddings(embedding_kind: str, arguments: dict, credential: O
         raise ValueError(f"Unknown embedding kind: {embedding_kind}")
 
 
-def get_embed_fn(embedding_kind: str, arguments: dict, credential: Optional[TokenCredential] = None) -> Callable[[List[str]], List[List[float]]]:
+def get_embed_fn(
+    embedding_kind: str, arguments: dict, credential: Optional[TokenCredential] = None
+) -> Callable[[List[str]], List[List[float]]]:
     """Get an embedding function from the given arguments."""
 
     if "open_ai" in embedding_kind:
@@ -151,12 +157,23 @@ def get_embed_fn(embedding_kind: str, arguments: dict, credential: Optional[Toke
                 duration = time.time() - pre_batch if pre_batch else 0
                 logger.error(f"Failed to embed after {duration}s:\n{e}.", exc_info=e, extra={"print": True})
                 if activity_logger:
-                    activity_logger.error("Failed to embed", extra={"properties": {"batch_size": embedder.batch_size, "duration": duration, "embedding_kind": embedding_kind}})
+                    activity_logger.error(
+                        "Failed to embed",
+                        extra={
+                            "properties": {
+                                "batch_size": embedder.batch_size,
+                                "duration": duration,
+                                "embedding_kind": embedding_kind,
+                            }
+                        },
+                    )
                 raise e
             finally:
                 if activity_logger:
                     activity_logger.activity_info["num_retries"] = embedder.statistics.get("num_retries", 0)
-                    activity_logger.activity_info["time_spent_sleeping"] = embedder.statistics.get("time_spent_sleeping", 0)
+                    activity_logger.activity_info["time_spent_sleeping"] = embedder.statistics.get(
+                        "time_spent_sleeping", 0
+                    )
                     activity_logger.activity_info["num_tokens"] = embedder.statistics.get("num_tokens", 0)
 
         return embed
@@ -165,8 +182,10 @@ def get_embed_fn(embedding_kind: str, arguments: dict, credential: Optional[Toke
 
         return embedder.embed_documents
     elif embedding_kind == "custom":
+
         def load_pickled_function(pickled_embedding_fn):
             import cloudpickle
+
             return cloudpickle.loads(gzip.decompress(pickled_embedding_fn))
 
         return arguments.get("embedding_fn", None) or load_pickled_function(arguments.get("pickled_embedding_fn"))
@@ -176,7 +195,9 @@ def get_embed_fn(embedding_kind: str, arguments: dict, credential: Optional[Toke
         raise ValueError(f"Invalid embeddings kind: {embedding_kind}")
 
 
-def get_query_embed_fn(embedding_kind: str, arguments: dict, credential: Optional[TokenCredential] = None) -> Callable[[str], List[float]]:
+def get_query_embed_fn(
+    embedding_kind: str, arguments: dict, credential: Optional[TokenCredential] = None
+) -> Callable[[str], List[float]]:
     """Get an embedding function from the given arguments."""
     if embedding_kind == "open_ai":
         # embedder = _args_to_openai_embedder(arguments)
@@ -203,8 +224,10 @@ def get_query_embed_fn(embedding_kind: str, arguments: dict, credential: Optiona
 
         return embedder.embed_query
     elif embedding_kind == "custom":
+
         def load_pickled_function(pickled_embedding_fn):
             import cloudpickle
+
             return cloudpickle.loads(gzip.decompress(pickled_embedding_fn))
 
         return arguments.get("embedding_fn", None) or load_pickled_function(arguments.get("pickled_embedding_fn"))
@@ -271,7 +294,16 @@ class ReferenceEmbeddedDocument(EmbeddedDocument):
 
     _last_opened_embeddings: Optional[Tuple[str, object]] = None
 
-    def __init__(self, document_id: str, mtime, document_hash: str, path_to_data: str, index, embeddings_container_path: str, metadata: dict):
+    def __init__(
+        self,
+        document_id: str,
+        mtime,
+        document_hash: str,
+        path_to_data: str,
+        index,
+        embeddings_container_path: str,
+        metadata: dict,
+    ):
         """Initialize the document."""
         super().__init__(document_id, mtime, document_hash, metadata)
         self.path_to_data = path_to_data
@@ -329,7 +361,9 @@ class WrappedLangChainDocument(Document):
 
     def dumps(self) -> str:
         """Dump the document to a json string."""
-        return json.dumps({"page_content": self.load_data(), "metadata": self.get_metadata(), "document_id": self.document_id})
+        return json.dumps(
+            {"page_content": self.load_data(), "metadata": self.get_metadata(), "document_id": self.document_id}
+        )
 
     @classmethod
     def loads(cls, data: str) -> "WrappedLangChainDocument":
@@ -358,9 +392,7 @@ class EmbeddingsContainer:
     _data_schema = ["data", "embeddings"]
     _sources_schema = ["source_id", "mtime", "filename", "url", "document_ids"]
     _deleted_documents_schema = ["doc_id", "mtime", "hash", "metadata"]
-    _model_context_lengths = {
-        "text-embedding-ada-002": 8191
-    }
+    _model_context_lengths = {"text-embedding-ada-002": 8191}
     kind: str
     arguments: dict
     _embed_fn: Callable[[List[str]], List[List[float]]]
@@ -415,25 +447,20 @@ class EmbeddingsContainer:
         """Get the metadata of the embeddings."""
         arguments = copy.deepcopy(self.arguments)
         if self.kind == "custom":
-            arguments["pickled_embedding_fn"] = gzip.compress(
-                cloudpickle.dumps(arguments["embedding_fn"]))
+            arguments["pickled_embedding_fn"] = gzip.compress(cloudpickle.dumps(arguments["embedding_fn"]))
             del arguments["embedding_fn"]
 
         if "open_ai" in self.kind:
             if "api_base" not in arguments:
                 import openai
+
                 arguments["api_base"] = openai.api_base if hasattr(openai, "api_base") else openai.base_url
             if "api_key" in arguments:
                 del arguments["api_key"]
             if "key" in arguments:
                 del arguments["key"]
 
-        metadata = {
-            "schema_version": "2",
-            "kind": self.kind,
-            "dimension": self.get_embedding_dimensions(),
-            **arguments
-        }
+        metadata = {"schema_version": "2", "kind": self.kind, "dimension": self.get_embedding_dimensions(), **arguments}
 
         return metadata
 
@@ -448,8 +475,7 @@ class EmbeddingsContainer:
             kind = metadata["kind"]
             del metadata["kind"]
             if kind == "custom":
-                metadata["embedding_fn"] = cloudpickle.loads(
-                    gzip.decompress(metadata["pickled_embedding_fn"]))
+                metadata["embedding_fn"] = cloudpickle.loads(gzip.decompress(metadata["pickled_embedding_fn"]))
                 del metadata["pickled_embedding_fn"]
 
             embeddings = EmbeddingsContainer(kind, **metadata)
@@ -494,7 +520,9 @@ class EmbeddingsContainer:
             table = pq.read_table(partition)
             for column in EmbeddingsContainer._embeddings_schema:
                 if column not in table.column_names:
-                    raise ValueError(f"Format of provided embedding file ({partition}) is not supported.  Missing column {column}")
+                    raise ValueError(
+                        f"Format of provided embedding file ({partition}) is not supported.  Missing column {column}"
+                    )
             # TODO: Keep pyarrow partition in Embeddings instance and give out `ReferenceEmbeddedDocument` when iterated over/indexed into with doc_id.
             # Allows each partition of embeddings to be stored in one array and users to retrieve it as one array with cow properties.
             for i in range(table.num_rows):
@@ -505,18 +533,19 @@ class EmbeddingsContainer:
                 path_to_data = None
                 # when loading from previous location convert all its local data references to remote ones
                 if table.column("is_local")[i].as_py():
-                    path_to_data  = os.path.join(
-                        dir_name, table.column("path_to_data")[i].as_py())
+                    path_to_data = os.path.join(dir_name, table.column("path_to_data")[i].as_py())
                 else:
                     path_to_data = table.column("path_to_data")[i].as_py()
                 index_of_data = table.column("index")[i].as_py()
-                self._document_embeddings[doc_id] = \
-                    ReferenceEmbeddedDocument(
-                        doc_id, mtime, document_hash, str(path_to_data), index_of_data, embeddings_container_path, metadata)
+                self._document_embeddings[doc_id] = ReferenceEmbeddedDocument(
+                    doc_id, mtime, document_hash, str(path_to_data), index_of_data, embeddings_container_path, metadata
+                )
 
             logger.info(f"Loaded {table.num_rows} documents from {partition}")
 
-        logger.info(f"Loaded {len(self._document_embeddings.keys())} documents from {len(embedding_partitions_files)} partitions")
+        logger.info(
+            f"Loaded {len(self._document_embeddings.keys())} documents from {len(embedding_partitions_files)} partitions"
+        )
 
         return self
 
@@ -532,7 +561,9 @@ class EmbeddingsContainer:
             table = pq.read_table(partition)
             for column in EmbeddingsContainer._sources_schema:
                 if column not in table.column_names:
-                    raise ValueError(f"Format of provided sources file ({partition}) is not supported.  Missing column {column}")
+                    raise ValueError(
+                        f"Format of provided sources file ({partition}) is not supported.  Missing column {column}"
+                    )
             for i in range(table.num_rows):
                 source_id = table.column("source_id")[i].as_py()
                 mtime = table.column("mtime")[i].as_py()
@@ -540,12 +571,7 @@ class EmbeddingsContainer:
                 url = table.column("url")[i].as_py()
                 document_ids = table.column("document_ids")[i].as_py()
                 self._document_sources[source_id] = EmbeddedDocumentSource(
-                    source=DocumentSource(
-                        path=None,
-                        filename=filename,
-                        mtime=mtime,
-                        url=url
-                    ),
+                    source=DocumentSource(path=None, filename=filename, mtime=mtime, url=url),
                     document_ids=document_ids,
                 )
 
@@ -557,7 +583,9 @@ class EmbeddingsContainer:
             table = pq.read_table(partition)
             for column in EmbeddingsContainer._sources_schema:
                 if column not in table.column_names:
-                    raise ValueError(f"Format of provided sources file ({partition}) is not supported.  Missing column {column}")
+                    raise ValueError(
+                        f"Format of provided sources file ({partition}) is not supported.  Missing column {column}"
+                    )
             for i in range(table.num_rows):
                 source_id = table.column("source_id")[i].as_py()
                 mtime = table.column("mtime")[i].as_py()
@@ -565,12 +593,7 @@ class EmbeddingsContainer:
                 url = table.column("url")[i].as_py()
                 document_ids = table.column("document_ids")[i].as_py()
                 self._deleted_sources[source_id] = EmbeddedDocumentSource(
-                    source=DocumentSource(
-                        path=None,
-                        filename=filename,
-                        mtime=mtime,
-                        url=url
-                    ),
+                    source=DocumentSource(path=None, filename=filename, mtime=mtime, url=url),
                     document_ids=document_ids,
                 )
 
@@ -582,7 +605,9 @@ class EmbeddingsContainer:
             table = pq.read_table(partition)
             for column in EmbeddingsContainer._embeddings_schema:
                 if column not in table.column_names:
-                    raise ValueError(f"Format of provided embedding file ({partition}) is not supported.  Missing column {column}")
+                    raise ValueError(
+                        f"Format of provided embedding file ({partition}) is not supported.  Missing column {column}"
+                    )
             # TODO: Keep pyarrow partition in Embeddings instance and give out `ReferenceEmbeddedDocument` when iterated over/indexed into with doc_id.
             # Allows each partition of embeddings to be stored in one array and users to retrieve it as one array with cow properties.
             for i in range(table.num_rows):
@@ -597,9 +622,9 @@ class EmbeddingsContainer:
                 else:
                     path_to_data = table.column("path_to_data")[i].as_py()
                 index_of_data = table.column("index")[i].as_py()
-                self._document_embeddings[doc_id] = \
-                    ReferenceEmbeddedDocument(
-                        doc_id, mtime, document_hash, str(path_to_data), index_of_data, embeddings_container_path, metadata)
+                self._document_embeddings[doc_id] = ReferenceEmbeddedDocument(
+                    doc_id, mtime, document_hash, str(path_to_data), index_of_data, embeddings_container_path, metadata
+                )
 
         # Load Deleted Documents
         deleted_documents_partitions_files = list(Path(path).glob("deleted_documents*.parquet"))
@@ -609,7 +634,9 @@ class EmbeddingsContainer:
             table = pq.read_table(partition)
             for column in EmbeddingsContainer._deleted_documents_schema:
                 if column not in table.column_names:
-                    raise ValueError(f"Format of provided documents file ({partition}) is not supported.  Missing column {column}")
+                    raise ValueError(
+                        f"Format of provided documents file ({partition}) is not supported.  Missing column {column}"
+                    )
             for i in range(table.num_rows):
                 doc_id = table.column("doc_id")[i].as_py()
                 mtime = table.column("mtime")[i].as_py()
@@ -620,10 +647,10 @@ class EmbeddingsContainer:
                     mtime,
                     document_hash,
                     path_to_data=None,  # type: ignore[arg-type]
-                    #TODO: Bug 2879181
+                    # TODO: Bug 2879181
                     index=None,
                     embeddings_container_path=embeddings_container_path,
-                    metadata=metadata
+                    metadata=metadata,
                 )
 
         return self
@@ -663,13 +690,17 @@ class EmbeddingsContainer:
                     pa.array(source_mtimes),
                     pa.array(source_filename),
                     pa.array(source_url),
-                    pa.array(source_document_ids)
-                ], names=EmbeddingsContainer._sources_schema)
+                    pa.array(source_document_ids),
+                ],
+                names=EmbeddingsContainer._sources_schema,
+            )
             pq.write_table(table, path / sources_file_name)
 
         # Deleted Document Sources
         if len(self._deleted_sources) > 0:
-            deleted_sources_file_name = f"deleted_sources_{suffix}.parquet" if suffix is not None else "deleted_sources.parquet"
+            deleted_sources_file_name = (
+                f"deleted_sources_{suffix}.parquet" if suffix is not None else "deleted_sources.parquet"
+            )
 
             deleted_source_ids: List = []
             deleted_source_mtimes: List = []
@@ -688,8 +719,10 @@ class EmbeddingsContainer:
                     pa.array(deleted_source_mtimes),
                     pa.array(deleted_source_filename),
                     pa.array(deleted_source_url),
-                    pa.array(deleted_document_ids)
-                ], names=EmbeddingsContainer._sources_schema)
+                    pa.array(deleted_document_ids),
+                ],
+                names=EmbeddingsContainer._sources_schema,
+            )
             pq.write_table(table, path / deleted_sources_file_name)
 
         # Documents
@@ -731,21 +764,23 @@ class EmbeddingsContainer:
                     pa.array(metadata),
                     pa.array(paths),
                     pa.array(indexes),
-                    pa.array(is_local)
-                ], names=EmbeddingsContainer._embeddings_schema)
+                    pa.array(is_local),
+                ],
+                names=EmbeddingsContainer._embeddings_schema,
+            )
             pq.write_table(table, path / embeddings_file_name)
 
             # write data.paruet with data embedded in this run
             data_table = pa.Table.from_arrays(
-                [
-                    pa.array(local_data),
-                    pa.array(embeddings)
-                ], names=["data", "embeddings"])
+                [pa.array(local_data), pa.array(embeddings)], names=["data", "embeddings"]
+            )
             pq.write_table(data_table, path / local_data_file_name)
 
         # Deleted EmbeddedDocuments
         if len(self._deleted_documents) > 0:
-            deleted_documents_file_name = f"deleted_documents_{suffix}.parquet" if suffix is not None else "deleted_documents.parquet"
+            deleted_documents_file_name = (
+                f"deleted_documents_{suffix}.parquet" if suffix is not None else "deleted_documents.parquet"
+            )
 
             deleted_doc_ids: List = []
             deleted_mtimes: List = []
@@ -763,7 +798,9 @@ class EmbeddingsContainer:
                     pa.array(deleted_mtimes),
                     pa.array(deleted_hashes),
                     pa.array(deleted_metdata),
-                ], names=EmbeddingsContainer._deleted_documents_schema)
+                ],
+                names=EmbeddingsContainer._deleted_documents_schema,
+            )
             pq.write_table(table, path / deleted_documents_file_name)
 
         # write metadata file
@@ -802,6 +839,7 @@ class EmbeddingsContainer:
                 is_local.append(False)
 
         import os
+
         os.makedirs(path, exist_ok=True)
 
         # write embeddings.parquet
@@ -813,16 +851,14 @@ class EmbeddingsContainer:
                 pa.array(metadata),
                 pa.array(paths),
                 pa.array(indexes),
-                pa.array(is_local)
-            ], names=EmbeddingsContainer._embeddings_schema)
+                pa.array(is_local),
+            ],
+            names=EmbeddingsContainer._embeddings_schema,
+        )
         pq.write_table(table, os.path.join(path, embeddings_file_name))
 
         # write data.paruet with data embedded in this run
-        data_table = pa.Table.from_arrays(
-            [
-                pa.array(local_data),
-                pa.array(embeddings)
-            ], names=["data", "embeddings"])
+        data_table = pa.Table.from_arrays([pa.array(local_data), pa.array(embeddings)], names=["data", "embeddings"])
         pq.write_table(data_table, os.path.join(path, local_data_file_name))
 
         # write metadata file
@@ -874,8 +910,9 @@ class EmbeddingsContainer:
 
             def truncate_by_tokens(text):
                 # Some chunks still managed to tokenize above the limit so leaving 20 tokens buffer.
-                tokens = enc.encode(text=text)[:ctx_length - 20]
+                tokens = enc.encode(text=text)[: ctx_length - 20]
                 return enc.decode(tokens)
+
             return truncate_by_tokens
         else:
             return lambda text: text
@@ -885,7 +922,9 @@ class EmbeddingsContainer:
         self._document_embeddings = self._get_embeddings_internal(input_documents)
         return self
 
-    def embed_and_create_new_instance(self, input_documents: Union[Iterator[Document], BaseLoader, DocumentChunksIterator]) -> "EmbeddingsContainer":
+    def embed_and_create_new_instance(
+        self, input_documents: Union[Iterator[Document], BaseLoader, DocumentChunksIterator]
+    ) -> "EmbeddingsContainer":
         """Embeds input documents if they are new or changed and returns a new instance with the new embeddings. Current instance is not mutated."""
         document_embeddings = self._get_embeddings_internal(input_documents)
         new_embeddings = EmbeddingsContainer(self.kind, **self.arguments)
@@ -893,13 +932,20 @@ class EmbeddingsContainer:
         new_embeddings.statistics = self.statistics.copy()
         return new_embeddings
 
-    def _get_embeddings_internal(self, input_documents: Union[Iterator[Document], BaseLoader, DocumentChunksIterator]) -> OrderedDict:
+    def _get_embeddings_internal(
+        self, input_documents: Union[Iterator[Document], BaseLoader, DocumentChunksIterator]
+    ) -> OrderedDict:
         if self._embed_fn is None:
             raise ValueError("No embed function provided.")
 
-        if hasattr(input_documents, "__module__") and "langchain" in input_documents.__module__ and "document_loaders" in input_documents.__module__:
-            input_documents = iter([WrappedLangChainDocument(d)
-                                   for d in input_documents.load()])  # type: ignore[union-attr]
+        if (
+            hasattr(input_documents, "__module__")
+            and "langchain" in input_documents.__module__
+            and "document_loaders" in input_documents.__module__
+        ):
+            input_documents = iter(
+                [WrappedLangChainDocument(d) for d in input_documents.load()]
+            )  # type: ignore[union-attr]
             # TODO: Bug 2879186
         elif isinstance(input_documents, DocumentChunksIterator):
             flattened_docs: List = []
@@ -911,44 +957,53 @@ class EmbeddingsContainer:
         documents_embedded = OrderedDict()
         document: Document
         for document in input_documents:
-            if hasattr(document, "__module__") and "langchain" in document.__module__ and ".Document" in str(document.__class__):
+            if (
+                hasattr(document, "__module__")
+                and "langchain" in document.__module__
+                and ".Document" in str(document.__class__)
+            ):
                 document = WrappedLangChainDocument(document)
 
             logger.info(f"Processing document: {document.document_id}")
             mtime = document.modified_time()
             current_embedded_document = self._document_embeddings.get(document.document_id)
-            if mtime \
-                    and current_embedded_document \
-                    and current_embedded_document.mtime \
-                    and current_embedded_document.mtime == mtime:
+            if (
+                mtime
+                and current_embedded_document
+                and current_embedded_document.mtime
+                and current_embedded_document.mtime == mtime
+            ):
                 documents_embedded[document.document_id] = current_embedded_document
 
                 with contextlib.suppress(Exception):
                     mtime = datetime.datetime.fromtimestamp(mtime)
 
                 logger.info(
-                    f"Skip embedding document {document.document_id} as it has not been modified since last embedded at {mtime}")
+                    f"Skip embedding document {document.document_id} as it has not been modified since last embedded at {mtime}"
+                )
                 self.statistics["documents_reused"] = len(documents_embedded.keys())
                 continue
 
             import hashlib
+
             document_data = document.load_data()
             document_hash = hashlib.sha256(document_data.encode("utf-8")).hexdigest()
 
             if current_embedded_document and current_embedded_document.document_hash == document_hash:
                 documents_embedded[document.document_id] = current_embedded_document
                 logger.info(
-                    f"Skip embedding document {document.document_id} as it has not been modified since last embedded")
+                    f"Skip embedding document {document.document_id} as it has not been modified since last embedded"
+                )
                 self.statistics["documents_reused"] = len(documents_embedded.keys())
                 continue
 
             document_metadata = document.get_metadata()
-            documents_to_embed.append(
-                (document.document_id, mtime, document_data, document_hash, document_metadata))
+            documents_to_embed.append((document.document_id, mtime, document_data, document_hash, document_metadata))
             self.statistics["documents_embedded"] = len(documents_to_embed)
 
-        logger.info(f"Documents to embed: {len(documents_to_embed)}"
-                    f"\nDocuments reused: {len(documents_embedded.keys())}")
+        logger.info(
+            f"Documents to embed: {len(documents_to_embed)}" f"\nDocuments reused: {len(documents_embedded.keys())}"
+        )
 
         truncate_func = self.get_embedding_ctx_length_truncate_func()
 
@@ -964,17 +1019,19 @@ class EmbeddingsContainer:
                     "reused_documents": len(documents_embedded.keys()),
                     "kind": self.kind,
                     "model": self.arguments.get("model", ""),
-                }
+                },
             ) as activity_logger:
                 embeddings = self._embed_fn(texts=data_to_embed, activity_logger=activity_logger)  # type: ignore[call-arg]
         except Exception as e:
             logger.error(f"Failed to get embeddings with error: {e}")
             raise
 
-        for ((doc_id, mtime, document_data, document_hash, document_metadata), embeddings) in zip(documents_to_embed, embeddings):
-            documents_embedded[doc_id] = \
-                DataEmbeddedDocument(doc_id, mtime, document_hash,
-                                     document_data, embeddings, document_metadata)
+        for ((doc_id, mtime, document_data, document_hash, document_metadata), embeddings) in zip(
+            documents_to_embed, embeddings
+        ):
+            documents_embedded[doc_id] = DataEmbeddedDocument(
+                doc_id, mtime, document_hash, document_data, embeddings, document_metadata
+            )
 
         return documents_embedded
 
@@ -995,8 +1052,8 @@ class EmbeddingsContainer:
                             "source_doc_id": doc_id,
                             "chunk_hash": emb_doc.document_hash,
                             "mtime": emb_doc.mtime,
-                            **emb_doc.metadata
-                        }
+                            **emb_doc.metadata,
+                        },
                     )
                 )
 
@@ -1011,13 +1068,9 @@ class EmbeddingsContainer:
                 documents.append(
                     StaticDocument(
                         data=emb_doc.get_data(),
-                        metadata={
-                            "doc_id": doc_id,
-                            "chunk_hash": emb_doc.document_hash,
-                            **emb_doc.metadata
-                        },
+                        metadata={"doc_id": doc_id, "chunk_hash": emb_doc.document_hash, **emb_doc.metadata},
                         document_id=doc_id,
-                        mtime=emb_doc.mtime
+                        mtime=emb_doc.mtime,
                     )
                 )
 
@@ -1046,15 +1099,15 @@ class EmbeddingsContainer:
         if len(embeddings) == 0:
             raise ValueError("No embeddings to index")
 
-        docstore = DocstoreClass(
-            {index_to_id[i]: doc for i, doc in enumerate(documents)}
-        )
+        docstore = DocstoreClass({index_to_id[i]: doc for i, doc in enumerate(documents)})
 
         faiss = import_faiss_or_so_help_me()
         index = faiss.IndexFlatL2(len(embeddings[0]))
         index.add(np.array(embeddings, dtype=np.float32))
 
-        logger.info(f"Built index from {num_source_docs} documents and {len(embeddings)} chunks, took {time.time()-t1:.4f} seconds")
+        logger.info(
+            f"Built index from {num_source_docs} documents and {len(embeddings)} chunks, took {time.time()-t1:.4f} seconds"
+        )
 
         return FaissClass(self.get_query_embed_fn(), index, docstore, index_to_id)
 
@@ -1068,21 +1121,17 @@ class EmbeddingsContainer:
         output_path = Path(output_path)
         faiss_index.save_local(str(output_path))
 
-        mlindex_config = {
-            "embeddings": self.get_metadata()
-        }
-        mlindex_config["index"] = {
-            "kind": "faiss",
-            "engine": engine,
-            "method": "FlatL2"
-        }
+        mlindex_config = {"embeddings": self.get_metadata()}
+        mlindex_config["index"] = {"kind": "faiss", "engine": engine, "method": "FlatL2"}
         with (output_path / "MLIndex").open("w") as f:
             yaml.dump(mlindex_config, f)
 
         return MLIndex(output_path)
 
     @staticmethod
-    def load_latest_snapshot(local_embeddings_cache: Union[str, Path], activity_logger=None) -> Optional["EmbeddingsContainer"]:
+    def load_latest_snapshot(
+        local_embeddings_cache: Union[str, Path], activity_logger=None
+    ) -> Optional["EmbeddingsContainer"]:
         """Loads the latest snapshot from the embeddings container."""
         embeddings_container_dir_name = None
         embeddings_container: Optional[EmbeddingsContainer] = None
@@ -1096,22 +1145,28 @@ class EmbeddingsContainer:
                     last_snapshot = curr_snapshot
                     logger.info(f"Found Snapshot: {curr_snapshot = } - mtime: {os.path.getmtime(file)}")
 
-            embeddings_container_dir_name = str(max(
-                [file for file in Path(local_embeddings_cache).glob("*/*") if file.is_file() and file.parent.name != os.environ.get("AZUREML_RUN_ID")],
-                key=os.path.getmtime
-            ).parent.name)
+            embeddings_container_dir_name = str(
+                max(
+                    [
+                        file
+                        for file in Path(local_embeddings_cache).glob("*/*")
+                        if file.is_file() and file.parent.name != os.environ.get("AZUREML_RUN_ID")
+                    ],
+                    key=os.path.getmtime,
+                ).parent.name
+            )
         except Exception as e:
             if activity_logger:
                 activity_logger.warn("Failed to get latest folder from embeddings_container.")
             logger.warn(f"failed to get latest folder from {local_embeddings_cache} with {e}.")
 
         if embeddings_container_dir_name is not None:
-            logger.info(
-                f"loading embeddings snapshot from {embeddings_container_dir_name} in {local_embeddings_cache}")
+            logger.info(f"loading embeddings snapshot from {embeddings_container_dir_name} in {local_embeddings_cache}")
             embeddings_container = None
             try:
                 embeddings_container = EmbeddingsContainer.load(
-                    embeddings_container_dir_name, str(local_embeddings_cache))
+                    embeddings_container_dir_name, str(local_embeddings_cache)
+                )
                 if activity_logger and hasattr(activity_logger, "activity_info"):
                     activity_logger.activity_info["completionStatus"] = "Success"
             except Exception as e:
@@ -1123,7 +1178,9 @@ class EmbeddingsContainer:
 
     @staticmethod
     @contextlib.contextmanager
-    def mount_and_load(embeddings_cache_path: Optional[Union[str, Path]], activity_logger=None) -> Iterator[Optional["EmbeddingsContainer"]]:
+    def mount_and_load(
+        embeddings_cache_path: Optional[Union[str, Path]], activity_logger=None
+    ) -> Iterator[Optional["EmbeddingsContainer"]]:
         """
         Mounts the embeddings container and loads it.
 
@@ -1141,16 +1198,22 @@ class EmbeddingsContainer:
                 try:
                     if "://" in embeddings_cache and not embeddings_cache.startswith("file://"):
                         from azureml.dataprep.fuse.dprepfuse import MountOptions, rslex_uri_volume_mount
+
                         mnt_options = MountOptions(
-                            default_permission=0o555, read_only=False, allow_other=False, create_destination=True)
-                        mount_context = rslex_uri_volume_mount(embeddings_cache, f"{Path.cwd()}/embeddings_container", options=mnt_options)
+                            default_permission=0o555, read_only=False, allow_other=False, create_destination=True
+                        )
+                        mount_context = rslex_uri_volume_mount(
+                            embeddings_cache, f"{Path.cwd()}/embeddings_container", options=mnt_options
+                        )
                         mount_context.start()
                         local_embeddings_cache = Path(mount_context.mount_point)
                     else:
                         local_embeddings_cache = Path(embeddings_cache.replace("file://", ""))
                         logger.info(f"Embeddings cache is a local path: {embeddings_cache}")
 
-                    embeddings_container = EmbeddingsContainer.load_latest_snapshot(local_embeddings_cache, activity_logger=activity_logger)
+                    embeddings_container = EmbeddingsContainer.load_latest_snapshot(
+                        local_embeddings_cache, activity_logger=activity_logger
+                    )
                     try:
                         yield embeddings_container
                         return None

@@ -32,7 +32,9 @@ class Simulator:
         self,
         systemConnection: Optional["AzureOpenAIModelConfiguration"] = None,  # type: ignore[name-defined]
         userConnection: Optional["AzureOpenAIModelConfiguration"] = None,  # type: ignore[name-defined]
-        simulate_callback: Optional[Callable[[str, Sequence[Union[Dict, ConversationTurn]], Optional[Dict]], str]] = None,
+        simulate_callback: Optional[
+            Callable[[str, Sequence[Union[Dict, ConversationTurn]], Optional[Dict]], str]
+        ] = None,
     ):
         self.userConnection = self._to_openai_chat_completion_model(userConnection)
         self.systemConnection = self._to_openai_chat_completion_model(systemConnection)
@@ -44,14 +46,14 @@ class Simulator:
         token_manager = PlainTokenManager(
             openapi_key=config.api_key,
             auth_header="api-key",
-            logger=logging.getLogger(f"{config.deployment_name}_bot_token_manager")
-        )        
+            logger=logging.getLogger(f"{config.deployment_name}_bot_token_manager"),
+        )
         return OpenAIChatCompletionsModel(
             endpoint_url=f"{config.api_base}openai/deployments/{config.deployment_name}/chat/completions",
             token_manager=token_manager,
             api_version=config.api_version,
             name=config.model_name,
-            **config.model_kwargs
+            **config.model_kwargs,
         )
 
     def create_bot(
@@ -69,12 +71,7 @@ class Simulator:
         )
         return bot
 
-    def setup_bot(
-        self,
-        role: Union[str, ConversationRole],
-        template: str,
-        parameters: dict
-    ):
+    def setup_bot(self, role: Union[str, ConversationRole], template: str, parameters: dict):
         if role == ConversationRole.ASSISTANT:
             with open(BASIC_MD, "r") as f:
                 chatbot_name_key = "chatbot_name"
@@ -83,9 +80,7 @@ class Simulator:
                 if parameters.get(chatbot_name_key) is not None:
                     assistant_parameters[chatbot_name_key] = parameters[chatbot_name_key]
 
-            return self.create_bot(
-                role, assistant_template, assistant_parameters, self.userConnection
-            )
+            return self.create_bot(role, assistant_template, assistant_parameters, self.userConnection)
 
         elif role == ConversationRole.USER:
             return self.create_bot(role, template, parameters, self.systemConnection)
@@ -105,16 +100,12 @@ class Simulator:
         if self.userConnection == None:
             bots = [gpt_bot]
         else:
-            customer_bot = self.setup_bot(
-                ConversationRole.ASSISTANT, str(template), parameters
-            )
+            customer_bot = self.setup_bot(ConversationRole.ASSISTANT, str(template), parameters)
             bots = [gpt_bot, customer_bot]
         # simulate the conversation
 
         asyncHttpClient = AsyncHTTPClientWithRetry(
-            n_retry=api_call_retry_max_count,
-            retry_timeout=api_call_retry_sleep_sec,
-            logger=logging.getLogger()
+            n_retry=api_call_retry_max_count, retry_timeout=api_call_retry_sleep_sec, logger=logging.getLogger()
         )
 
         async with asyncHttpClient.client as session:
@@ -129,13 +120,15 @@ class Simulator:
 
         return self._to_chat_protocol(template, conversation_history, parameters)
 
-    def _get_citations(self, parameters, context_keys, turn_num = None):
+    def _get_citations(self, parameters, context_keys, turn_num=None):
         citations = []
         for c_key in context_keys:
             if isinstance(parameters[c_key], dict):
                 if "callback_citation_key" in parameters[c_key]:
                     callback_citation_key = parameters[c_key]["callback_citation_key"]
-                    callback_citations = self._get_callback_citations(parameters[c_key][callback_citation_key], turn_num)
+                    callback_citations = self._get_callback_citations(
+                        parameters[c_key][callback_citation_key], turn_num
+                    )
                 else:
                     callback_citations = []
                 if callback_citations:
@@ -143,23 +136,11 @@ class Simulator:
                 else:
                     for k, v in parameters[c_key].items():
                         if k not in ["callback_citations", "callback_citation_key"]:
-                            citations.append(
-                                {
-                                    "id": k,
-                                    "content": self._to_citation_content(v)
-                                }
-                            )
+                            citations.append({"id": k, "content": self._to_citation_content(v)})
             else:
-                citations.append(
-                    {
-                        "id": c_key,
-                        "content": self._to_citation_content(parameters[c_key])
-                    }
-                )
+                citations.append({"id": c_key, "content": self._to_citation_content(parameters[c_key])})
 
-        return {
-            "citations": citations
-        }
+        return {"citations": citations}
 
     def _to_citation_content(self, obj):
         if isinstance(obj, str):
@@ -175,20 +156,10 @@ class Simulator:
         if current_turn_str in callback_citations.keys():
             citations = callback_citations[current_turn_str]
             if isinstance(citations, dict):
-                for  k, v in citations.items():
-                    current_turn_citations.append(
-                        {
-                            "id": k,
-                            "content": self._to_citation_content(v)
-                        }
-                    )
+                for k, v in citations.items():
+                    current_turn_citations.append({"id": k, "content": self._to_citation_content(v)})
             else:
-                current_turn_citations.append(
-                    {
-                        "id": current_turn_str,
-                        "content": self._to_citation_content(citations)
-                    }
-                )
+                current_turn_citations.append({"id": current_turn_str, "content": self._to_citation_content(citations)})
         return current_turn_citations
 
     def _to_chat_protocol(self, template, conversation_history, template_parameters):
@@ -202,7 +173,7 @@ class Simulator:
                     "role": m.role.value,
                     "turn_number": i,
                     "template_parameters": template_parameters,
-                    "context": citations
+                    "context": citations,
                 }
             )
 
@@ -261,7 +232,6 @@ class Simulator:
         thread.join()
 
         return results[0]
-
 
 
 class PlainTokenManager(APITokenManager):

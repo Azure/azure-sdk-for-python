@@ -16,13 +16,13 @@ LOGGER = logging.getLogger(__name__)
 
 class CodeMetricHandler(MetricHandler):
     def __init__(
-            self,
-            task_type,
-            prediction_data,
-            test_data,
-            input_output_data,
-            metrics_mapping=None,
-            metrics=None,
+        self,
+        task_type,
+        prediction_data,
+        test_data,
+        input_output_data,
+        metrics_mapping=None,
+        metrics=None,
     ):
 
         super().__init__(
@@ -45,16 +45,19 @@ class CodeMetricHandler(MetricHandler):
         LOGGER.info(f"Calculating code metrics : {[metric.name for metric in self.metrics]}")
         metrics_dict = {"artifacts": {}, "metrics": {}}
         metric_results_futures = {}
-        test_data_as_dict = self.test_data.to_dict('records')
-        prediction_data_as_dict = self.prediction_data.to_dict('records') if self.prediction_data is not None else None
+        test_data_as_dict = self.test_data.to_dict("records")
+        prediction_data_as_dict = self.prediction_data.to_dict("records") if self.prediction_data is not None else None
         with tqdm.tqdm(total=len(self.metrics)) as progress_bar:
             with ThreadPoolExecutor(thread_name_prefix="code_metrics") as thread_pool:
                 for metric in self.metrics:
                     metric_values = []
-                    metric_results_futures.update({metric.name: thread_pool.submit(
-                        self._calculate_metric, metric, test_data_as_dict,
-                        prediction_data_as_dict
-                    )})
+                    metric_results_futures.update(
+                        {
+                            metric.name: thread_pool.submit(
+                                self._calculate_metric, metric, test_data_as_dict, prediction_data_as_dict
+                            )
+                        }
+                    )
 
                 for metric_name, metric_result_future in metric_results_futures.items():
                     try:
@@ -66,14 +69,17 @@ class CodeMetricHandler(MetricHandler):
                     except Exception as ex:
                         progress_bar.update(1)
                         LOGGER.info(
-                            f"Error calculating value for {metric_name}, failed with error {str(ex)} : Stack trace : {str(ex.__traceback__)}")
+                            f"Error calculating value for {metric_name}, failed with error {str(ex)} : Stack trace : {str(ex.__traceback__)}"
+                        )
 
         return metrics_dict
 
     def _submit_method(self, method, *args, **kwargs):
         import inspect
+
         if inspect.iscoroutinefunction(method):
             import asyncio
+
             return asyncio.run(method(*args, **kwargs))
         return method(*args, **kwargs)
 
@@ -85,28 +91,25 @@ class CodeMetricHandler(MetricHandler):
 
         with ThreadPoolExecutor(thread_name_prefix="code_metrics_row") as thread_pool:
             for i in range(0, len(data)):
-                row_metric_futures.append(thread_pool.submit(
-                    self._submit_method, metric.calculate, data={**data[i], **response[i]}
-                ))
+                row_metric_futures.append(
+                    thread_pool.submit(self._submit_method, metric.calculate, data={**data[i], **response[i]})
+                )
 
             for row_metric_future in row_metric_futures:
                 try:
                     row_metric_results.append(row_metric_future.result())
                 except Exception as ex:
                     LOGGER.info(
-                        f"Error calculating value for a row for metric {metric.name} , failed with error {str(ex)} : Stack trace : {str(ex.__traceback__)}")
+                        f"Error calculating value for a row for metric {metric.name} , failed with error {str(ex)} : Stack trace : {str(ex.__traceback__)}"
+                    )
                     row_metric_results.append(NaN)
 
             results = {"artifacts": {}, "metrics": {}}
 
             if isinstance(row_metric_results[0], dict):
                 for key in row_metric_results[0].keys():
-                    results["artifacts"].update({
-                        key: [row[key] for row in row_metric_results]
-                    })
+                    results["artifacts"].update({key: [row[key] for row in row_metric_results]})
             else:
-                results["artifacts"].update(
-                    {metric.name: row_metric_results}
-                )
+                results["artifacts"].update({metric.name: row_metric_results})
 
         return results

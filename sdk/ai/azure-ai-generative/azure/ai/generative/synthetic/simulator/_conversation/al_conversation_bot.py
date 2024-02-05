@@ -12,6 +12,7 @@ from .conversation_turn import ConversationTurn
 from .constants import ConversationRole
 from .conversation_bot import ConversationBot
 
+
 class AugLoopConversationBot(ConversationBot):
     def __init__(
         self,
@@ -36,7 +37,9 @@ class AugLoopConversationBot(ConversationBot):
         self.augLoopParams = augLoopParams
 
         self.persona_template_args = instantiation_parameters
-        self.name = self.persona_template_args.get("chatbot_name", role.value) or f"Augloop_{augLoopParams.workflowName}"
+        self.name = (
+            self.persona_template_args.get("chatbot_name", role.value) or f"Augloop_{augLoopParams.workflowName}"
+        )
 
         self.logger = logging.getLogger(repr(self))
 
@@ -78,9 +81,9 @@ class AugLoopConversationBot(ConversationBot):
             raise Exception(f"Unexpected result from Augloop")
 
         parsed_response = {
-                "samples": response_data["messages"],
-                "id": response_data["id"],
-            }
+            "samples": response_data["messages"],
+            "id": response_data["id"],
+        }
 
         messages = [{"role": "system", "content": messageToSend}]
         request = {"messages": messages}
