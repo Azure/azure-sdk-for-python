@@ -153,7 +153,7 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
         if log_record.body:
             message = str(log_record.body)
         elif exc_message:
-            message = exc_message
+            message = exc_message # type: ignore
         else:
             message = "Exception"
         exc_details = TelemetryExceptionDetails(
