@@ -274,6 +274,14 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                         self._container_id,
                         last_exception,
                     )
+                    if isinstance(last_exception, OperationTimeoutError):
+                        description = "If trying to receive from NEXT_AVAILABLE_SESSION, "\
+                            "use max_wait_time on the ServiceBusReceiver to control the"\
+                                " timeout."
+                        error = OperationTimeoutError(
+                            message=description,
+                        )
+                        raise error from last_exception
                     raise last_exception from None
                 await self._backoff(
                     retried_times=retried_times,
@@ -306,6 +314,14 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 entity_name,
                 last_exception,
             )
+            if isinstance(last_exception, OperationTimeoutError):
+                description = "If trying to receive from NEXT_AVAILABLE_SESSION, "\
+                    "use max_wait_time on the ServiceBusReceiver to control the"\
+                        " timeout."
+                error = OperationTimeoutError(
+                    message=description,
+                )
+                raise error from last_exception
             raise last_exception
 
     async def _mgmt_request_response(

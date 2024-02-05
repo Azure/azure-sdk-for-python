@@ -1,5 +1,29 @@
 # Release History
 
+## 1.0.0b6 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b5 (2024-02-02)
+
+### Features Added
+
+- Supports evaluate() on chat
+
+### Bugs Fixed
+
+- Fix promptflow evaluation bugs
+
+### Other Changes
+
+- Duplicate cleanup
+
 ## 1.0.0b4 (2024-02-01)
 
 ### Features Added

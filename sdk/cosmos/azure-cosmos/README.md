@@ -475,7 +475,7 @@ For more information on TTL, see [Time to Live for Azure Cosmos DB data][cosmos_
 ### Using the asynchronous client
 
 The asynchronous cosmos client is a separate client that looks and works in a similar fashion to the existing synchronous client. However, the async client needs to be imported separately and its methods need to be used with the async/await keywords.
-The Async client needs to be initialized and closed after usage, which can be done manually or with the use of a context manager. The example below shows how to do so manually.
+The Async client needs to be initialized and closed after usage, which can be done manually or with the use of a context manager. The example below shows how to do so manually. We don't recommend doing it this way, since it requires that you manually call __aenter__() before using the client.
 
 ```python
 from azure.cosmos.aio import CosmosClient
@@ -488,6 +488,7 @@ CONTAINER_NAME = 'products'
 
 async def create_products():
     client = CosmosClient(URL, credential=KEY)
+    await client.__aenter__() # this piece is important for the SDK to cache account information
     database = client.get_database_client(DATABASE_NAME)
     container = database.get_container_client(CONTAINER_NAME)
     for i in range(10):
@@ -500,7 +501,7 @@ async def create_products():
     await client.close() # the async client must be closed manually if it's not initialized in a with statement
 ```
 
-Instead of manually opening and closing the client, it is highly recommended to use the `async with` keywords. This creates a context manager that will initialize and later close the client once you're out of the statement. The example below shows how to do so.
+Instead of manually opening and closing the client, it is highly recommended to use the `async with` keywords. This creates a context manager that will initialize and later close the client once you're out of the statement, as well as cache important information the SDK needs. The example below shows how to do so.
 
 ```python
 from azure.cosmos.aio import CosmosClient
