@@ -141,6 +141,10 @@ def test_string_content():
     assert request.headers == {"Content-Length": "13", "Content-Type": "text/plain"}
     assert request.content == "Hello, world!"
 
+    # make sure that sending string content with existing content type header doesn't override
+    request = HttpRequest("PUT", "http://example.org", content="Hello, world!", headers={"Content-Type": "application/json", "Content-Length": "1"})
+    assert request.headers == {"Content-Length": "1", "Content-Type": "application/json"}
+
     # Support 'data' for compat with requests.
     request = HttpRequest("PUT", "http://example.org", data="Hello, world!")
 
@@ -608,3 +612,9 @@ def test_data_and_file_input_same_name(client):
         ],
     )
     client.send_request(request).raise_for_status()
+
+def test_legacy_set_text_body():
+    request = HttpRequest("PUT", "/fake", content="not me", headers={"Content-Type": "application/json"})
+    assert request.headers["Content-Type"] == "application/json"
+    request.set_text_body("hello, world!")
+    assert request.headers["Content-Type"] == "application/json"
