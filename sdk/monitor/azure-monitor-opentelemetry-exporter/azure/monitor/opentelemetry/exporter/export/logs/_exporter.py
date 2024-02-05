@@ -149,14 +149,16 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
         has_full_stack = stack_trace is not None
         if not exc_type:
             exc_type = "Exception"
-        if not exc_message:
-            exc_message = "Exception"
         # Log body takes priority for message
         if log_record.body:
-            exc_message = str(log_record.body)
+            message = str(log_record.body)
+        elif exc_message:
+            message = exc_message
+        else:
+            message = "Exception"
         exc_details = TelemetryExceptionDetails(
             type_name=str(exc_type)[:1024],
-            message=str(exc_message)[:32768],
+            message=str(message)[:32768],
             has_full_stack=has_full_stack,
             stack=str(stack_trace)[:32768],
         )
