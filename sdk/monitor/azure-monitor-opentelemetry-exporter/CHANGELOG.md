@@ -7,7 +7,7 @@
 - Add live metrics skeleton + swagger definitions
     ([#33983](https://github.com/Azure/azure-sdk-for-python/pull/33983))
 - Add live metrics exporting functionality
-    ([#33983](https://github.com/Azure/azure-sdk-for-python/pull/33983))
+    ([#34141](https://github.com/Azure/azure-sdk-for-python/pull/34141))
 - Only create temporary folder if local storage is enabled without storage directory.
     ([#34061](https://github.com/Azure/azure-sdk-for-python/pull/34061))
 

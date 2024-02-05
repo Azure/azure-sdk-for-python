@@ -2,18 +2,7 @@
 # Licensed under the MIT License.
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Optional, Sequence
-
-from azure.core.exceptions import HttpResponseError
-from azure.monitor.opentelemetry.exporter._quickpulse._constants import _QUICKPULSE_METRIC_NAME_MAPPINGS
-from azure.monitor.opentelemetry.exporter._quickpulse._generated._client import QuickpulseClient
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
-    DocumentIngress,
-    MetricPoint,
-    MonitoringDataPoint,
-)
-from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
-from azure.monitor.opentelemetry.exporter._utils import _ticks_since_dot_net_epoch, PeriodicTask
+from typing import Any, List, Optional
 
 from opentelemetry.context import (
     _SUPPRESS_INSTRUMENTATION_KEY,
@@ -41,6 +30,17 @@ from opentelemetry.sdk.metrics.export import (
     MetricsData as OTMetricsData,
     MetricReader,
 )
+
+from azure.core.exceptions import HttpResponseError
+from azure.monitor.opentelemetry.exporter._quickpulse._constants import _QUICKPULSE_METRIC_NAME_MAPPINGS
+from azure.monitor.opentelemetry.exporter._quickpulse._generated._client import QuickpulseClient
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
+    DocumentIngress,
+    MetricPoint,
+    MonitoringDataPoint,
+)
+from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
+from azure.monitor.opentelemetry.exporter._utils import _ticks_since_dot_net_epoch, PeriodicTask
 
 
 _APPLICATION_INSIGHTS_METRIC_TEMPORALITIES = {
@@ -104,25 +104,26 @@ class _QuickpulseExporter(MetricExporter):
         :rtype: ~opentelemetry.sdk.metrics.export.MetricExportResult
         """
         result = MetricExportResult.SUCCESS
-        if metrics_data is None:
+        base_monitoring_data_point = kwargs.get("base_monitoring_data_point")
+        if metrics_data is None or base_monitoring_data_point is None:
             return result
         data_points = _metric_to_quick_pulse_data_points(
             metrics_data,
-            base_monitoring_data_point=kwargs.get("base_monitoring_data_point"),
+            base_monitoring_data_point=base_monitoring_data_point,
             documents=kwargs.get("documents"),
         )
 
         token = attach(set_value(_SUPPRESS_INSTRUMENTATION_KEY, True))
         try:
-            post_response = self._client.post(
+            post_response = self._client.post(  # type: ignore
                 monitoring_data_points=data_points,
                 ikey=self._instrumentation_key,
                 x_ms_qps_transmission_time=_ticks_since_dot_net_epoch(),
-                cls=Response, 
+                cls=Response,
             )
             if not post_response:
                 result = MetricExportResult.FAILURE
-            header = post_response._response_headers.get("x-ms-qps-subscribed")
+            header = post_response._response_headers.get("x-ms-qps-subscribed")  # pylint: disable=protected-access
             if header != "true":
                 # We raise an exception to indicate that quickpulse is not activated anymore
                 raise Exception()
@@ -167,13 +168,13 @@ class _QuickpulseExporter(MetricExporter):
         ping_response = None
         token = attach(set_value(_SUPPRESS_INSTRUMENTATION_KEY, True))
         try:
-            ping_response = self._client.ping(
+            ping_response = self._client.ping(  # type: ignore
                 monitoring_data_point=monitoring_data_point,
                 ikey=self._instrumentation_key,
                 x_ms_qps_transmission_time=_ticks_since_dot_net_epoch(),
-                cls=Response, 
+                cls=Response,
             )
-            return ping_response
+            return ping_response  # type: ignore
         except HttpResponseError:
             # Errors are not reported
             pass
@@ -219,11 +220,11 @@ class _QuickpulseMetricReader(MetricReader):
             # Send a ping if elapsed number of request meets the threshold
             if self._elapsed_num_seconds % int(self._quick_pulse_state.value) == 0:
                 print("pinging...")
-                ping_response = self._exporter._ping(
+                ping_response = self._exporter._ping(  # pylint: disable=protected-access
                     self._base_monitoring_data_point,
                 )
                 if ping_response:
-                    header = ping_response._response_headers.get("x-ms-qps-subscribed")
+                    header = ping_response._response_headers.get("x-ms-qps-subscribed")  # pylint: disable=protected-access
                     if header and header == "true":
                         print("ping succeeded: switching to post")
                         # Switch state to post if subscribed
@@ -231,21 +232,23 @@ class _QuickpulseMetricReader(MetricReader):
                         self._elapsed_num_seconds = 0
                     else:
                         # Backoff after _LONG_PING_INTERVAL_SECONDS (60s) of no successful requests
-                        if self._quick_pulse_state is QuickpulseState.PING_SHORT and self._elapsed_num_seconds >= _LONG_PING_INTERVAL_SECONDS:
+                        if self._quick_pulse_state is QuickpulseState.PING_SHORT and \
+                            self._elapsed_num_seconds >= _LONG_PING_INTERVAL_SECONDS:
                             print("ping failed for 60s, switching to pinging every 60s")
                             self._quick_pulse_state = QuickpulseState.PING_LONG
                 # TODO: Implement redirect
                 else:
-                    # Erroroneous responses instigate backoff logic
+                    # Erroneous responses instigate backoff logic
                     # Backoff after _LONG_PING_INTERVAL_SECONDS (60s) of no successful requests
-                    if self._quick_pulse_state is QuickpulseState.PING_SHORT and self._elapsed_num_seconds >= _LONG_PING_INTERVAL_SECONDS:
+                    if self._quick_pulse_state is QuickpulseState.PING_SHORT and \
+                        self._elapsed_num_seconds >= _LONG_PING_INTERVAL_SECONDS:
                         print("ping failed for 60s, switching to pinging every 60s")
                         self._quick_pulse_state = QuickpulseState.PING_LONG
         else:
             print("posting...")
             try:
                 self.collect()
-            except Exception as ex:  # pylint: disable=broad-except,invalid-name
+            except Exception:  # pylint: disable=broad-except,invalid-name
                 # Unsuccessful exports instigate backoff logic
                 # Backoff after _LONG_POST_INTERVAL_SECONDS (20s) of no successful requests
                 # And resume pinging
@@ -279,12 +282,12 @@ class _QuickpulseMetricReader(MetricReader):
 
     def _is_ping_state(self):
         return self._quick_pulse_state in (QuickpulseState.PING_SHORT, QuickpulseState.PING_LONG)
-    
-def _metric_to_quick_pulse_data_points(
+
+def _metric_to_quick_pulse_data_points(  # pylint: disable=too-many-nested-blocks
     metrics_data: OTMetricsData,
     base_monitoring_data_point: MonitoringDataPoint,
-    documents: Sequence[DocumentIngress],
-) -> Sequence[MonitoringDataPoint]:
+    documents: Optional[List[DocumentIngress]],
+) -> List[MonitoringDataPoint]:
     metric_points = []
     for resource_metric in metrics_data.resource_metrics:
         for scope_metric in resource_metric.scope_metrics:

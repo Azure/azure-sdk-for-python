@@ -3,6 +3,9 @@
 import platform
 from typing import Any, Optional
 
+from opentelemetry.sdk.metrics import MeterProvider
+from opentelemetry.sdk.trace.id_generator import RandomIdGenerator
+from opentelemetry.sdk.resources import Resource
 from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
 from azure.monitor.opentelemetry.exporter._quickpulse._exporter import (
     _QuickpulseExporter,
@@ -14,19 +17,16 @@ from azure.monitor.opentelemetry.exporter._utils import (
     _populate_part_a_fields,
     Singleton,
 )
-from opentelemetry.sdk.metrics import MeterProvider
-from opentelemetry.sdk.trace.id_generator import RandomIdGenerator
-from opentelemetry.sdk.resources import Resource
 
 
 def enable_live_metrics(**kwargs: Any) -> None:
     """Azure Monitor base exporter for OpenTelemetry.
 
-        :keyword str connection_string: The connection string used for your Application Insights resource.
-        :keyword Resource resource: The OpenTelemetry Resource used for this Python application.
-        :rtype: None
-        """
-    return _QuickpulseManager(kwargs.get('connection_string'), kwargs.get('resource'))
+    :keyword str connection_string: The connection string used for your Application Insights resource.
+    :keyword Resource resource: The OpenTelemetry Resource used for this Python application.
+    :rtype: None
+    """
+    _QuickpulseManager(kwargs.get('connection_string'), kwargs.get('resource'))
 
 
 class _QuickpulseManager(metaclass=Singleton):
@@ -43,7 +43,7 @@ class _QuickpulseManager(metaclass=Singleton):
             instance=part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE, ""),
             role_name=part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE, ""),
             machine_name=platform.node(),
-            stream_id=id_generator.generate_trace_id()
+            stream_id=str(id_generator.generate_trace_id()),
         )
         self._reader = _QuickpulseMetricReader(self._exporter, self._base_monitoring_data_point)
         self._meter_provider = MeterProvider([self._reader])

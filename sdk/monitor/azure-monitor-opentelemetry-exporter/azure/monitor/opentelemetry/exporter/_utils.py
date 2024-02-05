@@ -103,7 +103,11 @@ def _ticks_since_dot_net_epoch():
     # Since time.time() is the elapsed time since UTC January 1, 1970, we have
     # to shift this start time, and  then multiply by 10^7 to get the number of
     # 100-nanosecond intervals
-    shift_time = int((datetime.datetime(1970, 1, 1, 0, 0, 0) - datetime.datetime(1, 1, 1, 0, 0, 0)).total_seconds()) * (10 ** 7)
+    shift_time = int(
+        (
+            datetime.datetime(1970, 1, 1, 0, 0, 0) - 
+            datetime.datetime(1, 1, 1, 0, 0, 0)).total_seconds()
+        ) * (10 ** 7)
     # Add shift time to 100-ns intervals since time.time()
     return int(time.time() * (10**7)) + shift_time
 
