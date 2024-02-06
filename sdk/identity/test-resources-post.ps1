@@ -122,7 +122,7 @@ Write-Host "Applied kubeconfig.yaml"
 # Virtual machine setup
 $vmScript = @"
 sudo apt update && sudo apt install python3-pip -y --no-install-recommends &&
-git clone https://github.com/pvaneck/azure-sdk-for-python.git --depth 1 --single-branch --branch identity-vm-bicep /sdk &&
+git clone https://github.com/Azure/azure-sdk-for-python.git --depth 1 --single-branch --branch main /sdk &&
 cd /sdk/sdk/identity/azure-identity/tests/integration/azure-vms &&
 pip install -r requirements.txt
 "@
