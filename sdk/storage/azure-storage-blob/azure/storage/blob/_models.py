@@ -739,13 +739,13 @@ class BlobBlock(DictMixin):
 
     :param str block_id:
         Block id.
-    :param Enum state:
+    :param BlockState state:
         Block state. Possible values: BlockState.COMMITTED | BlockState.UNCOMMITTED
     """
     block_id: str
-    state: Enum
+    state: BlockState
 
-    def __init__(self, block_id: str, state: Enum = BlockState.LATEST) -> None:
+    def __init__(self, block_id: str, state: BlockState = BlockState.LATEST) -> None:
         self.id = block_id
         self.state = state
         self.size = None

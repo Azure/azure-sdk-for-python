@@ -337,9 +337,9 @@ def _download_blob_options(
     :returns: A dictionary containing the download blob options.
     :rtype: Dict[str, Any]
     """
-    if length is not None and offset is None:
-        raise ValueError("Offset must be provided if length is provided.")
-    if length:
+    if length is not None:
+        if offset is None:
+            raise ValueError("Offset must be provided if length is provided.")
         length = offset + length - 1  # Service actually uses an end-range inclusive index
 
     validate_content = kwargs.pop('validate_content', False)
@@ -847,8 +847,8 @@ def _abort_copy_options(copy_id: Union[str, Dict[str, Any], BlobProperties], **k
     :rtype: Dict[str, Any]
     """
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
-    if isinstance(copy_id, BlobProperties) and copy_id.copy.id is not None:
-        copy_id = copy_id.copy.id
+    if isinstance(copy_id, BlobProperties):
+        copy_id = copy_id.copy.id  # type: ignore [assignment]
     elif isinstance(copy_id, dict):
         copy_id = copy_id['copy_id']
     options = {
