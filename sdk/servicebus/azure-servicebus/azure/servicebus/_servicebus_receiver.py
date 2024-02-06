@@ -864,7 +864,17 @@ class ServiceBusReceiver(
         timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> int:
-        """  """
+        """  This operation deletes all messages in the queue that are older than the specified enqueued time.
+
+        :param int max_message_count: The maximum number of messages to delete. The default value is 1.
+        :param datetime.datetime enqueued_time_older_than_utc: The UTC datetime value before which all messages
+         should be deleted.
+        :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
+         The value must be greater than 0 if specified. The default value is None, meaning no timeout.
+        :returns: The number of messages deleted.
+        :rtype: int
+
+        """
         if kwargs:
             warnings.warn(f"Unsupported keyword args: {kwargs}")
         self._check_live()

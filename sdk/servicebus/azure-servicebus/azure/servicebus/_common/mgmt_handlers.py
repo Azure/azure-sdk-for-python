@@ -75,7 +75,7 @@ def peek_op(  # pylint: disable=inconsistent-return-statements
         _LOGGER, "Message peek failed.", condition, description, status_code
     )
 
-def batch_delete_op(  # pylint: disable=inconsistent-return-statements
+def batch_delete_op(  # pylint: disable=inconsistent-return-statements, unused-argument
     status_code, message, description, receiver, amqp_transport
 ):
     condition = message.application_properties.get(
