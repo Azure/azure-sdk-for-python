@@ -130,7 +130,9 @@ class PromptTemplate:
                 self.few_shot_example_separator = self.few_shot_example_separator.replace(special_token, "")
                 self.input_example_separator = self.input_example_separator.replace(special_token, "")
                 self.prompt_template = self.prompt_template.replace(special_token, "")
-                self.batched_prompt_suffix = self.batched_prompt_suffix.replace(special_token, "")  # type: ignore[has-type]
+                self.batched_prompt_suffix = self.batched_prompt_suffix.replace(  # type: ignore[has-type]
+                    special_token, ""
+                )
 
         if format == SpecialTokensFormat.CHAT:
             self.prompt_template = "<|im_start|>\n" + self.prompt_template

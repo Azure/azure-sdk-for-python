@@ -86,7 +86,9 @@ async def simulate_conversation(
             if len(bots) < 2 and current_character_idx == 1:
                 question = conversation_history[-1].message
                 # TODO: Fix Bug 2816997
-                response = await simulate_callback(question, conversation_history, template_paramaters)  # type: ignore[misc]
+                response = await simulate_callback(  # type: ignore[misc]
+                    question, conversation_history, template_paramaters
+                )
                 # add the generated response to the list of generated responses
                 conversation_history.append(
                     ConversationTurn(

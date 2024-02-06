@@ -21,13 +21,15 @@ class AugLoopConversationBot(ConversationBot):
         instantiation_parameters: Dict[str, str],
     ):
         """
-        Create an AugLoop ConversationBot with specific name, persona and a sentence that can be used as a conversation starter.
+        Create an AugLoop ConversationBot with specific name, 
+        persona and a sentence that can be used as a conversation starter.
 
         Parameters
         ----------
         role: The role of the bot in the conversation, either USER or ASSISTANT
         augLoopParams: The augloop params to use for connecting to augloop
-        conversation_template: A jinja2 template that describes the conversation, this is used to generate the prompt for the LLM
+        conversation_template: A jinja2 template that describes the conversation, 
+        this is used to generate the prompt for the LLM
         instantiation_parameters: A dictionary of parameters that are used to instantiate the conversation template
         """
         if role == ConversationRole.USER:

@@ -27,9 +27,10 @@ def main(args, logger, activity_logger):
 
             connection = get_connection_by_id_v2(connection_id)
             if args.git_repository != connection["properties"]["target"]:
-                logger.warning(
-                    f"Given git repository '{args.git_repository}' does not match the git repository '{connection['properties']['target']}' specified in the Workspace Connection '{connection_id}'. Using the Workspace Connection git repository."
-                )
+                msg_1 = f"Given git repository '{args.git_repository}' "
+                msg_2 = f"does not match the git repository '{connection['properties']['target']}' "
+                msg_3 = f"specified in the Workspace Connection '{connection_id}'. "
+                logger.warning(msg_1 + msg_2 + msg_3 + "Using the Workspace Connection git repository.")
             args.git_repository = connection["properties"]["target"]
             authentication = {
                 "username": connection["properties"]["metadata"]["username"],
@@ -73,12 +74,14 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--git-repository", type=str, required=True, dest="git_repository")
     parser.add_argument("--branch-name", type=str, required=False, default=None)
+    msg_1 = "<PREFIX>-USER and <PREFIX>-PASS are the expected names of two Secrets in the Workspace Key Vault "
+    msg_2 = "which will be used for authenticated when pulling the given git repo."
     parser.add_argument(
         "--authentication-key-prefix",
         type=str,
         required=False,
         default=None,
-        help="<PREFIX>-USER and <PREFIX>-PASS are the expected names of two Secrets in the Workspace Key Vault which will be used for authenticated when pulling the given git repo.",
+        help=msg_1 + msg_2,
     )
     parser.add_argument("--output-data", type=str, required=True, dest="output_data")
     args = parser.parse_args()

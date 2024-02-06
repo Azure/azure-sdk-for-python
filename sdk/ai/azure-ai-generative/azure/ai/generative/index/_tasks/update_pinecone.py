@@ -36,7 +36,8 @@ def pinecone_index_client_from_config(pinecone_config: dict, api_key: str):
         pinecone_config (dict): Pinecone configuration dictionary. Expected to contain:
             - environment: Pinecone index environment
             - index_name: Pinecone index name
-            - field_mapping: Mappings from a set of fields understood by MLIndex (refer to MLIndex.INDEX_FIELD_MAPPING_TYPES) to Pinecone field names.
+            - field_mapping: Mappings from a set of fields
+              understood by MLIndex (refer to MLIndex.INDEX_FIELD_MAPPING_TYPES) to Pinecone field names.
 
         api_key (str): API key to use for authentication to the Pinecone index.
     """
@@ -53,19 +54,20 @@ def create_pinecone_index_sdk(pinecone_config: dict, api_key: str, embeddings: E
         pinecone_config (dict): Pinecone configuration dictionary. Expected to contain:
             - environment: Pinecone index environment
             - index_name: Pinecone index name
-            - field_mapping: Mappings from a set of fields understood by MLIndex (refer to MLIndex.INDEX_FIELD_MAPPING_TYPES) to Pinecone field names.
+            - field_mapping: Mappings from a set of fields
+              understood by MLIndex (refer to MLIndex.INDEX_FIELD_MAPPING_TYPES) to Pinecone field names.
 
         api_key (str): API key to use for authentication to the Pinecone index.
-        embeddings (EmbeddingsContainer): EmbeddingsContainer to use for creating the index. If provided, the index will be configured to support vector search.
+        embeddings (EmbeddingsContainer): EmbeddingsContainer to use for creating the index.
+        If provided, the index will be configured to support vector search.
     """
     logger.info(f"Ensuring Pinecone index {pinecone_config['index_name']} exists")
 
     pinecone.init(api_key=api_key, environment=pinecone_config["environment"])
 
     if pinecone_config["index_name"] not in pinecone.list_indexes():
-        logger.info(
-            f"Creating {pinecone_config['index_name']} Pinecone index with dimensions {embeddings.get_embedding_dimensions()}"
-        )
+        msg = f"with dimensions {embeddings.get_embedding_dimensions()}"
+        logger.info(f"Creating {pinecone_config['index_name']} Pinecone index " + msg)
         pinecone.create_index(pinecone_config["index_name"], embeddings.get_embedding_dimensions())
         logger.info(f"Created {pinecone_config['index_name']} Pinecone index")
     else:
@@ -85,16 +87,20 @@ def create_index_from_raw_embeddings(
 
     Args:
     ----
-        emb (EmbeddingsContainer): EmbeddingsContainer to use for creating the index. If provided, the index will be configured to support vector search.
+        emb (EmbeddingsContainer): EmbeddingsContainer to use for creating the index.
+        If provided, the index will be configured to support vector search.
         pinecone_config (dict): Pinecone configuration dictionary. Expected to contain:
             - environment: Pinecone project/index environment
             - index_name: Pinecone index name
-            - field_mapping: Mappings from a set of fields understood by MLIndex (refer to MLIndex.INDEX_FIELD_MAPPING_TYPES) to Pinecone field names.
+            - field_mapping: Mappings from a set of fields
+              understood by MLIndex (refer to MLIndex.INDEX_FIELD_MAPPING_TYPES) to Pinecone field names.
 
-        connection (dict): Connection configuration dictionary describing the type of the connection to the Pinecone index.
+        connection (dict): Connection configuration dictionary describing
+        the type of the connection to the Pinecone index.
         output_path (str): The output path to store the MLIndex.
         credential (TokenCredential): Azure credential to use for authentication.
-        verbosity (int): Defaults to 1, which will log aggregate information about documents and IDs of deleted documents. 2 will log all document_ids as they are processed.
+        verbosity (int): Defaults to 1, which will log aggregate information about
+        documents and IDs of deleted documents. 2 will log all document_ids as they are processed.
     """
     with track_activity(
         logger, "create_index_from_raw_embeddings", custom_dimensions={"num_documents": len(emb._document_embeddings)}
@@ -114,9 +120,8 @@ def create_index_from_raw_embeddings(
 
         connection_credential = get_connection_credential(connection, credential=credential)
         if not isinstance(connection_credential, AzureKeyCredential):
-            raise ValueError(
-                f"Expected credential to Pinecone index to be an AzureKeyCredential, instead got: {type(connection_credential)}"
-            )
+            msg = f"instead got: {type(connection_credential)}"
+            raise ValueError(f"Expected credential to Pinecone index to be an AzureKeyCredential, " + msg)
 
         create_pinecone_index_sdk(pinecone_config, connection_credential.key, embeddings=emb)
 
@@ -162,9 +167,8 @@ def create_index_from_raw_embeddings(
                 if verbosity > 1:
                     logger.info(f"Marked document for deletion: {doc_id}")
 
-        logger.info(
-            f"Total {len(deleted_ids)} documents from sources marked for deletion, adding individual documents marked for deletion"
-        )
+        msg = "adding individual documents marked for deletion"
+        logger.info(f"Total {len(deleted_ids)} documents from sources marked for deletion, " + msg)
         for doc_id in emb._deleted_documents:
             deleted_ids.append(base64.urlsafe_b64encode(doc_id.encode("utf-8")).decode("utf-8"))
             if verbosity > 1:
@@ -216,7 +220,11 @@ def create_index_from_raw_embeddings(
                 # is_local=False when the EmbeddedDocuments data/embeddings are referenced from a remote source,
                 # which is the case when the data was reused from a previous snapshot. is_local=True means the data
                 # was generated for this snapshot and needs to pushed to the index.
-                if syncing_index and isinstance(emb_doc, ReferenceEmbeddedDocument) and not emb_doc.is_local:  # type: ignore[attr-defined]
+                if (
+                    syncing_index
+                    and isinstance(emb_doc, ReferenceEmbeddedDocument)
+                    and not emb_doc.is_local  # type: ignore[attr-defined]
+                ):
                     # TODO: Bug 2879174
                     skipped_doc_prefix_count += 1
                     if verbosity > 2:
@@ -299,8 +307,9 @@ def create_index_from_raw_embeddings(
                 num_source_docs += len(batch)
 
             duration = time.time() - t1
+            msg = f"took {duration:.4f} seconds"
             logger.info(
-                f"Built index from {num_source_docs} documents and {len(emb._document_embeddings)} chunks, took {duration:.4f} seconds"
+                f"Built index from {num_source_docs} documents and {len(emb._document_embeddings)} chunks, " + msg
             )
             activity_logger.info(
                 "Built index", extra={"properties": {"num_source_docs": num_source_docs, "duration": duration}}
@@ -380,9 +389,10 @@ def main(args, logger, activity_logger):
         logger.error("Failed to update Pinecone index")
         exception_str = str(e)
         if "Cannot find nested property" in exception_str:
-            logger.error(
-                f'The vector index provided "{pinecone_config["index_name"]}" has a different schema than outlined in this components description. This can happen if a different embedding model was used previously when updating this index.'
-            )
+            error_msg_1 = f'The vector index provided "{pinecone_config["index_name"]}" has a different schema '
+            error_msg_2 = "than outlined in this components description. "
+            error_msg_3 = "This can happen if a different embedding model was used previously when updating this index."
+            logger.error(error_msg_1 + error_msg_2 + error_msg_3)
             activity_logger.activity_info["error_classification"] = "UserError"
             activity_logger.activity_info["error"] = f"{e.__class__.__name__}: Cannot find nested property"
         elif "Failed to upsert" in exception_str:
@@ -415,11 +425,13 @@ if __name__ == "__main__":
     parser.add_argument("--pinecone_config", type=str)
     parser.add_argument("--connection_id", type=str, required=False)
     parser.add_argument("--output", type=str)
+    msg_1 = "Defaults to 1, which will log aggregate information about documents and IDs of deleted documents. "
+    msg_2 = "2 will log all document_ids as they are processed."
     parser.add_argument(
         "--verbosity",
         type=int,
         default=1,
-        help="Defaults to 1, which will log aggregate information about documents and IDs of deleted documents. 2 will log all document_ids as they are processed.",
+        help=msg_1 + msg_2,
     )
     args = parser.parse_args()
 

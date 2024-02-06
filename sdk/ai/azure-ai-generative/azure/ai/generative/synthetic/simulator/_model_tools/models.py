@@ -321,7 +321,8 @@ class OpenAICompletionsModel(LLMBase):
 
         Parameters
         ----------
-        messages: List of messages to query the model with. Expected format: [{"role": "user", "content": "Hello!"}, ...]
+        messages: List of messages to query the model with.
+        Expected format: [{"role": "user", "content": "Hello!"}, ...]
         session: aiohttp RetryClient object to query the model with.
         role: Role of the user sending the message.
         request_params: Additional parameters to pass to the model.
@@ -365,7 +366,9 @@ class OpenAICompletionsModel(LLMBase):
         # Format prompts and tag with index
         request_datas: List[Dict] = []
         for idx, prompt in enumerate(prompts):
-            prompt: Dict[str, str] = self.format_request_data(prompt, **request_params)  # type: ignore[no-redef,arg-type]
+            prompt: Dict[str, str] = self.format_request_data(  # type: ignore[no-redef]
+                prompt, **request_params  # type: ignore[arg-type]
+            )
             prompt[self.prompt_idx_key] = idx  # type: ignore[assignment]
             request_datas.append(prompt)
 
@@ -574,7 +577,8 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
 
         Parameters
         ----------
-        messages: List of messages to query the model with. Expected format: [{"role": "user", "content": "Hello!"}, ...]
+        messages: List of messages to query the model with.
+        Expected format: [{"role": "user", "content": "Hello!"}, ...]
         session: aiohttp RetryClient object to query the model with.
         role: Not used for this model, since it is a chat model.
         request_params: Additional parameters to pass to the model.
@@ -751,9 +755,10 @@ class LLAMAChatCompletionsModel(LLAMACompletionsModel):
     """
     LLaMa ChatCompletionsModel is a wrapper around LLaMaCompletionsModel that
     formats the prompt for chat completion.
-    This chat completion model should be only used as assistant, and shouldn't be used to simulate user. It is not possible
-     to pass a system prompt do describe how the model would behave, So we only use the model as assistant to reply for questions
-     made by GPT simulated users.
+    This chat completion model should be only used as assistant,
+    and shouldn't be used to simulate user. It is not possible
+    to pass a system prompt do describe how the model would behave,
+    So we only use the model as assistant to reply for questions made by GPT simulated users.
     """
 
     def __init__(self, name="LLAMAChatCompletionsModel", *args, **kwargs):
@@ -770,10 +775,13 @@ class LLAMAChatCompletionsModel(LLAMACompletionsModel):
                     captions=self.image_captions,
                 )
 
-        # For LLaMa we don't pass the prompt (user persona) as a system message since LLama doesn't support system message
-        # LLama only supports user, and assistant messages. The messages sequence has to start with User message/ It can't have two user or
+        # For LLaMa we don't pass the prompt (user persona) as a system message
+        # since LLama doesn't support system message
+        # LLama only supports user, and assistant messages.
+        # The messages sequence has to start with User message/ It can't have two user or
         # two assistant consecutive messages.
-        # so if we set the system meta prompt as a user message, and if we have the first two messages made by user then we
+        # so if we set the system meta prompt as a user message,
+        # and if we have the first two messages made by user then we
         # combine the two messages in one message.
         for idx, x in enumerate(messages):
             if x["role"] == "system":
@@ -804,7 +812,8 @@ class LLAMAChatCompletionsModel(LLAMACompletionsModel):
 
         Parameters
         ----------
-        messages: List of messages to query the model with. Expected format: [{"role": "user", "content": "Hello!"}, ...]
+        messages: List of messages to query the model with.
+        Expected format: [{"role": "user", "content": "Hello!"}, ...]
         session: aiohttp RetryClient object to query the model with.
         role: Not used for this model, since it is a chat model.
         request_params: Additional parameters to pass to the model.

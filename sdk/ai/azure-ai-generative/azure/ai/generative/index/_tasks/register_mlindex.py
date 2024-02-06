@@ -60,9 +60,11 @@ def main(args, run, logger, activity_logger):
         },
     )
 
+    path_1 = f"azureml://subscriptions/{ws._subscription_id}/resourcegroups/{ws._resource_group}/providers"
+    path_2 = f"/Microsoft.MachineLearningServices/workspaces/{ws._workspace_name}/data"
     asset_id = re.sub(
         "azureml://locations/(.*)/workspaces/(.*)/data",
-        f"azureml://subscriptions/{ws._subscription_id}/resourcegroups/{ws._resource_group}/providers/Microsoft.MachineLearningServices/workspaces/{ws._workspace_name}/data",
+        path_1 + path_2,
         data_version.asset_id,
     )
     with open(args.output_asset_id, "w") as f:

@@ -64,7 +64,8 @@ def crack_and_chunk_and_embed_and_index(
         )
 
         # EmbeddingsContainer now has current state of sources, and embedded documents, and deleted documents
-        # TODO: Need to handle embeddings_cache path as being remote or local, being mounted or not, then that final path being used for the EmbeddingsContainer persistance.
+        # TODO: Need to handle embeddings_cache path as being remote or local, being mounted or not,
+        # then that final path being used for the EmbeddingsContainer persistance.
         # New embeddings_container code ideally would handle this?
         if embeddings_cache is not None:
             import uuid
@@ -98,7 +99,8 @@ def crack_and_chunk_and_embed_and_index(
                 )
 
                 index_config["endpoint"] = get_target_from_connection(connection)  # type: ignore[index]
-                index_config["api_version"] = get_metadata_from_connection(connection).get("apiVersion", "2023-07-01-preview")  # type: ignore[index]
+                connection = get_metadata_from_connection(connection)
+                index_config["api_version"] = connection.get("apiVersion", "2023-07-01-preview")  # type: ignore[index]
 
             mlindex = create_index_from_raw_embeddings(
                 embeddings_container,

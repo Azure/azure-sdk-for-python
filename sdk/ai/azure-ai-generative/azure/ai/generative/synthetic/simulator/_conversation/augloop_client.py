@@ -73,6 +73,7 @@ class AugLoopClient:
         self.websocket = websocket.create_connection(self.augLoopParams.url)
 
         # send session init
+        # pylint: disable=line-too-long
         self.send_message_to_al(
             f'{{"protocolVersion":2,"clientMetadata":{{"appName":"{self.augLoopParams.clientAppName}","appPlatform":"Client","sessionId":"{self.augLoopParams.sessionId}","flights":"{self.augLoopParams.flights}","appVersion":"","uiLanguage":"","roamingServiceAppId":0,"runtimeVersion":"{self.augLoopParams.runtimeVersion}","docSessionId":"{self.augLoopParams.sessionId}"}},"extensionConfigs":[],"returnWorkflowInputTypes":false,"enableRemoteExecutionNotification":false,"H_":{{"T_":"AugLoop_Session_Protocol_SessionInitMessage","B_":["AugLoop_Session_Protocol_Message"]}},"cv":"{self.augLoopParams.cvBase}.{self.sequence}","messageId":"c{self.sequence}"}}'
         )
@@ -188,6 +189,7 @@ class AugLoopClient:
     def send_signal_message(self, message: str):
         self.id = f"id{self.sequence}"
         message = message.replace('"', '\\"')
+        # pylint: disable=line-too-long
         self.send_message_to_al(
             f'{{"cv":"{self.augLoopParams.cvBase}.{self.sequence}","seq":{self.sequence},"ops":[{{"parentPath":["session","doc"],"prevId":"{self.prevId}","items":[{{"id":"{self.id}","body":{{"{self.augLoopParams.signalMessageParamName}":"{message}", {self.augLoopParams.signalOtherParams} "H_":{{"T_":"{self.augLoopParams.signalType}","B_":["{self.augLoopParams.signalBaseType}"]}}}},"contextId":"C{self.sequence}"}}],"H_":{{"T_":"AugLoop_Core_AddOperation","B_":["AugLoop_Core_OperationWithSiblingContext","AugLoop_Core_Operation"]}}}}],"H_":{{"T_":"AugLoop_Session_Protocol_SyncMessage","B_":["AugLoop_Session_Protocol_Message"]}},"messageId":"c{self.sequence}"}}'
         )
@@ -201,6 +203,7 @@ class AugLoopClient:
         self.websocket = websocket.create_connection(self.augLoopParams.url)
 
         # send session init
+        # pylint: disable=line-too-long
         self.send_message_to_al(
             f'{{"protocolVersion":2,"clientMetadata":{{"appName":"{self.augLoopParams.clientAppName}","appPlatform":"Client","sessionKey":"{self.sessionKey}","origin":"{self.origin}","anonymousToken":"{self.anonToken}","sessionId":"{self.augLoopParams.sessionId}","flights":"{self.augLoopParams.flights}","appVersion":"","uiLanguage":"","roamingServiceAppId":0,"runtimeVersion":"{self.augLoopParams.runtimeVersion}","docSessionId":"{self.augLoopParams.sessionId}"}},"extensionConfigs":[],"returnWorkflowInputTypes":false,"enableRemoteExecutionNotification":false,"H_":{{"T_":"AugLoop_Session_Protocol_SessionInitMessage","B_":["AugLoop_Session_Protocol_Message"]}},"cv":"{self.augLoopParams.cvBase}.{self.sequence}","messageId":"c{self.sequence}"}}'
         )
@@ -226,14 +229,16 @@ class AugLoopClient:
             break
 
         if self.sessionKey != oldSessionKey:
+            msg = f"new: {sessionInitResponse['sessionKey']}"
             self.logger.warn(
-                f"Connected to a different session, previous: {self.sessionKey}, new: {sessionInitResponse['sessionKey']}"
+                f"Connected to a different session, previous: {self.sessionKey}, " + msg
             )
 
             self.setup_session_after_init()
 
     def setup_session_after_init(self):
         # Activate annotation
+        # pylint: disable=line-too-long
         self.send_message_to_al(
             f'{{"annotationType":"{self.augLoopParams.annotationType}","token":"{self.augLoopParams.annotationType}-1","ignoreExistingAnnotations":false,"H_":{{"T_":"AugLoop_Session_Protocol_AnnotationActivationMessage","B_":["AugLoop_Session_Protocol_Message"]}},"cv":"{self.augLoopParams.cvBase}.{self.sequence}","messageId":"c{self.sequence}"}}'
         )
@@ -242,6 +247,7 @@ class AugLoopClient:
 
         # auth token message
         token = self.get_auth_token()
+        # pylint: disable=line-too-long
         self.send_message_to_al(
             f'{{"authToken":"{token}","H_":{{"T_":"AugLoop_Session_Protocol_TokenProvisionMessage","B_":["AugLoop_Session_Protocol_Message"]}},"cv":"{self.augLoopParams.cvBase}.{self.sequence}","messageId":"c{self.sequence}"}}'
         )
@@ -249,6 +255,7 @@ class AugLoopClient:
         self.logger.info(f"Ack for auth token message: {message}")
 
         # add doc container to session
+        # pylint: disable=line-too-long
         self.send_message_to_al(
             f'{{"cv":"{self.augLoopParams.cvBase}.{self.sequence}","seq":{self.sequence},"ops":[{{"parentPath":["session"],"prevId":"#head","items":[{{"id":"doc","body":{{"isReadonly":false,"H_":{{"T_":"AugLoop_Core_Document","B_":["AugLoop_Core_TileGroup"]}}}},"contextId":"C{self.sequence}"}}],"H_":{{"T_":"AugLoop_Core_AddOperation","B_":["AugLoop_Core_OperationWithSiblingContext","AugLoop_Core_Operation"]}}}}],"H_":{{"T_":"AugLoop_Session_Protocol_SyncMessage","B_":["AugLoop_Session_Protocol_Message"]}},"messageId":"c{self.sequence}"}}'
         )

@@ -72,9 +72,11 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
         acs_config (dict): ACS configuration dictionary. Expected to contain:
             - endpoint: ACS endpoint
             - index_name: ACS index name
-            - field_mapping: Mappings from a set of fields understoon by MLIndex (refer to MLIndex.INDEX_FIELD_MAPPING_TYPES) to ACS field names.
+            - field_mapping: Mappings from a set of fields
+              understoon by MLIndex (refer to MLIndex.INDEX_FIELD_MAPPING_TYPES) to ACS field names.
         credential (TokenCredential): Azure credential to use for authentication.
-        embeddings (EmbeddingsContainer): EmbeddingsContainer to use for creating the index. If provided, the index will be configured to support vector search.
+        embeddings (EmbeddingsContainer): EmbeddingsContainer to use for creating the index.
+        If provided, the index will be configured to support vector search.
     """
     logger.info(f"Ensuring search index {acs_config['index_name']} exists")
     index_client = SearchIndexClient(endpoint=acs_config["endpoint"], credential=credential, user_agent=acs_user_agent)
@@ -122,9 +124,8 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
         # fields.append(SimpleField(name="content_hash", type=SearchFieldDataType.String))
 
         if "content" not in acs_config[MLIndex.INDEX_FIELD_MAPPING_KEY]:
-            raise RuntimeError(
-                f"ACS index must have a 'content' field. Please specify a 'content' field in the {MLIndex.INDEX_FIELD_MAPPING_KEY} config."
-            )
+            msg = f"Please specify a 'content' field in the {MLIndex.INDEX_FIELD_MAPPING_KEY} config."
+            raise RuntimeError(f"ACS index must have a 'content' field. " + msg)
 
         vector_search_args = {}
         if (
@@ -188,9 +189,8 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
                     ]
                 )
             else:
-                raise RuntimeError(
-                    f"azure-search-documents version {azure_documents_search_version} is not supported when using embeddings. Please upgrade to 11.4.0b4 or later."
-                )
+                msg = f"azure-search-documents version {azure_documents_search_version} is not supported "
+                raise RuntimeError(msg + f"when using embeddings. Please upgrade to 11.4.0b4 or later.")
 
         semantic_config = SemanticConfiguration(
             name="azureml-default",
@@ -295,9 +295,8 @@ def create_index_from_raw_embeddings(
                     if verbosity > 1:
                         logger.info(f"Marked document for deletion: {doc_id}")
 
-            logger.info(
-                f"{len(deleted_ids)} documents from sources marked for deletion, adding individual documents marked for deletion"
-            )
+            msg = "adding individual documents marked for deletion"
+            logger.info(f"{len(deleted_ids)} documents from sources marked for deletion, " + msg)
             for doc_id in emb._deleted_documents:
                 num_deleted_ids += 1
                 deleted_ids.append({"id": base64.urlsafe_b64encode(doc_id.encode("utf-8")).decode("utf-8")})
@@ -321,7 +320,7 @@ def create_index_from_raw_embeddings(
             if len(failed) > 0:
                 logger.info(f"Retrying {len(failed)} documents")
                 failed_ids = [fail["key"] for fail in failed]
-                results = search_client.delete_documents([doc for doc in delete_batch if doc["id"] in failed_ids])  # type: ignore[index]
+                results = search_client.delete_documents([doc for doc in delete_batch if doc["id"] in failed_ids])
                 failed = process_upload_results(results, start_time)
                 if len(failed) > 0:
                     raise RuntimeError(f"Failed to delete {len(failed)} documents.")
@@ -369,7 +368,11 @@ def create_index_from_raw_embeddings(
             # was generated for this snapshot and needs to pushed to the index.
 
             # TODO: Bug 2878426
-            if syncing_index and isinstance(emb_doc, ReferenceEmbeddedDocument) and not emb_doc.is_local:  # type: ignore[attr-defined]
+            if (
+                syncing_index
+                and isinstance(emb_doc, ReferenceEmbeddedDocument)
+                and not emb_doc.is_local  # type: ignore[attr-defined]
+            ):
                 skipped_prefix_documents += 1
                 num_source_docs += 1
                 if verbosity > 2:
@@ -437,9 +440,8 @@ def create_index_from_raw_embeddings(
             num_source_docs += len(batch)
 
         duration = time.time() - t1
-        logger.info(
-            f"Built index from {num_source_docs} documents and {len(emb._document_embeddings)} chunks, took {duration:.4f} seconds"
-        )
+        msg = f"took {duration:.4f} seconds"
+        logger.info(f"Built index from {num_source_docs} documents and {len(emb._document_embeddings)} chunks, " + msg)
         activity_logger.info(
             "Built index", extra={"properties": {"num_source_docs": num_source_docs, "duration": duration}}
         )
@@ -535,20 +537,22 @@ def main(args, logger, activity_logger):
         logger.error("Failed to update ACS index")
         exception_str = str(e)
         if "Floats quota has been exceeded for this service." in exception_str:
+            url = "https://github.com/Azure/cognitive-search-vector-pr#storage-and-vector-index-size-limits"
             logger.error(
-                "Floats quota exceeded on Azure Cognitive Search Service. For more information check these docs: https://github.com/Azure/cognitive-search-vector-pr#storage-and-vector-index-size-limits"
+                "Floats quota exceeded on Azure Cognitive Search Service. For more information check these docs: " + url
             )
-            logger.error(
-                "The usage statistic of an index can be checked using this REST API: https://learn.microsoft.com/en-us/rest/api/searchservice/get-index-statistics "
-            )
+
+            url = "https://learn.microsoft.com/en-us/rest/api/searchservice/get-index-statistics"
+            logger.error("The usage statistic of an index can be checked using this REST API: " + url)
             activity_logger.activity_info["error_classification"] = "UserError"
             activity_logger.activity_info[
                 "error"
             ] = f"{e.__class__.__name__}: Floats quota has been exceeded for this service."
         elif "Cannot find nested property" in exception_str:
-            logger.error(
-                f'The vector index provided "{acs_config["index_name"]}" has a different schema than outlined in this components description. This can happen if a different embedding model was used previously when updating this index.'
-            )
+            error_msg_1 = f'The vector index provided "{acs_config["index_name"]}" has a different schema '
+            error_msg_2 = "than outlined in this components description. "
+            error_msg_3 = "This can happen if a different embedding model was used previously when updating this index."
+            logger.error(error_msg_1 + error_msg_2 + error_msg_3)
             activity_logger.activity_info["error_classification"] = "UserError"
             activity_logger.activity_info["error"] = f"{e.__class__.__name__}: Cannot find nested property"
         elif "Failed to upload" in exception_str:
@@ -581,11 +585,12 @@ if __name__ == "__main__":
     parser.add_argument("--acs_config", type=str)
     parser.add_argument("--connection_id", type=str, required=False)
     parser.add_argument("--output", type=str)
+    msg = "Defaults to 1, which will log aggregate information about documents and IDs of deleted documents. "
     parser.add_argument(
         "--verbosity",
         type=int,
         default=1,
-        help="Defaults to 1, which will log aggregate information about documents and IDs of deleted documents. 2 will log all document_ids as they are processed.",
+        help=msg + "2 will log all document_ids as they are processed.",
     )
     args = parser.parse_args()
 

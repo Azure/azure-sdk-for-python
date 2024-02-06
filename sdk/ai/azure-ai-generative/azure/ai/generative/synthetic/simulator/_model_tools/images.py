@@ -31,7 +31,8 @@ def replace_prompt_captions(
     prompt: str, captions: dict = {}, logger: logging.Logger = logging.getLogger("Prompt Image Captioner")
 ) -> str:
     """
-    Insert captions for images into the prompt. If captions are present in the prompt, return the prompt with captions replaced.
+    Insert captions for images into the prompt. 
+    If captions are present in the prompt, return the prompt with captions replaced.
     """
     # Compile pattern if not already compiled
     _compile_prompt_images_pattern()

@@ -161,16 +161,28 @@ class QAType(str, Enum):
     """QAType defines different types of QAs that can be generated."""
 
     SHORT_ANSWER = "SHORT_ANSWER"
-    """Short answer QAs have answers that are only a few words long. These words are generally relevant details from text like dates, names, statistics, etc."""
+    """
+        Short answer QAs have answers that are only a few words long. 
+        These words are generally relevant details from text like dates, names, statistics, etc.
+    """
     LONG_ANSWER = "LONG_ANSWER"
-    """Long answer QAs have answers that are one or more sentences long. ex. Questions where answer is a definition: What is a {topic_from_text}?"""
+    """
+        Long answer QAs have answers that are one or more sentences long. 
+        ex. Questions where answer is a definition: What is a {topic_from_text}?
+    """
     BOOLEAN = "BOOLEAN"
     """Boolean QAs have answers that are either True or False."""
     SUMMARY = "SUMMARY"
-    """Summary QAs have questions that ask to write a summary for text's title in a limited number of words. It generates just one QA."""
+    """
+        Summary QAs have questions that ask to write a summary for text's title in a limited number of words. 
+        It generates just one QA.
+    """
     CONVERSATION = "CONVERSATION"
-    """Conversation QAs have questions that might reference words or ideas from previous QAs. ex. If previous conversation was about
-    some topicX from text, next question might reference it without using its name: How does *it* compare to topicY?"""
+    """
+        Conversation QAs have questions that might reference words or ideas from previous QAs. 
+        ex. If previous conversation was about some topicX from text, next question might reference it 
+        without using its name: How does *it* compare to topicY?
+    """
 
 
 class QADataGenerator:
@@ -315,10 +327,12 @@ class QADataGenerator:
             if qa_type == QAType.CONVERSATION and not (
                 "chat_history_key" in field_mapping and "question_key" in field_mapping
             ):
+                keys = "chat_history_key, question_key"
                 raise Exception(
-                    "Field mapping for Promptflow output with Conversation must contain following keys: chat_history_key, question_key"
+                    "Field mapping for Promptflow output with Conversation must contain following keys: " + keys
                 )
-            # Only the question key is required in non-conversation cases, we can default to chat_history as chat_history_key
+            # Only the question key is required in non-conversation cases,
+            # we can default to chat_history as chat_history_key
             elif not ("question_key" in field_mapping):
                 raise Exception(
                     f"Field mapping for Promptflow output with {qa_type} must contain following keys: question_key"
