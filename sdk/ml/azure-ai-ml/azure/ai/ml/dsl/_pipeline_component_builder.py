@@ -195,7 +195,7 @@ class PipelineComponentBuilder:
         if outputs is None:
             outputs = {}
 
-        jobs = self._update_nodes_variable_names(_locals)
+        jobs: Dict = self._update_nodes_variable_names(_locals)
         pipeline_component = PipelineComponent(
             name=self.name,
             version=self.version,
@@ -203,7 +203,7 @@ class PipelineComponentBuilder:
             description=self.description,
             inputs=self.inputs,
             jobs=jobs,
-            tags=self.tags,
+            tags=self.tags,  # type: ignore[arg-type]
             source_path=self.source_path,
             _source=ComponentSource.DSL,
         )
@@ -276,10 +276,14 @@ class PipelineComponentBuilder:
                 """
                 if type(_meta).__name__ != "InternalOutput":
                     return str(_meta.type)
-                return str(_meta.map_pipeline_output_type())
+                return str(_meta.map_pipeline_output_type())  # type: ignore[attr-defined]
 
             # Note: Here we set PipelineOutput as Pipeline's output definition as we need output binding.
-            output_meta = Output(type=_map_internal_output_type(meta), description=meta.description, mode=meta.mode)
+            output_meta = Output(
+                type=_map_internal_output_type(meta),  # type: ignore[arg-type]
+                description=meta.description,
+                mode=meta.mode,
+            )
             pipeline_output = PipelineOutput(
                 port_name=key,
                 data=None,
@@ -292,9 +296,11 @@ class PipelineComponentBuilder:
                 binding_output=value,
             )
             # copy node level output setting to pipeline output
-            copy_output_setting(source=value._owner.outputs[value._port_name], target=pipeline_output)
+            copy_output_setting(
+                source=value._owner.outputs[value._port_name], target=pipeline_output  # type: ignore[arg-type]
+            )
 
-            value._owner.outputs[value._port_name]._data = pipeline_output
+            value._owner.outputs[value._port_name]._data = pipeline_output  # type: ignore[union-attr]
 
             output_dict[key] = pipeline_output
             output_meta_dict[key] = output_meta._to_dict()
@@ -383,7 +389,7 @@ class PipelineComponentBuilder:
                     f"node name: {name!r}. Duplicate check is case-insensitive."
                 )
             local_names.add(name)
-            id_name_dict[v._instance_id] = name
+            id_name_dict[v._instance_id] = name  # type: ignore[union-attr]
             name_count_dict[name] = 1
 
         # Find the last user-defined name for the same type of components
@@ -420,6 +426,7 @@ class PipelineComponentBuilder:
         :type pipeline_inputs: Dict[str, Union[PipelineInput, Input, NodeOutput, Any]]
         """
         for input_name, value in pipeline_inputs.items():
+            anno: Any = None
             if input_name not in self.inputs:
                 if isinstance(value, PipelineInput):
                     value = value._data
@@ -497,12 +504,15 @@ class PipelineComponentBuilder:
                 unmatched_outputs.append(
                     f"{key}: pipeline component output: {actual_output} != annotation output {expected_output}"
                 )
+            res = output_dict[key]._meta
             if expected_description:
-                output_dict[key]._meta.description = expected_description
+                if res is not None:
+                    res.description = expected_description
                 # also copy the description to pipeline job
                 output_dict[key].description = expected_description
             if expected_mode:
-                output_dict[key]._meta.mode = expected_mode
+                if res is not None:
+                    res.mode = expected_mode
                 # also copy the mode to pipeline job
                 output_dict[key].mode = expected_mode
 
@@ -512,7 +522,7 @@ class PipelineComponentBuilder:
     @staticmethod
     def _validate_keyword_in_node_io(node: Union[BaseNode, AutoMLJob]) -> None:
         if has_attr_safe(node, "inputs"):
-            for input_name in set(node.inputs) & COMPONENT_IO_KEYWORDS:
+            for input_name in set(node.inputs) & COMPONENT_IO_KEYWORDS:  # type: ignore[arg-type]
                 module_logger.warning(
                     'Reserved word "%s" is used as input name in node "%s", '
                     "can only be accessed with '%s.inputs[\"%s\"]'",
@@ -522,7 +532,7 @@ class PipelineComponentBuilder:
                     input_name,
                 )
         if has_attr_safe(node, "outputs"):
-            for output_name in set(node.outputs) & COMPONENT_IO_KEYWORDS:
+            for output_name in set(node.outputs) & COMPONENT_IO_KEYWORDS:  # type: ignore[arg-type]
                 module_logger.warning(
                     'Reserved word "%s" is used as output name in node "%s", '
                     "can only be accessed with '%s.outputs[\"%s\"]'",

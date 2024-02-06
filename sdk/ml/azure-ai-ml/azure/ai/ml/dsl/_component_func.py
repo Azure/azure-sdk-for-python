@@ -91,7 +91,7 @@ def to_component_func(entity: ComponentEntity, component_creation_func: Callable
 
     dynamic_func = create_kw_function_from_parameters(
         component_creation_func,
-        documentation=doc_string,
+        documentation=str(doc_string),
         parameters=all_params,
         func_name=func_name,
         flattened_group_keys=flattened_group_keys,

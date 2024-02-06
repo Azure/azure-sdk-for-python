@@ -2,18 +2,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import List
+from typing import List, Optional
 
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     EmailMonitoringAlertNotificationSettings,
     EmailNotificationEnableType,
     NotificationSetting,
 )
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
-@experimental
 class AlertNotification(RestTranslatableMixin):
     """Alert notification configuration for monitoring jobs
 
@@ -34,7 +32,7 @@ class AlertNotification(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        emails: List[str] = None,
+        emails: Optional[List[str]] = None,
     ) -> None:
         self.emails = emails
 

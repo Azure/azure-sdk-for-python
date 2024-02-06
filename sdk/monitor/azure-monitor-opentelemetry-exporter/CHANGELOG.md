@@ -1,14 +1,23 @@
 # Release History
 
-## 1.0.0b22 (Unreleased)
+## 1.0.0b22 (2024-02-01)
 
 ### Features Added
 
-### Breaking Changes
+- Add live metrics skeleton + swagger definitions
+    ([#33983](https://github.com/Azure/azure-sdk-for-python/pull/33983))
+- Only create temporary folder if local storage is enabled without storage directory.
+    ([#34061](https://github.com/Azure/azure-sdk-for-python/pull/34061))
 
 ### Bugs Fixed
 
+- Update exception details messsage based on `LogRecord` body
+    ([#34020](https://github.com/Azure/azure-sdk-for-python/pull/34020))
+
 ### Other Changes
+
+- Drop support for Python 3.7
+    ([#34105](https://github.com/Azure/azure-sdk-for-python/pull/34105))
 
 ## 1.0.0b21 (2024-01-16)
 
@@ -34,7 +43,7 @@
 - Implement distro detection for statsbeat feature
     ([#33761](https://github.com/Azure/azure-sdk-for-python/pull/33761))
 - Use empty resource for statsbeat `MeterProvider`
-    ([#33761](https://github.com/Azure/azure-sdk-for-python/pull/33761))
+    ([#33768](https://github.com/Azure/azure-sdk-for-python/pull/33768))
 
 ## 1.0.0b19 (2023-11-20)
 

@@ -4,7 +4,7 @@
 
 from typing import List, Optional
 
-from azure.ai.ml._restclient.v2023_06_01_preview.models import ListWorkspaceKeysResult
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ListWorkspaceKeysResult
 
 
 class ContainerRegistryCredential:
@@ -71,7 +71,7 @@ class WorkspaceKeys:
         self.notebook_access_keys = notebook_access_keys
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: ListWorkspaceKeysResult) -> "WorkspaceKeys":
+    def _from_rest_object(cls, rest_obj: ListWorkspaceKeysResult) -> Optional["WorkspaceKeys"]:
         if not rest_obj:
             return None
 
@@ -93,7 +93,7 @@ class WorkspaceKeys:
 
         return WorkspaceKeys(
             user_storage_key=rest_obj.user_storage_key,
-            user_storage_resource_id=rest_obj.user_storage_resource_id,
+            user_storage_resource_id=rest_obj.user_storage_arm_id,
             app_insights_instrumentation_key=rest_obj.app_insights_instrumentation_key,
             container_registry_credentials=container_registry_credentials,
             notebook_access_keys=notebook_access_keys,

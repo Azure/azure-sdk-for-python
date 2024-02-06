@@ -27,6 +27,7 @@ try:
     from ._models_py3 import AmlToken
     from ._models_py3 import AmlTokenComputeIdentity
     from ._models_py3 import AmlUserFeature
+    from ._models_py3 import AnonymousAccessCredential
     from ._models_py3 import ArmResourceId
     from ._models_py3 import AssetBase
     from ._models_py3 import AssetContainer
@@ -53,6 +54,8 @@ try:
     from ._models_py3 import AzureFileDatastore
     from ._models_py3 import AzureMLBatchInferencingServer
     from ._models_py3 import AzureMLOnlineInferencingServer
+    from ._models_py3 import AzureOpenAiFineTuning
+    from ._models_py3 import AzureOpenAiHyperParameters
     from ._models_py3 import BanditPolicy
     from ._models_py3 import BaseEnvironmentId
     from ._models_py3 import BaseEnvironmentSource
@@ -131,6 +134,7 @@ try:
     from ._models_py3 import CustomForecastHorizon
     from ._models_py3 import CustomInferencingServer
     from ._models_py3 import CustomMetricThreshold
+    from ._models_py3 import CustomModelFineTuning
     from ._models_py3 import CustomModelJobInput
     from ._models_py3 import CustomModelJobOutput
     from ._models_py3 import CustomMonitoringSignal
@@ -154,6 +158,7 @@ try:
     from ._models_py3 import DataPathAssetReference
     from ._models_py3 import DataQualityMetricThresholdBase
     from ._models_py3 import DataQualityMonitoringSignal
+    from ._models_py3 import DataReferenceCredential
     from ._models_py3 import DataVersionBase
     from ._models_py3 import DataVersionBaseProperties
     from ._models_py3 import DataVersionBaseResourceArmPaginatedResult
@@ -173,8 +178,10 @@ try:
     from ._models_py3 import DeploymentLogs
     from ._models_py3 import DeploymentLogsRequest
     from ._models_py3 import DeploymentResourceConfiguration
+    from ._models_py3 import DestinationAsset
     from ._models_py3 import DistributionConfiguration
     from ._models_py3 import Docker
+    from ._models_py3 import DockerCredential
     from ._models_py3 import EarlyTerminationPolicy
     from ._models_py3 import Endpoint
     from ._models_py3 import EndpointAuthKeys
@@ -220,6 +227,8 @@ try:
     from ._models_py3 import FeaturestoreEntityVersionResourceArmPaginatedResult
     from ._models_py3 import FeaturizationSettings
     from ._models_py3 import FileSystemSource
+    from ._models_py3 import FineTuningJob
+    from ._models_py3 import FineTuningVertical
     from ._models_py3 import FixedInputData
     from ._models_py3 import FlavorData
     from ._models_py3 import ForecastHorizon
@@ -230,6 +239,9 @@ try:
     from ._models_py3 import GenerationSafetyQualityMonitoringSignal
     from ._models_py3 import GenerationTokenUsageMetricThreshold
     from ._models_py3 import GenerationTokenUsageSignal
+    from ._models_py3 import GetBlobReferenceForConsumptionDto
+    from ._models_py3 import GetBlobReferenceSASRequestDto
+    from ._models_py3 import GetBlobReferenceSASResponseDto
     from ._models_py3 import GridSamplingAlgorithm
     from ._models_py3 import GroupStatus
     from ._models_py3 import HDInsight
@@ -316,8 +328,15 @@ try:
     from ._models_py3 import MLTableJobOutput
     from ._models_py3 import ManagedComputeIdentity
     from ._models_py3 import ManagedIdentity
+    from ._models_py3 import ManagedIdentityCredential
     from ._models_py3 import ManagedOnlineDeployment
+    from ._models_py3 import ManagedResourceGroupAssignedIdentities
+    from ._models_py3 import ManagedResourceGroupSettings
     from ._models_py3 import ManagedServiceIdentity
+    from ._models_py3 import MarketplacePlan
+    from ._models_py3 import MarketplaceSubscription
+    from ._models_py3 import MarketplaceSubscriptionProperties
+    from ._models_py3 import MarketplaceSubscriptionResourceArmPaginatedResult
     from ._models_py3 import MaterializationComputeResource
     from ._models_py3 import MaterializationSettings
     from ._models_py3 import MedianStoppingPolicy
@@ -328,6 +347,7 @@ try:
     from ._models_py3 import ModelPackageInput
     from ._models_py3 import ModelPerformanceMetricThresholdBase
     from ._models_py3 import ModelPerformanceSignal
+    from ._models_py3 import ModelSettings
     from ._models_py3 import ModelVersion
     from ._models_py3 import ModelVersionProperties
     from ._models_py3 import ModelVersionResourceArmPaginatedResult
@@ -438,6 +458,7 @@ try:
     from ._models_py3 import ResourceQuota
     from ._models_py3 import RollingInputData
     from ._models_py3 import Route
+    from ._models_py3 import SASCredential
     from ._models_py3 import SASCredentialDto
     from ._models_py3 import SamplingAlgorithm
     from ._models_py3 import SasDatastoreCredentials
@@ -505,6 +526,8 @@ try:
     from ._models_py3 import TrainingSettings
     from ._models_py3 import TrialComponent
     from ._models_py3 import TriggerBase
+    from ._models_py3 import TriggerOnceRequest
+    from ._models_py3 import TriggerRunSubmissionDto
     from ._models_py3 import TritonInferencingServer
     from ._models_py3 import TritonModelJobInput
     from ._models_py3 import TritonModelJobOutput
@@ -557,6 +580,7 @@ except (SyntaxError, ImportError):
     from ._models import AmlToken  # type: ignore
     from ._models import AmlTokenComputeIdentity  # type: ignore
     from ._models import AmlUserFeature  # type: ignore
+    from ._models import AnonymousAccessCredential  # type: ignore
     from ._models import ArmResourceId  # type: ignore
     from ._models import AssetBase  # type: ignore
     from ._models import AssetContainer  # type: ignore
@@ -583,6 +607,8 @@ except (SyntaxError, ImportError):
     from ._models import AzureFileDatastore  # type: ignore
     from ._models import AzureMLBatchInferencingServer  # type: ignore
     from ._models import AzureMLOnlineInferencingServer  # type: ignore
+    from ._models import AzureOpenAiFineTuning  # type: ignore
+    from ._models import AzureOpenAiHyperParameters  # type: ignore
     from ._models import BanditPolicy  # type: ignore
     from ._models import BaseEnvironmentId  # type: ignore
     from ._models import BaseEnvironmentSource  # type: ignore
@@ -661,6 +687,7 @@ except (SyntaxError, ImportError):
     from ._models import CustomForecastHorizon  # type: ignore
     from ._models import CustomInferencingServer  # type: ignore
     from ._models import CustomMetricThreshold  # type: ignore
+    from ._models import CustomModelFineTuning  # type: ignore
     from ._models import CustomModelJobInput  # type: ignore
     from ._models import CustomModelJobOutput  # type: ignore
     from ._models import CustomMonitoringSignal  # type: ignore
@@ -684,6 +711,7 @@ except (SyntaxError, ImportError):
     from ._models import DataPathAssetReference  # type: ignore
     from ._models import DataQualityMetricThresholdBase  # type: ignore
     from ._models import DataQualityMonitoringSignal  # type: ignore
+    from ._models import DataReferenceCredential  # type: ignore
     from ._models import DataVersionBase  # type: ignore
     from ._models import DataVersionBaseProperties  # type: ignore
     from ._models import DataVersionBaseResourceArmPaginatedResult  # type: ignore
@@ -703,8 +731,10 @@ except (SyntaxError, ImportError):
     from ._models import DeploymentLogs  # type: ignore
     from ._models import DeploymentLogsRequest  # type: ignore
     from ._models import DeploymentResourceConfiguration  # type: ignore
+    from ._models import DestinationAsset  # type: ignore
     from ._models import DistributionConfiguration  # type: ignore
     from ._models import Docker  # type: ignore
+    from ._models import DockerCredential  # type: ignore
     from ._models import EarlyTerminationPolicy  # type: ignore
     from ._models import Endpoint  # type: ignore
     from ._models import EndpointAuthKeys  # type: ignore
@@ -750,6 +780,8 @@ except (SyntaxError, ImportError):
     from ._models import FeaturestoreEntityVersionResourceArmPaginatedResult  # type: ignore
     from ._models import FeaturizationSettings  # type: ignore
     from ._models import FileSystemSource  # type: ignore
+    from ._models import FineTuningJob  # type: ignore
+    from ._models import FineTuningVertical  # type: ignore
     from ._models import FixedInputData  # type: ignore
     from ._models import FlavorData  # type: ignore
     from ._models import ForecastHorizon  # type: ignore
@@ -760,6 +792,9 @@ except (SyntaxError, ImportError):
     from ._models import GenerationSafetyQualityMonitoringSignal  # type: ignore
     from ._models import GenerationTokenUsageMetricThreshold  # type: ignore
     from ._models import GenerationTokenUsageSignal  # type: ignore
+    from ._models import GetBlobReferenceForConsumptionDto  # type: ignore
+    from ._models import GetBlobReferenceSASRequestDto  # type: ignore
+    from ._models import GetBlobReferenceSASResponseDto  # type: ignore
     from ._models import GridSamplingAlgorithm  # type: ignore
     from ._models import GroupStatus  # type: ignore
     from ._models import HDInsight  # type: ignore
@@ -846,8 +881,15 @@ except (SyntaxError, ImportError):
     from ._models import MLTableJobOutput  # type: ignore
     from ._models import ManagedComputeIdentity  # type: ignore
     from ._models import ManagedIdentity  # type: ignore
+    from ._models import ManagedIdentityCredential  # type: ignore
     from ._models import ManagedOnlineDeployment  # type: ignore
+    from ._models import ManagedResourceGroupAssignedIdentities  # type: ignore
+    from ._models import ManagedResourceGroupSettings  # type: ignore
     from ._models import ManagedServiceIdentity  # type: ignore
+    from ._models import MarketplacePlan  # type: ignore
+    from ._models import MarketplaceSubscription  # type: ignore
+    from ._models import MarketplaceSubscriptionProperties  # type: ignore
+    from ._models import MarketplaceSubscriptionResourceArmPaginatedResult  # type: ignore
     from ._models import MaterializationComputeResource  # type: ignore
     from ._models import MaterializationSettings  # type: ignore
     from ._models import MedianStoppingPolicy  # type: ignore
@@ -858,6 +900,7 @@ except (SyntaxError, ImportError):
     from ._models import ModelPackageInput  # type: ignore
     from ._models import ModelPerformanceMetricThresholdBase  # type: ignore
     from ._models import ModelPerformanceSignal  # type: ignore
+    from ._models import ModelSettings  # type: ignore
     from ._models import ModelVersion  # type: ignore
     from ._models import ModelVersionProperties  # type: ignore
     from ._models import ModelVersionResourceArmPaginatedResult  # type: ignore
@@ -968,6 +1011,7 @@ except (SyntaxError, ImportError):
     from ._models import ResourceQuota  # type: ignore
     from ._models import RollingInputData  # type: ignore
     from ._models import Route  # type: ignore
+    from ._models import SASCredential  # type: ignore
     from ._models import SASCredentialDto  # type: ignore
     from ._models import SamplingAlgorithm  # type: ignore
     from ._models import SasDatastoreCredentials  # type: ignore
@@ -1035,6 +1079,8 @@ except (SyntaxError, ImportError):
     from ._models import TrainingSettings  # type: ignore
     from ._models import TrialComponent  # type: ignore
     from ._models import TriggerBase  # type: ignore
+    from ._models import TriggerOnceRequest  # type: ignore
+    from ._models import TriggerRunSubmissionDto  # type: ignore
     from ._models import TritonInferencingServer  # type: ignore
     from ._models import TritonModelJobInput  # type: ignore
     from ._models import TritonModelJobOutput  # type: ignore
@@ -1103,6 +1149,7 @@ from ._azure_machine_learning_workspaces_enums import (
     DataAvailabilityStatus,
     DataCollectionMode,
     DataImportSourceType,
+    DataReferenceCredentialType,
     DataType,
     DatastoreType,
     DeploymentProvisioningState,
@@ -1122,6 +1169,7 @@ from ._azure_machine_learning_workspaces_enums import (
     FeatureImportanceMode,
     FeatureLags,
     FeaturizationMode,
+    FineTuningTaskType,
     ForecastHorizonMode,
     ForecastingModels,
     ForecastingPrimaryMetrics,
@@ -1153,9 +1201,12 @@ from ._azure_machine_learning_workspaces_enums import (
     MLAssistConfigurationType,
     MLFlowAutologgerState,
     ManagedServiceIdentityType,
+    MarketplaceSubscriptionProvisioningState,
+    MarketplaceSubscriptionStatus,
     MaterializationStoreType,
     MediaType,
     MlflowAutologger,
+    ModelProvider,
     ModelSize,
     ModelTaskType,
     MonitorComputeIdentityType,
@@ -1215,8 +1266,10 @@ from ._azure_machine_learning_workspaces_enums import (
     ScheduleProvisioningState,
     ScheduleProvisioningStatus,
     ScheduleStatus,
+    ScheduleType,
     SeasonalityMode,
     SecretsType,
+    ServerlessEndpointState,
     ServerlessInferenceEndpointAuthMode,
     ServiceDataAccessAuthIdentity,
     ShortSeriesHandlingConfiguration,
@@ -1272,6 +1325,7 @@ __all__ = [
     'AmlToken',
     'AmlTokenComputeIdentity',
     'AmlUserFeature',
+    'AnonymousAccessCredential',
     'ArmResourceId',
     'AssetBase',
     'AssetContainer',
@@ -1298,6 +1352,8 @@ __all__ = [
     'AzureFileDatastore',
     'AzureMLBatchInferencingServer',
     'AzureMLOnlineInferencingServer',
+    'AzureOpenAiFineTuning',
+    'AzureOpenAiHyperParameters',
     'BanditPolicy',
     'BaseEnvironmentId',
     'BaseEnvironmentSource',
@@ -1376,6 +1432,7 @@ __all__ = [
     'CustomForecastHorizon',
     'CustomInferencingServer',
     'CustomMetricThreshold',
+    'CustomModelFineTuning',
     'CustomModelJobInput',
     'CustomModelJobOutput',
     'CustomMonitoringSignal',
@@ -1399,6 +1456,7 @@ __all__ = [
     'DataPathAssetReference',
     'DataQualityMetricThresholdBase',
     'DataQualityMonitoringSignal',
+    'DataReferenceCredential',
     'DataVersionBase',
     'DataVersionBaseProperties',
     'DataVersionBaseResourceArmPaginatedResult',
@@ -1418,8 +1476,10 @@ __all__ = [
     'DeploymentLogs',
     'DeploymentLogsRequest',
     'DeploymentResourceConfiguration',
+    'DestinationAsset',
     'DistributionConfiguration',
     'Docker',
+    'DockerCredential',
     'EarlyTerminationPolicy',
     'Endpoint',
     'EndpointAuthKeys',
@@ -1465,6 +1525,8 @@ __all__ = [
     'FeaturestoreEntityVersionResourceArmPaginatedResult',
     'FeaturizationSettings',
     'FileSystemSource',
+    'FineTuningJob',
+    'FineTuningVertical',
     'FixedInputData',
     'FlavorData',
     'ForecastHorizon',
@@ -1475,6 +1537,9 @@ __all__ = [
     'GenerationSafetyQualityMonitoringSignal',
     'GenerationTokenUsageMetricThreshold',
     'GenerationTokenUsageSignal',
+    'GetBlobReferenceForConsumptionDto',
+    'GetBlobReferenceSASRequestDto',
+    'GetBlobReferenceSASResponseDto',
     'GridSamplingAlgorithm',
     'GroupStatus',
     'HDInsight',
@@ -1561,8 +1626,15 @@ __all__ = [
     'MLTableJobOutput',
     'ManagedComputeIdentity',
     'ManagedIdentity',
+    'ManagedIdentityCredential',
     'ManagedOnlineDeployment',
+    'ManagedResourceGroupAssignedIdentities',
+    'ManagedResourceGroupSettings',
     'ManagedServiceIdentity',
+    'MarketplacePlan',
+    'MarketplaceSubscription',
+    'MarketplaceSubscriptionProperties',
+    'MarketplaceSubscriptionResourceArmPaginatedResult',
     'MaterializationComputeResource',
     'MaterializationSettings',
     'MedianStoppingPolicy',
@@ -1573,6 +1645,7 @@ __all__ = [
     'ModelPackageInput',
     'ModelPerformanceMetricThresholdBase',
     'ModelPerformanceSignal',
+    'ModelSettings',
     'ModelVersion',
     'ModelVersionProperties',
     'ModelVersionResourceArmPaginatedResult',
@@ -1683,6 +1756,7 @@ __all__ = [
     'ResourceQuota',
     'RollingInputData',
     'Route',
+    'SASCredential',
     'SASCredentialDto',
     'SamplingAlgorithm',
     'SasDatastoreCredentials',
@@ -1750,6 +1824,8 @@ __all__ = [
     'TrainingSettings',
     'TrialComponent',
     'TriggerBase',
+    'TriggerOnceRequest',
+    'TriggerRunSubmissionDto',
     'TritonInferencingServer',
     'TritonModelJobInput',
     'TritonModelJobOutput',
@@ -1816,6 +1892,7 @@ __all__ = [
     'DataAvailabilityStatus',
     'DataCollectionMode',
     'DataImportSourceType',
+    'DataReferenceCredentialType',
     'DataType',
     'DatastoreType',
     'DeploymentProvisioningState',
@@ -1835,6 +1912,7 @@ __all__ = [
     'FeatureImportanceMode',
     'FeatureLags',
     'FeaturizationMode',
+    'FineTuningTaskType',
     'ForecastHorizonMode',
     'ForecastingModels',
     'ForecastingPrimaryMetrics',
@@ -1866,9 +1944,12 @@ __all__ = [
     'MLAssistConfigurationType',
     'MLFlowAutologgerState',
     'ManagedServiceIdentityType',
+    'MarketplaceSubscriptionProvisioningState',
+    'MarketplaceSubscriptionStatus',
     'MaterializationStoreType',
     'MediaType',
     'MlflowAutologger',
+    'ModelProvider',
     'ModelSize',
     'ModelTaskType',
     'MonitorComputeIdentityType',
@@ -1928,8 +2009,10 @@ __all__ = [
     'ScheduleProvisioningState',
     'ScheduleProvisioningStatus',
     'ScheduleStatus',
+    'ScheduleType',
     'SeasonalityMode',
     'SecretsType',
+    'ServerlessEndpointState',
     'ServerlessInferenceEndpointAuthMode',
     'ServiceDataAccessAuthIdentity',
     'ShortSeriesHandlingConfiguration',
