@@ -832,8 +832,8 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
     async def delete_batch_messages(
         self,
         max_message_count: int = 1,
+        enqueued_time_older_than_utc: datetime.datetime = datetime.datetime.now(datetime.timezone.utc),
         *,
-        enqueued_time_older_than_utc: datetime.datetime = datetime.datetime.utcnow(),
         timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> int:
