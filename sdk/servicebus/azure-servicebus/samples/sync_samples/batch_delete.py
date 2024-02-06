@@ -57,5 +57,6 @@ with servicebus_client:
         received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
         for msg in received_msgs:
             print(f"{msg} received.")
+            receiver.complete_message(msg)
 
     print("Receive is done.")
