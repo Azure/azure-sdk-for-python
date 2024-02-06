@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b22 (Unreleased)
+## 1.0.0b22 (2024-02-01)
 
 ### Features Added
 
@@ -9,11 +9,15 @@
 - Only create temporary folder if local storage is enabled without storage directory.
     ([#34061](https://github.com/Azure/azure-sdk-for-python/pull/34061))
 
-### Breaking Changes
-
 ### Bugs Fixed
 
+- Update exception details messsage based on `LogRecord` body
+    ([#34020](https://github.com/Azure/azure-sdk-for-python/pull/34020))
+
 ### Other Changes
+
+- Drop support for Python 3.7
+    ([#34105](https://github.com/Azure/azure-sdk-for-python/pull/34105))
 
 ## 1.0.0b21 (2024-01-16)
 

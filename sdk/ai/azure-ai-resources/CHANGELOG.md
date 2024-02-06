@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b6 (Unreleased)
+## 1.0.0b7 (Unreleased)
 
 ### Features Added
 
@@ -12,7 +12,11 @@
 ### Bugs Fixed
 - Connections docstrings now discuss scope field.
 
+## 1.0.0b6 (2024-02-06)
+
 ### Other Changes
+
+- Bug fixes
 
 ## 1.0.0b5 (2024-02-01)
 
