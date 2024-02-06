@@ -113,6 +113,7 @@ class AzureOpenAIWorkspaceConnection(WorkspaceConnection):
         if self.tags is not None:
             self.tags[CONNECTION_API_TYPE_KEY] = value
 
+
 @experimental
 class AzureAISearchWorkspaceConnection(WorkspaceConnection):
     """A Workspace Connection that is specifically designed for handling connections to
@@ -286,19 +287,13 @@ class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
         self,
         *,
         target: str,
-        credentials: ApiKeyConfiguration, # TODO: double check this
+        credentials: ApiKeyConfiguration,  # TODO: double check this
         container_name: str,
         account_name: str,
         **kwargs,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
-        super().__init__(
-            target=target,
-            type="azure_blob",
-            credentials=credentials,
-            from_child=True,
-            **kwargs
-        )
+        super().__init__(target=target, type="azure_blob", credentials=credentials, from_child=True, **kwargs)
 
         self.tags[CONNECTION_CONTAINER_NAME_KEY] = container_name
         self.tags[CONNECTION_ACCOUNT_NAME_KEY] = account_name
@@ -321,7 +316,7 @@ class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
         if self.tags is not None and CONNECTION_CONTAINER_NAME_KEY in self.tags:
             return self.tags[CONNECTION_CONTAINER_NAME_KEY]
         return None
-    
+
     @property
     def account_name(self) -> str:
         """The name of the workspace connection's account

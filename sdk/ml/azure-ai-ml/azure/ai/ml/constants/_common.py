@@ -795,7 +795,7 @@ class InputOutputModes:
 class WorkspaceConnectionTypes:
     """Names for workspace connection types that are different from that underlying api enum values."""
 
-    CUSTOM = "custom" # Corresponds to "custom_keys".
+    CUSTOM = "custom"  # Corresponds to "custom_keys".
 
 
 class LegacyAssetTypes:

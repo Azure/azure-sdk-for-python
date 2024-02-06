@@ -48,11 +48,20 @@ from azure.ai.ml.entities._util import load_from_dict
 # Also defined here to avoid circular imports.
 CONNECTION_AUTH_TYPE_PROPERTY_CLASS_MAP = {
     ConnectionAuthType.PAT: (PATAuthTypeWorkspaceConnectionProperties, PatTokenConfiguration),
-    ConnectionAuthType.MANAGED_IDENTITY: (ManagedIdentityAuthTypeWorkspaceConnectionProperties, ManagedIdentityConfiguration),
-    ConnectionAuthType.USERNAME_PASSWORD: (UsernamePasswordAuthTypeWorkspaceConnectionProperties, UsernamePasswordConfiguration),
+    ConnectionAuthType.MANAGED_IDENTITY: (
+        ManagedIdentityAuthTypeWorkspaceConnectionProperties,
+        ManagedIdentityConfiguration,
+    ),
+    ConnectionAuthType.USERNAME_PASSWORD: (
+        UsernamePasswordAuthTypeWorkspaceConnectionProperties,
+        UsernamePasswordConfiguration,
+    ),
     ConnectionAuthType.ACCESS_KEY: (AccessKeyAuthTypeWorkspaceConnectionProperties, AccessKeyConfiguration),
     ConnectionAuthType.SAS: (SASAuthTypeWorkspaceConnectionProperties, SasTokenConfiguration),
-    ConnectionAuthType.SERVICE_PRINCIPAL: (ServicePrincipalAuthTypeWorkspaceConnectionProperties, ServicePrincipalConfiguration),
+    ConnectionAuthType.SERVICE_PRINCIPAL: (
+        ServicePrincipalAuthTypeWorkspaceConnectionProperties,
+        ServicePrincipalConfiguration,
+    ),
     ConnectionAuthType.API_KEY: (ApiKeyAuthWorkspaceConnectionProperties, ApiKeyConfiguration),
     None: (NoneAuthTypeWorkspaceConnectionProperties, None),
 }
@@ -114,7 +123,7 @@ class WorkspaceConnection(Resource):
         is_shared: bool = True,
         **kwargs: Any,
     ):
-        
+
         # Dev note: This initializer has an undocumented kwarg "from_child" to determine if this initialization
         # is from a child class.
         # This kwarg is required to allow instantiation of types that are associated with subtypes without a
@@ -347,7 +356,7 @@ class WorkspaceConnection(Resource):
         credentials: Any = None
 
         auth_type = _snake_to_camel(properties.auth_type) if properties is not None else None
-        if (auth_type in CONNECTION_AUTH_TYPE_PROPERTY_CLASS_MAP):
+        if auth_type in CONNECTION_AUTH_TYPE_PROPERTY_CLASS_MAP:
             _, credentials_class = CONNECTION_AUTH_TYPE_PROPERTY_CLASS_MAP[properties.auth_type]
             credentials = credentials_class._from_workspace_connection_rest_object(properties.credentials)
 
@@ -391,13 +400,14 @@ class WorkspaceConnection(Resource):
             AzureOpenAIWorkspaceConnection,
             AzureBlobStoreWorkspaceConnection,
         )
+
         # Connection categories don't perfectly follow perfect camel casing, so lower
         # case everything to avoid problems.
         CONNECTION_CATEGORY_TO_SUBCLASS_MAP = {
             ConnectionCategory.AZURE_OPEN_AI.lower(): AzureOpenAIWorkspaceConnection,
             ConnectionCategory.COGNITIVE_SEARCH.lower(): AzureAISearchWorkspaceConnection,
             ConnectionCategory.COGNITIVE_SERVICE.lower(): AzureAIServiceWorkspaceConnection,
-            "azureblob": AzureBlobStoreWorkspaceConnection, #TODO replace with real connection category when available.
+            "azureblob": AzureBlobStoreWorkspaceConnection,  # TODO replace with real connection category when available.
         }
         cat = _snake_to_camel(conn_type).lower()
         conn_class: Type = WorkspaceConnection
@@ -421,7 +431,7 @@ class WorkspaceConnection(Resource):
             return WorkspaceConnectionSchema
         entity_class = cls._get_entity_class_from_type(conn_type)
         return entity_class._get_schema_class()
-    
+
     @classmethod
     def _get_required_metadata_fields(cls) -> List[str]:
         """Helper function that returns the required metadata fields for specific workspace
@@ -429,7 +439,7 @@ class WorkspaceConnection(Resource):
         classes, which are created under the expectation that they have extra fields that need to be
         accounted for."""
         return []
-    
+
     @classmethod
     def _get_schema_class(cls) -> Type:
         """Helper function that maps this class to its associated schema class. Needs to be overridden by

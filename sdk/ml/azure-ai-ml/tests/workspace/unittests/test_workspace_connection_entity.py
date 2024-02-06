@@ -12,6 +12,7 @@ from azure.ai.ml.constants._common import WorkspaceConnectionTypes
 
 from azure.ai.ml.entities._workspace.connections.credentials import CONNECTION_AUTH_TYPE_PROPERTY_CLASS_MAP
 
+
 @pytest.mark.unittest
 @pytest.mark.core_sdk_test
 class TestWorkspaceConnectionEntity:
@@ -197,7 +198,7 @@ class TestWorkspaceConnectionEntity:
     def test_blob_storage(self):
         ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/blob_store.yaml")
 
-        assert ws_connection.type == camel_to_snake("azure_blob") # TODO replace with connetion category reference
+        assert ws_connection.type == camel_to_snake("azure_blob")  # TODO replace with connetion category reference
         assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
         assert ws_connection.credentials.key == "9876"
         assert ws_connection.name == "test_ws_conn_blob_store"
@@ -229,8 +230,8 @@ class TestWorkspaceConnectionEntity:
                 credentials=None,
             )
         _ = AzureOpenAIWorkspaceConnection(
-                target="dummy_target",
-                name="dummy_connection",
-                strict_typing=True,
-                credentials=None,
-            )
+            target="dummy_target",
+            name="dummy_connection",
+            strict_typing=True,
+            credentials=None,
+        )
