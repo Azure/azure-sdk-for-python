@@ -793,7 +793,8 @@ class InputOutputModes:
 
 
 class WorkspaceConnectionTypes:
-    """Names for workspace connection types that are different from that underlying api enum values."""
+    """Names for workspace connection types that are different from that underlying api enum values
+    from the ConnectionCategory class."""
 
     CUSTOM = "custom"  # Corresponds to "custom_keys".
 

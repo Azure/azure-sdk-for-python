@@ -275,8 +275,6 @@ class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
     :type target: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict
-    :param credentials: The credentials for authenticating to the external resource.
-    :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
     :param container_name: The name of the container.
     :type container_name: str
     :param account_name: The name of the account.
@@ -287,13 +285,15 @@ class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
         self,
         *,
         target: str,
-        credentials: ApiKeyConfiguration,  # TODO: double check this
         container_name: str,
         account_name: str,
         **kwargs,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
-        super().__init__(target=target, type="azure_blob", credentials=credentials, from_child=True, **kwargs)
+        # Blob store connections returned from the API generally have no credentials, but we still don't want
+        # to silently run over user inputted connections if they want to play with them locally, so double-check
+        # kwargs for them.
+        super().__init__(target=target, type="azure_blob", credentials=kwargs.pop("credentials", None), from_child=True, **kwargs)
 
         self.tags[CONNECTION_CONTAINER_NAME_KEY] = container_name
         self.tags[CONNECTION_ACCOUNT_NAME_KEY] = account_name

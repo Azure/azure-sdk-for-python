@@ -40,31 +40,12 @@ from azure.ai.ml.entities._credentials import (
     SasTokenConfiguration,
     ServicePrincipalConfiguration,
     UsernamePasswordConfiguration,
+    NoneCredentialConfiguration,
+    _BaseIdentityConfiguration,
 )
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
-
-# Also defined here to avoid circular imports.
-CONNECTION_AUTH_TYPE_PROPERTY_CLASS_MAP = {
-    ConnectionAuthType.PAT: (PATAuthTypeWorkspaceConnectionProperties, PatTokenConfiguration),
-    ConnectionAuthType.MANAGED_IDENTITY: (
-        ManagedIdentityAuthTypeWorkspaceConnectionProperties,
-        ManagedIdentityConfiguration,
-    ),
-    ConnectionAuthType.USERNAME_PASSWORD: (
-        UsernamePasswordAuthTypeWorkspaceConnectionProperties,
-        UsernamePasswordConfiguration,
-    ),
-    ConnectionAuthType.ACCESS_KEY: (AccessKeyAuthTypeWorkspaceConnectionProperties, AccessKeyConfiguration),
-    ConnectionAuthType.SAS: (SASAuthTypeWorkspaceConnectionProperties, SasTokenConfiguration),
-    ConnectionAuthType.SERVICE_PRINCIPAL: (
-        ServicePrincipalAuthTypeWorkspaceConnectionProperties,
-        ServicePrincipalConfiguration,
-    ),
-    ConnectionAuthType.API_KEY: (ApiKeyAuthWorkspaceConnectionProperties, ApiKeyConfiguration),
-    None: (NoneAuthTypeWorkspaceConnectionProperties, None),
-}
 
 
 # Dev note: The acceptable strings for the type field are all snake_cased versions of the string constants defined
@@ -91,7 +72,6 @@ class WorkspaceConnection(Resource):
     :param credentials: The credentials for authenticating to the external resource. Note that certain connection
         types (as defined by the type input) only accept certain types of credentials.
     :type credentials: Union[
-
         ~azure.ai.ml.entities.PatTokenConfiguration,
         ~azure.ai.ml.entities.SasTokenConfiguration,
         ~azure.ai.ml.entities.UsernamePasswordConfiguration,
@@ -191,6 +171,7 @@ class WorkspaceConnection(Resource):
         ServicePrincipalConfiguration,
         AccessKeyConfiguration,
         ApiKeyConfiguration,
+        None,
     ]:
         """Credentials for workspace connection.
 
@@ -203,7 +184,6 @@ class WorkspaceConnection(Resource):
             ~azure.ai.ml.entities.ServicePrincipalConfiguration,
             ~azure.ai.ml.entities.AccessKeyConfiguration,
             ~azure.ai.ml.entities.ApiKeyConfiguration
-
         ]
         """
         return self._credentials
@@ -316,23 +296,30 @@ class WorkspaceConnection(Resource):
         return str(self.name)
 
     def _to_rest_object(self) -> RestWorkspaceConnection:
-        workspace_connection_properties_class: Any = None
-        auth_type = _snake_to_camel(self.credentials.type) if self._credentials else None
-
-        if _snake_to_camel(auth_type) in CONNECTION_AUTH_TYPE_PROPERTY_CLASS_MAP:
-            workspace_connection_properties_class, _ = CONNECTION_AUTH_TYPE_PROPERTY_CLASS_MAP[auth_type]
+        workspace_connection_properties_class: Any = NoneAuthTypeWorkspaceConnectionProperties
+        if self._credentials:
+            workspace_connection_properties_class = self._credentials._get_rest_properties_class()
         # Convert from human readable type to corresponding api enum if needed.
         conn_type = self.type
         if conn_type == WorkspaceConnectionTypes.CUSTOM:
             conn_type = ConnectionCategory.CUSTOM_KEYS
 
-        properties = workspace_connection_properties_class(
-            target=self.target,
-            credentials=self.credentials._to_workspace_connection_rest_object(),
-            metadata=self.tags,
-            category=_snake_to_camel(conn_type),
-            is_shared_to_all=self.is_shared,
-        )
+        # No credential property bag uniquely has different inputs from ALL other propety bag classes.
+        if workspace_connection_properties_class == NoneAuthTypeWorkspaceConnectionProperties:
+            properties = workspace_connection_properties_class(
+                    target=self.target,
+                    metadata=self.tags,
+                    category=_snake_to_camel(conn_type),
+                    is_shared_to_all=self.is_shared,
+                )
+        else:
+            properties = workspace_connection_properties_class(
+                target=self.target,
+                credentials=self.credentials._to_workspace_connection_rest_object() if self._credentials else None,
+                metadata=self.tags,
+                category=_snake_to_camel(conn_type),
+                is_shared_to_all=self.is_shared,
+            )
 
         return RestWorkspaceConnection(properties=properties)
 
@@ -355,9 +342,8 @@ class WorkspaceConnection(Resource):
         properties = rest_obj.properties
         credentials: Any = None
 
-        auth_type = _snake_to_camel(properties.auth_type) if properties is not None else None
-        if auth_type in CONNECTION_AUTH_TYPE_PROPERTY_CLASS_MAP:
-            _, credentials_class = CONNECTION_AUTH_TYPE_PROPERTY_CLASS_MAP[properties.auth_type]
+        credentials_class = _BaseIdentityConfiguration._get_credential_class_from_rest_type(properties.auth_type)
+        if credentials_class is not NoneCredentialConfiguration:
             credentials = credentials_class._from_workspace_connection_rest_object(properties.credentials)
 
         tags = properties.metadata if hasattr(properties, "metadata") else None

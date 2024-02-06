@@ -10,9 +10,6 @@ from azure.ai.ml.entities import WorkspaceConnection, AzureOpenAIWorkspaceConnec
 from azure.ai.ml.entities._credentials import PatTokenConfiguration
 from azure.ai.ml.constants._common import WorkspaceConnectionTypes
 
-from azure.ai.ml.entities._workspace.connections.credentials import CONNECTION_AUTH_TYPE_PROPERTY_CLASS_MAP
-
-
 @pytest.mark.unittest
 @pytest.mark.core_sdk_test
 class TestWorkspaceConnectionEntity:
@@ -219,6 +216,18 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.api_version == new_ws_conn.api_version
         assert ws_connection.api_type == new_ws_conn.api_type
         assert ws_connection.is_shared
+
+    def empty_credentials_rest_conversion(self):
+        ws_connection = WorkspaceConnection(
+            target="dummy_target",
+            type=camel_to_snake(ConnectionCategory.PYTHON_FEED),
+            credentials=None,
+            name="dummy_connection",
+            tags=None,
+        )
+        rest_conn = ws_connection._to_rest_object()
+        new_ws_conn = AzureOpenAIWorkspaceConnection._from_rest_object(rest_obj=rest_conn)
+        assert new_ws_conn.credentials == None
 
     def test_ws_conn_subtype_restriction(self):
         with pytest.raises(ValueError):

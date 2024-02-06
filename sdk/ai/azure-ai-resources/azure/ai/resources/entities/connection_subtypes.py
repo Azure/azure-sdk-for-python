@@ -317,7 +317,7 @@ class GitHubConnection(BaseConnection):
         super().__init__(target=target, type="git", credentials=credentials, **kwargs)
 
 class AzureBlobStoreConnection(BaseConnection):
-    """A Connection to an Azure Blob Datastore.
+    """A Connection to an Azure Blob Datastore. Unlike other connection objects, this subclass has no credentials.
     NOTE: This connection type is currently READ-ONLY via the LIST operation. Attempts to create or update
     a connection of this type will result in an error.
 
@@ -325,8 +325,6 @@ class AzureBlobStoreConnection(BaseConnection):
     :type name: str
     :param target: The URL or ARM resource ID of the resource.
     :type target: str
-    :param credentials: ?????
-    :type credentials: ?????
     :param is_shared: For connections created for a project, this determines if the connection
         is shared amongst other connections with that project's parent AI resource. Defaults to True.
     :type is_shared: bool
@@ -338,7 +336,6 @@ class AzureBlobStoreConnection(BaseConnection):
         self,
         *,
         target: str,
-        credentials = None,
         container_name: str,
         account_name: str,
         **kwargs,
@@ -347,7 +344,6 @@ class AzureBlobStoreConnection(BaseConnection):
         super().__init__(
             target=target,
             type="azure_blob",
-            credentials=credentials,
             container_name=container_name,
             account_name=account_name,
             **kwargs

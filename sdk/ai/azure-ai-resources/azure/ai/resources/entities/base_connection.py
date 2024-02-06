@@ -5,7 +5,7 @@
 
 from typing import Any, Dict, Optional
 
-from azure.ai.ml._utils.utils import camel_to_snake
+from azure.ai.ml._utils.utils import camel_to_snake, _snake_to_camel
 from azure.ai.ml.entities import WorkspaceConnection
 from azure.ai.ml.entities._credentials import ApiKeyConfiguration
 from azure.core.credentials import TokenCredential
@@ -13,16 +13,18 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionCategor
 from azure.ai.ml.constants._common import (
     WorkspaceConnectionTypes,
 )
+
 class BaseConnection:
-    """A connection to a another system or service. This is a base class and should not be
-    instantiated directly. Use the child classes that are specialized for connections to different services.
+    """A connection to a another system or service. This is a base class and should only be directly 
+    used to cover the simplest of connection types that don't merit their own subclass.
 
     :param name: The name of the connection
     :type name: str
     :param target: The URL or ARM resource ID of the external resource.
     :type target: str
     :param type: The type of connection this represents. Acceptable values include:
-        "azure_open_ai", "cognitive_service", and "cognitive_search".
+        "azure_open_ai", "cognitive_service", "cognitive_search",
+        "git", "azure_blob", and "custom".
     :type type: str
     :param credentials: The credentials for authenticating to the external resource.
     :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
@@ -52,6 +54,8 @@ class BaseConnection:
         if kwargs.pop("make_empty", False):
             return
         
+        # Dev note: this is an important line, as is quietly changes the internal object from
+        # A WorkspaceConnection to the relevant subclass if needed.
         conn_class = WorkspaceConnection._get_entity_class_from_type(type)
         self._workspace_connection = conn_class(
             target=target,
@@ -71,9 +75,9 @@ class BaseConnection:
         :return: The converted connection.
         :rtype: ~azure.ai.resources.entities.Connection
         """
-        # It's simpler to create a placeholder connection, then overwrite the internal WC.
-        # We don't need to worry about the potentially changing WC fields this way.
         conn_class = cls._get_ai_connection_class_from_type(workspace_connection.type)
+        # It's simpler to create a placeholder connection, then overwrite it..
+        # We don't need to worry about the accidentally changing WC fields this way.
         conn = conn_class(type="a", target="a", credentials=None, name="a", make_empty=True, api_version=None, api_type=None, kind=None)
         conn._workspace_connection = workspace_connection
         return conn
@@ -83,6 +87,10 @@ class BaseConnection:
         """Given a connection type string, get the corresponding AI SDK object via class
         comparisons. Accounts for any potential camel/snake/capitalization issues. Returns
         the BaseConnection class if no match is found.
+
+        :param conn_type: The type of the connection as a string. Should match one of the
+            supported connection category values.
+        :type conn_type: str
         """
         #import here to avoid circular import
         from .connection_subtypes import (
@@ -94,22 +102,23 @@ class BaseConnection:
             AzureBlobStoreConnection
         )
     
-        cat = camel_to_snake(conn_type).lower()
-        if cat == camel_to_snake(ConnectionCategory.AZURE_OPEN_AI).lower():
-            return AzureOpenAIConnection
-        elif cat == camel_to_snake(ConnectionCategory.COGNITIVE_SEARCH).lower():
-            return AzureAISearchConnection
-        elif cat == camel_to_snake(ConnectionCategory.COGNITIVE_SERVICE).lower():
-            return AzureAIServiceConnection
-        elif cat == camel_to_snake(ConnectionCategory.GIT).lower():
-            return GitHubConnection
-        elif cat == camel_to_snake("azure_blob").lower():
-            return AzureBlobStoreConnection
-        elif (cat == camel_to_snake(ConnectionCategory.CUSTOM_KEYS).lower()
-            or cat == camel_to_snake(WorkspaceConnectionTypes.CUSTOM).lower()):
-            # Accept both custom_keys and custom as conversion type in case of
-            # improper input.
-            return CustomConnection
+        # Custom accounts for both "custom_keys" and "custom" as conversion types in case of
+        # improper input.
+        # All values are lower-cased to normalize input.
+        # TODO replace azure blob with conn category when available.
+        CONNECTION_CATEGORY_TO_SUBCLASS_MAP = {
+            ConnectionCategory.AZURE_OPEN_AI.lower(): AzureOpenAIConnection,
+            ConnectionCategory.COGNITIVE_SEARCH.lower(): AzureAISearchConnection,
+            ConnectionCategory.COGNITIVE_SERVICE.lower(): AzureAIServiceConnection,
+            ConnectionCategory.GIT.lower(): GitHubConnection,
+            "azure_blob".lower(): AzureBlobStoreConnection,
+            ConnectionCategory.CUSTOM_KEYS.lower(): CustomConnection, 
+            WorkspaceConnectionTypes.CUSTOM.lower(): CustomConnection
+        }
+        # snake and lower-case inputted type to match the map.
+        cat = _snake_to_camel(conn_type).lower()
+        if cat in CONNECTION_CATEGORY_TO_SUBCLASS_MAP:
+            return CONNECTION_CATEGORY_TO_SUBCLASS_MAP[cat]
         return BaseConnection
 
 
