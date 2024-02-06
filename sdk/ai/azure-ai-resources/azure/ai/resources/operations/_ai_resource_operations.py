@@ -40,7 +40,7 @@ class AIResourceOperations:
         :paramtype name: str
 
         :return: The AI resource with the provided name.
-        :rtype: AIResource
+        :rtype: ~azure.ai.resources.entities.AIResource
         """
         workspace_hub = self._ml_client._workspace_hubs.get(name=name, **kwargs)
         resource = AIResource._from_v2_workspace_hub(workspace_hub)
@@ -55,7 +55,7 @@ class AIResourceOperations:
         :paramtype scope: str
 
         :return: An iterator like instance of AI resource objects
-        :rtype: Iterable[AIResource]
+        :rtype: Iterable[~azure.ai.resources.entities.AIResource]
         """
         return [AIResource._from_v2_workspace_hub(wh) for wh in self._ml_client._workspace_hubs.list(scope=scope)]
 

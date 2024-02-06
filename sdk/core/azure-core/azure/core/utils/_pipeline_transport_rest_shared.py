@@ -5,6 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from __future__ import absolute_import
+from collections.abc import Mapping
 
 from io import BytesIO
 from email.message import Message
@@ -50,6 +51,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport._base import (
         _HttpResponseBase as PipelineTransportHttpResponseBase,
     )
+    from azure.core.rest._helpers import FilesType, FileType, FileContent
 
 binary_type = str
 
@@ -333,7 +335,7 @@ def _parts_helper(
     return responses
 
 
-def _format_data_helper(data: Union[str, IO]) -> Union[Tuple[None, str], Tuple[Optional[str], IO, str]]:
+def _format_data_helper(data: "FileType") -> Union[Tuple[Optional[str], str], Tuple[Optional[str], "FileContent", str]]:
     """Helper for _format_data.
 
     Format field data according to whether it is a stream or
@@ -344,16 +346,34 @@ def _format_data_helper(data: Union[str, IO]) -> Union[Tuple[None, str], Tuple[O
     :rtype: tuple[str, IO, str] or tuple[None, str]
     :return: A tuple of (data name, data IO, "application/octet-stream") or (None, data str)
     """
-    if hasattr(data, "read"):
-        data = cast(IO, data)
-        data_name = None
-        try:
-            if data.name[0] != "<" and data.name[-1] != ">":
-                data_name = os.path.basename(data.name)
-        except (AttributeError, TypeError):
-            pass
-        return (data_name, data, "application/octet-stream")
-    return (None, cast(str, data))
+    content_type: Optional[str] = None
+    filename: Optional[str] = None
+    if isinstance(data, tuple):
+        if len(data) == 2:
+            # Filename and file bytes are included
+            filename, file_bytes = cast(Tuple[Optional[str], "FileContent"], data)
+        elif len(data) == 3:
+            # Filename, file object, and content_type are included
+            filename, file_bytes, content_type = cast(Tuple[Optional[str], "FileContent", str], data)
+        else:
+            raise ValueError(
+                "Unexpected data format. Expected file, or tuple of (filename, file_bytes) or "
+                "(filename, file_bytes, content_type)."
+            )
+    else:
+        # here we just get the file content
+        if hasattr(data, "read"):
+            data = cast(IO, data)
+            try:
+                if data.name[0] != "<" and data.name[-1] != ">":
+                    filename = os.path.basename(data.name)
+            except (AttributeError, TypeError):
+                pass
+            content_type = "application/octet-stream"
+        file_bytes = data
+    if content_type:
+        return (filename, file_bytes, content_type)
+    return (filename, cast(str, file_bytes))
 
 
 def _aiohttp_body_helper(
@@ -390,3 +410,11 @@ def _aiohttp_body_helper(
         response._decompressed_content = True
         return response._content
     return response._content
+
+
+def get_file_items(files: "FilesType") -> Sequence[Tuple[str, "FileType"]]:
+    if isinstance(files, Mapping):
+        # casting because ItemsView technically isn't a Sequence, even
+        # though realistically it is ordered python 3.7 and after
+        return cast(Sequence[Tuple[str, "FileType"]], files.items())
+    return files

@@ -5,6 +5,7 @@
 # pylint: disable=protected-access
 
 from pathlib import Path
+from typing import Optional, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import download_artifact_from_storage_url
 from azure.ai.ml._utils._arm_id_utils import parse_prefixed_name_version
@@ -21,7 +22,7 @@ def get_code_configuration_artifacts(
     deployment: OnlineDeployment,
     code_operations: CodeOperations,
     download_path: str,
-) -> str:
+) -> Optional[Union[str, Path]]:
     """Validates and returns code artifacts from deployment specification.
 
     :param endpoint_name: name of endpoint which this deployment is linked to
@@ -51,7 +52,7 @@ def get_code_configuration_artifacts(
 
     if _code_configuration_contains_cloud_artifacts(deployment=deployment):
         return _get_cloud_code_configuration_artifacts(
-            deployment.code_configuration.code, code_operations, download_path
+            str(deployment.code_configuration.code), code_operations, download_path
         )
 
     if not _local_code_path_is_valid(deployment=deployment):

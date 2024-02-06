@@ -5,6 +5,7 @@
 
 DEFAULT_OPEN_AI_CONNECTION_NAME = "Default_AzureOpenAI"
 DEFAULT_CONTENT_SAFETY_CONNECTION_NAME = "Default_AzureAIContentSafety"
+USER_AGENT_HEADER_KEY = "Client-User-Agent"
 
 class AssetTypes:
     """AssetTypes is an enumeration of values for the asset types of a data.
@@ -30,8 +31,7 @@ class IndexType(object):
     FAISS = "faiss"
 
 class OperationScope:
-    """
-        Some AI Client Operations can be applied to either the client's AI resource,
+    """Some AI Client Operations can be applied to either the client's AI resource
     or its project. For such operations, this is used to determine that scope.
     """
     AI_RESOURCE = "ai_resource"

@@ -10,3 +10,5 @@ opencensus-ext-threading
 -e ../../../tools/azure-devtools
 -e tests/testserver_tests/coretestserver
 pytest-trio
+azure-storage-blob
+azure-data-tables

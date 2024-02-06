@@ -28,12 +28,12 @@ from azure.ai.ml.entities import CommandComponent, Component, Job, PipelineJob, 
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._component.datatransfer_component import DataTransferComponent
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
+from azure.ai.ml.entities._credentials import UserIdentityConfiguration
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
     INPUT_MOUNT_MAPPING_FROM_REST,
     validate_pipeline_input_key_characters,
 )
-from azure.ai.ml.entities._credentials import UserIdentityConfiguration
 from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_dist_dict_to_str_dict
 from azure.ai.ml.entities._job.job_service import (
     JobService,
@@ -1840,6 +1840,25 @@ class TestPipelineJobSchema:
         assert "component" not in job_dict
         assert "jobs" in job_dict
         assert "component_a_job" in job_dict["jobs"]
+
+        test_path = "./tests/test_configs/pipeline_jobs/pipeline_component_job_with_overrides.yml"
+        job: PipelineJob = load_job(source=test_path)
+        assert job._validate().passed
+        job_dict = job._to_dict()
+        assert job_dict["outputs"] == {
+            "not_exists": {"path": "azureml://datastores/mock/paths/not_exists.txt", "type": "uri_file"},
+            "output_path": {"path": "azureml://datastores/mock/paths/my_output_file.txt", "type": "uri_file"},
+        }
+
+        # Assert the output_path:None not override original component output value
+        test_path = "./tests/test_configs/pipeline_jobs/pipeline_component_job_with_overrides2.yml"
+        job: PipelineJob = load_job(source=test_path)
+        assert job._validate().passed
+        job_dict = job._to_dict()
+        assert job_dict["outputs"] == {
+            "not_exists": {"path": "azureml://datastores/mock/paths/not_exists.txt", "type": "uri_file"},
+            "output_path": {"type": "uri_folder"},  # uri_folder from component output
+        }
 
     def test_invalid_pipeline_component_job(self):
         test_path = "./tests/test_configs/pipeline_jobs/invalid/invalid_pipeline_component_job.yml"
