@@ -2,6 +2,10 @@
 
 ## 1.0.0b6 (2024-02-06)
 
+### Other Changes
+
+- Bug fixes
+
 ## 1.0.0b5 (2024-02-02)
 
 ### Features Added
