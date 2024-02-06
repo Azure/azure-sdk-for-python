@@ -307,11 +307,11 @@ class WorkspaceConnection(Resource):
         # No credential property bag uniquely has different inputs from ALL other propety bag classes.
         if workspace_connection_properties_class == NoneAuthTypeWorkspaceConnectionProperties:
             properties = workspace_connection_properties_class(
-                    target=self.target,
-                    metadata=self.tags,
-                    category=_snake_to_camel(conn_type),
-                    is_shared_to_all=self.is_shared,
-                )
+                target=self.target,
+                metadata=self.tags,
+                category=_snake_to_camel(conn_type),
+                is_shared_to_all=self.is_shared,
+            )
         else:
             properties = workspace_connection_properties_class(
                 target=self.target,

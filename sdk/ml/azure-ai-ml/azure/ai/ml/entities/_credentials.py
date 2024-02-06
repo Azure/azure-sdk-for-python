@@ -74,6 +74,7 @@ from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     UsernamePasswordAuthTypeWorkspaceConnectionProperties,
 )
 
+
 class _BaseIdentityConfiguration(ABC, DictMixin, RestTranslatableMixin):
     def __init__(self) -> None:
         self.type: Any = None
@@ -99,7 +100,9 @@ class _BaseIdentityConfiguration(ABC, DictMixin, RestTranslatableMixin):
         }
         if not auth_type:
             return NoneCredentialConfiguration
-        return REST_CREDENTIAL_TYPE_TO_CLIENT_CLASS_MAP.get(_snake_to_camel(auth_type).lower(), NoneCredentialConfiguration)
+        return REST_CREDENTIAL_TYPE_TO_CLIENT_CLASS_MAP.get(
+            _snake_to_camel(auth_type).lower(), NoneCredentialConfiguration
+        )
 
 
 class AccountKeyConfiguration(RestTranslatableMixin, DictMixin):
@@ -162,7 +165,7 @@ class SasTokenConfiguration(RestTranslatableMixin, DictMixin):
 
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
-    
+
     @classmethod
     def _get_rest_properties_class(cls) -> Type:
         return SASAuthTypeWorkspaceConnectionProperties
@@ -207,6 +210,7 @@ class PatTokenConfiguration(RestTranslatableMixin, DictMixin):
     def _get_rest_properties_class(cls) -> Type:
         return PATAuthTypeWorkspaceConnectionProperties
 
+
 class UsernamePasswordConfiguration(RestTranslatableMixin, DictMixin):
     """Username and password credentials.
 
@@ -247,6 +251,7 @@ class UsernamePasswordConfiguration(RestTranslatableMixin, DictMixin):
     @classmethod
     def _get_rest_properties_class(cls) -> Type:
         return UsernamePasswordAuthTypeWorkspaceConnectionProperties
+
 
 class BaseTenantCredentials(RestTranslatableMixin, DictMixin, ABC):
     """Base class for tenant credentials.
@@ -353,6 +358,7 @@ class ServicePrincipalConfiguration(BaseTenantCredentials):
     @classmethod
     def _get_rest_properties_class(cls) -> Type:
         return ServicePrincipalAuthTypeWorkspaceConnectionProperties
+
 
 class CertificateConfiguration(BaseTenantCredentials):
     def __init__(
@@ -573,6 +579,7 @@ class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
     @classmethod
     def _get_rest_properties_class(cls) -> Type:
         return ManagedIdentityAuthTypeWorkspaceConnectionProperties
+
 
 class UserIdentityConfiguration(_BaseIdentityConfiguration):
     """User identity configuration.
@@ -816,6 +823,7 @@ class NoneCredentialConfiguration(RestTranslatableMixin):
     def _get_rest_properties_class(cls) -> Type:
         return NoneAuthTypeWorkspaceConnectionProperties
 
+
 class AccessKeyConfiguration(RestTranslatableMixin, DictMixin):
     """Access Key Credentials.
 
@@ -854,7 +862,7 @@ class AccessKeyConfiguration(RestTranslatableMixin, DictMixin):
         if not isinstance(other, AccessKeyConfiguration):
             return NotImplemented
         return self.access_key_id == other.access_key_id and self.secret_access_key == other.secret_access_key
-    
+
     def _get_rest_properties_class(self):
         return AccessKeyAuthTypeWorkspaceConnectionProperties
 
@@ -893,6 +901,6 @@ class ApiKeyConfiguration(RestTranslatableMixin, DictMixin):
         if not isinstance(other, ApiKeyConfiguration):
             return NotImplemented
         return bool(self.key == other.key)
-    
+
     def _get_rest_properties_class(self):
         return ApiKeyAuthWorkspaceConnectionProperties

@@ -10,6 +10,7 @@ from azure.ai.ml.entities import WorkspaceConnection, AzureOpenAIWorkspaceConnec
 from azure.ai.ml.entities._credentials import PatTokenConfiguration
 from azure.ai.ml.constants._common import WorkspaceConnectionTypes
 
+
 @pytest.mark.unittest
 @pytest.mark.core_sdk_test
 class TestWorkspaceConnectionEntity:

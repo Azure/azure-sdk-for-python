@@ -293,7 +293,9 @@ class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
         # Blob store connections returned from the API generally have no credentials, but we still don't want
         # to silently run over user inputted connections if they want to play with them locally, so double-check
         # kwargs for them.
-        super().__init__(target=target, type="azure_blob", credentials=kwargs.pop("credentials", None), from_child=True, **kwargs)
+        super().__init__(
+            target=target, type="azure_blob", credentials=kwargs.pop("credentials", None), from_child=True, **kwargs
+        )
 
         self.tags[CONNECTION_CONTAINER_NAME_KEY] = container_name
         self.tags[CONNECTION_ACCOUNT_NAME_KEY] = account_name
