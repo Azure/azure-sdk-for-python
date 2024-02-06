@@ -853,8 +853,6 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         self._check_live()
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
-        if not enqueued_time_older_than_utc:
-            enqueued_time_older_than_utc = 0
         if int(max_message_count) < 0:
             raise ValueError("max_message_count must be 1 or greater.")
 
