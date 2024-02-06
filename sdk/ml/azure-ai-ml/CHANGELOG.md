@@ -5,7 +5,7 @@
 ### Features Added
 - Remove `experimental` tag for  `ml_client.jobs.validate`.
 - Workspace Connection has new read-only subclass: AzureBlobStoreWorkspaceConnectionSchema.
-- Workspace Connection supports 2 new types under main class: adls_gen_2 and azure_one_lake.
+- Workspace Connection supports 2 new types under main class: gen 2 and azure_one_lake.
 - Workspace connection supports reading data connections.
 
 ### Bugs Fixed
