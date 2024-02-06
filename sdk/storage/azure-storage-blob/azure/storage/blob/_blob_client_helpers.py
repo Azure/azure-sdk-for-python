@@ -340,6 +340,7 @@ def _download_blob_options(
     """
     if length is not None and offset is None:
         raise ValueError("Offset must be provided if length is provided.")
+    if length:
         length = offset + length - 1  # Service actually uses an end-range inclusive index
 
     validate_content = kwargs.pop('validate_content', False)
