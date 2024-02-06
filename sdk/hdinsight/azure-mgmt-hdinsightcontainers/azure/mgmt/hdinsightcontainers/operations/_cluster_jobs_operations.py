@@ -45,7 +45,7 @@ def build_run_job_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -77,12 +77,18 @@ def build_run_job_request(
 
 
 def build_list_request(
-    resource_group_name: str, cluster_pool_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str,
+    cluster_pool_name: str,
+    cluster_name: str,
+    subscription_id: str,
+    *,
+    filter: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -103,6 +109,8 @@ def build_list_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -369,7 +377,12 @@ class ClusterJobsOperations:
 
     @distributed_trace
     def list(
-        self, resource_group_name: str, cluster_pool_name: str, cluster_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        cluster_pool_name: str,
+        cluster_name: str,
+        filter: Optional[str] = None,
+        **kwargs: Any
     ) -> Iterable["_models.ClusterJob"]:
         """Get jobs of HDInsight on AKS cluster.
 
@@ -380,6 +393,9 @@ class ClusterJobsOperations:
         :type cluster_pool_name: str
         :param cluster_name: The name of the HDInsight cluster. Required.
         :type cluster_name: str
+        :param filter: The system query option to filter job returned in the response. Allowed value is
+         'jobName eq {jobName}' or 'jarName eq {jarName}'. Default value is None.
+        :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ClusterJob or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.hdinsightcontainers.models.ClusterJob]
@@ -407,6 +423,7 @@ class ClusterJobsOperations:
                     cluster_pool_name=cluster_pool_name,
                     cluster_name=cluster_name,
                     subscription_id=self._config.subscription_id,
+                    filter=filter,
                     api_version=api_version,
                     template_url=self.list.metadata["url"],
                     headers=_headers,

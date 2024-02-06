@@ -12,8 +12,16 @@ from ._models_py3 import AuthorizationProfile
 from ._models_py3 import AutoscaleProfile
 from ._models_py3 import CatalogOptions
 from ._models_py3 import Cluster
+from ._models_py3 import ClusterAKSPatchVersionUpgradeProperties
+from ._models_py3 import ClusterAccessProfile
+from ._models_py3 import ClusterAvailableUpgrade
+from ._models_py3 import ClusterAvailableUpgradeAksPatchUpgradeProperties
+from ._models_py3 import ClusterAvailableUpgradeHotfixUpgradeProperties
+from ._models_py3 import ClusterAvailableUpgradeList
+from ._models_py3 import ClusterAvailableUpgradeProperties
 from ._models_py3 import ClusterComponentsItem
 from ._models_py3 import ClusterConfigFile
+from ._models_py3 import ClusterHotfixUpgradeProperties
 from ._models_py3 import ClusterInstanceViewProperties
 from ._models_py3 import ClusterInstanceViewPropertiesStatus
 from ._models_py3 import ClusterInstanceViewResult
@@ -27,41 +35,63 @@ from ._models_py3 import ClusterListResult
 from ._models_py3 import ClusterLogAnalyticsApplicationLogs
 from ._models_py3 import ClusterLogAnalyticsProfile
 from ._models_py3 import ClusterPatch
+from ._models_py3 import ClusterPatchProperties
 from ._models_py3 import ClusterPool
+from ._models_py3 import ClusterPoolAKSPatchVersionUpgradeProperties
+from ._models_py3 import ClusterPoolAvailableUpgrade
+from ._models_py3 import ClusterPoolAvailableUpgradeAksPatchUpgradeProperties
+from ._models_py3 import ClusterPoolAvailableUpgradeList
+from ._models_py3 import ClusterPoolAvailableUpgradeNodeOsUpgradeProperties
+from ._models_py3 import ClusterPoolAvailableUpgradeProperties
 from ._models_py3 import ClusterPoolComputeProfile
 from ._models_py3 import ClusterPoolListResult
 from ._models_py3 import ClusterPoolLogAnalyticsProfile
 from ._models_py3 import ClusterPoolNetworkProfile
+from ._models_py3 import ClusterPoolNodeOsImageUpdateProperties
 from ._models_py3 import ClusterPoolProfile
+from ._models_py3 import ClusterPoolResourceProperties
 from ._models_py3 import ClusterPoolResourcePropertiesAksClusterProfile
 from ._models_py3 import ClusterPoolResourcePropertiesClusterPoolProfile
 from ._models_py3 import ClusterPoolResourcePropertiesComputeProfile
 from ._models_py3 import ClusterPoolResourcePropertiesLogAnalyticsProfile
 from ._models_py3 import ClusterPoolResourcePropertiesNetworkProfile
+from ._models_py3 import ClusterPoolUpgrade
+from ._models_py3 import ClusterPoolUpgradeProperties
 from ._models_py3 import ClusterPoolVersion
+from ._models_py3 import ClusterPoolVersionProperties
 from ._models_py3 import ClusterPoolVersionsListResult
 from ._models_py3 import ClusterProfile
 from ._models_py3 import ClusterPrometheusProfile
+from ._models_py3 import ClusterRangerPluginProfile
 from ._models_py3 import ClusterResizeData
+from ._models_py3 import ClusterResizeProperties
+from ._models_py3 import ClusterResourceProperties
 from ._models_py3 import ClusterServiceConfig
 from ._models_py3 import ClusterServiceConfigsProfile
+from ._models_py3 import ClusterUpgrade
+from ._models_py3 import ClusterUpgradeProperties
 from ._models_py3 import ClusterVersion
+from ._models_py3 import ClusterVersionProperties
 from ._models_py3 import ClusterVersionsListResult
 from ._models_py3 import ComparisonRule
 from ._models_py3 import ComputeProfile
 from ._models_py3 import ComputeResourceDefinition
 from ._models_py3 import ConnectivityProfile
 from ._models_py3 import ConnectivityProfileWeb
+from ._models_py3 import DiskStorageProfile
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
 from ._models_py3 import FlinkCatalogOptions
 from ._models_py3 import FlinkHiveCatalogOption
+from ._models_py3 import FlinkJobProfile
 from ._models_py3 import FlinkJobProperties
 from ._models_py3 import FlinkProfile
 from ._models_py3 import FlinkStorageProfile
 from ._models_py3 import HiveCatalogOption
 from ._models_py3 import IdentityProfile
+from ._models_py3 import KafkaConnectivityEndpoints
+from ._models_py3 import KafkaProfile
 from ._models_py3 import LoadBasedConfig
 from ._models_py3 import NameAvailabilityParameters
 from ._models_py3 import NameAvailabilityResult
@@ -70,6 +100,11 @@ from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
 from ._models_py3 import ProxyResource
+from ._models_py3 import RangerAdminSpec
+from ._models_py3 import RangerAdminSpecDatabase
+from ._models_py3 import RangerAuditSpec
+from ._models_py3 import RangerProfile
+from ._models_py3 import RangerUsersyncSpec
 from ._models_py3 import Resource
 from ._models_py3 import ScalingRule
 from ._models_py3 import Schedule
@@ -93,6 +128,7 @@ from ._models_py3 import SystemData
 from ._models_py3 import TagsObject
 from ._models_py3 import TrackedResource
 from ._models_py3 import TrinoCoordinator
+from ._models_py3 import TrinoDebugConfig
 from ._models_py3 import TrinoProfile
 from ._models_py3 import TrinoTelemetryConfig
 from ._models_py3 import TrinoUserPlugin
@@ -105,15 +141,29 @@ from ._models_py3 import WebConnectivityEndpoint
 from ._hd_insight_containers_mgmt_client_enums import Action
 from ._hd_insight_containers_mgmt_client_enums import ActionType
 from ._hd_insight_containers_mgmt_client_enums import AutoscaleType
+from ._hd_insight_containers_mgmt_client_enums import ClusterAvailableUpgradeType
+from ._hd_insight_containers_mgmt_client_enums import ClusterPoolAvailableUpgradeType
+from ._hd_insight_containers_mgmt_client_enums import ClusterPoolUpgradeType
+from ._hd_insight_containers_mgmt_client_enums import ClusterUpgradeType
 from ._hd_insight_containers_mgmt_client_enums import ComparisonOperator
 from ._hd_insight_containers_mgmt_client_enums import ContentEncoding
 from ._hd_insight_containers_mgmt_client_enums import CreatedByType
+from ._hd_insight_containers_mgmt_client_enums import CurrentClusterAksVersionStatus
+from ._hd_insight_containers_mgmt_client_enums import CurrentClusterPoolAksVersionStatus
+from ._hd_insight_containers_mgmt_client_enums import DataDiskType
+from ._hd_insight_containers_mgmt_client_enums import DbConnectionAuthenticationMode
+from ._hd_insight_containers_mgmt_client_enums import DeploymentMode
 from ._hd_insight_containers_mgmt_client_enums import JobType
 from ._hd_insight_containers_mgmt_client_enums import KeyVaultObjectType
+from ._hd_insight_containers_mgmt_client_enums import MetastoreDbConnectionAuthenticationMode
 from ._hd_insight_containers_mgmt_client_enums import Origin
+from ._hd_insight_containers_mgmt_client_enums import OutboundType
 from ._hd_insight_containers_mgmt_client_enums import ProvisioningStatus
+from ._hd_insight_containers_mgmt_client_enums import RangerUsersyncMode
 from ._hd_insight_containers_mgmt_client_enums import ScaleActionType
 from ._hd_insight_containers_mgmt_client_enums import ScheduleDay
+from ._hd_insight_containers_mgmt_client_enums import Severity
+from ._hd_insight_containers_mgmt_client_enums import UpgradeMode
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -125,8 +175,16 @@ __all__ = [
     "AutoscaleProfile",
     "CatalogOptions",
     "Cluster",
+    "ClusterAKSPatchVersionUpgradeProperties",
+    "ClusterAccessProfile",
+    "ClusterAvailableUpgrade",
+    "ClusterAvailableUpgradeAksPatchUpgradeProperties",
+    "ClusterAvailableUpgradeHotfixUpgradeProperties",
+    "ClusterAvailableUpgradeList",
+    "ClusterAvailableUpgradeProperties",
     "ClusterComponentsItem",
     "ClusterConfigFile",
+    "ClusterHotfixUpgradeProperties",
     "ClusterInstanceViewProperties",
     "ClusterInstanceViewPropertiesStatus",
     "ClusterInstanceViewResult",
@@ -140,41 +198,63 @@ __all__ = [
     "ClusterLogAnalyticsApplicationLogs",
     "ClusterLogAnalyticsProfile",
     "ClusterPatch",
+    "ClusterPatchProperties",
     "ClusterPool",
+    "ClusterPoolAKSPatchVersionUpgradeProperties",
+    "ClusterPoolAvailableUpgrade",
+    "ClusterPoolAvailableUpgradeAksPatchUpgradeProperties",
+    "ClusterPoolAvailableUpgradeList",
+    "ClusterPoolAvailableUpgradeNodeOsUpgradeProperties",
+    "ClusterPoolAvailableUpgradeProperties",
     "ClusterPoolComputeProfile",
     "ClusterPoolListResult",
     "ClusterPoolLogAnalyticsProfile",
     "ClusterPoolNetworkProfile",
+    "ClusterPoolNodeOsImageUpdateProperties",
     "ClusterPoolProfile",
+    "ClusterPoolResourceProperties",
     "ClusterPoolResourcePropertiesAksClusterProfile",
     "ClusterPoolResourcePropertiesClusterPoolProfile",
     "ClusterPoolResourcePropertiesComputeProfile",
     "ClusterPoolResourcePropertiesLogAnalyticsProfile",
     "ClusterPoolResourcePropertiesNetworkProfile",
+    "ClusterPoolUpgrade",
+    "ClusterPoolUpgradeProperties",
     "ClusterPoolVersion",
+    "ClusterPoolVersionProperties",
     "ClusterPoolVersionsListResult",
     "ClusterProfile",
     "ClusterPrometheusProfile",
+    "ClusterRangerPluginProfile",
     "ClusterResizeData",
+    "ClusterResizeProperties",
+    "ClusterResourceProperties",
     "ClusterServiceConfig",
     "ClusterServiceConfigsProfile",
+    "ClusterUpgrade",
+    "ClusterUpgradeProperties",
     "ClusterVersion",
+    "ClusterVersionProperties",
     "ClusterVersionsListResult",
     "ComparisonRule",
     "ComputeProfile",
     "ComputeResourceDefinition",
     "ConnectivityProfile",
     "ConnectivityProfileWeb",
+    "DiskStorageProfile",
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
     "FlinkCatalogOptions",
     "FlinkHiveCatalogOption",
+    "FlinkJobProfile",
     "FlinkJobProperties",
     "FlinkProfile",
     "FlinkStorageProfile",
     "HiveCatalogOption",
     "IdentityProfile",
+    "KafkaConnectivityEndpoints",
+    "KafkaProfile",
     "LoadBasedConfig",
     "NameAvailabilityParameters",
     "NameAvailabilityResult",
@@ -183,6 +263,11 @@ __all__ = [
     "OperationDisplay",
     "OperationListResult",
     "ProxyResource",
+    "RangerAdminSpec",
+    "RangerAdminSpecDatabase",
+    "RangerAuditSpec",
+    "RangerProfile",
+    "RangerUsersyncSpec",
     "Resource",
     "ScalingRule",
     "Schedule",
@@ -206,6 +291,7 @@ __all__ = [
     "TagsObject",
     "TrackedResource",
     "TrinoCoordinator",
+    "TrinoDebugConfig",
     "TrinoProfile",
     "TrinoTelemetryConfig",
     "TrinoUserPlugin",
@@ -217,15 +303,29 @@ __all__ = [
     "Action",
     "ActionType",
     "AutoscaleType",
+    "ClusterAvailableUpgradeType",
+    "ClusterPoolAvailableUpgradeType",
+    "ClusterPoolUpgradeType",
+    "ClusterUpgradeType",
     "ComparisonOperator",
     "ContentEncoding",
     "CreatedByType",
+    "CurrentClusterAksVersionStatus",
+    "CurrentClusterPoolAksVersionStatus",
+    "DataDiskType",
+    "DbConnectionAuthenticationMode",
+    "DeploymentMode",
     "JobType",
     "KeyVaultObjectType",
+    "MetastoreDbConnectionAuthenticationMode",
     "Origin",
+    "OutboundType",
     "ProvisioningStatus",
+    "RangerUsersyncMode",
     "ScaleActionType",
     "ScheduleDay",
+    "Severity",
+    "UpgradeMode",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

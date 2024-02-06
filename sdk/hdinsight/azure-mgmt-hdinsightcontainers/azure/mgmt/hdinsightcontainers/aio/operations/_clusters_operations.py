@@ -41,6 +41,7 @@ from ...operations._clusters_operations import (
     build_list_service_configs_request,
     build_resize_request,
     build_update_request,
+    build_upgrade_request,
 )
 
 T = TypeVar("T")
@@ -156,6 +157,248 @@ class ClustersOperations:
 
     list_by_cluster_pool_name.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusterpools/{clusterPoolName}/clusters"
+    }
+
+    async def _upgrade_initial(
+        self,
+        resource_group_name: str,
+        cluster_pool_name: str,
+        cluster_name: str,
+        cluster_upgrade_request: Union[_models.ClusterUpgrade, IO],
+        **kwargs: Any
+    ) -> Optional[_models.Cluster]:
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[_models.Cluster]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(cluster_upgrade_request, (IOBase, bytes)):
+            _content = cluster_upgrade_request
+        else:
+            _json = self._serialize.body(cluster_upgrade_request, "ClusterUpgrade")
+
+        request = build_upgrade_request(
+            resource_group_name=resource_group_name,
+            cluster_pool_name=cluster_pool_name,
+            cluster_name=cluster_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            template_url=self._upgrade_initial.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = None
+        response_headers = {}
+        if response.status_code == 200:
+            deserialized = self._deserialize("Cluster", pipeline_response)
+
+        if response.status_code == 202:
+            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
+
+    _upgrade_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusterpools/{clusterPoolName}/clusters/{clusterName}/upgrade"
+    }
+
+    @overload
+    async def begin_upgrade(
+        self,
+        resource_group_name: str,
+        cluster_pool_name: str,
+        cluster_name: str,
+        cluster_upgrade_request: _models.ClusterUpgrade,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Cluster]:
+        """Upgrade a cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_pool_name: The name of the cluster pool. Required.
+        :type cluster_pool_name: str
+        :param cluster_name: The name of the HDInsight cluster. Required.
+        :type cluster_name: str
+        :param cluster_upgrade_request: Upgrade a cluster. Required.
+        :type cluster_upgrade_request: ~azure.mgmt.hdinsightcontainers.models.ClusterUpgrade
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either Cluster or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.hdinsightcontainers.models.Cluster]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_upgrade(
+        self,
+        resource_group_name: str,
+        cluster_pool_name: str,
+        cluster_name: str,
+        cluster_upgrade_request: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Cluster]:
+        """Upgrade a cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_pool_name: The name of the cluster pool. Required.
+        :type cluster_pool_name: str
+        :param cluster_name: The name of the HDInsight cluster. Required.
+        :type cluster_name: str
+        :param cluster_upgrade_request: Upgrade a cluster. Required.
+        :type cluster_upgrade_request: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either Cluster or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.hdinsightcontainers.models.Cluster]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_upgrade(
+        self,
+        resource_group_name: str,
+        cluster_pool_name: str,
+        cluster_name: str,
+        cluster_upgrade_request: Union[_models.ClusterUpgrade, IO],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Cluster]:
+        """Upgrade a cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_pool_name: The name of the cluster pool. Required.
+        :type cluster_pool_name: str
+        :param cluster_name: The name of the HDInsight cluster. Required.
+        :type cluster_name: str
+        :param cluster_upgrade_request: Upgrade a cluster. Is either a ClusterUpgrade type or a IO
+         type. Required.
+        :type cluster_upgrade_request: ~azure.mgmt.hdinsightcontainers.models.ClusterUpgrade or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either Cluster or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.hdinsightcontainers.models.Cluster]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Cluster] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._upgrade_initial(
+                resource_group_name=resource_group_name,
+                cluster_pool_name=cluster_pool_name,
+                cluster_name=cluster_name,
+                cluster_upgrade_request=cluster_upgrade_request,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("Cluster", pipeline_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    begin_upgrade.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusterpools/{clusterPoolName}/clusters/{clusterName}/upgrade"
     }
 
     async def _resize_initial(
@@ -990,7 +1233,7 @@ class ClustersOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202, 204]:
+        if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
