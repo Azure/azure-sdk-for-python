@@ -357,32 +357,3 @@ def configure_v0(f):
 
     return wrapper
 
-
-def setup_adapter(deployment_id):
-
-    class CustomAdapter(requests.adapters.HTTPAdapter):
-
-        def send(self, request, **kwargs):
-            request.url = f"{openai.api_base}/openai/deployments/{deployment_id}/extensions/chat/completions?api-version={openai.api_version}"
-            return super().send(request, **kwargs)
-
-    session = requests.Session()
-
-    session.mount(
-        prefix=f"{openai.api_base}/openai/deployments/{deployment_id}",
-        adapter=CustomAdapter()
-    )
-
-    openai.requestssession = session
-
-
-def setup_adapter_async(deployment_id):
-
-    class CustomAdapterAsync(aiohttp.ClientRequest):
-
-        async def send(self, conn) -> aiohttp.ClientResponse:
-            self.url = yarl.URL(f"{openai.api_base}/openai/deployments/{deployment_id}/extensions/chat/completions?api-version={openai.api_version}")
-            return await super().send(conn)
-    
-    session = aiohttp.ClientSession(request_class=CustomAdapterAsync)
-    openai.aiosession.set(session)
