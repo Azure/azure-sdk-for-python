@@ -8,6 +8,7 @@
 # pyright: reportGeneralTypeIssues=false
 
 import calendar
+import decimal
 import functools
 import sys
 import logging
@@ -15,7 +16,7 @@ import base64
 import re
 import copy
 import typing
-import email
+import email.utils
 from datetime import datetime, date, time, timedelta, timezone
 from json import JSONEncoder
 import isodate
@@ -144,6 +145,8 @@ class SdkJSONEncoder(JSONEncoder):
         except TypeError:
             if isinstance(o, _Null):
                 return None
+            if isinstance(o, decimal.Decimal):
+                return float(o)
             if isinstance(o, (bytes, bytearray)):
                 return _serialize_bytes(o, self.format)
             try:
@@ -275,6 +278,12 @@ def _deserialize_duration(attr):
     return isodate.parse_duration(attr)
 
 
+def _deserialize_decimal(attr):
+    if isinstance(attr, decimal.Decimal):
+        return attr
+    return decimal.Decimal(str(attr))
+
+
 _DESERIALIZE_MAPPING = {
     datetime: _deserialize_datetime,
     date: _deserialize_date,
@@ -283,6 +292,7 @@ _DESERIALIZE_MAPPING = {
     bytearray: _deserialize_bytes,
     timedelta: _deserialize_duration,
     typing.Any: lambda x: x,
+    decimal.Decimal: _deserialize_decimal,
 }
 
 _DESERIALIZE_MAPPING_WITHFORMAT = {
@@ -426,6 +436,8 @@ def _serialize(o, format: typing.Optional[str] = None):  # pylint: disable=too-m
         return tuple(_serialize(x, format) for x in o)
     if isinstance(o, (bytes, bytearray)):
         return _serialize_bytes(o, format)
+    if isinstance(o, decimal.Decimal):
+        return float(o)
     try:
         # First try datetime.datetime
         return _serialize_datetime(o, format)
@@ -450,7 +462,13 @@ def _get_rest_field(
 
 
 def _create_value(rf: typing.Optional["_RestField"], value: typing.Any) -> typing.Any:
-    return _deserialize(rf._type, value) if (rf and rf._is_model) else _serialize(value, rf._format if rf else None)
+    if not rf:
+        return _serialize(value, None)
+    if rf._is_multipart_file_input:
+        return value
+    if rf._is_model:
+        return _deserialize(rf._type, value)
+    return _serialize(value, rf._format)
 
 
 class Model(_MyMutableMapping):
@@ -547,7 +565,14 @@ class Model(_MyMutableMapping):
         for k, v in self.items():
             if exclude_readonly and k in readonly_props:  # pyright: ignore[reportUnboundVariable]
                 continue
-            result[k] = Model._as_dict_value(v, exclude_readonly=exclude_readonly)
+            is_multipart_file_input = False
+            try:
+                is_multipart_file_input = next(
+                    rf for rf in self._attr_to_rest_field.values() if rf._rest_name == k
+                )._is_multipart_file_input
+            except StopIteration:
+                pass
+            result[k] = v if is_multipart_file_input else Model._as_dict_value(v, exclude_readonly=exclude_readonly)
         return result
 
     @staticmethod
@@ -555,7 +580,7 @@ class Model(_MyMutableMapping):
         if v is None or isinstance(v, _Null):
             return None
         if isinstance(v, (list, tuple, set)):
-            return [Model._as_dict_value(x, exclude_readonly=exclude_readonly) for x in v]
+            return type(v)(Model._as_dict_value(x, exclude_readonly=exclude_readonly) for x in v)
         if isinstance(v, dict):
             return {dk: Model._as_dict_value(dv, exclude_readonly=exclude_readonly) for dk, dv in v.items()}
         return v.as_dict(exclude_readonly=exclude_readonly) if hasattr(v, "as_dict") else v
@@ -599,14 +624,7 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, 
 
     # is it a literal?
     try:
-        if sys.version_info >= (3, 8):
-            from typing import (
-                Literal,
-            )  # pylint: disable=no-name-in-module, ungrouped-imports
-        else:
-            from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
-
-        if annotation.__origin__ == Literal:
+        if annotation.__origin__ is typing.Literal:
             return None
     except AttributeError:
         pass
@@ -642,24 +660,18 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, 
 
     try:
         if annotation._name == "Dict":
-            key_deserializer = _get_deserialize_callable_from_annotation(annotation.__args__[0], module, rf)
             value_deserializer = _get_deserialize_callable_from_annotation(annotation.__args__[1], module, rf)
 
             def _deserialize_dict(
-                key_deserializer: typing.Optional[typing.Callable],
                 value_deserializer: typing.Optional[typing.Callable],
                 obj: typing.Dict[typing.Any, typing.Any],
             ):
                 if obj is None:
                     return obj
-                return {
-                    _deserialize(key_deserializer, k, module): _deserialize(value_deserializer, v, module)
-                    for k, v in obj.items()
-                }
+                return {k: _deserialize(value_deserializer, v, module) for k, v in obj.items()}
 
             return functools.partial(
                 _deserialize_dict,
-                key_deserializer,
                 value_deserializer,
             )
     except (AttributeError, IndexError):
@@ -698,19 +710,21 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, 
         pass
 
     def _deserialize_default(
-        annotation,
-        deserializer_from_mapping,
+        deserializer,
         obj,
     ):
         if obj is None:
             return obj
         try:
-            return _deserialize_with_callable(annotation, obj)
+            return _deserialize_with_callable(deserializer, obj)
         except Exception:
             pass
-        return _deserialize_with_callable(deserializer_from_mapping, obj)
+        return obj
 
-    return functools.partial(_deserialize_default, annotation, get_deserializer(annotation, rf))
+    if get_deserializer(annotation, rf):
+        return functools.partial(_deserialize_default, get_deserializer(annotation, rf))
+
+    return functools.partial(_deserialize_default, annotation)
 
 
 def _deserialize_with_callable(
@@ -718,7 +732,7 @@ def _deserialize_with_callable(
     value: typing.Any,
 ):
     try:
-        if value is None:
+        if value is None or isinstance(value, _Null):
             return None
         if deserializer is None:
             return value
@@ -746,7 +760,8 @@ def _deserialize(
         value = value.http_response.json()
     if rf is None and format:
         rf = _RestField(format=format)
-    deserializer = _get_deserialize_callable_from_annotation(deserializer, module, rf)
+    if not isinstance(deserializer, functools.partial):
+        deserializer = _get_deserialize_callable_from_annotation(deserializer, module, rf)
     return _deserialize_with_callable(deserializer, value)
 
 
@@ -760,6 +775,7 @@ class _RestField:
         visibility: typing.Optional[typing.List[str]] = None,
         default: typing.Any = _UNSET,
         format: typing.Optional[str] = None,
+        is_multipart_file_input: bool = False,
     ):
         self._type = type
         self._rest_name_input = name
@@ -769,6 +785,7 @@ class _RestField:
         self._is_model = False
         self._default = default
         self._format = format
+        self._is_multipart_file_input = is_multipart_file_input
 
     @property
     def _rest_name(self) -> str:
@@ -814,8 +831,16 @@ def rest_field(
     visibility: typing.Optional[typing.List[str]] = None,
     default: typing.Any = _UNSET,
     format: typing.Optional[str] = None,
+    is_multipart_file_input: bool = False,
 ) -> typing.Any:
-    return _RestField(name=name, type=type, visibility=visibility, default=default, format=format)
+    return _RestField(
+        name=name,
+        type=type,
+        visibility=visibility,
+        default=default,
+        format=format,
+        is_multipart_file_input=is_multipart_file_input,
+    )
 
 
 def rest_discriminator(

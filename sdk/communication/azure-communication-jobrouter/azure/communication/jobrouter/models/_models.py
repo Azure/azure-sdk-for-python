@@ -1,5 +1,5 @@
 # coding=utf-8
-# pylint: disable=too-many-lines,anomalous-backslash-in-string,name-too-long
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8,8 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-import sys
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
@@ -22,11 +21,6 @@ from ._enums import (
     RouterRuleKind,
     WorkerSelectorAttachmentKind,
 )
-
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -98,6 +92,7 @@ class DistributionMode(_model_base.Model):
      values are: "bestWorker", "longestIdle", and "roundRobin".
     :vartype kind: str or ~azure.communication.jobrouter.models.DistributionModeKind
     """
+
     __mapping__: Dict[str, _model_base.Model] = {}
     min_concurrent_offers: Optional[int] = rest_field(name="minConcurrentOffers")
     """Governs the minimum desired number of active concurrent offers a job can have."""
@@ -2031,6 +2026,9 @@ class RouterWorker(_model_base.Model):  # pylint: disable=too-many-instance-attr
     :vartype load_ratio: float
     :ivar available_for_offers: A flag indicating this worker is open to receive offers or not.
     :vartype available_for_offers: bool
+    :ivar max_concurrent_offers: If this is set, the worker will only receive up to this many new
+     offers at a time.
+    :vartype max_concurrent_offers: int
     """
 
     etag: str = rest_field(visibility=["read"])
@@ -2062,6 +2060,8 @@ class RouterWorker(_model_base.Model):  # pylint: disable=too-many-instance-attr
      of '0' means no capacity is currently consumed."""
     available_for_offers: Optional[bool] = rest_field(name="availableForOffers")
     """A flag indicating this worker is open to receive offers or not."""
+    max_concurrent_offers: Optional[int] = rest_field(name="maxConcurrentOffers")
+    """If this is set, the worker will only receive up to this many new offers at a time."""
 
     @overload
     def __init__(
@@ -2073,6 +2073,7 @@ class RouterWorker(_model_base.Model):  # pylint: disable=too-many-instance-attr
         tags: Optional[Dict[str, Any]] = None,
         channels: Optional[List["_models.RouterChannel"]] = None,
         available_for_offers: Optional[bool] = None,
+        max_concurrent_offers: Optional[int] = None,
     ):
         ...
 
@@ -2663,7 +2664,9 @@ class WebhookRouterRule(RouterRule, discriminator="webhook"):
         self.kind: Literal[RouterRuleKind.WEBHOOK] = RouterRuleKind.WEBHOOK
 
 
-class WeightedAllocationQueueSelectorAttachment(QueueSelectorAttachment, discriminator="weightedAllocation"):
+class WeightedAllocationQueueSelectorAttachment(
+    QueueSelectorAttachment, discriminator="weightedAllocation"
+):  # pylint: disable=name-too-long
     """Describes multiple sets of queue selectors, of which one will be selected and attached
     according to a weighting.
 
@@ -2704,7 +2707,9 @@ class WeightedAllocationQueueSelectorAttachment(QueueSelectorAttachment, discrim
         ] = QueueSelectorAttachmentKind.WEIGHTED_ALLOCATION
 
 
-class WeightedAllocationWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="weightedAllocation"):
+class WeightedAllocationWorkerSelectorAttachment(
+    WorkerSelectorAttachment, discriminator="weightedAllocation"
+):  # pylint: disable=name-too-long
     """Describes multiple sets of worker selectors, of which one will be selected and attached
     according to a weighting.
 

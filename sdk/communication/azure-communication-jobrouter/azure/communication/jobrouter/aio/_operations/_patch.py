@@ -1184,6 +1184,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         tags: Optional[Dict[str, Union[int, float, str, bool]]],
         channels: Optional[List[_models.RouterChannel]],
         available_for_offers: Optional[bool],
+        max_concurrent_offers: Optional[int],
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -1213,6 +1214,10 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
         :keyword available_for_offers: A flag indicating this worker is open to receive offers or not.
         :paramtype available_for_offers: Optional[bool]
+
+        :keyword max_concurrent_offers: If this is set, the worker will only receive up to this many new
+          offers at a time.
+        :paramtype max_concurrent_offers: Optional[int]
 
         :keyword if_unmodified_since: The request should only proceed if the entity was not modified
          after this time. Default value is None.
@@ -1397,6 +1402,10 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :keyword available_for_offers: A flag indicating this worker is open to receive offers or not.
         :paramtype available_for_offers: Optional[bool]
 
+        :keyword max_concurrent_offers: If this is set, the worker will only receive up to this many new
+          offers at a time.
+        :paramtype max_concurrent_offers: Optional[int]
+
         :keyword if_unmodified_since: The request should only proceed if the entity was not modified
          after this time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
@@ -1453,6 +1462,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
                 tags=kwargs.pop("tags", router_worker.tags),
                 channels=kwargs.pop("channels", router_worker.channels),
                 available_for_offers=kwargs.pop("available_for_offers", router_worker.available_for_offers),
+                max_concurrent_offers = kwargs.pop("max_concurrent_offers", router_worker.max_concurrent_offers),
             )
 
         if_unmodified_since = kwargs.pop("if_unmodified_since", None)
