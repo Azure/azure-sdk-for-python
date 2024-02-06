@@ -41,3 +41,8 @@ def query_session():
     for result in results:
         print("    Name: {} (rating {})".format(result["hotelName"], result["rating"]))
     # [END query_session]
+
+
+if __name__ == "__main__":
+    query_session()
+
