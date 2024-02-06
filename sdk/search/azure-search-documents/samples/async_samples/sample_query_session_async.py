@@ -40,7 +40,7 @@ async def query_session():
         results = await search_client.search(search_text="spa", session_id="session-1")
 
         print("Hotels containing 'spa' in the name (or other fields):")
-        for result in results:
+        async for result in results:
             print("    Name: {} (rating {})".format(result["hotelName"], result["rating"]))
     # [END query_session_async]
 
