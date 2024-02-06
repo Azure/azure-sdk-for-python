@@ -68,9 +68,9 @@ class CodeMetricHandler(MetricHandler):
                         progress_bar.update(1)
                     except Exception as ex:
                         progress_bar.update(1)
-                        LOGGER.info(
-                            f"Error calculating value for {metric_name}, failed with error {str(ex)} : Stack trace : {str(ex.__traceback__)}"
-                        )
+                        msg_1 = f"Error calculating value for {metric_name}, "
+                        msg_2 = f"failed with error {str(ex)} : Stack trace : {str(ex.__traceback__)}"
+                        LOGGER.info(msg_1 + msg_2)
 
         return metrics_dict
 
@@ -99,9 +99,9 @@ class CodeMetricHandler(MetricHandler):
                 try:
                     row_metric_results.append(row_metric_future.result())
                 except Exception as ex:
-                    LOGGER.info(
-                        f"Error calculating value for a row for metric {metric.name} , failed with error {str(ex)} : Stack trace : {str(ex.__traceback__)}"
-                    )
+                    msg_1 = f"Error calculating value for a row for metric {metric.name}, "
+                    msg_2 = f"failed with error {str(ex)} : Stack trace : {str(ex.__traceback__)}"
+                    LOGGER.info(msg_1 + msg_2)
                     row_metric_results.append(NaN)
 
             results = {"artifacts": {}, "metrics": {}}

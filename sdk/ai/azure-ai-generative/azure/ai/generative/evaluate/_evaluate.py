@@ -393,9 +393,8 @@ def _evaluate(
                     # But since we control how params are logged, this is prob fine for now.
 
                     if ex.error_code == ErrorCode.Name(INVALID_PARAMETER_VALUE):
-                        LOGGER.warning(
-                            f"Parameter {param_name} value is too long to log. Truncating and logging it as an artifact."
-                        )
+                        msg = f"Parameter {param_name} value is too long to log. "
+                        LOGGER.warning(msg + "Truncating and logging it as an artifact.")
 
                         # Truncate the value to 500 bytes and log it.
                         truncated_value = param_value.encode("utf-8")[:500].decode("utf-8", "ignore")

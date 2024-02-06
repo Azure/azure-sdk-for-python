@@ -32,11 +32,15 @@ def patch_openai_embedding_retries(logger, activity_logger, max_seconds_retrying
         activity_logger.activity_info["num_retries"] += 1
         activity_logger.activity_info["time_spent_sleeping"] += retry_state.idle_for
 
-        # This is a lot of data to send to telemetry, not sending by default for now due to fears of maxxing out daily ingress cap.
+        # This is a lot of data to send to telemetry,
+        # not sending by default for now due to fears of maxxing out daily ingress cap.
         # if 'retries' not in activity_logger.activity_info:
         #     activity_logger.activity_info['retries'] = []
         #     activity_logger.activity_info['first_retry'] = datetime.utcnow()
-        # activity_logger.activity_info['retries'] += [json.dumps({'idx': retry_state.attempt_number, 'timestamp': str(datetime.utcnow()), 'sleep': retry_state.next_action.sleep})]
+        # activity_logger.activity_info['retries'] += [json.dumps(
+        # {'idx': retry_state.attempt_number,
+        # 'timestamp': str(datetime.utcnow()), 'sleep': retry_state.next_action.sleep
+        # })]
 
     class stop_after_delay_that_works(stop_base):
         """Stop when the time from the first attempt >= limit."""
@@ -52,7 +56,9 @@ def patch_openai_embedding_retries(logger, activity_logger, max_seconds_retrying
             else:
                 return False
 
-    # Copied from https://github.com/hwchase17/langchain/blob/511c12dd3985ce682226371c12f8fa70d8c9a8e1/langchain/embeddings/openai.py#L34
+    # Copied from
+    # https://github.com/hwchase17/langchain/blob/
+    # 511c12dd3985ce682226371c12f8fa70d8c9a8e1/langchain/embeddings/openai.py#L34
     def _create_retry_decorator(embeddings):
         import openai
         from packaging import version

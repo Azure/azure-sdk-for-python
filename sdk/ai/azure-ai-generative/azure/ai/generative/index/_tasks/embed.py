@@ -291,8 +291,9 @@ def create_embeddings(
                     batch_id += 1
                     chunk_batch = []
 
+                msg = f"{num_workers if batch_id > num_workers else batch_id}/{batch_id} batches remaining"
                 logger.info(
-                    f"==== Waiting for embedders to finish, {num_workers if batch_id > num_workers else batch_id}/{batch_id} batches remaining"
+                    f"==== Waiting for embedders to finish, " + msg
                 )
 
                 # Put sentinel values in the queue to stop the embedder processes

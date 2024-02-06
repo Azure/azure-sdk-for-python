@@ -166,7 +166,8 @@ def split_documents(
     for i, document in enumerate(documents):
         if len(document.chunks) < 1:
             logger.warning(f"Skipped document with no chunks: {document.source.filename}")
-            # TODO: Log this warning to telemetry with document metadata (extension, size, etc.) to get signal for improvements to parsing.
+            # TODO: Log this warning to telemetry with document metadata (extension, size, etc.)
+            # to get signal for improvements to parsing.
             continue
         file_start_time = time.time()
         total_documents += len(document.chunks)
@@ -250,9 +251,8 @@ def split_documents(
 
     safe_mlflow_log_metric("total_source_documents", total_documents, logger=logger, step=int(time.time() * 1000))
     safe_mlflow_log_metric("total_chunked_documents", total_splits, logger=logger, step=int(time.time() * 1000))
-    logger.info(
-        f"[DocumentChunksIterator::split_documents] Total time to split {total_documents} documents into {total_splits} chunks: {total_time}"
-    )
+    msg = f"{total_documents} documents into {total_splits} chunks: {total_time}"
+    logger.info(f"[DocumentChunksIterator::split_documents] Total time to split " + msg)
 
 
 @dataclass

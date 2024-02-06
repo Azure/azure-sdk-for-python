@@ -111,9 +111,8 @@ def main(parser_args, run, logger: Logger, activity_logger: Logger):
         result: GenerationResult = getattr(e, "generation_result", None)  # type: ignore[no-redef]
         if result is None or result.data_df.empty:
             raise
-        activity_logger.warn(
-            f"Ignoring exception in QADataGenerator since partial result is available. Exception: {traceback.format_exc()}"
-        )
+        msg = f"Exception: {traceback.format_exc()}"
+        activity_logger.warn(f"Ignoring exception in QADataGenerator since partial result is available. " + msg)
 
     # log run metrics
     generated_size = len(result.data_df.index)
@@ -151,6 +150,13 @@ def main_wrapper(parser_args, run, logger):
 if __name__ == "__main__":
     enable_stdout_logging()
     enable_appinsights_logging()
+    _default = {
+        "type": "azure_open_ai",
+        "model_name": "gpt-35-turbo",
+        "deployment_name": "gpt-35-turbo",
+        "temperature": 0,
+        "max_tokens": 3000,
+    }
 
     parser = ArgumentParser()
     parser.add_argument("--input-data", type=str, required=True, dest="input_data")
@@ -161,7 +167,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--llm_config",
         type=str,
-        default='{"type": "azure_open_ai","model_name": "gpt-35-turbo", "deployment_name": "gpt-35-turbo", "temperature": 0, "max_tokens": 3000}',
+        default=f"{_default}",
     )
     parser.add_argument("--qa_types", type=str, default="SHORT_ANSWER,LONG_ANSWER,BOOLEAN,SUMMARY")
     parser.add_argument("--openai_api_version", type=str)

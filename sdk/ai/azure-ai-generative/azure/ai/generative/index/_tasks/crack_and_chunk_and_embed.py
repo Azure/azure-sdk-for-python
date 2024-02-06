@@ -71,7 +71,9 @@ def crack_and_chunk_and_embed(
 
                 connection_args["connection"] = {"id": get_id_from_connection(embeddings_connection)}
 
-        embeddings_container = EmbeddingsContainer.from_uri(embeddings_model, **connection_args)  # type: ignore[used-before-def,arg-type]
+        embeddings_container = EmbeddingsContainer.from_uri(
+            embeddings_model, **connection_args  # type: ignore[used-before-def,arg-type]
+        )
 
     if citation_replacement_regex:
         document_path_replacement = json.loads(citation_replacement_regex)
@@ -106,15 +108,13 @@ def crack_and_chunk_and_embed(
         if existing_embedded_source:
             if existing_embedded_source.source.mtime is not None and existing_embedded_source.source.mtime >= mtime:
                 if verbosity >= SOURCE_LOGGING_VERBOSITY:
-                    logger.info(
-                        f"REUSING: source '{source_doc.filename}' embedding as mtime {mtime} is older than existing mtime {existing_embedded_source.source.mtime}"
-                    )
+                    msg = f"mtime {mtime} is older than existing mtime {existing_embedded_source.source.mtime}"
+                    logger.info(f"REUSING: source '{source_doc.filename}' embedding as " + msg)
                 reused_sources[source_doc.filename] = existing_embedded_source
             else:
                 if verbosity >= SOURCE_LOGGING_VERBOSITY:
-                    logger.info(
-                        f"EMBEDDING: source '{source_doc.filename}' as mtime {mtime} is newer than existing mtime {existing_embedded_source.source.mtime}"
-                    )
+                    msg = f"mtime {mtime} is newer than existing mtime {existing_embedded_source.source.mtime}"
+                    logger.info(f"EMBEDDING: source '{source_doc.filename}' as " + msg)
                 sources_to_embed[source_doc.filename] = source_doc
             del embeddings_container._document_sources[source_doc.filename]
         else:
@@ -125,9 +125,8 @@ def crack_and_chunk_and_embed(
     deleted_sources = embeddings_container._document_sources
     for deleted_source in deleted_sources.values():
         if verbosity >= SOURCE_LOGGING_VERBOSITY:
-            logger.info(
-                f"REMOVING: source '{deleted_source.source.filename}' from EmbeddingsContainer as it no longer exists in source"
-            )
+            msg = f"REMOVING: source '{deleted_source.source.filename}' "
+            logger.info(msg + "from EmbeddingsContainer as it no longer exists in source")
 
     # Reset EmbeddingsContainer._document_sources, ready to add reused sources
     embeddings_container._document_sources = OrderedDict()
@@ -150,7 +149,8 @@ def crack_and_chunk_and_embed(
             documents_embedded[doc_id] = embeddings_container._document_embeddings[doc_id]
             del embeddings_container._document_embeddings[doc_id]
 
-    # Now we have sources_to_embed that we need to chunk, compare with existing embedded documents, and embed, then merge with reused_sources
+    # Now we have sources_to_embed that we need to chunk, compare with existing embedded documents, and embed,
+    # then merge with reused_sources
     # Configure document cracking and chunking
     extension_loaders = copy.deepcopy(file_extension_loaders)
     extension_splitters = copy.deepcopy(file_extension_splitters)
@@ -182,15 +182,13 @@ def crack_and_chunk_and_embed(
             if existing_embedded_document:
                 if existing_embedded_document.document_hash == document_hash:
                     if verbosity >= DOCUMENT_LOGGING_VERBOSITY:
-                        logger.info(
-                            f"SKIPPING: chunk '{document.document_id}' embedding as hash {document_hash} is the same as existing hash {existing_embedded_document.document_hash}"
-                        )
+                        msg = f"SKIPPING: chunk '{document.document_id}' embedding as hash {document_hash} "
+                        logger.info(msg + f"is the same as existing hash {existing_embedded_document.document_hash}")
                     documents_embedded[document.document_id] = existing_embedded_document
                 else:
                     if verbosity >= DOCUMENT_LOGGING_VERBOSITY:
-                        logger.info(
-                            f"EMBEDDING: chunk '{document.document_id}' as hash {document_hash} is different than existing hash {existing_embedded_document.document_hash}"
-                        )
+                        msg = f"EMBEDDING: chunk '{document.document_id}' as hash {document_hash} "
+                        logger.info(msg + f"is different than existing hash {existing_embedded_document.document_hash}")
                     documents_to_embed.append(document)
                 del embeddings_container._document_embeddings[document.document_id]
             else:
@@ -219,7 +217,8 @@ def crack_and_chunk_and_embed(
 
     # TODO: Making this a generator breaks `_embed` on OpenAIEmbedder because it calls `len()`.
     # Likely need to batch here if can't use generator as could be way too much data and embeddings to hold in memory.
-    # TODO: Consider having Futures pool of workers making embedding requests and pushing results like `embed` task does, but internal to EmbeddingsContainer.
+    # TODO: Consider having Futures pool of workers making embedding requests and
+    # pushing results like `embed` task does, but internal to EmbeddingsContainer.
     data_to_embed = [document.load_data() for document in documents_to_embed]
 
     with track_activity(
@@ -233,11 +232,18 @@ def crack_and_chunk_and_embed(
             "model": embeddings_container.arguments.get("model", ""),
         },
     ) as activity_logger:
-        embeddings = embeddings_container._embed_fn(data_to_embed, activity_logger=activity_logger)  # type: ignore[call-arg]
+        embeddings = embeddings_container._embed_fn(
+            data_to_embed, activity_logger=activity_logger  # type: ignore[call-arg]
+        )
 
     for (document, embedding) in zip(documents_to_embed, embeddings):
         documents_embedded[document.document_id] = DataEmbeddedDocument(
-            document.document_id, document.mtime, document.metadata["content_hash"], document.load_data(), embedding, document.metadata  # type: ignore[attr-defined]
+            document.document_id,
+            document.mtime,
+            document.metadata["content_hash"],
+            document.load_data(),
+            embedding,
+            document.metadata,
         )
 
     # Set and save with EmbeddingsContainer (snapshot of state for this Run)
@@ -282,7 +288,8 @@ def main(args, logger, activity_logger):
         )
 
         # EmbeddingsContainer now has current state of sources, and embedded documents, and deleted documents
-        # TODO: Need to handle embeddings_cache path as being remote or local, being mounted or not, then that final path being used for the EmbeddingsContainer persistance.
+        # TODO: Need to handle embeddings_cache path as being remote or local, being mounted or not,
+        # then that final path being used for the EmbeddingsContainer persistance.
         # New embeddings_container code ideally would handle this?
         if args.output_path is not None:
             embeddings_container.save(args.output_path, with_metadata=True)
@@ -318,12 +325,15 @@ if __name__ == "__main__":
     parser.add_argument("--num_workers", type=int, default=-1)
     parser.add_argument("--output_path", type=str, required=False)
 
+    help_msg_0 = "0: Aggregate Source/Document Info, "
+    help_msg_1 = "1: Source Ids logged as processed, "
+    help_msg_2 = "2: Document Ids logged as processed."
     parser.add_argument(
         "--verbosity",
         type=int,
         default=2,
         choices=[0, 1, 2],
-        help="0: Aggregate Source/Document Info, 1: Source Ids logged as processed, 2: Document Ids logged as processed.",
+        help=help_msg_0 + help_msg_1 + help_msg_2,
     )
 
     # Legacy

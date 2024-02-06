@@ -100,7 +100,8 @@ class DocumentChunksIterator(Iterator):
         """
         Provide current statistics about the documents processed by iDocumentChunkIterator.
 
-        **Note:** The statistics only include files which have already been pulled through the iterator, calling this before iterating will yield None.
+        **Note:** The statistics only include files which have already been pulled through the iterator,
+        calling this before iterating will yield None.
         """
         return self.__document_statistics
 
@@ -122,14 +123,18 @@ class DocumentChunksIterator(Iterator):
             if allowed_extensions is not None:
                 if source_path.suffix not in allowed_extensions:
                     self.__document_statistics["skipped_files"] += 1  # type: ignore[index]
-                    ext_skipped = self.__document_statistics["skipped_extensions"].get(source_path.suffix.lower(), 0)  # type: ignore[index]
-                    self.__document_statistics["skipped_extensions"][source_path.suffix.lower()] = ext_skipped + 1  # type: ignore[index]
+                    _skipped_extensions = self.__document_statistics["skipped_extensions"]  # type: ignore[index]
+                    ext_skipped = _skipped_extensions.get(source_path.suffix.lower(), 0)
+                    _skipped_extensions[source_path.suffix.lower()] = ext_skipped + 1
                     logger.debug(f'Filtering out extension "{source_path.suffix.lower()}" source: {source.filename}')
                     continue
-            ext_kept = self.__document_statistics["kept_extensions"].get(source_path.suffix.lower(), 0)  # type: ignore[index]
-            self.__document_statistics["kept_extensions"][source_path.suffix.lower()] = ext_kept + 1  # type: ignore[index]
+            _kept_extensions = self.__document_statistics["kept_extensions"]  # type: ignore[index]
+            ext_kept = _kept_extensions.get(source_path.suffix.lower(), 0)
+            _kept_extensions[source_path.suffix.lower()] = ext_kept + 1  # type: ignore[index]
             yield source
-        logger.info(f"[DocumentChunksIterator::filter_extensions] Filtered {self.__document_statistics['skipped_files']} files out of {self.__document_statistics['total_files']}")  # type: ignore[index]
+        msg_1 = f"Filtered {self.__document_statistics['skipped_files']} files "  # type: ignore[index]
+        msg_2 = f"out of {self.__document_statistics['total_files']}"  # type: ignore[index]
+        logger.info(f"[DocumentChunksIterator::filter_extensions] " + msg_1 + msg_2)
         if self.span is not None:
             self.span.set_attributes({f"document_statistics.{k}": v for k, v in self.__document_statistics.items()})
 
@@ -152,12 +157,12 @@ class DocumentChunksIterator(Iterator):
                 try:
                     parts = remote_url.split("/")
                     org, project, repository = parts[0], parts[1], parts[2]
+                    repository = f"https://{org}.visualstudio.com/DefaultCollection/{project}/_git/{repository}"
                     # TODO: url encode `repo.active_branch.name`
-                    remote_url = f"https://{org}.visualstudio.com/DefaultCollection/{project}/_git/{repository}?version=GB{repo.active_branch.name}&path="
+                    remote_url = repository + f"?version=GB{repo.active_branch.name}&path="
                 except Exception as e:
-                    logger.warning(
-                        f"Failed to parse org, project and repo from Azure DevOps remote url: {remote_url}\nbecause: {e}"
-                    )
+                    url = f"{remote_url}\nbecause: {e}"
+                    logger.warning(f"Failed to parse org, project and repo from Azure DevOps remote url: " + url)
                     pass
             else:
                 # Infer branch from repo

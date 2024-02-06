@@ -127,7 +127,8 @@ def get_embed_fn(
         #             duration = time.time() - pre_batch if pre_batch else 0
         #             logger.error(f"Failed to embed after {duration}s:\n{e}.", exc_info=e, extra={"print": True})
         #             if activity_logger:
-        #                 activity_logger.error("Failed to embed", extra={"properties": {"batch_size": embedder.chunk_size, "duration": duration, "embedding_kind": embedding_kind}})
+        #                 activity_logger.error("Failed to embed", extra={"properties": {
+        #                 "batch_size": embedder.chunk_size, "duration": duration, "embedding_kind": embedding_kind}})
         #             print(f"Failed texts: {texts_chunk}\nlengths: {[len(t) for t in texts_chunk]}\n")
         #             raise e
         #     return embeddings
@@ -178,7 +179,9 @@ def get_embed_fn(
 
         return embed
     elif embedding_kind == "hugging_face":
-        embedder: Union[OpenAIEmbedder, Embedder] = get_langchain_embeddings(embedding_kind, arguments, credential=credential)  # type: ignore[no-redef]
+        embedder: Union[OpenAIEmbedder, Embedder] = get_langchain_embeddings(  # type: ignore[no-redef]
+            embedding_kind, arguments, credential=credential
+        )
 
         return embedder.embed_documents
     elif embedding_kind == "custom":
@@ -220,7 +223,9 @@ def get_query_embed_fn(
 
         return embedder.embed_query
     elif embedding_kind == "hugging_face":
-        embedder: Union[OpenAIEmbedder, Embedder] = get_langchain_embeddings(embedding_kind, arguments, credential=credential)  # type: ignore[no-redef]
+        embedder: Union[OpenAIEmbedder, Embedder] = get_langchain_embeddings(  # type: ignore[no-redef]
+            embedding_kind, arguments, credential=credential
+        )
 
         return embedder.embed_query
     elif embedding_kind == "custom":
@@ -380,12 +385,18 @@ class EmbeddingsContainer:
     A class for generating embeddings.
 
     Once some chunks have been embedded using `EmbeddingsContainer.embed`,
-    they can be loaded into a FAISS Index or persisted to be loaded later via `EmbeddingsContainer.save` and `EmbeddingsContainer.load`.
+    they can be loaded into a FAISS Index or
+    persisted to be loaded later via `EmbeddingsContainer.save` and `EmbeddingsContainer.load`.
 
     When saved to files:
     - The metadata about the EmbeddingsContainer is stored in `embeddings_metadata.yaml`.
-    - The metadata each document (doc_id, mtime, hash, metadata, path_to_data) is stored in `embeddings*.parquet`, the start meaning multiple files (partitions) can be written to the same folder containing distinct documents. This enables parallel generation of embeddings, multiple partitions are handled in `EmbeddingsContainer.load` as well.
-    - The document chunk content and embedding vectors are stores in `data*.parquet` files. These are loaded from lazily when the data or embeddings for a document is requested, not when `EmbeddingsContainer.load` is called.
+    - The metadata each document (doc_id, mtime, hash, metadata, path_to_data) is stored in `embeddings*.parquet`,
+    the start meaning multiple files (partitions) can be written to the same folder containing distinct documents.
+    This enables parallel generation of embeddings,
+    multiple partitions are handled in `EmbeddingsContainer.load` as well.
+    - The document chunk content and embedding vectors are stores in `data*.parquet` files.
+    These are loaded from lazily when the data or embeddings for a document is requested,
+    not when `EmbeddingsContainer.load` is called.
     """
 
     _embeddings_schema = ["doc_id", "mtime", "hash", "metadata", "path_to_data", "index", "is_local"]
@@ -523,8 +534,10 @@ class EmbeddingsContainer:
                     raise ValueError(
                         f"Format of provided embedding file ({partition}) is not supported.  Missing column {column}"
                     )
-            # TODO: Keep pyarrow partition in Embeddings instance and give out `ReferenceEmbeddedDocument` when iterated over/indexed into with doc_id.
-            # Allows each partition of embeddings to be stored in one array and users to retrieve it as one array with cow properties.
+            # TODO: Keep pyarrow partition in Embeddings instance and give out `ReferenceEmbeddedDocument`
+            # when iterated over/indexed into with doc_id.
+            # Allows each partition of embeddings to be stored in one array and
+            # users to retrieve it as one array with cow properties.
             for i in range(table.num_rows):
                 doc_id = table.column("doc_id")[i].as_py()
                 mtime = table.column("mtime")[i].as_py()
@@ -542,10 +555,8 @@ class EmbeddingsContainer:
                 )
 
             logger.info(f"Loaded {table.num_rows} documents from {partition}")
-
-        logger.info(
-            f"Loaded {len(self._document_embeddings.keys())} documents from {len(embedding_partitions_files)} partitions"
-        )
+        msg = f"Loaded {len(self._document_embeddings.keys())} documents "
+        logger.info(msg + f"from {len(embedding_partitions_files)} partitions")
 
         return self
 
@@ -608,8 +619,10 @@ class EmbeddingsContainer:
                     raise ValueError(
                         f"Format of provided embedding file ({partition}) is not supported.  Missing column {column}"
                     )
-            # TODO: Keep pyarrow partition in Embeddings instance and give out `ReferenceEmbeddedDocument` when iterated over/indexed into with doc_id.
-            # Allows each partition of embeddings to be stored in one array and users to retrieve it as one array with cow properties.
+            # TODO: Keep pyarrow partition in Embeddings instance and give out `ReferenceEmbeddedDocument`
+            # when iterated over/indexed into with doc_id.
+            # Allows each partition of embeddings to be stored in one array and
+            # users to retrieve it as one array with cow properties.
             for i in range(table.num_rows):
                 doc_id = table.column("doc_id")[i].as_py()
                 mtime = table.column("mtime")[i].as_py()
@@ -918,14 +931,20 @@ class EmbeddingsContainer:
             return lambda text: text
 
     def embed(self, input_documents: Union[Iterator[Document], BaseLoader, DocumentChunksIterator]):
-        """Embeds inout documents if they are new or changed and mutates current instance to drop embeddings for documents that are no longer present."""
+        """
+        Embeds inout documents if they are new or changed and mutates current instance to drop embeddings
+        for documents that are no longer present.
+        """
         self._document_embeddings = self._get_embeddings_internal(input_documents)
         return self
 
     def embed_and_create_new_instance(
         self, input_documents: Union[Iterator[Document], BaseLoader, DocumentChunksIterator]
     ) -> "EmbeddingsContainer":
-        """Embeds input documents if they are new or changed and returns a new instance with the new embeddings. Current instance is not mutated."""
+        """
+        Embeds input documents if they are new or changed and returns a new instance with the new embeddings.
+        Current instance is not mutated.
+        """
         document_embeddings = self._get_embeddings_internal(input_documents)
         new_embeddings = EmbeddingsContainer(self.kind, **self.arguments)
         new_embeddings._document_embeddings = document_embeddings
@@ -944,8 +963,8 @@ class EmbeddingsContainer:
             and "document_loaders" in input_documents.__module__
         ):
             input_documents = iter(
-                [WrappedLangChainDocument(d) for d in input_documents.load()]
-            )  # type: ignore[union-attr]
+                [WrappedLangChainDocument(d) for d in input_documents.load()]  # type: ignore[union-attr]
+            )
             # TODO: Bug 2879186
         elif isinstance(input_documents, DocumentChunksIterator):
             flattened_docs: List = []
@@ -977,10 +996,8 @@ class EmbeddingsContainer:
 
                 with contextlib.suppress(Exception):
                     mtime = datetime.datetime.fromtimestamp(mtime)
-
-                logger.info(
-                    f"Skip embedding document {document.document_id} as it has not been modified since last embedded at {mtime}"
-                )
+                msg = f"it has not been modified since last embedded at {mtime}"
+                logger.info(f"Skip embedding document {document.document_id} as " + msg)
                 self.statistics["documents_reused"] = len(documents_embedded.keys())
                 continue
 
@@ -1021,7 +1038,9 @@ class EmbeddingsContainer:
                     "model": self.arguments.get("model", ""),
                 },
             ) as activity_logger:
-                embeddings = self._embed_fn(texts=data_to_embed, activity_logger=activity_logger)  # type: ignore[call-arg]
+                embeddings = self._embed_fn(  # type: ignore[call-arg]
+                    texts=data_to_embed, activity_logger=activity_logger
+                )
         except Exception as e:
             logger.error(f"Failed to get embeddings with error: {e}")
             raise
@@ -1062,7 +1081,10 @@ class EmbeddingsContainer:
             import_faiss_or_so_help_me = dependable_faiss_import
         elif engine.endswith("indexes.faiss.FaissAndDocStore"):
             from azure.ai.generative.index._docstore import FileBasedDocstore
-            from azure.ai.generative.index._indexes.faiss import FaissAndDocStore, import_faiss_or_so_help_me  # type: ignore[no-redef]
+            from azure.ai.generative.index._indexes.faiss import (  # type: ignore[no-redef]
+                FaissAndDocStore,
+                import_faiss_or_so_help_me,
+            )
 
             def add_doc(doc_id, emb_doc, documents):
                 documents.append(
@@ -1105,9 +1127,8 @@ class EmbeddingsContainer:
         index = faiss.IndexFlatL2(len(embeddings[0]))
         index.add(np.array(embeddings, dtype=np.float32))
 
-        logger.info(
-            f"Built index from {num_source_docs} documents and {len(embeddings)} chunks, took {time.time()-t1:.4f} seconds"
-        )
+        msg = f"took {time.time()-t1:.4f} seconds"
+        logger.info(f"Built index from {num_source_docs} documents and {len(embeddings)} chunks, " + msg)
 
         return FaissClass(self.get_query_embed_fn(), index, docstore, index_to_id)
 
@@ -1184,8 +1205,10 @@ class EmbeddingsContainer:
         """
         Mounts the embeddings container and loads it.
 
-        Acts as a ContextManager, so it can be used in a `with` statement, keeping the embeddings_cache mounted if it is a remote path.
-        This ensures that Referenced Embeddings accessed while interacting with the EmbeddingsContainer remain accessible.
+        Acts as a ContextManager, so it can be used in a `with` statement,
+        keeping the embeddings_cache mounted if it is a remote path.
+        This ensures that Referenced Embeddings accessed
+        while interacting with the EmbeddingsContainer remain accessible.
         """
         local_embeddings_cache = None
         if embeddings_cache_path is not None:

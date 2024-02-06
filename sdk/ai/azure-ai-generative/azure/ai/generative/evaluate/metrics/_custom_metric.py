@@ -74,7 +74,9 @@ class PromptMetric(Metric):
     .. code-block:: python
 
         # Metric from prompt template
-        custom_prompt_metric = PromptMetric.from_template(path="test_template.jinja2", name="my_relevance_from_template")
+        custom_prompt_metric = PromptMetric.from_template(
+            path="test_template.jinja2", name="my_relevance_from_template"
+        )
 
         # Creating metric by provided details needed to build the prompt
         metric = PromptMetric(

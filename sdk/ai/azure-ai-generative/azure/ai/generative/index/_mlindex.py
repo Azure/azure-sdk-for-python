@@ -99,7 +99,8 @@ class MLIndex:
 
                     mlindex_file = fsspec.open(mlindex_uri, "r")
                     if hasattr(mlindex_file.fs, "_path"):
-                        # File on azureml filesystem has path relative to container root so need to get underlying fs path
+                        # File on azureml filesystem has path relative to container root
+                        # Need to get underlying fs path
                         self.base_uri = mlindex_file.fs._path.split("/MLIndex")[0]
                     else:
                         self.base_uri = mlindex_file.path.split("/MLIndex")[0]
@@ -164,9 +165,8 @@ class MLIndex:
                 import_azure_search_or_so_help_me()
 
                 if self.index_config.get("field_mapping", {}).get("embedding", None) is None:
-                    raise ValueError(
-                        "field_mapping.embedding must be set in MLIndex config for acs index, try `.as_langchain_retriever()` instead."
-                    )
+                    msg = "field_mapping.embedding must be set in MLIndex config for acs index, "
+                    raise ValueError(msg + "try `.as_langchain_retriever()` instead.")
 
                 try:
                     connection_credential = get_connection_credential(self.index_config, credential=credential)
@@ -236,9 +236,8 @@ class MLIndex:
                 else:
                     from azure.ai.generative.index._langchain.acs import AzureCognitiveSearchVectorStore
 
-                    logger.warning(
-                        f"azure-search-documents=={azure_search_documents_version} not compatible langchain.vectorstores.azuresearch yet, using REST client based VectorStore."
-                    )
+                    msg = f"azure-search-documents=={azure_search_documents_version} not compatible "
+                    logger.warning(msg + "langchain.vectorstores.azuresearch yet, using REST client based VectorStore.")
 
                     return AzureCognitiveSearchVectorStore(
                         index_name=self.index_config.get("index", ""),
@@ -272,9 +271,8 @@ class MLIndex:
 
                             store = FAISS.load_local(str(tmpdir), embeddings)
                         except Exception as e:
-                            logger.warning(
-                                f"Failed to load FAISS Index using installed version of langchain, retrying with vendored FAISS VectorStore.\n{e}"
-                            )
+                            msg = f"retrying with vendored FAISS VectorStore.\n{e}"
+                            logger.warning("Failed to load FAISS Index using installed version of langchain, " + msg)
 
                             from azure.ai.resources._index._langchain.vendor.vectorstores.faiss import FAISS
 
@@ -283,6 +281,7 @@ class MLIndex:
                 elif engine.endswith("indexes.faiss.FaissAndDocStore"):
                     from azure.ai.resources._index._indexes.faiss import FaissAndDocStore
 
+                    # pylint: disable=line-too-long
                     error_fmt_str = """Failed to import langchain faiss bridge module with: {e}\n"
                         This could be due to an incompatible change in langchain since this bridge was implemented.
                         If you understand what has changed you could implement your own wrapper of azure.ai.tools.mlindex._indexes.faiss.FaissAndDocStore.
@@ -317,9 +316,8 @@ class MLIndex:
 
                     connection_credential = get_connection_credential(self.index_config, credential=credential)
                     if not isinstance(connection_credential, AzureKeyCredential):
-                        raise ValueError(
-                            f"Expected credential to Pinecone index to be an AzureKeyCredential, instead got: {type(connection_credential)}"
-                        )
+                        msg = f"instead got: {type(connection_credential)}"
+                        raise ValueError(f"Expected credential to Pinecone index to be an AzureKeyCredential, " + msg)
 
                     environment = get_pinecone_environment(self.index_config, credential=credential)
                     pinecone.init(api_key=connection_credential.key, environment=environment)
@@ -337,9 +335,8 @@ class MLIndex:
                             text_key=self.index_config.get("field_mapping", {})["content"],
                         )
                     except Exception as e:
-                        logger.warn(
-                            f"Failed to get Pinecone vectorstore due to {e}, try again by passing in `embedding` as an Embeddings object."
-                        )
+                        msg = f"Failed to get Pinecone vectorstore due to {e}, "
+                        logger.warn(msg + "try again by passing in `embedding` as an Embeddings object.")
                         return Pinecone.from_existing_index(
                             self.index_config.get("index"),
                             self.get_langchain_embeddings(credential=credential),
@@ -385,7 +382,8 @@ class MLIndex:
         """
         Converts MLIndex config into a client for the underlying Index, may download files.
 
-        An azure.search.documents.SearchClient for acs indexes or an azure.ai.resources._index._indexes.indexFaissAndDocStore for faiss indexes.
+        An azure.search.documents.SearchClient for acs indexes or
+        an azure.ai.resources._index._indexes.indexFaissAndDocStore for faiss indexes.
         """
         index_kind = self.index_config.get("kind", None)
         if index_kind == "acs":
@@ -412,9 +410,8 @@ class MLIndex:
 
             connection_credential = get_connection_credential(self.index_config, credential=credential)
             if not isinstance(connection_credential, AzureKeyCredential):
-                raise ValueError(
-                    f"Expected credential to Pinecone index to be an AzureKeyCredential, instead got: {type(connection_credential)}"
-                )
+                msg = f"instead got: {type(connection_credential)}"
+                raise ValueError(f"Expected credential to Pinecone index to be an AzureKeyCredential, " + msg)
 
             environment = get_pinecone_environment(self.index_config, credential=credential)
             pinecone.init(api_key=connection_credential.key, environment=environment)
@@ -515,8 +512,12 @@ class MLIndex:
             chunk_size: Size of chunks to split documents into
             chunk_overlap: Size of overlap between chunks
             citation_url: Optional url to replace citation urls with
-            citation_replacement_regex: Optional regex to use to replace citation urls, e.g. `{"match_pattern": "(.*)/articles/(.*)(\.[^.]+)$", "replacement_pattern": "\1/\2"}`
-            embeddings_model: Name of embeddings model to use, expected format `azure_open_ai://deployment/.../model/text-embedding-ada-002` or `hugging_face://model/all-mpnet-base-v2`
+            citation_replacement_regex: Optional regex to use to replace citation urls,
+                e.g. `{"match_pattern": "(.*)/articles/(.*)(\.[^.]+)$", "replacement_pattern": "\1/\2"}`
+            embeddings_model: Name of embeddings model to use,
+            expected format
+                `azure_open_ai://deployment/.../model/text-embedding-ada-002` or
+                `hugging_face://model/all-mpnet-base-v2`
             embeddings_connection: Optional connection to use for embeddings model
             embeddings_container: Optional path to location where un-indexed embeddings can be saved/loaded.
             index_type: Type of index to use, e.g. faiss
@@ -576,7 +577,9 @@ class MLIndex:
         ----
             documents: Iterator of documents to index
             index_kind: Kind of index to use
-            embeddings_model: Name of embeddings model to use, expected format `azure_open_ai://deployment/.../model/text-embedding-ada-002` or `hugging_face://model/all-mpnet-base-v2`
+            embeddings_model: Name of embeddings model to use, expected format
+                `azure_open_ai://deployment/.../model/text-embedding-ada-002` or
+                `hugging_face://model/all-mpnet-base-v2`
             embeddings_container: Optional path to location where un-indexed embeddings can be saved/loaded.
             index_type: Type of index to use, e.g. faiss
             index_connection: Optional connection to use for index
@@ -630,9 +633,9 @@ class MLIndex:
 
                         if embeddings_connection:
                             if isinstance(embeddings_connection, str):
-                                embeddings_connection: Union[Dict[str, Dict[str, Dict[str, Any]]], Any] = get_connection_by_id_v2(  # type: ignore[no-redef]
-                                    embeddings_connection, credential=credential
-                                )
+                                embeddings_connection: Union[  # type: ignore[no-redef]
+                                    Dict[str, Dict[str, Dict[str, Any]]], Any
+                                ] = get_connection_by_id_v2(embeddings_connection, credential=credential)
                             connection_args = {
                                 "connection_type": "workspace_connection",
                                 "connection": {"id": get_id_from_connection(embeddings_connection)},
@@ -677,7 +680,8 @@ class MLIndex:
 
         if embeddings_container is not None:
             now = datetime.now()
-            # TODO: This means new snapshots will be created for every run, ideally there'd be a use container as readonly vs persist snapshot option
+            # TODO: This means new snapshots will be created for every run
+            # Ideally there'd be a use container as readonly vs persist snapshot option
             embeddings.save(
                 str(
                     Path(embeddings_container)
@@ -746,20 +750,24 @@ class MLIndex:
                 connection_args = {"connection_type": "environment", "connection": {"key": "AZURE_AI_SEARCH_KEY"}}
             else:
                 if isinstance(index_connection, str):
-                    index_connection: Union[Dict[str, Dict[str, Dict[str, Any]]], Any] = get_connection_by_id_v2(index_connection, credential=credential)  # type: ignore[no-redef]
+                    index_connection: Union[  # type: ignore[no-redef]
+                        Dict[str, Dict[str, Dict[str, Any]]], Any
+                    ] = get_connection_by_id_v2(index_connection, credential=credential)
                 index_config = {
                     **index_config,
                     **{
                         "endpoint": (
                             index_connection.target
                             if hasattr(index_connection, "target")
-                            else index_connection["properties"]["target"]
-                        ),  # type: ignore[index]
+                            else index_connection["properties"]["target"]  # type: ignore[index]
+                        ),
                         "api_version": (
                             index_connection.metadata.get("apiVersion", "2023-07-01-preview")
                             if hasattr(index_connection, "metadata")
-                            else index_connection["properties"]["metadata"].get("apiVersion", "2023-07-01-preview")
-                        ),  # type: ignore
+                            else index_connection["properties"]["metadata"].get(  # type: ignore
+                                "apiVersion", "2023-07-01-preview"
+                            )
+                        ),
                     },
                 }
                 connection_args = {
@@ -775,14 +783,18 @@ class MLIndex:
                 credential=credential,
             )
         elif index_type == "pinecone":
-            from azure.ai.generative.index._tasks.update_pinecone import create_index_from_raw_embeddings  # type: ignore[assignment]
+            from azure.ai.generative.index._tasks.update_pinecone import (  # type: ignore[assignment]
+                create_index_from_raw_embeddings,
+            )
 
             if not index_connection:
                 index_config = {**index_config, **{"environment": os.getenv("PINECONE_ENVIRONMENT")}}
                 connection_args = {"connection_type": "environment", "connection": {"key": "PINECONE_API_KEY"}}
             else:
                 if isinstance(index_connection, str):
-                    index_connection = get_connection_by_id_v2(index_connection, credential=credential)  # type: ignore[assignment,used-before-def]
+                    index_connection = get_connection_by_id_v2(  # type: ignore[assignment,used-before-def]
+                        index_connection, credential=credential
+                    )
                 index_config = {
                     **index_config,
                     **{"environment": index_connection["properties"]["metadata"]["environment"]},  # type: ignore[index]

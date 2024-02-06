@@ -29,7 +29,8 @@ def main(args, logger, activity_logger):
     parent = "/".join(splits)
     logger.info(f"extracted embeddings container path: {parent}")
 
-    # Mock OPENAI_API_KEY being set so that loading Embeddings doesn't fail, we don't need to do any embedding so should be fine
+    # Mock OPENAI_API_KEY being set so that loading Embeddings doesn't fail,
+    # we don't need to do any embedding so should be fine
     os.environ["OPENAI_API_KEY"] = "nope"
 
     from azureml.dataprep.fuse.dprepfuse import MountOptions, rslex_uri_volume_mount

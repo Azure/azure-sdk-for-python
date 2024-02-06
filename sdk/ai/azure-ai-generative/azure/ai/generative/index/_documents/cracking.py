@@ -176,9 +176,8 @@ class PDFFileLoader(BaseDocumentLoader):
                 metadata = {"page_number": reader.get_page_number(page), **self.metadata}
                 docs.append(StaticDocument(page_text, metadata=metadata))
         if len(docs) == 0:
-            logger.warning(
-                f"Unable to extract text from file: {self.document_source.filename} This can happen if a PDF contains only images."
-            )
+            msg = f"Unable to extract text from file: {self.document_source.filename} "
+            logger.warning(msg + "This can happen if a PDF contains only images.")
         return docs
 
     @classmethod
@@ -345,7 +344,8 @@ def crack_documents(
                     safe_mlflow_log_metric(ext, files_by_extension[ext], logger=logger, step=int(time.time() * 1000))
         mode = "r"
         if loader_cls is None:
-            raise RuntimeError(f"Unsupported file extension '{source.path.suffix}': {source.filename}")  # type: ignore[union-attr]
+            msg = f"Unsupported file extension '{source.path.suffix}': {source.filename}"  # type: ignore[union-attr]
+            raise RuntimeError(msg)
 
         if hasattr(loader_cls, "file_io_mode"):
             mode = loader_cls.file_io_mode()
@@ -373,6 +373,5 @@ def crack_documents(
     for ext in files_by_extension:
         if files_by_extension[ext] > 0:
             safe_mlflow_log_metric(ext, files_by_extension[ext], logger=logger, step=int(time.time() * 1000))
-    logger.info(
-        f"[DocumentChunksIterator::crack_documents] Total time to load files: {total_time}\n{json.dumps(files_by_extension, indent=2)}"
-    )
+    msg = f"Total time to load files: {total_time}\n{json.dumps(files_by_extension, indent=2)}"
+    logger.info(f"[DocumentChunksIterator::crack_documents] " + msg)
