@@ -25,23 +25,24 @@ from azure.identity.aio import (
 ENV_OPENAI_TEST_MODE = "OPENAI_TEST_MODE"
 
 # for pytest.parametrize
-ALL = ["azure", "azuread", "openai"]
 AZURE = "azure"
 OPENAI = "openai"
 AZURE_AD = "azuread"
+ALL = [AZURE, AZURE_AD, OPENAI]
 WHISPER_AZURE = "whisper_azure"
 WHISPER_AZURE_AD = "whisper_azuread"
-WHISPER_ALL = ["whisper_azure", "whisper_azuread", "openai"]
+WHISPER_ALL = [WHISPER_AZURE, WHISPER_AZURE_AD, OPENAI]
 TTS_OPENAI = "tts_openai"
 TTS_AZURE = "tts_azure"
 TTS_AZURE_AD = "tts_azuread"
+TTS_ALL = [TTS_AZURE, TTS_AZURE_AD, TTS_OPENAI]
 DALLE_AZURE = "dalle_azure"
 DALLE_AZURE_AD = "dalle_azuread"
-DALLE_ALL = ["dalle_azure", "dalle_azuread", "openai"]
+DALLE_ALL = [DALLE_AZURE, DALLE_AZURE_AD, OPENAI]
 GPT_4_AZURE = "gpt_4_azure"
 GPT_4_AZURE_AD = "gpt_4_azuread"
 GPT_4_OPENAI = "gpt_4_openai"
-GPT_4_ALL = ["gpt_4_azure", "gpt_4_azuread", "gpt_4_openai"]
+GPT_4_ALL = [GPT_4_AZURE, GPT_4_AZURE_AD, GPT_4_OPENAI]
 
 # Environment variable keys
 ENV_AZURE_OPENAI_ENDPOINT = "AZ_OPENAI_ENDPOINT"
@@ -58,7 +59,7 @@ ENV_AZURE_OPENAI_SEARCH_ENDPOINT = "AZURE_OPENAI_SEARCH_ENDPOINT"
 ENV_AZURE_OPENAI_SEARCH_KEY = "AZURE_OPENAI_SEARCH_KEY"
 ENV_AZURE_OPENAI_SEARCH_INDEX = "AZURE_OPENAI_SEARCH_INDEX"
 
-ENV_AZURE_OPENAI_API_VERSION = "2024-01-01-preview"
+ENV_AZURE_OPENAI_API_VERSION = "2024-02-15-preview"
 ENV_AZURE_OPENAI_COMPLETIONS_NAME = "gpt-35-turbo-instruct"
 ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME = "gpt-35-turbo-16k"
 ENV_AZURE_OPENAI_EMBEDDINGS_NAME = "text-embedding-ada-002"
