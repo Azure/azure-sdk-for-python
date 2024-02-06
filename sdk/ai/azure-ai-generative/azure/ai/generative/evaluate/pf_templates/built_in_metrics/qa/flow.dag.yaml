@@ -227,7 +227,7 @@ nodes:
     type: package
     tool: promptflow.tools.embedding.embedding
   inputs:
-    connection: "Default_AzureOpenAI"
+    connection: "openai_connection"
     deployment_name: "text-embedding-ada-002"
     input: "${inputs.ground_truth}"
   activate:
@@ -240,7 +240,7 @@ nodes:
     type: package
     tool: promptflow.tools.embedding.embedding
   inputs:
-    connection: "Default_AzureOpenAI"
+    connection: "openai_connection"
     deployment_name: "text-embedding-ada-002"
     input: "${inputs.answer}"
   activate:
