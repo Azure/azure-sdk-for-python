@@ -67,7 +67,7 @@ class AzureAIServiceWorkspaceConnectionSchema(WorkspaceConnectionSchema):
 # pylint: disable-next=name-too-long
 class AzureBlobStoreWorkspaceConnectionSchema(WorkspaceConnectionSchema):
     # type and credentials limited
-    type = StringTransformedEnum(
+    type = StringTransformedEnum( # TODO replace with real connection category.
         allowed_values="azure_blob", casing_transform=camel_to_snake, required=True
     )
     credentials = NestedField(ApiKeyConfigurationSchema)

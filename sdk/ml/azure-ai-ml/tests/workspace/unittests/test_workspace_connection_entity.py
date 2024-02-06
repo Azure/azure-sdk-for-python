@@ -10,6 +10,7 @@ from azure.ai.ml.entities import WorkspaceConnection, AzureOpenAIWorkspaceConnec
 from azure.ai.ml.entities._credentials import PatTokenConfiguration
 from azure.ai.ml.constants._common import WorkspaceConnectionTypes
 
+from azure.ai.ml.entities._workspace.connections.credentials import CONNECTION_AUTH_TYPE_PROPERTY_CLASS_MAP
 
 @pytest.mark.unittest
 @pytest.mark.core_sdk_test
@@ -194,9 +195,9 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.tags["one"] == "two"
 
     def test_blob_storage(self):
-        ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/blob_store_conn.yaml")
+        ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/blob_store.yaml")
 
-        assert ws_connection.type == camel_to_snake(WorkspaceConnectionTypes.CUSTOM)
+        assert ws_connection.type == camel_to_snake("azure_blob") # TODO replace with connetion category reference
         assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
         assert ws_connection.credentials.key == "9876"
         assert ws_connection.name == "test_ws_conn_blob_store"
@@ -217,3 +218,19 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.api_version == new_ws_conn.api_version
         assert ws_connection.api_type == new_ws_conn.api_type
         assert ws_connection.is_shared
+
+    def test_ws_conn_subtype_restriction(self):
+        with pytest.raises(ValueError):
+            _ = WorkspaceConnection(
+                target="dummy_target",
+                type=ConnectionCategory.AZURE_OPEN_AI,
+                name="dummy_connection",
+                strict_typing=True,
+                credentials=None,
+            )
+        _ = AzureOpenAIWorkspaceConnection(
+                target="dummy_target",
+                name="dummy_connection",
+                strict_typing=True,
+                credentials=None,
+            )

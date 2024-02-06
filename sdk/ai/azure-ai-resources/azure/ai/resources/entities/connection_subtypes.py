@@ -318,6 +318,8 @@ class GitHubConnection(BaseConnection):
 
 class AzureBlobStoreConnection(BaseConnection):
     """A Connection to an Azure Blob Datastore.
+    NOTE: This connection type is currently READ-ONLY via the LIST operation. Attempts to create or update
+    a connection of this type will result in an error.
 
     :param name: Name of the connection.
     :type name: str

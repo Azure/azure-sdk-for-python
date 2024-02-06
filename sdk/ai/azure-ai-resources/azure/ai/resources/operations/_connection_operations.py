@@ -30,20 +30,37 @@ class ConnectionOperations:
 
     @distributed_trace
     @monitor_with_activity(logger, "Connection.List", ActivityType.PUBLICAPI)
-    def list(self, connection_type: Optional[str] = None, scope: str = OperationScope.AI_RESOURCE) -> Iterable[BaseConnection]:
+    def list(
+        self,
+        connection_type: Optional[str] = None,
+        scope: str = OperationScope.AI_RESOURCE,
+        include_data_connection: bool = True,
+    ) -> Iterable[BaseConnection]:
         """List all connection assets in a project.
 
         :param connection_type: If set, return only connections of the specified type.
         :type connection_type: str
+        :param scope: The scope of the operation, which determines if the operation will list all connections
+            that are available to the AI Client's AI Resource or just those available to the project.
+            Defaults to AI resource-level scoping.
+        :type scope: ~azure.ai.resources.constants.OperationScope
+        :param include_data_connection: If true, also return data connections. Defaults to True.
+        :type include_data_connection: bool
 
         :return: An iterator like instance of connection objects
         :rtype: Iterable[Connection]
         """
         client = self._resource_ml_client if scope == OperationScope.AI_RESOURCE else self._project_ml_client
-        return [
-            BaseConnection._from_v2_workspace_connection(conn)
-            for conn in client._workspace_connections.list(connection_type=connection_type, params={"includeAll": "true"})
-        ]
+
+        if include_data_connection:
+            operation_result = client._workspace_connections.list(
+                connection_type=connection_type,
+                params={"includeAll": "true"}
+            )
+        else:
+            operation_result = client._workspace_connections.list(connection_type=connection_type)
+
+        return [BaseConnection._from_v2_workspace_connection(conn) for conn in operation_result]
 
     @distributed_trace
     @monitor_with_activity(logger, "Connection.Get", ActivityType.PUBLICAPI)
@@ -52,6 +69,10 @@ class ConnectionOperations:
 
         :param name: Name of the connection.
         :type name: str
+        :param scope: The scope of the operation, which determines if the operation will search among 
+            all connections that are available to the AI Client's AI Resource or just those available to the project.
+            Defaults to AI resource-level scoping.
+        :type scope: ~azure.ai.resources.constants.OperationScope
 
         :return: The connection with the provided name.
         :rtype: Connection
@@ -100,6 +121,10 @@ class ConnectionOperations:
 
         :param name: Name of the connection to delete.
         :type name: str
+        :param scope: The scope of the operation, which determines if the operation should search amongst
+            the connections available to the AI Client's AI Resource for the target connection, or through
+            the connections available to the project. Defaults to AI resource-level scoping.
+        :type scope: ~azure.ai.resources.constants.OperationScope
         """
         client = self._resource_ml_client if scope == OperationScope.AI_RESOURCE else self._project_ml_client
         return client._workspace_connections.delete(name=name)

@@ -14,7 +14,7 @@ from azure.ai.ml.constants._common import (
     WorkspaceConnectionTypes,
 )
 class BaseConnection:
-    """A connection to a specific external AI system. This is a base class and should not be
+    """A connection to a another system or service. This is a base class and should not be
     instantiated directly. Use the child classes that are specialized for connections to different services.
 
     :param name: The name of the connection

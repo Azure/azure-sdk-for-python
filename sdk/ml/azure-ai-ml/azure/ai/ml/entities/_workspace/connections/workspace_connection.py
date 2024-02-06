@@ -6,6 +6,7 @@
 
 from os import PathLike
 from pathlib import Path
+import warnings
 from typing import IO, Any, AnyStr, Dict, List, Optional, Type, Union, cast
 
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
@@ -113,6 +114,27 @@ class WorkspaceConnection(Resource):
         is_shared: bool = True,
         **kwargs: Any,
     ):
+        
+        # Dev note: This initializer has an undocumented kwarg "from_child" to determine if this initialization
+        # is from a child class.
+        # This kwarg is required to allow instantiation of types that are associated with subtypes without a
+        # warning printout.
+        # The additional undocumented kwarg "strict_typing" turns the warning into a value error.
+        from_child = kwargs.pop("from_child", False)
+        strict_typing = kwargs.pop("strict_typing", False)
+        correct_class = WorkspaceConnection._get_entity_class_from_type(type)
+        if not from_child and correct_class != WorkspaceConnection:
+            if strict_typing:
+                raise ValueError(
+                    f"Cannot instantiate a base WorkspaceConnection with a type of {type}. "
+                    f"Please use the appropriate subclass {correct_class.__name__} instead."
+                )
+            else:
+                warnings.warn(
+                    f"The workspace connection of {type} has additional fields and should not be instantiated directly "
+                    f"from the WorkspaceConnection class. Please use its subclass {correct_class.__name__} instead.",
+                )
+
         super().__init__(**kwargs)
 
         self.type = type
@@ -275,10 +297,9 @@ class WorkspaceConnection(Resource):
         popped_tags = conn_class._get_required_metadata_fields()
 
         rest_kwargs = cls._extract_kwargs_from_rest_obj(rest_obj=rest_obj, popped_tags=popped_tags)
-        # Renaming for client clarity
-        if rest_kwargs["type"] == camel_to_snake(ConnectionCategory.CUSTOM_KEYS):
+        # Check for alternative name for custom connection type (added for client clarity).
+        if rest_kwargs["type"].lower() == camel_to_snake(ConnectionCategory.CUSTOM_KEYS).lower():
             rest_kwargs["type"] = WorkspaceConnectionTypes.CUSTOM
-        #import pdb; pdb.set_trace()
         workspace_connection = conn_class(**rest_kwargs)
         return cast(Optional["WorkspaceConnection"], workspace_connection)
 
@@ -287,11 +308,10 @@ class WorkspaceConnection(Resource):
 
     def _to_rest_object(self) -> RestWorkspaceConnection:
         workspace_connection_properties_class: Any = None
-        auth_type = self.credentials.type if self._credentials else None
+        auth_type = _snake_to_camel(self.credentials.type) if self._credentials else None
 
-        if auth_type in CONNECTION_AUTH_TYPE_PROPERTY_CLASS_MAP:
+        if _snake_to_camel(auth_type) in CONNECTION_AUTH_TYPE_PROPERTY_CLASS_MAP:
             workspace_connection_properties_class, _ = CONNECTION_AUTH_TYPE_PROPERTY_CLASS_MAP[auth_type]
-
         # Convert from human readable type to corresponding api enum if needed.
         conn_type = self.type
         if conn_type == WorkspaceConnectionTypes.CUSTOM:
@@ -326,10 +346,8 @@ class WorkspaceConnection(Resource):
         properties = rest_obj.properties
         credentials: Any = None
 
-        if (properties is not None and
-            properties.auth_type is not None and
-            properties.auth_type in CONNECTION_AUTH_TYPE_PROPERTY_CLASS_MAP
-        ):
+        auth_type = _snake_to_camel(properties.auth_type) if properties is not None else None
+        if (auth_type in CONNECTION_AUTH_TYPE_PROPERTY_CLASS_MAP):
             _, credentials_class = CONNECTION_AUTH_TYPE_PROPERTY_CLASS_MAP[properties.auth_type]
             credentials = credentials_class._from_workspace_connection_rest_object(properties.credentials)
 
@@ -373,14 +391,15 @@ class WorkspaceConnection(Resource):
             AzureOpenAIWorkspaceConnection,
             AzureBlobStoreWorkspaceConnection,
         )
+        # Connection categories don't perfectly follow perfect camel casing, so lower
+        # case everything to avoid problems.
         CONNECTION_CATEGORY_TO_SUBCLASS_MAP = {
-            ConnectionCategory.AZURE_OPEN_AI: AzureOpenAIWorkspaceConnection,
-            ConnectionCategory.COGNITIVE_SEARCH: AzureAISearchWorkspaceConnection,
-            ConnectionCategory.COGNITIVE_SERVICE: AzureAIServiceWorkspaceConnection,
-            ConnectionCategory.AZURE_BLOB: AzureBlobStoreWorkspaceConnection,
+            ConnectionCategory.AZURE_OPEN_AI.lower(): AzureOpenAIWorkspaceConnection,
+            ConnectionCategory.COGNITIVE_SEARCH.lower(): AzureAISearchWorkspaceConnection,
+            ConnectionCategory.COGNITIVE_SERVICE.lower(): AzureAIServiceWorkspaceConnection,
+            "azureblob": AzureBlobStoreWorkspaceConnection, #TODO replace with real connection category when available.
         }
-        # Connection category enums are snake-cased.
-        cat = camel_to_snake(conn_type)
+        cat = _snake_to_camel(conn_type).lower()
         conn_class: Type = WorkspaceConnection
         if cat in CONNECTION_CATEGORY_TO_SUBCLASS_MAP:
             conn_class = CONNECTION_CATEGORY_TO_SUBCLASS_MAP[cat]

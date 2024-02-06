@@ -55,7 +55,7 @@ class AzureOpenAIWorkspaceConnection(WorkspaceConnection):
         **kwargs: Any,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
-        super().__init__(target=target, type="azure_open_ai", credentials=credentials, **kwargs)
+        super().__init__(target=target, type="azure_open_ai", credentials=credentials, from_child=True, **kwargs)
 
         if self.tags is not None:
             self.tags[CONNECTION_API_VERSION_KEY] = api_version
@@ -139,7 +139,7 @@ class AzureAISearchWorkspaceConnection(WorkspaceConnection):
         **kwargs: Any,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
-        super().__init__(target=target, type="cognitive_search", credentials=credentials, **kwargs)
+        super().__init__(target=target, type="cognitive_search", credentials=credentials, from_child=True, **kwargs)
 
         if self.tags is not None:
             self.tags[CONNECTION_API_VERSION_KEY] = api_version
@@ -204,7 +204,7 @@ class AzureAIServiceWorkspaceConnection(WorkspaceConnection):
         **kwargs: Any,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
-        super().__init__(target=target, type="cognitive_service", credentials=credentials, **kwargs)
+        super().__init__(target=target, type="cognitive_service", credentials=credentials, from_child=True, **kwargs)
 
         if self.tags is not None:
             self.tags[CONNECTION_API_VERSION_KEY] = api_version
@@ -296,6 +296,7 @@ class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
             target=target,
             type="azure_blob",
             credentials=credentials,
+            from_child=True,
             **kwargs
         )
 

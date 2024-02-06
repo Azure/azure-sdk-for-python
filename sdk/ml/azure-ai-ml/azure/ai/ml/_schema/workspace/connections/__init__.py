@@ -9,6 +9,7 @@ from .workspace_connection_subtypes import (
     OpenAIWorkspaceConnectionSchema,
     AzureAISearchWorkspaceConnectionSchema,
     AzureAIServiceWorkspaceConnectionSchema,
+    AzureBlobStoreWorkspaceConnectionSchema,
 )
 
 __all__ = [
@@ -16,4 +17,5 @@ __all__ = [
     "OpenAIWorkspaceConnectionSchema",
     "AzureAISearchWorkspaceConnectionSchema",
     "AzureAIServiceWorkspaceConnectionSchema",
+    "AzureBlobStoreWorkspaceConnectionSchema",
 ]

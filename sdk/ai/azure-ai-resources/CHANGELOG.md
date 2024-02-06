@@ -4,9 +4,13 @@
 
 ### Features Added
 
+- Connections LIST operation now includes data connections.
+- Connections have read-only support for 3 new connection types: alds gen 2, data lake, and azure blob.
+
 ### Breaking Changes
 
 ### Bugs Fixed
+- Connections docstrings now discuss scope field.
 
 ### Other Changes
 
