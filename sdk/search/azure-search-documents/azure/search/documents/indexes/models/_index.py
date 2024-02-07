@@ -341,7 +341,7 @@ def SearchableField(
     collection: bool = False,
     key: bool = False,
     hidden: bool = False,
-    searchable: bool = False,
+    searchable: bool = True,
     filterable: bool = False,
     sortable: bool = False,
     facetable: bool = False,
