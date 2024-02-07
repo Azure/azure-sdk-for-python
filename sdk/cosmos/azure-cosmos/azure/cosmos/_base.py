@@ -766,8 +766,7 @@ def _replace_throughput(
             max_throughput = throughput.auto_scale_max_throughput
             increment_percent = throughput.auto_scale_increment_percent
             if max_throughput is not None:
-                new_throughput_properties['content']['offerAutopilotSettings'][
-                    'maxThroughput'] = max_throughput
+                new_throughput_properties['content']['offerAutopilotSettings']['maxThroughput'] = max_throughput
                 if increment_percent:
                     new_throughput_properties['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy']['incrementPercent'] = increment_percent  # pylint: disable=line-too-long
                 if throughput.offer_throughput:
