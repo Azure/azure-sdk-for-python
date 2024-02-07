@@ -37,7 +37,7 @@ class ModelBatchDeploymentSchema(DeploymentSchema):
         allowed_values=[BatchDeploymentType.PIPELINE, BatchDeploymentType.MODEL], required=False
     )
 
-    settings = ExperimentalField(NestedField(ModelBatchDeploymentSettingsSchema))
+    settings = NestedField(ModelBatchDeploymentSettingsSchema)
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:
