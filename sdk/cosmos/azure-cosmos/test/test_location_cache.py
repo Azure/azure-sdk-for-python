@@ -1,3 +1,6 @@
+# The MIT License (MIT)
+# Copyright (c) Microsoft Corporation. All rights reserved.
+
 import threading
 import unittest
 from time import sleep

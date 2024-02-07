@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# The MIT License (MIT)
+# Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
 import uuid
