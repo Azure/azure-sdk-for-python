@@ -143,7 +143,6 @@ class DatabaseProxy(object):
         :returns: A dict representing the database properties
         :rtype: Dict[str, Any]
         """
-        response_hook = kwargs.pop('response_hook', None)
         database_link = _get_database_link(self)
         if session_token is not None:
             kwargs['session_token'] = session_token
@@ -154,8 +153,6 @@ class DatabaseProxy(object):
         self._properties = await self.client_connection.ReadDatabase(
             database_link, options=request_options, **kwargs
         )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, self._properties)
 
         return self._properties
 
@@ -227,7 +224,6 @@ class DatabaseProxy(object):
                 :caption: Create a container with specific settings; in this case, a custom partition key:
                 :name: create_container_with_settings
         """
-        response_hook = kwargs.pop('response_hook', None)
         definition: Dict[str, Any] = dict(id=id)
         if partition_key is not None:
             definition["partitionKey"] = partition_key
@@ -264,8 +260,6 @@ class DatabaseProxy(object):
         data = await self.client_connection.CreateContainer(
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
         )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, data)
         return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data)
 
     @distributed_trace_async
@@ -505,7 +499,6 @@ class DatabaseProxy(object):
                 :caption: Reset the TTL property on a container, and display the updated properties:
                 :name: reset_container_properties
         """
-        response_hook = kwargs.pop('response_hook', None)
         if session_token is not None:
             kwargs['session_token'] = session_token
         if initial_headers is not None:
@@ -534,8 +527,6 @@ class DatabaseProxy(object):
         container_properties = await self.client_connection.ReplaceContainer(
             container_link, collection=parameters, options=request_options, **kwargs
         )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, container_properties)
         return ContainerProxy(
             self.client_connection, self.database_link, container_properties["id"], properties=container_properties
         )
@@ -568,7 +559,6 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the container couldn't be deleted.
         :rtype: None
         """
-        response_hook = kwargs.pop('response_hook', None)
         if session_token is not None:
             kwargs['session_token'] = session_token
         if initial_headers is not None:
@@ -581,8 +571,6 @@ class DatabaseProxy(object):
 
         collection_link = self._get_container_link(container)
         await self.client_connection.DeleteContainer(collection_link, options=request_options, **kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, None)
 
     @distributed_trace_async
     async def create_user(
@@ -614,13 +602,9 @@ class DatabaseProxy(object):
                 :name: create_user
         """
         request_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
 
         user = await self.client_connection.CreateUser(
             database_link=self.database_link, user=body, options=request_options, **kwargs)
-
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, user)
 
         return UserProxy(
             client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
@@ -729,13 +713,10 @@ class DatabaseProxy(object):
         :rtype: ~azure.cosmos.aio.UserProxy
         """
         request_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
 
         user = await self.client_connection.UpsertUser(
             database_link=self.database_link, user=body, options=request_options, **kwargs
         )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, user)
         return UserProxy(
             client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
         )
@@ -761,13 +742,9 @@ class DatabaseProxy(object):
         :rtype: ~azure.cosmos.aio.UserProxy
         """
         request_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
 
         replaced_user = await self.client_connection.ReplaceUser(
             user_link=self._get_user_link(user), user=body, options=request_options, **kwargs)
-
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, replaced_user)
 
         return UserProxy(
             client_connection=self.client_connection,
@@ -794,13 +771,10 @@ class DatabaseProxy(object):
         :rtype: None
         """
         request_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
 
         await self.client_connection.DeleteUser(
             user_link=self._get_user_link(user), options=request_options, **kwargs
         )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, None)
 
     @distributed_trace_async
     async def get_throughput(self, **kwargs: Any) -> ThroughputProperties:
@@ -853,7 +827,6 @@ class DatabaseProxy(object):
         :returns: ThroughputProperties for the database, updated with new throughput.
         :rtype: ~azure.cosmos.offer.ThroughputProperties
         """
-        response_hook = kwargs.pop('response_hook', None)
         properties = await self._get_properties()
         link = properties["_self"]
         query_spec = {
@@ -871,6 +844,5 @@ class DatabaseProxy(object):
         _replace_throughput(throughput=throughput, new_throughput_properties=new_offer)
         data = await self.client_connection.ReplaceOffer(offer_link=throughput_properties[0]["_self"],
                                                          offer=throughput_properties[0], **kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, data)
+
         return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
