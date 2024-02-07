@@ -14,6 +14,7 @@ try:
     from langchain.schema.embeddings import Embeddings
     from langchain.schema.vectorstore import VectorStore
 except ImportError:
+    # pylint: disable=ungrouped-imports
     from azure.ai.resources._index._langchain.vendor.embeddings.base import Embeddings
     from azure.ai.resources._index._langchain.vendor.schema.document import Document
     from azure.ai.resources._index._langchain.vendor.vectorstores.base import VectorStore

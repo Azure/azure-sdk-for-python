@@ -12,9 +12,9 @@ from abc import ABC, abstractmethod
 from typing import Deque, Dict, List, Optional, Union
 from collections import deque
 
-from aiohttp import TraceConfig
-from aiohttp.web import HTTPException
-from aiohttp_retry import RetryClient, RandomRetry
+from aiohttp import TraceConfig  # pylint: disable=networking-import-outside-azure-core-transport
+from aiohttp.web import HTTPException  # pylint: disable=networking-import-outside-azure-core-transport
+from aiohttp_retry import RetryClient, RandomRetry  # pylint: disable=networking-import-outside-azure-core-transport
 
 from .identity_manager import APITokenManager
 from .images import replace_prompt_captions, format_multimodal_prompt

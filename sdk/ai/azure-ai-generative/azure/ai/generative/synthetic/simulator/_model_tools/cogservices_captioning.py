@@ -5,8 +5,8 @@
 import json
 import urllib
 from typing import Dict, Optional, Union
-from aiohttp import ClientTimeout
-from aiohttp_retry import RetryClient
+from aiohttp import ClientTimeout  # pylint: disable=networking-import-outside-azure-core-transport
+from aiohttp_retry import RetryClient  # pylint: disable=networking-import-outside-azure-core-transport
 
 from azure.ai.generative.synthetic.simulator._model_tools.identity_manager import KeyVaultAPITokenManager
 
