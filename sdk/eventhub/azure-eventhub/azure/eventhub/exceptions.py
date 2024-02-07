@@ -27,7 +27,15 @@ class EventHubError(Exception):
         self.details: Union[List[str], "AMQPException"]
         if details and isinstance(details, Exception):
             self.details = details
-            if isinstance(self.details, AMQPException):
+            if isinstance(self.details, list):
+                try:
+                    details.description = cast(str, details.description)
+                    self._parse_error(details.description)
+                    for detail in self.details:
+                        self.message += "\n{}".format(detail)
+                except:  # pylint: disable=bare-except
+                    self.message += "\n{}".format(details)
+            else:
                 try:
                     details.condition = cast("ErrorCondition", details.condition)
                     condition = details.condition.value.decode("UTF-8")
@@ -40,14 +48,6 @@ class EventHubError(Exception):
                 if condition:
                     _, _, self.error = condition.partition(":")
                     self.message += "\nError: {}".format(self.error)
-            elif isinstance(self.details, list):
-                try:
-                    details.description = cast(str, details.description)
-                    self._parse_error(details.description)
-                    for detail in self.details:
-                        self.message += "\n{}".format(detail)
-                except:  # pylint: disable=bare-except
-                    self.message += "\n{}".format(details)
         super(EventHubError, self).__init__(self.message)
 
     def _parse_error(self, error_list: Union[str, bytes]) -> None:
