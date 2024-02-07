@@ -22,10 +22,9 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 
-
+import warnings
 from typing import Any, Dict, List, Optional, Sequence, Union, Tuple, Mapping, Type, cast
 from typing_extensions import Literal
-import warnings
 
 from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
@@ -621,10 +620,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 UserWarning,
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
-        if pre_trigger_include is not None:
-            request_options["preTriggerInclude"] = pre_trigger_include
-        if post_trigger_include is not None:
-            request_options["postTriggerInclude"] = post_trigger_include
 
         return self.client_connection.UpsertItem(
             database_or_container_link=self.container_link,
@@ -739,6 +734,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword Literal["High", "Low"] priority_level: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :returns: A dict representing the item after the patch operations went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
             given id does not exist.

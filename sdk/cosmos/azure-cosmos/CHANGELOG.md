@@ -9,6 +9,7 @@
 #### Bugs Fixed
 
 #### Other Changes
+* Marked `continutation_token_limit` keyword as non-provisional since feature is not in preview. See [PR 34207]().
 
 ### 4.5.2b4 (2024-02-02)
 This version and all future versions will require Python 3.8+.
