@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines
 
-from enum import Enum
 from io import BytesIO
 from typing import (
     Any, AnyStr, AsyncGenerator, AsyncIterable, cast,
@@ -1011,8 +1010,6 @@ def _commit_block_list_options(
             elif block_lookup.latest is not None:
                 block_lookup.latest.append(encode_base64(str(block.id)))
         else:
-            if block_lookup.latest is None:
-                raise ValueError("block_lookup.latest was None or malformed.")
             block_lookup.latest.append(encode_base64(str(block)))
     headers = kwargs.pop('headers', {})
     headers.update(add_metadata_headers(metadata))

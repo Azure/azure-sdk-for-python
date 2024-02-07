@@ -331,7 +331,7 @@ def upload_append_blob(  # pylint: disable=unused-argument
             if error.response.status_code != 404:  # type: ignore
                 raise
             # rewind the request body if it is a stream
-            if stream is not None and hasattr(stream, 'read'):
+            if hasattr(stream, 'read'):
                 try:
                     # attempt to rewind the body to the initial position
                     stream.seek(0, SEEK_SET)
