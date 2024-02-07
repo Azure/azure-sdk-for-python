@@ -204,15 +204,35 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AppConfigurationSnapshotModifiedEventName = 'Microsoft.AppConfiguration.SnapshotModified'
 
-    ClusterCreatedEventName = 'Microsoft.AVS.ClusterCreated'
+    AvsClusterCreatedEventName = 'Microsoft.AVS.ClusterCreated'
 
-    ClusterDeletedEventName = 'Microsoft.AVS.ClusterDeleted'
+    AvsClusterDeletedEventName = 'Microsoft.AVS.ClusterDeleted'
 
-    ClusterFailedEventName = 'Microsoft.AVS.ClusterFailed'
+    AvsClusterEventName = 'Microsoft.AVS/clusters'
 
-    ClusterUpdatedEventName = 'Microsoft.AVS.ClusterUpdated'
+    AvsClusterFailedEventName = 'Microsoft.AVS.ClusterFailed'
 
-    ClusterUpdatingEventName = 'Microsoft.AVS.ClusterUpdating'
+    AvsClusterUpdatedEventName = 'Microsoft.AVS.ClusterUpdated'
+
+    AvsClusterUpdatingEventName = 'Microsoft.AVS.ClusterUpdating'
+
+    AvsPrivateCloudEventName = 'Microsoft.AVS/privateClouds'
+
+    AvsPrivateCloudFailedEventName = 'Microsoft.AVS.PrivateCloudFailed'
+
+    AvsPrivateCloudUpdatedEventName = 'Microsoft.AVS.PrivateCloudUpdated'
+
+    AvsPrivateCloudUpdatingEventName = 'Microsoft.AVS.PrivateCloudUpdating'
+
+    AvsScriptExecutionCancelledEventName = 'Microsoft.AVS.ScriptExecutionCancelled'
+
+    AvsScriptExecutionEventName = 'Microsoft.AVS/scriptExecutions'
+
+    AvsScriptExecutionFailedEventName = 'Microsoft.AVS.ScriptExecutionFailed'
+
+    AvsScriptExecutionFinishedEventName = 'Microsoft.AVS.ScriptExecutionFinished'
+
+    AvsScriptExecutionStartedEventName = 'Microsoft.AVS.ScriptExecutionStarted'
 
     ContainerRegistryChartDeletedEventName = 'Microsoft.ContainerRegistry.ChartDeleted'
 
@@ -397,20 +417,6 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ResourceWriteFailureName = 'Microsoft.Resources.ResourceWriteFailure'
 
     ResourceWriteSuccessName = 'Microsoft.Resources.ResourceWriteSuccess'
-
-    ScriptExecutionCancelledEventName = 'Microsoft.AVS.ScriptExecutionCancelled'
-
-    ScriptExecutionFailedEventName = 'Microsoft.AVS.ScriptExecutionFailed'
-
-    ScriptExecutionFinishedEventName = 'Microsoft.AVS.ScriptExecutionFinished'
-
-    ScriptExecutionStartedEventName = 'Microsoft.AVS.ScriptExecutionStarted'
-
-    SddcFailedEventName = 'Microsoft.AVS.SddcFailed'
-
-    SddcUpdatedEventName = 'Microsoft.AVS.SddcUpdated'
-
-    SddcUpdatingEventName = 'Microsoft.AVS.SddcUpdating'
 
     ServiceBusActiveMessagesAvailablePeriodicNotificationsEventName = 'Microsoft.ServiceBus.ActiveMessagesAvailablePeriodicNotifications'
 
