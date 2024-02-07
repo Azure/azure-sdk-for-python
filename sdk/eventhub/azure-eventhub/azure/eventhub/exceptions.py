@@ -3,10 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from typing import Union, List, Optional, cast, TYPE_CHECKING
-from ._pyamqp.error import AMQPException
 
 if TYPE_CHECKING:
     from ._pyamqp.error import ErrorCondition
+    from ._pyamqp.error import AMQPException
 
 
 class EventHubError(Exception):
