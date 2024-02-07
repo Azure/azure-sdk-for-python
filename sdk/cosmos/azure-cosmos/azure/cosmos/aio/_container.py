@@ -156,7 +156,6 @@ class ContainerProxy:
         :returns: Dict representing the retrieved container.
         :rtype: Dict[str, Any]
         """
-        response_hook = kwargs.pop('response_hook', None)
         if session_token is not None:
             kwargs['session_token'] = session_token
         if priority_level is not None:
@@ -173,8 +172,6 @@ class ContainerProxy:
         self._properties = await self.client_connection.ReadContainer(
             collection_link, options=request_options, **kwargs
         )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, self._properties)
         return self._properties
 
     @distributed_trace_async
@@ -220,7 +217,6 @@ class ContainerProxy:
         :returns: A dict representing the new item.
         :rtype: Dict[str, Any]
         """
-        response_hook = kwargs.pop('response_hook', None)
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
         if post_trigger_include is not None:
@@ -243,8 +239,6 @@ class ContainerProxy:
         result = await self.client_connection.CreateItem(
             database_or_container_link=self.container_link, document=body, options=request_options, **kwargs
         )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
         return result
 
     @distributed_trace_async
@@ -291,7 +285,6 @@ class ContainerProxy:
                 :caption: Get an item from the database and update one of its properties:
                 :name: update_item
         """
-        response_hook = kwargs.pop('response_hook', None)
         doc_link = self._get_document_link(item)
         if post_trigger_include is not None:
             kwargs['post_trigger_include'] = post_trigger_include
@@ -309,10 +302,7 @@ class ContainerProxy:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
-        result = await self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
-        return result
+        return await self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
 
     @distributed_trace
     def read_all_items(
@@ -571,7 +561,6 @@ class ContainerProxy:
         :returns: A dict representing the upserted item.
         :rtype: Dict[str, Any]
         """
-        response_hook = kwargs.pop('response_hook', None)
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
         if post_trigger_include is not None:
@@ -595,8 +584,6 @@ class ContainerProxy:
             options=request_options,
             **kwargs
         )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
         return result
 
     @distributed_trace_async
@@ -639,7 +626,6 @@ class ContainerProxy:
         :returns: A dict representing the item after replace went through.
         :rtype: Dict[str, Any]
         """
-        response_hook = kwargs.pop('response_hook', None)
         item_link = self._get_document_link(item)
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
@@ -661,8 +647,6 @@ class ContainerProxy:
         result = await self.client_connection.ReplaceItem(
             document_link=item_link, new_document=body, options=request_options, **kwargs
         )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
         return result
 
     @distributed_trace_async
@@ -708,7 +692,6 @@ class ContainerProxy:
             given id does not exist.
         :rtype: dict[str, Any]
         """
-        response_hook = kwargs.pop('response_hook', None)
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
         if post_trigger_include is not None:
@@ -728,11 +711,8 @@ class ContainerProxy:
             request_options["filterPredicate"] = filter_predicate
 
         item_link = self._get_document_link(item)
-        result = await self.client_connection.PatchItem(
+        return await self.client_connection.PatchItem(
             document_link=item_link, operations=patch_operations, options=request_options, **kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
-        return result
 
     @distributed_trace_async
     async def delete_item(
@@ -770,7 +750,6 @@ class ContainerProxy:
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The item does not exist in the container.
         :rtype: None
         """
-        response_hook = kwargs.pop('response_hook', None)
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
         if post_trigger_include is not None:
@@ -788,8 +767,6 @@ class ContainerProxy:
 
         document_link = self._get_document_link(item)
         await self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, None)
 
     @distributed_trace_async
     async def get_throughput(self, **kwargs: Any) -> ThroughputProperties:
@@ -842,7 +819,6 @@ class ContainerProxy:
         :returns: ThroughputProperties for the container, updated with new throughput.
         :rtype: ~azure.cosmos.offer.ThroughputProperties
         """
-        response_hook = kwargs.pop('response_hook', None)
         properties = await self._get_properties()
         link = properties["_self"]
         query_spec = {
@@ -860,8 +836,6 @@ class ContainerProxy:
         _replace_throughput(throughput=throughput, new_throughput_properties=new_offer)
         data = await self.client_connection.ReplaceOffer(offer_link=throughput_properties[0]["_self"],
                                                          offer=throughput_properties[0], **kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, data)
 
         return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
 
@@ -955,13 +929,10 @@ class ContainerProxy:
         :rtype: Dict[str, Any]
         """
         request_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
         result = await self.client_connection.ReadConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
         )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
         return result
 
     @distributed_trace_async
@@ -986,13 +957,11 @@ class ContainerProxy:
         :rtype: None
         """
         request_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
+
         await self.client_connection.DeleteConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
         )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, None)
 
     @distributed_trace_async
     async def delete_all_items_by_partition_key(
@@ -1023,7 +992,6 @@ class ContainerProxy:
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :rtype: None
         """
-        response_hook = kwargs.pop('response_hook', None)
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
         if post_trigger_include is not None:
@@ -1040,8 +1008,6 @@ class ContainerProxy:
 
         await self.client_connection.DeleteAllItemsByPartitionKey(collection_link=self.container_link,
                                                                   options=request_options, **kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, None)
 
     @distributed_trace_async
     async def execute_item_batch(
@@ -1074,7 +1040,6 @@ class ContainerProxy:
         :raises ~azure.cosmos.exceptions.CosmosBatchOperationError: A transactional batch operation failed in the batch.
         :rtype: List[Dict[str, Any]]
         """
-        response_hook = kwargs.pop('response_hook', None)
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
         if post_trigger_include is not None:
@@ -1089,8 +1054,5 @@ class ContainerProxy:
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
         request_options["disableAutomaticIdGeneration"] = True
 
-        result = await self.client_connection.Batch(
+        return await self.client_connection.Batch(
             collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
-        return result
