@@ -66,16 +66,16 @@ def _any_conditions(modified_access_conditions=None, **kwargs):  # pylint: disab
 
 
 def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
-    client: "BlockBlobOperations" = None,  # type: ignore [assignment]
-    data: Union[bytes, Iterable[AnyStr], IO[AnyStr]] = None,  # type: ignore [assignment]
-    overwrite: bool = None,  # type: ignore [assignment]
-    encryption_options: Dict[str, Any] = None,  # type: ignore [assignment]
-    blob_settings: "StorageConfiguration" = None,  # type: ignore [assignment]
-    headers: Dict[str, Any] = None,  # type: ignore [assignment]
-    stream: IO = None,  # type: ignore [assignment]
+    client: "BlockBlobOperations",
+    data: Union[bytes, Iterable[AnyStr], IO[AnyStr]],
+    overwrite: bool,
+    encryption_options: Dict[str, Any],
+    blob_settings: "StorageConfiguration",
+    headers: Dict[str, Any],
+    stream: IO,
+    validate_content: bool,
+    max_concurrency: Optional[int],
     length: Optional[int] = None,
-    validate_content: bool = None,  # type: ignore [assignment]
-    max_concurrency: Optional[int] = None,  # type: ignore [assignment]
     **kwargs: Any
 ) -> Dict[str, Any]:
     try:
@@ -139,10 +139,10 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
             total_size = length
             encryptor, padder = None, None
             if encryption_options and encryption_options.get('key'):
-                cek, iv, encryption_data = generate_blob_encryption_data(  # type: ignore [assignment]
+                cek, iv, encryption_metadata = generate_blob_encryption_data(
                     encryption_options['key'],
                     encryption_options['version'])
-                headers['x-ms-meta-encryptiondata'] = encryption_data
+                headers['x-ms-meta-encryptiondata'] = encryption_metadata
 
                 if encryption_options['version'] == _ENCRYPTION_PROTOCOL_V1:
                     encryptor, padder = get_blob_encryptor_and_padder(cek, iv, True)
@@ -154,7 +154,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
                     # V2 wraps the data stream with an encryption stream
                     if cek is None:
                         raise ValueError("Generate encryption metadata failed. 'cek' is None.")
-                    stream = GCMBlobEncryptionStream(cek, stream)  # type: ignore
+                    stream = GCMBlobEncryptionStream(cek, stream)  # type: ignore [assignment]
 
             block_ids = upload_data_chunks(
                 service=client,
@@ -291,7 +291,7 @@ def upload_append_blob(  # pylint: disable=unused-argument
     encryption_options: Dict[str, Any],
     blob_settings: "StorageConfiguration",
     headers: Dict[str, Any],
-    stream: Optional[IO] = None,
+    stream: IO,
     length: Optional[int] = None,
     validate_content: Optional[bool] = None,
     max_concurrency: Optional[int] = None,

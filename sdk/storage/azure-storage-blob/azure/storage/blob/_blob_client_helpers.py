@@ -848,8 +848,8 @@ def _abort_copy_options(copy_id: Union[str, Dict[str, Any], BlobProperties], **k
     :rtype: Dict[str, Any]
     """
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
-    if isinstance(copy_id, BlobProperties) and copy_id.copy.id is not None:
-        copy_id = copy_id.copy.id
+    if isinstance(copy_id, BlobProperties):
+        copy_id = copy_id.copy.id  # type: ignore [assignment]
     elif isinstance(copy_id, dict):
         copy_id = copy_id['copy_id']
     options = {
@@ -1003,11 +1003,11 @@ def _commit_block_list_options(
     """
     block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
     for block in block_list:
-        if isinstance(block, BlobBlock) and isinstance(block.state, Enum):
-            if block.state.value == 'committed' and block_lookup.committed is not None:
-                block_lookup.committed.append(encode_base64(str(block.id)))
-            elif block.state.value == 'uncommitted' and block_lookup.uncommitted is not None:
-                block_lookup.uncommitted.append(encode_base64(str(block.id)))
+        if isinstance(block, BlobBlock):
+            if block.state.value == 'committed':
+                cast(List[str], block_lookup.committed).append(encode_base64(str(block.id)))
+            elif block.state.value == 'uncommitted':
+                cast(List[str], block_lookup.uncommitted).append(encode_base64(str(block.id)))
             elif block_lookup.latest is not None:
                 block_lookup.latest.append(encode_base64(str(block.id)))
         else:
@@ -1062,7 +1062,11 @@ def _commit_block_list_options(
     options.update(kwargs)
     return options
 
-def _set_blob_tags_options(version_id: Optional[str], tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> Dict[str, Any]: # pylint: disable=line-too-long
+def _set_blob_tags_options(
+    version_id: Optional[str],
+    tags: Optional[Dict[str, str]] = None,
+    **kwargs: Any
+)-> Dict[str, Any]:
     """Creates a dictionary containing the options for setting blob tags.
 
     :param Optional[str] version_id:

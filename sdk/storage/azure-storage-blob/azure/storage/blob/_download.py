@@ -83,6 +83,7 @@ def process_content(data: Any, start_offset: int, end_offset: int, encryption: D
 class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
+<<<<<<< HEAD
         client: "BlobOperations" = None,  # type: ignore [assignment]
         non_empty_ranges: Optional[List[Dict[str, Any]]] = None,
         total_size: int = None,  # type: ignore [assignment]
@@ -95,6 +96,20 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
         parallel: Optional[int] = None,
         encryption_options: Dict[str, Any] = None,  # type: ignore [assignment]
         encryption_data: Optional["_EncryptionData"] = None,
+=======
+        client: "BlobOperations",
+        total_size: int,
+        chunk_size: int,
+        current_progress: int,
+        start_range: int,
+        end_range: int,
+        validate_content: bool,
+        encryption_options: Dict[str, Any],
+        encryption_data: Optional["_EncryptionData"] = None,
+        stream = None,
+        parallel: Optional[int] = None,
+        non_empty_ranges: Optional[List[Dict[str, Any]]] = None,
+>>>>>>> feature/storage-blob-typing2
         progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
         **kwargs: Any
     ) -> None:
@@ -163,7 +178,11 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
         if self.progress_hook:
             self.progress_hook(self.progress_total, self.total_size)
 
+<<<<<<< HEAD
     def _write_to_stream(self, chunk_data, chunk_start: int) -> None:
+=======
+    def _write_to_stream(self, chunk_data: bytes, chunk_start: int) -> None:
+>>>>>>> feature/storage-blob-typing2
         if self.stream_lock:
             with self.stream_lock:  # pylint: disable=not-context-manager
                 self.stream.seek(self.stream_start + (chunk_start - self.start_index))
@@ -261,7 +280,7 @@ class _ChunkIterator(object):
     def __len__(self) -> int:
         return self.size
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[bytes]:
         return self
 
     # Iterate through responses.
