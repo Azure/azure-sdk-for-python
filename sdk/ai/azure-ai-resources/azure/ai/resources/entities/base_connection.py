@@ -76,7 +76,7 @@ class BaseConnection:
         :rtype: ~azure.ai.resources.entities.Connection
         """
         conn_class = cls._get_ai_connection_class_from_type(workspace_connection.type)
-        # This slightly-cheeky initiliazation is just a placeholder that is immediately replaced
+        # This slightly-cheeky init is just a placeholder that is immediately replaced
         # with a directly-injected v2 connection object.
         # Since all connection class initializers have kwargs, we can just throw a kitchen sink's
         # worth of inputs to satisfy all possible subclass input requirements.
