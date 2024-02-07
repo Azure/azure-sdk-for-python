@@ -9,8 +9,8 @@ from typing import (
     Any, Dict, List, Optional, Union,
     TYPE_CHECKING
 )
-from typing_extensions import Self
 import warnings
+from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
@@ -649,7 +649,11 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def undelete_container(self, deleted_container_name: str, deleted_container_version: str, **kwargs: Any) -> ContainerClient:
+    def undelete_container(
+        self, deleted_container_name: str,
+        deleted_container_version: str,
+        **kwargs: Any
+    ) -> ContainerClient:
         """Restores soft-deleted container.
 
         Operation will only be successful if used within the specified number of days
