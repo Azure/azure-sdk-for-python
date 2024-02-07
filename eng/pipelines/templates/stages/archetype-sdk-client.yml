@@ -101,8 +101,6 @@ extends:
         os: windows
     stages:
       - stage: Build
-        variables:
-          - template: /eng/pipelines/templates/variables/globals.yml
         jobs:
         - template: /eng/pipelines/templates/jobs/ci.yml
           parameters:
