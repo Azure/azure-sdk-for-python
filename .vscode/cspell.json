@@ -173,6 +173,7 @@
     "AsyncIterable",
     "asyncio",
     "avroencoder",
+    "Avs",
     "azcmagent",
     "azsdk",
     "azurecr",
