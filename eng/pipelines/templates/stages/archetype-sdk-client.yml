@@ -1,3 +1,10 @@
+resources:
+  repositories:
+    - repository: 1ESPipelineTemplates
+      type: git
+      name: 1ESPipelineTemplates/1ESPipelineTemplates
+      ref: refs/tags/release
+
 parameters:
 - name: ServiceDirectory
   type: string
@@ -76,52 +83,48 @@ parameters:
   type: boolean
   default: false
 
-variables:
-  - template: /eng/pipelines/templates/variables/globals.yml
 
-stages:
-  - stage: Build
-    jobs:
-    - template: /eng/pipelines/templates/jobs/ci.yml
-      parameters:
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        Artifacts: ${{ parameters.Artifacts }}
-        ${{ if eq(parameters.ServiceDirectory, 'template') }}:
-          TestPipeline: true
-        BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
-        AfterTestSteps: ${{ parameters.AfterTestSteps }}
-        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
-        TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        BuildTargetingString: '${{ parameters.BuildTargetingString }}'
-        TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
-        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
-        InjectedPackages: ${{ parameters.InjectedPackages }}
-        BuildDocs: ${{ parameters.BuildDocs }}
-        DevFeedName: ${{ parameters.DevFeedName }}
-        MatrixConfigs:
-          - ${{ each config in parameters.MatrixConfigs }}:
-            -  ${{ config }}
-          - ${{ each config in parameters.AdditionalMatrixConfigs }}:
-            -  ${{ config }}
-        MatrixFilters: ${{ parameters.MatrixFilters }}
-        MatrixReplace: ${{ parameters.MatrixReplace }}
-        VerifyAutorest: ${{ parameters.VerifyAutorest }}
-        ValidateFormatting: ${{ parameters.ValidateFormatting }}
-        TestProxy: ${{ parameters.TestProxy }}
-        GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
-        AdvancedBuild: ${{ parameters.AdvancedBuild }}
-
-  # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
-  - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
-    - template: archetype-python-release.yml
-      parameters:
-        DependsOn: Build
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        Artifacts: ${{ parameters.Artifacts }}
-        ${{ if eq(parameters.ServiceDirectory, 'template') }}:
-          TestPipeline: true
-        ArtifactName: packages_extended
-        DocArtifact: documentation
-        TargetDocRepoOwner: ${{ parameters.TargetDocRepoOwner }}
-        TargetDocRepoName: ${{ parameters.TargetDocRepoName }}
-        DevFeedName: ${{ parameters.DevFeedName }}
+extends:
+  ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+    template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
+  ${{ else }}:
+    template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    sdl:
+      sourceAnalysisPool:
+        name: azsdk-pool-mms-win-2022-1es-pt
+        image: azsdk-pool-mms-win-2022-1espt
+        os: windows
+    stages:
+      - stage: Build
+        variables:
+          - template: /eng/pipelines/templates/variables/globals.yml
+        jobs:
+        - template: /eng/pipelines/templates/jobs/ci.yml
+          parameters:
+            ServiceDirectory: ${{ parameters.ServiceDirectory }}
+            Artifacts: ${{ parameters.Artifacts }}
+            ${{ if eq(parameters.ServiceDirectory, 'template') }}:
+              TestPipeline: true
+            BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
+            AfterTestSteps: ${{ parameters.AfterTestSteps }}
+            BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+            TestMarkArgument: ${{ parameters.TestMarkArgument }}
+            BuildTargetingString: '${{ parameters.BuildTargetingString }}'
+            TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+            ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
+            InjectedPackages: ${{ parameters.InjectedPackages }}
+            BuildDocs: ${{ parameters.BuildDocs }}
+            DevFeedName: ${{ parameters.DevFeedName }}
+            MatrixConfigs:
+              - ${{ each config in parameters.MatrixConfigs }}:
+                -  ${{ config }}
+              - ${{ each config in parameters.AdditionalMatrixConfigs }}:
+                -  ${{ config }}
+            MatrixFilters: ${{ parameters.MatrixFilters }}
+            MatrixReplace: ${{ parameters.MatrixReplace }}
+            VerifyAutorest: ${{ parameters.VerifyAutorest }}
+            ValidateFormatting: ${{ parameters.ValidateFormatting }}
+            TestProxy: ${{ parameters.TestProxy }}
+            GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
+            AdvancedBuild: ${{ parameters.AdvancedBuild }}
