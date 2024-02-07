@@ -304,7 +304,6 @@ class ContainerProxy:
         request_options = _build_options(kwargs)
 
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
-        max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
@@ -379,6 +378,7 @@ class ContainerProxy:
         initial_headers: Optional[Dict[str, str]] = None,
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
         priority_level: Optional[Literal["High", "Low"]] = None,
+        continuation_token_limit: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all results matching the given `query`.
@@ -407,9 +407,9 @@ class ContainerProxy:
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
-        :keyword int continuation_token_limit: **provisional** The size limit in kb of the
-        response continuation token in the query response. Valid values are positive integers.
-        A value of 0 is the same as not passing a value (default no limit).
+        :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
+            response. Valid values are positive integers.
+            A value of 0 is the same as not passing a value (default no limit).
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
@@ -463,7 +463,6 @@ class ContainerProxy:
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
         correlated_activity_id = GenerateGuidId()
         feed_options["correlatedActivityId"] = correlated_activity_id
-        continuation_token_limit = kwargs.pop("continuation_token_limit", None)
         if continuation_token_limit is not None:
             feed_options["responseContinuationTokenLimitInKb"] = continuation_token_limit
         if hasattr(response_hook, "clear"):
