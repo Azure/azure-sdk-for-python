@@ -17,6 +17,10 @@ from .._serialize import get_modify_conditions
 if TYPE_CHECKING:
     from azure.storage.blob.aio import BlobClient, ContainerClient
     from datetime import datetime
+<<<<<<< HEAD
+=======
+    from .._generated.aio.operations import BlobOperations, ContainerOperations
+>>>>>>> feature/storage-blob-typing2
 
 
 class BlobLeaseClient(): # pylint: disable=client-accepts-api-version-keyword
@@ -40,6 +44,10 @@ class BlobLeaseClient(): # pylint: disable=client-accepts-api-version-keyword
     last_modified: Optional["datetime"]
     """The last modified timestamp of the lease currently being maintained.
     This will be `None` if no lease has yet been acquired or modified."""
+<<<<<<< HEAD
+=======
+    _client: Union["BlobOperations", "ContainerOperations"]
+>>>>>>> feature/storage-blob-typing2
 
     def __init__( # pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
         self, client: Union["BlobClient", "ContainerClient"],
@@ -49,9 +57,15 @@ class BlobLeaseClient(): # pylint: disable=client-accepts-api-version-keyword
         self.last_modified = None
         self.etag = None
         if hasattr(client, 'blob_name'):
+<<<<<<< HEAD
             self._client = client._client.blob  # type: ignore # pylint: disable=protected-access
         elif hasattr(client, 'container_name'):
             self._client = client._client.container  # type: ignore # pylint: disable=protected-access
+=======
+            self._client = client._client.blob
+        elif hasattr(client, 'container_name'):
+            self._client = client._client.container
+>>>>>>> feature/storage-blob-typing2
         else:
             raise TypeError("Lease must use either BlobClient or ContainerClient.")
 
@@ -112,7 +126,7 @@ class BlobLeaseClient(): # pylint: disable=client-accepts-api-version-keyword
         """
         mod_conditions = get_modify_conditions(kwargs)
         try:
-            response = await self._client.acquire_lease(
+            response: Any = await self._client.acquire_lease(
                 timeout=kwargs.pop('timeout', None),
                 duration=lease_duration,
                 proposed_lease_id=self.id,
@@ -168,7 +182,7 @@ class BlobLeaseClient(): # pylint: disable=client-accepts-api-version-keyword
         """
         mod_conditions = get_modify_conditions(kwargs)
         try:
-            response = await self._client.renew_lease(
+            response: Any = await self._client.renew_lease(
                 lease_id=self.id,
                 timeout=kwargs.pop('timeout', None),
                 modified_access_conditions=mod_conditions,
@@ -221,7 +235,7 @@ class BlobLeaseClient(): # pylint: disable=client-accepts-api-version-keyword
         """
         mod_conditions = get_modify_conditions(kwargs)
         try:
-            response = await self._client.release_lease(
+            response: Any = await self._client.release_lease(
                 lease_id=self.id,
                 timeout=kwargs.pop('timeout', None),
                 modified_access_conditions=mod_conditions,
@@ -273,7 +287,7 @@ class BlobLeaseClient(): # pylint: disable=client-accepts-api-version-keyword
         """
         mod_conditions = get_modify_conditions(kwargs)
         try:
-            response = await self._client.change_lease(
+            response: Any = await self._client.change_lease(
                 lease_id=self.id,
                 proposed_lease_id=proposed_lease_id,
                 timeout=kwargs.pop('timeout', None),
@@ -336,7 +350,7 @@ class BlobLeaseClient(): # pylint: disable=client-accepts-api-version-keyword
         """
         mod_conditions = get_modify_conditions(kwargs)
         try:
-            response = await self._client.break_lease(
+            response: Any = await self._client.break_lease(
                 timeout=kwargs.pop('timeout', None),
                 break_period=lease_break_period,
                 modified_access_conditions=mod_conditions,

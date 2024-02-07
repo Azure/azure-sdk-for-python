@@ -175,13 +175,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         self.container_name = container_name
         self.blob_name = blob_name
 
-        if snapshot is None:
-            self.snapshot = snapshot or path_snapshot
-        elif hasattr(snapshot, 'snapshot'):
+        if snapshot is not None and hasattr(snapshot, 'snapshot'):
             self.snapshot = snapshot.snapshot
         elif isinstance(snapshot, dict):
-            if 'snapshot' in snapshot:
-                self.snapshot = snapshot['snapshot']
+            self.snapshot = snapshot['snapshot']
         else:
             self.snapshot = snapshot or path_snapshot
         self.version_id = kwargs.pop('version_id', None)
@@ -1263,7 +1260,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :rtype: Dict[str, Union[str, datetime, bool]]
         """
 
-        return cast(Dict[str, Union[str, datetime, bool]], self._client.blob.set_legal_hold(legal_hold, cls=return_response_headers, **kwargs))  # pylint: disable=line-too-long
+        return cast(Dict[str, Union[str, datetime, bool]],
+                    self._client.blob.set_legal_hold(legal_hold, cls=return_response_headers, **kwargs))
 
     @distributed_trace
     def create_page_blob(
@@ -3188,7 +3186,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             **kwargs
         )
         try:
-            return cast(Dict[str, Union[str, datetime, int]], self._client.append_blob.append_block_from_url(**options))  # pylint: disable=line-too-long
+            return cast(Dict[str, Union[str, datetime, int]],
+                        self._client.append_blob.append_block_from_url(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 

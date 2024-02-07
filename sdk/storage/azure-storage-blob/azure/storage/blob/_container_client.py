@@ -1295,7 +1295,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             **kwargs)
 
     @distributed_trace
-    def delete_blobs(
+    def delete_blobs(  # pylint: disable=delete-operation-wrong-return-type
         self, *blobs: Union[str, Dict[str, Any], BlobProperties],
         **kwargs: Any
     ) -> Iterator["HttpResponse"]:

@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from io import BytesIO
-from typing import Any, Dict, Generator, IO, Iterable, Optional, Union, TYPE_CHECKING
+from typing import Any, Dict, Generator, IO, Iterable, Optional, Type, Union, TYPE_CHECKING
 
 from ._shared.avro.avro_io import DatumReader
 from ._shared.avro.datafile import DataFileReader
@@ -36,7 +36,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
         encoding: Optional[str] = None,
         headers: Dict[str, Any] = None,  # type: ignore [assignment]
         response: Any = None,
-        error_cls: "BlobQueryError" = None,  # type: ignore [assignment]
+        error_cls: Type["BlobQueryError"] = None,  # type: ignore [assignment]
     ) -> None:
         self.name = name
         self.container = container
@@ -53,7 +53,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
     def __len__(self):
         return self._size
 
-    def _process_record(self, result: Dict[str, Any]) -> Optional[Any]:
+    def _process_record(self, result: Dict[str, Any]) -> Optional[bytes]:
         self._size = result.get('totalBytes', self._size)
         self._bytes_processed = result.get('bytesScanned', self._bytes_processed)
         if 'data' in result:
@@ -69,7 +69,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
                 self._errors(error)
         return None
 
-    def _iter_stream(self) -> Generator[Any, Any, Any]:
+    def _iter_stream(self) -> Generator[bytes, None, None]:
         if self._first_result is not None:
             yield self._first_result
         for next_result in self._parsed_results:
