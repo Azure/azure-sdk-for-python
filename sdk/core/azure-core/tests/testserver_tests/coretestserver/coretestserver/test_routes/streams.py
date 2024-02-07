@@ -58,9 +58,10 @@ def error():
 def string():
     return Response(streaming_test(), status=200, mimetype="text/plain")
 
+
 @streams_api.route("/plain_header", methods=["GET"])
 def plain_header():
-   return Response(streaming_test(), status=200, mimetype="text/plain", headers={"Content-Encoding": "gzip"})
+    return Response(streaming_test(), status=200, mimetype="text/plain", headers={"Content-Encoding": "gzip"})
 
 
 @streams_api.route("/compressed_no_header", methods=["GET"])
@@ -70,9 +71,9 @@ def compressed_no_header():
 
 @streams_api.route("/compressed_header", methods=["GET"])
 def compressed_header():
-   return Response(compressed_stream(), status=200,headers={"Content-Encoding": "gzip"})
+    return Response(compressed_stream(), status=200, headers={"Content-Encoding": "gzip"})
 
- 
+
 @streams_api.route("/compressed", methods=["GET"])
 def compressed():
     return Response(stream_compressed_header_error(), status=300, headers={"Content-Encoding": "gzip"})
