@@ -41,12 +41,12 @@ class ImageAnalysisClient(ImageAnalysisClientGenerated):
     ) -> _models.ImageAnalysisResult:
         """Performs a single Image Analysis operation.
 
-        :keyword image_url: The publicly accessible URL of the image to analyze.
-        :paramtype image_url: str
-        :keyword visual_features: A list of visual features to analyze. Required. Seven visual features
+        :param image_url: The publicly accessible URL of the image to analyze.
+        :type image_url: str
+        :param visual_features: A list of visual features to analyze. Required. Seven visual features
          are supported: Caption, DenseCaptions, Read (OCR), Tags, Objects, SmartCrops, and People. At
          least one visual feature must be specified.
-        :paramtype visual_features: list[~azure.ai.vision.imageanalysis.models.VisualFeatures]
+        :type visual_features: list[~azure.ai.vision.imageanalysis.models.VisualFeatures]
         :keyword language: The desired language for result generation (a two-letter language code).
          Defaults to 'en' (English). See https://aka.ms/cv-languages for a list of supported languages.
         :paramtype language: str
@@ -102,12 +102,12 @@ class ImageAnalysisClient(ImageAnalysisClientGenerated):
     ) -> _models.ImageAnalysisResult:
         """Performs a single Image Analysis operation.
 
-        :keyword image_data: A buffer containing the whole image to be analyzed.
-        :paramtype image_data: bytes
-        :keyword visual_features: A list of visual features to analyze. Required. Seven visual features
+        :param image_data: A buffer containing the whole image to be analyzed.
+        :type image_data: bytes
+        :param visual_features: A list of visual features to analyze. Required. Seven visual features
          are supported: Caption, DenseCaptions, Read (OCR), Tags, Objects, SmartCrops, and People. At
          least one visual feature must be specified.
-        :paramtype visual_features: list[~azure.ai.vision.imageanalysis.models.VisualFeatures]
+        :type visual_features: list[~azure.ai.vision.imageanalysis.models.VisualFeatures]
         :keyword language: The desired language for result generation (a two-letter language code).
          Defaults to 'en' (English). See https://aka.ms/cv-languages for a list of supported languages.
         :paramtype language: str
