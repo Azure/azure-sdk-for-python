@@ -1010,7 +1010,7 @@ def _commit_block_list_options(
             elif block_lookup.latest is not None:
                 block_lookup.latest.append(encode_base64(str(block.id)))
         else:
-            if block_lookup.latest is None:
+            block_lookup.latest.append(encode_base64(str(block)))
     headers = kwargs.pop('headers', {})
     headers.update(add_metadata_headers(metadata))
     blob_headers = None
