@@ -208,11 +208,14 @@ class EventHubConsumer(
             self._handler = cast("ReceiveClient", self._handler)
             self._handler.open(connection=conn)
             self.handler_ready = False
-            self.running = True
-
-        if not self.handler_ready:
-            if self._handler.client_ready():    # type: ignore
+            try:
+                while not self._handler.client_ready():
+                    time.sleep(0.05)
+                self.running = True
                 self.handler_ready = True
+            except:
+                self._close_handler()
+                raise
 
         return self.handler_ready
 
@@ -239,8 +242,8 @@ class EventHubConsumer(
                     self._amqp_transport.check_link_stolen(self, exception)
                     # TODO: below block hangs when retry_total > 0
                     # need to remove/refactor, issue #27137
-                    if not self.running:  # exit by close
-                        return
+                    #if not self.running:  # exit by close
+                    #    return
                     if self._last_received_event:
                         self._offset = self._last_received_event.offset
                     last_exception = self._handle_exception(exception, is_consumer=True)
