@@ -76,9 +76,22 @@ class BaseConnection:
         :rtype: ~azure.ai.resources.entities.Connection
         """
         conn_class = cls._get_ai_connection_class_from_type(workspace_connection.type)
-        # It's simpler to create a placeholder connection, then overwrite it..
-        # We don't need to worry about the accidentally changing WC fields this way.
-        conn = conn_class(type="a", target="a", credentials=None, name="a", make_empty=True, api_version=None, api_type=None, kind=None)
+        # This slightly-cheeky initiliazation is just a placeholder that is immediately replaced
+        # with a directly-injected v2 connection object.
+        # Since all connection class initializers have kwargs, we can just throw a kitchen sink's
+        # worth of inputs to satisfy all possible subclass input requirements.
+        conn = conn_class(
+            type="a",
+            target="a",
+            credentials=None,
+            name="a",
+            make_empty=True,
+            api_version=None,
+            api_type=None,
+            kind=None,
+            account_name="a",
+            container_name="a",
+        )
         conn._workspace_connection = workspace_connection
         return conn
     
@@ -111,7 +124,7 @@ class BaseConnection:
             ConnectionCategory.COGNITIVE_SEARCH.lower(): AzureAISearchConnection,
             ConnectionCategory.COGNITIVE_SERVICE.lower(): AzureAIServiceConnection,
             ConnectionCategory.GIT.lower(): GitHubConnection,
-            "azure_blob".lower(): AzureBlobStoreConnection,
+            "azureblob": AzureBlobStoreConnection,
             ConnectionCategory.CUSTOM_KEYS.lower(): CustomConnection, 
             WorkspaceConnectionTypes.CUSTOM.lower(): CustomConnection
         }

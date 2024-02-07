@@ -4,8 +4,8 @@
 
 ### Features Added
 
-- Connections LIST operation now includes data connections.
-- Connections have read-only support for 3 new connection types: alds gen 2, data lake, and azure blob.
+- Connections LIST operation now supports returning data connections via new optional flag: include_data_connections.
+- Connections have read-only support for 3 new connection types: gen 2, data lake, and azure blob.
 
 ### Breaking Changes
 

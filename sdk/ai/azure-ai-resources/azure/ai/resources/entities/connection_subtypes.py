@@ -12,6 +12,8 @@ from azure.ai.ml.constants._common import (
     CONNECTION_API_VERSION_KEY,
     CONNECTION_API_TYPE_KEY,
     CONNECTION_KIND_KEY,
+    CONNECTION_ACCOUNT_NAME_KEY,
+    CONNECTION_CONTAINER_NAME_KEY,
 )
 
 from .base_connection import BaseConnection
@@ -356,7 +358,8 @@ class AzureBlobStoreConnection(BaseConnection):
         :return: the container name of the connection.
         :rtype: str
         """
-        return self._workspace_connection.container_name
+        if self._workspace_connection.tags is not None and CONNECTION_CONTAINER_NAME_KEY in self._workspace_connection.tags:
+            return self._workspace_connection.tags[CONNECTION_CONTAINER_NAME_KEY]
     
     @container_name.setter
     def container_name(self, value: str) -> None:
@@ -365,7 +368,7 @@ class AzureBlobStoreConnection(BaseConnection):
         :param value: the new container name of the connection.
         :type value: str
         """
-        self._workspace_connection.container_name = value
+        self._workspace_connection.tags[CONNECTION_CONTAINER_NAME_KEY] = value
 
     @property
     def account_name(self) -> str:
@@ -374,7 +377,8 @@ class AzureBlobStoreConnection(BaseConnection):
         :return: the account name of the connection.
         :rtype: str
         """
-        return self._workspace_connection.account_name
+        if self._workspace_connection.tags is not None and CONNECTION_ACCOUNT_NAME_KEY in self._workspace_connection.tags:
+            return self._workspace_connection.tags[CONNECTION_ACCOUNT_NAME_KEY]
     
     @account_name.setter
     def account_name(self, value: str) -> None:
@@ -383,8 +387,7 @@ class AzureBlobStoreConnection(BaseConnection):
         :param value: the new account name of the connection.
         :type value: str
         """
-        self._workspace_connection.account_name = value
-
+        self._workspace_connection.tags[CONNECTION_ACCOUNT_NAME_KEY] = value
 class CustomConnection(BaseConnection):
     """A Connection to system that's not encapsulated by other connection types.
 

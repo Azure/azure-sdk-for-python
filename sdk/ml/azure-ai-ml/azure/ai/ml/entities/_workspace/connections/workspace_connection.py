@@ -304,7 +304,7 @@ class WorkspaceConnection(Resource):
         if conn_type == WorkspaceConnectionTypes.CUSTOM:
             conn_type = ConnectionCategory.CUSTOM_KEYS
 
-        # No credential property bag uniquely has different inputs from ALL other propety bag classes.
+        # No credential property bag uniquely has different inputs from ALL other property bag classes.
         if workspace_connection_properties_class == NoneAuthTypeWorkspaceConnectionProperties:
             properties = workspace_connection_properties_class(
                 target=self.target,

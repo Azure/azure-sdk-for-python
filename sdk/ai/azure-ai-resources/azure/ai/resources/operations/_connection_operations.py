@@ -34,7 +34,7 @@ class ConnectionOperations:
         self,
         connection_type: Optional[str] = None,
         scope: str = OperationScope.AI_RESOURCE,
-        include_data_connection: bool = True,
+        include_data_connections: bool = False,
     ) -> Iterable[BaseConnection]:
         """List all connection assets in a project.
 
@@ -44,21 +44,18 @@ class ConnectionOperations:
             that are available to the AI Client's AI Resource or just those available to the project.
             Defaults to AI resource-level scoping.
         :type scope: ~azure.ai.resources.constants.OperationScope
-        :param include_data_connection: If true, also return data connections. Defaults to True.
-        :type include_data_connection: bool
+        :param include_data_connections: If true, also return data connections. Defaults to False.
+        :type include_data_connections: bool
 
-        :return: An iterator like instance of connection objects
+        :return: An iterator of connection objects
         :rtype: Iterable[Connection]
         """
         client = self._resource_ml_client if scope == OperationScope.AI_RESOURCE else self._project_ml_client
 
-        if include_data_connection:
-            operation_result = client._workspace_connections.list(
-                connection_type=connection_type,
-                params={"includeAll": "true"}
-            )
-        else:
-            operation_result = client._workspace_connections.list(connection_type=connection_type)
+        operation_result = client._workspace_connections.list(
+            connection_type=connection_type,
+            include_data_connections=include_data_connections
+        )
 
         return [BaseConnection._from_v2_workspace_connection(conn) for conn in operation_result]
 
