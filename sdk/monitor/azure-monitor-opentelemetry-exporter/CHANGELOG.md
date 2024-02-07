@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Add device.* to part A fields
+    ([#33983](https://github.com/Azure/azure-sdk-for-python/pull/33983))
+
 ### Breaking Changes
 
 ### Bugs Fixed
