@@ -302,10 +302,10 @@ def _upload_blob_from_url_options(
 def _download_blob_options(
     blob_name: str,
     container_name: str,
-    version_id: str,
-    offset: int,
-    length: int,
-    encoding: str,
+    version_id: Optional[str],
+    offset: Optional[int],
+    length: Optional[int],
+    encoding: Optional[str],
     encryption_options: Dict[str, Any],
     config: "StorageConfiguration",
     sdk_moniker: str,
@@ -318,13 +318,13 @@ def _download_blob_options(
         The name of the blob.
     :param str container_name:
         The name of the container.
-    :param str version_id:
+    :param Optional[str] version_id:
         The version id parameter is a value that, when present, specifies the version of the blob to download.
-    :param int offset:
+    :param Optional[int] offset:
         Start of byte range to use for downloading a section of the blob. Must be set if length is provided.
-    :param int length:
+    :param Optional[int] length:
         Number of bytes to read from the stream. This is optional, but should be supplied for optimal performance.
-    :param int encoding:
+    :param Optional[str] encoding:
         Encoding to decode the downloaded bytes. Default is None, i.e. no decoding.
     :param Dict[str, Any] encryption_options:
         The options for encryption, if enabled.
@@ -338,6 +338,8 @@ def _download_blob_options(
     :rtype: Dict[str, Any]
     """
     if length is not None:
+        if offset is None:
+            raise ValueError("Offset must be provided if length is provided.")
         length = offset + length - 1  # Service actually uses an end-range inclusive index
 
     validate_content = kwargs.pop('validate_content', False)
@@ -382,13 +384,13 @@ def _download_blob_options(
     return options
 
 def _quick_query_options(
-    snapshot: str,
+    snapshot: Optional[str],
     query_expression: str,
     **kwargs: Any
 ) -> Tuple[Dict[str, Any], str]:
     """Creates a dictionary containing the options for a quick query operation.
 
-    :param str snapshot:
+    :param Optional[str] snapshot:
         The snapshot data of the blob.
     :param str query_expression:
         A query statement.
@@ -480,16 +482,16 @@ def _generic_delete_blob_options(delete_snapshots: Optional[str] = None, **kwarg
     return options
 
 def _delete_blob_options(
-    snapshot: str,
-    version_id: str,
+    snapshot: Optional[str],
+    version_id: Optional[str],
     delete_snapshots: Optional[str] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
     """Creates a dictionary containing the options for a specific delete blob operation.
 
-    :param str snapshot:
+    :param Optional[str] snapshot:
         The snapshot data of the blob.
-    :param str version_id:
+    :param Optional[str] version_id:
         The version id that specifies the version of the blob to operate on.
     :param Optional[str] delete_snapshots:
         Required if the blob has associated snapshots. Values include:
@@ -846,7 +848,7 @@ def _abort_copy_options(copy_id: Union[str, Dict[str, Any], BlobProperties], **k
     """
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     if isinstance(copy_id, BlobProperties):
-        copy_id = copy_id.copy.id
+        copy_id = copy_id.copy.id  # type: ignore [assignment]
     elif isinstance(copy_id, dict):
         copy_id = copy_id['copy_id']
     options = {
@@ -1001,10 +1003,10 @@ def _commit_block_list_options(
     block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
     for block in block_list:
         if isinstance(block, BlobBlock):
-            if block.state.value == 'committed' and block_lookup.committed is not None:
-                block_lookup.committed.append(encode_base64(str(block.id)))
-            elif block.state.value == 'uncommitted' and block_lookup.uncommitted is not None:
-                block_lookup.uncommitted.append(encode_base64(str(block.id)))
+            if block.state.value == 'committed':
+                cast(List[str], block_lookup.committed).append(encode_base64(str(block.id)))
+            elif block.state.value == 'uncommitted':
+                cast(List[str], block_lookup.uncommitted).append(encode_base64(str(block.id)))
             elif block_lookup.latest is not None:
                 block_lookup.latest.append(encode_base64(str(block.id)))
         else:
@@ -1057,10 +1059,14 @@ def _commit_block_list_options(
     options.update(kwargs)
     return options
 
-def _set_blob_tags_options(version_id: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> Dict[str, Any]:
+def _set_blob_tags_options(
+    version_id: Optional[str],
+    tags: Optional[Dict[str, str]] = None,
+    **kwargs: Any
+)-> Dict[str, Any]:
     """Creates a dictionary containing the options for setting blob tags.
 
-    :param str version_id:
+    :param Optional[str] version_id:
         The version id that specifies the version of the blob to operate on.
     :param tags:
         Name-value pairs associated with the blob as tag. Tags are case-sensitive.
@@ -1085,12 +1091,12 @@ def _set_blob_tags_options(version_id: str, tags: Optional[Dict[str, str]] = Non
     options.update(kwargs)
     return options
 
-def _get_blob_tags_options(version_id: str, snapshot: str, **kwargs: Any) -> Dict[str, Any]:
+def _get_blob_tags_options(version_id: Optional[str], snapshot: Optional[str], **kwargs: Any) -> Dict[str, Any]:
     """Creates a dictionary containing the options for getting blob tags.
 
-    :param str version_id:
+    :param Optional[str] version_id:
         The version id that specifies the version of the blob to operate on.
-    :param str snapshot:
+    :param Optional[str] snapshot:
         The snapshot data of the blob.
     :returns: A dictionary containing the options for a get blob tags operation.
     :rtype: Dict[str, Any]
@@ -1108,7 +1114,7 @@ def _get_blob_tags_options(version_id: str, snapshot: str, **kwargs: Any) -> Dic
     return options
 
 def _get_page_ranges_options( # type: ignore
-    snapshot: str,
+    snapshot: Optional[str],
     offset: Optional[int] = None,
     length: Optional[int] = None,
     previous_snapshot_diff: Optional[Union[str, Dict[str, Any]]] = None,
@@ -1116,7 +1122,7 @@ def _get_page_ranges_options( # type: ignore
 ) -> Dict[str, Any]:
     """Creates a dictionary containing the options for getting page ranges.
 
-    :param str snapshot:
+    :param Optional[str] snapshot:
         The snapshot data of the blob.
     :param Optional[int] offset:
         Start of byte range to use for getting valid page ranges.
