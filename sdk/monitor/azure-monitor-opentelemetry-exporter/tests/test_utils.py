@@ -93,7 +93,7 @@ class TestUtils(unittest.TestCase):
 
     @patch("azure.monitor.opentelemetry.exporter._utils.isdir", return_value=False)
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Windows")
-    def test_get_sdk_version_prefix_wiindows(self, mock_system, mock_getenv):
+    def test_get_sdk_version_prefix_windows(self, mock_system, mock_getenv):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "uwm_")
 
