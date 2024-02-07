@@ -241,15 +241,15 @@ class BlobPrefix(ItemPaged, DictMixin):
     options include "primary" and "secondary"."""
     current_page: Optional[List[BlobProperties]]
     """The current page of listed results."""
-<<<<<<< HEAD
-    delimiter: Optional[str]
+    delimiter: str
     """A delimiting character used for hierarchy listing."""
     command: Callable
+    """Function to retrieve the next page of items."""
     container: str
->>>>>>> feature/storage-blob-typing2
     """The name of the container."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super(BlobPrefix, self).__init__(*args, page_iterator_class=BlobPrefixPaged, **kwargs)
         self.name = kwargs.get('prefix')  # type: ignore [assignment]
         self.prefix = kwargs.get('prefix')  # type: ignore [assignment]
         self.results_per_page = kwargs.get('results_per_page')

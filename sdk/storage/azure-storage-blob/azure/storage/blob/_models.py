@@ -1252,14 +1252,14 @@ class ObjectReplicationPolicy(DictMixin):
         e.g. rule 1= src/container/.pdf to dst/container2/; rule2 = src/container1/.jpg to dst/container3"""
 
     def __init__(self, **kwargs: Any) -> None:
-<<<<<<< HEAD
-        self.policy_id = kwargs.pop('policy_id', None)
-        self.rules = kwargs.pop('rules', None)
-=======
         self.policy_id = kwargs.pop('policy_id', None)  # type: ignore [assignment]
         self.rules = kwargs.pop('rules', None)  # type: ignore [assignment]
+
+
+class BlobProperties(DictMixin):
     """Blob Properties."""
 
+    name: str
     """The name of the blob."""
     container: str
     """The container in which the blob resides."""
@@ -1390,22 +1390,6 @@ class ObjectReplicationPolicy(DictMixin):
         self.has_versions_only = None
 
 
-<<<<<<< HEAD
-class ObjectReplicationRule(DictMixin):
-    """Policy id and rule ids applied to a blob."""
-
-    rule_id: Optional[str]
-    """Rule id."""
-    status: Optional[str]
-    """The status of the rule. It could be "Complete" or "Failed" """
-
-    def __init__(self, **kwargs: Any) -> None:
-        self.rule_id = kwargs.pop('rule_id', None)
-        self.status = kwargs.pop('status', None)
-
-
-=======
->>>>>>> feature/storage-blob-typing2
 class BlobQueryError(object):
     """The error happened during quick query operation."""
 

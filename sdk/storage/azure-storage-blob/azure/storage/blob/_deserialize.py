@@ -189,11 +189,7 @@ def get_blob_properties_from_generated_code(generated: "BlobItemInternal") -> Bl
     blob.has_versions_only = generated.has_versions_only
     return blob
 
-<<<<<<< HEAD
-def parse_tags(generated_tags: Optional["BlobTags"]) -> Union[Dict[str, str], None]:
-=======
 def parse_tags(generated_tags: Optional["BlobTags"]) -> Optional[Dict[str, str]]:
->>>>>>> feature/storage-blob-typing2
     """Deserialize a list of BlobTag objects into a dict.
 
     :param Optional[BlobTags] generated_tags:
