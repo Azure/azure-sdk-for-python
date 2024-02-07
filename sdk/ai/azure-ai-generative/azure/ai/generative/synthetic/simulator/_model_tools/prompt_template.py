@@ -5,7 +5,6 @@
 import re
 import json
 from enum import Enum
-from dataclasses import asdict
 from typing import Any, Dict, List, Optional, Union
 
 from .encoding import encode_example, Encoding

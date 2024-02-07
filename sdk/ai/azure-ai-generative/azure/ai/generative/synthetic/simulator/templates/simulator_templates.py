@@ -9,23 +9,22 @@ from jinja2 import (
     FileSystemLoader as JinjaFileSystemLoader,
     meta as JinjaMeta,
 )
-import os
+
 
 class Template:
     def __init__(self, template_name, text, context_key):
         self.text = text
         self.context_key = context_key
         self.template_name = template_name
-        
+
     def __str__(self):
         return self.text
+
 
 class SimulatorTemplates:
     def __init__(self):
         self.cached_templates_source = {}
-        self.template_env = JinjaEnvironment(
-            loader=JinjaFileSystemLoader(searchpath=template_dir)
-        )
+        self.template_env = JinjaEnvironment(loader=JinjaFileSystemLoader(searchpath=template_dir))
 
     def get_templates_list(self):
         return ALL_TEMPLATES.keys()
@@ -41,9 +40,7 @@ class SimulatorTemplates:
         if template_name not in ALL_TEMPLATES.keys():
             raise ValueError(f"{template_name} not in templates library.")
 
-        template_source = self.template_env.loader.get_source(
-            self.template_env, ALL_TEMPLATES[template_name]
-        )
+        template_source = self.template_env.loader.get_source(self.template_env, ALL_TEMPLATES[template_name])
         self.cached_templates_source[template_name] = template_source
 
         template, template_path, loader_func = template_source

@@ -10,7 +10,6 @@ from logging import Logger
 from typing import Dict, Union
 
 import openai
-import pandas as pd
 # pylint: disable=import-error
 from azureml.core import Run
 # pylint: disable=import-error

@@ -14,8 +14,6 @@ import mlflow
 import pandas as pd
 import tempfile
 
-from pydash import flow
-
 _SUB_ID = "sub-id"
 _RES_GRP = "res-grp"
 _WS_NAME = "ws-name"

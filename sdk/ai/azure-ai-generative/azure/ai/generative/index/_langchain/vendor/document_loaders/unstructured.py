@@ -37,6 +37,7 @@ class UnstructuredBaseLoader(BaseLoader, ABC):
     ):
         """Initialize with file path."""
         try:
+            # pylint: disable=unused-import
             import unstructured  # noqa:F401
         except ImportError:
             raise ValueError(

@@ -9,7 +9,7 @@ import uuid
 import logging
 from urllib.parse import urlparse
 from abc import ABC, abstractmethod
-from typing import Deque, Dict, List, Optional, Union, Sized
+from typing import Deque, Dict, List, Optional, Union
 from collections import deque
 
 from aiohttp import TraceConfig

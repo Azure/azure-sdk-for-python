@@ -8,11 +8,9 @@ from typing import Dict, List, Tuple, Union
 
 from azure.ai.generative.synthetic.simulator._model_tools import (
     LLMBase,
-    OpenAICompletionsModel,
     OpenAIChatCompletionsModel,
     RetryClient,
     LLAMAChatCompletionsModel,
-    LLAMACompletionsModel,
 )
 from .conversation_turn import ConversationTurn
 from .constants import ConversationRole

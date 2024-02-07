@@ -2,9 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import os
 import sys
-import errno
 import mlflow
 import traceback
 import tempfile
@@ -21,6 +19,7 @@ class OutputCollector(object):
 
     def __getattr__(self, name):
         return getattr(self._inner, name)
+
 
 class RedirectUserOutputStreams(object):
     def __init__(self, logger):

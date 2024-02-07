@@ -10,7 +10,7 @@ import re
 import time
 import traceback
 from pathlib import Path
-from typing import IO, Any, Callable, Dict, Iterator, List, Optional, Union
+from typing import Any, Callable, Dict, Iterator, List
 
 import pandas as pd
 from azure.ai.generative.index._documents import (

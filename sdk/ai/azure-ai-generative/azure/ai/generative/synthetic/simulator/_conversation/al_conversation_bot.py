@@ -3,7 +3,6 @@
 # ---------------------------------------------------------
 
 import time
-import jinja2
 import logging
 from .augloop_client import AugLoopClient, AugLoopParams
 from typing import Dict, List, Tuple

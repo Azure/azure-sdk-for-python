@@ -3,16 +3,12 @@
 # ---------------------------------------------------------
 import json
 import logging
-import re
-from json import JSONDecodeError
 
-import numpy as np
 
 LOGGER = logging.getLogger(__name__)
 
 
 class JsonParser(object):
-
     @staticmethod
     def parse(value):
         """

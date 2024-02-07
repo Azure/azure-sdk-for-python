@@ -1,9 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import copy
 import datetime
-import json
 from logging import Logger
 import os
 import time

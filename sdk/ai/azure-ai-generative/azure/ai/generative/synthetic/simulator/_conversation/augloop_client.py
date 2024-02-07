@@ -8,7 +8,7 @@ import logging
 import websocket
 from azure.identity import ManagedIdentityCredential, AzureCliCredential
 from azure.keyvault.secrets import SecretClient
-from jsonpath_ng import jsonpath, parse
+from jsonpath_ng import parse
 from websocket import WebSocketConnectionClosedException
 
 

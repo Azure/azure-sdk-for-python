@@ -1,7 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import os
 
 CONVERSATION_PATH = "user.md"
 SUMMARIZATION_PATH = "summarization.md"

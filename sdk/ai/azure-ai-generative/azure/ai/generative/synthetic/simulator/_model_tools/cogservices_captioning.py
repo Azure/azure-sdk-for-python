@@ -4,7 +4,6 @@
 
 import json
 import urllib
-import logging
 from typing import Dict, Optional, Union
 from aiohttp import ClientTimeout
 from aiohttp_retry import RetryClient

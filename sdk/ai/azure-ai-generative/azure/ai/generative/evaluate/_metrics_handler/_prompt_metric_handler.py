@@ -2,10 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import asyncio
-import json
-from json import JSONDecodeError
-
-import numpy as np
 import pandas as pd
 import logging
 import tqdm.asyncio
@@ -23,13 +19,13 @@ SUPPORTED_PARSERS = [JsonParser, NumberParser]
 
 class PromptMetricHandler(MetricHandler):
     def __init__(
-            self,
-            task_type,
-            prediction_data,
-            test_data,
-            input_output_data,
-            metrics_mapping=None,
-            metrics=None,
+        self,
+        task_type,
+        prediction_data,
+        test_data,
+        input_output_data,
+        metrics_mapping=None,
+        metrics=None,
     ):
         super().__init__(
             task_type=task_type,
@@ -46,9 +42,9 @@ class PromptMetricHandler(MetricHandler):
     def _validate(self):
         supported_list = [isinstance(metric, PromptMetric) for metric in self.metrics]
         if not all(supported_list):
-            raise Exception \
-                (f"{self.__class__.__name__} supports only {PromptMetric.__class__.__name__} type of metrics")
-
+            raise Exception(
+                f"{self.__class__.__name__} supports only {PromptMetric.__class__.__name__} type of metrics"
+            )
 
     def _convert_metric_to_message(self, metric, data):
         from jinja2 import Template
@@ -57,10 +53,7 @@ class PromptMetricHandler(MetricHandler):
 
         prompt_as_string = template.render(data)
 
-        message = [{
-            "role": "user",
-            "content": prompt_as_string
-        }]
+        message = [{"role": "user", "content": prompt_as_string}]
 
         return message
 
@@ -80,8 +73,7 @@ class PromptMetricHandler(MetricHandler):
 
             pd_list.append(data_source[[data_column]].rename(columns={data_column: param}))
 
-        data_as_jsonl = pd.concat(pd_list, axis=1, verify_integrity=True) \
-            .to_dict(orient="records")
+        data_as_jsonl = pd.concat(pd_list, axis=1, verify_integrity=True).to_dict(orient="records")
 
         return data_as_jsonl
 
@@ -117,17 +109,13 @@ class PromptMetricHandler(MetricHandler):
         data = self._get_data_for_metric(metric)
         tasks = []
         for row_data in data:
-            task = asyncio.ensure_future(
-                self._compute_metric_row(metric, row_data)
-            )
+            task = asyncio.ensure_future(self._compute_metric_row(metric, row_data))
             tasks.append(task)
 
         responses = await asyncio.gather(*tasks, return_exceptions=True)
         results = {"artifacts": {}, "metrics": {}}
         for key in responses[0].keys():
-            results["artifacts"].update({
-                key: [row[key] for row in responses]
-            })
+            results["artifacts"].update({key: [row[key] for row in responses]})
 
         return results
 
@@ -135,9 +123,7 @@ class PromptMetricHandler(MetricHandler):
         tasks = []
         metrics_dict = {"artifacts": {}, "metrics": {}}
         for metric in self.metrics:
-            task = asyncio.ensure_future(
-                self._compute_metric(metric)
-            )
+            task = asyncio.ensure_future(self._compute_metric(metric))
             tasks.append(task)
 
         # responses = await asyncio.gather(*tasks, return_exceptions=True)

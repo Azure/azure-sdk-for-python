@@ -1,8 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import copy
-from hmac import new
 import json
 import os
 import shutil
@@ -10,19 +8,16 @@ import tempfile
 import time
 import logging
 from collections import Counter
-from json import JSONDecodeError
 from pathlib import Path
-from typing import Callable, Optional, Dict, List, Mapping, Union
+from typing import Callable, Optional, Dict, List, Union
 from types import FunctionType
 
 import mlflow
-import numpy as np
 import pandas as pd
 from azure.core.tracing.decorator import distributed_trace
 from azure.ai.generative._telemetry import (
     ActivityType,
     monitor_with_activity,
-    monitor_with_telemetry_mixin,
     ActivityLogger,
 )
 
@@ -50,7 +45,7 @@ from azure.ai.generative.evaluate._evaluation_result import EvaluationResult
 from ._metrics_handler._prompt_metric_handler import PromptMetricHandler
 
 from ._utils import _write_properties_to_run_history
-from .metrics._custom_metric import CodeMetric, PromptMetric, Metric as GenAIMetric
+from .metrics._custom_metric import CodeMetric, PromptMetric
 from azure.ai.resources.entities import AzureOpenAIModelConfiguration
 
 LOGGER = logging.getLogger(__name__)

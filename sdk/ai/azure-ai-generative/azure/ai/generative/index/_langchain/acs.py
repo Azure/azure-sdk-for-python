@@ -57,6 +57,7 @@ class AzureCognitiveSearchVectorStore(VectorStore):
                 "Please install it with `pip install azure-identity`."
             )
         try:
+            # pylint: disable=unused-import
             from azure.core.credentials import AzureKeyCredential  # noqa:F401
         except ImportError:
             raise ValueError(

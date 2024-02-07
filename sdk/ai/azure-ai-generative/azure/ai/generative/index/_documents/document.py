@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 """Document abstraction."""
-from abc import ABC
 from dataclasses import dataclass
 from typing import Optional
 from pathlib import Path

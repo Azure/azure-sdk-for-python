@@ -2,10 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 """Document parsing and chunking utilities."""
-import json
 import re
 from pathlib import Path
-from os import PathLike
 from typing import Any, Callable, Dict, Generator, Iterable, Iterator, List, Optional, Union
 
 from azure.ai.generative.index._documents.chunking import ChunkedDocument, split_documents

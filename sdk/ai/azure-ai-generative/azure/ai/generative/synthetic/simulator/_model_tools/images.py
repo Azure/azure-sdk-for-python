@@ -5,7 +5,7 @@
 import os
 import re
 import logging
-from typing import List, Optional, Pattern
+from typing import List, Optional
 
 # Image types supported by Azure Cognitive Services: JPEG, PNG, GIF, BMP, WEBP, ICO, TIFF, or MPO format
 IMAGE_TYPES = ["jpg", "jpeg", "png", "gif", "bmp", "webp", "ico", "tiff", "mpo"]

@@ -6,7 +6,7 @@ import asyncio
 import logging
 import pathlib
 import json
-from typing import Dict, List
+from typing import List
 from .conversation_turn import ConversationTurn
 
 

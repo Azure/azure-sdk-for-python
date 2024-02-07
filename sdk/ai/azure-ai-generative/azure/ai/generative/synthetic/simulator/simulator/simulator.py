@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Callable, Dict, List, Union, Optional, Sequence
+from typing import Callable, Dict, Union, Optional, Sequence
 from azure.ai.generative.synthetic.simulator._conversation import (
     ConversationBot,
     ConversationRole,

@@ -7,7 +7,7 @@ import time
 import logging
 import asyncio
 from enum import Enum
-from typing import Optional, Union
+from typing import Optional
 from urllib.parse import urlparse
 from abc import ABC, abstractmethod
 
