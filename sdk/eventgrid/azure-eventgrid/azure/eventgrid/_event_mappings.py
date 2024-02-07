@@ -208,15 +208,11 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AvsClusterDeletedEventName = 'Microsoft.AVS.ClusterDeleted'
 
-    AvsClusterEventName = 'Microsoft.AVS/clusters'
-
     AvsClusterFailedEventName = 'Microsoft.AVS.ClusterFailed'
 
     AvsClusterUpdatedEventName = 'Microsoft.AVS.ClusterUpdated'
 
     AvsClusterUpdatingEventName = 'Microsoft.AVS.ClusterUpdating'
-
-    AvsPrivateCloudEventName = 'Microsoft.AVS/privateClouds'
 
     AvsPrivateCloudFailedEventName = 'Microsoft.AVS.PrivateCloudFailed'
 
@@ -225,8 +221,6 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AvsPrivateCloudUpdatingEventName = 'Microsoft.AVS.PrivateCloudUpdating'
 
     AvsScriptExecutionCancelledEventName = 'Microsoft.AVS.ScriptExecutionCancelled'
-
-    AvsScriptExecutionEventName = 'Microsoft.AVS/scriptExecutions'
 
     AvsScriptExecutionFailedEventName = 'Microsoft.AVS.ScriptExecutionFailed'
 
