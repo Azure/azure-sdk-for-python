@@ -11,7 +11,9 @@ from typing import Dict, Union
 
 import openai
 import pandas as pd
+# pylint: disable=import-error
 from azureml.core import Run
+# pylint: disable=import-error
 from azure.ai.generative.index.data_generation.qa import QADataGenerator, GenerationResult, QAType
 from azure.ai.resources._index._utils.connections import (
     get_connection_by_id_v2,

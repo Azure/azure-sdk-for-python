@@ -204,7 +204,7 @@ class MLIndex:
                     and langchain_pkg_version < pkg_version.parse("0.0.273")
                     and langchain_pkg_version >= pkg_version.parse("0.0.198")
                 ):
-                    from langchain.vectorstores import azuresearch
+                    from langchain.vectorstores import azuresearch  # pylint: disable=import-error
 
                     # TODO: These fields effect all ACS retrievers in the same process, should change class so it can
                     # use these as defaults but uses names passed in as args preferentially
@@ -218,7 +218,7 @@ class MLIndex:
                     )
 
                     from azure.core.credentials import AzureKeyCredential
-                    from langchain.vectorstores.azuresearch import AzureSearch
+                    from langchain.vectorstores.azuresearch import AzureSearch  # pylint: disable=import-error
 
                     return AzureSearch(
                         azure_search_endpoint=index_endpoint,
@@ -310,9 +310,9 @@ class MLIndex:
                 return store
             elif index_kind == "pinecone":
                 try:
-                    import pinecone
+                    import pinecone  # pylint: disable=import-error
                     from azure.core.credentials import AzureKeyCredential
-                    from langchain.vectorstores import Pinecone
+                    from langchain.vectorstores import Pinecone  # pylint: disable=import-error
 
                     connection_credential = get_connection_credential(self.index_config, credential=credential)
                     if not isinstance(connection_credential, AzureKeyCredential):
@@ -405,7 +405,7 @@ class MLIndex:
 
             return FaissAndDocStore.load(self.base_uri, embeddings.embed_query)
         elif index_kind == "pinecone":
-            import pinecone
+            import pinecone  # pylint: disable=import-error
             from azure.core.credentials import AzureKeyCredential
 
             connection_credential = get_connection_credential(self.index_config, credential=credential)

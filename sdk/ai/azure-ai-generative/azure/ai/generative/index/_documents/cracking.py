@@ -164,6 +164,7 @@ class PDFFileLoader(BaseDocumentLoader):
             from pypdf import PdfReader
         except Exception:
             try:
+                # pylint: disable=import-error
                 from PyPDF2 import PdfReader  # type: ignore[no-redef]
             except Exception as e:
                 raise RuntimeError("Unable to import pypdf or PyPDF2.") from e

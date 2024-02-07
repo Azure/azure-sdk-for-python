@@ -71,7 +71,7 @@ class AzureCognitiveSearchVectorStore(VectorStore):
     @classmethod
     def from_mlindex(cls, uri: str):
         """Create a vector store from a MLIndex uri."""
-        from ..mlindex import MLIndex
+        from ..mlindex import MLIndex  # pylint: disable=import-error
         mlindex = MLIndex(uri)
         return mlindex.as_langchain_vectorstore()
 

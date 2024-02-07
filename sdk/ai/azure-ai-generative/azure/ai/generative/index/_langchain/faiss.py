@@ -5,8 +5,8 @@
 from azure.ai.generative.index._langchain.docstore import FileBasedDocStore
 from azure.ai.generative.index._utils.logging import get_logger
 from azure.ai.resources._index._indexes.faiss import FaissAndDocStore
-from langchain.vectorstores import FAISS
-from langchain.vectorstores.base import VectorStore
+from langchain.vectorstores import FAISS  # pylint: disable=import-error
+from langchain.vectorstores.base import VectorStore  # pylint: disable=import-error
 
 logger = get_logger(__name__)
 

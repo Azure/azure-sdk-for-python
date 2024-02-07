@@ -6,7 +6,7 @@ import os
 import time
 import traceback
 import json
-import pinecone
+import pinecone  # pylint: disable=import-error
 import yaml  # type: ignore[import]
 from pathlib import Path
 from typing import Optional

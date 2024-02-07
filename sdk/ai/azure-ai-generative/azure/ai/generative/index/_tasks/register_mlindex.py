@@ -9,7 +9,9 @@ import traceback
 
 import fsspec
 import yaml  # type: ignore[import]
+# pylint: disable=import-error
 from azureml.core import Run
+# pylint: disable=import-error
 from azure.ai.generative.index._asset_client.client import get_rest_client, register_new_data_asset_version
 from azure.ai.generative.index._utils.logging import (
     _logger_factory,

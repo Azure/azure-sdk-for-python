@@ -1058,9 +1058,13 @@ class EmbeddingsContainer:
         """Returns a FAISS index that can be used to query the embeddings."""
         if engine == "langchain.vectorstores.FAISS":
             # Using vendored version here would mean promptflow can't unpickle the vectorstore.
+            # pylint: disable=import-error
             from langchain.docstore.in_memory import InMemoryDocstore
-            from langchain.schema.document import Document as NotVendoredLangchainDocument
+            # pylint: disable=import-error
+            from langchain.schema.document import Document as NotVendoredLangchainDocument  
+            # pylint: disable=import-error
             from langchain.vectorstores import FAISS
+            # pylint: disable=import-error
             from langchain.vectorstores.faiss import dependable_faiss_import
 
             def add_doc(doc_id, emb_doc, documents):
@@ -1080,7 +1084,9 @@ class EmbeddingsContainer:
             FaissClass = FAISS
             import_faiss_or_so_help_me = dependable_faiss_import
         elif engine.endswith("indexes.faiss.FaissAndDocStore"):
+            # pylint: disable=import-error
             from azure.ai.generative.index._docstore import FileBasedDocstore
+            # pylint: disable=import-error
             from azure.ai.generative.index._indexes.faiss import (  # type: ignore[no-redef]
                 FaissAndDocStore,
                 import_faiss_or_so_help_me,
