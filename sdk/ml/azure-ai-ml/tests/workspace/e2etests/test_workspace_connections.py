@@ -7,7 +7,7 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient, load_workspace_connection, load_datastore
-from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionAuthType, ConnectionCategory
+from azure.ai.ml._restclient.v2024_01_01_preview.models import ConnectionAuthType, ConnectionCategory
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities import (
     WorkspaceConnection,
@@ -513,26 +513,23 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert created_datastore.credentials.account_key == primary_account_key
 
         # Make sure that normal list call doesn't include data connection
-        listed_conns = [conn for conn in client.connections.list()]
-        conn_names = [conn.name for conn in listed_conns]
-        assert internal_blob_ds.name not in conn_names
+        assert internal_blob_ds.name not in [conn.name for conn in client.connections.list()]
 
         # Make sure that the data connection list call includes the data connection
-        listed_conns_with_data = [conn for conn in client.connections.list(include_data_connections=True)]
-        conn_names_with_data = [conn.name for conn in listed_conns_with_data]
-        checked_current = False
-        for conn in listed_conns_with_data:
+        found_datastore_conn = False
+        for conn in client.connections.list(include_data_connections=True):
             if created_datastore.name == conn.name:
-                assert conn.type == "azure_blob" # TODO replace with restclient enum when available.
+                assert conn.type == camel_to_snake(ConnectionCategory.AZURE_BLOB)
                 assert isinstance(conn, AzureBlobStoreWorkspaceConnection)
-                checked_current = True
+                found_datastore_conn = True
         # Ensure that we actually found and validated the data connection.
-        assert checked_current
+        assert found_datastore_conn
         # delete the data store.
         client.datastores.delete(random_name)
         with pytest.raises(Exception):
             client.datastores.get(random_name)
 
+# Helper function copied from datstore e2e test.
 def datastore_create_get_list(client: MLClient, datastore: Datastore, random_name: str) -> Datastore:
     client.datastores.create_or_update(datastore)
     datastore = client.datastores.get(random_name, include_secrets=True)

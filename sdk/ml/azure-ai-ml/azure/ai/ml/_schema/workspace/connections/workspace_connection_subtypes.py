@@ -6,7 +6,7 @@
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionCategory
+from azure.ai.ml._restclient.v2024_01_01_preview.models import ConnectionCategory
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._schema.workspace.connections.credentials import ApiKeyConfigurationSchema
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -68,7 +68,7 @@ class AzureAIServiceWorkspaceConnectionSchema(WorkspaceConnectionSchema):
 class AzureBlobStoreWorkspaceConnectionSchema(WorkspaceConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(  # TODO replace with real connection category.
-        allowed_values="azure_blob", casing_transform=camel_to_snake, required=True
+        allowed_values=ConnectionCategory.AZURE_BLOB, casing_transform=camel_to_snake, required=True
     )
     credentials = NestedField(ApiKeyConfigurationSchema)
 

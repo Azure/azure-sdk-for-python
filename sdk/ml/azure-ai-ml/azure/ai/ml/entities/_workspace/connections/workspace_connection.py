@@ -9,17 +9,9 @@ from pathlib import Path
 import warnings
 from typing import IO, Any, AnyStr, Dict, List, Optional, Type, Union, cast
 
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
-    AccessKeyAuthTypeWorkspaceConnectionProperties,
-    ApiKeyAuthWorkspaceConnectionProperties,
-    ConnectionAuthType,
+from azure.ai.ml._restclient.v2024_01_01_preview.models import (
     ConnectionCategory,
-    ManagedIdentityAuthTypeWorkspaceConnectionProperties,
     NoneAuthTypeWorkspaceConnectionProperties,
-    PATAuthTypeWorkspaceConnectionProperties,
-    SASAuthTypeWorkspaceConnectionProperties,
-    ServicePrincipalAuthTypeWorkspaceConnectionProperties,
-    UsernamePasswordAuthTypeWorkspaceConnectionProperties,
 )
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     WorkspaceConnectionPropertiesV2BasicResource as RestWorkspaceConnection,
@@ -393,7 +385,7 @@ class WorkspaceConnection(Resource):
             ConnectionCategory.AZURE_OPEN_AI.lower(): AzureOpenAIWorkspaceConnection,
             ConnectionCategory.COGNITIVE_SEARCH.lower(): AzureAISearchWorkspaceConnection,
             ConnectionCategory.COGNITIVE_SERVICE.lower(): AzureAIServiceWorkspaceConnection,
-            "azureblob": AzureBlobStoreWorkspaceConnection,  # TODO replace with real connection category when available.
+            ConnectionCategory.AZURE_BLOB.lower(): AzureBlobStoreWorkspaceConnection,  # TODO replace with real connection category when available.
         }
         cat = _snake_to_camel(conn_type).lower()
         conn_class: Type = WorkspaceConnection
