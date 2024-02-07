@@ -70,7 +70,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
             self.container.create_item(body=body)
 
         start_time = time.time()
-        print("created items, changing offer to 22k and starting queries")
+        print("created items, changing offer to 11k and starting queries")
         self.database.replace_throughput(11000)
         offer_time = time.time()
         print("changed offer to 11k")
