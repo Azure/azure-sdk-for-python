@@ -824,7 +824,7 @@ class WorkflowOperations:
     @distributed_trace
     def create_or_replace(
         self, workflow_id: str, workflow_create_or_update_command: Union[JSON, IO], *,
-        content_type: str = None, **kwargs: Any
+        content_type: str = "application/json", **kwargs: Any
     ) -> JSON:
         """Create or replace a workflow.
 
@@ -834,7 +834,7 @@ class WorkflowOperations:
          type or a IO type. Required.
         :type workflow_create_or_update_command: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
+         Default value is "application/json".
         :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
@@ -904,10 +904,8 @@ class WorkflowOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
         _json = None
         _content = None
         if isinstance(workflow_create_or_update_command, (IOBase, bytes)):
@@ -1111,7 +1109,7 @@ class WorkflowOperations:
     @distributed_trace
     def validate(
         self, workflow_id: str, workflow_validate_query: Union[JSON, IO], *,
-        content_type: str = None, **kwargs: Any
+        content_type: str = "application/json", **kwargs: Any
     ) -> JSON:
         """Validate a workflow.
 
@@ -1184,10 +1182,8 @@ class WorkflowOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
         _json = None
         _content = None
         if isinstance(workflow_validate_query, (IOBase, bytes)):
@@ -1352,7 +1348,8 @@ class UserRequestsOperations:
 
     @distributed_trace
     def submit(
-        self, user_requests_payload: Union[JSON, IO], *, content_type: str = None, **kwargs: Any
+        self, user_requests_payload: Union[JSON, IO], *, content_type: str = "application/json",
+        **kwargs: Any
         ) -> JSON:
         """Submit a user request for requestor, a user  request describes user ask to do operation(s) on
         Purview. If any workflow's trigger matches with an operation in request, a run of the workflow
@@ -1420,10 +1417,8 @@ class UserRequestsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
         _json = None
         _content = None
         if isinstance(user_requests_payload, (IOBase, bytes)):
@@ -1786,8 +1781,8 @@ class WorkflowRunOperations:
 
     @distributed_trace
     def cancel(  # pylint: disable=inconsistent-return-statements
-        self, workflow_run_id: str, run_cancel_reply: Union[JSON, IO], *, content_type: str = None,
-          **kwargs: Any) -> None:
+        self, workflow_run_id: str, run_cancel_reply: Union[JSON, IO], *,
+        content_type: str = "application/json", **kwargs: Any) -> None:
         """Cancel a workflow run.
 
         :param workflow_run_id: The workflow run id. Required.
@@ -1821,10 +1816,8 @@ class WorkflowRunOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
         _json = None
         _content = None
         if isinstance(run_cancel_reply, (IOBase, bytes)):
@@ -2372,8 +2365,8 @@ class WorkflowTaskOperations:
 
     @distributed_trace
     def reassign(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, reassign_command: Union[JSON, IO], *, content_type: str = None,
-        **kwargs: Any
+        self, task_id: str, reassign_command: Union[JSON, IO], *, 
+        content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Reassign a workflow task.
 
@@ -2383,7 +2376,7 @@ class WorkflowTaskOperations:
          or a IO type. Required.
         :type reassign_command: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
+         Default value is "application/json".
         :paramtype content_type: str
         :return: None
         :rtype: None
@@ -2415,10 +2408,8 @@ class WorkflowTaskOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
         _json = None
         _content = None
         if isinstance(reassign_command, (IOBase, bytes)):
@@ -2523,8 +2514,9 @@ class ApprovalOperations:
 
     @distributed_trace
     def approve(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, approval_response_comment: Union[JSON, IO], *, content_type:str = None,
-          **kwargs: Any) -> None:
+        self, task_id: str, approval_response_comment: Union[JSON, IO], *, 
+        content_type: Optional[str] = "application/json", **kwargs: Any
+        ) -> None:
         """Approve an approval.
 
         :param task_id: The task id. Required.
@@ -2533,7 +2525,7 @@ class ApprovalOperations:
          task. Is either a JSON type or a IO type. Required.
         :type approval_response_comment: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
+         Default value is "application/json".
         :paramtype content_type: str
         :return: None
         :rtype: None
@@ -2559,10 +2551,8 @@ class ApprovalOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
         _json = None
         _content = None
         if isinstance(approval_response_comment, (IOBase, bytes)):
@@ -2650,7 +2640,7 @@ class ApprovalOperations:
     @distributed_trace
     def reject(  # pylint: disable=inconsistent-return-statements
         self, task_id: str, approval_response_comment: Union[JSON, IO], *,
-        content_type: str = None, **kwargs: Any
+        content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Reject an approval.
 
@@ -2660,7 +2650,7 @@ class ApprovalOperations:
          task. Is either a JSON type or a IO type. Required.
         :type approval_response_comment: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
+         Default value is "application/json".
         :paramtype content_type: str
         :return: None
         :rtype: None
@@ -2686,10 +2676,8 @@ class ApprovalOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
         _json = None
         _content = None
         if isinstance(approval_response_comment, (IOBase, bytes)):
@@ -2794,8 +2782,9 @@ class TaskStatusOperations:
 
     @distributed_trace
     def update(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, task_update_command: Union[JSON, IO], *, content_type:str = None,
-        **kwargs: Any) -> None:
+        self, task_id: str, task_update_command: Union[JSON, IO], *, 
+        content_type: str = "application/json", **kwargs: Any
+        ) -> None:
         """Update the status of a workflow task request.
 
         :param task_id: The task id. Required.
@@ -2804,7 +2793,7 @@ class TaskStatusOperations:
          type or a IO type. Required.
         :type task_update_command: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
+         Default value is "application/json".
         :paramtype content_type: str
         :return: None
         :rtype: None
@@ -2832,10 +2821,8 @@ class TaskStatusOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
         _json = None
         _content = None
         if isinstance(task_update_command, (IOBase, bytes)):
