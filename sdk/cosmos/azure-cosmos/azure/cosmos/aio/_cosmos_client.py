@@ -271,7 +271,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 :caption: Create a database in the Cosmos DB account:
                 :name: create_database
         """
-        response_hook = kwargs.pop('response_hook', None)
         if session_token is not None:
             kwargs["session_token"] = session_token
         if initial_headers is not None:
@@ -284,8 +283,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
         result = await self.client_connection.CreateDatabase(database=dict(id=id), options=request_options, **kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
         return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
 
     @distributed_trace_async
