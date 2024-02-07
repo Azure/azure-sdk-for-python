@@ -4,9 +4,9 @@
 
 import time
 import logging
-from .augloop_client import AugLoopClient, AugLoopParams
 from typing import Dict, List, Tuple
 from azure.ai.generative.synthetic.simulator._model_tools import RetryClient
+from .augloop_client import AugLoopClient, AugLoopParams
 from .conversation_turn import ConversationTurn
 from .constants import ConversationRole
 from .conversation_bot import ConversationBot

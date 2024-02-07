@@ -4,11 +4,11 @@
 """Langchain compatible Docstore which serializes to jsonl."""
 from typing import Dict, Union
 
+from langchain.docstore.base import AddableMixin, Docstore  # pylint: disable=import-error
+from langchain.docstore.document import Document as LangChainDocument  # pylint: disable=import-error
 from azure.ai.generative.index._embeddings import WrappedLangChainDocument
 from azure.ai.resources._index._documents import Document  # pylint: disable=import-error
 from azure.ai.resources._index._docstore import FileBasedDocstore  # pylint: disable=import-error
-from langchain.docstore.base import AddableMixin, Docstore  # pylint: disable=import-error
-from langchain.docstore.document import Document as LangChainDocument  # pylint: disable=import-error
 
 
 class FileBasedDocStore(Docstore, AddableMixin):

@@ -4,8 +4,8 @@
 
 import time
 import logging
-import tiktoken
 from typing import Optional
+import tiktoken
 
 
 class Tokenizer:

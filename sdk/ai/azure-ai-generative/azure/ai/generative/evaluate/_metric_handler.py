@@ -1,11 +1,12 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import pandas as pd
 import logging
 
 from os import path
 from typing import Dict, Optional
+
+import pandas as pd
 
 from azure.ai.generative.evaluate._constants import TASK_TYPE_TO_METRICS_MAPPING, CHAT
 from ._user_agent import USER_AGENT

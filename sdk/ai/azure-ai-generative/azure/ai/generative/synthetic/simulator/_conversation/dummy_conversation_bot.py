@@ -2,9 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import jinja2
 import logging
 from typing import Dict, List, Optional, Tuple
+import jinja2
 
 from azure.ai.generative.synthetic.simulator._model_tools import RetryClient
 from .conversation_turn import ConversationTurn

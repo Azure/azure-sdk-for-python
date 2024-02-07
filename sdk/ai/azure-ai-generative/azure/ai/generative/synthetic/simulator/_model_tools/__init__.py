@@ -32,4 +32,3 @@ from .dataset_utilities import jsonl_file_iter, resolve_file, batched_iterator
 from .str2bool import str2bool
 # pylint: disable=unused-import
 from .prompt_template import PromptTemplate
-from .str2bool import str2bool

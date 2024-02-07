@@ -217,7 +217,6 @@ class TikaLoader(BaseDocumentLoader):
             logger.warning(f"Unable to extract text from file: {self.document_source.filename}")
             return []
 
-        import re
 
         try:
             text = re.sub(r"\n{3,}", "\n\n", content)

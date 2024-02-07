@@ -3,10 +3,10 @@
 # ---------------------------------------------------------
 
 import logging
-import json5 as json
-
 from collections import Counter, defaultdict
 from typing import Any, Dict, List, Tuple, Optional
+import json5 as json
+
 from .prompt_template import PromptTemplate
 from .encoding import Encoding
 

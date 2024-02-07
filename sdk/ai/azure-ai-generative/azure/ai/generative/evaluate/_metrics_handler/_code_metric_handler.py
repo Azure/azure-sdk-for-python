@@ -3,8 +3,8 @@
 # ---------------------------------------------------------
 
 import logging
-import tqdm
 from concurrent.futures.thread import ThreadPoolExecutor
+import tqdm
 
 from numpy import NaN
 

@@ -3,9 +3,9 @@
 # ---------------------------------------------------------
 
 import logging
-import json5 as json
 from enum import Enum
 from typing import Any, Dict, Optional
+import json5 as json
 
 logger = logging.getLogger(__name__)
 

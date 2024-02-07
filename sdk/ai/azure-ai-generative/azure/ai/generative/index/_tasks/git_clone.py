@@ -2,10 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import argparse
-import git
 import os
 import time
 import traceback
+import git
 
 from azure.ai.generative.index._utils.git import clone_repo, get_keyvault_authentication
 from azure.ai.generative.index._utils.logging import (

@@ -6,10 +6,10 @@ import os
 import json
 import logging
 import websocket
-from azure.identity import ManagedIdentityCredential, AzureCliCredential
-from azure.keyvault.secrets import SecretClient
 from jsonpath_ng import parse
 from websocket import WebSocketConnectionClosedException
+from azure.identity import ManagedIdentityCredential, AzureCliCredential
+from azure.keyvault.secrets import SecretClient
 
 
 class AugLoopParams:

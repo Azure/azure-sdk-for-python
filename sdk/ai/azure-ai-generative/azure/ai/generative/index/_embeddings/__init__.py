@@ -187,7 +187,6 @@ def get_embed_fn(
     elif embedding_kind == "custom":
 
         def load_pickled_function(pickled_embedding_fn):
-            import cloudpickle
 
             return cloudpickle.loads(gzip.decompress(pickled_embedding_fn))
 
@@ -231,7 +230,6 @@ def get_query_embed_fn(
     elif embedding_kind == "custom":
 
         def load_pickled_function(pickled_embedding_fn):
-            import cloudpickle
 
             return cloudpickle.loads(gzip.decompress(pickled_embedding_fn))
 
@@ -851,8 +849,6 @@ class EmbeddingsContainer:
                 paths.append(document.path_to_data)
                 is_local.append(False)
 
-        import os
-
         os.makedirs(path, exist_ok=True)
 
         # write embeddings.parquet
@@ -1060,10 +1056,13 @@ class EmbeddingsContainer:
             # Using vendored version here would mean promptflow can't unpickle the vectorstore.
             # pylint: disable=import-error
             from langchain.docstore.in_memory import InMemoryDocstore
+
             # pylint: disable=import-error
-            from langchain.schema.document import Document as NotVendoredLangchainDocument  
+            from langchain.schema.document import Document as NotVendoredLangchainDocument
+
             # pylint: disable=import-error
             from langchain.vectorstores import FAISS
+
             # pylint: disable=import-error
             from langchain.vectorstores.faiss import dependable_faiss_import
 
@@ -1086,6 +1085,7 @@ class EmbeddingsContainer:
         elif engine.endswith("indexes.faiss.FaissAndDocStore"):
             # pylint: disable=import-error
             from azure.ai.generative.index._docstore import FileBasedDocstore
+
             # pylint: disable=import-error
             from azure.ai.generative.index._indexes.faiss import (  # type: ignore[no-redef]
                 FaissAndDocStore,

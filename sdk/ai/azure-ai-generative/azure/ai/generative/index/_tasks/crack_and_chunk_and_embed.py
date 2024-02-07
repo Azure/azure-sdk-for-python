@@ -9,7 +9,7 @@ import time
 import traceback
 from collections import OrderedDict
 from pathlib import Path
-from typing import Any, Dict, Iterator, Optional, List, Union, Iterator
+from typing import Any, Dict, Iterator, Optional, List, Union
 
 from azure.ai.generative.index._documents import (
     DocumentChunksIterator,
@@ -24,7 +24,6 @@ from azure.ai.generative.index._documents.cracking import (
 from azure.ai.generative.index._embeddings import DataEmbeddedDocument, EmbeddedDocumentSource, EmbeddingsContainer
 from azure.ai.generative.index._mlindex import MLIndex
 from azure.ai.generative.index._tasks.crack_and_chunk import custom_loading, get_activity_logging_filter, str2bool
-from azure.ai.generative.index._documents.document import DocumentSource
 from azure.ai.generative.index._utils.logging import (
     _logger_factory,
     enable_appinsights_logging,

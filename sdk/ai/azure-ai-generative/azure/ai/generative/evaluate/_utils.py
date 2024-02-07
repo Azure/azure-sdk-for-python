@@ -10,9 +10,9 @@ import time
 from pathlib import Path
 from typing import Optional, Dict, List
 
+import tempfile
 import mlflow
 import pandas as pd
-import tempfile
 
 _SUB_ID = "sub-id"
 _RES_GRP = "res-grp"
@@ -102,7 +102,6 @@ def _is_flow_local(path):
 
 
 def _get_artifact_dir_path(path):
-    import mlflow
     from mlflow.tracking.artifact_utils import get_artifact_repository
 
     _WORKSPACE_INFO_REGEX = r".*/subscriptions/(.+)/resourceGroups/(.+)" \
@@ -135,7 +134,6 @@ def _get_artifact_dir_path(path):
 
 
 def _write_properties_to_run_history(properties: dict, logger) -> None:
-    import mlflow
     from mlflow.tracking import MlflowClient
     from mlflow.utils.rest_utils import http_request
 

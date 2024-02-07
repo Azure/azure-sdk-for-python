@@ -2,8 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import asyncio
-import pandas as pd
 import logging
+import pandas as pd
 import tqdm.asyncio
 from numpy import NaN
 

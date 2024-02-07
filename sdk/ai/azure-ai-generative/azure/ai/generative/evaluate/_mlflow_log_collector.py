@@ -3,9 +3,9 @@
 # ---------------------------------------------------------
 
 import sys
-import mlflow
 import traceback
 import tempfile
+import mlflow
 
 
 class OutputCollector(object):

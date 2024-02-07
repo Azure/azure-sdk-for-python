@@ -3,6 +3,12 @@
 # ---------------------------------------------------------
 
 from typing import Callable, Dict, Union, Optional, Sequence
+import logging
+import os
+import asyncio
+import threading
+import json
+
 from azure.ai.generative.synthetic.simulator._conversation import (
     ConversationBot,
     ConversationRole,
@@ -14,14 +20,8 @@ from azure.ai.generative.synthetic.simulator._model_tools.models import (
     AsyncHTTPClientWithRetry,
 )
 from azure.ai.generative.synthetic.simulator import _template_dir as template_dir
-from azure.ai.generative.synthetic.simulator._model_tools import APITokenManager, OpenAIChatCompletionsModel, LLMBase
+from azure.ai.generative.synthetic.simulator._model_tools import APITokenManager, LLMBase
 
-
-import logging
-import os
-import asyncio
-import threading
-import json
 
 BASIC_MD = os.path.join(template_dir, "basic.md")  # type: ignore[has-type]
 USER_MD = os.path.join(template_dir, "user.md")  # type: ignore[has-type]

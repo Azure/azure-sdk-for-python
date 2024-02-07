@@ -11,9 +11,9 @@ from typing import Optional
 from urllib.parse import urlparse
 from abc import ABC, abstractmethod
 
+from msal import ConfidentialClientApplication
 from azure.keyvault.secrets import SecretClient
 from azure.identity import ManagedIdentityCredential, AzureCliCredential
-from msal import ConfidentialClientApplication
 
 http_logger = logging.getLogger("azure.core.pipeline.policies.http_logging_policy")
 

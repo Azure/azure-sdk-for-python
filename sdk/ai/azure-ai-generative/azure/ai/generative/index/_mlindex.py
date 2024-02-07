@@ -9,7 +9,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Iterator, Optional, Union
 
+from importlib.util import find_spec
 import yaml  # type: ignore[import]
+from packaging import version as pkg_version
 from azure.core.credentials import TokenCredential
 from azure.ai.generative.index._documents import Document, DocumentChunksIterator
 from azure.ai.generative.index._embeddings import EmbeddingsContainer
@@ -29,8 +31,6 @@ from azure.ai.generative.index._utils.logging import (
     track_activity,
     version,
 )
-from packaging import version as pkg_version
-from importlib.util import find_spec
 
 try:
     from langchain.document_loaders.base import BaseLoader
@@ -459,7 +459,6 @@ class MLIndex:
             else:
                 self.embeddings_config["connection_type"] = "workspace_connection"
                 if isinstance(embedding_connection, str):
-                    from azure.ai.resources._index._utils.connections import get_connection_by_id_v2
 
                     embedding_connection = get_connection_by_id_v2(embedding_connection, credential=credential)
                 self.embeddings_config["connection"] = {"id": get_id_from_connection(embedding_connection)}
@@ -469,7 +468,6 @@ class MLIndex:
             else:
                 self.index_config["connection_type"] = "workspace_connection"
                 if isinstance(index_connection, str):
-                    from azure.ai.resources._index._utils.connections import get_connection_by_id_v2
 
                     index_connection = get_connection_by_id_v2(index_connection, credential=credential)
                 self.index_config["connection"] = {"id": get_id_from_connection(index_connection)}
@@ -528,7 +526,7 @@ class MLIndex:
         -------
             MLIndex
         """
-        from azure.ai.generative.index._documents import DocumentChunksIterator, split_documents
+        from azure.ai.generative.index._documents import split_documents
 
         with track_activity(logger, "MLIndex.from_files"):
             chunked_documents = DocumentChunksIterator(
@@ -629,7 +627,6 @@ class MLIndex:
                 if isinstance(embeddings_model, str):
                     connection_args = {}
                     if "open_ai" in embeddings_model:
-                        from azure.ai.resources._index._utils.connections import get_connection_by_id_v2
 
                         if embeddings_connection:
                             if isinstance(embeddings_connection, str):
@@ -737,7 +734,6 @@ class MLIndex:
             )
         elif index_type == "acs":
             from azure.ai.generative.index._tasks.update_acs import create_index_from_raw_embeddings
-            from azure.ai.resources._index._utils.connections import get_connection_by_id_v2
 
             if not index_connection:
                 index_config = {

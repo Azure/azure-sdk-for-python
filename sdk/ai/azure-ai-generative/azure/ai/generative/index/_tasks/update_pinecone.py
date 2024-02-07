@@ -6,10 +6,10 @@ import os
 import time
 import traceback
 import json
-import pinecone  # pylint: disable=import-error
-import yaml  # type: ignore[import]
 from pathlib import Path
 from typing import Optional
+import pinecone  # pylint: disable=import-error
+import yaml  # type: ignore[import]
 
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.ai.generative.index._embeddings import EmbeddingsContainer, ReferenceEmbeddedDocument

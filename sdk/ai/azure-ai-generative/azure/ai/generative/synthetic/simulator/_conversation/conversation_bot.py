@@ -2,9 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import jinja2
 import logging
 from typing import Dict, List, Tuple, Union
+import jinja2
 
 from azure.ai.generative.synthetic.simulator._model_tools import (
     LLMBase,
