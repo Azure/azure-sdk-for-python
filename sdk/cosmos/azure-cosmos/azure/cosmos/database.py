@@ -196,8 +196,8 @@ class DatabaseProxy(object):
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL. Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
-        :keyword List[Dict[str, str]] computed_properties: Sets The computed properties for this container in the Azure
-            Cosmos DB Service. For more Information on how to use computed properties visit
+        :keyword List[Dict[str, str]] computed_properties: **provisional** Sets The computed properties for this
+            container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
             `here: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :returns: A `ContainerProxy` instance representing the new container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
@@ -300,8 +300,8 @@ class DatabaseProxy(object):
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
-        :keyword List[Dict[str, str]] computed_properties: Sets The computed properties for this container in the Azure
-            Cosmos DB Service. For more Information on how to use computed properties visit
+        :keyword List[Dict[str, str]] computed_properties: **provisional** Sets The computed properties for this
+            container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
             `here: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :returns: A `ContainerProxy` instance representing the container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
