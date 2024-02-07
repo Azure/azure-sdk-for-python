@@ -80,7 +80,7 @@ Radiology Insights currently supports one document from one patient. Please take
 
 ### Create a RadiologyInsights request and get the result using an asynchronous client
 
-For an example how to create a client, a request and get the result see the example in the [sample folder][sample_client].
+For an example how to create a client, a request and get the result see the example in the sample folder.
 
 ### Get Critical Result Inference information
 
@@ -114,11 +114,10 @@ additional questions or comments.
 
 <!-- LINKS -->
 [health_insights]: https://learn.microsoft.com/azure/azure-health-insights/overview
-[radiology_insights_docs]: https://azure.microsoft.com/services/
+[radiology_insights_docs]: https://learn.microsoft.com/azure/azure-health-insights/radiology-insights/
 [azure_sub]: https://azure.microsoft.com/free/
 [cognitive_resource_cli]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli
 [azure_portal]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesHealthInsights
 [azure_cli]: https://learn.microsoft.com/cli/azure/
-[inferences]: https://learn.microsoft.com/azure/cognitive-services/health-decision-support/radiology-insights
-[sample_client]: https://github.com/Azure/azure-sdk-for-python/tree/sdk/healthinsights/azure-healthinsights-radiologyinsights/samples/
+[inferences]: https://learn.microsoft.com/azure/azure-health-insights/radiology-insights/inferences
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/

@@ -1,5 +1,4 @@
 import functools
-import json
 
 from azure.core.credentials import AzureKeyCredential
 from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
@@ -17,14 +16,12 @@ HealthInsightsEnvPreparer = functools.partial(
     healthinsights_key="00000000000000000000000000000000",
 )
 
-
 class TestRadiologyInsights(AzureRecordedTestCase):
 
     @HealthInsightsEnvPreparer()
     @recorded_by_proxy
-    def test_match_trials(self, healthinsights_endpoint, healthinsights_key):
-        radiology_insights_client = RadiologyInsightsClient(healthinsights_endpoint,
-                                                  AzureKeyCredential(healthinsights_key))
+    def test_radiology_insights(self, healthinsights_endpoint, healthinsights_key):
+        radiology_insights_client = RadiologyInsightsClient(healthinsights_endpoint, AzureKeyCredential(healthinsights_key))
 
         assert radiology_insights_client is not None
 
@@ -118,10 +115,9 @@ class TestRadiologyInsights(AzureRecordedTestCase):
                     }
                 }
             }
-
         }
 
         poller = radiology_insights_client.begin_infer_radiology_insights(data)
         result = poller.result()
 
-        assert len(result.results.patients[0].inferences) is not 0
+        assert len(result.patient_results) == 1
