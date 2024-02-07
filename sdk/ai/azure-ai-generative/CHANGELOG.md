@@ -4,6 +4,7 @@
 
 ### Other Changes
 
+- Recursive Text Splitter is now enabled by default for local index builds which mimics behavior of cloud index builds
 - Bug fixes
 
 ## 1.0.0b5 (2024-02-02)
