@@ -1004,9 +1004,9 @@ def _commit_block_list_options(
     for block in block_list:
         if isinstance(block, BlobBlock):
             if block.state.value == 'committed':
-                block_lookup.committed.append(encode_base64(str(block.id)))  # type: ignore [union-attr]
+                cast(List[str], block_lookup.committed).append(encode_base64(str(block.id)))
             elif block.state.value == 'uncommitted':
-                block_lookup.uncommitted.append(encode_base64(str(block.id)))  # type: ignore [union-attr]
+                cast(List[str], block_lookup.uncommitted).append(encode_base64(str(block.id)))
             elif block_lookup.latest is not None:
                 block_lookup.latest.append(encode_base64(str(block.id)))
         else:
