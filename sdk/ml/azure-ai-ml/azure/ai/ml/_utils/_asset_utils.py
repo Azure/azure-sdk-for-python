@@ -70,7 +70,6 @@ from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 if TYPE_CHECKING:
     from azure.ai.ml.operations import ComponentOperations, DataOperations, EnvironmentOperations, ModelOperations
 
-hash_type = type(hashlib.md5())  # nosec
 
 module_logger = logging.getLogger(__name__)
 
@@ -243,8 +242,8 @@ def _parse_name_version(
 
 
 def _get_file_hash(
-    filename: Union[str, os.PathLike], _hash: hash_type  # pylint: disable=no-member
-) -> hash_type:  # pylint: disable=no-member
+    filename: Union[str, os.PathLike], _hash: "_hashlib.HASH"  # type: ignore[name-defined]
+) -> "_hashlib.HASH":  # type: ignore[name-defined]
     with open(str(filename), "rb") as f:
         for chunk in iter(lambda: f.read(CHUNK_SIZE), b""):
             _hash.update(chunk)
@@ -252,8 +251,8 @@ def _get_file_hash(
 
 
 def _get_dir_hash(
-    directory: Union[str, os.PathLike], _hash: hash_type, ignore_file: IgnoreFile  # pylint: disable=no-member
-) -> hash_type:  # pylint: disable=no-member
+    directory: Union[str, os.PathLike], _hash: "_hashlib.HASH", ignore_file: IgnoreFile  # type: ignore[name-defined]
+) -> "_hashlib.HASH":  # type: ignore[name-defined]
     dir_contents = Path(directory).iterdir()
     sorted_contents = sorted(dir_contents, key=lambda path: str(path).lower())
     for path in sorted_contents:
@@ -489,7 +488,9 @@ def get_directory_size(
                 # os.readlink returns a file path relative to dirpath, and must be
                 # re-joined to get a workable result
                 path_size = os.path.getsize(
-                    os.path.join(dirpath, os.readlink(convert_windows_path_to_unix(full_path)))
+                    os.path.join(
+                        dirpath, os.readlink(convert_windows_path_to_unix(full_path))
+                    )  # type: ignore[call-overload]
                 )  # type: ignore[call-overload]
             size_list[full_path] = path_size
             total_size += path_size
@@ -1077,7 +1078,7 @@ class FileUploadProgressBar(tqdm):
 
     def update_to(self, response):
         current = response.context["upload_stream_current"]
-        self.total = response.context["data_stream_total"]
+        self.total = response.context["data_stream_total"]  # disable=attribute-defined-outside-init
         if current:
             self.update(current - self.n)
 
