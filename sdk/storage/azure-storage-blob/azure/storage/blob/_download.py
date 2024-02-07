@@ -598,7 +598,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         :returns:
             The requested data as bytes or a string if encoding was specified. If
             the return value is empty, there is no more data to read.
-        :rtype: Any
+        :rtype: T
         """
         if size == -1:
             return self.readall()
