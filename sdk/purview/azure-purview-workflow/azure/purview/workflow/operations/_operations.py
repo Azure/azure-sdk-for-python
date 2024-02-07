@@ -823,7 +823,8 @@ class WorkflowOperations:
 
     @distributed_trace
     def create_or_replace(
-        self, workflow_id: str, workflow_create_or_update_command: Union[JSON, IO], **kwargs: Any
+        self, workflow_id: str, workflow_create_or_update_command: Union[JSON, IO], *,
+        content_type: str = None, **kwargs: Any
     ) -> JSON:
         """Create or replace a workflow.
 
@@ -1108,7 +1109,10 @@ class WorkflowOperations:
         """
 
     @distributed_trace
-    def validate(self, workflow_id: str, workflow_validate_query: Union[JSON, IO], **kwargs: Any) -> JSON:
+    def validate(
+        self, workflow_id: str, workflow_validate_query: Union[JSON, IO], *,
+        content_type: str = None, **kwargs: Any
+    ) -> JSON:
         """Validate a workflow.
 
         :param workflow_id: The workflow id. Required.
@@ -1347,7 +1351,9 @@ class UserRequestsOperations:
         """
 
     @distributed_trace
-    def submit(self, user_requests_payload: Union[JSON, IO], **kwargs: Any) -> JSON:
+    def submit(
+        self, user_requests_payload: Union[JSON, IO], *, content_type: str = None, **kwargs: Any
+        ) -> JSON:
         """Submit a user request for requestor, a user  request describes user ask to do operation(s) on
         Purview. If any workflow's trigger matches with an operation in request, a run of the workflow
         is created.
@@ -1780,8 +1786,8 @@ class WorkflowRunOperations:
 
     @distributed_trace
     def cancel(  # pylint: disable=inconsistent-return-statements
-        self, workflow_run_id: str, run_cancel_reply: Union[JSON, IO], **kwargs: Any
-    ) -> None:
+        self, workflow_run_id: str, run_cancel_reply: Union[JSON, IO], *, content_type: str = None,
+          **kwargs: Any) -> None:
         """Cancel a workflow run.
 
         :param workflow_run_id: The workflow run id. Required.
@@ -2366,7 +2372,8 @@ class WorkflowTaskOperations:
 
     @distributed_trace
     def reassign(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, reassign_command: Union[JSON, IO], **kwargs: Any
+        self, task_id: str, reassign_command: Union[JSON, IO], *, content_type: str = None,
+        **kwargs: Any
     ) -> None:
         """Reassign a workflow task.
 
@@ -2516,8 +2523,8 @@ class ApprovalOperations:
 
     @distributed_trace
     def approve(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, approval_response_comment: Union[JSON, IO], **kwargs: Any
-    ) -> None:
+        self, task_id: str, approval_response_comment: Union[JSON, IO], *, content_type:str = None,
+          **kwargs: Any) -> None:
         """Approve an approval.
 
         :param task_id: The task id. Required.
@@ -2642,7 +2649,8 @@ class ApprovalOperations:
 
     @distributed_trace
     def reject(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, approval_response_comment: Union[JSON, IO], **kwargs: Any
+        self, task_id: str, approval_response_comment: Union[JSON, IO], *,
+        content_type: str = None, **kwargs: Any
     ) -> None:
         """Reject an approval.
 
@@ -2786,8 +2794,8 @@ class TaskStatusOperations:
 
     @distributed_trace
     def update(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, task_update_command: Union[JSON, IO], **kwargs: Any
-    ) -> None:
+        self, task_id: str, task_update_command: Union[JSON, IO], *, content_type:str = None,
+        **kwargs: Any) -> None:
         """Update the status of a workflow task request.
 
         :param task_id: The task id. Required.
