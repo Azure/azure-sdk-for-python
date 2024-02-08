@@ -3,18 +3,19 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-many-lines, invalid-overridden-method
+# pylint: disable=too-many-lines
 
 import warnings
 from functools import partial
-from typing import (  # pylint: disable=unused-import
-    Any, AnyStr, AsyncIterable, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
+from typing import (
+    Any, AnyStr, AsyncIterable, cast, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
     TYPE_CHECKING
 )
 from typing_extensions import Self
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -51,8 +52,7 @@ from .._blob_client_helpers import (
     _upload_page_options,
     _upload_pages_from_url_options
 )
-from .._shared.base_client import parse_connection_str
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
 from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._generated.aio import AzureBlobStorage
@@ -78,8 +78,9 @@ from ._upload_helpers import (
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
+    from azure.storage.blob.aio import ContainerClient
     from datetime import datetime
-    from .._models import (  # pylint: disable=unused-import
+    from .._models import (
         ContentSettings,
         ImmutabilityPolicy,
         PremiumPageBlobTier,
@@ -88,7 +89,7 @@ if TYPE_CHECKING:
     )
 
 
-class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: disable=too-many-public-methods
+class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):  # type: ignore [misc] # pylint: disable=too-many-public-methods
     """A client to interact with a specific blob, although that blob may not yet exist.
 
     :param str account_url:
@@ -161,7 +162,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             snapshot: Optional[Union[str, Dict[str, Any]]] = None,
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
             **kwargs: Any
-        ) -> None:
+    ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         parsed_url, sas_token, path_snapshot = _parse_url(
             account_url=account_url,
@@ -169,13 +170,13 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             blob_name=blob_name)
         self.container_name = container_name
         self.blob_name = blob_name
-        try:
-            self.snapshot = snapshot.snapshot # type: ignore
-        except AttributeError:
-            try:
-                self.snapshot = snapshot['snapshot'] # type: ignore
-            except TypeError:
-                self.snapshot = snapshot or path_snapshot
+
+        if snapshot is not None and hasattr(snapshot, 'snapshot'):
+            self.snapshot = snapshot.snapshot
+        elif isinstance(snapshot, dict):
+            self.snapshot = snapshot['snapshot']
+        else:
+            self.snapshot = snapshot or path_snapshot
         self.version_id = kwargs.pop('version_id', None)
 
         # This parameter is used for the hierarchy traversal. Give precedence to credential.
@@ -183,10 +184,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
         super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment] # pylint: disable=protected-access
         self._configure_encryption(kwargs)
 
-    def _format_url(self, hostname):
+    def _format_url(self, hostname: str) -> str:
         return _format_url(
             container_name=self.container_name,
             scheme=self.scheme,
@@ -197,11 +198,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
 
     @classmethod
     def from_blob_url(
-            cls, blob_url: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
-            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-            **kwargs: Any
-        ) -> Self:
+        cls, blob_url: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+        **kwargs: Any
+    ) -> Self:
         """Create BlobClient from a blob url. This doesn't support customized blob url with '/' in blob name.
 
         :param str blob_url:
@@ -239,13 +240,13 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
 
     @classmethod
     def from_connection_string(
-            cls, conn_str: str,
-            container_name: str,
-            blob_name: str,
-            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
-        ) -> Self:
+        cls, conn_str: str,
+        container_name: str,
+        blob_name: str,
+        snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> Self:
         """Create BlobClient from a Connection String.
 
         :param str conn_str:
@@ -293,8 +294,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         )
 
     @distributed_trace_async
-    async def get_account_information(self, **kwargs): # type: ignore
-        # type: (Optional[int]) -> Dict[str, str]
+    async def get_account_information(self, **kwargs: Any) -> Dict[str, str]:
         """Gets information related to the storage account in which the blob resides.
 
         The information can also be retrieved if the user has a SAS to a container or blob.
@@ -304,13 +304,13 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :rtype: dict(str, str)
         """
         try:
-            return await self._client.blob.get_account_info(cls=return_response_headers, **kwargs) # type: ignore
+            return cast(Dict[str, str],
+                        await self._client.blob.get_account_info(cls=return_response_headers, **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def upload_blob_from_url(self, source_url, **kwargs):
-        # type: (str, Any) -> Dict[str, Any]
+    async def upload_blob_from_url(self, source_url: str, **kwargs: Any) -> Dict[str, Any]:
         """
         Creates a new Block Blob where the content of the blob is read from a given URL.
         The content of an existing blob is overwritten with the new blob.
@@ -412,18 +412,18 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             source_url=source_url,
             **kwargs)
         try:
-            return await self._client.block_blob.put_blob_from_url(**options)
+            return cast(Dict[str, Any], await self._client.block_blob.put_blob_from_url(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
     async def upload_blob(
-            self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
-            blob_type: Union[str, BlobType] = BlobType.BlockBlob,
-            length: Optional[int] = None,
-            metadata: Optional[Dict[str, str]] = None,
-            **kwargs
-        ) -> Dict[str, Any]:
+        self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+        blob_type: Union[str, BlobType] = BlobType.BLOCKBLOB,
+        length: Optional[int] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Creates a new blob from a data source with automatic chunking.
 
         :param data: The blob data to upload.
@@ -582,15 +582,15 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             client=self._client,
             **kwargs)
         if blob_type == BlobType.BlockBlob:
-            return await upload_block_blob(**options)
+            return cast(Dict[str, Any], await upload_block_blob(**options))
         if blob_type == BlobType.PageBlob:
-            return await upload_page_blob(**options)
-        return await upload_append_blob(**options)
+            return cast(Dict[str, Any], await upload_page_blob(**options))
+        return cast(Dict[str, Any], await upload_append_blob(**options))
 
     @overload
     async def download_blob(
-            self, offset: int = None,
-            length: int = None,
+            self, offset: Optional[int] = None,
+            length: Optional[int] = None,
             *,
             encoding: str,
             **kwargs) -> StorageStreamDownloader[str]:
@@ -598,20 +598,21 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
 
     @overload
     async def download_blob(
-            self, offset: int = None,
-            length: int = None,
+            self, offset: Optional[int] = None,
+            length: Optional[int] = None,
             *,
-            encoding: None = None,
+            encoding: Optional[str] = None,
             **kwargs) -> StorageStreamDownloader[bytes]:
         ...
 
     @distributed_trace_async
     async def download_blob(
-            self, offset: int = None,
-            length: int = None,
-            *,
-            encoding: Optional[str] = None,
-            **kwargs) -> StorageStreamDownloader:
+        self, offset: Optional[int] = None,
+        length: Optional[int] = None,
+        *,
+        encoding: Optional[str] = None,
+        **kwargs: Any
+    ) -> StorageStreamDownloader:
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
         a stream. Using chunks() returns an async iterator which allows the user to iterate over the content in chunks.
@@ -729,8 +730,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         return downloader
 
     @distributed_trace_async
-    async def delete_blob(self, delete_snapshots=None, **kwargs):
-        # type: (str, Any) -> None
+    async def delete_blob(self, delete_snapshots: Optional[str] = None, **kwargs: Any) -> None:
         """Marks the specified blob for deletion.
 
         The blob is later deleted during garbage collection.
@@ -811,8 +811,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             process_storage_error(error)
 
     @distributed_trace_async
-    async def undelete_blob(self, **kwargs):
-        # type: (Any) -> None
+    async def undelete_blob(self, **kwargs: Any) -> None:
         """Restores soft-deleted blobs or snapshots.
 
         Operation will only be successful if used within the specified number of days
@@ -845,8 +844,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             process_storage_error(error)
 
     @distributed_trace_async
-    async def exists(self, **kwargs):
-        # type: (**Any) -> bool
+    async def exists(self, **kwargs: Any) -> bool:
         """
         Returns True if a blob exists with the defined parameters, and returns
         False otherwise.
@@ -880,8 +878,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
                 return False
 
     @distributed_trace_async
-    async def get_blob_properties(self, **kwargs):
-        # type: (Any) -> BlobProperties
+    async def get_blob_properties(self, **kwargs: Any) -> BlobProperties:
         """Returns all user-defined metadata, standard HTTP properties, and
         system properties for the blob. It does not return the content of the blob.
 
@@ -971,11 +968,13 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         if isinstance(blob_props, BlobProperties):
             blob_props.container = self.container_name
             blob_props.snapshot = self.snapshot
-        return blob_props # type: ignore
+        return cast(BlobProperties, blob_props)
 
     @distributed_trace_async
-    async def set_http_headers(self, content_settings=None, **kwargs):
-        # type: (Optional[ContentSettings], Any) -> None
+    async def set_http_headers(
+        self, content_settings: Optional["ContentSettings"] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Sets system properties on the blob.
 
         If one property is set for the content_settings, all properties will be overridden.
@@ -1021,13 +1020,15 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         """
         options = _set_http_headers_options(content_settings=content_settings, **kwargs)
         try:
-            return await self._client.blob.set_http_headers(**options) # type: ignore
+            return cast(Dict[str, Any], await self._client.blob.set_http_headers(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def set_blob_metadata(self, metadata=None, **kwargs):
-        # type: (Optional[Dict[str, str]], Any) -> Dict[str, Union[str, datetime]]
+    async def set_blob_metadata(
+        self, metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, datetime]]:
         """Sets user-defined metadata for the blob as one or more name-value pairs.
 
         :param metadata:
@@ -1087,13 +1088,15 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _set_blob_metadata_options(metadata=metadata, **kwargs)
         try:
-            return await self._client.blob.set_metadata(**options)  # type: ignore
+            return cast(Dict[str, Union[str, datetime]], await self._client.blob.set_metadata(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def set_immutability_policy(self, immutability_policy, **kwargs):
-        # type: (ImmutabilityPolicy, **Any) -> Dict[str, str]
+    async def set_immutability_policy(
+        self, immutability_policy: "ImmutabilityPolicy",
+        **kwargs: Any
+    ) -> Dict[str, str]:
         """The Set Immutability Policy operation sets the immutability policy on the blob.
 
         .. versionadded:: 12.10.0
@@ -1117,11 +1120,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
 
         kwargs['immutability_policy_expiry'] = immutability_policy.expiry_time
         kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
-        return await self._client.blob.set_immutability_policy(cls=return_response_headers, **kwargs)
+        return cast(Dict[str, str], await self._client.blob.set_immutability_policy(cls=return_response_headers, **kwargs))
 
     @distributed_trace_async
-    async def delete_immutability_policy(self, **kwargs):
-        # type: (**Any) -> None
+    async def delete_immutability_policy(self, **kwargs: Any) -> None:
         """The Delete Immutability Policy operation deletes the immutability policy on the blob.
 
         .. versionadded:: 12.10.0
@@ -1140,8 +1142,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         await self._client.blob.delete_immutability_policy(**kwargs)
 
     @distributed_trace_async
-    async def set_legal_hold(self, legal_hold, **kwargs):
-        # type: (bool, **Any) -> Dict[str, Union[str, datetime, bool]]
+    async def set_legal_hold(self, legal_hold: bool, **kwargs: Any) -> Dict[str, Union[str, datetime, bool]]:
         """The Set Legal Hold operation sets a legal hold on the blob.
 
         .. versionadded:: 12.10.0
@@ -1159,17 +1160,17 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :rtype: Dict[str, Union[str, datetime, bool]]
         """
 
-        return await self._client.blob.set_legal_hold(legal_hold, cls=return_response_headers, **kwargs)
+        return cast(Dict[str, Union[str, datetime, bool]],
+                    await self._client.blob.set_legal_hold(legal_hold, cls=return_response_headers, **kwargs))
 
     @distributed_trace_async
-    async def create_page_blob(  # type: ignore
-            self, size,  # type: int
-            content_settings=None,  # type: Optional[ContentSettings]
-            metadata=None, # type: Optional[Dict[str, str]]
-            premium_page_blob_tier=None,  # type: Optional[Union[str, PremiumPageBlobTier]]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+    async def create_page_blob(
+        self, size: int,
+        content_settings: Optional["ContentSettings"] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        premium_page_blob_tier: Optional[Union[str, "PremiumPageBlobTier"]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, datetime]]:
         """Creates a new Page Blob of the specified size.
 
         :param int size:
@@ -1265,13 +1266,16 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             premium_page_blob_tier=premium_page_blob_tier,
             **kwargs)
         try:
-            return await self._client.page_blob.create(**options) # type: ignore
+            return cast(Dict[str, Any], await self._client.page_blob.create(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def create_append_blob(self, content_settings=None, metadata=None, **kwargs):
-        # type: (Optional[ContentSettings], Optional[Dict[str, str]], Any) -> Dict[str, Union[str, datetime]]
+    async def create_append_blob(
+        self, content_settings: Optional["ContentSettings"] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, datetime]]:
         """Creates a new Append Blob. This operation creates a new 0-length append blob. The content
         of any existing blob is overwritten with the newly initialized append blob. To add content to
         the append blob, call the :func:`append_block` or :func:`append_block_from_url` method.
@@ -1356,13 +1360,15 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             metadata=metadata,
             **kwargs)
         try:
-            return await self._client.append_blob.create(**options) # type: ignore
+            return cast(Dict[str, Union[str, datetime]], await self._client.append_blob.create(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def create_snapshot(self, metadata=None, **kwargs):
-        # type: (Optional[Dict[str, str]], Any) -> Dict[str, Union[str, datetime]]
+    async def create_snapshot(
+        self, metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, datetime]]:
         """Creates a snapshot of the blob.
 
         A snapshot is a read-only version of a blob that's taken at a point in time.
@@ -1438,13 +1444,17 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _create_snapshot_options(metadata=metadata, **kwargs)
         try:
-            return await self._client.blob.create_snapshot(**options) # type: ignore
+            return cast(Dict[str, Any], await self._client.blob.create_snapshot(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def start_copy_from_url(self, source_url, metadata=None, incremental_copy=False, **kwargs):
-        # type: (str, Optional[Dict[str, str]], bool, Any) -> Dict[str, Union[str, datetime]]
+    async def start_copy_from_url(
+        self, source_url: str,
+        metadata: Optional[Dict[str, str]] = None,
+        incremental_copy: bool = False,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, datetime]]:
         """Copies a blob from the given URL.
 
         This operation returns a dictionary containing `copy_status` and `copy_id`,
@@ -1634,14 +1644,16 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             **kwargs)
         try:
             if incremental_copy:
-                return await self._client.page_blob.copy_incremental(**options)
-            return await self._client.blob.start_copy_from_url(**options)
+                return cast(Dict[str, Union[str, datetime]], await self._client.page_blob.copy_incremental(**options))
+            return cast(Dict[str, Union[str, datetime]], await self._client.blob.start_copy_from_url(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def abort_copy(self, copy_id, **kwargs):
-        # type: (Union[str, Dict[str, Any], BlobProperties], Any) -> None
+    async def abort_copy(
+        self, copy_id: Union[str, Dict[str, Any], BlobProperties],
+        **kwargs: Any
+    ) -> None:
         """Abort an ongoing copy operation.
 
         This will leave a destination blob with zero length and full metadata.
@@ -1669,8 +1681,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             process_storage_error(error)
 
     @distributed_trace_async
-    async def acquire_lease(self, lease_duration=-1, lease_id=None, **kwargs):
-        # type: (int, Optional[str], Any) -> BlobLeaseClient
+    async def acquire_lease(
+        self, lease_duration: int =-1,
+        lease_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> BlobLeaseClient:
         """Requests a new lease.
 
         If the blob does not have an active lease, the Blob
@@ -1726,13 +1741,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
                 :dedent: 12
                 :caption: Acquiring a lease on a blob.
         """
-        lease = BlobLeaseClient(self, lease_id=lease_id) # type: ignore
+        lease = BlobLeaseClient(self, lease_id=lease_id)
         await lease.acquire(lease_duration=lease_duration, **kwargs)
         return lease
 
     @distributed_trace_async
-    async def set_standard_blob_tier(self, standard_blob_tier, **kwargs):
-        # type: (Union[str, StandardBlobTier], Any) -> None
+    async def set_standard_blob_tier(self, standard_blob_tier: Union[str, "StandardBlobTier"], **kwargs: Any) -> None:
         """This operation sets the tier on a block blob.
 
         A block blob's tier determines Hot/Cool/Archive storage type.
@@ -1784,12 +1798,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
 
     @distributed_trace_async
     async def stage_block(
-            self, block_id,  # type: str
-            data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
-            length=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> None
+        self, block_id: str,
+        data: Union[Iterable[AnyStr], IO[AnyStr]],
+        length: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Creates a new block to be committed as part of a blob.
 
         :param str block_id: A string value that identifies the block.
@@ -1843,20 +1856,19 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             length=length,
             **kwargs)
         try:
-            return await self._client.block_blob.stage_block(**options)
+            return cast(Dict[str, Any], await self._client.block_blob.stage_block(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
     async def stage_block_from_url(
-            self, block_id,  # type: Union[str, int]
-            source_url,  # type: str
-            source_offset=None,  # type: Optional[int]
-            source_length=None,  # type: Optional[int]
-            source_content_md5=None,  # type: Optional[Union[bytes, bytearray]]
-            **kwargs
-        ):
-        # type: (...) -> None
+        self, block_id: str,
+        source_url: str,
+        source_offset: Optional[int] = None,
+        source_length: Optional[int] = None,
+        source_content_md5: Optional[Union[bytes, bytearray]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Creates a new block to be committed as part of a blob where
         the contents are read from a URL.
 
@@ -1909,13 +1921,15 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             source_content_md5=source_content_md5,
             **kwargs)
         try:
-            return await self._client.block_blob.stage_block_from_url(**options)
+            return cast(Dict[str, Any], await self._client.block_blob.stage_block_from_url(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_block_list(self, block_list_type="committed", **kwargs):
-        # type: (Optional[str], Any) -> Tuple[List[BlobBlock], List[BlobBlock]]
+    async def get_block_list(
+        self, block_list_type: str = "committed",
+        **kwargs: Any
+    ) -> Tuple[List[Optional[BlobBlock]], List[Optional[BlobBlock]]]:
         """The Get Block List operation retrieves the list of blocks that have
         been uploaded as part of a block blob.
 
@@ -1957,13 +1971,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         return _get_block_list_result(blocks)
 
     @distributed_trace_async
-    async def commit_block_list( # type: ignore
-            self, block_list,  # type: List[BlobBlock]
-            content_settings=None,  # type: Optional[ContentSettings]
-            metadata=None,  # type: Optional[Dict[str, str]]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+    async def commit_block_list(
+        self, block_list: List[BlobBlock],
+        content_settings: Optional["ContentSettings"] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, datetime]]:
         """The Commit Block List operation writes a blob by specifying the list of
         block IDs that make up the blob.
 
@@ -2066,13 +2079,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             metadata=metadata,
             **kwargs)
         try:
-            return await self._client.block_blob.commit_block_list(**options) # type: ignore
+            return cast(Dict[str, Any], await self._client.block_blob.commit_block_list(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def set_premium_page_blob_tier(self, premium_page_blob_tier, **kwargs):
-        # type: (Union[str, PremiumPageBlobTier], **Any) -> None
+    async def set_premium_page_blob_tier(self, premium_page_blob_tier: "PremiumPageBlobTier", **kwargs: Any) -> None:
         """Sets the page blob tiers on the blob. This API is only supported for page blobs on premium accounts.
 
         :param premium_page_blob_tier:
@@ -2113,8 +2125,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             process_storage_error(error)
 
     @distributed_trace_async
-    async def set_blob_tags(self, tags=None, **kwargs):
-        # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Any]
+    async def set_blob_tags(self, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> Dict[str, Any]:
         """The Set Tags operation enables users to set tags on a blob or specific blob version, but not snapshot.
             Each call to this operation replaces all existing tags attached to the blob. To remove all
             tags from the blob, call this operation with no tags set.
@@ -2158,13 +2169,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         version_id = get_version_id(self.version_id, kwargs)
         options = _set_blob_tags_options(version_id=version_id, tags=tags, **kwargs)
         try:
-            return await self._client.blob.set_tags(**options)
+            return cast(Dict[str, Any], await self._client.blob.set_tags(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_blob_tags(self, **kwargs):
-        # type: (**Any) -> Dict[str, str]
+    async def get_blob_tags(self, **kwargs: Any) -> Optional[Dict[str, str]]:
         """The Get Tags operation enables users to get tags on a blob or specific blob version, but not snapshot.
 
         .. versionadded:: 12.4.0
@@ -2198,13 +2208,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_page_ranges( # type: ignore
-            self, offset=None, # type: Optional[int]
-            length=None, # type: Optional[int]
-            previous_snapshot_diff=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            **kwargs
-        ):
-        # type: (...) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]
+    async def get_page_ranges(
+        self, offset: Optional[int] = None,
+        length: Optional[int] = None,
+        previous_snapshot_diff: Optional[Union[str, Dict[str, Any]]] = None,
+        **kwargs: Any
+    ) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]:
         """DEPRECATED: Returns the list of valid page ranges for a Page Blob or snapshot
         of a page blob.
 
@@ -2286,13 +2295,13 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
 
     @distributed_trace
     def list_page_ranges(
-            self,
-            *,
-            offset: Optional[int] = None,
-            length: Optional[int] = None,
-            previous_snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-            **kwargs: Any
-        ) -> AsyncItemPaged[PageRange]:
+        self,
+        *,
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        previous_snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[PageRange]:
         """Returns the list of valid page ranges for a Page Blob or snapshot
         of a page blob. If `previous_snapshot` is specified, the result will be
         a diff of changes between the target blob and the previous snapshot.
@@ -2377,12 +2386,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
 
     @distributed_trace_async
     async def get_page_range_diff_for_managed_disk(
-            self, previous_snapshot_url,  # type: str
-            offset=None, # type: Optional[int]
-            length=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]
+        self, previous_snapshot_url: str,
+        offset: Optional[int] = None,
+        length:Optional[int] = None,
+        **kwargs: Any
+    ) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]:
         """Returns the list of valid page ranges for a managed disk or snapshot.
 
         .. note::
@@ -2454,12 +2462,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         return get_page_ranges_result(ranges)
 
     @distributed_trace_async
-    async def set_sequence_number( # type: ignore
-            self, sequence_number_action,  # type: Union[str, SequenceNumberAction]
-            sequence_number=None,  # type: Optional[str]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+    async def set_sequence_number(
+        self, sequence_number_action: Union[str, "SequenceNumberAction"],
+        sequence_number: Optional[str] = None,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, datetime]]:
         """Sets the blob sequence number.
 
         :param str sequence_number_action:
@@ -2507,13 +2514,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         """
         options = _set_sequence_number_options(sequence_number_action, sequence_number=sequence_number, **kwargs)
         try:
-            return await self._client.page_blob.update_sequence_number(**options) # type: ignore
+            return cast(Dict[str, Any],await self._client.page_blob.update_sequence_number(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def resize_blob(self, size, **kwargs):
-        # type: (int, Any) -> Dict[str, Union[str, datetime]]
+    async def resize_blob(self, size: int, **kwargs: Any) -> Dict[str, Union[str, datetime]]:
         """Resizes a page blob to the specified size.
 
         If the specified value is less than the current size of the blob,
@@ -2566,18 +2572,17 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _resize_blob_options(size=size, **kwargs)
         try:
-            return await self._client.page_blob.resize(**options) # type: ignore
+            return cast(Dict[str, Any],await self._client.page_blob.resize(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def upload_page( # type: ignore
-            self, page,  # type: bytes
-            offset,  # type: int
-            length,  # type: int
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+    async def upload_page(
+        self, page: bytes,
+        offset: int,
+        length: int,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, datetime]]:
         """The Upload Pages operation writes a range of pages to a page blob.
 
         :param bytes page:
@@ -2669,18 +2674,18 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             length=length,
             **kwargs)
         try:
-            return await self._client.page_blob.upload_pages(**options) # type: ignore
+            return cast(Dict[str, Any], await self._client.page_blob.upload_pages(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def upload_pages_from_url(self, source_url,  # type: str
-                                    offset,  # type: int
-                                    length,  # type: int
-                                    source_offset,  # type: int
-                                    **kwargs
-                                    ):
-        # type: (...) -> Dict[str, Any]
+    async def upload_pages_from_url(
+        self, source_url: str,
+        offset: int,
+        length: int,
+        source_offset: int,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """
         The Upload Pages operation writes a range of pages to a page blob where
         the contents are read from a URL.
@@ -2792,13 +2797,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             **kwargs
         )
         try:
-            return await self._client.page_blob.upload_pages_from_url(**options)  # type: ignore
+            return cast(Dict[str, Any], await self._client.page_blob.upload_pages_from_url(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def clear_page(self, offset, length, **kwargs):
-        # type: (int, int, Any) -> Dict[str, Union[str, datetime]]
+    async def clear_page(self, offset: int, length: int, **kwargs: Any) -> Dict[str, Union[str, datetime]]:
         """Clears a range of pages.
 
         :param int offset:
@@ -2871,17 +2875,16 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             **kwargs
         )
         try:
-            return await self._client.page_blob.clear_pages(**options)  # type: ignore
+            return cast(Dict[str, Any], await self._client.page_blob.clear_pages(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def append_block( # type: ignore
-            self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
-            length=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Union[str, datetime, int]]
+    async def append_block(
+        self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        length: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, datetime, int]]:
         """Commits a new block of data to the end of the existing append blob.
 
         :param data:
@@ -2968,16 +2971,17 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             **kwargs
         )
         try:
-            return await self._client.append_blob.append_block(**options)  # type: ignore
+            return cast(Dict[str, Any], await self._client.append_blob.append_block(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def append_block_from_url(self, copy_source_url,  # type: str
-                                    source_offset=None,  # type: Optional[int]
-                                    source_length=None,  # type: Optional[int]
-                                    **kwargs):
-        # type: (...) -> Dict[str, Union[str, datetime, int]]
+    async def append_block_from_url(
+        self, copy_source_url: str,
+        source_offset: Optional[int] = None,
+        source_length: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, datetime, int]]:
         """
         Creates a new block to be committed as part of a blob, where the contents are read from a source url.
 
@@ -3081,13 +3085,13 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             **kwargs
         )
         try:
-            return await self._client.append_blob.append_block_from_url(**options)  # type: ignore
+            return cast(Dict[str, Union[str, datetime, int]],
+                        await self._client.append_blob.append_block_from_url(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def seal_append_blob(self, **kwargs):
-        # type: (...) -> Dict[str, Union[str, datetime, int]]
+    async def seal_append_blob(self, **kwargs: Any) -> Dict[str, Union[str, datetime, int]]:
         """The Seal operation seals the Append Blob to make it read-only.
 
             .. versionadded:: 12.4.0
@@ -3132,12 +3136,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         options = _seal_append_blob_options(**kwargs)
         try:
-            return await self._client.append_blob.seal(**options) # type: ignore
+            return cast(Dict[str, Any], await self._client.append_blob.seal(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def _get_container_client(self): # pylint: disable=client-method-missing-kwargs
-        # type: (...) -> ContainerClient
+    def _get_container_client(self) -> "ContainerClient":
         """Get a client to interact with the blob's parent container.
 
         The container need not already exist. Defaults to current blob's credentials.
