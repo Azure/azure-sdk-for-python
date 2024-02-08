@@ -1,4 +1,8 @@
-import pytest
+# The MIT License (MIT)
+# Copyright (c) Microsoft Corporation. All rights reserved.
+
+import unittest
+
 import azure.cosmos.diagnostics as m
 
 _common = {
@@ -14,7 +18,7 @@ _headers = dict(zip(_common, _common))
 _headers['other'] = 'other'
 
 
-class TestOldDiagnostics:
+class TestOldDiagnostics(unittest.TestCase):
 
     def test_init(self):
         rh = m.RecordDiagnostics()
@@ -46,5 +50,9 @@ class TestOldDiagnostics:
         rh = m.RecordDiagnostics()
         rh(_headers, "body")
         assert rh.headers['other'] == 'other'
-        with pytest.raises(AttributeError):
+        with self.assertRaises(AttributeError):
             rh.other
+
+
+if __name__ == '__main__':
+    unittest.main()
