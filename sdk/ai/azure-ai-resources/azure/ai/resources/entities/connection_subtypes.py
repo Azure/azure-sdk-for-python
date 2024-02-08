@@ -356,7 +356,7 @@ class AzureBlobStoreConnection(BaseConnection):
         """The container name of the connection.
 
         :return: the container name of the connection.
-        :rtype: str
+        :rtype: Optional[str]
         """
         if self._workspace_connection.tags is not None and CONNECTION_CONTAINER_NAME_KEY in self._workspace_connection.tags:
             return self._workspace_connection.tags[CONNECTION_CONTAINER_NAME_KEY]
@@ -376,7 +376,7 @@ class AzureBlobStoreConnection(BaseConnection):
         """The account name of the connection.
 
         :return: the account name of the connection.
-        :rtype: str
+        :rtype: Optional[str]
         """
         if self._workspace_connection.tags is not None and CONNECTION_ACCOUNT_NAME_KEY in self._workspace_connection.tags:
             return self._workspace_connection.tags[CONNECTION_ACCOUNT_NAME_KEY]
