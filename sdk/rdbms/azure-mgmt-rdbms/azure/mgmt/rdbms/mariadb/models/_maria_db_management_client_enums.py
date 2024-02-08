@@ -11,41 +11,40 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The mode to create a new server.
-    """
+    """The mode to create a new server."""
 
     DEFAULT = "Default"
     POINT_IN_TIME_RESTORE = "PointInTimeRestore"
     GEO_RESTORE = "GeoRestore"
     REPLICA = "Replica"
 
+
 class GeoRedundantBackup(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enable Geo-redundant or not for server backup.
-    """
+    """Enable Geo-redundant or not for server backup."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+
 class MinimalTlsVersionEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enforce a minimal Tls version for the server.
-    """
+    """Enforce a minimal Tls version for the server."""
 
     TLS1_0 = "TLS1_0"
     TLS1_1 = "TLS1_1"
     TLS1_2 = "TLS1_2"
     TLS_ENFORCEMENT_DISABLED = "TLSEnforcementDisabled"
 
+
 class OperationOrigin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The intended executor of the operation.
-    """
+    """The intended executor of the operation."""
 
     NOT_SPECIFIED = "NotSpecified"
     USER = "user"
     SYSTEM = "system"
 
+
 class PrivateEndpointProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """State of the private endpoint connection.
-    """
+    """State of the private endpoint connection."""
 
     APPROVING = "Approving"
     READY = "Ready"
@@ -53,87 +52,90 @@ class PrivateEndpointProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumM
     FAILED = "Failed"
     REJECTING = "Rejecting"
 
+
 class PrivateLinkServiceConnectionStateActionsRequire(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The actions required for private link service connection.
-    """
+    """The actions required for private link service connection."""
 
     NONE = "None"
 
+
 class PrivateLinkServiceConnectionStateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The private link service connection status.
-    """
+    """The private link service connection status."""
 
     APPROVED = "Approved"
     PENDING = "Pending"
     REJECTED = "Rejected"
     DISCONNECTED = "Disconnected"
 
+
 class PublicNetworkAccessEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether or not public network access is allowed for this server. Value is optional but if
-    passed in, must be 'Enabled' or 'Disabled'
+    passed in, must be 'Enabled' or 'Disabled'.
     """
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+
 class QueryPerformanceInsightResetDataResultState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates result of the operation.
-    """
+    """Indicates result of the operation."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
 
+
 class SecurityAlertPolicyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SecurityAlertPolicyName."""
 
     DEFAULT = "Default"
 
+
 class ServerSecurityAlertPolicyState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the state of the policy, whether it is enabled or disabled.
-    """
+    """Specifies the state of the policy, whether it is enabled or disabled."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+
 class ServerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A state of a server that is visible to user.
-    """
+    """A state of a server that is visible to user."""
 
     READY = "Ready"
     DROPPING = "Dropping"
     DISABLED = "Disabled"
 
+
 class ServerVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The version of a server.
-    """
+    """The version of a server."""
 
     TEN2 = "10.2"
     TEN3 = "10.3"
 
+
 class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The tier of the particular SKU, e.g. Basic.
-    """
+    """The tier of the particular SKU, e.g. Basic."""
 
     BASIC = "Basic"
     GENERAL_PURPOSE = "GeneralPurpose"
     MEMORY_OPTIMIZED = "MemoryOptimized"
 
+
 class SslEnforcementEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enable ssl enforcement or not when connect to server.
-    """
+    """Enable ssl enforcement or not when connect to server."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+
 
 class StorageAutogrow(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enable Storage Auto Grow.
-    """
+    """Enable Storage Auto Grow."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+
 class VirtualNetworkRuleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Virtual Network Rule State
-    """
+    """Virtual Network Rule State."""
 
     INITIALIZING = "Initializing"
     IN_PROGRESS = "InProgress"

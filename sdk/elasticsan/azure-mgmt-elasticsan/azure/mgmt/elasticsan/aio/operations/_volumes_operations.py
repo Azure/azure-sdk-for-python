@@ -567,7 +567,14 @@ class VolumesOperations:
     }
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, elastic_san_name: str, volume_group_name: str, volume_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        elastic_san_name: str,
+        volume_group_name: str,
+        volume_name: str,
+        x_ms_delete_snapshots: Optional[Union[str, _models.XMsDeleteSnapshots]] = None,
+        x_ms_force_delete: Optional[Union[str, _models.XMsForceDelete]] = None,
+        **kwargs: Any
     ) -> None:
         error_map = {
             401: ClientAuthenticationError,
@@ -589,6 +596,8 @@ class VolumesOperations:
             volume_group_name=volume_group_name,
             volume_name=volume_name,
             subscription_id=self._config.subscription_id,
+            x_ms_delete_snapshots=x_ms_delete_snapshots,
+            x_ms_force_delete=x_ms_force_delete,
             api_version=api_version,
             template_url=self._delete_initial.metadata["url"],
             headers=_headers,
@@ -622,7 +631,14 @@ class VolumesOperations:
 
     @distributed_trace_async
     async def begin_delete(
-        self, resource_group_name: str, elastic_san_name: str, volume_group_name: str, volume_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        elastic_san_name: str,
+        volume_group_name: str,
+        volume_name: str,
+        x_ms_delete_snapshots: Optional[Union[str, _models.XMsDeleteSnapshots]] = None,
+        x_ms_force_delete: Optional[Union[str, _models.XMsForceDelete]] = None,
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete an Volume.
 
@@ -635,6 +651,14 @@ class VolumesOperations:
         :type volume_group_name: str
         :param volume_name: The name of the Volume. Required.
         :type volume_name: str
+        :param x_ms_delete_snapshots: Optional, used to delete snapshots under volume. Allowed value
+         are only true or false. Default value is false. Known values are: "true" and "false". Default
+         value is None.
+        :type x_ms_delete_snapshots: str or ~azure.mgmt.elasticsan.models.XMsDeleteSnapshots
+        :param x_ms_force_delete: Optional, used to delete volume if active sessions present. Allowed
+         value are only true or false. Default value is false. Known values are: "true" and "false".
+         Default value is None.
+        :type x_ms_force_delete: str or ~azure.mgmt.elasticsan.models.XMsForceDelete
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -661,6 +685,8 @@ class VolumesOperations:
                 elastic_san_name=elastic_san_name,
                 volume_group_name=volume_group_name,
                 volume_name=volume_name,
+                x_ms_delete_snapshots=x_ms_delete_snapshots,
+                x_ms_force_delete=x_ms_force_delete,
                 api_version=api_version,
                 cls=lambda x, y, z: x,
                 headers=_headers,

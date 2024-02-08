@@ -38,7 +38,6 @@ from ..error import (
     AMQPException,
     MessageException
 )
-from ..constants import LinkState
 
 _logger = logging.getLogger(__name__)
 
@@ -748,7 +747,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         :rtype: bool
         """
         try:
-            if self._link.current_link_credit == 0:
+            if self._link.current_link_credit <= 0:
                 await self._link.flow()
             await self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:

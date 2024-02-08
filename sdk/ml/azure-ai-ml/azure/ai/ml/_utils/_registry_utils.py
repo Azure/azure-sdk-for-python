@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import logging
-from typing import Tuple
+from typing import Tuple, Optional
 
 from typing_extensions import Literal
 
@@ -199,15 +199,17 @@ def get_storage_details_for_registry_assets(
     )
 
 
-def get_registry_client(credential, registry_name, workspace_location, **kwargs):
+def get_registry_client(credential, registry_name, workspace_location: Optional[str] = None, **kwargs):
     base_url = _get_registry_discovery_endpoint_from_metadata(_get_default_cloud_name())
     kwargs.pop("base_url", None)
 
     service_client_registry_discovery_client = ServiceClientRegistryDiscovery(
         credential=credential, base_url=base_url, **kwargs
     )
-    workspace_kwargs = {"workspace_location": workspace_location}
-    kwargs.update(workspace_kwargs)
+    if workspace_location:
+        workspace_kwargs = {"workspace_location": workspace_location}
+        kwargs.update(workspace_kwargs)
+
     registry_discovery = RegistryDiscovery(
         credential, registry_name, service_client_registry_discovery_client, **kwargs
     )

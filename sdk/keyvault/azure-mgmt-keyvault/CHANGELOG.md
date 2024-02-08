@@ -1,5 +1,14 @@
 # Release History
 
+## 10.3.0 (2023-10-23)
+
+### Features Added
+
+  - Model MHSMPrivateEndpointConnection has a new parameter identity
+  - Model MHSMPrivateLinkResource has a new parameter identity
+  - Model ManagedHsm has a new parameter identity
+  - Model ManagedHsmResource has a new parameter identity
+
 ## 10.2.3 (2023-07-25)
 
 ### Bugs Fixed

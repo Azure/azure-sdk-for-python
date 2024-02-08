@@ -8,13 +8,20 @@
 # --------------------------------------------------------------------------
 
 import datetime
+import sys
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class AccountKeyMetadata(_serialization.Model):
@@ -367,8 +374,7 @@ class DataTransferDataSourceSink(_serialization.Model):
     """Base class for all DataTransfer source/sink.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AzureBlobDataTransferDataSourceSink, CosmosCassandraDataTransferDataSourceSink,
-    CosmosMongoDataTransferDataSourceSink, CosmosSqlDataTransferDataSourceSink
+    AzureBlobDataTransferDataSourceSink, BaseCosmosDataTransferDataSourceSink
 
     All required parameters must be populated in order to send to Azure.
 
@@ -388,9 +394,7 @@ class DataTransferDataSourceSink(_serialization.Model):
     _subtype_map = {
         "component": {
             "AzureBlobStorage": "AzureBlobDataTransferDataSourceSink",
-            "CosmosDBCassandra": "CosmosCassandraDataTransferDataSourceSink",
-            "CosmosDBMongo": "CosmosMongoDataTransferDataSourceSink",
-            "CosmosDBSql": "CosmosSqlDataTransferDataSourceSink",
+            "BaseCosmosDataTransferDataSourceSink": "BaseCosmosDataTransferDataSourceSink",
         }
     }
 
@@ -544,61 +548,143 @@ class BackupPolicyMigrationState(_serialization.Model):
         self.start_time = start_time
 
 
-class BackupResource(ARMProxyResource):
+class BackupResource(_serialization.Model):
     """A restorable backup of a Cassandra cluster.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    :ivar backup_id: The unique identifier of backup.
+    :vartype backup_id: str
+    :ivar backup_state: The current state of the backup. Known values are: "Initiated",
+     "InProgress", "Succeeded", and "Failed".
+    :vartype backup_state: str or ~azure.mgmt.cosmosdb.models.BackupState
+    :ivar backup_start_timestamp: The time at which the backup process begins.
+    :vartype backup_start_timestamp: ~datetime.datetime
+    :ivar backup_stop_timestamp: The time at which the backup process ends.
+    :vartype backup_stop_timestamp: ~datetime.datetime
+    :ivar backup_expiry_timestamp: The time at which the backup will expire.
+    :vartype backup_expiry_timestamp: ~datetime.datetime
+    """
 
-    :ivar id: The unique resource identifier of the database account.
-    :vartype id: str
-    :ivar name: The name of the database account.
-    :vartype name: str
-    :ivar type: The type of Azure resource.
-    :vartype type: str
-    :ivar properties:
-    :vartype properties: ~azure.mgmt.cosmosdb.models.BackupResourceProperties
+    _attribute_map = {
+        "backup_id": {"key": "backupId", "type": "str"},
+        "backup_state": {"key": "backupState", "type": "str"},
+        "backup_start_timestamp": {"key": "backupStartTimestamp", "type": "iso-8601"},
+        "backup_stop_timestamp": {"key": "backupStopTimestamp", "type": "iso-8601"},
+        "backup_expiry_timestamp": {"key": "backupExpiryTimestamp", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        backup_id: Optional[str] = None,
+        backup_state: Optional[Union[str, "_models.BackupState"]] = None,
+        backup_start_timestamp: Optional[datetime.datetime] = None,
+        backup_stop_timestamp: Optional[datetime.datetime] = None,
+        backup_expiry_timestamp: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword backup_id: The unique identifier of backup.
+        :paramtype backup_id: str
+        :keyword backup_state: The current state of the backup. Known values are: "Initiated",
+         "InProgress", "Succeeded", and "Failed".
+        :paramtype backup_state: str or ~azure.mgmt.cosmosdb.models.BackupState
+        :keyword backup_start_timestamp: The time at which the backup process begins.
+        :paramtype backup_start_timestamp: ~datetime.datetime
+        :keyword backup_stop_timestamp: The time at which the backup process ends.
+        :paramtype backup_stop_timestamp: ~datetime.datetime
+        :keyword backup_expiry_timestamp: The time at which the backup will expire.
+        :paramtype backup_expiry_timestamp: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.backup_id = backup_id
+        self.backup_state = backup_state
+        self.backup_start_timestamp = backup_start_timestamp
+        self.backup_stop_timestamp = backup_stop_timestamp
+        self.backup_expiry_timestamp = backup_expiry_timestamp
+
+
+class BackupSchedule(_serialization.Model):
+    """BackupSchedule.
+
+    :ivar schedule_name: The unique identifier of backup schedule.
+    :vartype schedule_name: str
+    :ivar cron_expression: The cron expression that defines when you want to back up your data.
+    :vartype cron_expression: str
+    :ivar retention_in_hours: The retention period (hours) of the backups. If you want to retain
+     data forever, set retention to 0.
+    :vartype retention_in_hours: int
+    """
+
+    _attribute_map = {
+        "schedule_name": {"key": "scheduleName", "type": "str"},
+        "cron_expression": {"key": "cronExpression", "type": "str"},
+        "retention_in_hours": {"key": "retentionInHours", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        schedule_name: Optional[str] = None,
+        cron_expression: Optional[str] = None,
+        retention_in_hours: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword schedule_name: The unique identifier of backup schedule.
+        :paramtype schedule_name: str
+        :keyword cron_expression: The cron expression that defines when you want to back up your data.
+        :paramtype cron_expression: str
+        :keyword retention_in_hours: The retention period (hours) of the backups. If you want to retain
+         data forever, set retention to 0.
+        :paramtype retention_in_hours: int
+        """
+        super().__init__(**kwargs)
+        self.schedule_name = schedule_name
+        self.cron_expression = cron_expression
+        self.retention_in_hours = retention_in_hours
+
+
+class BaseCosmosDataTransferDataSourceSink(DataTransferDataSourceSink):
+    """A base CosmosDB data source/sink.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    CosmosCassandraDataTransferDataSourceSink, CosmosMongoDataTransferDataSourceSink,
+    CosmosSqlDataTransferDataSourceSink
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar component: Known values are: "CosmosDBCassandra", "CosmosDBMongo", "CosmosDBSql", and
+     "AzureBlobStorage".
+    :vartype component: str or ~azure.mgmt.cosmosdb.models.DataTransferComponent
+    :ivar remote_account_name:
+    :vartype remote_account_name: str
     """
 
     _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
+        "component": {"required": True},
     }
 
     _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "properties": {"key": "properties", "type": "BackupResourceProperties"},
+        "component": {"key": "component", "type": "str"},
+        "remote_account_name": {"key": "remoteAccountName", "type": "str"},
     }
 
-    def __init__(self, *, properties: Optional["_models.BackupResourceProperties"] = None, **kwargs: Any) -> None:
-        """
-        :keyword properties:
-        :paramtype properties: ~azure.mgmt.cosmosdb.models.BackupResourceProperties
-        """
-        super().__init__(**kwargs)
-        self.properties = properties
-
-
-class BackupResourceProperties(_serialization.Model):
-    """BackupResourceProperties.
-
-    :ivar timestamp: The time this backup was taken, formatted like 2021-01-21T17:35:21.
-    :vartype timestamp: ~datetime.datetime
-    """
-
-    _attribute_map = {
-        "timestamp": {"key": "timestamp", "type": "iso-8601"},
+    _subtype_map = {
+        "component": {
+            "CosmosDBCassandra": "CosmosCassandraDataTransferDataSourceSink",
+            "CosmosDBMongo": "CosmosMongoDataTransferDataSourceSink",
+            "CosmosDBSql": "CosmosSqlDataTransferDataSourceSink",
+        }
     }
 
-    def __init__(self, *, timestamp: Optional[datetime.datetime] = None, **kwargs: Any) -> None:
+    def __init__(self, *, remote_account_name: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword timestamp: The time this backup was taken, formatted like 2021-01-21T17:35:21.
-        :paramtype timestamp: ~datetime.datetime
+        :keyword remote_account_name:
+        :paramtype remote_account_name: str
         """
         super().__init__(**kwargs)
-        self.timestamp = timestamp
+        self.component: str = "BaseCosmosDataTransferDataSourceSink"
+        self.remote_account_name = remote_account_name
 
 
 class Capability(_serialization.Model):
@@ -694,6 +780,8 @@ class CassandraClusterDataCenterNodeItem(_serialization.Model):  # pylint: disab
     :vartype memory_total_kb: int
     :ivar cpu_usage: A float representing the current system-wide CPU utilization as a percentage.
     :vartype cpu_usage: float
+    :ivar is_latest_model: If node has been updated to latest model.
+    :vartype is_latest_model: bool
     """
 
     _attribute_map = {
@@ -714,6 +802,7 @@ class CassandraClusterDataCenterNodeItem(_serialization.Model):  # pylint: disab
         "memory_free_kb": {"key": "memoryFreeKB", "type": "int"},
         "memory_total_kb": {"key": "memoryTotalKB", "type": "int"},
         "cpu_usage": {"key": "cpuUsage", "type": "float"},
+        "is_latest_model": {"key": "isLatestModel", "type": "bool"},
     }
 
     def __init__(
@@ -736,6 +825,7 @@ class CassandraClusterDataCenterNodeItem(_serialization.Model):  # pylint: disab
         memory_free_kb: Optional[int] = None,
         memory_total_kb: Optional[int] = None,
         cpu_usage: Optional[float] = None,
+        is_latest_model: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -779,6 +869,8 @@ class CassandraClusterDataCenterNodeItem(_serialization.Model):  # pylint: disab
         :keyword cpu_usage: A float representing the current system-wide CPU utilization as a
          percentage.
         :paramtype cpu_usage: float
+        :keyword is_latest_model: If node has been updated to latest model.
+        :paramtype is_latest_model: bool
         """
         super().__init__(**kwargs)
         self.address = address
@@ -798,6 +890,7 @@ class CassandraClusterDataCenterNodeItem(_serialization.Model):  # pylint: disab
         self.memory_free_kb = memory_free_kb
         self.memory_total_kb = memory_total_kb
         self.cpu_usage = cpu_usage
+        self.is_latest_model = is_latest_model
 
 
 class CassandraClusterPublicStatus(_serialization.Model):
@@ -2606,6 +2699,9 @@ class ClusterResourceProperties(_serialization.Model):  # pylint: disable=too-ma
      and should stay true unless you are running a hybrid cluster where you are already doing your
      own repairs.
     :vartype repair_enabled: bool
+    :ivar auto_replicate: The form of AutoReplicate that is being used by this cluster. Known
+     values are: "None", "SystemKeyspaces", and "AllKeyspaces".
+    :vartype auto_replicate: str or ~azure.mgmt.cosmosdb.models.AutoReplicate
     :ivar client_certificates: List of TLS certificates used to authorize clients connecting to the
      cluster. All connections are TLS encrypted whether clientCertificates is set or not, but if
      clientCertificates is set, the managed Cassandra cluster will reject all connections not
@@ -2626,6 +2722,9 @@ class ClusterResourceProperties(_serialization.Model):  # pylint: disable=too-ma
     :ivar seed_nodes: List of IP addresses of seed nodes in the managed data centers. These should
      be added to the seed node lists of all unmanaged nodes.
     :vartype seed_nodes: list[~azure.mgmt.cosmosdb.models.SeedNode]
+    :ivar external_data_centers: List of the data center names for unmanaged data centers in this
+     cluster to be included in auto-replication.
+    :vartype external_data_centers: list[str]
     :ivar hours_between_backups: (Deprecated) Number of hours to wait between taking a backup of
      the cluster.
     :vartype hours_between_backups: int
@@ -2633,13 +2732,31 @@ class ClusterResourceProperties(_serialization.Model):  # pylint: disable=too-ma
     :vartype deallocated: bool
     :ivar cassandra_audit_logging_enabled: Whether Cassandra audit logging is enabled.
     :vartype cassandra_audit_logging_enabled: bool
+    :ivar cluster_type: Type of the cluster. If set to Production, some operations might not be
+     permitted on cluster. Known values are: "Production" and "NonProduction".
+    :vartype cluster_type: str or ~azure.mgmt.cosmosdb.models.ClusterType
     :ivar provision_error: Error related to resource provisioning.
     :vartype provision_error: ~azure.mgmt.cosmosdb.models.CassandraError
+    :ivar extensions: Extensions to be added or updated on cluster.
+    :vartype extensions: list[str]
+    :ivar backup_schedules: List of backup schedules that define when you want to back up your
+     data.
+    :vartype backup_schedules: list[~azure.mgmt.cosmosdb.models.BackupSchedule]
+    :ivar scheduled_event_strategy: How the nodes in the cluster react to scheduled events. Known
+     values are: "Ignore", "StopAny", and "StopByRack".
+    :vartype scheduled_event_strategy: str or ~azure.mgmt.cosmosdb.models.ScheduledEventStrategy
+    :ivar azure_connection_method: How to connect to the azure services needed for running the
+     cluster. Known values are: "None" and "VPN".
+    :vartype azure_connection_method: str or ~azure.mgmt.cosmosdb.models.AzureConnectionType
+    :ivar private_link_resource_id: If the Connection Method is Vpn, this is the Id of the private
+     link resource that the datacenters need to connect to.
+    :vartype private_link_resource_id: str
     """
 
     _validation = {
         "gossip_certificates": {"readonly": True},
         "seed_nodes": {"readonly": True},
+        "private_link_resource_id": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2652,18 +2769,26 @@ class ClusterResourceProperties(_serialization.Model):  # pylint: disable=too-ma
         "initial_cassandra_admin_password": {"key": "initialCassandraAdminPassword", "type": "str"},
         "prometheus_endpoint": {"key": "prometheusEndpoint", "type": "SeedNode"},
         "repair_enabled": {"key": "repairEnabled", "type": "bool"},
+        "auto_replicate": {"key": "autoReplicate", "type": "str"},
         "client_certificates": {"key": "clientCertificates", "type": "[Certificate]"},
         "external_gossip_certificates": {"key": "externalGossipCertificates", "type": "[Certificate]"},
         "gossip_certificates": {"key": "gossipCertificates", "type": "[Certificate]"},
         "external_seed_nodes": {"key": "externalSeedNodes", "type": "[SeedNode]"},
         "seed_nodes": {"key": "seedNodes", "type": "[SeedNode]"},
+        "external_data_centers": {"key": "externalDataCenters", "type": "[str]"},
         "hours_between_backups": {"key": "hoursBetweenBackups", "type": "int"},
         "deallocated": {"key": "deallocated", "type": "bool"},
         "cassandra_audit_logging_enabled": {"key": "cassandraAuditLoggingEnabled", "type": "bool"},
+        "cluster_type": {"key": "clusterType", "type": "str"},
         "provision_error": {"key": "provisionError", "type": "CassandraError"},
+        "extensions": {"key": "extensions", "type": "[str]"},
+        "backup_schedules": {"key": "backupSchedules", "type": "[BackupSchedule]"},
+        "scheduled_event_strategy": {"key": "scheduledEventStrategy", "type": "str"},
+        "azure_connection_method": {"key": "azureConnectionMethod", "type": "str"},
+        "private_link_resource_id": {"key": "privateLinkResourceId", "type": "str"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         provisioning_state: Optional[Union[str, "_models.ManagedCassandraProvisioningState"]] = None,
@@ -2675,13 +2800,20 @@ class ClusterResourceProperties(_serialization.Model):  # pylint: disable=too-ma
         initial_cassandra_admin_password: Optional[str] = None,
         prometheus_endpoint: Optional["_models.SeedNode"] = None,
         repair_enabled: Optional[bool] = None,
+        auto_replicate: Optional[Union[str, "_models.AutoReplicate"]] = None,
         client_certificates: Optional[List["_models.Certificate"]] = None,
         external_gossip_certificates: Optional[List["_models.Certificate"]] = None,
         external_seed_nodes: Optional[List["_models.SeedNode"]] = None,
+        external_data_centers: Optional[List[str]] = None,
         hours_between_backups: Optional[int] = None,
         deallocated: Optional[bool] = None,
         cassandra_audit_logging_enabled: Optional[bool] = None,
+        cluster_type: Optional[Union[str, "_models.ClusterType"]] = None,
         provision_error: Optional["_models.CassandraError"] = None,
+        extensions: Optional[List[str]] = None,
+        backup_schedules: Optional[List["_models.BackupSchedule"]] = None,
+        scheduled_event_strategy: Optional[Union[str, "_models.ScheduledEventStrategy"]] = None,
+        azure_connection_method: Optional[Union[str, "_models.AzureConnectionType"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2721,6 +2853,9 @@ class ClusterResourceProperties(_serialization.Model):  # pylint: disable=too-ma
          true, and should stay true unless you are running a hybrid cluster where you are already doing
          your own repairs.
         :paramtype repair_enabled: bool
+        :keyword auto_replicate: The form of AutoReplicate that is being used by this cluster. Known
+         values are: "None", "SystemKeyspaces", and "AllKeyspaces".
+        :paramtype auto_replicate: str or ~azure.mgmt.cosmosdb.models.AutoReplicate
         :keyword client_certificates: List of TLS certificates used to authorize clients connecting to
          the cluster. All connections are TLS encrypted whether clientCertificates is set or not, but if
          clientCertificates is set, the managed Cassandra cluster will reject all connections not
@@ -2734,6 +2869,9 @@ class ClusterResourceProperties(_serialization.Model):  # pylint: disable=too-ma
         :keyword external_seed_nodes: List of IP addresses of seed nodes in unmanaged data centers.
          These will be added to the seed node lists of all managed nodes.
         :paramtype external_seed_nodes: list[~azure.mgmt.cosmosdb.models.SeedNode]
+        :keyword external_data_centers: List of the data center names for unmanaged data centers in
+         this cluster to be included in auto-replication.
+        :paramtype external_data_centers: list[str]
         :keyword hours_between_backups: (Deprecated) Number of hours to wait between taking a backup of
          the cluster.
         :paramtype hours_between_backups: int
@@ -2741,8 +2879,22 @@ class ClusterResourceProperties(_serialization.Model):  # pylint: disable=too-ma
         :paramtype deallocated: bool
         :keyword cassandra_audit_logging_enabled: Whether Cassandra audit logging is enabled.
         :paramtype cassandra_audit_logging_enabled: bool
+        :keyword cluster_type: Type of the cluster. If set to Production, some operations might not be
+         permitted on cluster. Known values are: "Production" and "NonProduction".
+        :paramtype cluster_type: str or ~azure.mgmt.cosmosdb.models.ClusterType
         :keyword provision_error: Error related to resource provisioning.
         :paramtype provision_error: ~azure.mgmt.cosmosdb.models.CassandraError
+        :keyword extensions: Extensions to be added or updated on cluster.
+        :paramtype extensions: list[str]
+        :keyword backup_schedules: List of backup schedules that define when you want to back up your
+         data.
+        :paramtype backup_schedules: list[~azure.mgmt.cosmosdb.models.BackupSchedule]
+        :keyword scheduled_event_strategy: How the nodes in the cluster react to scheduled events.
+         Known values are: "Ignore", "StopAny", and "StopByRack".
+        :paramtype scheduled_event_strategy: str or ~azure.mgmt.cosmosdb.models.ScheduledEventStrategy
+        :keyword azure_connection_method: How to connect to the azure services needed for running the
+         cluster. Known values are: "None" and "VPN".
+        :paramtype azure_connection_method: str or ~azure.mgmt.cosmosdb.models.AzureConnectionType
         """
         super().__init__(**kwargs)
         self.provisioning_state = provisioning_state
@@ -2754,15 +2906,23 @@ class ClusterResourceProperties(_serialization.Model):  # pylint: disable=too-ma
         self.initial_cassandra_admin_password = initial_cassandra_admin_password
         self.prometheus_endpoint = prometheus_endpoint
         self.repair_enabled = repair_enabled
+        self.auto_replicate = auto_replicate
         self.client_certificates = client_certificates
         self.external_gossip_certificates = external_gossip_certificates
         self.gossip_certificates = None
         self.external_seed_nodes = external_seed_nodes
         self.seed_nodes = None
+        self.external_data_centers = external_data_centers
         self.hours_between_backups = hours_between_backups
         self.deallocated = deallocated
         self.cassandra_audit_logging_enabled = cassandra_audit_logging_enabled
+        self.cluster_type = cluster_type
         self.provision_error = provision_error
+        self.extensions = extensions
+        self.backup_schedules = backup_schedules
+        self.scheduled_event_strategy = scheduled_event_strategy
+        self.azure_connection_method = azure_connection_method
+        self.private_link_resource_id = None
 
 
 class Column(_serialization.Model):
@@ -2819,15 +2979,15 @@ class CommandPostBody(_serialization.Model):
     :ivar command: The command which should be run. Required.
     :vartype command: str
     :ivar arguments: The arguments for the command to be run.
-    :vartype arguments: dict[str, str]
+    :vartype arguments: JSON
     :ivar host: IP address of the cassandra host to run the command on. Required.
     :vartype host: str
     :ivar cassandra_stop_start: If true, stops cassandra before executing the command and then
      start it again.
     :vartype cassandra_stop_start: bool
-    :ivar readwrite: If true, allows the command to *write* to the cassandra directory, otherwise
+    :ivar read_write: If true, allows the command to *write* to the cassandra directory, otherwise
      read-only.
-    :vartype readwrite: bool
+    :vartype read_write: bool
     """
 
     _validation = {
@@ -2837,10 +2997,10 @@ class CommandPostBody(_serialization.Model):
 
     _attribute_map = {
         "command": {"key": "command", "type": "str"},
-        "arguments": {"key": "arguments", "type": "{str}"},
+        "arguments": {"key": "arguments", "type": "object"},
         "host": {"key": "host", "type": "str"},
         "cassandra_stop_start": {"key": "cassandra-stop-start", "type": "bool"},
-        "readwrite": {"key": "readwrite", "type": "bool"},
+        "read_write": {"key": "readWrite", "type": "bool"},
     }
 
     def __init__(
@@ -2848,31 +3008,125 @@ class CommandPostBody(_serialization.Model):
         *,
         command: str,
         host: str,
-        arguments: Optional[Dict[str, str]] = None,
+        arguments: Optional[JSON] = None,
         cassandra_stop_start: Optional[bool] = None,
-        readwrite: Optional[bool] = None,
+        read_write: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword command: The command which should be run. Required.
         :paramtype command: str
         :keyword arguments: The arguments for the command to be run.
-        :paramtype arguments: dict[str, str]
+        :paramtype arguments: JSON
         :keyword host: IP address of the cassandra host to run the command on. Required.
         :paramtype host: str
         :keyword cassandra_stop_start: If true, stops cassandra before executing the command and then
          start it again.
         :paramtype cassandra_stop_start: bool
-        :keyword readwrite: If true, allows the command to *write* to the cassandra directory,
+        :keyword read_write: If true, allows the command to *write* to the cassandra directory,
          otherwise read-only.
-        :paramtype readwrite: bool
+        :paramtype read_write: bool
         """
         super().__init__(**kwargs)
         self.command = command
         self.arguments = arguments
         self.host = host
         self.cassandra_stop_start = cassandra_stop_start
-        self.readwrite = readwrite
+        self.read_write = read_write
+
+
+class CommandPublicResource(_serialization.Model):
+    """resource representing a command.
+
+    :ivar command: The command which should be run.
+    :vartype command: str
+    :ivar command_id: The unique id of command.
+    :vartype command_id: str
+    :ivar arguments: The arguments for the command to be run.
+    :vartype arguments: JSON
+    :ivar host: IP address of the cassandra host to run the command on.
+    :vartype host: str
+    :ivar is_admin: Whether command has admin privileges.
+    :vartype is_admin: bool
+    :ivar cassandra_stop_start: If true, stops cassandra before executing the command and then
+     start it again.
+    :vartype cassandra_stop_start: bool
+    :ivar read_write: If true, allows the command to *write* to the cassandra directory, otherwise
+     read-only.
+    :vartype read_write: bool
+    :ivar result: Result output of the command.
+    :vartype result: str
+    :ivar status: Status of the command. Known values are: "Done", "Running", "Enqueue",
+     "Processing", "Finished", and "Failed".
+    :vartype status: str or ~azure.mgmt.cosmosdb.models.CommandStatus
+    :ivar output_file: The name of the file where the result is written.
+    :vartype output_file: str
+    """
+
+    _attribute_map = {
+        "command": {"key": "command", "type": "str"},
+        "command_id": {"key": "commandId", "type": "str"},
+        "arguments": {"key": "arguments", "type": "object"},
+        "host": {"key": "host", "type": "str"},
+        "is_admin": {"key": "isAdmin", "type": "bool"},
+        "cassandra_stop_start": {"key": "cassandraStopStart", "type": "bool"},
+        "read_write": {"key": "readWrite", "type": "bool"},
+        "result": {"key": "result", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "output_file": {"key": "outputFile", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        command: Optional[str] = None,
+        command_id: Optional[str] = None,
+        arguments: Optional[JSON] = None,
+        host: Optional[str] = None,
+        is_admin: Optional[bool] = None,
+        cassandra_stop_start: Optional[bool] = None,
+        read_write: Optional[bool] = None,
+        result: Optional[str] = None,
+        status: Optional[Union[str, "_models.CommandStatus"]] = None,
+        output_file: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword command: The command which should be run.
+        :paramtype command: str
+        :keyword command_id: The unique id of command.
+        :paramtype command_id: str
+        :keyword arguments: The arguments for the command to be run.
+        :paramtype arguments: JSON
+        :keyword host: IP address of the cassandra host to run the command on.
+        :paramtype host: str
+        :keyword is_admin: Whether command has admin privileges.
+        :paramtype is_admin: bool
+        :keyword cassandra_stop_start: If true, stops cassandra before executing the command and then
+         start it again.
+        :paramtype cassandra_stop_start: bool
+        :keyword read_write: If true, allows the command to *write* to the cassandra directory,
+         otherwise read-only.
+        :paramtype read_write: bool
+        :keyword result: Result output of the command.
+        :paramtype result: str
+        :keyword status: Status of the command. Known values are: "Done", "Running", "Enqueue",
+         "Processing", "Finished", and "Failed".
+        :paramtype status: str or ~azure.mgmt.cosmosdb.models.CommandStatus
+        :keyword output_file: The name of the file where the result is written.
+        :paramtype output_file: str
+        """
+        super().__init__(**kwargs)
+        self.command = command
+        self.command_id = command_id
+        self.arguments = arguments
+        self.host = host
+        self.is_admin = is_admin
+        self.cassandra_stop_start = cassandra_stop_start
+        self.read_write = read_write
+        self.result = result
+        self.status = status
+        self.output_file = output_file
 
 
 class CompositePath(_serialization.Model):
@@ -2907,6 +3161,34 @@ class CompositePath(_serialization.Model):
         super().__init__(**kwargs)
         self.path = path
         self.order = order
+
+
+class ComputedProperty(_serialization.Model):
+    """The definition of a computed property.
+
+    :ivar name: The name of a computed property, for example - "cp_lowerName".
+    :vartype name: str
+    :ivar query: The query that evaluates the value for computed property, for example - "SELECT
+     VALUE LOWER(c.name) FROM c".
+    :vartype query: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "query": {"key": "query", "type": "str"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, query: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: The name of a computed property, for example - "cp_lowerName".
+        :paramtype name: str
+        :keyword query: The query that evaluates the value for computed property, for example - "SELECT
+         VALUE LOWER(c.name) FROM c".
+        :paramtype query: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.query = query
 
 
 class ConflictResolutionPolicy(_serialization.Model):
@@ -3330,7 +3612,7 @@ class CorsPolicy(_serialization.Model):
         self.max_age_in_seconds = max_age_in_seconds
 
 
-class CosmosCassandraDataTransferDataSourceSink(DataTransferDataSourceSink):
+class CosmosCassandraDataTransferDataSourceSink(BaseCosmosDataTransferDataSourceSink):
     """A CosmosDB Cassandra API data source/sink.
 
     All required parameters must be populated in order to send to Azure.
@@ -3338,6 +3620,8 @@ class CosmosCassandraDataTransferDataSourceSink(DataTransferDataSourceSink):
     :ivar component: Known values are: "CosmosDBCassandra", "CosmosDBMongo", "CosmosDBSql", and
      "AzureBlobStorage".
     :vartype component: str or ~azure.mgmt.cosmosdb.models.DataTransferComponent
+    :ivar remote_account_name:
+    :vartype remote_account_name: str
     :ivar keyspace_name: Required.
     :vartype keyspace_name: str
     :ivar table_name: Required.
@@ -3352,31 +3636,38 @@ class CosmosCassandraDataTransferDataSourceSink(DataTransferDataSourceSink):
 
     _attribute_map = {
         "component": {"key": "component", "type": "str"},
+        "remote_account_name": {"key": "remoteAccountName", "type": "str"},
         "keyspace_name": {"key": "keyspaceName", "type": "str"},
         "table_name": {"key": "tableName", "type": "str"},
     }
 
-    def __init__(self, *, keyspace_name: str, table_name: str, **kwargs: Any) -> None:
+    def __init__(
+        self, *, keyspace_name: str, table_name: str, remote_account_name: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
+        :keyword remote_account_name:
+        :paramtype remote_account_name: str
         :keyword keyspace_name: Required.
         :paramtype keyspace_name: str
         :keyword table_name: Required.
         :paramtype table_name: str
         """
-        super().__init__(**kwargs)
+        super().__init__(remote_account_name=remote_account_name, **kwargs)
         self.component: str = "CosmosDBCassandra"
         self.keyspace_name = keyspace_name
         self.table_name = table_name
 
 
-class CosmosMongoDataTransferDataSourceSink(DataTransferDataSourceSink):
-    """A CosmosDB Cassandra API data source/sink.
+class CosmosMongoDataTransferDataSourceSink(BaseCosmosDataTransferDataSourceSink):
+    """A CosmosDB Mongo API data source/sink.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar component: Known values are: "CosmosDBCassandra", "CosmosDBMongo", "CosmosDBSql", and
      "AzureBlobStorage".
     :vartype component: str or ~azure.mgmt.cosmosdb.models.DataTransferComponent
+    :ivar remote_account_name:
+    :vartype remote_account_name: str
     :ivar database_name: Required.
     :vartype database_name: str
     :ivar collection_name: Required.
@@ -3391,31 +3682,38 @@ class CosmosMongoDataTransferDataSourceSink(DataTransferDataSourceSink):
 
     _attribute_map = {
         "component": {"key": "component", "type": "str"},
+        "remote_account_name": {"key": "remoteAccountName", "type": "str"},
         "database_name": {"key": "databaseName", "type": "str"},
         "collection_name": {"key": "collectionName", "type": "str"},
     }
 
-    def __init__(self, *, database_name: str, collection_name: str, **kwargs: Any) -> None:
+    def __init__(
+        self, *, database_name: str, collection_name: str, remote_account_name: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
+        :keyword remote_account_name:
+        :paramtype remote_account_name: str
         :keyword database_name: Required.
         :paramtype database_name: str
         :keyword collection_name: Required.
         :paramtype collection_name: str
         """
-        super().__init__(**kwargs)
+        super().__init__(remote_account_name=remote_account_name, **kwargs)
         self.component: str = "CosmosDBMongo"
         self.database_name = database_name
         self.collection_name = collection_name
 
 
-class CosmosSqlDataTransferDataSourceSink(DataTransferDataSourceSink):
-    """A CosmosDB Cassandra API data source/sink.
+class CosmosSqlDataTransferDataSourceSink(BaseCosmosDataTransferDataSourceSink):
+    """A CosmosDB No Sql API data source/sink.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar component: Known values are: "CosmosDBCassandra", "CosmosDBMongo", "CosmosDBSql", and
      "AzureBlobStorage".
     :vartype component: str or ~azure.mgmt.cosmosdb.models.DataTransferComponent
+    :ivar remote_account_name:
+    :vartype remote_account_name: str
     :ivar database_name: Required.
     :vartype database_name: str
     :ivar container_name: Required.
@@ -3430,18 +3728,23 @@ class CosmosSqlDataTransferDataSourceSink(DataTransferDataSourceSink):
 
     _attribute_map = {
         "component": {"key": "component", "type": "str"},
+        "remote_account_name": {"key": "remoteAccountName", "type": "str"},
         "database_name": {"key": "databaseName", "type": "str"},
         "container_name": {"key": "containerName", "type": "str"},
     }
 
-    def __init__(self, *, database_name: str, container_name: str, **kwargs: Any) -> None:
+    def __init__(
+        self, *, database_name: str, container_name: str, remote_account_name: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
+        :keyword remote_account_name:
+        :paramtype remote_account_name: str
         :keyword database_name: Required.
         :paramtype database_name: str
         :keyword container_name: Required.
         :paramtype container_name: str
         """
-        super().__init__(**kwargs)
+        super().__init__(remote_account_name=remote_account_name, **kwargs)
         self.component: str = "CosmosDBSql"
         self.database_name = database_name
         self.container_name = container_name
@@ -3493,7 +3796,8 @@ class CreateUpdateOptions(_serialization.Model):
 
     :ivar throughput: Request Units per second. For example, "throughput": 10000.
     :vartype throughput: int
-    :ivar autoscale_settings: Specifies the Autoscale settings.
+    :ivar autoscale_settings: Specifies the Autoscale settings. Note: Either throughput or
+     autoscaleSettings is required, but not both.
     :vartype autoscale_settings: ~azure.mgmt.cosmosdb.models.AutoscaleSettings
     """
 
@@ -3512,7 +3816,8 @@ class CreateUpdateOptions(_serialization.Model):
         """
         :keyword throughput: Request Units per second. For example, "throughput": 10000.
         :paramtype throughput: int
-        :keyword autoscale_settings: Specifies the Autoscale settings.
+        :keyword autoscale_settings: Specifies the Autoscale settings. Note: Either throughput or
+         autoscaleSettings is required, but not both.
         :paramtype autoscale_settings: ~azure.mgmt.cosmosdb.models.AutoscaleSettings
         """
         super().__init__(**kwargs)
@@ -3628,7 +3933,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):  # pylint: d
      "FirstPartyIdentity", "SystemAssignedIdentity" and more.
     :vartype default_identity: str
     :ivar public_network_access: Whether requests from Public Network are allowed. Known values
-     are: "Enabled" and "Disabled".
+     are: "Enabled", "Disabled", and "SecuredByPerimeter".
     :vartype public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
     :ivar enable_free_tier: Flag to indicate whether Free Tier is enabled.
     :vartype enable_free_tier: bool
@@ -3680,6 +3985,15 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):  # pylint: d
      except for Cassandra and Mongo API's, which only work with Tls 1.2. Known values are: "Tls",
      "Tls11", and "Tls12".
     :vartype minimal_tls_version: str or ~azure.mgmt.cosmosdb.models.MinimalTlsVersion
+    :ivar customer_managed_key_status: Indicates the status of the Customer Managed Key feature on
+     the account. In case there are errors, the property provides troubleshooting guidance.
+    :vartype customer_managed_key_status: str
+    :ivar enable_priority_based_execution: Flag to indicate enabling/disabling of Priority Based
+     Execution Preview feature on the account.
+    :vartype enable_priority_based_execution: bool
+    :ivar default_priority_level: Enum to indicate default Priority Level of request for Priority
+     Based Execution. Known values are: "High" and "Low".
+    :vartype default_priority_level: str or ~azure.mgmt.cosmosdb.models.DefaultPriorityLevel
     """
 
     _validation = {
@@ -3738,6 +4052,9 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):  # pylint: d
         "enable_partition_merge": {"key": "properties.enablePartitionMerge", "type": "bool"},
         "enable_burst_capacity": {"key": "properties.enableBurstCapacity", "type": "bool"},
         "minimal_tls_version": {"key": "properties.minimalTlsVersion", "type": "str"},
+        "customer_managed_key_status": {"key": "properties.customerManagedKeyStatus", "type": "str"},
+        "enable_priority_based_execution": {"key": "properties.enablePriorityBasedExecution", "type": "bool"},
+        "default_priority_level": {"key": "properties.defaultPriorityLevel", "type": "str"},
     }
 
     database_account_offer_type = "Standard"
@@ -3780,6 +4097,9 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):  # pylint: d
         enable_partition_merge: Optional[bool] = None,
         enable_burst_capacity: Optional[bool] = None,
         minimal_tls_version: Optional[Union[str, "_models.MinimalTlsVersion"]] = None,
+        customer_managed_key_status: Optional[str] = None,
+        enable_priority_based_execution: Optional[bool] = None,
+        default_priority_level: Optional[Union[str, "_models.DefaultPriorityLevel"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3835,7 +4155,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):  # pylint: d
          "FirstPartyIdentity", "SystemAssignedIdentity" and more.
         :paramtype default_identity: str
         :keyword public_network_access: Whether requests from Public Network are allowed. Known values
-         are: "Enabled" and "Disabled".
+         are: "Enabled", "Disabled", and "SecuredByPerimeter".
         :paramtype public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
         :keyword enable_free_tier: Flag to indicate whether Free Tier is enabled.
         :paramtype enable_free_tier: bool
@@ -3883,6 +4203,15 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):  # pylint: d
          1.0, except for Cassandra and Mongo API's, which only work with Tls 1.2. Known values are:
          "Tls", "Tls11", and "Tls12".
         :paramtype minimal_tls_version: str or ~azure.mgmt.cosmosdb.models.MinimalTlsVersion
+        :keyword customer_managed_key_status: Indicates the status of the Customer Managed Key feature
+         on the account. In case there are errors, the property provides troubleshooting guidance.
+        :paramtype customer_managed_key_status: str
+        :keyword enable_priority_based_execution: Flag to indicate enabling/disabling of Priority Based
+         Execution Preview feature on the account.
+        :paramtype enable_priority_based_execution: bool
+        :keyword default_priority_level: Enum to indicate default Priority Level of request for
+         Priority Based Execution. Known values are: "High" and "Low".
+        :paramtype default_priority_level: str or ~azure.mgmt.cosmosdb.models.DefaultPriorityLevel
         """
         super().__init__(location=location, tags=tags, identity=identity, **kwargs)
         self.kind = kind
@@ -3918,6 +4247,9 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):  # pylint: d
         self.enable_partition_merge = enable_partition_merge
         self.enable_burst_capacity = enable_burst_capacity
         self.minimal_tls_version = minimal_tls_version
+        self.customer_managed_key_status = customer_managed_key_status
+        self.enable_priority_based_execution = enable_priority_based_execution
+        self.default_priority_level = default_priority_level
 
 
 class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-many-instance-attributes
@@ -4008,7 +4340,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-m
      "FirstPartyIdentity", "SystemAssignedIdentity" and more.
     :vartype default_identity: str
     :ivar public_network_access: Whether requests from Public Network are allowed. Known values
-     are: "Enabled" and "Disabled".
+     are: "Enabled", "Disabled", and "SecuredByPerimeter".
     :vartype public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
     :ivar enable_free_tier: Flag to indicate whether Free Tier is enabled.
     :vartype enable_free_tier: bool
@@ -4061,6 +4393,15 @@ class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-m
      except for Cassandra and Mongo API's, which only work with Tls 1.2. Known values are: "Tls",
      "Tls11", and "Tls12".
     :vartype minimal_tls_version: str or ~azure.mgmt.cosmosdb.models.MinimalTlsVersion
+    :ivar customer_managed_key_status: Indicates the status of the Customer Managed Key feature on
+     the account. In case there are errors, the property provides troubleshooting guidance.
+    :vartype customer_managed_key_status: str
+    :ivar enable_priority_based_execution: Flag to indicate enabling/disabling of Priority Based
+     Execution Preview feature on the account.
+    :vartype enable_priority_based_execution: bool
+    :ivar default_priority_level: Enum to indicate default Priority Level of request for Priority
+     Based Execution. Known values are: "High" and "Low".
+    :vartype default_priority_level: str or ~azure.mgmt.cosmosdb.models.DefaultPriorityLevel
     """
 
     _validation = {
@@ -4138,6 +4479,9 @@ class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-m
         "enable_partition_merge": {"key": "properties.enablePartitionMerge", "type": "bool"},
         "enable_burst_capacity": {"key": "properties.enableBurstCapacity", "type": "bool"},
         "minimal_tls_version": {"key": "properties.minimalTlsVersion", "type": "str"},
+        "customer_managed_key_status": {"key": "properties.customerManagedKeyStatus", "type": "str"},
+        "enable_priority_based_execution": {"key": "properties.enablePriorityBasedExecution", "type": "bool"},
+        "default_priority_level": {"key": "properties.defaultPriorityLevel", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -4177,6 +4521,9 @@ class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-m
         enable_partition_merge: Optional[bool] = None,
         enable_burst_capacity: Optional[bool] = None,
         minimal_tls_version: Optional[Union[str, "_models.MinimalTlsVersion"]] = None,
+        customer_managed_key_status: Optional[str] = None,
+        enable_priority_based_execution: Optional[bool] = None,
+        default_priority_level: Optional[Union[str, "_models.DefaultPriorityLevel"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4229,7 +4576,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-m
          "FirstPartyIdentity", "SystemAssignedIdentity" and more.
         :paramtype default_identity: str
         :keyword public_network_access: Whether requests from Public Network are allowed. Known values
-         are: "Enabled" and "Disabled".
+         are: "Enabled", "Disabled", and "SecuredByPerimeter".
         :paramtype public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
         :keyword enable_free_tier: Flag to indicate whether Free Tier is enabled.
         :paramtype enable_free_tier: bool
@@ -4277,6 +4624,15 @@ class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-m
          1.0, except for Cassandra and Mongo API's, which only work with Tls 1.2. Known values are:
          "Tls", "Tls11", and "Tls12".
         :paramtype minimal_tls_version: str or ~azure.mgmt.cosmosdb.models.MinimalTlsVersion
+        :keyword customer_managed_key_status: Indicates the status of the Customer Managed Key feature
+         on the account. In case there are errors, the property provides troubleshooting guidance.
+        :paramtype customer_managed_key_status: str
+        :keyword enable_priority_based_execution: Flag to indicate enabling/disabling of Priority Based
+         Execution Preview feature on the account.
+        :paramtype enable_priority_based_execution: bool
+        :keyword default_priority_level: Enum to indicate default Priority Level of request for
+         Priority Based Execution. Known values are: "High" and "Low".
+        :paramtype default_priority_level: str or ~azure.mgmt.cosmosdb.models.DefaultPriorityLevel
         """
         super().__init__(location=location, tags=tags, identity=identity, **kwargs)
         self.kind = kind
@@ -4321,6 +4677,9 @@ class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-m
         self.enable_partition_merge = enable_partition_merge
         self.enable_burst_capacity = enable_burst_capacity
         self.minimal_tls_version = minimal_tls_version
+        self.customer_managed_key_status = customer_managed_key_status
+        self.enable_priority_based_execution = enable_priority_based_execution
+        self.default_priority_level = default_priority_level
 
 
 class DatabaseAccountKeysMetadata(_serialization.Model):
@@ -4558,7 +4917,7 @@ class DatabaseAccountUpdateParameters(_serialization.Model):  # pylint: disable=
      "FirstPartyIdentity", "SystemAssignedIdentity" and more.
     :vartype default_identity: str
     :ivar public_network_access: Whether requests from Public Network are allowed. Known values
-     are: "Enabled" and "Disabled".
+     are: "Enabled", "Disabled", and "SecuredByPerimeter".
     :vartype public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
     :ivar enable_free_tier: Flag to indicate whether Free Tier is enabled.
     :vartype enable_free_tier: bool
@@ -4604,6 +4963,15 @@ class DatabaseAccountUpdateParameters(_serialization.Model):  # pylint: disable=
      except for Cassandra and Mongo API's, which only work with Tls 1.2. Known values are: "Tls",
      "Tls11", and "Tls12".
     :vartype minimal_tls_version: str or ~azure.mgmt.cosmosdb.models.MinimalTlsVersion
+    :ivar customer_managed_key_status: Indicates the status of the Customer Managed Key feature on
+     the account. In case there are errors, the property provides troubleshooting guidance.
+    :vartype customer_managed_key_status: str
+    :ivar enable_priority_based_execution: Flag to indicate enabling/disabling of Priority Based
+     Execution Preview feature on the account.
+    :vartype enable_priority_based_execution: bool
+    :ivar default_priority_level: Enum to indicate default Priority Level of request for Priority
+     Based Execution. Known values are: "High" and "Low".
+    :vartype default_priority_level: str or ~azure.mgmt.cosmosdb.models.DefaultPriorityLevel
     """
 
     _validation = {
@@ -4650,6 +5018,9 @@ class DatabaseAccountUpdateParameters(_serialization.Model):  # pylint: disable=
         "enable_partition_merge": {"key": "properties.enablePartitionMerge", "type": "bool"},
         "enable_burst_capacity": {"key": "properties.enableBurstCapacity", "type": "bool"},
         "minimal_tls_version": {"key": "properties.minimalTlsVersion", "type": "str"},
+        "customer_managed_key_status": {"key": "properties.customerManagedKeyStatus", "type": "str"},
+        "enable_priority_based_execution": {"key": "properties.enablePriorityBasedExecution", "type": "bool"},
+        "default_priority_level": {"key": "properties.defaultPriorityLevel", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -4687,6 +5058,9 @@ class DatabaseAccountUpdateParameters(_serialization.Model):  # pylint: disable=
         enable_partition_merge: Optional[bool] = None,
         enable_burst_capacity: Optional[bool] = None,
         minimal_tls_version: Optional[Union[str, "_models.MinimalTlsVersion"]] = None,
+        customer_managed_key_status: Optional[str] = None,
+        enable_priority_based_execution: Optional[bool] = None,
+        default_priority_level: Optional[Union[str, "_models.DefaultPriorityLevel"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4739,7 +5113,7 @@ class DatabaseAccountUpdateParameters(_serialization.Model):  # pylint: disable=
          "FirstPartyIdentity", "SystemAssignedIdentity" and more.
         :paramtype default_identity: str
         :keyword public_network_access: Whether requests from Public Network are allowed. Known values
-         are: "Enabled" and "Disabled".
+         are: "Enabled", "Disabled", and "SecuredByPerimeter".
         :paramtype public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
         :keyword enable_free_tier: Flag to indicate whether Free Tier is enabled.
         :paramtype enable_free_tier: bool
@@ -4782,6 +5156,15 @@ class DatabaseAccountUpdateParameters(_serialization.Model):  # pylint: disable=
          1.0, except for Cassandra and Mongo API's, which only work with Tls 1.2. Known values are:
          "Tls", "Tls11", and "Tls12".
         :paramtype minimal_tls_version: str or ~azure.mgmt.cosmosdb.models.MinimalTlsVersion
+        :keyword customer_managed_key_status: Indicates the status of the Customer Managed Key feature
+         on the account. In case there are errors, the property provides troubleshooting guidance.
+        :paramtype customer_managed_key_status: str
+        :keyword enable_priority_based_execution: Flag to indicate enabling/disabling of Priority Based
+         Execution Preview feature on the account.
+        :paramtype enable_priority_based_execution: bool
+        :keyword default_priority_level: Enum to indicate default Priority Level of request for
+         Priority Based Execution. Known values are: "High" and "Low".
+        :paramtype default_priority_level: str or ~azure.mgmt.cosmosdb.models.DefaultPriorityLevel
         """
         super().__init__(**kwargs)
         self.tags = tags
@@ -4817,6 +5200,9 @@ class DatabaseAccountUpdateParameters(_serialization.Model):  # pylint: disable=
         self.enable_partition_merge = enable_partition_merge
         self.enable_burst_capacity = enable_burst_capacity
         self.minimal_tls_version = minimal_tls_version
+        self.customer_managed_key_status = customer_managed_key_status
+        self.enable_priority_based_execution = enable_priority_based_execution
+        self.default_priority_level = default_priority_level
 
 
 class DatabaseRestoreResource(_serialization.Model):
@@ -4939,6 +5325,8 @@ class DataCenterResourceProperties(_serialization.Model):  # pylint: disable=too
     :vartype deallocated: bool
     :ivar provision_error: Error related to resource provisioning.
     :vartype provision_error: ~azure.mgmt.cosmosdb.models.CassandraError
+    :ivar private_endpoint_ip_address: Ip of the VPN Endpoint for this data center.
+    :vartype private_endpoint_ip_address: str
     """
 
     _validation = {
@@ -4964,6 +5352,7 @@ class DataCenterResourceProperties(_serialization.Model):  # pylint: disable=too
         },
         "deallocated": {"key": "deallocated", "type": "bool"},
         "provision_error": {"key": "provisionError", "type": "CassandraError"},
+        "private_endpoint_ip_address": {"key": "privateEndpointIpAddress", "type": "str"},
     }
 
     def __init__(
@@ -4983,6 +5372,7 @@ class DataCenterResourceProperties(_serialization.Model):  # pylint: disable=too
         authentication_method_ldap_properties: Optional["_models.AuthenticationMethodLdapProperties"] = None,
         deallocated: Optional[bool] = None,
         provision_error: Optional["_models.CassandraError"] = None,
+        private_endpoint_ip_address: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5032,6 +5422,8 @@ class DataCenterResourceProperties(_serialization.Model):  # pylint: disable=too
         :paramtype deallocated: bool
         :keyword provision_error: Error related to resource provisioning.
         :paramtype provision_error: ~azure.mgmt.cosmosdb.models.CassandraError
+        :keyword private_endpoint_ip_address: Ip of the VPN Endpoint for this data center.
+        :paramtype private_endpoint_ip_address: str
         """
         super().__init__(**kwargs)
         self.provisioning_state = provisioning_state
@@ -5049,6 +5441,7 @@ class DataCenterResourceProperties(_serialization.Model):  # pylint: disable=too
         self.authentication_method_ldap_properties = authentication_method_ldap_properties
         self.deallocated = deallocated
         self.provision_error = provision_error
+        self.private_endpoint_ip_address = private_endpoint_ip_address
 
 
 class DataTransferJobFeedResults(_serialization.Model):
@@ -5108,6 +5501,10 @@ class DataTransferJobGetResults(ARMProxyResource):  # pylint: disable=too-many-i
     :vartype worker_count: int
     :ivar error: Error response for Faulted job.
     :vartype error: ~azure.mgmt.cosmosdb.models.ErrorResponse
+    :ivar duration: Total Duration of Job.
+    :vartype duration: str
+    :ivar mode: Mode of job execution. Known values are: "Offline" and "Online".
+    :vartype mode: str or ~azure.mgmt.cosmosdb.models.DataTransferJobMode
     """
 
     _validation = {
@@ -5121,6 +5518,7 @@ class DataTransferJobGetResults(ARMProxyResource):  # pylint: disable=too-many-i
         "last_updated_utc_time": {"readonly": True},
         "worker_count": {"minimum": 0},
         "error": {"readonly": True},
+        "duration": {"readonly": True},
     }
 
     _attribute_map = {
@@ -5136,6 +5534,8 @@ class DataTransferJobGetResults(ARMProxyResource):  # pylint: disable=too-many-i
         "last_updated_utc_time": {"key": "properties.lastUpdatedUtcTime", "type": "iso-8601"},
         "worker_count": {"key": "properties.workerCount", "type": "int"},
         "error": {"key": "properties.error", "type": "ErrorResponse"},
+        "duration": {"key": "properties.duration", "type": "str"},
+        "mode": {"key": "properties.mode", "type": "str"},
     }
 
     def __init__(
@@ -5144,6 +5544,7 @@ class DataTransferJobGetResults(ARMProxyResource):  # pylint: disable=too-many-i
         source: Optional["_models.DataTransferDataSourceSink"] = None,
         destination: Optional["_models.DataTransferDataSourceSink"] = None,
         worker_count: Optional[int] = None,
+        mode: Optional[Union[str, "_models.DataTransferJobMode"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5153,6 +5554,8 @@ class DataTransferJobGetResults(ARMProxyResource):  # pylint: disable=too-many-i
         :paramtype destination: ~azure.mgmt.cosmosdb.models.DataTransferDataSourceSink
         :keyword worker_count: Worker count.
         :paramtype worker_count: int
+        :keyword mode: Mode of job execution. Known values are: "Offline" and "Online".
+        :paramtype mode: str or ~azure.mgmt.cosmosdb.models.DataTransferJobMode
         """
         super().__init__(**kwargs)
         self.job_name = None
@@ -5164,9 +5567,11 @@ class DataTransferJobGetResults(ARMProxyResource):  # pylint: disable=too-many-i
         self.last_updated_utc_time = None
         self.worker_count = worker_count
         self.error = None
+        self.duration = None
+        self.mode = mode
 
 
-class DataTransferJobProperties(_serialization.Model):
+class DataTransferJobProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The properties of a DataTransfer Job.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5191,6 +5596,10 @@ class DataTransferJobProperties(_serialization.Model):
     :vartype worker_count: int
     :ivar error: Error response for Faulted job.
     :vartype error: ~azure.mgmt.cosmosdb.models.ErrorResponse
+    :ivar duration: Total Duration of Job.
+    :vartype duration: str
+    :ivar mode: Mode of job execution. Known values are: "Offline" and "Online".
+    :vartype mode: str or ~azure.mgmt.cosmosdb.models.DataTransferJobMode
     """
 
     _validation = {
@@ -5203,6 +5612,7 @@ class DataTransferJobProperties(_serialization.Model):
         "last_updated_utc_time": {"readonly": True},
         "worker_count": {"minimum": 0},
         "error": {"readonly": True},
+        "duration": {"readonly": True},
     }
 
     _attribute_map = {
@@ -5215,6 +5625,8 @@ class DataTransferJobProperties(_serialization.Model):
         "last_updated_utc_time": {"key": "lastUpdatedUtcTime", "type": "iso-8601"},
         "worker_count": {"key": "workerCount", "type": "int"},
         "error": {"key": "error", "type": "ErrorResponse"},
+        "duration": {"key": "duration", "type": "str"},
+        "mode": {"key": "mode", "type": "str"},
     }
 
     def __init__(
@@ -5223,6 +5635,7 @@ class DataTransferJobProperties(_serialization.Model):
         source: "_models.DataTransferDataSourceSink",
         destination: "_models.DataTransferDataSourceSink",
         worker_count: Optional[int] = None,
+        mode: Optional[Union[str, "_models.DataTransferJobMode"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5232,6 +5645,8 @@ class DataTransferJobProperties(_serialization.Model):
         :paramtype destination: ~azure.mgmt.cosmosdb.models.DataTransferDataSourceSink
         :keyword worker_count: Worker count.
         :paramtype worker_count: int
+        :keyword mode: Mode of job execution. Known values are: "Offline" and "Online".
+        :paramtype mode: str or ~azure.mgmt.cosmosdb.models.DataTransferJobMode
         """
         super().__init__(**kwargs)
         self.job_name = None
@@ -5243,6 +5658,8 @@ class DataTransferJobProperties(_serialization.Model):
         self.last_updated_utc_time = None
         self.worker_count = worker_count
         self.error = None
+        self.duration = None
+        self.mode = mode
 
 
 class RegionalServiceResource(_serialization.Model):
@@ -7343,6 +7760,29 @@ class ListClusters(_serialization.Model):
         self.value = value
 
 
+class ListCommands(_serialization.Model):
+    """List of commands for cluster.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Container for array of commands.
+    :vartype value: list[~azure.mgmt.cosmosdb.models.CommandPublicResource]
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[CommandPublicResource]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value = None
+
+
 class ListConnectionStringsResult(_serialization.Model):
     """The connection strings for the given mongo cluster.
 
@@ -7545,7 +7985,8 @@ class LocationProperties(_serialization.Model):
      have access in region for Availability Zones(Az).
     :vartype is_subscription_region_access_allowed_for_az: bool
     :ivar status: Enum to indicate current buildout status of the region. Known values are:
-     "Uninitialized", "Initializing", "InternallyReady", "Online", and "Deleting".
+     "Uninitialized", "Initializing", "InternallyReady", "Online", "Deleting", "Succeeded",
+     "Failed", "Canceled", and "Updating".
     :vartype status: str or ~azure.mgmt.cosmosdb.models.Status
     """
 
@@ -11422,6 +11863,11 @@ class RestorableGremlinDatabasePropertiesResource(_serialization.Model):
     :ivar operation_type: The operation type of this database event. Known values are: "Create",
      "Replace", "Delete", "Recreate", and "SystemOperation".
     :vartype operation_type: str or ~azure.mgmt.cosmosdb.models.OperationType
+    :ivar can_undelete: A state of this database to identify if this database is restorable in same
+     account.
+    :vartype can_undelete: str
+    :ivar can_undelete_reason: The reason why this database can not be restored in same account.
+    :vartype can_undelete_reason: str
     :ivar event_timestamp: The time when this database event happened.
     :vartype event_timestamp: str
     :ivar owner_id: The name of this Gremlin database.
@@ -11433,6 +11879,8 @@ class RestorableGremlinDatabasePropertiesResource(_serialization.Model):
     _validation = {
         "rid": {"readonly": True},
         "operation_type": {"readonly": True},
+        "can_undelete": {"readonly": True},
+        "can_undelete_reason": {"readonly": True},
         "event_timestamp": {"readonly": True},
         "owner_id": {"readonly": True},
         "owner_resource_id": {"readonly": True},
@@ -11441,6 +11889,8 @@ class RestorableGremlinDatabasePropertiesResource(_serialization.Model):
     _attribute_map = {
         "rid": {"key": "_rid", "type": "str"},
         "operation_type": {"key": "operationType", "type": "str"},
+        "can_undelete": {"key": "canUndelete", "type": "str"},
+        "can_undelete_reason": {"key": "canUndeleteReason", "type": "str"},
         "event_timestamp": {"key": "eventTimestamp", "type": "str"},
         "owner_id": {"key": "ownerId", "type": "str"},
         "owner_resource_id": {"key": "ownerResourceId", "type": "str"},
@@ -11451,6 +11901,8 @@ class RestorableGremlinDatabasePropertiesResource(_serialization.Model):
         super().__init__(**kwargs)
         self.rid = None
         self.operation_type = None
+        self.can_undelete = None
+        self.can_undelete_reason = None
         self.event_timestamp = None
         self.owner_id = None
         self.owner_resource_id = None
@@ -11531,6 +11983,11 @@ class RestorableGremlinGraphPropertiesResource(_serialization.Model):
     :ivar operation_type: The operation type of this graph event. Known values are: "Create",
      "Replace", "Delete", "Recreate", and "SystemOperation".
     :vartype operation_type: str or ~azure.mgmt.cosmosdb.models.OperationType
+    :ivar can_undelete: A state of this graph to identify if this graph is restorable in same
+     account.
+    :vartype can_undelete: str
+    :ivar can_undelete_reason: The reason why this graph can not be restored in same account.
+    :vartype can_undelete_reason: str
     :ivar event_timestamp: The time when this graph event happened.
     :vartype event_timestamp: str
     :ivar owner_id: The name of this Gremlin graph.
@@ -11542,6 +11999,8 @@ class RestorableGremlinGraphPropertiesResource(_serialization.Model):
     _validation = {
         "rid": {"readonly": True},
         "operation_type": {"readonly": True},
+        "can_undelete": {"readonly": True},
+        "can_undelete_reason": {"readonly": True},
         "event_timestamp": {"readonly": True},
         "owner_id": {"readonly": True},
         "owner_resource_id": {"readonly": True},
@@ -11550,6 +12009,8 @@ class RestorableGremlinGraphPropertiesResource(_serialization.Model):
     _attribute_map = {
         "rid": {"key": "_rid", "type": "str"},
         "operation_type": {"key": "operationType", "type": "str"},
+        "can_undelete": {"key": "canUndelete", "type": "str"},
+        "can_undelete_reason": {"key": "canUndeleteReason", "type": "str"},
         "event_timestamp": {"key": "eventTimestamp", "type": "str"},
         "owner_id": {"key": "ownerId", "type": "str"},
         "owner_resource_id": {"key": "ownerResourceId", "type": "str"},
@@ -11560,6 +12021,8 @@ class RestorableGremlinGraphPropertiesResource(_serialization.Model):
         super().__init__(**kwargs)
         self.rid = None
         self.operation_type = None
+        self.can_undelete = None
+        self.can_undelete_reason = None
         self.event_timestamp = None
         self.owner_id = None
         self.owner_resource_id = None
@@ -11753,6 +12216,11 @@ class RestorableMongodbCollectionPropertiesResource(_serialization.Model):
     :ivar operation_type: The operation type of this collection event. Known values are: "Create",
      "Replace", "Delete", "Recreate", and "SystemOperation".
     :vartype operation_type: str or ~azure.mgmt.cosmosdb.models.OperationType
+    :ivar can_undelete: A state of this collection to identify if this container is restorable in
+     same account.
+    :vartype can_undelete: str
+    :ivar can_undelete_reason: The reason why this collection can not be restored in same account.
+    :vartype can_undelete_reason: str
     :ivar event_timestamp: The time when this collection event happened.
     :vartype event_timestamp: str
     :ivar owner_id: The name of this MongoDB collection.
@@ -11764,6 +12232,8 @@ class RestorableMongodbCollectionPropertiesResource(_serialization.Model):
     _validation = {
         "rid": {"readonly": True},
         "operation_type": {"readonly": True},
+        "can_undelete": {"readonly": True},
+        "can_undelete_reason": {"readonly": True},
         "event_timestamp": {"readonly": True},
         "owner_id": {"readonly": True},
         "owner_resource_id": {"readonly": True},
@@ -11772,6 +12242,8 @@ class RestorableMongodbCollectionPropertiesResource(_serialization.Model):
     _attribute_map = {
         "rid": {"key": "_rid", "type": "str"},
         "operation_type": {"key": "operationType", "type": "str"},
+        "can_undelete": {"key": "canUndelete", "type": "str"},
+        "can_undelete_reason": {"key": "canUndeleteReason", "type": "str"},
         "event_timestamp": {"key": "eventTimestamp", "type": "str"},
         "owner_id": {"key": "ownerId", "type": "str"},
         "owner_resource_id": {"key": "ownerResourceId", "type": "str"},
@@ -11782,6 +12254,8 @@ class RestorableMongodbCollectionPropertiesResource(_serialization.Model):
         super().__init__(**kwargs)
         self.rid = None
         self.operation_type = None
+        self.can_undelete = None
+        self.can_undelete_reason = None
         self.event_timestamp = None
         self.owner_id = None
         self.owner_resource_id = None
@@ -11862,6 +12336,11 @@ class RestorableMongodbDatabasePropertiesResource(_serialization.Model):
     :ivar operation_type: The operation type of this database event. Known values are: "Create",
      "Replace", "Delete", "Recreate", and "SystemOperation".
     :vartype operation_type: str or ~azure.mgmt.cosmosdb.models.OperationType
+    :ivar can_undelete: A state of this database to identify if this database is restorable in same
+     account.
+    :vartype can_undelete: str
+    :ivar can_undelete_reason: The reason why this database can not be restored in same account.
+    :vartype can_undelete_reason: str
     :ivar event_timestamp: The time when this database event happened.
     :vartype event_timestamp: str
     :ivar owner_id: The name of this MongoDB database.
@@ -11873,6 +12352,8 @@ class RestorableMongodbDatabasePropertiesResource(_serialization.Model):
     _validation = {
         "rid": {"readonly": True},
         "operation_type": {"readonly": True},
+        "can_undelete": {"readonly": True},
+        "can_undelete_reason": {"readonly": True},
         "event_timestamp": {"readonly": True},
         "owner_id": {"readonly": True},
         "owner_resource_id": {"readonly": True},
@@ -11881,6 +12362,8 @@ class RestorableMongodbDatabasePropertiesResource(_serialization.Model):
     _attribute_map = {
         "rid": {"key": "_rid", "type": "str"},
         "operation_type": {"key": "operationType", "type": "str"},
+        "can_undelete": {"key": "canUndelete", "type": "str"},
+        "can_undelete_reason": {"key": "canUndeleteReason", "type": "str"},
         "event_timestamp": {"key": "eventTimestamp", "type": "str"},
         "owner_id": {"key": "ownerId", "type": "str"},
         "owner_resource_id": {"key": "ownerResourceId", "type": "str"},
@@ -11891,6 +12374,8 @@ class RestorableMongodbDatabasePropertiesResource(_serialization.Model):
         super().__init__(**kwargs)
         self.rid = None
         self.operation_type = None
+        self.can_undelete = None
+        self.can_undelete_reason = None
         self.event_timestamp = None
         self.owner_id = None
         self.owner_resource_id = None
@@ -12042,6 +12527,11 @@ class RestorableSqlContainerPropertiesResource(_serialization.Model):
     :ivar operation_type: The operation type of this container event. Known values are: "Create",
      "Replace", "Delete", "Recreate", and "SystemOperation".
     :vartype operation_type: str or ~azure.mgmt.cosmosdb.models.OperationType
+    :ivar can_undelete: A state of this container to identify if this container is restorable in
+     same account.
+    :vartype can_undelete: str
+    :ivar can_undelete_reason: The reason why this container can not be restored in same account.
+    :vartype can_undelete_reason: str
     :ivar event_timestamp: The when this container event happened.
     :vartype event_timestamp: str
     :ivar owner_id: The name of this SQL container.
@@ -12056,6 +12546,8 @@ class RestorableSqlContainerPropertiesResource(_serialization.Model):
     _validation = {
         "rid": {"readonly": True},
         "operation_type": {"readonly": True},
+        "can_undelete": {"readonly": True},
+        "can_undelete_reason": {"readonly": True},
         "event_timestamp": {"readonly": True},
         "owner_id": {"readonly": True},
         "owner_resource_id": {"readonly": True},
@@ -12064,6 +12556,8 @@ class RestorableSqlContainerPropertiesResource(_serialization.Model):
     _attribute_map = {
         "rid": {"key": "_rid", "type": "str"},
         "operation_type": {"key": "operationType", "type": "str"},
+        "can_undelete": {"key": "canUndelete", "type": "str"},
+        "can_undelete_reason": {"key": "canUndeleteReason", "type": "str"},
         "event_timestamp": {"key": "eventTimestamp", "type": "str"},
         "owner_id": {"key": "ownerId", "type": "str"},
         "owner_resource_id": {"key": "ownerResourceId", "type": "str"},
@@ -12081,6 +12575,8 @@ class RestorableSqlContainerPropertiesResource(_serialization.Model):
         super().__init__(**kwargs)
         self.rid = None
         self.operation_type = None
+        self.can_undelete = None
+        self.can_undelete_reason = None
         self.event_timestamp = None
         self.owner_id = None
         self.owner_resource_id = None
@@ -12119,6 +12615,8 @@ class SqlContainerResource(_serialization.Model):  # pylint: disable=too-many-in
     :ivar materialized_view_definition: The configuration for defining Materialized Views. This
      must be specified only for creating a Materialized View container.
     :vartype materialized_view_definition: ~azure.mgmt.cosmosdb.models.MaterializedViewDefinition
+    :ivar computed_properties: List of computed properties.
+    :vartype computed_properties: list[~azure.mgmt.cosmosdb.models.ComputedProperty]
     """
 
     _validation = {
@@ -12137,6 +12635,7 @@ class SqlContainerResource(_serialization.Model):  # pylint: disable=too-many-in
         "restore_parameters": {"key": "restoreParameters", "type": "ResourceRestoreParameters"},
         "create_mode": {"key": "createMode", "type": "str"},
         "materialized_view_definition": {"key": "materializedViewDefinition", "type": "MaterializedViewDefinition"},
+        "computed_properties": {"key": "computedProperties", "type": "[ComputedProperty]"},
     }
 
     def __init__(
@@ -12153,6 +12652,7 @@ class SqlContainerResource(_serialization.Model):  # pylint: disable=too-many-in
         restore_parameters: Optional["_models.ResourceRestoreParameters"] = None,
         create_mode: Optional[Union[str, "_models.CreateMode"]] = None,
         materialized_view_definition: Optional["_models.MaterializedViewDefinition"] = None,
+        computed_properties: Optional[List["_models.ComputedProperty"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -12183,6 +12683,8 @@ class SqlContainerResource(_serialization.Model):  # pylint: disable=too-many-in
         :keyword materialized_view_definition: The configuration for defining Materialized Views. This
          must be specified only for creating a Materialized View container.
         :paramtype materialized_view_definition: ~azure.mgmt.cosmosdb.models.MaterializedViewDefinition
+        :keyword computed_properties: List of computed properties.
+        :paramtype computed_properties: list[~azure.mgmt.cosmosdb.models.ComputedProperty]
         """
         super().__init__(**kwargs)
         self.id = id
@@ -12196,6 +12698,7 @@ class SqlContainerResource(_serialization.Model):  # pylint: disable=too-many-in
         self.restore_parameters = restore_parameters
         self.create_mode = create_mode
         self.materialized_view_definition = materialized_view_definition
+        self.computed_properties = computed_properties
 
 
 class RestorableSqlContainerPropertiesResourceContainer(
@@ -12241,6 +12744,8 @@ class RestorableSqlContainerPropertiesResourceContainer(
     :ivar materialized_view_definition: The configuration for defining Materialized Views. This
      must be specified only for creating a Materialized View container.
     :vartype materialized_view_definition: ~azure.mgmt.cosmosdb.models.MaterializedViewDefinition
+    :ivar computed_properties: List of computed properties.
+    :vartype computed_properties: list[~azure.mgmt.cosmosdb.models.ComputedProperty]
     :ivar self_property: A system generated property that specifies the addressable path of the
      container resource.
     :vartype self_property: str
@@ -12269,6 +12774,7 @@ class RestorableSqlContainerPropertiesResourceContainer(
         "restore_parameters": {"key": "restoreParameters", "type": "ResourceRestoreParameters"},
         "create_mode": {"key": "createMode", "type": "str"},
         "materialized_view_definition": {"key": "materializedViewDefinition", "type": "MaterializedViewDefinition"},
+        "computed_properties": {"key": "computedProperties", "type": "[ComputedProperty]"},
         "self_property": {"key": "_self", "type": "str"},
     }
 
@@ -12286,6 +12792,7 @@ class RestorableSqlContainerPropertiesResourceContainer(
         restore_parameters: Optional["_models.ResourceRestoreParameters"] = None,
         create_mode: Optional[Union[str, "_models.CreateMode"]] = None,
         materialized_view_definition: Optional["_models.MaterializedViewDefinition"] = None,
+        computed_properties: Optional[List["_models.ComputedProperty"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -12316,6 +12823,8 @@ class RestorableSqlContainerPropertiesResourceContainer(
         :keyword materialized_view_definition: The configuration for defining Materialized Views. This
          must be specified only for creating a Materialized View container.
         :paramtype materialized_view_definition: ~azure.mgmt.cosmosdb.models.MaterializedViewDefinition
+        :keyword computed_properties: List of computed properties.
+        :paramtype computed_properties: list[~azure.mgmt.cosmosdb.models.ComputedProperty]
         """
         super().__init__(
             id=id,
@@ -12329,6 +12838,7 @@ class RestorableSqlContainerPropertiesResourceContainer(
             restore_parameters=restore_parameters,
             create_mode=create_mode,
             materialized_view_definition=materialized_view_definition,
+            computed_properties=computed_properties,
             **kwargs
         )
         self.rid = None
@@ -12346,6 +12856,7 @@ class RestorableSqlContainerPropertiesResourceContainer(
         self.restore_parameters = restore_parameters
         self.create_mode = create_mode
         self.materialized_view_definition = materialized_view_definition
+        self.computed_properties = computed_properties
 
 
 class RestorableSqlContainersListResult(_serialization.Model):
@@ -12423,6 +12934,11 @@ class RestorableSqlDatabasePropertiesResource(_serialization.Model):
     :ivar operation_type: The operation type of this database event. Known values are: "Create",
      "Replace", "Delete", "Recreate", and "SystemOperation".
     :vartype operation_type: str or ~azure.mgmt.cosmosdb.models.OperationType
+    :ivar can_undelete: A state of this database to identify if this database is restorable in same
+     account.
+    :vartype can_undelete: str
+    :ivar can_undelete_reason: The reason why this database can not be restored in same account.
+    :vartype can_undelete_reason: str
     :ivar event_timestamp: The time when this database event happened.
     :vartype event_timestamp: str
     :ivar owner_id: The name of the SQL database.
@@ -12436,6 +12952,8 @@ class RestorableSqlDatabasePropertiesResource(_serialization.Model):
     _validation = {
         "rid": {"readonly": True},
         "operation_type": {"readonly": True},
+        "can_undelete": {"readonly": True},
+        "can_undelete_reason": {"readonly": True},
         "event_timestamp": {"readonly": True},
         "owner_id": {"readonly": True},
         "owner_resource_id": {"readonly": True},
@@ -12444,6 +12962,8 @@ class RestorableSqlDatabasePropertiesResource(_serialization.Model):
     _attribute_map = {
         "rid": {"key": "_rid", "type": "str"},
         "operation_type": {"key": "operationType", "type": "str"},
+        "can_undelete": {"key": "canUndelete", "type": "str"},
+        "can_undelete_reason": {"key": "canUndeleteReason", "type": "str"},
         "event_timestamp": {"key": "eventTimestamp", "type": "str"},
         "owner_id": {"key": "ownerId", "type": "str"},
         "owner_resource_id": {"key": "ownerResourceId", "type": "str"},
@@ -12461,6 +12981,8 @@ class RestorableSqlDatabasePropertiesResource(_serialization.Model):
         super().__init__(**kwargs)
         self.rid = None
         self.operation_type = None
+        self.can_undelete = None
+        self.can_undelete_reason = None
         self.event_timestamp = None
         self.owner_id = None
         self.owner_resource_id = None
@@ -12743,6 +13265,11 @@ class RestorableTablePropertiesResource(_serialization.Model):
     :ivar operation_type: The operation type of this table event. Known values are: "Create",
      "Replace", "Delete", "Recreate", and "SystemOperation".
     :vartype operation_type: str or ~azure.mgmt.cosmosdb.models.OperationType
+    :ivar can_undelete: A state of this table to identify if this table is restorable in same
+     account.
+    :vartype can_undelete: str
+    :ivar can_undelete_reason: The reason why this table can not be restored in same account.
+    :vartype can_undelete_reason: str
     :ivar event_timestamp: The time when this table event happened.
     :vartype event_timestamp: str
     :ivar owner_id: The name of this Table.
@@ -12754,6 +13281,8 @@ class RestorableTablePropertiesResource(_serialization.Model):
     _validation = {
         "rid": {"readonly": True},
         "operation_type": {"readonly": True},
+        "can_undelete": {"readonly": True},
+        "can_undelete_reason": {"readonly": True},
         "event_timestamp": {"readonly": True},
         "owner_id": {"readonly": True},
         "owner_resource_id": {"readonly": True},
@@ -12762,6 +13291,8 @@ class RestorableTablePropertiesResource(_serialization.Model):
     _attribute_map = {
         "rid": {"key": "_rid", "type": "str"},
         "operation_type": {"key": "operationType", "type": "str"},
+        "can_undelete": {"key": "canUndelete", "type": "str"},
+        "can_undelete_reason": {"key": "canUndeleteReason", "type": "str"},
         "event_timestamp": {"key": "eventTimestamp", "type": "str"},
         "owner_id": {"key": "ownerId", "type": "str"},
         "owner_resource_id": {"key": "ownerResourceId", "type": "str"},
@@ -12772,6 +13303,8 @@ class RestorableTablePropertiesResource(_serialization.Model):
         super().__init__(**kwargs)
         self.rid = None
         self.operation_type = None
+        self.can_undelete = None
+        self.can_undelete_reason = None
         self.event_timestamp = None
         self.owner_id = None
         self.owner_resource_id = None
@@ -13375,6 +13908,8 @@ class SqlContainerGetPropertiesResource(
     :ivar materialized_view_definition: The configuration for defining Materialized Views. This
      must be specified only for creating a Materialized View container.
     :vartype materialized_view_definition: ~azure.mgmt.cosmosdb.models.MaterializedViewDefinition
+    :ivar computed_properties: List of computed properties.
+    :vartype computed_properties: list[~azure.mgmt.cosmosdb.models.ComputedProperty]
     """
 
     _validation = {
@@ -13399,6 +13934,7 @@ class SqlContainerGetPropertiesResource(
         "restore_parameters": {"key": "restoreParameters", "type": "ResourceRestoreParameters"},
         "create_mode": {"key": "createMode", "type": "str"},
         "materialized_view_definition": {"key": "materializedViewDefinition", "type": "MaterializedViewDefinition"},
+        "computed_properties": {"key": "computedProperties", "type": "[ComputedProperty]"},
     }
 
     def __init__(
@@ -13415,6 +13951,7 @@ class SqlContainerGetPropertiesResource(
         restore_parameters: Optional["_models.ResourceRestoreParameters"] = None,
         create_mode: Optional[Union[str, "_models.CreateMode"]] = None,
         materialized_view_definition: Optional["_models.MaterializedViewDefinition"] = None,
+        computed_properties: Optional[List["_models.ComputedProperty"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -13445,6 +13982,8 @@ class SqlContainerGetPropertiesResource(
         :keyword materialized_view_definition: The configuration for defining Materialized Views. This
          must be specified only for creating a Materialized View container.
         :paramtype materialized_view_definition: ~azure.mgmt.cosmosdb.models.MaterializedViewDefinition
+        :keyword computed_properties: List of computed properties.
+        :paramtype computed_properties: list[~azure.mgmt.cosmosdb.models.ComputedProperty]
         """
         super().__init__(
             id=id,
@@ -13458,6 +13997,7 @@ class SqlContainerGetPropertiesResource(
             restore_parameters=restore_parameters,
             create_mode=create_mode,
             materialized_view_definition=materialized_view_definition,
+            computed_properties=computed_properties,
             **kwargs
         )
         self.rid = None
@@ -13474,6 +14014,7 @@ class SqlContainerGetPropertiesResource(
         self.restore_parameters = restore_parameters
         self.create_mode = create_mode
         self.materialized_view_definition = materialized_view_definition
+        self.computed_properties = computed_properties
 
 
 class SqlContainerGetResults(ARMResourceProperties):
@@ -15541,6 +16082,300 @@ class ThroughputPolicyResource(_serialization.Model):
         self.increment_percent = increment_percent
 
 
+class ThroughputPoolAccountCreateParameters(_serialization.Model):
+    """Parameters for creating a Azure Cosmos DB throughput pool account.
+
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with "defaultExperience": "Cassandra". Current "defaultExperience" values also include "Table",
+     "Graph", "DocumentDB", and "MongoDB".
+    :vartype tags: dict[str, str]
+    :ivar account_resource_identifier: The resource identifier of global database account in the
+     throughputPool.
+    :vartype account_resource_identifier: str
+    :ivar account_location: The location of global database account in the throughputPool.
+    :vartype account_location: str
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "account_resource_identifier": {"key": "properties.accountResourceIdentifier", "type": "str"},
+        "account_location": {"key": "properties.accountLocation", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        account_resource_identifier: Optional[str] = None,
+        account_location: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+         used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+         be provided for a resource. Each tag must have a key no greater than 128 characters and value
+         no greater than 256 characters. For example, the default experience for a template type is set
+         with "defaultExperience": "Cassandra". Current "defaultExperience" values also include "Table",
+         "Graph", "DocumentDB", and "MongoDB".
+        :paramtype tags: dict[str, str]
+        :keyword account_resource_identifier: The resource identifier of global database account in the
+         throughputPool.
+        :paramtype account_resource_identifier: str
+        :keyword account_location: The location of global database account in the throughputPool.
+        :paramtype account_location: str
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.account_resource_identifier = account_resource_identifier
+        self.account_location = account_location
+
+
+class ThroughputPoolAccountResource(ProxyResourceAutoGenerated):
+    """An Azure Cosmos DB Throughputpool Account.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
+    :ivar provisioning_state: A provisioning state of the ThroughputPool Account. Known values are:
+     "Uninitialized", "Initializing", "InternallyReady", "Online", "Deleting", "Succeeded",
+     "Failed", "Canceled", and "Updating".
+    :vartype provisioning_state: str or ~azure.mgmt.cosmosdb.models.Status
+    :ivar account_resource_identifier: The resource identifier of global database account in the
+     throughputPool.
+    :vartype account_resource_identifier: str
+    :ivar account_location: The location of  global database account in the throughputPool.
+    :vartype account_location: str
+    :ivar account_instance_id: The instance id of global database account in the throughputPool.
+    :vartype account_instance_id: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "account_instance_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "account_resource_identifier": {"key": "properties.accountResourceIdentifier", "type": "str"},
+        "account_location": {"key": "properties.accountLocation", "type": "str"},
+        "account_instance_id": {"key": "properties.accountInstanceId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        provisioning_state: Optional[Union[str, "_models.Status"]] = None,
+        account_resource_identifier: Optional[str] = None,
+        account_location: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword provisioning_state: A provisioning state of the ThroughputPool Account. Known values
+         are: "Uninitialized", "Initializing", "InternallyReady", "Online", "Deleting", "Succeeded",
+         "Failed", "Canceled", and "Updating".
+        :paramtype provisioning_state: str or ~azure.mgmt.cosmosdb.models.Status
+        :keyword account_resource_identifier: The resource identifier of global database account in the
+         throughputPool.
+        :paramtype account_resource_identifier: str
+        :keyword account_location: The location of  global database account in the throughputPool.
+        :paramtype account_location: str
+        """
+        super().__init__(**kwargs)
+        self.provisioning_state = provisioning_state
+        self.account_resource_identifier = account_resource_identifier
+        self.account_location = account_location
+        self.account_instance_id = None
+
+
+class ThroughputPoolAccountsListResult(_serialization.Model):
+    """The List operation response, that contains the global database accounts and their properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of global database accounts in a throughput pool and their properties.
+    :vartype value: list[~azure.mgmt.cosmosdb.models.ThroughputPoolAccountResource]
+    :ivar next_link: The link used to get the next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ThroughputPoolAccountResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class ThroughputPoolResource(TrackedResource):
+    """An Azure Cosmos DB Throughputpool.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar provisioning_state: A provisioning state of the ThroughputPool. Known values are:
+     "Uninitialized", "Initializing", "InternallyReady", "Online", "Deleting", "Succeeded",
+     "Failed", "Canceled", and "Updating".
+    :vartype provisioning_state: str or ~azure.mgmt.cosmosdb.models.Status
+    :ivar max_throughput: Value for throughput to be shared among CosmosDB resources in the pool.
+    :vartype max_throughput: int
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "max_throughput": {"key": "properties.maxThroughput", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        provisioning_state: Optional[Union[str, "_models.Status"]] = None,
+        max_throughput: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword provisioning_state: A provisioning state of the ThroughputPool. Known values are:
+         "Uninitialized", "Initializing", "InternallyReady", "Online", "Deleting", "Succeeded",
+         "Failed", "Canceled", and "Updating".
+        :paramtype provisioning_state: str or ~azure.mgmt.cosmosdb.models.Status
+        :keyword max_throughput: Value for throughput to be shared among CosmosDB resources in the
+         pool.
+        :paramtype max_throughput: int
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.provisioning_state = provisioning_state
+        self.max_throughput = max_throughput
+
+
+class ThroughputPoolsListResult(_serialization.Model):
+    """The List operation response, that contains the throughput pools and their properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of throughput pools and their properties.
+    :vartype value: list[~azure.mgmt.cosmosdb.models.ThroughputPoolResource]
+    :ivar next_link: The link used to get the next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ThroughputPoolResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class ThroughputPoolUpdate(_serialization.Model):
+    """Represents a throughput pool resource for updates.
+
+    :ivar provisioning_state: A provisioning state of the ThroughputPool. Known values are:
+     "Uninitialized", "Initializing", "InternallyReady", "Online", "Deleting", "Succeeded",
+     "Failed", "Canceled", and "Updating".
+    :vartype provisioning_state: str or ~azure.mgmt.cosmosdb.models.Status
+    :ivar max_throughput: Value for throughput to be shared among CosmosDB resources in the pool.
+    :vartype max_throughput: int
+    """
+
+    _attribute_map = {
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "max_throughput": {"key": "properties.maxThroughput", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        provisioning_state: Optional[Union[str, "_models.Status"]] = None,
+        max_throughput: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword provisioning_state: A provisioning state of the ThroughputPool. Known values are:
+         "Uninitialized", "Initializing", "InternallyReady", "Online", "Deleting", "Succeeded",
+         "Failed", "Canceled", and "Updating".
+        :paramtype provisioning_state: str or ~azure.mgmt.cosmosdb.models.Status
+        :keyword max_throughput: Value for throughput to be shared among CosmosDB resources in the
+         pool.
+        :paramtype max_throughput: int
+        """
+        super().__init__(**kwargs)
+        self.provisioning_state = provisioning_state
+        self.max_throughput = max_throughput
+
+
 class ThroughputSettingsResource(_serialization.Model):
     """Cosmos DB resource throughput object. Either throughput is required or autoscaleSettings is
     required, but not both.
@@ -15557,11 +16392,19 @@ class ThroughputSettingsResource(_serialization.Model):
     :vartype minimum_throughput: str
     :ivar offer_replace_pending: The throughput replace is pending.
     :vartype offer_replace_pending: str
+    :ivar instant_maximum_throughput: The offer throughput value to instantly scale up without
+     triggering splits.
+    :vartype instant_maximum_throughput: str
+    :ivar soft_allowed_maximum_throughput: The maximum throughput value or the maximum
+     maxThroughput value (for autoscale) that can be specified.
+    :vartype soft_allowed_maximum_throughput: str
     """
 
     _validation = {
         "minimum_throughput": {"readonly": True},
         "offer_replace_pending": {"readonly": True},
+        "instant_maximum_throughput": {"readonly": True},
+        "soft_allowed_maximum_throughput": {"readonly": True},
     }
 
     _attribute_map = {
@@ -15569,6 +16412,8 @@ class ThroughputSettingsResource(_serialization.Model):
         "autoscale_settings": {"key": "autoscaleSettings", "type": "AutoscaleSettingsResource"},
         "minimum_throughput": {"key": "minimumThroughput", "type": "str"},
         "offer_replace_pending": {"key": "offerReplacePending", "type": "str"},
+        "instant_maximum_throughput": {"key": "instantMaximumThroughput", "type": "str"},
+        "soft_allowed_maximum_throughput": {"key": "softAllowedMaximumThroughput", "type": "str"},
     }
 
     def __init__(
@@ -15591,6 +16436,8 @@ class ThroughputSettingsResource(_serialization.Model):
         self.autoscale_settings = autoscale_settings
         self.minimum_throughput = None
         self.offer_replace_pending = None
+        self.instant_maximum_throughput = None
+        self.soft_allowed_maximum_throughput = None
 
 
 class ThroughputSettingsGetPropertiesResource(ThroughputSettingsResource, ExtendedResourceProperties):
@@ -15615,6 +16462,12 @@ class ThroughputSettingsGetPropertiesResource(ThroughputSettingsResource, Extend
     :vartype minimum_throughput: str
     :ivar offer_replace_pending: The throughput replace is pending.
     :vartype offer_replace_pending: str
+    :ivar instant_maximum_throughput: The offer throughput value to instantly scale up without
+     triggering splits.
+    :vartype instant_maximum_throughput: str
+    :ivar soft_allowed_maximum_throughput: The maximum throughput value or the maximum
+     maxThroughput value (for autoscale) that can be specified.
+    :vartype soft_allowed_maximum_throughput: str
     """
 
     _validation = {
@@ -15623,6 +16476,8 @@ class ThroughputSettingsGetPropertiesResource(ThroughputSettingsResource, Extend
         "etag": {"readonly": True},
         "minimum_throughput": {"readonly": True},
         "offer_replace_pending": {"readonly": True},
+        "instant_maximum_throughput": {"readonly": True},
+        "soft_allowed_maximum_throughput": {"readonly": True},
     }
 
     _attribute_map = {
@@ -15633,6 +16488,8 @@ class ThroughputSettingsGetPropertiesResource(ThroughputSettingsResource, Extend
         "autoscale_settings": {"key": "autoscaleSettings", "type": "AutoscaleSettingsResource"},
         "minimum_throughput": {"key": "minimumThroughput", "type": "str"},
         "offer_replace_pending": {"key": "offerReplacePending", "type": "str"},
+        "instant_maximum_throughput": {"key": "instantMaximumThroughput", "type": "str"},
+        "soft_allowed_maximum_throughput": {"key": "softAllowedMaximumThroughput", "type": "str"},
     }
 
     def __init__(
@@ -15658,6 +16515,8 @@ class ThroughputSettingsGetPropertiesResource(ThroughputSettingsResource, Extend
         self.autoscale_settings = autoscale_settings
         self.minimum_throughput = None
         self.offer_replace_pending = None
+        self.instant_maximum_throughput = None
+        self.soft_allowed_maximum_throughput = None
 
 
 class ThroughputSettingsGetResults(ARMResourceProperties):

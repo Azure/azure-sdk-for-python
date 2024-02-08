@@ -2978,7 +2978,7 @@ class ClusterResourceProperties(_serialization.Model):  # pylint: disable=too-ma
     :vartype vnet_addons: ~azure.mgmt.appplatform.v2023_01_01_preview.models.ServiceVNetAddons
     :ivar version: Version of the Service.
     :vartype version: int
-    :ivar service_id: ServiceInstanceEntity GUID which uniquely identifies a created resource.
+    :ivar service_id: ServiceInstanceEntity Id which uniquely identifies a created resource.
     :vartype service_id: str
     :ivar managed_environment_id: The resource Id of the Managed Environment that the Spring Apps
      instance builds on.
@@ -4728,6 +4728,41 @@ class DeploymentSettings(_serialization.Model):
         self.container_probe_settings = container_probe_settings
 
 
+class DevToolPortalComponent(_serialization.Model):
+    """DevToolPortalComponent.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name:
+    :vartype name: str
+    :ivar resource_requests: The requested resource quantity for required CPU and Memory.
+    :vartype resource_requests:
+     ~azure.mgmt.appplatform.v2023_01_01_preview.models.DevToolPortalResourceRequests
+    :ivar instances: Collection of instances belong to Dev Tool Portal.
+    :vartype instances:
+     list[~azure.mgmt.appplatform.v2023_01_01_preview.models.DevToolPortalInstance]
+    """
+
+    _validation = {
+        "name": {"readonly": True},
+        "resource_requests": {"readonly": True},
+        "instances": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "resource_requests": {"key": "resourceRequests", "type": "DevToolPortalResourceRequests"},
+        "instances": {"key": "instances", "type": "[DevToolPortalInstance]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.name = None
+        self.resource_requests = None
+        self.instances = None
+
+
 class DevToolPortalFeatureDetail(_serialization.Model):
     """Detail settings for Dev Tool Portal feature.
 
@@ -4834,12 +4869,9 @@ class DevToolPortalProperties(_serialization.Model):
      "Updating", "Succeeded", "Failed", "Deleting", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.appplatform.v2023_01_01_preview.models.DevToolPortalProvisioningState
-    :ivar resource_requests: The requested resource quantity for required CPU and Memory.
-    :vartype resource_requests:
-     ~azure.mgmt.appplatform.v2023_01_01_preview.models.DevToolPortalResourceRequests
-    :ivar instances: Collection of instances belong to Dev Tool Portal.
-    :vartype instances:
-     list[~azure.mgmt.appplatform.v2023_01_01_preview.models.DevToolPortalInstance]
+    :ivar components: Collection of components belong to Dev Tool Portal.
+    :vartype components:
+     list[~azure.mgmt.appplatform.v2023_01_01_preview.models.DevToolPortalComponent]
     :ivar public: Indicates whether the resource exposes public endpoint.
     :vartype public: bool
     :ivar url: URL of the resource, exposed when 'public' is true.
@@ -4854,15 +4886,13 @@ class DevToolPortalProperties(_serialization.Model):
 
     _validation = {
         "provisioning_state": {"readonly": True},
-        "resource_requests": {"readonly": True},
-        "instances": {"readonly": True},
+        "components": {"readonly": True},
         "url": {"readonly": True},
     }
 
     _attribute_map = {
         "provisioning_state": {"key": "provisioningState", "type": "str"},
-        "resource_requests": {"key": "resourceRequests", "type": "DevToolPortalResourceRequests"},
-        "instances": {"key": "instances", "type": "[DevToolPortalInstance]"},
+        "components": {"key": "components", "type": "[DevToolPortalComponent]"},
         "public": {"key": "public", "type": "bool"},
         "url": {"key": "url", "type": "str"},
         "sso_properties": {"key": "ssoProperties", "type": "DevToolPortalSsoProperties"},
@@ -4889,8 +4919,7 @@ class DevToolPortalProperties(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.provisioning_state = None
-        self.resource_requests = None
-        self.instances = None
+        self.components = None
         self.public = public
         self.url = None
         self.sso_properties = sso_properties

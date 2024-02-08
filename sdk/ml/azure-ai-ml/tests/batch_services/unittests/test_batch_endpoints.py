@@ -8,8 +8,8 @@ from pytest_mock import MockFixture
 from requests import Response
 
 from azure.ai.ml import load_batch_endpoint
-from azure.ai.ml._restclient.v2022_05_01.models import BatchEndpointData
-from azure.ai.ml._restclient.v2022_05_01.models import BatchEndpointDetails as RestBatchEndpoint
+from azure.ai.ml._restclient.v2023_10_01.models import BatchEndpoint as BatchEndpointData
+from azure.ai.ml._restclient.v2023_10_01.models import BatchEndpointProperties as RestBatchEndpoint
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import AssetTypes, AzureMLResourceType
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
@@ -53,11 +53,13 @@ def mock_datastore_operations(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
     mock_aml_services_2023_04_01_preview: Mock,
+    mock_aml_services_2024_01_01_preview: Mock,
 ) -> CodeOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         serviceclient_2023_04_01_preview=mock_aml_services_2023_04_01_preview,
+        serviceclient_2024_01_01_preview=mock_aml_services_2024_01_01_preview,
     )
 
 
@@ -116,11 +118,14 @@ def mock_workspace_operations(
     mock_workspace_scope: OperationScope,
     mock_aml_services_2022_10_01: Mock,
     mock_machinelearning_client: Mock,
+    mock_aml_services_workspace_dataplane: Mock,
 ) -> WorkspaceOperations:
     yield WorkspaceOperations(
         operation_scope=mock_workspace_scope,
         service_client=mock_aml_services_2022_10_01,
         all_operations=mock_machinelearning_client._operation_container,
+        dataplane_client=mock_aml_services_workspace_dataplane,
+        requests_pipeline=mock_machinelearning_client._requests_pipeline,
     )
 
 
@@ -133,7 +138,7 @@ def mock_local_endpoint_helper() -> Mock:
 def mock_batch_endpoint_operations(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
-    mock_aml_services_2022_05_01: Mock,
+    mock_aml_services_2023_10_01: Mock,
     mock_aml_services_2020_09_01_dataplanepreview: Mock,
     mock_machinelearning_client: Mock,
     mock_environment_operations: Mock,
@@ -153,7 +158,7 @@ def mock_batch_endpoint_operations(
     yield BatchEndpointOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        service_client_05_2022=mock_aml_services_2022_05_01,
+        service_client_10_2023=mock_aml_services_2023_10_01,
         all_operations=mock_machinelearning_client._operation_container,
         requests_pipeline=mock_machinelearning_client._requests_pipeline,
         **kwargs,
@@ -305,10 +310,10 @@ class TestBatchEndpointOperations:
     def test_batch_get(
         self,
         mock_batch_endpoint_operations: BatchEndpointOperations,
-        mock_aml_services_2022_05_01: Mock,
+        mock_aml_services_2023_10_01: Mock,
     ) -> None:
         random_name = "random_name"
-        mock_aml_services_2022_05_01.batch_endpoints.get.return_value = BatchEndpointData(
+        mock_aml_services_2023_10_01.batch_endpoints.get.return_value = BatchEndpointData(
             name=random_name,
             location="eastus",
             properties=RestBatchEndpoint(auth_mode="AADToken"),
@@ -319,11 +324,11 @@ class TestBatchEndpointOperations:
     def test_delete_batch_endpoint(
         self,
         mock_batch_endpoint_operations: BatchEndpointOperations,
-        mock_aml_services_2022_05_01: Mock,
+        mock_aml_services_2023_10_01: Mock,
         mocker: MockFixture,
         mock_delete_poller: LROPoller,
     ) -> None:
         random_name = "random_name"
-        mock_aml_services_2022_05_01.batch_endpoints.begin_delete.return_value = mock_delete_poller
+        mock_aml_services_2023_10_01.batch_endpoints.begin_delete.return_value = mock_delete_poller
         mock_batch_endpoint_operations.begin_delete(name=random_name)
         mock_batch_endpoint_operations._batch_operation.begin_delete.assert_called_once()

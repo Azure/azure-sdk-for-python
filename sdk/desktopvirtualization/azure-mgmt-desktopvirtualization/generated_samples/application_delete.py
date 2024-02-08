@@ -29,14 +29,13 @@ def main():
         subscription_id="daefabc0-95b4-48b3-b645-8a753a63c4fa",
     )
 
-    response = client.applications.delete(
+    client.applications.delete(
         resource_group_name="resourceGroup1",
         application_group_name="applicationGroup1",
         application_name="application1",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/desktopvirtualization/resource-manager/Microsoft.DesktopVirtualization/stable/2022-09-09/examples/Application_Delete.json
+# x-ms-original-file: specification/desktopvirtualization/resource-manager/Microsoft.DesktopVirtualization/stable/2023-09-05/examples/Application_Delete.json
 if __name__ == "__main__":
     main()

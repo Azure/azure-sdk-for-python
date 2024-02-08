@@ -22,11 +22,35 @@ class AdministratorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ACTIVE_DIRECTORY = "ActiveDirectory"
 
 
+class AdvancedThreatProtectionName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AdvancedThreatProtectionName."""
+
+    DEFAULT = "Default"
+
+
+class AdvancedThreatProtectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state."""
+
+    SUCCEEDED = "Succeeded"
+    UPDATING = "Updating"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+
+
+class AdvancedThreatProtectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the state of the Advanced Threat Protection, whether it is enabled or disabled on the
+    server.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
 class BackupFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Backup Format for the current backup. (CollatedFormat is INTERNAL – DO NOT USE)."""
 
-    NONE = "None"
     COLLATED_FORMAT = "CollatedFormat"
+    RAW = "Raw"
 
 
 class ConfigurationSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -86,6 +110,12 @@ class HighAvailabilityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     REMOVING_STANDBY = "RemovingStandby"
 
 
+class ImportSourceStorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Storage type of import source."""
+
+    AZURE_BLOB = "AzureBlob"
+
+
 class IsConfigPendingRestart(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """If is the configuration pending restart or not."""
 
@@ -130,6 +160,23 @@ class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation has been Canceled"""
 
 
+class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state."""
+
+    SUCCEEDED = "Succeeded"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    FAILED = "Failed"
+
+
+class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The private endpoint connection status."""
+
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    REJECTED = "Rejected"
+
+
 class ReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The replication role."""
 
@@ -143,6 +190,14 @@ class ResetAllToDefault(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     TRUE = "True"
     FALSE = "False"
+
+
+class ServerSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The tier of the particular SKU, e.g. GeneralPurpose."""
+
+    BURSTABLE = "Burstable"
+    GENERAL_PURPOSE = "GeneralPurpose"
+    MEMORY_OPTIMIZED = "MemoryOptimized"
 
 
 class ServerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -162,11 +217,3 @@ class ServerVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     FIVE7 = "5.7"
     EIGHT0_21 = "8.0.21"
-
-
-class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The tier of the particular SKU, e.g. GeneralPurpose."""
-
-    BURSTABLE = "Burstable"
-    GENERAL_PURPOSE = "GeneralPurpose"
-    MEMORY_OPTIMIZED = "MemoryOptimized"

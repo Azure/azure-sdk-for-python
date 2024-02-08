@@ -53,7 +53,7 @@ class AzureRedHatOpenShiftClient(MultiApiClientMixin, _SDKClient):
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '2023-04-01'
+    DEFAULT_API_VERSION = '2023-09-04'
     _PROFILE_TAG = "azure.mgmt.redhatopenshift.AzureRedHatOpenShiftClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -93,6 +93,7 @@ class AzureRedHatOpenShiftClient(MultiApiClientMixin, _SDKClient):
            * 2022-04-01: :mod:`v2022_04_01.models<azure.mgmt.redhatopenshift.v2022_04_01.models>`
            * 2022-09-04: :mod:`v2022_09_04.models<azure.mgmt.redhatopenshift.v2022_09_04.models>`
            * 2023-04-01: :mod:`v2023_04_01.models<azure.mgmt.redhatopenshift.v2023_04_01.models>`
+           * 2023-09-04: :mod:`v2023_09_04.models<azure.mgmt.redhatopenshift.v2023_09_04.models>`
         """
         if api_version == '2020-04-30':
             from ..v2020_04_30 import models
@@ -109,6 +110,9 @@ class AzureRedHatOpenShiftClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2023-04-01':
             from ..v2023_04_01 import models
             return models
+        elif api_version == '2023-09-04':
+            from ..v2023_09_04 import models
+            return models
         raise ValueError("API version {} is not available".format(api_version))
 
     @property
@@ -117,12 +121,15 @@ class AzureRedHatOpenShiftClient(MultiApiClientMixin, _SDKClient):
 
            * 2022-09-04: :class:`MachinePoolsOperations<azure.mgmt.redhatopenshift.v2022_09_04.aio.operations.MachinePoolsOperations>`
            * 2023-04-01: :class:`MachinePoolsOperations<azure.mgmt.redhatopenshift.v2023_04_01.aio.operations.MachinePoolsOperations>`
+           * 2023-09-04: :class:`MachinePoolsOperations<azure.mgmt.redhatopenshift.v2023_09_04.aio.operations.MachinePoolsOperations>`
         """
         api_version = self._get_api_version('machine_pools')
         if api_version == '2022-09-04':
             from ..v2022_09_04.aio.operations import MachinePoolsOperations as OperationClass
         elif api_version == '2023-04-01':
             from ..v2023_04_01.aio.operations import MachinePoolsOperations as OperationClass
+        elif api_version == '2023-09-04':
+            from ..v2023_09_04.aio.operations import MachinePoolsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'machine_pools'".format(api_version))
         self._config.api_version = api_version
@@ -137,6 +144,7 @@ class AzureRedHatOpenShiftClient(MultiApiClientMixin, _SDKClient):
            * 2022-04-01: :class:`OpenShiftClustersOperations<azure.mgmt.redhatopenshift.v2022_04_01.aio.operations.OpenShiftClustersOperations>`
            * 2022-09-04: :class:`OpenShiftClustersOperations<azure.mgmt.redhatopenshift.v2022_09_04.aio.operations.OpenShiftClustersOperations>`
            * 2023-04-01: :class:`OpenShiftClustersOperations<azure.mgmt.redhatopenshift.v2023_04_01.aio.operations.OpenShiftClustersOperations>`
+           * 2023-09-04: :class:`OpenShiftClustersOperations<azure.mgmt.redhatopenshift.v2023_09_04.aio.operations.OpenShiftClustersOperations>`
         """
         api_version = self._get_api_version('open_shift_clusters')
         if api_version == '2020-04-30':
@@ -149,6 +157,8 @@ class AzureRedHatOpenShiftClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_09_04.aio.operations import OpenShiftClustersOperations as OperationClass
         elif api_version == '2023-04-01':
             from ..v2023_04_01.aio.operations import OpenShiftClustersOperations as OperationClass
+        elif api_version == '2023-09-04':
+            from ..v2023_09_04.aio.operations import OpenShiftClustersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'open_shift_clusters'".format(api_version))
         self._config.api_version = api_version
@@ -160,12 +170,15 @@ class AzureRedHatOpenShiftClient(MultiApiClientMixin, _SDKClient):
 
            * 2022-09-04: :class:`OpenShiftVersionsOperations<azure.mgmt.redhatopenshift.v2022_09_04.aio.operations.OpenShiftVersionsOperations>`
            * 2023-04-01: :class:`OpenShiftVersionsOperations<azure.mgmt.redhatopenshift.v2023_04_01.aio.operations.OpenShiftVersionsOperations>`
+           * 2023-09-04: :class:`OpenShiftVersionsOperations<azure.mgmt.redhatopenshift.v2023_09_04.aio.operations.OpenShiftVersionsOperations>`
         """
         api_version = self._get_api_version('open_shift_versions')
         if api_version == '2022-09-04':
             from ..v2022_09_04.aio.operations import OpenShiftVersionsOperations as OperationClass
         elif api_version == '2023-04-01':
             from ..v2023_04_01.aio.operations import OpenShiftVersionsOperations as OperationClass
+        elif api_version == '2023-09-04':
+            from ..v2023_09_04.aio.operations import OpenShiftVersionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'open_shift_versions'".format(api_version))
         self._config.api_version = api_version
@@ -180,6 +193,7 @@ class AzureRedHatOpenShiftClient(MultiApiClientMixin, _SDKClient):
            * 2022-04-01: :class:`Operations<azure.mgmt.redhatopenshift.v2022_04_01.aio.operations.Operations>`
            * 2022-09-04: :class:`Operations<azure.mgmt.redhatopenshift.v2022_09_04.aio.operations.Operations>`
            * 2023-04-01: :class:`Operations<azure.mgmt.redhatopenshift.v2023_04_01.aio.operations.Operations>`
+           * 2023-09-04: :class:`Operations<azure.mgmt.redhatopenshift.v2023_09_04.aio.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2020-04-30':
@@ -192,6 +206,8 @@ class AzureRedHatOpenShiftClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_09_04.aio.operations import Operations as OperationClass
         elif api_version == '2023-04-01':
             from ..v2023_04_01.aio.operations import Operations as OperationClass
+        elif api_version == '2023-09-04':
+            from ..v2023_09_04.aio.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         self._config.api_version = api_version
@@ -203,12 +219,15 @@ class AzureRedHatOpenShiftClient(MultiApiClientMixin, _SDKClient):
 
            * 2022-09-04: :class:`SecretsOperations<azure.mgmt.redhatopenshift.v2022_09_04.aio.operations.SecretsOperations>`
            * 2023-04-01: :class:`SecretsOperations<azure.mgmt.redhatopenshift.v2023_04_01.aio.operations.SecretsOperations>`
+           * 2023-09-04: :class:`SecretsOperations<azure.mgmt.redhatopenshift.v2023_09_04.aio.operations.SecretsOperations>`
         """
         api_version = self._get_api_version('secrets')
         if api_version == '2022-09-04':
             from ..v2022_09_04.aio.operations import SecretsOperations as OperationClass
         elif api_version == '2023-04-01':
             from ..v2023_04_01.aio.operations import SecretsOperations as OperationClass
+        elif api_version == '2023-09-04':
+            from ..v2023_09_04.aio.operations import SecretsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'secrets'".format(api_version))
         self._config.api_version = api_version
@@ -220,12 +239,15 @@ class AzureRedHatOpenShiftClient(MultiApiClientMixin, _SDKClient):
 
            * 2022-09-04: :class:`SyncIdentityProvidersOperations<azure.mgmt.redhatopenshift.v2022_09_04.aio.operations.SyncIdentityProvidersOperations>`
            * 2023-04-01: :class:`SyncIdentityProvidersOperations<azure.mgmt.redhatopenshift.v2023_04_01.aio.operations.SyncIdentityProvidersOperations>`
+           * 2023-09-04: :class:`SyncIdentityProvidersOperations<azure.mgmt.redhatopenshift.v2023_09_04.aio.operations.SyncIdentityProvidersOperations>`
         """
         api_version = self._get_api_version('sync_identity_providers')
         if api_version == '2022-09-04':
             from ..v2022_09_04.aio.operations import SyncIdentityProvidersOperations as OperationClass
         elif api_version == '2023-04-01':
             from ..v2023_04_01.aio.operations import SyncIdentityProvidersOperations as OperationClass
+        elif api_version == '2023-09-04':
+            from ..v2023_09_04.aio.operations import SyncIdentityProvidersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'sync_identity_providers'".format(api_version))
         self._config.api_version = api_version
@@ -237,12 +259,15 @@ class AzureRedHatOpenShiftClient(MultiApiClientMixin, _SDKClient):
 
            * 2022-09-04: :class:`SyncSetsOperations<azure.mgmt.redhatopenshift.v2022_09_04.aio.operations.SyncSetsOperations>`
            * 2023-04-01: :class:`SyncSetsOperations<azure.mgmt.redhatopenshift.v2023_04_01.aio.operations.SyncSetsOperations>`
+           * 2023-09-04: :class:`SyncSetsOperations<azure.mgmt.redhatopenshift.v2023_09_04.aio.operations.SyncSetsOperations>`
         """
         api_version = self._get_api_version('sync_sets')
         if api_version == '2022-09-04':
             from ..v2022_09_04.aio.operations import SyncSetsOperations as OperationClass
         elif api_version == '2023-04-01':
             from ..v2023_04_01.aio.operations import SyncSetsOperations as OperationClass
+        elif api_version == '2023-09-04':
+            from ..v2023_09_04.aio.operations import SyncSetsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'sync_sets'".format(api_version))
         self._config.api_version = api_version

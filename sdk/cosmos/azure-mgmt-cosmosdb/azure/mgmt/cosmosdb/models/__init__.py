@@ -20,7 +20,8 @@ from ._models_py3 import BackupInformation
 from ._models_py3 import BackupPolicy
 from ._models_py3 import BackupPolicyMigrationState
 from ._models_py3 import BackupResource
-from ._models_py3 import BackupResourceProperties
+from ._models_py3 import BackupSchedule
+from ._models_py3 import BaseCosmosDataTransferDataSourceSink
 from ._models_py3 import Capability
 from ._models_py3 import Capacity
 from ._models_py3 import CassandraClusterDataCenterNodeItem
@@ -63,7 +64,9 @@ from ._models_py3 import ClusterResourceProperties
 from ._models_py3 import Column
 from ._models_py3 import CommandOutput
 from ._models_py3 import CommandPostBody
+from ._models_py3 import CommandPublicResource
 from ._models_py3 import CompositePath
+from ._models_py3 import ComputedProperty
 from ._models_py3 import ConflictResolutionPolicy
 from ._models_py3 import ConnectionError
 from ._models_py3 import ConnectionString
@@ -139,6 +142,7 @@ from ._models_py3 import IpAddressOrRange
 from ._models_py3 import KeyWrapMetadata
 from ._models_py3 import ListBackups
 from ._models_py3 import ListClusters
+from ._models_py3 import ListCommands
 from ._models_py3 import ListConnectionStringsResult
 from ._models_py3 import ListDataCenters
 from ._models_py3 import Location
@@ -320,6 +324,12 @@ from ._models_py3 import TableGetResults
 from ._models_py3 import TableListResult
 from ._models_py3 import TableResource
 from ._models_py3 import ThroughputPolicyResource
+from ._models_py3 import ThroughputPoolAccountCreateParameters
+from ._models_py3 import ThroughputPoolAccountResource
+from ._models_py3 import ThroughputPoolAccountsListResult
+from ._models_py3 import ThroughputPoolResource
+from ._models_py3 import ThroughputPoolUpdate
+from ._models_py3 import ThroughputPoolsListResult
 from ._models_py3 import ThroughputSettingsGetPropertiesResource
 from ._models_py3 import ThroughputSettingsGetResults
 from ._models_py3 import ThroughputSettingsResource
@@ -334,10 +344,15 @@ from ._models_py3 import VirtualNetworkRule
 from ._cosmos_db_management_client_enums import AnalyticalStorageSchemaType
 from ._cosmos_db_management_client_enums import ApiType
 from ._cosmos_db_management_client_enums import AuthenticationMethod
+from ._cosmos_db_management_client_enums import AutoReplicate
+from ._cosmos_db_management_client_enums import AzureConnectionType
 from ._cosmos_db_management_client_enums import BackupPolicyMigrationStatus
 from ._cosmos_db_management_client_enums import BackupPolicyType
+from ._cosmos_db_management_client_enums import BackupState
 from ._cosmos_db_management_client_enums import BackupStorageRedundancy
 from ._cosmos_db_management_client_enums import CheckNameAvailabilityReason
+from ._cosmos_db_management_client_enums import ClusterType
+from ._cosmos_db_management_client_enums import CommandStatus
 from ._cosmos_db_management_client_enums import CompositePathSortOrder
 from ._cosmos_db_management_client_enums import ConflictResolutionMode
 from ._cosmos_db_management_client_enums import ConnectionState
@@ -346,9 +361,11 @@ from ._cosmos_db_management_client_enums import ContinuousTier
 from ._cosmos_db_management_client_enums import CreateMode
 from ._cosmos_db_management_client_enums import CreatedByType
 from ._cosmos_db_management_client_enums import DataTransferComponent
+from ._cosmos_db_management_client_enums import DataTransferJobMode
 from ._cosmos_db_management_client_enums import DataType
 from ._cosmos_db_management_client_enums import DatabaseAccountKind
 from ._cosmos_db_management_client_enums import DefaultConsistencyLevel
+from ._cosmos_db_management_client_enums import DefaultPriorityLevel
 from ._cosmos_db_management_client_enums import EnableFullTextQuery
 from ._cosmos_db_management_client_enums import IndexKind
 from ._cosmos_db_management_client_enums import IndexingMode
@@ -372,6 +389,7 @@ from ._cosmos_db_management_client_enums import PublicNetworkAccess
 from ._cosmos_db_management_client_enums import ResourceIdentityType
 from ._cosmos_db_management_client_enums import RestoreMode
 from ._cosmos_db_management_client_enums import RoleDefinitionType
+from ._cosmos_db_management_client_enums import ScheduledEventStrategy
 from ._cosmos_db_management_client_enums import ServerVersion
 from ._cosmos_db_management_client_enums import ServiceSize
 from ._cosmos_db_management_client_enums import ServiceStatus
@@ -402,7 +420,8 @@ __all__ = [
     "BackupPolicy",
     "BackupPolicyMigrationState",
     "BackupResource",
-    "BackupResourceProperties",
+    "BackupSchedule",
+    "BaseCosmosDataTransferDataSourceSink",
     "Capability",
     "Capacity",
     "CassandraClusterDataCenterNodeItem",
@@ -445,7 +464,9 @@ __all__ = [
     "Column",
     "CommandOutput",
     "CommandPostBody",
+    "CommandPublicResource",
     "CompositePath",
+    "ComputedProperty",
     "ConflictResolutionPolicy",
     "ConnectionError",
     "ConnectionString",
@@ -521,6 +542,7 @@ __all__ = [
     "KeyWrapMetadata",
     "ListBackups",
     "ListClusters",
+    "ListCommands",
     "ListConnectionStringsResult",
     "ListDataCenters",
     "Location",
@@ -702,6 +724,12 @@ __all__ = [
     "TableListResult",
     "TableResource",
     "ThroughputPolicyResource",
+    "ThroughputPoolAccountCreateParameters",
+    "ThroughputPoolAccountResource",
+    "ThroughputPoolAccountsListResult",
+    "ThroughputPoolResource",
+    "ThroughputPoolUpdate",
+    "ThroughputPoolsListResult",
     "ThroughputSettingsGetPropertiesResource",
     "ThroughputSettingsGetResults",
     "ThroughputSettingsResource",
@@ -715,10 +743,15 @@ __all__ = [
     "AnalyticalStorageSchemaType",
     "ApiType",
     "AuthenticationMethod",
+    "AutoReplicate",
+    "AzureConnectionType",
     "BackupPolicyMigrationStatus",
     "BackupPolicyType",
+    "BackupState",
     "BackupStorageRedundancy",
     "CheckNameAvailabilityReason",
+    "ClusterType",
+    "CommandStatus",
     "CompositePathSortOrder",
     "ConflictResolutionMode",
     "ConnectionState",
@@ -727,9 +760,11 @@ __all__ = [
     "CreateMode",
     "CreatedByType",
     "DataTransferComponent",
+    "DataTransferJobMode",
     "DataType",
     "DatabaseAccountKind",
     "DefaultConsistencyLevel",
+    "DefaultPriorityLevel",
     "EnableFullTextQuery",
     "IndexKind",
     "IndexingMode",
@@ -753,6 +788,7 @@ __all__ = [
     "ResourceIdentityType",
     "RestoreMode",
     "RoleDefinitionType",
+    "ScheduledEventStrategy",
     "ServerVersion",
     "ServiceSize",
     "ServiceStatus",

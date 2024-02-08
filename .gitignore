@@ -3,7 +3,7 @@
 
 # Python cache
 __pycache__/
-*.pyc
+*.py[cod]
 .pytest_cache
 .mypy_cache
 .cache
@@ -59,6 +59,7 @@ conda/assembly/
 conda/assembled/
 conda/downloaded/
 conda/conda-env/
+scenario_*.txt
 
 # tox environment folders
 .tox/

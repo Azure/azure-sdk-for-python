@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from logging import WARNING, getLogger
+from logging import getLogger
 
 from azure.monitor.opentelemetry import configure_azure_monitor
 

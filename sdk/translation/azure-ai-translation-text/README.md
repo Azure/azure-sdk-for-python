@@ -64,7 +64,7 @@ With the value of the `endpoint`, `credential` and a `region`, you can create th
 
 ```python
 credential = TranslatorCredential(apikey, region)
-text_translator = TextTranslationClient(credential, endpoint)
+text_translator = TextTranslationClient(credential, endpoint=endpoint)
 ```
 
 <!-- END SNIPPET -->
@@ -94,9 +94,15 @@ Gets the set of languages currently supported by other operations of the Transla
 try:
     response = text_translator.get_languages()
 
-    print(f"Number of supported languages for translate operation: {len(response.translation) if response.translation is not None else 0}")
-    print(f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}")
-    print(f"Number of supported languages for dictionary operations: {len(response.dictionary) if response.dictionary is not None else 0}")
+    print(
+        f"Number of supported languages for translate operation: {len(response.translation) if response.translation is not None else 0}"
+    )
+    print(
+        f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}"
+    )
+    print(
+        f"Number of supported languages for dictionary operations: {len(response.dictionary) if response.dictionary is not None else 0}"
+    )
 
     if response.translation is not None:
         print("Translation Languages:")
@@ -135,15 +141,17 @@ Renders single source-language text to multiple target-language texts with a sin
 ```python
 try:
     target_languages = ["cs", "es", "de"]
-    input_text_elements = [ InputTextItem(text = "This is a test") ]
+    input_text_elements = [InputTextItem(text="This is a test")]
 
-    response = text_translator.translate(content = input_text_elements, to = target_languages)
+    response = text_translator.translate(request_body=input_text_elements, to=target_languages)
     translation = response[0] if response else None
 
     if translation:
         detected_language = translation.detected_language
         if detected_language:
-            print(f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}.")
+            print(
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+            )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
@@ -170,13 +178,17 @@ try:
     language = "zh-Hans"
     from_script = "Hans"
     to_script = "Latn"
-    input_text_elements = [ InputTextItem(text = "这是个测试。") ]
+    input_text_elements = [InputTextItem(text="这是个测试。")]
 
-    response = text_translator.transliterate(content = input_text_elements, language = language, from_script = from_script, to_script = to_script)
+    response = text_translator.transliterate(
+        request_body=input_text_elements, language=language, from_script=from_script, to_script=to_script
+    )
     transliteration = response[0] if response else None
 
     if transliteration:
-        print(f"Input text was transliterated to '{transliteration.script}' script. Transliterated text: '{transliteration.text}'.")
+        print(
+            f"Input text was transliterated to '{transliteration.script}' script. Transliterated text: '{transliteration.text}'."
+        )
 
 except HttpResponseError as exception:
     if exception.error is not None:
@@ -200,18 +212,22 @@ Identifies the positioning of sentence boundaries in a piece of text.
 try:
     include_sentence_length = True
     target_languages = ["cs"]
-    input_text_elements = [ InputTextItem(text = "The answer lies in machine translation. This is a test.") ]
+    input_text_elements = [InputTextItem(text="The answer lies in machine translation. This is a test.")]
 
-    response = text_translator.translate(content = input_text_elements, to = target_languages, include_sentence_length=include_sentence_length)
+    response = text_translator.translate(
+        request_body=input_text_elements, to=target_languages, include_sentence_length=include_sentence_length
+    )
     translation = response[0] if response else None
 
     if translation:
         detected_language = translation.detected_language
         if detected_language:
-            print(f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}.")
+            print(
+                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
+            )
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
-            if (translated_text.sent_len):
+            if translated_text.sent_len:
                 print(f"Source Sentence length: {translated_text.sent_len.src_sent_len}")
                 print(f"Translated Sentence length: {translated_text.sent_len.trans_sent_len}")
 
@@ -236,14 +252,18 @@ Returns equivalent words for the source term in the target language.
 try:
     source_language = "en"
     target_language = "es"
-    input_text_elements = [ InputTextItem(text = "fly") ]
+    input_text_elements = [InputTextItem(text="fly")]
 
-    response = text_translator.lookup_dictionary_entries(content = input_text_elements, from_parameter = source_language, to = target_language)
+    response = text_translator.lookup_dictionary_entries(
+        request_body=input_text_elements, from_parameter=source_language, to=target_language
+    )
     dictionary_entry = response[0] if response else None
 
     if dictionary_entry:
         print(f"For the given input {len(dictionary_entry.translations)} entries were found in the dictionary.")
-        print(f"First entry: '{dictionary_entry.translations[0].display_target}', confidence: {dictionary_entry.translations[0].confidence}.")
+        print(
+            f"First entry: '{dictionary_entry.translations[0].display_target}', confidence: {dictionary_entry.translations[0].confidence}."
+        )
 
 except HttpResponseError as exception:
     if exception.error is not None:
@@ -268,14 +288,18 @@ Returns grammatical structure and context examples for the source term and targe
 try:
     source_language = "en"
     target_language = "es"
-    input_text_elements = [ DictionaryExampleTextItem(text = "fly", translation = "volar") ]
+    input_text_elements = [DictionaryExampleTextItem(text="fly", translation="volar")]
 
-    response = text_translator.lookup_dictionary_examples(content = input_text_elements, from_parameter = source_language, to = target_language)
+    response = text_translator.lookup_dictionary_examples(
+        content=input_text_elements, from_parameter=source_language, to=target_language
+    )
     dictionary_entry = response[0] if response else None
 
     if dictionary_entry:
         print(f"For the given input {len(dictionary_entry.examples)} entries were found in the dictionary.")
-        print(f"First example: '{dictionary_entry.examples[0].target_prefix}{dictionary_entry.examples[0].target_term}{dictionary_entry.examples[0].target_suffix}'.")
+        print(
+            f"First example: '{dictionary_entry.examples[0].target_prefix}{dictionary_entry.examples[0].target_term}{dictionary_entry.examples[0].target_suffix}'."
+        )
 
 except HttpResponseError as exception:
     if exception.error is not None:

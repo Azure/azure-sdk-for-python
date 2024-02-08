@@ -44,7 +44,7 @@ def build_list_by_server_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -75,7 +75,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -107,7 +107,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -141,7 +141,7 @@ def build_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -168,7 +168,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -203,7 +203,7 @@ def build_failover_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -235,7 +235,7 @@ def build_force_failover_allow_data_loss_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -267,7 +267,7 @@ def build_try_planned_before_forced_failover_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -331,7 +331,7 @@ class FailoverGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
         cls: ClsType[_models.FailoverGroupListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -421,7 +421,7 @@ class FailoverGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
         cls: ClsType[_models.FailoverGroup] = kwargs.pop("cls", None)
 
         request = build_get_request(
@@ -478,7 +478,7 @@ class FailoverGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.FailoverGroup]] = kwargs.pop("cls", None)
 
@@ -651,7 +651,7 @@ class FailoverGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.FailoverGroup] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -711,7 +711,7 @@ class FailoverGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
@@ -773,7 +773,7 @@ class FailoverGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -833,7 +833,7 @@ class FailoverGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.FailoverGroup]] = kwargs.pop("cls", None)
 
@@ -1003,7 +1003,7 @@ class FailoverGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.FailoverGroup] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -1063,7 +1063,7 @@ class FailoverGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
         cls: ClsType[Optional[_models.FailoverGroup]] = kwargs.pop("cls", None)
 
         request = build_failover_request(
@@ -1132,7 +1132,7 @@ class FailoverGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
         cls: ClsType[_models.FailoverGroup] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1189,7 +1189,7 @@ class FailoverGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
         cls: ClsType[Optional[_models.FailoverGroup]] = kwargs.pop("cls", None)
 
         request = build_force_failover_allow_data_loss_request(
@@ -1259,7 +1259,7 @@ class FailoverGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
         cls: ClsType[_models.FailoverGroup] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1316,7 +1316,7 @@ class FailoverGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
         cls: ClsType[Optional[_models.FailoverGroup]] = kwargs.pop("cls", None)
 
         request = build_try_planned_before_forced_failover_request(
@@ -1390,7 +1390,7 @@ class FailoverGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
         cls: ClsType[_models.FailoverGroup] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)

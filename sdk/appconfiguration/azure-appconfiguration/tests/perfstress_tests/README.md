@@ -1,7 +1,7 @@
 # App config Performance Tests
 
-In order to run the performance tests, the `azure-devtools` package must be installed. This is done as part of the `dev_requirements`.
-Start be creating a new virtual environment for your perf tests. This will need to be a Python 3 environment, preferably >=3.7.
+In order to run the performance tests, the `devtools_testutils` package must be installed. This is done as part of the `dev_requirements`.
+Start be creating a new virtual environment for your perf tests. This will need to be a Python 3 environment, preferably >=3.8.
 
 ### Setup for test resources
 
@@ -19,7 +19,7 @@ AZURE_APP_CONFIG_CONNECTION_STRING=<app config connection string>
 
 ## Test commands
 
-When `azure-devtools` is installed, you will have access to the `perfstress` command line tool, which will scan the current module for runable perf tests. Only a specific test can be run at a time (i.e. there is no "run all" feature).
+When `devtools_testutils` is installed, you will have access to the `perfstress` command line tool, which will scan the current module for runable perf tests. Only a specific test can be run at a time (i.e. there is no "run all" feature).
 
 ```cmd
 (env) ~/azure-appconfiguration> cd tests

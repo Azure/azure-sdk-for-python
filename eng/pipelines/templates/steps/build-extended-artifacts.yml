@@ -43,9 +43,9 @@ steps:
     condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
 
   - task: UsePythonVersion@0
-    displayName: 'Use Python $(PythonVersion)'
+    displayName: 'Use Python 3.11'
     inputs:
-      versionSpec: $(PythonVersion)
+      versionSpec: '3.11'
 
   - script: |
       python -m pip install setuptools==58.3.0
@@ -65,7 +65,7 @@ steps:
     displayName: 'Generate Docs'
     condition: and(succeededOrFailed(), ${{parameters.BuildDocs}})
     inputs:
-      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
       arguments: >-
         "$(TargetingString)" 
         --service="${{ parameters.ServiceDirectory }}" 
@@ -86,10 +86,15 @@ steps:
       ArtifactPath: '$(Build.ArtifactStagingDirectory)'
       ArtifactName: 'packages_extended'
 
+  - pwsh: |
+      $directoryExists = Test-Path -Path "$(Build.SourcesDirectory)/_docs"
+      Write-Output "##vso[task.setvariable variable=DirectoryExists]$directoryExists"
+    displayName: Check if docs directory exists
+  
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/_docs'
-      CustomCondition: ${{ parameters.BuildDocs }}
+      CustomCondition: and(${{ parameters.BuildDocs }}, eq(variables['DirectoryExists'], 'True'))
       ArtifactName: 'documentation'
 
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:

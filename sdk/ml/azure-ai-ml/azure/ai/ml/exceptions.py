@@ -88,6 +88,7 @@ class ErrorTarget:
     UNKNOWN = "Unknown"
     FEATURE_SET = "FeatureSet"
     FEATURE_STORE_ENTITY = "FeatureStoreEntity"
+    MODEL_MONITORING = "ModelMonitoring"
 
 
 class MlException(AzureError):

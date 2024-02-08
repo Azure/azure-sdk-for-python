@@ -1,5 +1,5 @@
 {
-  "commit": "a3089b2764df11b10a8a43e2a5a33dbe4d3653ca",
+  "commit": "c280892951a9e45c059132c05aace25a9c752d48",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.9.7",
   "use": [
@@ -12,5 +12,6 @@
   "package-2021-09-01-preview": "2021-09-08 03:37:58 +0300 b9e1a57680ad54fd555bce727702550aefcd2d47 Microsoft.RedHatOpenShift/preview/2021-09-01-preview/redhatopenshift.json",
   "package-2022-04-01": "2022-04-26 20:09:23 -0700 3c622a337592e7debc58b09a9fdc3aa275ba808f Microsoft.RedHatOpenShift/stable/2022-04-01/redhatopenshift.json",
   "package-2022-09-04": "2022-12-06 18:13:21 -0800 1be09531e4c6edeafde41d6562371566d39669e8 Microsoft.RedHatOpenShift/stable/2022-09-04/redhatopenshift.json",
-  "package-2023-04-01": "2023-07-24 17:12:10 +1000 db80d2c04a9e7ecd7d1fee6da42fe5b825fabf4b Microsoft.RedHatOpenShift/stable/2023-04-01/redhatopenshift.json"
+  "package-2023-04-01": "2023-07-24 17:12:10 +1000 db80d2c04a9e7ecd7d1fee6da42fe5b825fabf4b Microsoft.RedHatOpenShift/stable/2023-04-01/redhatopenshift.json",
+  "package-2023-09-04": "2023-09-28 19:57:42 -0500 6941a3d632bf05aac1f38a0db8fb51d04102d49b Microsoft.RedHatOpenShift/stable/2023-09-04/redhatopenshift.json"
 }

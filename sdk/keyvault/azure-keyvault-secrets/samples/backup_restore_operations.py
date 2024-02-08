@@ -4,6 +4,7 @@
 # ------------------------------------
 import os
 import time
+
 from azure.keyvault.secrets import SecretClient
 from azure.identity import DefaultAzureCredential
 
@@ -40,6 +41,7 @@ client = SecretClient(vault_url=VAULT_URL, credential=credential)
 # if the secret already exists in the Key Vault, then a new version of the secret is created.
 print("\n.. Create Secret")
 secret = client.set_secret("backupRestoreSecretName", "backupRestoreSecretValue")
+assert secret.name
 print(f"Secret with name '{secret.name}' created with value '{secret.value}'")
 
 # Backups are good to have, if in case secrets gets deleted accidentally.
@@ -52,6 +54,7 @@ print(f"Backup created for secret with name '{secret.name}'.")
 print("\n.. Deleting secret...")
 delete_operation = client.begin_delete_secret(secret.name)
 deleted_secret = delete_operation.result()
+assert deleted_secret.name
 print(f"Deleted secret with name '{deleted_secret.name}'")
 
 # Wait for the deletion to complete before purging the secret.
@@ -64,5 +67,5 @@ print(f"Purged secret with name '{deleted_secret.name}'")
 
 # In the future, if the secret is required again, we can use the backup value to restore it in the Key Vault.
 print("\n.. Restore the secret using the backed up secret bytes")
-secret = client.restore_secret_backup(secret_backup)
-print(f"Restored secret with name '{secret.name}'")
+secret_properties = client.restore_secret_backup(secret_backup)
+print(f"Restored secret with name '{secret_properties.name}'")

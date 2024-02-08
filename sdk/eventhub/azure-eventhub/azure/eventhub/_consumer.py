@@ -83,7 +83,7 @@ class EventHubConsumer(
         event_position = kwargs.get("event_position", None)
         prefetch = kwargs.get("prefetch", 300)
         owner_level = kwargs.get("owner_level", None)
-        keep_alive = kwargs.get("keep_alive", None)
+        keep_alive = kwargs.get("keep_alive", 30)
         auto_reconnect = kwargs.get("auto_reconnect", True)
         track_last_enqueued_event_properties = kwargs.get(
             "track_last_enqueued_event_properties", False
@@ -138,6 +138,8 @@ class EventHubConsumer(
         self._message_buffer: Deque[uamqp_Message] = deque()
         self._last_received_event: Optional[EventData] = None
         self._receive_start_time: Optional[float] = None
+
+        super(EventHubConsumer, self).__init__()
 
     def _create_handler(self, auth: Union[uamqp_JWTTokenAuth, JWTTokenAuth]) -> None:
         source = self._amqp_transport.create_source(

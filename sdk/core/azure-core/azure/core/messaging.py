@@ -216,8 +216,8 @@ class CloudEvent(Generic[DataType]):  # pylint:disable=too-many-instance-attribu
 
     @classmethod
     def from_json(cls, event: Any) -> CloudEvent[DataType]:
-        """
-        Returns the deserialized CloudEvent object when a json payload is provided.
+        """Returns the deserialized CloudEvent object when a json payload is provided.
+
         :param event: The json string that should be converted into a CloudEvent. This can also be
          a storage QueueMessage, eventhub's EventData or ServiceBusMessage
         :type event: object

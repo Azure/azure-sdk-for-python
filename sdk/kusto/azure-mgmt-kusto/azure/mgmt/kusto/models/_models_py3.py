@@ -1120,6 +1120,8 @@ class ClusterUpdate(Resource):  # pylint: disable=too-many-instance-attributes
     :vartype location: str
     :ivar sku: The SKU of the cluster.
     :vartype sku: ~azure.mgmt.kusto.models.AzureSku
+    :ivar zones: The availability zones of the cluster.
+    :vartype zones: list[str]
     :ivar identity: The identity of the cluster, if configured.
     :vartype identity: ~azure.mgmt.kusto.models.Identity
     :ivar state: The state of the resource. Known values are: "Creating", "Unavailable", "Running",
@@ -1208,6 +1210,7 @@ class ClusterUpdate(Resource):  # pylint: disable=too-many-instance-attributes
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
         "sku": {"key": "sku", "type": "AzureSku"},
+        "zones": {"key": "zones", "type": "[str]"},
         "identity": {"key": "identity", "type": "Identity"},
         "state": {"key": "properties.state", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
@@ -1251,6 +1254,7 @@ class ClusterUpdate(Resource):  # pylint: disable=too-many-instance-attributes
         tags: Optional[Dict[str, str]] = None,
         location: Optional[str] = None,
         sku: Optional["_models.AzureSku"] = None,
+        zones: Optional[List[str]] = None,
         identity: Optional["_models.Identity"] = None,
         trusted_external_tenants: Optional[List["_models.TrustedExternalTenant"]] = None,
         optimized_autoscale: Optional["_models.OptimizedAutoscale"] = None,
@@ -1279,6 +1283,8 @@ class ClusterUpdate(Resource):  # pylint: disable=too-many-instance-attributes
         :paramtype location: str
         :keyword sku: The SKU of the cluster.
         :paramtype sku: ~azure.mgmt.kusto.models.AzureSku
+        :keyword zones: The availability zones of the cluster.
+        :paramtype zones: list[str]
         :keyword identity: The identity of the cluster, if configured.
         :paramtype identity: ~azure.mgmt.kusto.models.Identity
         :keyword trusted_external_tenants: The cluster's external tenants.
@@ -1334,6 +1340,7 @@ class ClusterUpdate(Resource):  # pylint: disable=too-many-instance-attributes
         self.tags = tags
         self.location = location
         self.sku = sku
+        self.zones = zones
         self.identity = identity
         self.state = None
         self.provisioning_state = None
@@ -2178,19 +2185,25 @@ class EndpointDetail(_serialization.Model):
 
     :ivar port: The port an endpoint is connected to.
     :vartype port: int
+    :ivar ip_address: The ip address of the endpoint.
+    :vartype ip_address: str
     """
 
     _attribute_map = {
         "port": {"key": "port", "type": "int"},
+        "ip_address": {"key": "ipAddress", "type": "str"},
     }
 
-    def __init__(self, *, port: Optional[int] = None, **kwargs: Any) -> None:
+    def __init__(self, *, port: Optional[int] = None, ip_address: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword port: The port an endpoint is connected to.
         :paramtype port: int
+        :keyword ip_address: The ip address of the endpoint.
+        :paramtype ip_address: str
         """
         super().__init__(**kwargs)
         self.port = port
+        self.ip_address = ip_address
 
 
 class ErrorAdditionalInfo(_serialization.Model):
@@ -2935,14 +2948,17 @@ class LanguageExtension(_serialization.Model):
     :ivar language_extension_name: The language extension name. Known values are: "PYTHON" and "R".
     :vartype language_extension_name: str or ~azure.mgmt.kusto.models.LanguageExtensionName
     :ivar language_extension_image_name: The language extension image name. Known values are: "R",
-     "Python3_6_5", and "Python3_10_8".
+     "Python3_6_5", "Python3_10_8", "Python3_10_8_DL", and "PythonCustomImage".
     :vartype language_extension_image_name: str or
      ~azure.mgmt.kusto.models.LanguageExtensionImageName
+    :ivar language_extension_custom_image_name: The language extension custom image name.
+    :vartype language_extension_custom_image_name: str
     """
 
     _attribute_map = {
         "language_extension_name": {"key": "languageExtensionName", "type": "str"},
         "language_extension_image_name": {"key": "languageExtensionImageName", "type": "str"},
+        "language_extension_custom_image_name": {"key": "languageExtensionCustomImageName", "type": "str"},
     }
 
     def __init__(
@@ -2950,6 +2966,7 @@ class LanguageExtension(_serialization.Model):
         *,
         language_extension_name: Optional[Union[str, "_models.LanguageExtensionName"]] = None,
         language_extension_image_name: Optional[Union[str, "_models.LanguageExtensionImageName"]] = None,
+        language_extension_custom_image_name: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2957,13 +2974,16 @@ class LanguageExtension(_serialization.Model):
          "R".
         :paramtype language_extension_name: str or ~azure.mgmt.kusto.models.LanguageExtensionName
         :keyword language_extension_image_name: The language extension image name. Known values are:
-         "R", "Python3_6_5", and "Python3_10_8".
+         "R", "Python3_6_5", "Python3_10_8", "Python3_10_8_DL", and "PythonCustomImage".
         :paramtype language_extension_image_name: str or
          ~azure.mgmt.kusto.models.LanguageExtensionImageName
+        :keyword language_extension_custom_image_name: The language extension custom image name.
+        :paramtype language_extension_custom_image_name: str
         """
         super().__init__(**kwargs)
         self.language_extension_name = language_extension_name
         self.language_extension_image_name = language_extension_image_name
+        self.language_extension_custom_image_name = language_extension_custom_image_name
 
 
 class LanguageExtensionsList(_serialization.Model):
@@ -4037,6 +4057,137 @@ class ResourceSkuZoneDetails(_serialization.Model):
         self.capabilities = None
 
 
+class SandboxCustomImage(ProxyResource):
+    """Class representing a Kusto sandbox custom image.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar language: The language name, for example Python. "Python"
+    :vartype language: str or ~azure.mgmt.kusto.models.Language
+    :ivar language_version: The version of the language.
+    :vartype language_version: str
+    :ivar requirements_file_content: The requirements file content.
+    :vartype requirements_file_content: str
+    :ivar provisioning_state: The provisioned state of the resource. Known values are: "Running",
+     "Creating", "Deleting", "Succeeded", "Failed", "Moving", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.kusto.models.ProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "language": {"key": "properties.language", "type": "str"},
+        "language_version": {"key": "properties.languageVersion", "type": "str"},
+        "requirements_file_content": {"key": "properties.requirementsFileContent", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        language: Optional[Union[str, "_models.Language"]] = None,
+        language_version: Optional[str] = None,
+        requirements_file_content: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword language: The language name, for example Python. "Python"
+        :paramtype language: str or ~azure.mgmt.kusto.models.Language
+        :keyword language_version: The version of the language.
+        :paramtype language_version: str
+        :keyword requirements_file_content: The requirements file content.
+        :paramtype requirements_file_content: str
+        """
+        super().__init__(**kwargs)
+        self.language = language
+        self.language_version = language_version
+        self.requirements_file_content = requirements_file_content
+        self.provisioning_state = None
+
+
+class SandboxCustomImagesCheckNameRequest(_serialization.Model):
+    """The result returned from a sandboxCustomImage check name availability request.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: Sandbox custom image resource name. Required.
+    :vartype name: str
+    :ivar type: The type of resource, for instance Microsoft.Kusto/clusters/sandboxCustomImages.
+     Required. Default value is "Microsoft.Kusto/clusters/sandboxCustomImages".
+    :vartype type: str
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "type": {"required": True, "constant": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    type = "Microsoft.Kusto/clusters/sandboxCustomImages"
+
+    def __init__(self, *, name: str, **kwargs: Any) -> None:
+        """
+        :keyword name: Sandbox custom image resource name. Required.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+
+
+class SandboxCustomImagesListResult(_serialization.Model):
+    """The list Kusto sandbox custom images operation response.
+
+    :ivar next_link: Link to the next page of results.
+    :vartype next_link: str
+    :ivar value: The list of Kusto sandbox custom images.
+    :vartype value: list[~azure.mgmt.kusto.models.SandboxCustomImage]
+    """
+
+    _attribute_map = {
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[SandboxCustomImage]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[List["_models.SandboxCustomImage"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword next_link: Link to the next page of results.
+        :paramtype next_link: str
+        :keyword value: The list of Kusto sandbox custom images.
+        :paramtype value: list[~azure.mgmt.kusto.models.SandboxCustomImage]
+        """
+        super().__init__(**kwargs)
+        self.next_link = next_link
+        self.value = value
+
+
 class Script(ProxyResource):
     """Class representing a database script.
 
@@ -4498,6 +4649,9 @@ class VirtualNetworkConfiguration(_serialization.Model):
     :ivar data_management_public_ip_id: Data management's service public IP address resource id.
      Required.
     :vartype data_management_public_ip_id: str
+    :ivar state: When enabled, the cluster is deployed into the configured subnet, when disabled it
+     will be removed from the subnet. Known values are: "Enabled" and "Disabled".
+    :vartype state: str or ~azure.mgmt.kusto.models.VnetState
     """
 
     _validation = {
@@ -4510,10 +4664,17 @@ class VirtualNetworkConfiguration(_serialization.Model):
         "subnet_id": {"key": "subnetId", "type": "str"},
         "engine_public_ip_id": {"key": "enginePublicIpId", "type": "str"},
         "data_management_public_ip_id": {"key": "dataManagementPublicIpId", "type": "str"},
+        "state": {"key": "state", "type": "str"},
     }
 
     def __init__(
-        self, *, subnet_id: str, engine_public_ip_id: str, data_management_public_ip_id: str, **kwargs: Any
+        self,
+        *,
+        subnet_id: str,
+        engine_public_ip_id: str,
+        data_management_public_ip_id: str,
+        state: Union[str, "_models.VnetState"] = "Enabled",
+        **kwargs: Any
     ) -> None:
         """
         :keyword subnet_id: The subnet resource id. Required.
@@ -4523,8 +4684,12 @@ class VirtualNetworkConfiguration(_serialization.Model):
         :keyword data_management_public_ip_id: Data management's service public IP address resource id.
          Required.
         :paramtype data_management_public_ip_id: str
+        :keyword state: When enabled, the cluster is deployed into the configured subnet, when disabled
+         it will be removed from the subnet. Known values are: "Enabled" and "Disabled".
+        :paramtype state: str or ~azure.mgmt.kusto.models.VnetState
         """
         super().__init__(**kwargs)
         self.subnet_id = subnet_id
         self.engine_public_ip_id = engine_public_ip_id
         self.data_management_public_ip_id = data_management_public_ip_id
+        self.state = state

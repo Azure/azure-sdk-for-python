@@ -1,0 +1,4 @@
+name: ws_min_serverless
+serverless_compute:
+  custom_subnet: None
+  no_public_ip: false

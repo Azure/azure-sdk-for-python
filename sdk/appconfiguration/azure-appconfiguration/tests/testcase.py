@@ -10,7 +10,7 @@ from azure.appconfiguration import (
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
-    Snapshot,
+    ConfigurationSnapshot,
 )
 from azure.core.exceptions import ResourceExistsError
 from consts import (
@@ -91,7 +91,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
         elif isinstance(key1, SecretReferenceConfigurationSetting):
             assert key1.secret_id == key2.secret_id
 
-    def _assert_snapshots(self, snapshot: Snapshot, expected_snapshot: Snapshot):
+    def _assert_snapshots(self, snapshot: ConfigurationSnapshot, expected_snapshot: ConfigurationSnapshot):
         assert snapshot.composition_type == expected_snapshot.composition_type
         assert snapshot.created == expected_snapshot.created
         assert snapshot.etag == expected_snapshot.etag
@@ -100,7 +100,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
         for index, filter in enumerate(snapshot.filters):
             assert filter.key == expected_snapshot.filters[index].key
             assert filter.label == expected_snapshot.filters[index].label
-        assert snapshot.item_count == expected_snapshot.item_count
+        assert snapshot.items_count == expected_snapshot.items_count
         assert snapshot.name == expected_snapshot.name
         assert snapshot.retention_period == expected_snapshot.retention_period
         assert snapshot.size == expected_snapshot.size

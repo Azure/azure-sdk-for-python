@@ -16,6 +16,7 @@ from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import MySQLManagementClientConfiguration
 from .operations import (
+    AdvancedThreatProtectionSettingsOperations,
     AzureADAdministratorsOperations,
     BackupAndExportOperations,
     BackupsOperations,
@@ -27,9 +28,12 @@ from .operations import (
     FirewallRulesOperations,
     GetPrivateDnsZoneSuffixOperations,
     LocationBasedCapabilitiesOperations,
+    LocationBasedCapabilitySetOperations,
     LogFilesOperations,
+    OperationResultsOperations,
     Operations,
     ReplicasOperations,
+    ServersMigrationOperations,
     ServersOperations,
 )
 
@@ -63,11 +67,17 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
     :vartype servers: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.ServersOperations
     :ivar replicas: ReplicasOperations operations
     :vartype replicas: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.ReplicasOperations
+    :ivar servers_migration: ServersMigrationOperations operations
+    :vartype servers_migration:
+     azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.ServersMigrationOperations
     :ivar log_files: LogFilesOperations operations
     :vartype log_files: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.LogFilesOperations
     :ivar location_based_capabilities: LocationBasedCapabilitiesOperations operations
     :vartype location_based_capabilities:
      azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.LocationBasedCapabilitiesOperations
+    :ivar location_based_capability_set: LocationBasedCapabilitySetOperations operations
+    :vartype location_based_capability_set:
+     azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.LocationBasedCapabilitySetOperations
     :ivar check_virtual_network_subnet_usage: CheckVirtualNetworkSubnetUsageOperations operations
     :vartype check_virtual_network_subnet_usage:
      azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.CheckVirtualNetworkSubnetUsageOperations
@@ -78,14 +88,21 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
      operations
     :vartype check_name_availability_without_location:
      azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.CheckNameAvailabilityWithoutLocationOperations
+    :ivar operation_results: OperationResultsOperations operations
+    :vartype operation_results:
+     azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.OperationResultsOperations
     :ivar get_private_dns_zone_suffix: GetPrivateDnsZoneSuffixOperations operations
     :vartype get_private_dns_zone_suffix:
      azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.GetPrivateDnsZoneSuffixOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.Operations
+    :ivar advanced_threat_protection_settings: AdvancedThreatProtectionSettingsOperations
+     operations
+    :vartype advanced_threat_protection_settings:
+     azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.AdvancedThreatProtectionSettingsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
@@ -121,8 +138,14 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
         self.firewall_rules = FirewallRulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.replicas = ReplicasOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.servers_migration = ServersMigrationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.log_files = LogFilesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.location_based_capabilities = LocationBasedCapabilitiesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.location_based_capability_set = LocationBasedCapabilitySetOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.check_virtual_network_subnet_usage = CheckVirtualNetworkSubnetUsageOperations(
@@ -134,10 +157,16 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
         self.check_name_availability_without_location = CheckNameAvailabilityWithoutLocationOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.operation_results = OperationResultsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.get_private_dns_zone_suffix = GetPrivateDnsZoneSuffixOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.advanced_threat_protection_settings = AdvancedThreatProtectionSettingsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.

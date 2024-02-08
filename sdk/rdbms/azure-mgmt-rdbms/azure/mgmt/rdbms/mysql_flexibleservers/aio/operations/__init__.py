@@ -14,13 +14,17 @@ from ._databases_operations import DatabasesOperations
 from ._firewall_rules_operations import FirewallRulesOperations
 from ._servers_operations import ServersOperations
 from ._replicas_operations import ReplicasOperations
+from ._servers_migration_operations import ServersMigrationOperations
 from ._log_files_operations import LogFilesOperations
 from ._location_based_capabilities_operations import LocationBasedCapabilitiesOperations
+from ._location_based_capability_set_operations import LocationBasedCapabilitySetOperations
 from ._check_virtual_network_subnet_usage_operations import CheckVirtualNetworkSubnetUsageOperations
 from ._check_name_availability_operations import CheckNameAvailabilityOperations
 from ._check_name_availability_without_location_operations import CheckNameAvailabilityWithoutLocationOperations
+from ._operation_results_operations import OperationResultsOperations
 from ._get_private_dns_zone_suffix_operations import GetPrivateDnsZoneSuffixOperations
 from ._operations import Operations
+from ._advanced_threat_protection_settings_operations import AdvancedThreatProtectionSettingsOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -35,13 +39,17 @@ __all__ = [
     "FirewallRulesOperations",
     "ServersOperations",
     "ReplicasOperations",
+    "ServersMigrationOperations",
     "LogFilesOperations",
     "LocationBasedCapabilitiesOperations",
+    "LocationBasedCapabilitySetOperations",
     "CheckVirtualNetworkSubnetUsageOperations",
     "CheckNameAvailabilityOperations",
     "CheckNameAvailabilityWithoutLocationOperations",
+    "OperationResultsOperations",
     "GetPrivateDnsZoneSuffixOperations",
     "Operations",
+    "AdvancedThreatProtectionSettingsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

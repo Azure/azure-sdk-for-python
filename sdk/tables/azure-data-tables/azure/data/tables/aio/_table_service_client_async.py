@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from typing import Optional, Dict, List
+from typing import Optional, Any, Dict, List
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
@@ -14,9 +14,16 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._base_client import parse_connection_str
 from .._generated.models import TableServiceProperties
-from .._models import service_stats_deserialize, service_properties_deserialize
+from .._models import (
+    TableItem,
+    LocationMode,
+    TableCorsRule,
+    TableMetrics,
+    TableAnalyticsLogging,
+    service_stats_deserialize,
+    service_properties_deserialize,
+)
 from .._error import _process_table_error, _reprocess_error
-from .._models import TableItem, LocationMode, TableCorsRule, TableMetrics, TableAnalyticsLogging
 from .._serialize import _parameter_filter_substitution
 from ._table_client_async import TableClient
 from ._base_client_async import AsyncTablesBaseClient, AsyncTransportWrapper
@@ -66,18 +73,8 @@ class TableServiceClient(AsyncTablesBaseClient):
             :caption: Creating the tableServiceClient with Shared Access Signature.
     """
 
-    def _format_url(self, hostname: str) -> str:
-        """Format the endpoint URL according to the current location
-        mode hostname.
-
-        :param str hostname: The current location mode hostname.
-        :returns: The full URL to the Tables account.
-        :rtype: str
-        """
-        return f"{self.scheme}://{hostname}{self._query_str}"
-
     @classmethod
-    def from_connection_string(cls, conn_str: str, **kwargs) -> "TableServiceClient":
+    def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "TableServiceClient":
         """Create TableServiceClient from a Connection String.
 
         :param str conn_str: A connection string to an Azure Tables account.
@@ -108,7 +105,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         """
         try:
             timeout = kwargs.pop("timeout", None)
-            stats = await self._client.service.get_statistics(  # type: ignore
+            stats = await self._client.service.get_statistics(
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs
             )
         except HttpResponseError as error:
@@ -120,14 +117,13 @@ class TableServiceClient(AsyncTablesBaseClient):
         """Gets the properties of an account's Table service,
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TableServiceProperties, or the result of cls(response)
+        :return: Dictionary of service properties
         :rtype: dict[str, object]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         timeout = kwargs.pop("timeout", None)
         try:
-            service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)  # type: ignore
+            service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)
         except HttpResponseError as error:
             try:
                 _process_table_error(error)
@@ -160,16 +156,14 @@ class TableServiceClient(AsyncTablesBaseClient):
         :return: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        if cors:
-            cors = [c._to_generated() for c in cors]  # pylint:disable=protected-access
         props = TableServiceProperties(
             logging=analytics_logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=cors,  # type: ignore
+            cors=[c._to_generated() for c in cors] if cors is not None else cors,  # pylint:disable=protected-access
         )
         try:
-            await self._client.service.set_properties(props, **kwargs)  # type: ignore
+            await self._client.service.set_properties(props, **kwargs)
         except HttpResponseError as error:
             try:
                 _process_table_error(error)
@@ -248,7 +242,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         await table.delete_table(**kwargs)
 
     @distributed_trace
-    def list_tables(self, **kwargs) -> AsyncItemPaged[TableItem]:
+    def list_tables(self, *, results_per_page: Optional[int] = None, **kwargs) -> AsyncItemPaged[TableItem]:
         """Queries tables under the given account.
 
         :keyword int results_per_page: Number of tables per page in returned ItemPaged
@@ -265,17 +259,22 @@ class TableServiceClient(AsyncTablesBaseClient):
                 :dedent: 16
                 :caption: Listing all tables in an account
         """
-        top = kwargs.pop("results_per_page", None)
-
         command = functools.partial(self._client.table.query, **kwargs)
         return AsyncItemPaged(
             command,
-            results_per_page=top,
+            results_per_page=results_per_page,
             page_iterator_class=TablePropertiesPaged,
         )
 
     @distributed_trace
-    def query_tables(self, query_filter: str, **kwargs) -> AsyncItemPaged[TableItem]:
+    def query_tables(
+        self,
+        query_filter: str,
+        *,
+        results_per_page: Optional[int] = None,
+        parameters: Optional[Dict[str, Any]] = None,
+        **kwargs,
+    ) -> AsyncItemPaged[TableItem]:
         """Queries tables under the given account.
 
         :param str query_filter: Specify a filter to return certain tables.
@@ -295,18 +294,16 @@ class TableServiceClient(AsyncTablesBaseClient):
                 :dedent: 16
                 :caption: Querying tables in an account given specific parameters
         """
-        parameters = kwargs.pop("parameters", None)
         query_filter = _parameter_filter_substitution(parameters, query_filter)
-        top = kwargs.pop("results_per_page", None)
         command = functools.partial(self._client.table.query, **kwargs)
         return AsyncItemPaged(
             command,
-            results_per_page=top,
+            results_per_page=results_per_page,
             filter=query_filter,
             page_iterator_class=TablePropertiesPaged,
         )
 
-    def get_table_client(self, table_name: str, **kwargs) -> TableClient:
+    def get_table_client(self, table_name: str, **kwargs: Any) -> TableClient:
         """Get a client to interact with the specified table.
 
         The table need not already exist.
@@ -316,7 +313,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         :rtype: ~azure.data.tables.aio.TableClient
 
         """
-        pipeline = AsyncPipeline(  # type: ignore
+        pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(
                 self._client._client._pipeline._transport  # pylint:disable=protected-access
             ),
@@ -325,7 +322,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         return TableClient(
             self.url,
             table_name=table_name,
-            credential=self.credential,  # type: ignore
+            credential=self.credential,
             api_version=self.api_version,
             pipeline=pipeline,
             location_mode=self._location_mode,

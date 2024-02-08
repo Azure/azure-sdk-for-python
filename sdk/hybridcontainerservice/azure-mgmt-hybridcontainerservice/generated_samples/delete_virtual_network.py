@@ -29,13 +29,12 @@ def main():
         subscription_id="a3e42606-29b1-4d7d-b1d9-9ff6b9d3c71b",
     )
 
-    response = client.virtual_networks.delete(
+    client.virtual_networks.begin_delete(
         resource_group_name="test-arcappliance-resgrp",
-        virtual_networks_name="test-vnet-static",
-    )
-    print(response)
+        virtual_network_name="test-vnet-static",
+    ).result()
 
 
-# x-ms-original-file: specification/hybridaks/resource-manager/Microsoft.HybridContainerService/preview/2022-09-01-preview/examples/DeleteVirtualNetwork.json
+# x-ms-original-file: specification/hybridaks/resource-manager/Microsoft.HybridContainerService/stable/2024-01-01/examples/DeleteVirtualNetwork.json
 if __name__ == "__main__":
     main()

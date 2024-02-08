@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.shared_private_link_resources.begin_delete(
+    client.shared_private_link_resources.begin_delete(
         resource_group_name="rg1",
         search_service_name="mysearchservice",
         shared_private_link_resource_name="testResource",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/stable/2022-09-01/examples/DeleteSharedPrivateLinkResource.json
+# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/stable/2023-11-01/examples/DeleteSharedPrivateLinkResource.json
 if __name__ == "__main__":
     main()

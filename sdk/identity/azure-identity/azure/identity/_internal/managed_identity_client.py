@@ -93,11 +93,11 @@ class ManagedIdentityClientBase(abc.ABC):
 
 
 class ManagedIdentityClient(ManagedIdentityClientBase):
-    def __enter__(self):
+    def __enter__(self) -> "ManagedIdentityClient":
         self._pipeline.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self._pipeline.__exit__(*args)
 
     def close(self) -> None:

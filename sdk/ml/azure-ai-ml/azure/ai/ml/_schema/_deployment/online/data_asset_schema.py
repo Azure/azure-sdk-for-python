@@ -16,7 +16,7 @@ module_logger = logging.getLogger(__name__)
 class DataAssetSchema(metaclass=PatchedSchemaMeta):
     name = fields.Str()
     path = fields.Str()
-    version = fields.Int()
+    version = fields.Str()
     data_id = fields.Str()
 
     @post_load

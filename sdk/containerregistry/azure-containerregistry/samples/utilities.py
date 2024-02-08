@@ -38,9 +38,9 @@ def load_registry(endpoint):
 def _import_images(endpoint, repository, tags):
     authority = get_authority(endpoint)
     credential = ClientSecretCredential(
-        tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"),
-        client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"),
-        client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"),
+        tenant_id=os.environ["CONTAINERREGISTRY_TENANT_ID"],
+        client_id=os.environ["CONTAINERREGISTRY_CLIENT_ID"],
+        client_secret=os.environ["CONTAINERREGISTRY_CLIENT_SECRET"],
         authority=authority,
     )
     with ContainerRegistryClient(endpoint, credential) as client:
@@ -95,14 +95,14 @@ def get_credential(authority, **kwargs):
     is_async = kwargs.pop("is_async", False)
     if is_async:
         return AsyncClientSecretCredential(
-            tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"),
-            client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"),
-            client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"),
+            tenant_id=os.environ["CONTAINERREGISTRY_TENANT_ID"],
+            client_id=os.environ["CONTAINERREGISTRY_CLIENT_ID"],
+            client_secret=os.environ["CONTAINERREGISTRY_CLIENT_SECRET"],
             authority=authority,
         )
     return ClientSecretCredential(
-        tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"),
-        client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"),
-        client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"),
+        tenant_id=os.environ["CONTAINERREGISTRY_TENANT_ID"],
+        client_id=os.environ["CONTAINERREGISTRY_CLIENT_ID"],
+        client_secret=os.environ["CONTAINERREGISTRY_CLIENT_SECRET"],
         authority=authority,
     )

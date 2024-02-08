@@ -24,58 +24,6 @@ if TYPE_CHECKING:
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class CloudErrorBody(_serialization.Model):
-    """An error response from the Azure VM Image Builder service.
-
-    :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
-     programmatically.
-    :vartype code: str
-    :ivar message: A message describing the error, intended to be suitable for display in a user
-     interface.
-    :vartype message: str
-    :ivar target: The target of the particular error. For example, the name of the property in
-     error.
-    :vartype target: str
-    :ivar details: A list of additional details about the error.
-    :vartype details: list[~azure.mgmt.imagebuilder.models.CloudErrorBody]
-    """
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-        "target": {"key": "target", "type": "str"},
-        "details": {"key": "details", "type": "[CloudErrorBody]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        target: Optional[str] = None,
-        details: Optional[List["_models.CloudErrorBody"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
-         programmatically.
-        :paramtype code: str
-        :keyword message: A message describing the error, intended to be suitable for display in a user
-         interface.
-        :paramtype message: str
-        :keyword target: The target of the particular error. For example, the name of the property in
-         error.
-        :paramtype target: str
-        :keyword details: A list of additional details about the error.
-        :paramtype details: list[~azure.mgmt.imagebuilder.models.CloudErrorBody]
-        """
-        super().__init__(**kwargs)
-        self.code = code
-        self.message = message
-        self.target = target
-        self.details = details
-
-
 class DistributeVersioner(_serialization.Model):
     """Describes how to generate new x.y.z version number for distribution.
 
@@ -158,6 +106,98 @@ class DistributeVersionerSource(DistributeVersioner):
         """ """
         super().__init__(**kwargs)
         self.scheme: str = "Source"
+
+
+class ErrorAdditionalInfo(_serialization.Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: JSON
+    """
+
+    _validation = {
+        "type": {"readonly": True},
+        "info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
+class ErrorDetail(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.imagebuilder.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.imagebuilder.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.imagebuilder.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.imagebuilder.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.error = error
 
 
 class Resource(_serialization.Model):
@@ -291,6 +331,8 @@ class ImageTemplate(TrackedResource):  # pylint: disable=too-many-instance-attri
     :vartype validate: ~azure.mgmt.imagebuilder.models.ImageTemplatePropertiesValidate
     :ivar distribute: The distribution targets where the image output needs to go to.
     :vartype distribute: list[~azure.mgmt.imagebuilder.models.ImageTemplateDistributor]
+    :ivar error_handling: Error handling options upon a build failure.
+    :vartype error_handling: ~azure.mgmt.imagebuilder.models.ImageTemplatePropertiesErrorHandling
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Creating",
      "Updating", "Succeeded", "Failed", "Deleting", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.imagebuilder.models.ProvisioningState
@@ -347,6 +389,7 @@ class ImageTemplate(TrackedResource):  # pylint: disable=too-many-instance-attri
         "optimize": {"key": "properties.optimize", "type": "ImageTemplatePropertiesOptimize"},
         "validate": {"key": "properties.validate", "type": "ImageTemplatePropertiesValidate"},
         "distribute": {"key": "properties.distribute", "type": "[ImageTemplateDistributor]"},
+        "error_handling": {"key": "properties.errorHandling", "type": "ImageTemplatePropertiesErrorHandling"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "provisioning_error": {"key": "properties.provisioningError", "type": "ProvisioningError"},
         "last_run_status": {"key": "properties.lastRunStatus", "type": "ImageTemplateLastRunStatus"},
@@ -367,6 +410,7 @@ class ImageTemplate(TrackedResource):  # pylint: disable=too-many-instance-attri
         optimize: Optional["_models.ImageTemplatePropertiesOptimize"] = None,
         validate: Optional["_models.ImageTemplatePropertiesValidate"] = None,
         distribute: Optional[List["_models.ImageTemplateDistributor"]] = None,
+        error_handling: Optional["_models.ImageTemplatePropertiesErrorHandling"] = None,
         build_timeout_in_minutes: int = 0,
         vm_profile: Optional["_models.ImageTemplateVmProfile"] = None,
         staging_resource_group: Optional[str] = None,
@@ -391,6 +435,8 @@ class ImageTemplate(TrackedResource):  # pylint: disable=too-many-instance-attri
         :paramtype validate: ~azure.mgmt.imagebuilder.models.ImageTemplatePropertiesValidate
         :keyword distribute: The distribution targets where the image output needs to go to.
         :paramtype distribute: list[~azure.mgmt.imagebuilder.models.ImageTemplateDistributor]
+        :keyword error_handling: Error handling options upon a build failure.
+        :paramtype error_handling: ~azure.mgmt.imagebuilder.models.ImageTemplatePropertiesErrorHandling
         :keyword build_timeout_in_minutes: Maximum duration to wait while building the image template
          (includes all customizations, optimization, validations, and distributions). Omit or specify 0
          to use the default (4 hours).
@@ -414,6 +460,7 @@ class ImageTemplate(TrackedResource):  # pylint: disable=too-many-instance-attri
         self.optimize = optimize
         self.validate = validate
         self.distribute = distribute
+        self.error_handling = error_handling
         self.provisioning_state = None
         self.provisioning_error = None
         self.last_run_status = None
@@ -1193,6 +1240,50 @@ class ImageTemplatePowerShellValidator(ImageTemplateInVMValidator):
         self.valid_exit_codes = valid_exit_codes
 
 
+class ImageTemplatePropertiesErrorHandling(_serialization.Model):
+    """Error handling options upon a build failure.
+
+    :ivar on_customizer_error: If there is a customizer error and this field is set to 'cleanup',
+     the build VM and associated network resources will be cleaned up. This is the default behavior.
+     If there is a customizer error and this field is set to 'abort', the build VM will be
+     preserved. Known values are: "cleanup" and "abort".
+    :vartype on_customizer_error: str or ~azure.mgmt.imagebuilder.models.OnBuildError
+    :ivar on_validation_error: If there is a validation error and this field is set to 'cleanup',
+     the build VM and associated network resources will be cleaned up. This is the default behavior.
+     If there is a validation error and this field is set to 'abort', the build VM will be
+     preserved. Known values are: "cleanup" and "abort".
+    :vartype on_validation_error: str or ~azure.mgmt.imagebuilder.models.OnBuildError
+    """
+
+    _attribute_map = {
+        "on_customizer_error": {"key": "onCustomizerError", "type": "str"},
+        "on_validation_error": {"key": "onValidationError", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        on_customizer_error: Optional[Union[str, "_models.OnBuildError"]] = None,
+        on_validation_error: Optional[Union[str, "_models.OnBuildError"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword on_customizer_error: If there is a customizer error and this field is set to
+         'cleanup', the build VM and associated network resources will be cleaned up. This is the
+         default behavior. If there is a customizer error and this field is set to 'abort', the build VM
+         will be preserved. Known values are: "cleanup" and "abort".
+        :paramtype on_customizer_error: str or ~azure.mgmt.imagebuilder.models.OnBuildError
+        :keyword on_validation_error: If there is a validation error and this field is set to
+         'cleanup', the build VM and associated network resources will be cleaned up. This is the
+         default behavior. If there is a validation error and this field is set to 'abort', the build VM
+         will be preserved. Known values are: "cleanup" and "abort".
+        :paramtype on_validation_error: str or ~azure.mgmt.imagebuilder.models.OnBuildError
+        """
+        super().__init__(**kwargs)
+        self.on_customizer_error = on_customizer_error
+        self.on_validation_error = on_validation_error
+
+
 class ImageTemplatePropertiesOptimize(_serialization.Model):
     """Specifies optimization to be performed on image.
 
@@ -1623,11 +1714,14 @@ class ImageTemplateUpdateParameters(_serialization.Model):
     :vartype identity: ~azure.mgmt.imagebuilder.models.ImageTemplateIdentity
     :ivar tags: The user-specified tags associated with the image template.
     :vartype tags: dict[str, str]
+    :ivar properties: Parameters for updating an image template.
+    :vartype properties: ~azure.mgmt.imagebuilder.models.ImageTemplateUpdateParametersProperties
     """
 
     _attribute_map = {
         "identity": {"key": "identity", "type": "ImageTemplateIdentity"},
         "tags": {"key": "tags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "ImageTemplateUpdateParametersProperties"},
     }
 
     def __init__(
@@ -1635,6 +1729,7 @@ class ImageTemplateUpdateParameters(_serialization.Model):
         *,
         identity: Optional["_models.ImageTemplateIdentity"] = None,
         tags: Optional[Dict[str, str]] = None,
+        properties: Optional["_models.ImageTemplateUpdateParametersProperties"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1642,10 +1737,33 @@ class ImageTemplateUpdateParameters(_serialization.Model):
         :paramtype identity: ~azure.mgmt.imagebuilder.models.ImageTemplateIdentity
         :keyword tags: The user-specified tags associated with the image template.
         :paramtype tags: dict[str, str]
+        :keyword properties: Parameters for updating an image template.
+        :paramtype properties: ~azure.mgmt.imagebuilder.models.ImageTemplateUpdateParametersProperties
         """
         super().__init__(**kwargs)
         self.identity = identity
         self.tags = tags
+        self.properties = properties
+
+
+class ImageTemplateUpdateParametersProperties(_serialization.Model):
+    """Parameters for updating an image template.
+
+    :ivar distribute: The distribution targets where the image output needs to go to.
+    :vartype distribute: list[~azure.mgmt.imagebuilder.models.ImageTemplateDistributor]
+    """
+
+    _attribute_map = {
+        "distribute": {"key": "distribute", "type": "[ImageTemplateDistributor]"},
+    }
+
+    def __init__(self, *, distribute: Optional[List["_models.ImageTemplateDistributor"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword distribute: The distribution targets where the image output needs to go to.
+        :paramtype distribute: list[~azure.mgmt.imagebuilder.models.ImageTemplateDistributor]
+        """
+        super().__init__(**kwargs)
+        self.distribute = distribute
 
 
 class ImageTemplateVhdDistributor(ImageTemplateDistributor):

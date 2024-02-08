@@ -492,6 +492,8 @@ class ApplicationGroup(ResourceModelWithAllowedPropertySet):  # pylint: disable=
      ~azure.mgmt.desktopvirtualization.models.ApplicationGroupType
     :ivar cloud_pc_resource: Is cloud pc resource.
     :vartype cloud_pc_resource: bool
+    :ivar show_in_feed: Boolean representing whether the applicationGroup is show in the feed.
+    :vartype show_in_feed: bool
     """
 
     _validation = {
@@ -528,6 +530,7 @@ class ApplicationGroup(ResourceModelWithAllowedPropertySet):  # pylint: disable=
         "workspace_arm_path": {"key": "properties.workspaceArmPath", "type": "str"},
         "application_group_type": {"key": "properties.applicationGroupType", "type": "str"},
         "cloud_pc_resource": {"key": "properties.cloudPcResource", "type": "bool"},
+        "show_in_feed": {"key": "properties.showInFeed", "type": "bool"},
     }
 
     def __init__(
@@ -544,6 +547,7 @@ class ApplicationGroup(ResourceModelWithAllowedPropertySet):  # pylint: disable=
         plan: Optional["_models.ResourceModelWithAllowedPropertySetPlan"] = None,
         description: Optional[str] = None,
         friendly_name: Optional[str] = None,
+        show_in_feed: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -578,6 +582,8 @@ class ApplicationGroup(ResourceModelWithAllowedPropertySet):  # pylint: disable=
          "RemoteApp" and "Desktop".
         :paramtype application_group_type: str or
          ~azure.mgmt.desktopvirtualization.models.ApplicationGroupType
+        :keyword show_in_feed: Boolean representing whether the applicationGroup is show in the feed.
+        :paramtype show_in_feed: bool
         """
         super().__init__(
             location=location,
@@ -597,6 +603,7 @@ class ApplicationGroup(ResourceModelWithAllowedPropertySet):  # pylint: disable=
         self.workspace_arm_path = None
         self.application_group_type = application_group_type
         self.cloud_pc_resource = None
+        self.show_in_feed = show_in_feed
 
 
 class ApplicationGroupList(_serialization.Model):
@@ -648,6 +655,8 @@ class ApplicationGroupPatch(Resource):
     :vartype description: str
     :ivar friendly_name: Friendly name of ApplicationGroup.
     :vartype friendly_name: str
+    :ivar show_in_feed: Boolean representing whether the applicationGroup is show in the feed.
+    :vartype show_in_feed: bool
     """
 
     _validation = {
@@ -663,6 +672,7 @@ class ApplicationGroupPatch(Resource):
         "tags": {"key": "tags", "type": "{str}"},
         "description": {"key": "properties.description", "type": "str"},
         "friendly_name": {"key": "properties.friendlyName", "type": "str"},
+        "show_in_feed": {"key": "properties.showInFeed", "type": "bool"},
     }
 
     def __init__(
@@ -671,6 +681,7 @@ class ApplicationGroupPatch(Resource):
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
         friendly_name: Optional[str] = None,
+        show_in_feed: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -680,11 +691,14 @@ class ApplicationGroupPatch(Resource):
         :paramtype description: str
         :keyword friendly_name: Friendly name of ApplicationGroup.
         :paramtype friendly_name: str
+        :keyword show_in_feed: Boolean representing whether the applicationGroup is show in the feed.
+        :paramtype show_in_feed: bool
         """
         super().__init__(**kwargs)
         self.tags = tags
         self.description = description
         self.friendly_name = friendly_name
+        self.show_in_feed = show_in_feed
 
 
 class ApplicationList(_serialization.Model):
@@ -1253,9 +1267,19 @@ class HostPool(ResourceModelWithAllowedPropertySet):  # pylint: disable=too-many
     :vartype start_vm_on_connect: bool
     :ivar cloud_pc_resource: Is cloud pc resource.
     :vartype cloud_pc_resource: bool
+    :ivar public_network_access: Enabled allows this resource to be accessed from both public and
+     private networks, Disabled allows this resource to only be accessed via private endpoints.
+     Known values are: "Enabled", "Disabled", "EnabledForSessionHostsOnly", and
+     "EnabledForClientsOnly".
+    :vartype public_network_access: str or
+     ~azure.mgmt.desktopvirtualization.models.HostpoolPublicNetworkAccess
     :ivar agent_update: The session host configuration for updating agent, monitoring agent, and
      stack component.
     :vartype agent_update: ~azure.mgmt.desktopvirtualization.models.AgentUpdateProperties
+    :ivar private_endpoint_connections: List of private endpoint connection associated with the
+     specified resource.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.desktopvirtualization.models.PrivateEndpointConnection]
     """
 
     _validation = {
@@ -1271,6 +1295,7 @@ class HostPool(ResourceModelWithAllowedPropertySet):  # pylint: disable=too-many
         "application_group_references": {"readonly": True},
         "preferred_app_group_type": {"required": True},
         "cloud_pc_resource": {"readonly": True},
+        "private_endpoint_connections": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1306,7 +1331,12 @@ class HostPool(ResourceModelWithAllowedPropertySet):  # pylint: disable=too-many
         "preferred_app_group_type": {"key": "properties.preferredAppGroupType", "type": "str"},
         "start_vm_on_connect": {"key": "properties.startVMOnConnect", "type": "bool"},
         "cloud_pc_resource": {"key": "properties.cloudPcResource", "type": "bool"},
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
         "agent_update": {"key": "properties.agentUpdate", "type": "AgentUpdateProperties"},
+        "private_endpoint_connections": {
+            "key": "properties.privateEndpointConnections",
+            "type": "[PrivateEndpointConnection]",
+        },
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -1336,6 +1366,7 @@ class HostPool(ResourceModelWithAllowedPropertySet):  # pylint: disable=too-many
         sso_client_secret_key_vault_path: Optional[str] = None,
         sso_secret_type: Optional[Union[str, "_models.SSOSecretType"]] = None,
         start_vm_on_connect: Optional[bool] = None,
+        public_network_access: Optional[Union[str, "_models.HostpoolPublicNetworkAccess"]] = None,
         agent_update: Optional["_models.AgentUpdateProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -1405,6 +1436,12 @@ class HostPool(ResourceModelWithAllowedPropertySet):  # pylint: disable=too-many
          ~azure.mgmt.desktopvirtualization.models.PreferredAppGroupType
         :keyword start_vm_on_connect: The flag to turn on/off StartVMOnConnect feature.
         :paramtype start_vm_on_connect: bool
+        :keyword public_network_access: Enabled allows this resource to be accessed from both public
+         and private networks, Disabled allows this resource to only be accessed via private endpoints.
+         Known values are: "Enabled", "Disabled", "EnabledForSessionHostsOnly", and
+         "EnabledForClientsOnly".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.desktopvirtualization.models.HostpoolPublicNetworkAccess
         :keyword agent_update: The session host configuration for updating agent, monitoring agent, and
          stack component.
         :paramtype agent_update: ~azure.mgmt.desktopvirtualization.models.AgentUpdateProperties
@@ -1440,7 +1477,9 @@ class HostPool(ResourceModelWithAllowedPropertySet):  # pylint: disable=too-many
         self.preferred_app_group_type = preferred_app_group_type
         self.start_vm_on_connect = start_vm_on_connect
         self.cloud_pc_resource = None
+        self.public_network_access = public_network_access
         self.agent_update = agent_update
+        self.private_endpoint_connections = None
 
 
 class HostPoolList(_serialization.Model):
@@ -1528,6 +1567,11 @@ class HostPoolPatch(Resource):  # pylint: disable=too-many-instance-attributes
      ~azure.mgmt.desktopvirtualization.models.PreferredAppGroupType
     :ivar start_vm_on_connect: The flag to turn on/off StartVMOnConnect feature.
     :vartype start_vm_on_connect: bool
+    :ivar public_network_access: Enabled to allow this resource to be access from the public
+     network. Known values are: "Enabled", "Disabled", "EnabledForSessionHostsOnly", and
+     "EnabledForClientsOnly".
+    :vartype public_network_access: str or
+     ~azure.mgmt.desktopvirtualization.models.HostpoolPublicNetworkAccess
     :ivar agent_update: The session host configuration for updating agent, monitoring agent, and
      stack component.
     :vartype agent_update: ~azure.mgmt.desktopvirtualization.models.AgentUpdatePatchProperties
@@ -1560,6 +1604,7 @@ class HostPoolPatch(Resource):  # pylint: disable=too-many-instance-attributes
         "sso_secret_type": {"key": "properties.ssoSecretType", "type": "str"},
         "preferred_app_group_type": {"key": "properties.preferredAppGroupType", "type": "str"},
         "start_vm_on_connect": {"key": "properties.startVMOnConnect", "type": "bool"},
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
         "agent_update": {"key": "properties.agentUpdate", "type": "AgentUpdatePatchProperties"},
     }
 
@@ -1583,6 +1628,7 @@ class HostPoolPatch(Resource):  # pylint: disable=too-many-instance-attributes
         sso_secret_type: Optional[Union[str, "_models.SSOSecretType"]] = None,
         preferred_app_group_type: Optional[Union[str, "_models.PreferredAppGroupType"]] = None,
         start_vm_on_connect: Optional[bool] = None,
+        public_network_access: Optional[Union[str, "_models.HostpoolPublicNetworkAccess"]] = None,
         agent_update: Optional["_models.AgentUpdatePatchProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -1629,6 +1675,11 @@ class HostPoolPatch(Resource):  # pylint: disable=too-many-instance-attributes
          ~azure.mgmt.desktopvirtualization.models.PreferredAppGroupType
         :keyword start_vm_on_connect: The flag to turn on/off StartVMOnConnect feature.
         :paramtype start_vm_on_connect: bool
+        :keyword public_network_access: Enabled to allow this resource to be access from the public
+         network. Known values are: "Enabled", "Disabled", "EnabledForSessionHostsOnly", and
+         "EnabledForClientsOnly".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.desktopvirtualization.models.HostpoolPublicNetworkAccess
         :keyword agent_update: The session host configuration for updating agent, monitoring agent, and
          stack component.
         :paramtype agent_update: ~azure.mgmt.desktopvirtualization.models.AgentUpdatePatchProperties
@@ -1651,6 +1702,7 @@ class HostPoolPatch(Resource):  # pylint: disable=too-many-instance-attributes
         self.sso_secret_type = sso_secret_type
         self.preferred_app_group_type = preferred_app_group_type
         self.start_vm_on_connect = start_vm_on_connect
+        self.public_network_access = public_network_access
         self.agent_update = agent_update
 
 
@@ -2224,6 +2276,357 @@ class Plan(_serialization.Model):
         self.product = product
         self.promotion_code = promotion_code
         self.version = version
+
+
+class PrivateEndpoint(_serialization.Model):
+    """The Private Endpoint resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The ARM identifier for Private Endpoint.
+    :vartype id: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id = None
+
+
+class PrivateEndpointConnection(Resource):
+    """The Private Endpoint Connection resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar private_endpoint: The resource of private end point.
+    :vartype private_endpoint: ~azure.mgmt.desktopvirtualization.models.PrivateEndpoint
+    :ivar private_link_service_connection_state: A collection of information about the state of the
+     connection between service consumer and provider.
+    :vartype private_link_service_connection_state:
+     ~azure.mgmt.desktopvirtualization.models.PrivateLinkServiceConnectionState
+    :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
+     Known values are: "Succeeded", "Creating", "Deleting", and "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.desktopvirtualization.models.PrivateEndpointConnectionProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpoint"},
+        "private_link_service_connection_state": {
+            "key": "properties.privateLinkServiceConnectionState",
+            "type": "PrivateLinkServiceConnectionState",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        private_endpoint: Optional["_models.PrivateEndpoint"] = None,
+        private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword private_endpoint: The resource of private end point.
+        :paramtype private_endpoint: ~azure.mgmt.desktopvirtualization.models.PrivateEndpoint
+        :keyword private_link_service_connection_state: A collection of information about the state of
+         the connection between service consumer and provider.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.desktopvirtualization.models.PrivateLinkServiceConnectionState
+        """
+        super().__init__(**kwargs)
+        self.private_endpoint = private_endpoint
+        self.private_link_service_connection_state = private_link_service_connection_state
+        self.provisioning_state = None
+
+
+class PrivateEndpointConnectionListResultWithSystemData(_serialization.Model):
+    """List of private endpoint connection associated with the specified storage account.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of private endpoint connections.
+    :vartype value:
+     list[~azure.mgmt.desktopvirtualization.models.PrivateEndpointConnectionWithSystemData]
+    :ivar next_link: Link to the next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[PrivateEndpointConnectionWithSystemData]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.PrivateEndpointConnectionWithSystemData"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: Array of private endpoint connections.
+        :paramtype value:
+         list[~azure.mgmt.desktopvirtualization.models.PrivateEndpointConnectionWithSystemData]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = None
+
+
+class PrivateEndpointConnectionWithSystemData(PrivateEndpointConnection):
+    """The Private Endpoint Connection resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar private_endpoint: The resource of private end point.
+    :vartype private_endpoint: ~azure.mgmt.desktopvirtualization.models.PrivateEndpoint
+    :ivar private_link_service_connection_state: A collection of information about the state of the
+     connection between service consumer and provider.
+    :vartype private_link_service_connection_state:
+     ~azure.mgmt.desktopvirtualization.models.PrivateLinkServiceConnectionState
+    :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
+     Known values are: "Succeeded", "Creating", "Deleting", and "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.desktopvirtualization.models.PrivateEndpointConnectionProvisioningState
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.desktopvirtualization.models.SystemData
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpoint"},
+        "private_link_service_connection_state": {
+            "key": "properties.privateLinkServiceConnectionState",
+            "type": "PrivateLinkServiceConnectionState",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(
+        self,
+        *,
+        private_endpoint: Optional["_models.PrivateEndpoint"] = None,
+        private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword private_endpoint: The resource of private end point.
+        :paramtype private_endpoint: ~azure.mgmt.desktopvirtualization.models.PrivateEndpoint
+        :keyword private_link_service_connection_state: A collection of information about the state of
+         the connection between service consumer and provider.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.desktopvirtualization.models.PrivateLinkServiceConnectionState
+        """
+        super().__init__(
+            private_endpoint=private_endpoint,
+            private_link_service_connection_state=private_link_service_connection_state,
+            **kwargs
+        )
+        self.system_data = None
+
+
+class PrivateLinkResource(Resource):
+    """A private link resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    :ivar required_zone_names: The private link resource Private link DNS zone name.
+    :vartype required_zone_names: list[str]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "group_id": {"readonly": True},
+        "required_members": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "group_id": {"key": "properties.groupId", "type": "str"},
+        "required_members": {"key": "properties.requiredMembers", "type": "[str]"},
+        "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
+    }
+
+    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword required_zone_names: The private link resource Private link DNS zone name.
+        :paramtype required_zone_names: list[str]
+        """
+        super().__init__(**kwargs)
+        self.group_id = None
+        self.required_members = None
+        self.required_zone_names = required_zone_names
+
+
+class PrivateLinkResourceListResult(_serialization.Model):
+    """A list of private link resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of private link resources.
+    :vartype value: list[~azure.mgmt.desktopvirtualization.models.PrivateLinkResource]
+    :ivar next_link: Link to the next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[PrivateLinkResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: Array of private link resources.
+        :paramtype value: list[~azure.mgmt.desktopvirtualization.models.PrivateLinkResource]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = None
+
+
+class PrivateLinkServiceConnectionState(_serialization.Model):
+    """A collection of information about the state of the connection between service consumer and
+    provider.
+
+    :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
+     of the service. Known values are: "Pending", "Approved", and "Rejected".
+    :vartype status: str or
+     ~azure.mgmt.desktopvirtualization.models.PrivateEndpointServiceConnectionStatus
+    :ivar description: The reason for approval/rejection of the connection.
+    :vartype description: str
+    :ivar actions_required: A message indicating if changes on the service provider require any
+     updates on the consumer.
+    :vartype actions_required: str
+    """
+
+    _attribute_map = {
+        "status": {"key": "status", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "actions_required": {"key": "actionsRequired", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "_models.PrivateEndpointServiceConnectionStatus"]] = None,
+        description: Optional[str] = None,
+        actions_required: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword status: Indicates whether the connection has been Approved/Rejected/Removed by the
+         owner of the service. Known values are: "Pending", "Approved", and "Rejected".
+        :paramtype status: str or
+         ~azure.mgmt.desktopvirtualization.models.PrivateEndpointServiceConnectionStatus
+        :keyword description: The reason for approval/rejection of the connection.
+        :paramtype description: str
+        :keyword actions_required: A message indicating if changes on the service provider require any
+         updates on the consumer.
+        :paramtype actions_required: str
+        """
+        super().__init__(**kwargs)
+        self.status = status
+        self.description = description
+        self.actions_required = actions_required
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
 
 
 class RegistrationInfo(_serialization.Model):
@@ -2957,6 +3360,625 @@ class ScalingPlanPatch(_serialization.Model):
         self.host_pool_references = host_pool_references
 
 
+class ScalingPlanPersonalSchedule(ProxyResource):  # pylint: disable=too-many-instance-attributes
+    """Represents a ScalingPlanPersonalSchedule definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.desktopvirtualization.models.SystemData
+    :ivar days_of_week: Set of days of the week on which this schedule is active.
+    :vartype days_of_week: list[str or ~azure.mgmt.desktopvirtualization.models.DayOfWeek]
+    :ivar ramp_up_start_time: Starting time for ramp up period.
+    :vartype ramp_up_start_time: ~azure.mgmt.desktopvirtualization.models.Time
+    :ivar ramp_up_auto_start_hosts: The desired startup behavior during the ramp up period for
+     personal vms in the hostpool. Known values are: "None", "WithAssignedUser", and "All".
+    :vartype ramp_up_auto_start_hosts: str or
+     ~azure.mgmt.desktopvirtualization.models.StartupBehavior
+    :ivar ramp_up_start_vm_on_connect: The desired configuration of Start VM On Connect for the
+     hostpool during the ramp up phase. If this is disabled, session hosts must be turned on using
+     rampUpAutoStartHosts or by turning them on manually. Known values are: "Enable" and "Disable".
+    :vartype ramp_up_start_vm_on_connect: str or
+     ~azure.mgmt.desktopvirtualization.models.SetStartVMOnConnect
+    :ivar ramp_up_action_on_disconnect: Action to be taken after a user disconnect during the ramp
+     up period. Known values are: "None", "Deallocate", and "Hibernate".
+    :vartype ramp_up_action_on_disconnect: str or
+     ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+    :ivar ramp_up_minutes_to_wait_on_disconnect: The time in minutes to wait before performing the
+     desired session handling action when a user disconnects during the ramp up period.
+    :vartype ramp_up_minutes_to_wait_on_disconnect: int
+    :ivar ramp_up_action_on_logoff: Action to be taken after a logoff during the ramp up period.
+     Known values are: "None", "Deallocate", and "Hibernate".
+    :vartype ramp_up_action_on_logoff: str or
+     ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+    :ivar ramp_up_minutes_to_wait_on_logoff: The time in minutes to wait before performing the
+     desired session handling action when a user logs off during the ramp up period.
+    :vartype ramp_up_minutes_to_wait_on_logoff: int
+    :ivar peak_start_time: Starting time for peak period.
+    :vartype peak_start_time: ~azure.mgmt.desktopvirtualization.models.Time
+    :ivar peak_start_vm_on_connect: The desired configuration of Start VM On Connect for the
+     hostpool during the peak phase. Known values are: "Enable" and "Disable".
+    :vartype peak_start_vm_on_connect: str or
+     ~azure.mgmt.desktopvirtualization.models.SetStartVMOnConnect
+    :ivar peak_action_on_disconnect: Action to be taken after a user disconnect during the peak
+     period. Known values are: "None", "Deallocate", and "Hibernate".
+    :vartype peak_action_on_disconnect: str or
+     ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+    :ivar peak_minutes_to_wait_on_disconnect: The time in minutes to wait before performing the
+     desired session handling action when a user disconnects during the peak period.
+    :vartype peak_minutes_to_wait_on_disconnect: int
+    :ivar peak_action_on_logoff: Action to be taken after a logoff during the peak period. Known
+     values are: "None", "Deallocate", and "Hibernate".
+    :vartype peak_action_on_logoff: str or
+     ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+    :ivar peak_minutes_to_wait_on_logoff: The time in minutes to wait before performing the desired
+     session handling action when a user logs off during the peak period.
+    :vartype peak_minutes_to_wait_on_logoff: int
+    :ivar ramp_down_start_time: Starting time for ramp down period.
+    :vartype ramp_down_start_time: ~azure.mgmt.desktopvirtualization.models.Time
+    :ivar ramp_down_start_vm_on_connect: The desired configuration of Start VM On Connect for the
+     hostpool during the ramp down phase. Known values are: "Enable" and "Disable".
+    :vartype ramp_down_start_vm_on_connect: str or
+     ~azure.mgmt.desktopvirtualization.models.SetStartVMOnConnect
+    :ivar ramp_down_action_on_disconnect: Action to be taken after a user disconnect during the
+     ramp down period. Known values are: "None", "Deallocate", and "Hibernate".
+    :vartype ramp_down_action_on_disconnect: str or
+     ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+    :ivar ramp_down_minutes_to_wait_on_disconnect: The time in minutes to wait before performing
+     the desired session handling action when a user disconnects during the ramp down period.
+    :vartype ramp_down_minutes_to_wait_on_disconnect: int
+    :ivar ramp_down_action_on_logoff: Action to be taken after a logoff during the ramp down
+     period. Known values are: "None", "Deallocate", and "Hibernate".
+    :vartype ramp_down_action_on_logoff: str or
+     ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+    :ivar ramp_down_minutes_to_wait_on_logoff: The time in minutes to wait before performing the
+     desired session handling action when a user logs off during the ramp down period.
+    :vartype ramp_down_minutes_to_wait_on_logoff: int
+    :ivar off_peak_start_time: Starting time for off-peak period.
+    :vartype off_peak_start_time: ~azure.mgmt.desktopvirtualization.models.Time
+    :ivar off_peak_start_vm_on_connect: The desired configuration of Start VM On Connect for the
+     hostpool during the off-peak phase. Known values are: "Enable" and "Disable".
+    :vartype off_peak_start_vm_on_connect: str or
+     ~azure.mgmt.desktopvirtualization.models.SetStartVMOnConnect
+    :ivar off_peak_action_on_disconnect: Action to be taken after a user disconnect during the
+     off-peak period. Known values are: "None", "Deallocate", and "Hibernate".
+    :vartype off_peak_action_on_disconnect: str or
+     ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+    :ivar off_peak_minutes_to_wait_on_disconnect: The time in minutes to wait before performing the
+     desired session handling action when a user disconnects during the off-peak period.
+    :vartype off_peak_minutes_to_wait_on_disconnect: int
+    :ivar off_peak_action_on_logoff: Action to be taken after a logoff during the off-peak period.
+     Known values are: "None", "Deallocate", and "Hibernate".
+    :vartype off_peak_action_on_logoff: str or
+     ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+    :ivar off_peak_minutes_to_wait_on_logoff: The time in minutes to wait before performing the
+     desired session handling action when a user logs off during the off-peak period.
+    :vartype off_peak_minutes_to_wait_on_logoff: int
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "ramp_up_minutes_to_wait_on_disconnect": {"minimum": 0},
+        "ramp_up_minutes_to_wait_on_logoff": {"minimum": 0},
+        "peak_minutes_to_wait_on_disconnect": {"minimum": 0},
+        "peak_minutes_to_wait_on_logoff": {"minimum": 0},
+        "ramp_down_minutes_to_wait_on_disconnect": {"minimum": 0},
+        "ramp_down_minutes_to_wait_on_logoff": {"minimum": 0},
+        "off_peak_minutes_to_wait_on_disconnect": {"minimum": 0},
+        "off_peak_minutes_to_wait_on_logoff": {"minimum": 0},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "days_of_week": {"key": "properties.daysOfWeek", "type": "[str]"},
+        "ramp_up_start_time": {"key": "properties.rampUpStartTime", "type": "Time"},
+        "ramp_up_auto_start_hosts": {"key": "properties.rampUpAutoStartHosts", "type": "str"},
+        "ramp_up_start_vm_on_connect": {"key": "properties.rampUpStartVMOnConnect", "type": "str"},
+        "ramp_up_action_on_disconnect": {"key": "properties.rampUpActionOnDisconnect", "type": "str"},
+        "ramp_up_minutes_to_wait_on_disconnect": {"key": "properties.rampUpMinutesToWaitOnDisconnect", "type": "int"},
+        "ramp_up_action_on_logoff": {"key": "properties.rampUpActionOnLogoff", "type": "str"},
+        "ramp_up_minutes_to_wait_on_logoff": {"key": "properties.rampUpMinutesToWaitOnLogoff", "type": "int"},
+        "peak_start_time": {"key": "properties.peakStartTime", "type": "Time"},
+        "peak_start_vm_on_connect": {"key": "properties.peakStartVMOnConnect", "type": "str"},
+        "peak_action_on_disconnect": {"key": "properties.peakActionOnDisconnect", "type": "str"},
+        "peak_minutes_to_wait_on_disconnect": {"key": "properties.peakMinutesToWaitOnDisconnect", "type": "int"},
+        "peak_action_on_logoff": {"key": "properties.peakActionOnLogoff", "type": "str"},
+        "peak_minutes_to_wait_on_logoff": {"key": "properties.peakMinutesToWaitOnLogoff", "type": "int"},
+        "ramp_down_start_time": {"key": "properties.rampDownStartTime", "type": "Time"},
+        "ramp_down_start_vm_on_connect": {"key": "properties.rampDownStartVMOnConnect", "type": "str"},
+        "ramp_down_action_on_disconnect": {"key": "properties.rampDownActionOnDisconnect", "type": "str"},
+        "ramp_down_minutes_to_wait_on_disconnect": {
+            "key": "properties.rampDownMinutesToWaitOnDisconnect",
+            "type": "int",
+        },
+        "ramp_down_action_on_logoff": {"key": "properties.rampDownActionOnLogoff", "type": "str"},
+        "ramp_down_minutes_to_wait_on_logoff": {"key": "properties.rampDownMinutesToWaitOnLogoff", "type": "int"},
+        "off_peak_start_time": {"key": "properties.offPeakStartTime", "type": "Time"},
+        "off_peak_start_vm_on_connect": {"key": "properties.offPeakStartVMOnConnect", "type": "str"},
+        "off_peak_action_on_disconnect": {"key": "properties.offPeakActionOnDisconnect", "type": "str"},
+        "off_peak_minutes_to_wait_on_disconnect": {"key": "properties.offPeakMinutesToWaitOnDisconnect", "type": "int"},
+        "off_peak_action_on_logoff": {"key": "properties.offPeakActionOnLogoff", "type": "str"},
+        "off_peak_minutes_to_wait_on_logoff": {"key": "properties.offPeakMinutesToWaitOnLogoff", "type": "int"},
+    }
+
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        days_of_week: Optional[List[Union[str, "_models.DayOfWeek"]]] = None,
+        ramp_up_start_time: Optional["_models.Time"] = None,
+        ramp_up_auto_start_hosts: Optional[Union[str, "_models.StartupBehavior"]] = None,
+        ramp_up_start_vm_on_connect: Optional[Union[str, "_models.SetStartVMOnConnect"]] = None,
+        ramp_up_action_on_disconnect: Optional[Union[str, "_models.SessionHandlingOperation"]] = None,
+        ramp_up_minutes_to_wait_on_disconnect: Optional[int] = None,
+        ramp_up_action_on_logoff: Optional[Union[str, "_models.SessionHandlingOperation"]] = None,
+        ramp_up_minutes_to_wait_on_logoff: Optional[int] = None,
+        peak_start_time: Optional["_models.Time"] = None,
+        peak_start_vm_on_connect: Optional[Union[str, "_models.SetStartVMOnConnect"]] = None,
+        peak_action_on_disconnect: Optional[Union[str, "_models.SessionHandlingOperation"]] = None,
+        peak_minutes_to_wait_on_disconnect: Optional[int] = None,
+        peak_action_on_logoff: Optional[Union[str, "_models.SessionHandlingOperation"]] = None,
+        peak_minutes_to_wait_on_logoff: Optional[int] = None,
+        ramp_down_start_time: Optional["_models.Time"] = None,
+        ramp_down_start_vm_on_connect: Optional[Union[str, "_models.SetStartVMOnConnect"]] = None,
+        ramp_down_action_on_disconnect: Optional[Union[str, "_models.SessionHandlingOperation"]] = None,
+        ramp_down_minutes_to_wait_on_disconnect: Optional[int] = None,
+        ramp_down_action_on_logoff: Optional[Union[str, "_models.SessionHandlingOperation"]] = None,
+        ramp_down_minutes_to_wait_on_logoff: Optional[int] = None,
+        off_peak_start_time: Optional["_models.Time"] = None,
+        off_peak_start_vm_on_connect: Optional[Union[str, "_models.SetStartVMOnConnect"]] = None,
+        off_peak_action_on_disconnect: Optional[Union[str, "_models.SessionHandlingOperation"]] = None,
+        off_peak_minutes_to_wait_on_disconnect: Optional[int] = None,
+        off_peak_action_on_logoff: Optional[Union[str, "_models.SessionHandlingOperation"]] = None,
+        off_peak_minutes_to_wait_on_logoff: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword days_of_week: Set of days of the week on which this schedule is active.
+        :paramtype days_of_week: list[str or ~azure.mgmt.desktopvirtualization.models.DayOfWeek]
+        :keyword ramp_up_start_time: Starting time for ramp up period.
+        :paramtype ramp_up_start_time: ~azure.mgmt.desktopvirtualization.models.Time
+        :keyword ramp_up_auto_start_hosts: The desired startup behavior during the ramp up period for
+         personal vms in the hostpool. Known values are: "None", "WithAssignedUser", and "All".
+        :paramtype ramp_up_auto_start_hosts: str or
+         ~azure.mgmt.desktopvirtualization.models.StartupBehavior
+        :keyword ramp_up_start_vm_on_connect: The desired configuration of Start VM On Connect for the
+         hostpool during the ramp up phase. If this is disabled, session hosts must be turned on using
+         rampUpAutoStartHosts or by turning them on manually. Known values are: "Enable" and "Disable".
+        :paramtype ramp_up_start_vm_on_connect: str or
+         ~azure.mgmt.desktopvirtualization.models.SetStartVMOnConnect
+        :keyword ramp_up_action_on_disconnect: Action to be taken after a user disconnect during the
+         ramp up period. Known values are: "None", "Deallocate", and "Hibernate".
+        :paramtype ramp_up_action_on_disconnect: str or
+         ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+        :keyword ramp_up_minutes_to_wait_on_disconnect: The time in minutes to wait before performing
+         the desired session handling action when a user disconnects during the ramp up period.
+        :paramtype ramp_up_minutes_to_wait_on_disconnect: int
+        :keyword ramp_up_action_on_logoff: Action to be taken after a logoff during the ramp up period.
+         Known values are: "None", "Deallocate", and "Hibernate".
+        :paramtype ramp_up_action_on_logoff: str or
+         ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+        :keyword ramp_up_minutes_to_wait_on_logoff: The time in minutes to wait before performing the
+         desired session handling action when a user logs off during the ramp up period.
+        :paramtype ramp_up_minutes_to_wait_on_logoff: int
+        :keyword peak_start_time: Starting time for peak period.
+        :paramtype peak_start_time: ~azure.mgmt.desktopvirtualization.models.Time
+        :keyword peak_start_vm_on_connect: The desired configuration of Start VM On Connect for the
+         hostpool during the peak phase. Known values are: "Enable" and "Disable".
+        :paramtype peak_start_vm_on_connect: str or
+         ~azure.mgmt.desktopvirtualization.models.SetStartVMOnConnect
+        :keyword peak_action_on_disconnect: Action to be taken after a user disconnect during the peak
+         period. Known values are: "None", "Deallocate", and "Hibernate".
+        :paramtype peak_action_on_disconnect: str or
+         ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+        :keyword peak_minutes_to_wait_on_disconnect: The time in minutes to wait before performing the
+         desired session handling action when a user disconnects during the peak period.
+        :paramtype peak_minutes_to_wait_on_disconnect: int
+        :keyword peak_action_on_logoff: Action to be taken after a logoff during the peak period. Known
+         values are: "None", "Deallocate", and "Hibernate".
+        :paramtype peak_action_on_logoff: str or
+         ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+        :keyword peak_minutes_to_wait_on_logoff: The time in minutes to wait before performing the
+         desired session handling action when a user logs off during the peak period.
+        :paramtype peak_minutes_to_wait_on_logoff: int
+        :keyword ramp_down_start_time: Starting time for ramp down period.
+        :paramtype ramp_down_start_time: ~azure.mgmt.desktopvirtualization.models.Time
+        :keyword ramp_down_start_vm_on_connect: The desired configuration of Start VM On Connect for
+         the hostpool during the ramp down phase. Known values are: "Enable" and "Disable".
+        :paramtype ramp_down_start_vm_on_connect: str or
+         ~azure.mgmt.desktopvirtualization.models.SetStartVMOnConnect
+        :keyword ramp_down_action_on_disconnect: Action to be taken after a user disconnect during the
+         ramp down period. Known values are: "None", "Deallocate", and "Hibernate".
+        :paramtype ramp_down_action_on_disconnect: str or
+         ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+        :keyword ramp_down_minutes_to_wait_on_disconnect: The time in minutes to wait before performing
+         the desired session handling action when a user disconnects during the ramp down period.
+        :paramtype ramp_down_minutes_to_wait_on_disconnect: int
+        :keyword ramp_down_action_on_logoff: Action to be taken after a logoff during the ramp down
+         period. Known values are: "None", "Deallocate", and "Hibernate".
+        :paramtype ramp_down_action_on_logoff: str or
+         ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+        :keyword ramp_down_minutes_to_wait_on_logoff: The time in minutes to wait before performing the
+         desired session handling action when a user logs off during the ramp down period.
+        :paramtype ramp_down_minutes_to_wait_on_logoff: int
+        :keyword off_peak_start_time: Starting time for off-peak period.
+        :paramtype off_peak_start_time: ~azure.mgmt.desktopvirtualization.models.Time
+        :keyword off_peak_start_vm_on_connect: The desired configuration of Start VM On Connect for the
+         hostpool during the off-peak phase. Known values are: "Enable" and "Disable".
+        :paramtype off_peak_start_vm_on_connect: str or
+         ~azure.mgmt.desktopvirtualization.models.SetStartVMOnConnect
+        :keyword off_peak_action_on_disconnect: Action to be taken after a user disconnect during the
+         off-peak period. Known values are: "None", "Deallocate", and "Hibernate".
+        :paramtype off_peak_action_on_disconnect: str or
+         ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+        :keyword off_peak_minutes_to_wait_on_disconnect: The time in minutes to wait before performing
+         the desired session handling action when a user disconnects during the off-peak period.
+        :paramtype off_peak_minutes_to_wait_on_disconnect: int
+        :keyword off_peak_action_on_logoff: Action to be taken after a logoff during the off-peak
+         period. Known values are: "None", "Deallocate", and "Hibernate".
+        :paramtype off_peak_action_on_logoff: str or
+         ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+        :keyword off_peak_minutes_to_wait_on_logoff: The time in minutes to wait before performing the
+         desired session handling action when a user logs off during the off-peak period.
+        :paramtype off_peak_minutes_to_wait_on_logoff: int
+        """
+        super().__init__(**kwargs)
+        self.system_data = None
+        self.days_of_week = days_of_week
+        self.ramp_up_start_time = ramp_up_start_time
+        self.ramp_up_auto_start_hosts = ramp_up_auto_start_hosts
+        self.ramp_up_start_vm_on_connect = ramp_up_start_vm_on_connect
+        self.ramp_up_action_on_disconnect = ramp_up_action_on_disconnect
+        self.ramp_up_minutes_to_wait_on_disconnect = ramp_up_minutes_to_wait_on_disconnect
+        self.ramp_up_action_on_logoff = ramp_up_action_on_logoff
+        self.ramp_up_minutes_to_wait_on_logoff = ramp_up_minutes_to_wait_on_logoff
+        self.peak_start_time = peak_start_time
+        self.peak_start_vm_on_connect = peak_start_vm_on_connect
+        self.peak_action_on_disconnect = peak_action_on_disconnect
+        self.peak_minutes_to_wait_on_disconnect = peak_minutes_to_wait_on_disconnect
+        self.peak_action_on_logoff = peak_action_on_logoff
+        self.peak_minutes_to_wait_on_logoff = peak_minutes_to_wait_on_logoff
+        self.ramp_down_start_time = ramp_down_start_time
+        self.ramp_down_start_vm_on_connect = ramp_down_start_vm_on_connect
+        self.ramp_down_action_on_disconnect = ramp_down_action_on_disconnect
+        self.ramp_down_minutes_to_wait_on_disconnect = ramp_down_minutes_to_wait_on_disconnect
+        self.ramp_down_action_on_logoff = ramp_down_action_on_logoff
+        self.ramp_down_minutes_to_wait_on_logoff = ramp_down_minutes_to_wait_on_logoff
+        self.off_peak_start_time = off_peak_start_time
+        self.off_peak_start_vm_on_connect = off_peak_start_vm_on_connect
+        self.off_peak_action_on_disconnect = off_peak_action_on_disconnect
+        self.off_peak_minutes_to_wait_on_disconnect = off_peak_minutes_to_wait_on_disconnect
+        self.off_peak_action_on_logoff = off_peak_action_on_logoff
+        self.off_peak_minutes_to_wait_on_logoff = off_peak_minutes_to_wait_on_logoff
+
+
+class ScalingPlanPersonalScheduleList(_serialization.Model):
+    """List of ScalingPlanPersonalSchedule definitions.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of ScalingPlanPersonalSchedule definitions.
+    :vartype value: list[~azure.mgmt.desktopvirtualization.models.ScalingPlanPersonalSchedule]
+    :ivar next_link: Link to the next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ScalingPlanPersonalSchedule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[List["_models.ScalingPlanPersonalSchedule"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: List of ScalingPlanPersonalSchedule definitions.
+        :paramtype value: list[~azure.mgmt.desktopvirtualization.models.ScalingPlanPersonalSchedule]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = None
+
+
+class ScalingPlanPersonalSchedulePatch(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+    """ScalingPlanPersonalSchedule properties that can be patched.
+
+    :ivar days_of_week: Set of days of the week on which this schedule is active.
+    :vartype days_of_week: list[str or ~azure.mgmt.desktopvirtualization.models.DayOfWeek]
+    :ivar ramp_up_start_time: Starting time for ramp up period.
+    :vartype ramp_up_start_time: ~azure.mgmt.desktopvirtualization.models.Time
+    :ivar ramp_up_auto_start_hosts: The desired startup behavior during the ramp up period for
+     personal vms in the hostpool. Known values are: "None", "WithAssignedUser", and "All".
+    :vartype ramp_up_auto_start_hosts: str or
+     ~azure.mgmt.desktopvirtualization.models.StartupBehavior
+    :ivar ramp_up_start_vm_on_connect: The desired configuration of Start VM On Connect for the
+     hostpool during the ramp up phase. If this is disabled, session hosts must be turned on using
+     rampUpAutoStartHosts or by turning them on manually. Known values are: "Enable" and "Disable".
+    :vartype ramp_up_start_vm_on_connect: str or
+     ~azure.mgmt.desktopvirtualization.models.SetStartVMOnConnect
+    :ivar ramp_up_action_on_disconnect: Action to be taken after a user disconnect during the ramp
+     up period. Known values are: "None", "Deallocate", and "Hibernate".
+    :vartype ramp_up_action_on_disconnect: str or
+     ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+    :ivar ramp_up_minutes_to_wait_on_disconnect: The time in minutes to wait before performing the
+     desired session handling action when a user disconnects during the ramp up period.
+    :vartype ramp_up_minutes_to_wait_on_disconnect: int
+    :ivar ramp_up_action_on_logoff: Action to be taken after a logoff during the ramp up period.
+     Known values are: "None", "Deallocate", and "Hibernate".
+    :vartype ramp_up_action_on_logoff: str or
+     ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+    :ivar ramp_up_minutes_to_wait_on_logoff: The time in minutes to wait before performing the
+     desired session handling action when a user logs off during the ramp up period.
+    :vartype ramp_up_minutes_to_wait_on_logoff: int
+    :ivar peak_start_time: Starting time for peak period.
+    :vartype peak_start_time: ~azure.mgmt.desktopvirtualization.models.Time
+    :ivar peak_start_vm_on_connect: The desired configuration of Start VM On Connect for the
+     hostpool during the peak phase. Known values are: "Enable" and "Disable".
+    :vartype peak_start_vm_on_connect: str or
+     ~azure.mgmt.desktopvirtualization.models.SetStartVMOnConnect
+    :ivar peak_action_on_disconnect: Action to be taken after a user disconnect during the peak
+     period. Known values are: "None", "Deallocate", and "Hibernate".
+    :vartype peak_action_on_disconnect: str or
+     ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+    :ivar peak_minutes_to_wait_on_disconnect: The time in minutes to wait before performing the
+     desired session handling action when a user disconnects during the peak period.
+    :vartype peak_minutes_to_wait_on_disconnect: int
+    :ivar peak_action_on_logoff: Action to be taken after a logoff during the peak period. Known
+     values are: "None", "Deallocate", and "Hibernate".
+    :vartype peak_action_on_logoff: str or
+     ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+    :ivar peak_minutes_to_wait_on_logoff: The time in minutes to wait before performing the desired
+     session handling action when a user logs off during the peak period.
+    :vartype peak_minutes_to_wait_on_logoff: int
+    :ivar ramp_down_start_time: Starting time for ramp down period.
+    :vartype ramp_down_start_time: ~azure.mgmt.desktopvirtualization.models.Time
+    :ivar ramp_down_start_vm_on_connect: The desired configuration of Start VM On Connect for the
+     hostpool during the ramp down phase. Known values are: "Enable" and "Disable".
+    :vartype ramp_down_start_vm_on_connect: str or
+     ~azure.mgmt.desktopvirtualization.models.SetStartVMOnConnect
+    :ivar ramp_down_action_on_disconnect: Action to be taken after a user disconnect during the
+     ramp down period. Known values are: "None", "Deallocate", and "Hibernate".
+    :vartype ramp_down_action_on_disconnect: str or
+     ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+    :ivar ramp_down_minutes_to_wait_on_disconnect: The time in minutes to wait before performing
+     the desired session handling action when a user disconnects during the ramp down period.
+    :vartype ramp_down_minutes_to_wait_on_disconnect: int
+    :ivar ramp_down_action_on_logoff: Action to be taken after a logoff during the ramp down
+     period. Known values are: "None", "Deallocate", and "Hibernate".
+    :vartype ramp_down_action_on_logoff: str or
+     ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+    :ivar ramp_down_minutes_to_wait_on_logoff: The time in minutes to wait before performing the
+     desired session handling action when a user logs off during the ramp down period.
+    :vartype ramp_down_minutes_to_wait_on_logoff: int
+    :ivar off_peak_start_time: Starting time for off-peak period.
+    :vartype off_peak_start_time: ~azure.mgmt.desktopvirtualization.models.Time
+    :ivar off_peak_start_vm_on_connect: The desired configuration of Start VM On Connect for the
+     hostpool during the off-peak phase. Known values are: "Enable" and "Disable".
+    :vartype off_peak_start_vm_on_connect: str or
+     ~azure.mgmt.desktopvirtualization.models.SetStartVMOnConnect
+    :ivar off_peak_action_on_disconnect: Action to be taken after a user disconnect during the
+     off-peak period. Known values are: "None", "Deallocate", and "Hibernate".
+    :vartype off_peak_action_on_disconnect: str or
+     ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+    :ivar off_peak_minutes_to_wait_on_disconnect: The time in minutes to wait before performing the
+     desired session handling action when a user disconnects during the off-peak period.
+    :vartype off_peak_minutes_to_wait_on_disconnect: int
+    :ivar off_peak_action_on_logoff: Action to be taken after a logoff during the off-peak period.
+     Known values are: "None", "Deallocate", and "Hibernate".
+    :vartype off_peak_action_on_logoff: str or
+     ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+    :ivar off_peak_minutes_to_wait_on_logoff: The time in minutes to wait before performing the
+     desired session handling action when a user logs off during the off-peak period.
+    :vartype off_peak_minutes_to_wait_on_logoff: int
+    """
+
+    _validation = {
+        "ramp_up_minutes_to_wait_on_disconnect": {"minimum": 0},
+        "ramp_up_minutes_to_wait_on_logoff": {"minimum": 0},
+        "peak_minutes_to_wait_on_disconnect": {"minimum": 0},
+        "peak_minutes_to_wait_on_logoff": {"minimum": 0},
+        "ramp_down_minutes_to_wait_on_disconnect": {"minimum": 0},
+        "ramp_down_minutes_to_wait_on_logoff": {"minimum": 0},
+        "off_peak_minutes_to_wait_on_disconnect": {"minimum": 0},
+        "off_peak_minutes_to_wait_on_logoff": {"minimum": 0},
+    }
+
+    _attribute_map = {
+        "days_of_week": {"key": "properties.daysOfWeek", "type": "[str]"},
+        "ramp_up_start_time": {"key": "properties.rampUpStartTime", "type": "Time"},
+        "ramp_up_auto_start_hosts": {"key": "properties.rampUpAutoStartHosts", "type": "str"},
+        "ramp_up_start_vm_on_connect": {"key": "properties.rampUpStartVMOnConnect", "type": "str"},
+        "ramp_up_action_on_disconnect": {"key": "properties.rampUpActionOnDisconnect", "type": "str"},
+        "ramp_up_minutes_to_wait_on_disconnect": {"key": "properties.rampUpMinutesToWaitOnDisconnect", "type": "int"},
+        "ramp_up_action_on_logoff": {"key": "properties.rampUpActionOnLogoff", "type": "str"},
+        "ramp_up_minutes_to_wait_on_logoff": {"key": "properties.rampUpMinutesToWaitOnLogoff", "type": "int"},
+        "peak_start_time": {"key": "properties.peakStartTime", "type": "Time"},
+        "peak_start_vm_on_connect": {"key": "properties.peakStartVMOnConnect", "type": "str"},
+        "peak_action_on_disconnect": {"key": "properties.peakActionOnDisconnect", "type": "str"},
+        "peak_minutes_to_wait_on_disconnect": {"key": "properties.peakMinutesToWaitOnDisconnect", "type": "int"},
+        "peak_action_on_logoff": {"key": "properties.peakActionOnLogoff", "type": "str"},
+        "peak_minutes_to_wait_on_logoff": {"key": "properties.peakMinutesToWaitOnLogoff", "type": "int"},
+        "ramp_down_start_time": {"key": "properties.rampDownStartTime", "type": "Time"},
+        "ramp_down_start_vm_on_connect": {"key": "properties.rampDownStartVMOnConnect", "type": "str"},
+        "ramp_down_action_on_disconnect": {"key": "properties.rampDownActionOnDisconnect", "type": "str"},
+        "ramp_down_minutes_to_wait_on_disconnect": {
+            "key": "properties.rampDownMinutesToWaitOnDisconnect",
+            "type": "int",
+        },
+        "ramp_down_action_on_logoff": {"key": "properties.rampDownActionOnLogoff", "type": "str"},
+        "ramp_down_minutes_to_wait_on_logoff": {"key": "properties.rampDownMinutesToWaitOnLogoff", "type": "int"},
+        "off_peak_start_time": {"key": "properties.offPeakStartTime", "type": "Time"},
+        "off_peak_start_vm_on_connect": {"key": "properties.offPeakStartVMOnConnect", "type": "str"},
+        "off_peak_action_on_disconnect": {"key": "properties.offPeakActionOnDisconnect", "type": "str"},
+        "off_peak_minutes_to_wait_on_disconnect": {"key": "properties.offPeakMinutesToWaitOnDisconnect", "type": "int"},
+        "off_peak_action_on_logoff": {"key": "properties.offPeakActionOnLogoff", "type": "str"},
+        "off_peak_minutes_to_wait_on_logoff": {"key": "properties.offPeakMinutesToWaitOnLogoff", "type": "int"},
+    }
+
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        days_of_week: Optional[List[Union[str, "_models.DayOfWeek"]]] = None,
+        ramp_up_start_time: Optional["_models.Time"] = None,
+        ramp_up_auto_start_hosts: Optional[Union[str, "_models.StartupBehavior"]] = None,
+        ramp_up_start_vm_on_connect: Optional[Union[str, "_models.SetStartVMOnConnect"]] = None,
+        ramp_up_action_on_disconnect: Optional[Union[str, "_models.SessionHandlingOperation"]] = None,
+        ramp_up_minutes_to_wait_on_disconnect: Optional[int] = None,
+        ramp_up_action_on_logoff: Optional[Union[str, "_models.SessionHandlingOperation"]] = None,
+        ramp_up_minutes_to_wait_on_logoff: Optional[int] = None,
+        peak_start_time: Optional["_models.Time"] = None,
+        peak_start_vm_on_connect: Optional[Union[str, "_models.SetStartVMOnConnect"]] = None,
+        peak_action_on_disconnect: Optional[Union[str, "_models.SessionHandlingOperation"]] = None,
+        peak_minutes_to_wait_on_disconnect: Optional[int] = None,
+        peak_action_on_logoff: Optional[Union[str, "_models.SessionHandlingOperation"]] = None,
+        peak_minutes_to_wait_on_logoff: Optional[int] = None,
+        ramp_down_start_time: Optional["_models.Time"] = None,
+        ramp_down_start_vm_on_connect: Optional[Union[str, "_models.SetStartVMOnConnect"]] = None,
+        ramp_down_action_on_disconnect: Optional[Union[str, "_models.SessionHandlingOperation"]] = None,
+        ramp_down_minutes_to_wait_on_disconnect: Optional[int] = None,
+        ramp_down_action_on_logoff: Optional[Union[str, "_models.SessionHandlingOperation"]] = None,
+        ramp_down_minutes_to_wait_on_logoff: Optional[int] = None,
+        off_peak_start_time: Optional["_models.Time"] = None,
+        off_peak_start_vm_on_connect: Optional[Union[str, "_models.SetStartVMOnConnect"]] = None,
+        off_peak_action_on_disconnect: Optional[Union[str, "_models.SessionHandlingOperation"]] = None,
+        off_peak_minutes_to_wait_on_disconnect: Optional[int] = None,
+        off_peak_action_on_logoff: Optional[Union[str, "_models.SessionHandlingOperation"]] = None,
+        off_peak_minutes_to_wait_on_logoff: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword days_of_week: Set of days of the week on which this schedule is active.
+        :paramtype days_of_week: list[str or ~azure.mgmt.desktopvirtualization.models.DayOfWeek]
+        :keyword ramp_up_start_time: Starting time for ramp up period.
+        :paramtype ramp_up_start_time: ~azure.mgmt.desktopvirtualization.models.Time
+        :keyword ramp_up_auto_start_hosts: The desired startup behavior during the ramp up period for
+         personal vms in the hostpool. Known values are: "None", "WithAssignedUser", and "All".
+        :paramtype ramp_up_auto_start_hosts: str or
+         ~azure.mgmt.desktopvirtualization.models.StartupBehavior
+        :keyword ramp_up_start_vm_on_connect: The desired configuration of Start VM On Connect for the
+         hostpool during the ramp up phase. If this is disabled, session hosts must be turned on using
+         rampUpAutoStartHosts or by turning them on manually. Known values are: "Enable" and "Disable".
+        :paramtype ramp_up_start_vm_on_connect: str or
+         ~azure.mgmt.desktopvirtualization.models.SetStartVMOnConnect
+        :keyword ramp_up_action_on_disconnect: Action to be taken after a user disconnect during the
+         ramp up period. Known values are: "None", "Deallocate", and "Hibernate".
+        :paramtype ramp_up_action_on_disconnect: str or
+         ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+        :keyword ramp_up_minutes_to_wait_on_disconnect: The time in minutes to wait before performing
+         the desired session handling action when a user disconnects during the ramp up period.
+        :paramtype ramp_up_minutes_to_wait_on_disconnect: int
+        :keyword ramp_up_action_on_logoff: Action to be taken after a logoff during the ramp up period.
+         Known values are: "None", "Deallocate", and "Hibernate".
+        :paramtype ramp_up_action_on_logoff: str or
+         ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+        :keyword ramp_up_minutes_to_wait_on_logoff: The time in minutes to wait before performing the
+         desired session handling action when a user logs off during the ramp up period.
+        :paramtype ramp_up_minutes_to_wait_on_logoff: int
+        :keyword peak_start_time: Starting time for peak period.
+        :paramtype peak_start_time: ~azure.mgmt.desktopvirtualization.models.Time
+        :keyword peak_start_vm_on_connect: The desired configuration of Start VM On Connect for the
+         hostpool during the peak phase. Known values are: "Enable" and "Disable".
+        :paramtype peak_start_vm_on_connect: str or
+         ~azure.mgmt.desktopvirtualization.models.SetStartVMOnConnect
+        :keyword peak_action_on_disconnect: Action to be taken after a user disconnect during the peak
+         period. Known values are: "None", "Deallocate", and "Hibernate".
+        :paramtype peak_action_on_disconnect: str or
+         ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+        :keyword peak_minutes_to_wait_on_disconnect: The time in minutes to wait before performing the
+         desired session handling action when a user disconnects during the peak period.
+        :paramtype peak_minutes_to_wait_on_disconnect: int
+        :keyword peak_action_on_logoff: Action to be taken after a logoff during the peak period. Known
+         values are: "None", "Deallocate", and "Hibernate".
+        :paramtype peak_action_on_logoff: str or
+         ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+        :keyword peak_minutes_to_wait_on_logoff: The time in minutes to wait before performing the
+         desired session handling action when a user logs off during the peak period.
+        :paramtype peak_minutes_to_wait_on_logoff: int
+        :keyword ramp_down_start_time: Starting time for ramp down period.
+        :paramtype ramp_down_start_time: ~azure.mgmt.desktopvirtualization.models.Time
+        :keyword ramp_down_start_vm_on_connect: The desired configuration of Start VM On Connect for
+         the hostpool during the ramp down phase. Known values are: "Enable" and "Disable".
+        :paramtype ramp_down_start_vm_on_connect: str or
+         ~azure.mgmt.desktopvirtualization.models.SetStartVMOnConnect
+        :keyword ramp_down_action_on_disconnect: Action to be taken after a user disconnect during the
+         ramp down period. Known values are: "None", "Deallocate", and "Hibernate".
+        :paramtype ramp_down_action_on_disconnect: str or
+         ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+        :keyword ramp_down_minutes_to_wait_on_disconnect: The time in minutes to wait before performing
+         the desired session handling action when a user disconnects during the ramp down period.
+        :paramtype ramp_down_minutes_to_wait_on_disconnect: int
+        :keyword ramp_down_action_on_logoff: Action to be taken after a logoff during the ramp down
+         period. Known values are: "None", "Deallocate", and "Hibernate".
+        :paramtype ramp_down_action_on_logoff: str or
+         ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+        :keyword ramp_down_minutes_to_wait_on_logoff: The time in minutes to wait before performing the
+         desired session handling action when a user logs off during the ramp down period.
+        :paramtype ramp_down_minutes_to_wait_on_logoff: int
+        :keyword off_peak_start_time: Starting time for off-peak period.
+        :paramtype off_peak_start_time: ~azure.mgmt.desktopvirtualization.models.Time
+        :keyword off_peak_start_vm_on_connect: The desired configuration of Start VM On Connect for the
+         hostpool during the off-peak phase. Known values are: "Enable" and "Disable".
+        :paramtype off_peak_start_vm_on_connect: str or
+         ~azure.mgmt.desktopvirtualization.models.SetStartVMOnConnect
+        :keyword off_peak_action_on_disconnect: Action to be taken after a user disconnect during the
+         off-peak period. Known values are: "None", "Deallocate", and "Hibernate".
+        :paramtype off_peak_action_on_disconnect: str or
+         ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+        :keyword off_peak_minutes_to_wait_on_disconnect: The time in minutes to wait before performing
+         the desired session handling action when a user disconnects during the off-peak period.
+        :paramtype off_peak_minutes_to_wait_on_disconnect: int
+        :keyword off_peak_action_on_logoff: Action to be taken after a logoff during the off-peak
+         period. Known values are: "None", "Deallocate", and "Hibernate".
+        :paramtype off_peak_action_on_logoff: str or
+         ~azure.mgmt.desktopvirtualization.models.SessionHandlingOperation
+        :keyword off_peak_minutes_to_wait_on_logoff: The time in minutes to wait before performing the
+         desired session handling action when a user logs off during the off-peak period.
+        :paramtype off_peak_minutes_to_wait_on_logoff: int
+        """
+        super().__init__(**kwargs)
+        self.days_of_week = days_of_week
+        self.ramp_up_start_time = ramp_up_start_time
+        self.ramp_up_auto_start_hosts = ramp_up_auto_start_hosts
+        self.ramp_up_start_vm_on_connect = ramp_up_start_vm_on_connect
+        self.ramp_up_action_on_disconnect = ramp_up_action_on_disconnect
+        self.ramp_up_minutes_to_wait_on_disconnect = ramp_up_minutes_to_wait_on_disconnect
+        self.ramp_up_action_on_logoff = ramp_up_action_on_logoff
+        self.ramp_up_minutes_to_wait_on_logoff = ramp_up_minutes_to_wait_on_logoff
+        self.peak_start_time = peak_start_time
+        self.peak_start_vm_on_connect = peak_start_vm_on_connect
+        self.peak_action_on_disconnect = peak_action_on_disconnect
+        self.peak_minutes_to_wait_on_disconnect = peak_minutes_to_wait_on_disconnect
+        self.peak_action_on_logoff = peak_action_on_logoff
+        self.peak_minutes_to_wait_on_logoff = peak_minutes_to_wait_on_logoff
+        self.ramp_down_start_time = ramp_down_start_time
+        self.ramp_down_start_vm_on_connect = ramp_down_start_vm_on_connect
+        self.ramp_down_action_on_disconnect = ramp_down_action_on_disconnect
+        self.ramp_down_minutes_to_wait_on_disconnect = ramp_down_minutes_to_wait_on_disconnect
+        self.ramp_down_action_on_logoff = ramp_down_action_on_logoff
+        self.ramp_down_minutes_to_wait_on_logoff = ramp_down_minutes_to_wait_on_logoff
+        self.off_peak_start_time = off_peak_start_time
+        self.off_peak_start_vm_on_connect = off_peak_start_vm_on_connect
+        self.off_peak_action_on_disconnect = off_peak_action_on_disconnect
+        self.off_peak_minutes_to_wait_on_disconnect = off_peak_minutes_to_wait_on_disconnect
+        self.off_peak_action_on_logoff = off_peak_action_on_logoff
+        self.off_peak_minutes_to_wait_on_logoff = off_peak_minutes_to_wait_on_logoff
+
+
 class ScalingPlanPooledSchedule(Resource):  # pylint: disable=too-many-instance-attributes
     """Represents a ScalingPlanPooledSchedule definition.
 
@@ -3027,7 +4049,7 @@ class ScalingPlanPooledSchedule(Resource):  # pylint: disable=too-many-instance-
         "ramp_up_minimum_hosts_pct": {"maximum": 100, "minimum": 0},
         "ramp_up_capacity_threshold_pct": {"maximum": 100, "minimum": 1},
         "ramp_down_minimum_hosts_pct": {"maximum": 100, "minimum": 0},
-        "ramp_down_capacity_threshold_pct": {"maximum": 100, "minimum": 0},
+        "ramp_down_capacity_threshold_pct": {"maximum": 100, "minimum": 1},
     }
 
     _attribute_map = {
@@ -3242,7 +4264,7 @@ class ScalingPlanPooledSchedulePatch(Resource):  # pylint: disable=too-many-inst
         "ramp_up_minimum_hosts_pct": {"maximum": 100, "minimum": 0},
         "ramp_up_capacity_threshold_pct": {"maximum": 100, "minimum": 1},
         "ramp_down_minimum_hosts_pct": {"maximum": 100, "minimum": 0},
-        "ramp_down_capacity_threshold_pct": {"maximum": 100, "minimum": 0},
+        "ramp_down_capacity_threshold_pct": {"maximum": 100, "minimum": 1},
     }
 
     _attribute_map = {
@@ -3415,7 +4437,7 @@ class ScalingSchedule(_serialization.Model):  # pylint: disable=too-many-instanc
         "ramp_up_minimum_hosts_pct": {"maximum": 100, "minimum": 0},
         "ramp_up_capacity_threshold_pct": {"maximum": 100, "minimum": 1},
         "ramp_down_minimum_hosts_pct": {"maximum": 100, "minimum": 0},
-        "ramp_down_capacity_threshold_pct": {"maximum": 100, "minimum": 0},
+        "ramp_down_capacity_threshold_pct": {"maximum": 100, "minimum": 1},
     }
 
     _attribute_map = {
@@ -4272,6 +5294,15 @@ class Workspace(ResourceModelWithAllowedPropertySet):  # pylint: disable=too-man
     :vartype application_group_references: list[str]
     :ivar cloud_pc_resource: Is cloud pc resource.
     :vartype cloud_pc_resource: bool
+    :ivar public_network_access: Enabled allows this resource to be accessed from both public and
+     private networks, Disabled allows this resource to only be accessed via private endpoints.
+     Known values are: "Enabled" and "Disabled".
+    :vartype public_network_access: str or
+     ~azure.mgmt.desktopvirtualization.models.PublicNetworkAccess
+    :ivar private_endpoint_connections: List of private endpoint connection associated with the
+     specified resource.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.desktopvirtualization.models.PrivateEndpointConnection]
     """
 
     _validation = {
@@ -4283,6 +5314,7 @@ class Workspace(ResourceModelWithAllowedPropertySet):  # pylint: disable=too-man
         "system_data": {"readonly": True},
         "object_id": {"readonly": True},
         "cloud_pc_resource": {"readonly": True},
+        "private_endpoint_connections": {"readonly": True},
     }
 
     _attribute_map = {
@@ -4303,6 +5335,11 @@ class Workspace(ResourceModelWithAllowedPropertySet):  # pylint: disable=too-man
         "friendly_name": {"key": "properties.friendlyName", "type": "str"},
         "application_group_references": {"key": "properties.applicationGroupReferences", "type": "[str]"},
         "cloud_pc_resource": {"key": "properties.cloudPcResource", "type": "bool"},
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
+        "private_endpoint_connections": {
+            "key": "properties.privateEndpointConnections",
+            "type": "[PrivateEndpointConnection]",
+        },
     }
 
     def __init__(
@@ -4318,6 +5355,7 @@ class Workspace(ResourceModelWithAllowedPropertySet):  # pylint: disable=too-man
         description: Optional[str] = None,
         friendly_name: Optional[str] = None,
         application_group_references: Optional[List[str]] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4348,6 +5386,11 @@ class Workspace(ResourceModelWithAllowedPropertySet):  # pylint: disable=too-man
         :paramtype friendly_name: str
         :keyword application_group_references: List of applicationGroup resource Ids.
         :paramtype application_group_references: list[str]
+        :keyword public_network_access: Enabled allows this resource to be accessed from both public
+         and private networks, Disabled allows this resource to only be accessed via private endpoints.
+         Known values are: "Enabled" and "Disabled".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.desktopvirtualization.models.PublicNetworkAccess
         """
         super().__init__(
             location=location,
@@ -4365,6 +5408,8 @@ class Workspace(ResourceModelWithAllowedPropertySet):  # pylint: disable=too-man
         self.friendly_name = friendly_name
         self.application_group_references = application_group_references
         self.cloud_pc_resource = None
+        self.public_network_access = public_network_access
+        self.private_endpoint_connections = None
 
 
 class WorkspaceList(_serialization.Model):
@@ -4408,6 +5453,10 @@ class WorkspacePatch(_serialization.Model):
     :vartype friendly_name: str
     :ivar application_group_references: List of applicationGroup links.
     :vartype application_group_references: list[str]
+    :ivar public_network_access: Enabled to allow this resource to be access from the public
+     network. Known values are: "Enabled" and "Disabled".
+    :vartype public_network_access: str or
+     ~azure.mgmt.desktopvirtualization.models.PublicNetworkAccess
     """
 
     _attribute_map = {
@@ -4415,6 +5464,7 @@ class WorkspacePatch(_serialization.Model):
         "description": {"key": "properties.description", "type": "str"},
         "friendly_name": {"key": "properties.friendlyName", "type": "str"},
         "application_group_references": {"key": "properties.applicationGroupReferences", "type": "[str]"},
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
     }
 
     def __init__(
@@ -4424,6 +5474,7 @@ class WorkspacePatch(_serialization.Model):
         description: Optional[str] = None,
         friendly_name: Optional[str] = None,
         application_group_references: Optional[List[str]] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4435,9 +5486,14 @@ class WorkspacePatch(_serialization.Model):
         :paramtype friendly_name: str
         :keyword application_group_references: List of applicationGroup links.
         :paramtype application_group_references: list[str]
+        :keyword public_network_access: Enabled to allow this resource to be access from the public
+         network. Known values are: "Enabled" and "Disabled".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.desktopvirtualization.models.PublicNetworkAccess
         """
         super().__init__(**kwargs)
         self.tags = tags
         self.description = description
         self.friendly_name = friendly_name
         self.application_group_references = application_group_references
+        self.public_network_access = public_network_access

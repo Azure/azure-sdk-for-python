@@ -78,7 +78,10 @@ class TestSearchIndexClient(AzureRecordedTestCase):
         scoring_profiles.append(scoring_profile)
         cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
         index = SearchIndex(
-            name=index_name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options
+            name=index_name,
+            fields=fields,
+            scoring_profiles=scoring_profiles,
+            cors_options=cors_options,
         )
         result = client.create_index(index)
         assert result.name == index_name
@@ -94,7 +97,12 @@ class TestSearchIndexClient(AzureRecordedTestCase):
         ]
         cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
         scoring_profiles = []
-        index = SearchIndex(name=name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options)
+        index = SearchIndex(
+            name=name,
+            fields=fields,
+            scoring_profiles=scoring_profiles,
+            cors_options=cors_options,
+        )
         result = client.create_or_update_index(index=index)
         assert len(result.scoring_profiles) == 0
         assert result.cors_options.allowed_origins == cors_options.allowed_origins
@@ -102,7 +110,12 @@ class TestSearchIndexClient(AzureRecordedTestCase):
         scoring_profile = ScoringProfile(name="MyProfile")
         scoring_profiles = []
         scoring_profiles.append(scoring_profile)
-        index = SearchIndex(name=name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options)
+        index = SearchIndex(
+            name=name,
+            fields=fields,
+            scoring_profiles=scoring_profiles,
+            cors_options=cors_options,
+        )
         result = client.create_or_update_index(index=index)
         assert result.scoring_profiles[0].name == scoring_profile.name
         assert result.cors_options.allowed_origins == cors_options.allowed_origins
@@ -119,7 +132,12 @@ class TestSearchIndexClient(AzureRecordedTestCase):
         scoring_profiles = []
         scoring_profiles.append(scoring_profile)
         cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
-        index = SearchIndex(name=name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options)
+        index = SearchIndex(
+            name=name,
+            fields=fields,
+            scoring_profiles=scoring_profiles,
+            cors_options=cors_options,
+        )
         result = client.create_index(index)
         etag = result.e_tag
         # get e tag  and update
@@ -146,7 +164,12 @@ class TestSearchIndexClient(AzureRecordedTestCase):
         scoring_profiles = []
         scoring_profiles.append(scoring_profile)
         cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
-        index = SearchIndex(name=name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options)
+        index = SearchIndex(
+            name=name,
+            fields=fields,
+            scoring_profiles=scoring_profiles,
+            cors_options=cors_options,
+        )
         result = client.create_index(index)
         etag = result.e_tag
         # get e tag  and update

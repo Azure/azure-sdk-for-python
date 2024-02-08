@@ -2,10 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access, too-many-boolean-expressions
 
 import re
-from typing import Dict, Optional, TypeVar, Union
+from typing import Any, Optional, TypeVar, Union
 
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import (
@@ -23,10 +23,10 @@ from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._package_utils import package_deployment
 from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service, modified_operation_client
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LROConfigurations
-from azure.ai.ml.entities import BatchDeployment, BatchJob, ModelBatchDeployment, PipelineComponent
-from azure.ai.ml.entities._deployment.deployment import Deployment
+from azure.ai.ml.entities import BatchDeployment, BatchJob, ModelBatchDeployment, PipelineComponent, PipelineJob
 from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
 from azure.core.credentials import TokenCredential
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
@@ -67,7 +67,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         service_client_05_2022: ServiceClient052022,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
-        **kwargs: Dict,
+        **kwargs: Any,
     ):
         super(BatchDeploymentOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
@@ -90,7 +90,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         deployment: DeploymentType,
         *,
         skip_script_validation: bool = False,
-        **kwargs,
+        **kwargs: Any,
     ) -> LROPoller[DeploymentType]:
         """Create or update a batch deployment.
 
@@ -115,13 +115,13 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                 :dedent: 8
                 :caption: Create example.
         """
-
         if (
             not skip_script_validation
+            and not isinstance(deployment, PipelineComponentBatchDeployment)
             and deployment
-            and deployment.code_configuration
-            and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX)
-            and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code)
+            and deployment.code_configuration  # type: ignore
+            and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX)  # type: ignore
+            and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code)  # type: ignore
         ):
             validate_scoring_script(deployment)
         module_logger.debug("Checking endpoint %s exists", deployment.endpoint_name)
@@ -135,9 +135,10 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
             operation_scope=self._operation_scope,
             operation_config=self._operation_config,
         )
-        upload_dependencies(deployment, orchestrators)
         if isinstance(deployment, PipelineComponentBatchDeployment):
-            self._validate_component(deployment, orchestrators)
+            self._validate_component(deployment, orchestrators)  # type: ignore
+        else:
+            upload_dependencies(deployment, orchestrators)
         try:
             location = self._get_workspace_location()
             if kwargs.pop("package_model", False):
@@ -320,9 +321,11 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         :return: The workspace location
         :rtype: str
         """
-        return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
+        return str(
+            self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
+        )
 
-    def _validate_component(self, deployment: Deployment, orchestrators: OperationOrchestrator) -> None:
+    def _validate_component(self, deployment: Any, orchestrators: OperationOrchestrator) -> None:
         """Validates that the value provided is associated to an existing component or otherwise we will try to create
         an anonymous component that will be use for batch deployment.
 
@@ -332,14 +335,25 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         :type orchestrators: _operation_orchestrator.OperationOrchestrator
         """
         if isinstance(deployment.component, PipelineComponent):
-            deployment.component = self._all_operations.all_operations[AzureMLResourceType.COMPONENT].create_or_update(
-                name=deployment.component.name,
-                resource_group_name=self._resource_group_name,
-                workspace_name=self._workspace_name,
-                component=deployment.component,
-                version=deployment.component.version,
-                **self._init_kwargs,
-            )
+            try:
+                registered_component = self._all_operations.all_operations[AzureMLResourceType.COMPONENT].get(
+                    name=deployment.component.name, version=deployment.component.version
+                )
+                deployment.component = registered_component.id
+            except Exception as err:  # pylint: disable=broad-except
+                if isinstance(err, (ResourceNotFoundError, HttpResponseError)):
+                    deployment.component = self._all_operations.all_operations[
+                        AzureMLResourceType.COMPONENT
+                    ].create_or_update(
+                        name=deployment.component.name,
+                        resource_group_name=self._resource_group_name,
+                        workspace_name=self._workspace_name,
+                        component=deployment.component,
+                        version=deployment.component.version,
+                        **self._init_kwargs,
+                    )
+                else:
+                    raise err
         elif isinstance(deployment.component, str):
             component_id = orchestrators.get_asset_arm_id(
                 deployment.component, azureml_type=AzureMLResourceType.COMPONENT
@@ -356,3 +370,22 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                 **self._init_kwargs,
             )
             deployment.component = job_component.id
+
+        elif isinstance(deployment.job_definition, PipelineJob):
+            try:
+                registered_job = self._all_operations.all_operations[AzureMLResourceType.JOB].get(
+                    name=deployment.job_definition.name
+                )
+                if registered_job:
+                    job_component = PipelineComponent(source_job_id=registered_job.name)
+                    job_component = self._component_operations.create_or_update(
+                        name=job_component.name,
+                        resource_group_name=self._resource_group_name,
+                        workspace_name=self._workspace_name,
+                        body=job_component._to_rest_object(),
+                        version=job_component.version,
+                        **self._init_kwargs,
+                    )
+                    deployment.component = job_component.id
+            except ResourceNotFoundError as err:
+                raise err

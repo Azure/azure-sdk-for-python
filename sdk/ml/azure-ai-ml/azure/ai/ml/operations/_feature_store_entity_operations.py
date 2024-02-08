@@ -9,20 +9,17 @@ from typing import Dict, Optional
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType, FeaturestoreEntityVersion
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
+from azure.ai.ml._restclient.v2023_10_01 import AzureMachineLearningServices as ServiceClient102023
+from azure.ai.ml._restclient.v2023_10_01.models import FeaturestoreEntityVersion
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
-from azure.ai.ml.exceptions import ValidationException
-
-
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
-from azure.ai.ml._utils._feature_store_utils import (
-    _archive_or_restore,
-)
+from azure.ai.ml._utils._feature_store_utils import _archive_or_restore
 from azure.ai.ml._utils._logger_utils import OpsLogger
+from azure.ai.ml.constants import ListViewType
 from azure.ai.ml.entities._feature_store_entity.feature_store_entity import FeatureStoreEntity
-from azure.core.polling import LROPoller
+from azure.ai.ml.exceptions import ValidationException
 from azure.core.paging import ItemPaged
+from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
 ops_logger = OpsLogger(__name__)
@@ -41,7 +38,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: ServiceClient042023Preview,
+        service_client: ServiceClient102023,
         **kwargs: Dict,
     ):
         super(FeatureStoreEntityOperations, self).__init__(operation_scope, operation_config)
@@ -65,7 +62,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
         :param name: Name of a specific FeatureStoreEntity asset, optional.
         :type name: Optional[str]
         :keyword list_view_type: View type for including/excluding (for example) archived FeatureStoreEntity assets.
-        Default: ACTIVE_ONLY.
+            Default: ACTIVE_ONLY.
         :paramtype list_view_type: Optional[ListViewType]
         :return: An iterator like instance of FeatureStoreEntity objects
         :rtype: ~azure.core.paging.ItemPaged[FeatureStoreEntity]
@@ -87,7 +84,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-    def _get(self, name: str, version: str = None, **kwargs: Dict) -> FeaturestoreEntityVersion:
+    def _get(self, name: str, version: Optional[str] = None, **kwargs: Dict) -> FeaturestoreEntityVersion:
         return self._operation.get(
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
@@ -99,7 +96,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "FeatureStoreEntity.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: str, **kwargs: Dict) -> FeatureStoreEntity:
+    def get(self, name: str, version: str, **kwargs: Dict) -> FeatureStoreEntity:  # type: ignore
         """Get the specified FeatureStoreEntity asset.
 
         :param name: Name of FeatureStoreEntity asset.

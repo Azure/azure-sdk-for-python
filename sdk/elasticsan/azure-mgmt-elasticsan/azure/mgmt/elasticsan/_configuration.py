@@ -29,14 +29,14 @@ class ElasticSanMgmtClientConfiguration(Configuration):  # pylint: disable=too-m
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2022-12-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-01-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "TokenCredential", subscription_id: str, **kwargs: Any) -> None:
         super(ElasticSanMgmtClientConfiguration, self).__init__(**kwargs)
-        api_version: str = kwargs.pop("api_version", "2022-12-01-preview")
+        api_version: str = kwargs.pop("api_version", "2023-01-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

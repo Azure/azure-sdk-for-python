@@ -43,9 +43,7 @@ def get_authentication_policy(
             return AsyncBearerTokenCredentialPolicy(
                 credential, "https://communication.azure.com//.default"  # type: ignore
             )
-        return BearerTokenCredentialPolicy(
-            credential, "https://communication.azure.com//.default"  # type: ignore
-        )
+        return BearerTokenCredentialPolicy(credential, "https://communication.azure.com//.default")  # type: ignore
     if isinstance(credential, (AzureKeyCredential, str)):
         return HMACCredentialsPolicy(endpoint, credential, decode_url=decode_url)
 

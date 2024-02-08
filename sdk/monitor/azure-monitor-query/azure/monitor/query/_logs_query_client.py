@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import timedelta, datetime
-from typing import Any, Union, Sequence, Dict, List, cast, Tuple, Optional
+from typing import Any, Union, Sequence, Dict, List, cast, Tuple, Optional, MutableMapping
 from urllib.parse import urlparse
 
 from azure.core.credentials import TokenCredential
@@ -22,6 +22,8 @@ from ._helpers import (
 )
 from ._models import LogsBatchQuery, LogsQueryResult, LogsQueryPartialResult
 from ._exceptions import LogsQueryError
+
+JSON = MutableMapping[str, Any]
 
 
 class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-keyword
@@ -119,6 +121,7 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
 
         body = {"query": query, "timespan": timespan_iso, "workspaces": additional_workspaces}
 
+        generated_response: JSON = {}
         try:
             generated_response = self._query_op.execute(  # pylint: disable=protected-access
                 workspace_id=workspace_id, body=body, prefer=prefer, **kwargs
@@ -236,6 +239,7 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
 
         body = {"query": query, "timespan": timespan_iso, "workspaces": additional_workspaces}
 
+        generated_response: JSON = {}
         try:
             generated_response = self._query_op.resource_execute(  # pylint: disable=protected-access
                 resource_id=resource_id, body=body, prefer=prefer, **kwargs

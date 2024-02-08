@@ -36,6 +36,6 @@ def main():
     )
 
 
-# x-ms-original-file: specification/redhatopenshift/resource-manager/Microsoft.RedHatOpenShift/stable/2023-04-01/examples/SyncIdentityProviders_Delete.json
+# x-ms-original-file: specification/redhatopenshift/resource-manager/Microsoft.RedHatOpenShift/stable/2023-09-04/examples/SyncIdentityProviders_Delete.json
 if __name__ == "__main__":
     main()

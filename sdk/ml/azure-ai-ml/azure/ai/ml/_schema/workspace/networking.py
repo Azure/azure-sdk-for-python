@@ -179,6 +179,6 @@ class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
     def make(self, data, **kwargs):
         outbound_rules = data.get("outbound_rules", False)
         if outbound_rules:
-            return ManagedNetwork(_snake_to_camel(data["isolation_mode"]), outbound_rules)
+            return ManagedNetwork(isolation_mode=_snake_to_camel(data["isolation_mode"]), outbound_rules=outbound_rules)
         else:
-            return ManagedNetwork(_snake_to_camel(data["isolation_mode"]))
+            return ManagedNetwork(isolation_mode=_snake_to_camel(data["isolation_mode"]))

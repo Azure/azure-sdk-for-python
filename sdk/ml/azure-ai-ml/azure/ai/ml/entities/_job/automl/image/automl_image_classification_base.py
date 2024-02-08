@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import LearningRateScheduler, StochasticOptimizer
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -19,6 +19,24 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 
 class AutoMLImageClassificationBase(AutoMLImage):
+    """Base class for AutoML Image Classification and Image Classification Multilabel tasks.
+    Please do not instantiate this class directly. Instantiate one of the child classes instead.
+
+    :keyword task_type: Type of task to run.
+    Possible values include: "ImageClassification", "ImageClassificationMultilabel".
+    :paramtype task_type: str
+    :keyword limits: Limits for Automl image classification jobs. Defaults to None.
+    :paramtype limits: Optional[~azure.ai.ml.automl.ImageLimitSettings]
+    :keyword sweep: Sweep settings for Automl image classification jobs. Defaults to None.
+    :paramtype sweep: Optional[~azure.ai.ml.automl.ImageSweepSettings]
+    :keyword training_parameters: Training parameters for Automl image classification jobs. Defaults to None.
+    :paramtype training_parameters: Optional[~azure.ai.ml.automl.ImageModelSettingsClassification]
+    :keyword search_space: Search space for Automl image classification jobs. Defaults to None.
+    :paramtype search_space: Optional[List[~azure.ai.ml.automl.ImageClassificationSearchSpace]]
+    :keyword kwargs: Other Keyword arguments for AutoMLImageClassificationBase class.
+    :paramtype kwargs: Dict[str, Any]
+    """
+
     def __init__(
         self,
         *,
@@ -27,18 +45,32 @@ class AutoMLImageClassificationBase(AutoMLImage):
         sweep: Optional[ImageSweepSettings] = None,
         training_parameters: Optional[ImageModelSettingsClassification] = None,
         search_space: Optional[List[ImageClassificationSearchSpace]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
+        self._training_parameters: Optional[ImageModelSettingsClassification] = None
+
         super().__init__(task_type=task_type, limits=limits, sweep=sweep, **kwargs)
         self.training_parameters = training_parameters  # Assigning training_parameters through setter method.
         self._search_space = search_space
 
     @property
-    def training_parameters(self) -> ImageModelSettingsClassification:
+    def training_parameters(self) -> Optional[ImageModelSettingsClassification]:
+        """
+        :rtype: ~azure.ai.ml.automl.ImageModelSettingsClassification
+        :return: Training parameters for AutoML Image Classification and Image Classification Multilabel tasks.
+        """
         return self._training_parameters
 
     @training_parameters.setter
     def training_parameters(self, value: Union[Dict, ImageModelSettingsClassification]) -> None:
+        """Setting Image training parameters for AutoML Image Classification and Image Classification Multilabel tasks.
+
+        :param value: Training parameters for AutoML Image Classification and Image Classification Multilabel tasks.
+        :type value: Union[Dict, ~azure.ai.ml.automl.ImageModelSettingsClassification]
+        :raises ~azure.ml.exceptions.ValidationException if value is not a dictionary or
+         ImageModelSettingsClassification.
+        :return: None
+        """
         if value is None:
             self._training_parameters = None
         elif isinstance(value, ImageModelSettingsClassification):
@@ -61,11 +93,22 @@ class AutoMLImageClassificationBase(AutoMLImage):
             self.set_training_parameters(**value)
 
     @property
-    def search_space(self) -> List[ImageClassificationSearchSpace]:
+    def search_space(self) -> Optional[List[ImageClassificationSearchSpace]]:
+        """
+        :rtype: List[~azure.ai.ml.automl.ImageClassificationSearchSpace]
+        :return: Search space for AutoML Image Classification and Image Classification Multilabel tasks.
+        """
         return self._search_space
 
     @search_space.setter
     def search_space(self, value: Union[List[Dict], List[SearchSpace]]) -> None:
+        """Setting Image search space for AutoML Image Classification and Image Classification Multilabel tasks.
+
+        :param value: Search space for AutoML Image Classification and Image Classification Multilabel tasks.
+        :type value: Union[List[Dict], List[~azure.ai.ml.automl.ImageClassificationSearchSpace]]
+        :raises ~azure.ml.exceptions.ValidationException if value is not a list of dictionaries or
+            ImageClassificationSearchSpace.
+        """
         if not isinstance(value, list):
             msg = "Expected a list for search space."
             raise ValidationException(
@@ -80,7 +123,8 @@ class AutoMLImageClassificationBase(AutoMLImage):
 
         if all_search_space_type or all_dict_type:
             self._search_space = [
-                cast_to_specific_search_space(item, ImageClassificationSearchSpace, self.task_type) for item in value
+                cast_to_specific_search_space(item, ImageClassificationSearchSpace, self.task_type)  # type: ignore
+                for item in value
             ]
         else:
             msg = "Expected all items in the list to be either dictionaries or ImageClassificationSearchSpace objects."
@@ -364,22 +408,25 @@ class AutoMLImageClassificationBase(AutoMLImage):
 
         if isinstance(value, list):
             self._search_space.extend(
-                [cast_to_specific_search_space(item, ImageClassificationSearchSpace, self.task_type) for item in value]
+                [
+                    cast_to_specific_search_space(item, ImageClassificationSearchSpace, self.task_type)  # type: ignore
+                    for item in value
+                ]
             )
         else:
             self._search_space.append(
-                cast_to_specific_search_space(value, ImageClassificationSearchSpace, self.task_type)
+                cast_to_specific_search_space(value, ImageClassificationSearchSpace, self.task_type)  # type: ignore
             )
 
     @classmethod
-    def _get_search_space_from_str(cls, search_space_str: str):
+    def _get_search_space_from_str(cls, search_space_str: str) -> Optional[List[ImageClassificationSearchSpace]]:
         return (
             [ImageClassificationSearchSpace._from_rest_object(entry) for entry in search_space_str if entry is not None]
             if search_space_str is not None
             else None
         )
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, AutoMLImageClassificationBase):
             return NotImplemented
 
@@ -388,5 +435,5 @@ class AutoMLImageClassificationBase(AutoMLImage):
 
         return self._training_parameters == other._training_parameters and self._search_space == other._search_space
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)

@@ -8,13 +8,173 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import List, Optional, TYPE_CHECKING, Union
+from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
+
+
+class Resource(_serialization.Model):
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.support.models.SystemData
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.system_data = None
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.support.models.SystemData
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+
+
+class ChatTranscriptDetails(ProxyResource):
+    """Object that represents a Chat Transcript resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.support.models.SystemData
+    :ivar messages: List of chat transcript communication resources.
+    :vartype messages: list[~azure.mgmt.support.models.MessageProperties]
+    :ivar start_time: Time in UTC (ISO 8601 format) when the chat began.
+    :vartype start_time: ~datetime.datetime
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "start_time": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "messages": {"key": "properties.messages", "type": "[MessageProperties]"},
+        "start_time": {"key": "properties.startTime", "type": "iso-8601"},
+    }
+
+    def __init__(self, *, messages: Optional[List["_models.MessageProperties"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword messages: List of chat transcript communication resources.
+        :paramtype messages: list[~azure.mgmt.support.models.MessageProperties]
+        """
+        super().__init__(**kwargs)
+        self.messages = messages
+        self.start_time = None
+
+
+class ChatTranscriptsListResult(_serialization.Model):
+    """Collection of Chat Transcripts resources.
+
+    :ivar value: List of Chat Transcripts resources.
+    :vartype value: list[~azure.mgmt.support.models.ChatTranscriptDetails]
+    :ivar next_link: The URI to fetch the next page of Chat Transcripts resources.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ChatTranscriptDetails]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.ChatTranscriptDetails"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of Chat Transcripts resources.
+        :paramtype value: list[~azure.mgmt.support.models.ChatTranscriptDetails]
+        :keyword next_link: The URI to fetch the next page of Chat Transcripts resources.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 
 
 class CheckNameAvailabilityInput(_serialization.Model):
@@ -39,7 +199,7 @@ class CheckNameAvailabilityInput(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, name: str, type: Union[str, "_models.Type"], **kwargs):
+    def __init__(self, *, name: str, type: Union[str, "_models.Type"], **kwargs: Any) -> None:
         """
         :keyword name: The resource name to validate. Required.
         :paramtype name: str
@@ -77,7 +237,7 @@ class CheckNameAvailabilityOutput(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name_available = None
@@ -134,8 +294,8 @@ class CommunicationDetails(_serialization.Model):
     }
 
     def __init__(
-        self, *, sender: Optional[str] = None, subject: Optional[str] = None, body: Optional[str] = None, **kwargs
-    ):
+        self, *, sender: Optional[str] = None, subject: Optional[str] = None, body: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword sender: Email address of the sender. This property is required if called by a service
          principal.
@@ -172,8 +332,12 @@ class CommunicationsListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.CommunicationDetails"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.CommunicationDetails"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of Communication resources.
         :paramtype value: list[~azure.mgmt.support.models.CommunicationDetails]
@@ -254,8 +418,8 @@ class ContactProfile(_serialization.Model):
         preferred_support_language: str,
         additional_email_addresses: Optional[List[str]] = None,
         phone_number: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword first_name: First name. Required.
         :paramtype first_name: str
@@ -298,24 +462,289 @@ class ContactProfile(_serialization.Model):
         self.preferred_support_language = preferred_support_language
 
 
-class ExceptionResponse(_serialization.Model):
-    """The API error.
+class ErrorAdditionalInfo(_serialization.Model):
+    """The resource management error additional info.
 
-    :ivar error: The API error details.
-    :vartype error: ~azure.mgmt.support.models.ServiceError
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: JSON
+    """
+
+    _validation = {
+        "type": {"readonly": True},
+        "info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
+class ErrorDetail(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.support.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.support.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.support.models.ErrorDetail
     """
 
     _attribute_map = {
-        "error": {"key": "error", "type": "ServiceError"},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ServiceError"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
-        :keyword error: The API error details.
-        :paramtype error: ~azure.mgmt.support.models.ServiceError
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.support.models.ErrorDetail
         """
         super().__init__(**kwargs)
         self.error = error
+
+
+class FileDetails(ProxyResource):
+    """Object that represents File Details resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.support.models.SystemData
+    :ivar created_on: Time in UTC (ISO 8601 format) when file workspace was created.
+    :vartype created_on: ~datetime.datetime
+    :ivar chunk_size: Size of each chunk.
+    :vartype chunk_size: float
+    :ivar file_size: Size of the file to be uploaded.
+    :vartype file_size: float
+    :ivar number_of_chunks: Number of chunks to be uploaded.
+    :vartype number_of_chunks: float
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "created_on": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "created_on": {"key": "properties.createdOn", "type": "iso-8601"},
+        "chunk_size": {"key": "properties.chunkSize", "type": "float"},
+        "file_size": {"key": "properties.fileSize", "type": "float"},
+        "number_of_chunks": {"key": "properties.numberOfChunks", "type": "float"},
+    }
+
+    def __init__(
+        self,
+        *,
+        chunk_size: Optional[float] = None,
+        file_size: Optional[float] = None,
+        number_of_chunks: Optional[float] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword chunk_size: Size of each chunk.
+        :paramtype chunk_size: float
+        :keyword file_size: Size of the file to be uploaded.
+        :paramtype file_size: float
+        :keyword number_of_chunks: Number of chunks to be uploaded.
+        :paramtype number_of_chunks: float
+        """
+        super().__init__(**kwargs)
+        self.created_on = None
+        self.chunk_size = chunk_size
+        self.file_size = file_size
+        self.number_of_chunks = number_of_chunks
+
+
+class FilesListResult(_serialization.Model):
+    """Object that represents a collection of File resources.
+
+    :ivar value: List of File resources.
+    :vartype value: list[~azure.mgmt.support.models.FileDetails]
+    :ivar next_link: The URI to fetch the next page of File resources.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[FileDetails]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.FileDetails"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of File resources.
+        :paramtype value: list[~azure.mgmt.support.models.FileDetails]
+        :keyword next_link: The URI to fetch the next page of File resources.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class FileWorkspaceDetails(ProxyResource):
+    """Object that represents FileWorkspaceDetails resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.support.models.SystemData
+    :ivar created_on: Time in UTC (ISO 8601 format) when file workspace was created.
+    :vartype created_on: ~datetime.datetime
+    :ivar expiration_time: Time in UTC (ISO 8601 format) when file workspace is going to expire.
+    :vartype expiration_time: ~datetime.datetime
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "created_on": {"readonly": True},
+        "expiration_time": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "created_on": {"key": "properties.createdOn", "type": "iso-8601"},
+        "expiration_time": {"key": "properties.expirationTime", "type": "iso-8601"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.created_on = None
+        self.expiration_time = None
+
+
+class MessageProperties(_serialization.Model):
+    """Describes the properties of a Message Details resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar content_type: Content type.
+    :vartype content_type: str or ~azure.mgmt.support.models.TranscriptContentType
+    :ivar communication_direction: Direction of communication. Known values are: "inbound" and
+     "outbound".
+    :vartype communication_direction: str or ~azure.mgmt.support.models.CommunicationDirection
+    :ivar sender: Name of the sender.
+    :vartype sender: str
+    :ivar body: Body of the communication. Required.
+    :vartype body: str
+    :ivar created_date: Time in UTC (ISO 8601 format) when the communication was created.
+    :vartype created_date: ~datetime.datetime
+    """
+
+    _validation = {
+        "content_type": {"readonly": True},
+        "communication_direction": {"readonly": True},
+        "body": {"required": True},
+        "created_date": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "content_type": {"key": "contentType", "type": "str"},
+        "communication_direction": {"key": "communicationDirection", "type": "str"},
+        "sender": {"key": "sender", "type": "str"},
+        "body": {"key": "body", "type": "str"},
+        "created_date": {"key": "createdDate", "type": "iso-8601"},
+    }
+
+    def __init__(self, *, body: str, sender: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword sender: Name of the sender.
+        :paramtype sender: str
+        :keyword body: Body of the communication. Required.
+        :paramtype body: str
+        """
+        super().__init__(**kwargs)
+        self.content_type = None
+        self.communication_direction = None
+        self.sender = sender
+        self.body = body
+        self.created_date = None
 
 
 class Operation(_serialization.Model):
@@ -338,7 +767,7 @@ class Operation(_serialization.Model):
         "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
         """
         :keyword display: The object that describes the operation.
         :paramtype display: ~azure.mgmt.support.models.OperationDisplay
@@ -377,7 +806,7 @@ class OperationDisplay(_serialization.Model):
         "resource": {"key": "resource", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.description = None
@@ -397,7 +826,7 @@ class OperationsListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of operations supported by Microsoft Support resource provider.
         :paramtype value: list[~azure.mgmt.support.models.Operation]
@@ -419,6 +848,9 @@ class ProblemClassification(_serialization.Model):
     :vartype type: str
     :ivar display_name: Localized name of problem classification.
     :vartype display_name: str
+    :ivar secondary_consent_enabled: This property indicates whether secondary consent is present
+     for problem classification.
+    :vartype secondary_consent_enabled: list[~azure.mgmt.support.models.SecondaryConsentEnabled]
     """
 
     _validation = {
@@ -432,18 +864,29 @@ class ProblemClassification(_serialization.Model):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "display_name": {"key": "properties.displayName", "type": "str"},
+        "secondary_consent_enabled": {"key": "properties.secondaryConsentEnabled", "type": "[SecondaryConsentEnabled]"},
     }
 
-    def __init__(self, *, display_name: Optional[str] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        display_name: Optional[str] = None,
+        secondary_consent_enabled: Optional[List["_models.SecondaryConsentEnabled"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: Localized name of problem classification.
         :paramtype display_name: str
+        :keyword secondary_consent_enabled: This property indicates whether secondary consent is
+         present for problem classification.
+        :paramtype secondary_consent_enabled: list[~azure.mgmt.support.models.SecondaryConsentEnabled]
         """
         super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
         self.display_name = display_name
+        self.secondary_consent_enabled = secondary_consent_enabled
 
 
 class ProblemClassificationsListResult(_serialization.Model):
@@ -457,7 +900,7 @@ class ProblemClassificationsListResult(_serialization.Model):
         "value": {"key": "value", "type": "[ProblemClassification]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ProblemClassification"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ProblemClassification"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of ProblemClassification resources.
         :paramtype value: list[~azure.mgmt.support.models.ProblemClassification]
@@ -480,7 +923,7 @@ class QuotaChangeRequest(_serialization.Model):
         "payload": {"key": "payload", "type": "str"},
     }
 
-    def __init__(self, *, region: Optional[str] = None, payload: Optional[str] = None, **kwargs):
+    def __init__(self, *, region: Optional[str] = None, payload: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword region: Region for which the quota increase request is being made.
         :paramtype region: str
@@ -493,7 +936,9 @@ class QuotaChangeRequest(_serialization.Model):
 
 
 class QuotaTicketDetails(_serialization.Model):
-    """Additional set of information required for quota increase support ticket for certain quota types, e.g.: Virtual machine cores. Get complete details about Quota payload support request along with examples at `Support quota request <https://aka.ms/supportrpquotarequestpayload>`_.
+    """Additional set of information required for quota increase support ticket for certain quota
+    types, e.g.: Virtual machine cores. Get complete details about Quota payload support request
+    along with examples at `Support quota request <https://aka.ms/supportrpquotarequestpayload>`_.
 
     :ivar quota_change_request_sub_type: Required for certain quota types when there is a sub type,
      such as Batch, for which you are requesting a quota increase.
@@ -517,8 +962,8 @@ class QuotaTicketDetails(_serialization.Model):
         quota_change_request_sub_type: Optional[str] = None,
         quota_change_request_version: Optional[str] = None,
         quota_change_requests: Optional[List["_models.QuotaChangeRequest"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword quota_change_request_sub_type: Required for certain quota types when there is a sub
          type, such as Batch, for which you are requesting a quota increase.
@@ -533,6 +978,66 @@ class QuotaTicketDetails(_serialization.Model):
         self.quota_change_request_sub_type = quota_change_request_sub_type
         self.quota_change_request_version = quota_change_request_version
         self.quota_change_requests = quota_change_requests
+
+
+class SecondaryConsent(_serialization.Model):
+    """This property indicates secondary consent for the support ticket.
+
+    :ivar user_consent: User consent value provided. Known values are: "Yes" and "No".
+    :vartype user_consent: str or ~azure.mgmt.support.models.UserConsent
+    :ivar type: The service name for which the secondary consent is being provided. The value needs
+     to be retrieved from the Problem Classification API response.
+    :vartype type: str
+    """
+
+    _attribute_map = {
+        "user_consent": {"key": "userConsent", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        user_consent: Optional[Union[str, "_models.UserConsent"]] = None,
+        type: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword user_consent: User consent value provided. Known values are: "Yes" and "No".
+        :paramtype user_consent: str or ~azure.mgmt.support.models.UserConsent
+        :keyword type: The service name for which the secondary consent is being provided. The value
+         needs to be retrieved from the Problem Classification API response.
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
+        self.user_consent = user_consent
+        self.type = type
+
+
+class SecondaryConsentEnabled(_serialization.Model):
+    """This property indicates whether secondary consent is present for problem classification.
+
+    :ivar description: User consent description.
+    :vartype description: str
+    :ivar type: The Azure service for which secondary consent is needed for case creation.
+    :vartype type: str
+    """
+
+    _attribute_map = {
+        "description": {"key": "description", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(self, *, description: Optional[str] = None, type: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword description: User consent description.
+        :paramtype description: str
+        :keyword type: The Azure service for which secondary consent is needed for case creation.
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
+        self.description = description
+        self.type = type
 
 
 class Service(_serialization.Model):
@@ -566,7 +1071,9 @@ class Service(_serialization.Model):
         "resource_types": {"key": "properties.resourceTypes", "type": "[str]"},
     }
 
-    def __init__(self, *, display_name: Optional[str] = None, resource_types: Optional[List[str]] = None, **kwargs):
+    def __init__(
+        self, *, display_name: Optional[str] = None, resource_types: Optional[List[str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: Localized name of the Azure service.
         :paramtype display_name: str
@@ -579,85 +1086,6 @@ class Service(_serialization.Model):
         self.type = None
         self.display_name = display_name
         self.resource_types = resource_types
-
-
-class ServiceError(_serialization.Model):
-    """The API error details.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The target of the error.
-    :vartype target: str
-    :ivar details: The list of error details.
-    :vartype details: list[~azure.mgmt.support.models.ServiceErrorDetail]
-    """
-
-    _validation = {
-        "details": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-        "target": {"key": "target", "type": "str"},
-        "details": {"key": "details", "type": "[ServiceErrorDetail]"},
-    }
-
-    def __init__(
-        self, *, code: Optional[str] = None, message: Optional[str] = None, target: Optional[str] = None, **kwargs
-    ):
-        """
-        :keyword code: The error code.
-        :paramtype code: str
-        :keyword message: The error message.
-        :paramtype message: str
-        :keyword target: The target of the error.
-        :paramtype target: str
-        """
-        super().__init__(**kwargs)
-        self.code = code
-        self.message = message
-        self.target = target
-        self.details = None
-
-
-class ServiceErrorDetail(_serialization.Model):
-    """The error details.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The target of the error.
-    :vartype target: str
-    """
-
-    _validation = {
-        "code": {"readonly": True},
-        "message": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-        "target": {"key": "target", "type": "str"},
-    }
-
-    def __init__(self, *, target: Optional[str] = None, **kwargs):
-        """
-        :keyword target: The target of the error.
-        :paramtype target: str
-        """
-        super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = target
 
 
 class ServiceLevelAgreement(_serialization.Model):
@@ -685,7 +1113,7 @@ class ServiceLevelAgreement(_serialization.Model):
         "sla_minutes": {"key": "slaMinutes", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.start_time = None
@@ -704,7 +1132,7 @@ class ServicesListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Service]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Service"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Service"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of Service resources.
         :paramtype value: list[~azure.mgmt.support.models.Service]
@@ -731,7 +1159,7 @@ class SupportEngineer(_serialization.Model):
         "email_address": {"key": "emailAddress", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.email_address = None
@@ -768,6 +1196,13 @@ class SupportTicketDetails(_serialization.Model):  # pylint: disable=too-many-in
     :vartype enrollment_id: str
     :ivar require24_x7_response: Indicates if this requires a 24x7 response from Azure.
     :vartype require24_x7_response: bool
+    :ivar advanced_diagnostic_consent: Advanced diagnostic consent to be updated on the support
+     ticket. Known values are: "Yes" and "No".
+    :vartype advanced_diagnostic_consent: str or ~azure.mgmt.support.models.Consent
+    :ivar problem_scoping_questions: Problem scoping questions associated with the support ticket.
+    :vartype problem_scoping_questions: str
+    :ivar support_plan_id: Support plan id associated with the support ticket.
+    :vartype support_plan_id: str
     :ivar contact_details: Contact information of the user requesting to create a support ticket.
     :vartype contact_details: ~azure.mgmt.support.models.ContactProfile
     :ivar service_level_agreement: Service Level Agreement information for this support ticket.
@@ -776,6 +1211,8 @@ class SupportTicketDetails(_serialization.Model):  # pylint: disable=too-many-in
     :vartype support_engineer: ~azure.mgmt.support.models.SupportEngineer
     :ivar support_plan_type: Support plan type associated with the support ticket.
     :vartype support_plan_type: str
+    :ivar support_plan_display_name: Support plan type associated with the support ticket.
+    :vartype support_plan_display_name: str
     :ivar title: Title of the support ticket.
     :vartype title: str
     :ivar problem_start_time: Time in UTC (ISO 8601 format) when the problem started.
@@ -791,12 +1228,16 @@ class SupportTicketDetails(_serialization.Model):  # pylint: disable=too-many-in
     :vartype created_date: ~datetime.datetime
     :ivar modified_date: Time in UTC (ISO 8601 format) when the support ticket was last modified.
     :vartype modified_date: ~datetime.datetime
+    :ivar file_workspace_name: File workspace name.
+    :vartype file_workspace_name: str
     :ivar technical_ticket_details: Additional ticket details associated with a technical support
      ticket request.
     :vartype technical_ticket_details: ~azure.mgmt.support.models.TechnicalTicketDetails
     :ivar quota_ticket_details: Additional ticket details associated with a quota support ticket
      request.
     :vartype quota_ticket_details: ~azure.mgmt.support.models.QuotaTicketDetails
+    :ivar secondary_consent: This property indicates secondary consents for the support ticket.
+    :vartype secondary_consent: list[~azure.mgmt.support.models.SecondaryConsent]
     """
 
     _validation = {
@@ -806,6 +1247,7 @@ class SupportTicketDetails(_serialization.Model):  # pylint: disable=too-many-in
         "problem_classification_display_name": {"readonly": True},
         "enrollment_id": {"readonly": True},
         "support_plan_type": {"readonly": True},
+        "support_plan_display_name": {"readonly": True},
         "service_display_name": {"readonly": True},
         "status": {"readonly": True},
         "created_date": {"readonly": True},
@@ -823,10 +1265,14 @@ class SupportTicketDetails(_serialization.Model):  # pylint: disable=too-many-in
         "severity": {"key": "properties.severity", "type": "str"},
         "enrollment_id": {"key": "properties.enrollmentId", "type": "str"},
         "require24_x7_response": {"key": "properties.require24X7Response", "type": "bool"},
+        "advanced_diagnostic_consent": {"key": "properties.advancedDiagnosticConsent", "type": "str"},
+        "problem_scoping_questions": {"key": "properties.problemScopingQuestions", "type": "str"},
+        "support_plan_id": {"key": "properties.supportPlanId", "type": "str"},
         "contact_details": {"key": "properties.contactDetails", "type": "ContactProfile"},
         "service_level_agreement": {"key": "properties.serviceLevelAgreement", "type": "ServiceLevelAgreement"},
         "support_engineer": {"key": "properties.supportEngineer", "type": "SupportEngineer"},
         "support_plan_type": {"key": "properties.supportPlanType", "type": "str"},
+        "support_plan_display_name": {"key": "properties.supportPlanDisplayName", "type": "str"},
         "title": {"key": "properties.title", "type": "str"},
         "problem_start_time": {"key": "properties.problemStartTime", "type": "iso-8601"},
         "service_id": {"key": "properties.serviceId", "type": "str"},
@@ -834,11 +1280,13 @@ class SupportTicketDetails(_serialization.Model):  # pylint: disable=too-many-in
         "status": {"key": "properties.status", "type": "str"},
         "created_date": {"key": "properties.createdDate", "type": "iso-8601"},
         "modified_date": {"key": "properties.modifiedDate", "type": "iso-8601"},
+        "file_workspace_name": {"key": "properties.fileWorkspaceName", "type": "str"},
         "technical_ticket_details": {"key": "properties.technicalTicketDetails", "type": "TechnicalTicketDetails"},
         "quota_ticket_details": {"key": "properties.quotaTicketDetails", "type": "QuotaTicketDetails"},
+        "secondary_consent": {"key": "properties.secondaryConsent", "type": "[SecondaryConsent]"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         support_ticket_id: Optional[str] = None,
@@ -846,16 +1294,21 @@ class SupportTicketDetails(_serialization.Model):  # pylint: disable=too-many-in
         problem_classification_id: Optional[str] = None,
         severity: Optional[Union[str, "_models.SeverityLevel"]] = None,
         require24_x7_response: Optional[bool] = None,
+        advanced_diagnostic_consent: Optional[Union[str, "_models.Consent"]] = None,
+        problem_scoping_questions: Optional[str] = None,
+        support_plan_id: Optional[str] = None,
         contact_details: Optional["_models.ContactProfile"] = None,
         service_level_agreement: Optional["_models.ServiceLevelAgreement"] = None,
         support_engineer: Optional["_models.SupportEngineer"] = None,
         title: Optional[str] = None,
         problem_start_time: Optional[datetime.datetime] = None,
         service_id: Optional[str] = None,
+        file_workspace_name: Optional[str] = None,
         technical_ticket_details: Optional["_models.TechnicalTicketDetails"] = None,
         quota_ticket_details: Optional["_models.QuotaTicketDetails"] = None,
-        **kwargs
-    ):
+        secondary_consent: Optional[List["_models.SecondaryConsent"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword support_ticket_id: System generated support ticket Id that is unique.
         :paramtype support_ticket_id: str
@@ -873,6 +1326,14 @@ class SupportTicketDetails(_serialization.Model):  # pylint: disable=too-many-in
         :paramtype severity: str or ~azure.mgmt.support.models.SeverityLevel
         :keyword require24_x7_response: Indicates if this requires a 24x7 response from Azure.
         :paramtype require24_x7_response: bool
+        :keyword advanced_diagnostic_consent: Advanced diagnostic consent to be updated on the support
+         ticket. Known values are: "Yes" and "No".
+        :paramtype advanced_diagnostic_consent: str or ~azure.mgmt.support.models.Consent
+        :keyword problem_scoping_questions: Problem scoping questions associated with the support
+         ticket.
+        :paramtype problem_scoping_questions: str
+        :keyword support_plan_id: Support plan id associated with the support ticket.
+        :paramtype support_plan_id: str
         :keyword contact_details: Contact information of the user requesting to create a support
          ticket.
         :paramtype contact_details: ~azure.mgmt.support.models.ContactProfile
@@ -888,12 +1349,16 @@ class SupportTicketDetails(_serialization.Model):  # pylint: disable=too-many-in
         :keyword service_id: This is the resource Id of the Azure service resource associated with the
          support ticket.
         :paramtype service_id: str
+        :keyword file_workspace_name: File workspace name.
+        :paramtype file_workspace_name: str
         :keyword technical_ticket_details: Additional ticket details associated with a technical
          support ticket request.
         :paramtype technical_ticket_details: ~azure.mgmt.support.models.TechnicalTicketDetails
         :keyword quota_ticket_details: Additional ticket details associated with a quota support ticket
          request.
         :paramtype quota_ticket_details: ~azure.mgmt.support.models.QuotaTicketDetails
+        :keyword secondary_consent: This property indicates secondary consents for the support ticket.
+        :paramtype secondary_consent: list[~azure.mgmt.support.models.SecondaryConsent]
         """
         super().__init__(**kwargs)
         self.id = None
@@ -906,10 +1371,14 @@ class SupportTicketDetails(_serialization.Model):  # pylint: disable=too-many-in
         self.severity = severity
         self.enrollment_id = None
         self.require24_x7_response = require24_x7_response
+        self.advanced_diagnostic_consent = advanced_diagnostic_consent
+        self.problem_scoping_questions = problem_scoping_questions
+        self.support_plan_id = support_plan_id
         self.contact_details = contact_details
         self.service_level_agreement = service_level_agreement
         self.support_engineer = support_engineer
         self.support_plan_type = None
+        self.support_plan_display_name = None
         self.title = title
         self.problem_start_time = problem_start_time
         self.service_id = service_id
@@ -917,8 +1386,10 @@ class SupportTicketDetails(_serialization.Model):  # pylint: disable=too-many-in
         self.status = None
         self.created_date = None
         self.modified_date = None
+        self.file_workspace_name = file_workspace_name
         self.technical_ticket_details = technical_ticket_details
         self.quota_ticket_details = quota_ticket_details
+        self.secondary_consent = secondary_consent
 
 
 class SupportTicketsListResult(_serialization.Model):
@@ -936,8 +1407,12 @@ class SupportTicketsListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.SupportTicketDetails"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.SupportTicketDetails"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of SupportTicket resources.
         :paramtype value: list[~azure.mgmt.support.models.SupportTicketDetails]
@@ -947,6 +1422,70 @@ class SupportTicketsListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
+
+
+class SystemData(_serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.support.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.support.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.support.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.support.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
 
 
 class TechnicalTicketDetails(_serialization.Model):
@@ -961,7 +1500,7 @@ class TechnicalTicketDetails(_serialization.Model):
         "resource_id": {"key": "resourceId", "type": "str"},
     }
 
-    def __init__(self, *, resource_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, resource_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword resource_id: This is the resource Id of the Azure service resource (For example: A
          virtual machine resource or an HDInsight resource) for which the support ticket is created.
@@ -1027,8 +1566,8 @@ class UpdateContactProfile(_serialization.Model):
         preferred_time_zone: Optional[str] = None,
         country: Optional[str] = None,
         preferred_support_language: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword first_name: First name.
         :paramtype first_name: str
@@ -1081,12 +1620,19 @@ class UpdateSupportTicket(_serialization.Model):
     :vartype status: str or ~azure.mgmt.support.models.Status
     :ivar contact_details: Contact details to be updated on the support ticket.
     :vartype contact_details: ~azure.mgmt.support.models.UpdateContactProfile
+    :ivar advanced_diagnostic_consent: Advanced diagnostic consent to be updated on the support
+     ticket. Known values are: "Yes" and "No".
+    :vartype advanced_diagnostic_consent: str or ~azure.mgmt.support.models.Consent
+    :ivar secondary_consent: This property indicates secondary consents for the support ticket.
+    :vartype secondary_consent: list[~azure.mgmt.support.models.SecondaryConsent]
     """
 
     _attribute_map = {
         "severity": {"key": "severity", "type": "str"},
         "status": {"key": "status", "type": "str"},
         "contact_details": {"key": "contactDetails", "type": "UpdateContactProfile"},
+        "advanced_diagnostic_consent": {"key": "advancedDiagnosticConsent", "type": "str"},
+        "secondary_consent": {"key": "secondaryConsent", "type": "[SecondaryConsent]"},
     }
 
     def __init__(
@@ -1095,8 +1641,10 @@ class UpdateSupportTicket(_serialization.Model):
         severity: Optional[Union[str, "_models.SeverityLevel"]] = None,
         status: Optional[Union[str, "_models.Status"]] = None,
         contact_details: Optional["_models.UpdateContactProfile"] = None,
-        **kwargs
-    ):
+        advanced_diagnostic_consent: Optional[Union[str, "_models.Consent"]] = None,
+        secondary_consent: Optional[List["_models.SecondaryConsent"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword severity: Severity level. Known values are: "minimal", "moderate", "critical", and
          "highestcriticalimpact".
@@ -1105,8 +1653,41 @@ class UpdateSupportTicket(_serialization.Model):
         :paramtype status: str or ~azure.mgmt.support.models.Status
         :keyword contact_details: Contact details to be updated on the support ticket.
         :paramtype contact_details: ~azure.mgmt.support.models.UpdateContactProfile
+        :keyword advanced_diagnostic_consent: Advanced diagnostic consent to be updated on the support
+         ticket. Known values are: "Yes" and "No".
+        :paramtype advanced_diagnostic_consent: str or ~azure.mgmt.support.models.Consent
+        :keyword secondary_consent: This property indicates secondary consents for the support ticket.
+        :paramtype secondary_consent: list[~azure.mgmt.support.models.SecondaryConsent]
         """
         super().__init__(**kwargs)
         self.severity = severity
         self.status = status
         self.contact_details = contact_details
+        self.advanced_diagnostic_consent = advanced_diagnostic_consent
+        self.secondary_consent = secondary_consent
+
+
+class UploadFile(_serialization.Model):
+    """File content associated with the file under a workspace.
+
+    :ivar content: File Content in base64 encoded format.
+    :vartype content: str
+    :ivar chunk_index: Index of the uploaded chunk (Index starts at 0).
+    :vartype chunk_index: float
+    """
+
+    _attribute_map = {
+        "content": {"key": "content", "type": "str"},
+        "chunk_index": {"key": "chunkIndex", "type": "float"},
+    }
+
+    def __init__(self, *, content: Optional[str] = None, chunk_index: Optional[float] = None, **kwargs: Any) -> None:
+        """
+        :keyword content: File Content in base64 encoded format.
+        :paramtype content: str
+        :keyword chunk_index: Index of the uploaded chunk (Index starts at 0).
+        :paramtype chunk_index: float
+        """
+        super().__init__(**kwargs)
+        self.content = content
+        self.chunk_index = chunk_index

@@ -1955,22 +1955,34 @@ class IstioComponents(_serialization.Model):
     :ivar ingress_gateways: Istio ingress gateways.
     :vartype ingress_gateways:
      list[~azure.mgmt.containerservice.v2023_06_02_preview.models.IstioIngressGateway]
+    :ivar egress_gateways: Istio egress gateways.
+    :vartype egress_gateways:
+     list[~azure.mgmt.containerservice.v2023_06_02_preview.models.IstioEgressGateway]
     """
 
     _attribute_map = {
         "ingress_gateways": {"key": "ingressGateways", "type": "[IstioIngressGateway]"},
+        "egress_gateways": {"key": "egressGateways", "type": "[IstioEgressGateway]"},
     }
 
     def __init__(
-        self, *, ingress_gateways: Optional[List["_models.IstioIngressGateway"]] = None, **kwargs: Any
+        self,
+        *,
+        ingress_gateways: Optional[List["_models.IstioIngressGateway"]] = None,
+        egress_gateways: Optional[List["_models.IstioEgressGateway"]] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword ingress_gateways: Istio ingress gateways.
         :paramtype ingress_gateways:
          list[~azure.mgmt.containerservice.v2023_06_02_preview.models.IstioIngressGateway]
+        :keyword egress_gateways: Istio egress gateways.
+        :paramtype egress_gateways:
+         list[~azure.mgmt.containerservice.v2023_06_02_preview.models.IstioEgressGateway]
         """
         super().__init__(**kwargs)
         self.ingress_gateways = ingress_gateways
+        self.egress_gateways = egress_gateways
 
 
 class IstioEgressGateway(_serialization.Model):

@@ -46,6 +46,10 @@ from ._restorable_gremlin_resources_operations import RestorableGremlinResources
 from ._restorable_tables_operations import RestorableTablesOperations
 from ._restorable_table_resources_operations import RestorableTableResourcesOperations
 from ._service_operations import ServiceOperations
+from ._throughput_pools_operations import ThroughputPoolsOperations
+from ._throughput_pool_operations import ThroughputPoolOperations
+from ._throughput_pool_accounts_operations import ThroughputPoolAccountsOperations
+from ._throughput_pool_account_operations import ThroughputPoolAccountOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -92,6 +96,10 @@ __all__ = [
     "RestorableTablesOperations",
     "RestorableTableResourcesOperations",
     "ServiceOperations",
+    "ThroughputPoolsOperations",
+    "ThroughputPoolOperations",
+    "ThroughputPoolAccountsOperations",
+    "ThroughputPoolAccountOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

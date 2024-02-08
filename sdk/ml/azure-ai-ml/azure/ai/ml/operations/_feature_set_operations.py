@@ -6,20 +6,21 @@
 
 import json
 import os
+from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
+from azure.ai.ml._restclient.v2023_10_01 import AzureMachineLearningServices as ServiceClient102023
+from azure.ai.ml._restclient.v2023_10_01.models import (
     FeaturesetVersion,
     FeaturesetVersionBackfillRequest,
     FeatureWindow,
-    ListViewType,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
@@ -31,7 +32,9 @@ from azure.ai.ml._utils._feature_store_utils import (
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import is_url
+from azure.ai.ml.constants import ListViewType
 from azure.ai.ml.entities._assets._artifacts.feature_set import FeatureSet
+from azure.ai.ml.entities._feature_set.data_availability_status import DataAvailabilityStatus
 from azure.ai.ml.entities._feature_set.feature import Feature
 from azure.ai.ml.entities._feature_set.feature_set_backfill_metadata import FeatureSetBackfillMetadata
 from azure.ai.ml.entities._feature_set.feature_set_materialization_metadata import FeatureSetMaterializationMetadata
@@ -59,7 +62,8 @@ class FeatureSetOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: ServiceClient042023Preview,
+        service_client: ServiceClient102023,
+        service_client_for_jobs: ServiceClient082023Preview,
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
@@ -67,6 +71,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         ops_logger.update_info(kwargs)
         self._operation = service_client.featureset_versions
         self._container_operation = service_client.featureset_containers
+        self._jobs_operation = service_client_for_jobs.jobs
         self._feature_operation = service_client.features
         self._service_client = service_client
         self._datastore_operation = datastore_operations
@@ -86,7 +91,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :param name: Name of a specific FeatureSet asset, optional.
         :type name: Optional[str]
         :keyword list_view_type: View type for including/excluding (for example) archived FeatureSet assets.
-        Default: ACTIVE_ONLY.
+            Defaults to ACTIVE_ONLY.
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of FeatureSet objects
         :rtype: ~azure.core.paging.ItemPaged[FeatureSet]
@@ -108,7 +113,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-    def _get(self, name: str, version: str = None, **kwargs: Dict) -> FeaturesetVersion:
+    def _get(self, name: str, version: Optional[str] = None, **kwargs: Dict) -> FeaturesetVersion:
         return self._operation.get(
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
@@ -120,7 +125,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "FeatureSet.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: str, **kwargs: Dict) -> FeatureSet:
+    def get(self, name: str, version: str, **kwargs: Dict) -> Optional[FeatureSet]:  # type: ignore
         """Get the specified FeatureSet asset.
 
         :param name: Name of FeatureSet asset.
@@ -148,23 +153,29 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :return: An instance of LROPoller that returns a FeatureSet.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureSet]
         """
+        featureset_copy = deepcopy(featureset)
 
-        featureset_spec = self._validate_and_get_feature_set_spec(featureset)
-        featureset.properties["featuresetPropertiesVersion"] = "1"
-        featureset.properties["featuresetProperties"] = json.dumps(featureset_spec._to_dict())
+        featureset_spec = self._validate_and_get_feature_set_spec(featureset_copy)
+        featureset_copy.properties["featuresetPropertiesVersion"] = "1"
+        featureset_copy.properties["featuresetProperties"] = json.dumps(featureset_spec._to_dict())
 
         sas_uri = None
-        featureset, _ = _check_and_upload_path(
-            artifact=featureset, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.FEATURE_SET
+
+        if not is_url(featureset_copy.path):
+            with open(os.path.join(str(featureset_copy.path), ".amlignore"), mode="w", encoding="utf-8") as f:
+                f.write(".*\n*.amltmp\n*.amltemp")
+
+        featureset_copy, _ = _check_and_upload_path(
+            artifact=featureset_copy, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.FEATURE_SET
         )
 
-        featureset_resource = FeatureSet._to_rest_object(featureset)
+        featureset_resource = FeatureSet._to_rest_object(featureset_copy)
 
         return self._operation.begin_create_or_update(
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
-            name=featureset.name,
-            version=featureset.version,
+            name=featureset_copy.name,
+            version=featureset_copy.version,
             body=featureset_resource,
             **kwargs,
             cls=lambda response, deserialized, headers: FeatureSet._from_rest_object(deserialized),
@@ -177,13 +188,15 @@ class FeatureSetOperations(_ScopeDependentOperations):
         *,
         name: str,
         version: str,
-        feature_window_start_time: datetime,
-        feature_window_end_time: datetime,
+        feature_window_start_time: Optional[datetime] = None,
+        feature_window_end_time: Optional[datetime] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         compute_resource: Optional[MaterializationComputeResource] = None,
         spark_configuration: Optional[Dict[str, str]] = None,
+        data_status: Optional[List[Union[str, DataAvailabilityStatus]]] = None,
+        job_id: Optional[str] = None,
         **kwargs: Dict,
     ) -> LROPoller[FeatureSetBackfillMetadata]:
         """Backfill.
@@ -206,10 +219,11 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :paramtype compute_resource: ~azure.ai.ml.entities.MaterializationComputeResource
         :keyword spark_configuration: Specifies the spark compute settings.
         :paramtype spark_configuration: dict[str, str]
+        :keyword data_status: Specifies the data status that you want to backfill.
+        :paramtype data_status: list[str or ~azure.ai.ml.entities.DataAvailabilityStatus]
         :return: An instance of LROPoller that returns ~azure.ai.ml.entities.FeatureSetBackfillMetadata
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureSetBackfillMetadata]
         """
-
         request_body: FeaturesetVersionBackfillRequest = FeaturesetVersionBackfillRequest(
             description=description,
             display_name=display_name,
@@ -218,8 +232,11 @@ class FeatureSetOperations(_ScopeDependentOperations):
             ),
             resource=compute_resource._to_rest_object() if compute_resource else None,
             spark_configuration=spark_configuration,
+            data_availability_status=data_status,
+            job_id=job_id,
             tags=tags,
         )
+
         return self._operation.begin_backfill(
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
@@ -259,16 +276,19 @@ class FeatureSetOperations(_ScopeDependentOperations):
         """
         feature_window_start_time = _datetime_to_str(feature_window_start_time) if feature_window_start_time else None
         feature_window_end_time = _datetime_to_str(feature_window_end_time) if feature_window_end_time else None
-        materialization_jobs = self._operation.list_materialization_jobs(
+        properties = f"azureml.FeatureSetName={name},azureml.FeatureSetVersion={version}"
+        if feature_window_start_time:
+            properties = properties + f",azureml.FeatureWindowStart={feature_window_start_time}"
+        if feature_window_end_time:
+            properties = properties + f",azureml.FeatureWindowEnd={feature_window_end_time}"
+
+        materialization_jobs = self._jobs_operation.list(
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
-            name=name,
-            version=version,
-            filters=filters,
-            feature_window_start=feature_window_start_time,
-            feature_window_end=feature_window_end_time,
-            **kwargs,
+            properties=properties,
+            tag=filters,
             cls=lambda objs: [FeatureSetMaterializationMetadata._from_rest_object(obj) for obj in objs],
+            **kwargs,
         )
         return materialization_jobs
 
@@ -314,17 +334,19 @@ class FeatureSetOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "FeatureSet.GetFeature", ActivityType.PUBLICAPI)
-    def get_feature(self, feature_set_name: str, version: str, *, feature_name: str, **kwargs: Dict) -> "Feature":
+    def get_feature(
+        self, feature_set_name: str, version: str, *, feature_name: str, **kwargs: Dict
+    ) -> Optional["Feature"]:
         """Get Feature
 
         :param feature_set_name: Feature set name.
         :type feature_set_name: str
         :param version: Feature set version.
         :type version: str
-        :keyword feature_name. This is case-sensitive.
+        :keyword feature_name: This is case-sensitive.
         :paramtype feature_name: str
-        :keyword tags: String representation of a comma-separated list of tag names
-            (and optionally values). Example: "tag1,tag2=value2".
+        :keyword tags: String representation of a comma-separated list of tag names, and optionally, values.
+            For example, "tag1,tag2=value2". If provided, only features matching the specified tags are returned.
         :paramtype tags: str
         :return: Feature object
         :rtype: ~azure.ai.ml.entities.Feature
@@ -404,7 +426,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-        featureset_spec_path = str(featureset.specification.path)
+        featureset_spec_path: Any = str(featureset.specification.path)
         if is_url(featureset_spec_path):
             try:
                 featureset_spec_contents = read_remote_feature_set_spec_metadata(

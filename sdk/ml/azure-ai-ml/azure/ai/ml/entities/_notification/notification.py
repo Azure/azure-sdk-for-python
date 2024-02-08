@@ -5,11 +5,9 @@
 from typing import List, Optional
 
 from azure.ai.ml._restclient.v2023_02_01_preview.models import NotificationSetting as RestNotificationSetting
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
-@experimental
 class Notification(RestTranslatableMixin):
     """Configuration for notification.
 
@@ -29,7 +27,7 @@ class Notification(RestTranslatableMixin):
         return RestNotificationSetting(email_on=self.email_on, emails=self.emails)
 
     @classmethod
-    def _from_rest_object(cls, obj: RestNotificationSetting) -> "Notification":
+    def _from_rest_object(cls, obj: RestNotificationSetting) -> Optional["Notification"]:
         if not obj:
             return None
         return Notification(email_on=obj.email_on, emails=obj.emails)

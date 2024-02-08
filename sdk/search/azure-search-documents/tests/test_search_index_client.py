@@ -9,7 +9,10 @@ from unittest import mock
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient, ApiVersion
 from azure.search.documents.indexes import SearchIndexClient, SearchIndexerClient
-from azure.search.documents.indexes.models import SearchIndexerDataContainer, SearchIndexerDataSourceConnection
+from azure.search.documents.indexes.models import (
+    SearchIndexerDataContainer,
+    SearchIndexerDataSourceConnection,
+)
 
 CREDENTIAL = AzureKeyCredential(key="test_api_key")
 

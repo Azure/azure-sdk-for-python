@@ -32,12 +32,12 @@ class ManagementOperation(object):
             "amqpConnection": self._session._connection._container_id,
             "amqpSession": self._session.name,
         }
-        self._mgmt_link = self._session.create_request_response_link_pair(
+        self._mgmt_link: ManagementLink = self._session.create_request_response_link_pair(
             endpoint=endpoint,
             on_amqp_management_open_complete=self._on_amqp_management_open_complete,
             on_amqp_management_error=self._on_amqp_management_error,
             **kwargs
-        )  # type: ManagementLink
+        )
         self._responses = {}
         self._mgmt_error = None
 
@@ -85,7 +85,7 @@ class ManagementOperation(object):
         else:
             self._responses[operation_id] = (status_code, status_description, raw_message)
 
-    async def execute(self, message, operation=None, operation_type=None, timeout=0):
+    async def execute(self, message, operation=None, operation_type=None, timeout: float = 0):
         start_time = time.time()
         operation_id = str(uuid.uuid4())
         self._responses[operation_id] = None

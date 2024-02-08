@@ -40,13 +40,13 @@ def main():
                 },
             },
             "location": "centralus",
-            "properties": {},
+            "properties": {"displayName": "ContosoDevCenter"},
             "tags": {"CostCode": "12345"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/stable/2023-04-01/examples/DevCenters_CreateWithUserIdentity.json
+# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/preview/2023-10-01-preview/examples/DevCenters_CreateWithUserIdentity.json
 if __name__ == "__main__":
     main()

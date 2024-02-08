@@ -56,7 +56,7 @@ for example_file in all_files:
 # ones.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.doctest',
               'sphinx.ext.viewcode', 'sphinx.ext.intersphinx', 'sphinx.ext.napoleon',
-              'myst_parser']
+              'myst_parser', 'sphinxcontrib.jquery']
 
 intersphinx_mapping = {
     # Dependencies
@@ -276,3 +276,8 @@ latex_documents = [
 
 # If false, no module index is generated.
 #latex_domain_indices = True
+
+# Used my myst-parser
+# https://myst-parser.readthedocs.io/en/latest/syntax/optional.html#syntax-header-anchors
+# Controls allowable header anchors in markdown files. Value allows header anchors for h1 - h6
+myst_heading_anchors = 6

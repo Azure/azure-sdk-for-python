@@ -57,11 +57,13 @@ def main():
                     "maxStalenessPrefix": 200,
                 },
                 "defaultIdentity": "FirstPartyIdentity",
+                "defaultPriorityLevel": "Low",
                 "diagnosticLogSettings": {"enableFullTextQuery": "True"},
                 "enableAnalyticalStorage": True,
                 "enableBurstCapacity": True,
                 "enableFreeTier": False,
                 "enablePartitionMerge": True,
+                "enablePriorityBasedExecution": True,
                 "ipRules": [{"ipAddressOrRange": "23.43.230.120"}, {"ipAddressOrRange": "110.12.240.0/12"}],
                 "isVirtualNetworkFilterEnabled": True,
                 "minimalTlsVersion": "Tls",
@@ -82,6 +84,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2023-03-15-preview/examples/CosmosDBDatabaseAccountPatch.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2023-11-15-preview/examples/CosmosDBDatabaseAccountPatch.json
 if __name__ == "__main__":
     main()

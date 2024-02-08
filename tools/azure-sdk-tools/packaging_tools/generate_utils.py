@@ -5,13 +5,14 @@ import os
 import re
 from functools import wraps
 
-from azure_devtools.ci_tools.git_tools import get_add_diff_file_list
+from ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
-from subprocess import check_call
+from subprocess import check_output, CalledProcessError, check_call
 from typing import Dict, Any
 from glob import glob
 import yaml
 
+from . import build_packaging
 from .swaggertosdk.autorest_tools import build_autorest_options, generate_code
 from .swaggertosdk.SwaggerToSdkCore import CONFIG_FILE_DPG, read_config
 from .conf import CONF_NAME
@@ -62,10 +63,17 @@ def get_package_names(sdk_folder):
 
 
 def call_build_config(package_name: str, folder_name: str):
-    check_call(
-        f"python -m packaging_tools --build-conf {package_name} -o {folder_name}",
-        shell=True,
+    build_packaging(
+        folder_name,
+        os.environ.get("GH_TOKEN", None),
+        packages=[package_name],
+        build_conf=True,
     )
+    # Replace this check_call by in process equivalent call, for better debugging
+    # check_call(
+    #     f"python -m packaging_tools --build-conf {package_name} -o {folder_name}",
+    #     shell=True,
+    # )
 
 def init_new_service(package_name, folder_name, is_typespec = False):
     if not is_typespec:
@@ -377,7 +385,11 @@ def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, r
     typespec_python = "@azure-tools/typespec-python"
 
     # call scirpt to generate sdk
-    check_call(f'pwsh {Path("eng/common/scripts/TypeSpec-Project-Process.ps1")} {(Path(spec_folder) / typespec_relative_path).resolve()} {head_sha} {rest_repo_url}', shell=True)
+    try:
+        check_output(f'pwsh {Path("eng/common/scripts/TypeSpec-Project-Process.ps1")} {(Path(spec_folder) / typespec_relative_path).resolve()} {head_sha} {rest_repo_url}', shell=True)
+    except CalledProcessError as e:
+        _LOGGER.error(f"Failed to generate sdk from typespec: {e.output.decode('utf-8')}")
+        raise e
 
     # get version of codegen used in generation
     with open(Path("eng/emitter-package.json"), "r") as file_in:
