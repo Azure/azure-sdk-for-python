@@ -98,7 +98,7 @@ def crack_and_chunk_and_embed_and_index(
 
                 index_config["endpoint"] = get_target_from_connection(connection)  # type: ignore[index]
                 connection = get_metadata_from_connection(connection)
-                index_config["api_version"] = connection.get("apiVersion", "2023-07-01-preview")  # type: ignore[index]
+                index_config["api_version"] = connection.get("apiVersion", "2023-07-01-preview")  # type: ignore
 
             mlindex = create_index_from_raw_embeddings(
                 embeddings_container,

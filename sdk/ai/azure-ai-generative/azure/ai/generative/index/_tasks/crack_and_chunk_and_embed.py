@@ -236,7 +236,7 @@ def crack_and_chunk_and_embed(
     for (document, embedding) in zip(documents_to_embed, embeddings):
         documents_embedded[document.document_id] = DataEmbeddedDocument(
             document.document_id,
-            document.mtime,
+            document.mtime,  # type: ignore[attr-defined]
             document.metadata["content_hash"],
             document.load_data(),
             embedding,
