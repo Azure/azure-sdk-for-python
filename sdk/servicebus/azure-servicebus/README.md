@@ -399,6 +399,21 @@ logger = logging.getLogger('azure.servicebus')
 logger.setLevel(logging.DEBUG)
 logger.addHandler(handler)
 
+# Advanced usage: Log AMQP connection/session/link names
+class CustomFormatter(logging.Formatter):
+
+    def format(self, record: logging.LogRecord) -> str:
+        if not "amqpConnection" in record.__dict__:
+            record.__dict__["amqpConnection"] = None
+        if not "amqpSession" in record.__dict__:
+            record.__dict__["amqpSession"] = None
+        if not "amqpLink" in record.__dict__:
+            record.__dict__["amqpLink"] = None
+
+        return super().format(record)
+
+formatter = CustomFormatter('amqpConnection: %(amqpConnection)s, amqpSession: %(amqpSession)s, amqpLink: %(amqpLink)s - %(message)s')
+handler.setFormatter(formatter)
 ...
 
 from azure.servicebus import ServiceBusClient
