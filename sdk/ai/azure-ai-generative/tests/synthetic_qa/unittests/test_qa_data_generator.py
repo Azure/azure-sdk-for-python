@@ -69,6 +69,8 @@ class TestQADataGenerator:
             qa_generator.generate("", QAType.SHORT_ANSWER, num_questions)
         assert str(excinfo.value) == "num_questions must be an integer greater than zero"
     
+
+    @pytest.mark.skipif(condition=True, reason="""Fails on CI due to permissions issues.""")
     @pytest.mark.parametrize("qa_type", [QAType.CONVERSATION, QAType.SHORT_ANSWER])
     @pytest.mark.parametrize("structure", [OutputStructure.CHAT_PROTOCOL, OutputStructure.PROMPTFLOW])
     def test_export_format(self, qa_type, structure):
