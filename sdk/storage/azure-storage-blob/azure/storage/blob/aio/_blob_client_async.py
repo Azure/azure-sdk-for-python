@@ -5,8 +5,8 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines
 
-import warnings
 from datetime import datetime
+import warnings
 from functools import partial
 from typing import (
     Any, AnyStr, AsyncIterable, cast, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
@@ -80,7 +80,6 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.storage.blob.aio import ContainerClient
-    from datetime import datetime
     from .._models import (
         ContentSettings,
         ImmutabilityPolicy,
