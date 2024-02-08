@@ -176,11 +176,11 @@ def _populate_part_a_fields(resource: Resource):
             tags[ContextTagKeys.AI_CLOUD_ROLE_INSTANCE] = platform.node()  # hostname default
         tags[ContextTagKeys.AI_INTERNAL_NODE_NAME] = tags[ContextTagKeys.AI_CLOUD_ROLE_INSTANCE]
         if device_id:
-            tags[ContextTagKeys.AI_DEVICE_ID] = device_id
+            tags[ContextTagKeys.AI_DEVICE_ID] = device_id # type: ignore
         if device_model:
-            tags[ContextTagKeys.AI_DEVICE_MODEL] = device_model
+            tags[ContextTagKeys.AI_DEVICE_MODEL] = device_model # type: ignore
         if device_make:
-            tags[ContextTagKeys.AI_DEVICE_OEM_NAME] = device_make
+            tags[ContextTagKeys.AI_DEVICE_OEM_NAME] = device_make # type: ignore
     return tags
 
 # pylint: disable=W0622
