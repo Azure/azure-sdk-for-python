@@ -1,14 +1,10 @@
 # Release History
 
-## 1.0.0b2 (Unreleased)
-
-### Features Added
+## 1.0.0b2 (2024-02-09)
 
 ### Breaking Changes
 
-### Bugs Fixed
-
-### Other Changes
+- In the previous version, you would call the `analyze` method on the `ImageAnalysisClient` to analyze an image from a publicly accessible URL, or from a memory buffer. To better align with other Azure client libraires, this was changed in this release. Call the new dedicated `analyze_from_url` method to analyze an image from URL. Keep calling the `analyze` method to analyze an image from a memory buffer.
 
 ## 1.0.0b1 (2024-01-09)
 
