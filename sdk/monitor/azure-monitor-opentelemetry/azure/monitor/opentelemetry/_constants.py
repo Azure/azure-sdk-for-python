@@ -17,7 +17,6 @@ from azure.monitor.opentelemetry.exporter._constants import (  # pylint: disable
     _AZURE_MONITOR_DISTRO_VERSION_ARG,
 )
 
-
 # --------------------Configuration------------------------------------------
 
 CONNECTION_STRING_ARG = "connection_string"
