@@ -58,7 +58,7 @@ def _get_sdk_version_prefix():
     # TODO: Add AKS scenario
     # elif _is_on_aks():
     #     rp = 'k'
-    
+
     os = 'u'
     system = platform.system()
     if system == "Linux":
@@ -70,7 +70,7 @@ def _get_sdk_version_prefix():
     if _is_attach_enabled():
         attach_type = 'i'
     sdk_version_prefix = "{}{}{}_".format(rp, os, attach_type)
-    
+
     return sdk_version_prefix
 
 
