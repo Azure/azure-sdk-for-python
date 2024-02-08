@@ -9,7 +9,7 @@ from azure.ai.ml._utils.utils import camel_to_snake, _snake_to_camel
 from azure.ai.ml.entities import WorkspaceConnection
 from azure.ai.ml.entities._credentials import ApiKeyConfiguration
 from azure.core.credentials import TokenCredential
-from azure.ai.ml._restclient.v2024_01_01_preview.models import ConnectionCategory
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ConnectionCategory
 from azure.ai.ml.constants._common import (
     WorkspaceConnectionTypes,
 )
@@ -124,7 +124,7 @@ class BaseConnection:
             ConnectionCategory.COGNITIVE_SEARCH.lower(): AzureAISearchConnection,
             ConnectionCategory.COGNITIVE_SERVICE.lower(): AzureAIServiceConnection,
             ConnectionCategory.GIT.lower(): GitHubConnection,
-            ConnectionCategory.AZURE_BLOB.lower(): AzureBlobStoreConnection,
+            "azureblob": AzureBlobStoreConnection, # TODO replace with conn category when available
             ConnectionCategory.CUSTOM_KEYS.lower(): CustomConnection, 
             WorkspaceConnectionTypes.CUSTOM.lower(): CustomConnection
         }
