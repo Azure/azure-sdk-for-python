@@ -13,7 +13,7 @@ from pathlib import Path
 from azure.monitor.opentelemetry.exporter._connection_string_parser import (  # pylint: disable=import-error,no-name-in-module
     ConnectionStringParser,
 )
-from azure.monitor.opentelemetry.exporter._constants import (
+from azure.monitor.opentelemetry.exporter._constants import (  # pylint: disable=import-error,no-name-in-module
     _AZURE_MONITOR_DISTRO_VERSION_ARG,
 )
 
