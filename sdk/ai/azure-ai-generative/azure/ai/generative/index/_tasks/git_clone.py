@@ -16,7 +16,7 @@ def main(args, logger, activity_logger):
     try:
         connection_id = os.environ.get('AZUREML_WORKSPACE_CONNECTION_ID_GIT')
         if connection_id is not None and connection_id != '':
-            from azure.ai.resources._index._utils.connections import get_connection_by_id_v2
+            from azure.ai.generative.index._utils.connections import get_connection_by_id_v2
 
             connection = get_connection_by_id_v2(connection_id)
             if args.git_repository != connection['properties']['target']:
