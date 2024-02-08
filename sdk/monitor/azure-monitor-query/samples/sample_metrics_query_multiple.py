@@ -1,13 +1,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 """
-FILE: sample_metrics_batch_query.py
+FILE: sample_metrics_query_multiple.py
 DESCRIPTION:
-    This sample demonstrates authenticating the MetricsBatchQueryClient and retrieving the "Ingress"
+    This sample demonstrates authenticating the MetricsClient and retrieving the "Ingress"
     metric along with the "Average" aggregation type for multiple resources.
     The query will execute over a timespan of 2 hours with a granularity of 5 minutes.
 USAGE:
-    python sample_metrics_batch_query.py
+    python sample_metrics_query_multiple.py
     1) AZURE_METRICS_ENDPOINT - The regional metrics endpoint to use (i.e. https://westus3.metrics.monitor.azure.com)
 
     This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
@@ -22,13 +22,13 @@ import os
 
 from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
-from azure.monitor.query import MetricsBatchQueryClient, MetricAggregationType
+from azure.monitor.query import MetricsClient, MetricAggregationType
 
 
 endpoint = os.environ["AZURE_METRICS_ENDPOINT"]
 
 credential = DefaultAzureCredential()
-client = MetricsBatchQueryClient(endpoint, credential)
+client = MetricsClient(endpoint, credential)
 
 resource_uris = [
     '/subscriptions/<id>/resourceGroups/<rg>/providers/Microsoft.Storage/storageAccounts/<account-1>',
@@ -36,10 +36,10 @@ resource_uris = [
 ]
 
 try:
-    response = client.query_batch(
-        resource_uris,
-        metric_names=["Ingress"],
+    response = client.query_resources(
+        resource_uris=resource_uris,
         metric_namespace="Microsoft.Storage/storageAccounts",
+        metric_names=["Ingress"],
         timespan=timedelta(hours=2),
         granularity=timedelta(minutes=5),
         aggregations=[MetricAggregationType.AVERAGE],
