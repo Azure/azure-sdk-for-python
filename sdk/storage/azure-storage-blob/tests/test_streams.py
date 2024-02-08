@@ -8,23 +8,32 @@ import math
 import os
 import random
 from io import BytesIO
-from typing import List, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 import pytest
 from azure.storage.blob._shared.streams import (
     StructuredMessageConstants,
     StructuredMessageDecodeStream,
+    StructuredMessageError,
     StructuredMessageProperties,
 )
 from azure.storage.extensions import crc64
 
 
-def _write_segment(number: int, data: bytes, flags: StructuredMessageProperties, stream: BytesIO) -> None:
+def _write_segment(
+    number: int,
+    data: bytes,
+    flags: StructuredMessageProperties,
+    stream: BytesIO,
+    invalidate_crc: bool
+) -> None:
     stream.write(number.to_bytes(2, 'little'))  # Segment number
     stream.write(len(data).to_bytes(8, 'little'))  # Segment length
     stream.write(data)  # Segment content
     if StructuredMessageProperties.CRC64 in flags:
         crc: int = crc64.compute_crc64(data, 0)
+        if invalidate_crc:
+            crc -= 5
         stream.write(crc.to_bytes(StructuredMessageConstants.CRC64_LENGTH, 'little'))
 
 
@@ -32,6 +41,7 @@ def _build_structured_message(
     data: bytes,
     segment_size: Union[int, List[int]],
     flags: StructuredMessageProperties,
+    invalidate_crc_segment: Optional[int] = None
 ) -> Tuple[BytesIO, int]:
     if isinstance(segment_size, list):
         segment_count = len(segment_size)
@@ -54,7 +64,7 @@ def _build_structured_message(
 
     # Special case for 0 length content
     if len(data) == 0:
-        _write_segment(1, data, flags, message)
+        _write_segment(1, data, flags, message, False)
         message.seek(0, 0)
         return message, message_length
 
@@ -66,7 +76,8 @@ def _build_structured_message(
         segment_data = data[offset: offset + size]
         offset += size
 
-        _write_segment(i, segment_data, flags, message)
+        invalidate_crc = i == invalidate_crc_segment
+        _write_segment(i, segment_data, flags, message, invalidate_crc)
 
     message.seek(0, 0)
     return message, message_length
@@ -175,3 +186,36 @@ class TestStructuredMessageDecodeStream:
         content = stream.read()
 
         assert content == data
+
+    @pytest.mark.parametrize("invalid_segment", [1, 2, 3])
+    def test_crc64_mismatch_read_all(self, invalid_segment):
+        data = os.urandom(3 * 1024)
+        message_stream, length = _build_structured_message(
+            data,
+            1024,
+            StructuredMessageProperties.CRC64,
+            invalid_segment)
+
+        stream = StructuredMessageDecodeStream(message_stream, length)
+        with pytest.raises(StructuredMessageError) as e:
+            stream.read()
+        assert 'CRC64 mismatch' in str(e.value)
+
+    @pytest.mark.parametrize("invalid_segment", [1, 2, 3])
+    def test_crc64_mismatch_read_chunks(self, invalid_segment):
+        data = os.urandom(3 * 1024)
+        message_stream, length = _build_structured_message(
+            data,
+            1024,
+            StructuredMessageProperties.CRC64,
+            invalid_segment)
+
+        stream = StructuredMessageDecodeStream(message_stream, length)
+        # Since we only check CRC on segment borders, some reads will succeed, but we test
+        # to ensure eventually the stream reading will error out.
+        with pytest.raises(StructuredMessageError) as e:
+            read = 0
+            while read < len(data):
+                stream.read(512)
+
+        assert 'CRC64 mismatch' in str(e.value)
