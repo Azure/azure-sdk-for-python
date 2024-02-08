@@ -13,6 +13,10 @@ import traceback
 from typing import Iterator, List, Optional
 
 import pandas as pd
+from azure.ai.generative.index._documents import (
+    Document,
+    StaticDocument,
+)
 from azure.ai.generative.index._embeddings import EmbeddingsContainer
 from azure.ai.generative.index._utils.logging import (
     _logger_factory,
@@ -23,7 +27,6 @@ from azure.ai.generative.index._utils.logging import (
     safe_mlflow_start_run,
     track_activity,
 )
-from azure.ai.resources._index._documents import Document, StaticDocument
 
 logger = get_logger("embed")
 
@@ -276,7 +279,7 @@ def main(args, logger, activity_logger):
         connection_args["connection"] = {"id": connection_id}
     else:
         if "open_ai" in args.embeddings_model:
-            from azure.ai.resources._index._utils.azureml import get_workspace_from_environment
+            from azure.ai.generative.index._utils.azureml import get_workspace_from_environment
 
             ws = get_workspace_from_environment()
             connection_args["connection_type"] = "workspace_keyvault"

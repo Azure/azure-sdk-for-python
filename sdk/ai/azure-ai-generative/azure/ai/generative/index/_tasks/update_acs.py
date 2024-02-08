@@ -15,7 +15,7 @@ from packaging import version as pkg_version
 
 from azure.ai.generative.index._embeddings import EmbeddingsContainer, ReferenceEmbeddedDocument
 from azure.ai.generative.index._mlindex import MLIndex
-from azure.ai.resources._index._utils.connections import get_connection_credential
+from azure.ai.generative.index._utils.connections import get_connection_credential
 from azure.ai.generative.index._utils.logging import (
     _logger_factory,
     enable_appinsights_logging,
@@ -486,7 +486,7 @@ def main(args, logger, activity_logger):
         if args.connection_id is not None:
             connection_args["connection_type"] = "workspace_connection"
             connection_args["connection"] = {"id": args.connection_id}
-            from azure.ai.resources._index._utils.connections import (
+            from azure.ai.generative.index._utils.connections import (
                 get_connection_by_id_v2,
                 get_metadata_from_connection,
                 get_target_from_connection,

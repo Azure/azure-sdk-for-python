@@ -21,7 +21,7 @@ from azure.ai.generative.index._documents.cracking import crack_documents, file_
 from azure.ai.generative.index._embeddings import DataEmbeddedDocument, EmbeddedDocumentSource, EmbeddingsContainer
 from azure.ai.generative.index._mlindex import MLIndex
 from azure.ai.generative.index._tasks.crack_and_chunk import custom_loading, get_activity_logging_filter, str2bool
-from azure.ai.generative.index._documents.document import DocumentSource
+from azure.ai.generative.index._documents.document import Document, DocumentSource
 from azure.ai.generative.index._utils.logging import (
     _logger_factory,
     enable_appinsights_logging,
@@ -30,7 +30,6 @@ from azure.ai.generative.index._utils.logging import (
     safe_mlflow_start_run,
     track_activity,
 )
-from azure.ai.resources._index._documents import Document
 
 logger = get_logger("crack_and_chunk_and_embed")
 
@@ -63,7 +62,7 @@ def crack_and_chunk_and_embed(
             if isinstance(embeddings_connection, str):
                 connection_args["connection"] = {"id": embeddings_connection}
             else:
-                from azure.ai.resources._index._utils.connections import get_id_from_connection
+                from azure.ai.generative.index._utils.connections import get_id_from_connection
 
                 connection_args["connection"] = {"id": get_id_from_connection(embeddings_connection)}
 
