@@ -8,6 +8,7 @@ from unittest.mock import patch
 import pytest
 from azure.core.utils import case_insensitive_dict
 from azure.core.utils._utils import get_running_async_lock
+from azure.core.pipeline.policies._utils import parse_retry_after
 
 
 @pytest.fixture()
@@ -63,9 +64,9 @@ def test_case_insensitive_dict_lowerkey_items():
 @pytest.mark.parametrize(
     "other, expected",
     (
-        ({"PLATFORMUPDATEDOMAINCOUNT": 5}, True),
-        ({}, False),
-        (None, False),
+            ({"PLATFORMUPDATEDOMAINCOUNT": 5}, True),
+            ({}, False),
+            (None, False),
     ),
 )
 def test_case_insensitive_dict_equality(other, expected):
@@ -134,3 +135,14 @@ def test_get_running_async_module_sync():
         sys.modules.pop("trio", None)
         with pytest.raises(RuntimeError):
             get_running_async_lock()
+
+
+def test_parse_retry_after():
+    ret = parse_retry_after("100")
+    assert ret == 100
+    ret = parse_retry_after("Fri, 1 Oct 2100 00:00:00 GMT")
+    assert ret > 0
+    ret = parse_retry_after("0")
+    assert ret == 0
+    ret = parse_retry_after("0.9")
+    assert ret == 0.9
