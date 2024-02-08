@@ -1093,6 +1093,15 @@ class ServiceBusReceivedMessage(ServiceBusMessage): # pylint: disable=too-many-i
                 in_seconds = timestamp / 1000.0
                 return utc_from_timestamp(in_seconds)
         return None
+    
+    @property
+    def received_timestamp_utc(self) -> datetime.datetime:
+        """
+        The UTC datetime at which the message has been received by the client.
+
+        :rtype: ~datetime.datetime
+        """
+        return self._received_timestamp_utc
 
     @property
     def expires_at_utc(self) -> Optional[datetime.datetime]:
