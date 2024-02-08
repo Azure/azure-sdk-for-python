@@ -4,6 +4,7 @@
 
 import logging
 import re
+from os import PathLike
 from typing import Any, Optional, Tuple, Union
 
 from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
@@ -33,13 +34,13 @@ class AzureMLDatastorePathUri:
     """Parser for an azureml:// datastore path URI, e.g.: azureml://datastores/mydatastore/paths/images/dogs'.
 
     :param uri: The AzureML datastore path URI.
-    :type uri: str
+    :type uri: Union[PathLike[Any], str]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the AzureML datastore
         path URI is incorrectly formatted.
     '
     """
-
-    def __init__(self, uri: str):
+    def __init__(self, uri: Union[PathLike[Any], str]):
+        uri = str(uri)
         if uri.startswith(FILE_PREFIX):
             uri = uri[len(FILE_PREFIX) :]
         elif uri.startswith(FOLDER_PREFIX):
