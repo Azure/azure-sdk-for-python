@@ -23,7 +23,7 @@ from azure.ai.generative.index._utils.logging import (
 
 logger = get_logger("crack_and_chunk_and_embed_and_index")
 
-
+# pylint: disable=too-many-locals
 def crack_and_chunk_and_embed_and_index(
     logger: Logger,
     activity_logger: Logger,

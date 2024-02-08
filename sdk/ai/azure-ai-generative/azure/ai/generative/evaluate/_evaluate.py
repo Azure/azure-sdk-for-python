@@ -266,7 +266,7 @@ def evaluate(
         return evaluation_result
 
 
-def _evaluate(
+def _evaluate(  # pylint: disable=too-many-locals
     evaluation_name=None,
     target=None,
     data=None,

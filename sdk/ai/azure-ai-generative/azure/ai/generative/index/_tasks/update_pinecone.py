@@ -74,7 +74,7 @@ def create_pinecone_index_sdk(pinecone_config: dict, api_key: str, embeddings: E
         logger.info(f"Pinecone index {pinecone_config['index_name']} already exists")
 
 
-def create_index_from_raw_embeddings(
+def create_index_from_raw_embeddings(  # pylint: disable=too-many-locals
     emb: EmbeddingsContainer,
     pinecone_config: dict = {},
     connection: dict = {},

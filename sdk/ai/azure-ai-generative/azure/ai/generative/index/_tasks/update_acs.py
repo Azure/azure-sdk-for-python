@@ -218,7 +218,7 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
         logger.info(f"Search index {acs_config['index_name']} already exists")
 
 
-def create_index_from_raw_embeddings(
+def create_index_from_raw_embeddings(  # pylint: disable=too-many-locals
     emb: EmbeddingsContainer,
     acs_config={},
     connection={},
@@ -474,7 +474,7 @@ def create_index_from_raw_embeddings(
     return mlindex
 
 
-def main(args, logger, activity_logger):
+def main(args, logger, activity_logger):  # pylint: disable=too-many-locals
     try:
         try:
             acs_config = json.loads(args.acs_config)
