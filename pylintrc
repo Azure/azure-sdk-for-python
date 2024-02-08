@@ -61,3 +61,4 @@ inlinevar-naming-style=snake_case
 
 [TYPECHECK]
 generated-members=js.*
+disable=python_2_unicode_compatible
