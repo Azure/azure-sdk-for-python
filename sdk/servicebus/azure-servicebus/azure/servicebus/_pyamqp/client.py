@@ -181,7 +181,7 @@ class AMQPClient(
             "remote_idle_timeout_empty_frame_send_ratio", None
         )
         self._network_trace = kwargs.pop("network_trace", False)
-        self._network_trace_params = {"amqpConnection": "", "amqpSession": "", "amqpLink": ""}
+        self._network_trace_params = {}
 
         # Session settings
         self._outgoing_window = kwargs.pop("outgoing_window", OUTGOING_WINDOW)
@@ -377,8 +377,15 @@ class AMQPClient(
             except RuntimeError:  # Probably thread failed to start in .open()
                 logging.debug("Keep alive thread failed to join.", exc_info=True)
             self._keep_alive_thread = None
-        self._network_trace_params["amqpConnection"] = ""
-        self._network_trace_params["amqpSession"] = ""
+        try:
+            del self._network_trace_params["amqpConnection"]
+        except KeyError:
+            pass
+        try:
+            del self._network_trace_params["amqpSession"]
+        except KeyError:
+            pass
+
 
     def auth_complete(self):
         """Whether the authentication handshake is complete during
