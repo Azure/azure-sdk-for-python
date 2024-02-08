@@ -765,7 +765,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             )
             blob_name = blob.name
         else:
-            blob_name = blob.name
+            blob_name = blob
         if isinstance(container, ContainerProperties):
             container_name = container.name
         else:
