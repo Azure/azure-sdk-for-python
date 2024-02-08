@@ -59,9 +59,10 @@ class AzureOpenAIWorkspaceConnection(WorkspaceConnection):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type=camel_to_snake(ConnectionCategory.AZURE_OPEN_AI), credentials=credentials, from_child=True, **kwargs)
 
-        if self.tags is not None:
-            self.tags[CONNECTION_API_VERSION_KEY] = api_version
-            self.tags[CONNECTION_API_TYPE_KEY] = api_type
+        if not hasattr(self, 'tags') or self.tags is None:
+            self.tags = {}
+        self.tags[CONNECTION_API_VERSION_KEY] = api_version
+        self.tags[CONNECTION_API_TYPE_KEY] = api_type
 
     @classmethod
     def _get_required_metadata_fields(cls) -> List[str]:
@@ -76,7 +77,7 @@ class AzureOpenAIWorkspaceConnection(WorkspaceConnection):
         """The API version of the workspace connection.
 
         :return: The API version of the workspace connection.
-        :rtype: str
+        :rtype: Optional[str]
         """
         if self.tags is not None and CONNECTION_API_VERSION_KEY in self.tags:
             res: str = self.tags[CONNECTION_API_VERSION_KEY]
@@ -90,15 +91,16 @@ class AzureOpenAIWorkspaceConnection(WorkspaceConnection):
         :param value: The new api version to set.
         :type value: str
         """
-        if self.tags is not None:
-            self.tags[CONNECTION_API_VERSION_KEY] = value
+        if not hasattr(self, 'tags') or self.tags is None:
+            self.tags = {}
+        self.tags[CONNECTION_API_VERSION_KEY] = value
 
     @property
     def api_type(self) -> Optional[str]:
         """The API type of the workspace connection.
 
         :return: The API type of the workspace connection.
-        :rtype: str
+        :rtype: Optional[str]
         """
         if self.tags is not None and CONNECTION_API_TYPE_KEY in self.tags:
             res: str = self.tags[CONNECTION_API_TYPE_KEY]
@@ -112,8 +114,9 @@ class AzureOpenAIWorkspaceConnection(WorkspaceConnection):
         :param value: The new api type to set.
         :type value: str
         """
-        if self.tags is not None:
-            self.tags[CONNECTION_API_TYPE_KEY] = value
+        if not hasattr(self, 'tags') or self.tags is None:
+            self.tags = {}
+        self.tags[CONNECTION_API_TYPE_KEY] = value
 
 
 @experimental
@@ -144,8 +147,9 @@ class AzureAISearchWorkspaceConnection(WorkspaceConnection):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type=camel_to_snake(ConnectionCategory.COGNITIVE_SEARCH), credentials=credentials, from_child=True, **kwargs)
 
-        if self.tags is not None:
-            self.tags[CONNECTION_API_VERSION_KEY] = api_version
+        if not hasattr(self, 'tags') or self.tags is None:
+            self.tags = {}
+        self.tags[CONNECTION_API_VERSION_KEY] = api_version
 
     @classmethod
     def _get_required_metadata_fields(cls) -> List[str]:
@@ -160,7 +164,7 @@ class AzureAISearchWorkspaceConnection(WorkspaceConnection):
         """The API version of the workspace connection.
 
         :return: The API version of the workspace connection.
-        :rtype: str
+        :rtype: Optional[str]
         """
         if self.tags is not None and CONNECTION_API_VERSION_KEY in self.tags:
             res: str = self.tags[CONNECTION_API_VERSION_KEY]
@@ -174,8 +178,9 @@ class AzureAISearchWorkspaceConnection(WorkspaceConnection):
         :param value: The new api version to set.
         :type value: str
         """
-        if self.tags is not None:
-            self.tags[CONNECTION_API_VERSION_KEY] = value
+        if not hasattr(self, 'tags') or self.tags is None:
+            self.tags = {}
+        self.tags[CONNECTION_API_VERSION_KEY] = value
 
 
 @experimental
@@ -209,9 +214,10 @@ class AzureAIServiceWorkspaceConnection(WorkspaceConnection):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type=camel_to_snake(ConnectionCategory.COGNITIVE_SERVICE), credentials=credentials, from_child=True, **kwargs)
 
-        if self.tags is not None:
-            self.tags[CONNECTION_API_VERSION_KEY] = api_version
-            self.tags[CONNECTION_KIND_KEY] = kind
+        if not hasattr(self, 'tags') or self.tags is None:
+            self.tags = {}
+        self.tags[CONNECTION_API_VERSION_KEY] = api_version
+        self.tags[CONNECTION_KIND_KEY] = kind
 
     @classmethod
     def _get_required_metadata_fields(cls) -> List[str]:
@@ -226,7 +232,7 @@ class AzureAIServiceWorkspaceConnection(WorkspaceConnection):
         """The API version of the workspace connection.
 
         :return: The API version of the workspace connection.
-        :rtype: str
+        :rtype: Optional[str]
         """
         if self.tags is not None and CONNECTION_API_VERSION_KEY in self.tags:
             res: str = self.tags[CONNECTION_API_VERSION_KEY]
@@ -240,15 +246,16 @@ class AzureAIServiceWorkspaceConnection(WorkspaceConnection):
         :param value: The new api version to set.
         :type value: str
         """
-        if self.tags is not None:
-            self.tags[CONNECTION_API_VERSION_KEY] = value
+        if not hasattr(self, 'tags') or self.tags is None:
+            self.tags = {}
+        self.tags[CONNECTION_API_VERSION_KEY] = value
 
     @property
     def kind(self) -> Optional[str]:
         """The kind of the workspace connection.
 
         :return: The kind of the workspace connection.
-        :rtype: str
+        :rtype: Optional[str]
         """
         if self.tags is not None and CONNECTION_KIND_KEY in self.tags:
             res: str = self.tags[CONNECTION_KIND_KEY]
@@ -262,6 +269,8 @@ class AzureAIServiceWorkspaceConnection(WorkspaceConnection):
         :param value: The new kind to set.
         :type value: str
         """
+        if self.tags is None:
+            self.tags = {}
         self.tags[CONNECTION_KIND_KEY] = value
 
 
@@ -299,6 +308,8 @@ class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
             target=target, type=camel_to_snake(ConnectionCategory.AZURE_BLOB), credentials=kwargs.pop("credentials", None), from_child=True, **kwargs
         )
 
+        if not hasattr(self, 'tags') or self.tags is None:
+            self.tags = {}
         self.tags[CONNECTION_CONTAINER_NAME_KEY] = container_name
         self.tags[CONNECTION_ACCOUNT_NAME_KEY] = account_name
 
@@ -319,7 +330,18 @@ class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
         """
         if self.tags is not None and CONNECTION_CONTAINER_NAME_KEY in self.tags:
             return self.tags[CONNECTION_CONTAINER_NAME_KEY]
-        return None
+        return ""
+    
+    @container_name.setter
+    def container_name(self, value: str) -> None:
+        """Set the container name of the workspace connection.
+
+        :param value: The new container name to set.
+        :type value: str
+        """
+        if self.tags is None:
+            self.tags = {}
+        self.tags[CONNECTION_CONTAINER_NAME_KEY] = value
 
     @property
     def account_name(self) -> str:
@@ -330,4 +352,15 @@ class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
         """
         if self.tags is not None and CONNECTION_ACCOUNT_NAME_KEY in self.tags:
             return self.tags[CONNECTION_ACCOUNT_NAME_KEY]
-        return None
+        return ""
+    
+    @account_name.setter
+    def account_name(self, value: str) -> None:
+        """Set the account name of the workspace connection.
+
+        :param value: The new account name to set.
+        :type value: str
+        """
+        if self.tags is None:
+            self.tags = {}
+        self.tags[CONNECTION_ACCOUNT_NAME_KEY] = value

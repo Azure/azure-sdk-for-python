@@ -163,7 +163,6 @@ class WorkspaceConnection(Resource):
         ServicePrincipalConfiguration,
         AccessKeyConfiguration,
         ApiKeyConfiguration,
-        None,
     ]:
         """Credentials for workspace connection.
 
