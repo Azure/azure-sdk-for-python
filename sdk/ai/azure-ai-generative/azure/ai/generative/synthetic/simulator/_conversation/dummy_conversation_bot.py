@@ -25,7 +25,7 @@ class DummyConversationBot:
         ----------
         role: The role of the bot in the conversation, either USER or ASSISTANT
         model: The LLM model to use for generating responses
-        conversation_template: A jinja2 template that describes the conversation, 
+        conversation_template: A jinja2 template that describes the conversation,
         this is used to generate the prompt for the LLM
         instantiation_parameters: A dictionary of parameters that are used to instantiate the conversation template
             Dedicated parameters:
@@ -116,11 +116,11 @@ class DummyConversationBot:
         # The ChatAPI must respond as ASSISTANT, so if this bot is USER, we need to reverse the messages
         if (
             self.role == ConversationRole.USER
-        ):  # and (isinstance(self.model, OpenAIChatCompletionsModel) or 
+        ):  # and (isinstance(self.model, OpenAIChatCompletionsModel) or
             # isinstance(self.model, LLAMAChatCompletionsModel)):
-            # in here we need to simulate the user, 
+            # in here we need to simulate the user,
             # The chatapi only generate turn as assistant and can't generate turn as user
-            # thus we reverse all rules in history messages, 
+            # thus we reverse all rules in history messages,
             # so that messages produced from the other bot passed here as user messages
             messages.extend([turn.to_openai_chat_format(reverse=True) for turn in conversation_history[-max_history:]])
             prompt_role = ConversationRole.USER.value

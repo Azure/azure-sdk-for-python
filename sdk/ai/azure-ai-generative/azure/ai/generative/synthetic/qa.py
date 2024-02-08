@@ -159,25 +159,25 @@ class QAType(str, Enum):
 
     SHORT_ANSWER = "SHORT_ANSWER"
     """
-        Short answer QAs have answers that are only a few words long. 
+        Short answer QAs have answers that are only a few words long.
         These words are generally relevant details from text like dates, names, statistics, etc.
     """
     LONG_ANSWER = "LONG_ANSWER"
     """
-        Long answer QAs have answers that are one or more sentences long. 
+        Long answer QAs have answers that are one or more sentences long.
         ex. Questions where answer is a definition: What is a {topic_from_text}?
     """
     BOOLEAN = "BOOLEAN"
     """Boolean QAs have answers that are either True or False."""
     SUMMARY = "SUMMARY"
     """
-        Summary QAs have questions that ask to write a summary for text's title in a limited number of words. 
+        Summary QAs have questions that ask to write a summary for text's title in a limited number of words.
         It generates just one QA.
     """
     CONVERSATION = "CONVERSATION"
     """
-        Conversation QAs have questions that might reference words or ideas from previous QAs. 
-        ex. If previous conversation was about some topicX from text, next question might reference it 
+        Conversation QAs have questions that might reference words or ideas from previous QAs.
+        ex. If previous conversation was about some topicX from text, next question might reference it
         without using its name: How does *it* compare to topicY?
     """
 
