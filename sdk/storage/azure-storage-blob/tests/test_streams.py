@@ -19,18 +19,6 @@ from azure.storage.blob._shared.streams import (
 from azure.storage.extensions import crc64
 
 
-def _write_message_header(
-    message_length: int,
-    flags: StructuredMessageProperties,
-    segment_count: int,
-    stream: BytesIO
-) -> None:
-    stream.write(b'\x01')  # Version
-    stream.write(message_length.to_bytes(8, 'little'))  # Message length
-    stream.write(int(flags).to_bytes(2, 'little'))  # Flags
-    stream.write(segment_count.to_bytes(2, 'little'))  # Num segments
-
-
 def _write_segment(number: int, data: bytes, flags: StructuredMessageProperties, stream: BytesIO) -> None:
     stream.write(number.to_bytes(2, 'little'))  # Segment number
     stream.write(len(data).to_bytes(8, 'little'))  # Segment length
@@ -59,7 +47,10 @@ def _build_structured_message(
     message = BytesIO()
 
     # Message Header
-    _write_message_header(message_length, flags, segment_count, message)
+    message.write(b'\x01')  # Version
+    message.write(message_length.to_bytes(8, 'little'))  # Message length
+    message.write(int(flags).to_bytes(2, 'little'))  # Flags
+    message.write(segment_count.to_bytes(2, 'little'))  # Num segments
 
     # Special case for 0 length content
     if len(data) == 0:
@@ -151,7 +142,21 @@ class TestStructuredMessageDecodeStream:
 
     @pytest.mark.parametrize("data_size", [100, 1024, 10 * 1024, 100 * 1024])
     def test_random_reads(self, data_size):
-        pass
+        data = os.urandom(data_size)
+        message_stream, length = _build_structured_message(data, data_size // 3, StructuredMessageProperties.CRC64)
+
+        stream = StructuredMessageDecodeStream(message_stream, length)
+
+        count = 0
+        content = b''
+        while count < data_size:
+            read_size = random.randint(10, data_size // 3)
+            read_size = min(read_size, data_size - count)
+
+            content += stream.read(read_size)
+            count += read_size
+
+        assert content == data
 
     @pytest.mark.parametrize("data_size", [100, 1024, 10 * 1024, 100 * 1024])
     def test_random_segment_sizes(self, data_size):

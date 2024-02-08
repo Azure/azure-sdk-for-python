@@ -23,12 +23,6 @@ class StructuredMessageProperties(IntFlag):
     CRC64 = auto()
 
 
-def verify_crc64(data: bytes, expected_crc: bytes) -> None:
-    actual_crc = crc64.compute_crc64(data, 0).to_bytes(StructuredMessageConstants.CRC64_LENGTH, 'little')
-    if actual_crc != expected_crc:
-        raise ValueError("CRC64 mismatch detected.")
-
-
 class StructuredMessageDecodeStream:
 
     message_version: int
@@ -43,7 +37,7 @@ class StructuredMessageDecodeStream:
     _inner_stream: IO[bytes]
     _message_offset: int
     _segment_number: int
-    _segment_content: bytes
+    _segment_crc64: int
     _segment_content_length: int
     _segment_content_offset: int
 
@@ -57,12 +51,12 @@ class StructuredMessageDecodeStream:
         self._message_offset = 0
 
         self._segment_number = 0
-        self._segment_content = b''
+        self._segment_crc64 = 0
         self._segment_content_length = 0
         self._segment_content_offset = 0
 
     @property
-    def _end_of_segment(self) -> bool:
+    def _end_of_segment_content(self) -> bool:
         return self._segment_content_offset == self._segment_content_length
 
     @property
@@ -75,26 +69,43 @@ class StructuredMessageDecodeStream:
         if size < 0:
             size = sys.maxsize
 
-        # On the first read, read the header and first segment
+        # On the first read, read message header and first segment header
         if self._message_offset == 0:
             self._read_message_header()
-            self._read_segment()
+            self._read_segment_header()
+
+            # Special case for 0 length content
+            if self._end_of_segment_content:
+                self._read_segment_footer()
+                if self.num_segments > 1:
+                    raise ValueError("First message segment was empty but more segments were detected.")
+                self._read_message_footer()
+                return b''
 
         count = 0
         content = BytesIO()
-        while count < size and not (self._end_of_segment and self._end_of_message):
-            if self._end_of_segment:
-                self._read_segment()
+        while count < size and not (self._end_of_segment_content and self._end_of_message):
+            if self._end_of_segment_content:
+                self._read_segment_header()
 
-            remaining_segment_size = self._segment_content_length - self._segment_content_offset
-            read_length = min((size - count), remaining_segment_size)
+            segment_remaining = self._segment_content_length - self._segment_content_offset
+            read_size = min(segment_remaining, size - count)
 
-            segment_content = self._segment_content[self._segment_content_offset:
-                                                    self._segment_content_offset + read_length]
-            self._segment_content_offset += read_length
-
+            segment_content = self._inner_stream.read(read_size)
             content.write(segment_content)
-            count += read_length
+
+            # Update the running CRC64 for the segment
+            if StructuredMessageProperties.CRC64 in self.flags:
+                self._segment_crc64 = crc64.compute_crc64(segment_content, self._segment_crc64)
+
+            self._segment_content_offset += read_size
+            self._message_offset += read_size
+            count += read_size
+
+            if self._end_of_segment_content:
+                self._read_segment_footer()
+                if self._segment_number == self.num_segments:
+                    self._read_message_footer()
 
         return content.getvalue()
 
@@ -120,24 +131,16 @@ class StructuredMessageDecodeStream:
         # V1 does not have a message footer
         pass
 
-    def _read_segment(self) -> None:
-        self._read_segment_header()
-        self._read_segment_content()
-        self._read_segment_footer()
-
     def _read_segment_header(self) -> None:
         segment_number = int.from_bytes(self._inner_stream.read(2), 'little')
         if segment_number != self._segment_number + 1:
             raise ValueError(f"Structured message segment number invalid or out of order {segment_number}")
         self._segment_number = segment_number
         self._segment_content_length = int.from_bytes(self._inner_stream.read(8), 'little')
-        self._segment_content_offset = 0
-
         self._message_offset += StructuredMessageConstants.V1_SEGMENT_HEADER_LENGTH
 
-    def _read_segment_content(self) -> None:
-        self._segment_content = self._inner_stream.read(self._segment_content_length)
-        self._message_offset += self._segment_content_length
+        self._segment_content_offset = 0
+        self._segment_crc64 = 0
 
     def _read_segment_footer(self) -> None:
         footer_length = 0
@@ -145,6 +148,8 @@ class StructuredMessageDecodeStream:
             segment_crc = self._inner_stream.read(StructuredMessageConstants.CRC64_LENGTH)
             footer_length += StructuredMessageConstants.CRC64_LENGTH
 
-            verify_crc64(self._segment_content, segment_crc)
+            if self._segment_crc64 != int.from_bytes(segment_crc, 'little'):
+                raise ValueError(f"CRC64 mismatch detected in segment {self._segment_number}."
+                                 f"All data read should be considered invalid.")
 
         self._message_offset += footer_length
