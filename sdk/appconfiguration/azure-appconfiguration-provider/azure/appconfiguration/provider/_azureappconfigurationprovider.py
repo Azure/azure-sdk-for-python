@@ -538,7 +538,17 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
     ) -> Tuple[bool, Union[ConfigurationSetting, None]]:
         """
         Checks if the configuration setting have been updated since the last refresh.
-        Returns a tuple of a boolean indicating if change has been detected and the updated sentinel.
+
+        :keyword key: key to check for chances
+        :paramtype key: str
+        :keyword label: label to check for changes
+        :paramtype label: str
+        :keyword etag: etag to check for changes
+        :paramtype etag: str
+        :keyword headers: headers to use for the request
+        :paramtype headers: Mapping[str, str]
+        :return: A tuple with the first item being true/false if a change is detected. The second item is the updated value if a change was detected.
+        :rtype: Tuple[bool, Union[ConfigurationSetting, None]]
         """
         try:
             updated_sentinel = self._client.get_configuration_setting(  # type: ignore
