@@ -36,5 +36,6 @@ def infer_deployment(aoai_connection, model_name):
         if deployment["model"] == model_name:
             return deployment["id"]
     raise Exception(
-        f"Deployment for model={model_name} not found in AOAI workspace. Please retry with correct model name or create a deployment."
+        f"Deployment for model={model_name} not found in AOAI workspace. "
+        + f"Please retry with correct model name or create a deployment."
     )

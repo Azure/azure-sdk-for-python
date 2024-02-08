@@ -160,6 +160,7 @@ class OpenAIEmbedder:
                 raise
 
             import re
+
             match = re.match(r".*The max number of inputs is ([0-9]+).*", err_msg)
             if match and match.group(1):
                 try:
@@ -194,7 +195,10 @@ class OpenAIEmbedder:
                         **kwargs,
                     )
                     if self.openai_v1plus:
-                        response = {"object": "list", "data": [{"object": "embedding", "embedding": d.embedding} for d in response.data]}
+                        response = {
+                            "object": "list",
+                            "data": [{"object": "embedding", "embedding": d.embedding} for d in response.data],
+                        }
                     return response
                 except Exception as e:
                     err_msg = str(e)
@@ -213,7 +217,8 @@ class OpenAIEmbedder:
                                     delay = int(response_headers["Retry-After"])
                                     logger.warning(f"OpenAI throws RateLimitError with Retry-After {delay} seconds.")
                                 else:
-                                    # Wait for 1 minute as suggested by openai https://help.openai.com/en/articles/6897202-ratelimiterror
+                                    # Wait for 1 minute as suggested by openai
+                                    # https://help.openai.com/en/articles/6897202-ratelimiterror
                                     logger.warning("Retry after 60 seconds.")
                                     delay = 60
                             total_delay += delay
@@ -227,7 +232,10 @@ class OpenAIEmbedder:
             self._statistics["num_retries"] += retry
             self._statistics["time_spent_sleeping"] += total_delay
 
-        err_msg = f"Failed to embed {len(tokenized_texts)} documents after {total_delay}s and {retry} retries. {last_exception}"
+        err_msg = (
+            f"Failed to embed {len(tokenized_texts)} documents "
+            + f"after {total_delay}s and {retry} retries. {last_exception}"
+        )
         logger.error(err_msg)  # TODO: Add custom dimensions
         raise RuntimeError(err_msg)
 
@@ -294,7 +302,8 @@ class OpenAIEmbedder:
         for i in range(len(texts)):
             _result = embedding_results[i]
             if len(_result) == 0:
-                average = self._embed_request(tokenized_texts="", **self._openai_client_params)["data"][0]["embedding"]  # type: ignore[arg-type]
+                res = self._embed_request(tokenized_texts="", **self._openai_client_params)  # type: ignore[arg-type]
+                average = res["data"][0]["embedding"]
             else:
                 average = np.average(_result, axis=0, weights=num_tokens_in_batch[i])
             embeddings[i] = (average / np.linalg.norm(average)).tolist()

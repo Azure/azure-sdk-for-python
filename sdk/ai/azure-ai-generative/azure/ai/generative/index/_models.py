@@ -45,12 +45,18 @@ def parse_model_uri(uri: str, **kwargs) -> dict:
         config = {**split_details(details), **config}
         config["kind"] = "open_ai"
         if "endpoint" in config:
-            if config["endpoint"] and (".openai." in config["endpoint"] or ".api.cognitive." in config["endpoint"] or ".cognitiveservices." in config["endpoint"]):
+            if config["endpoint"] and (
+                ".openai." in config["endpoint"]
+                or ".api.cognitive." in config["endpoint"]
+                or ".cognitiveservices." in config["endpoint"]
+            ):
                 config["api_base"] = config["endpoint"].rstrip("/")
             else:
                 config["api_base"] = f"https://{config['endpoint']}.openai.azure.com"
         config["api_type"] = "azure"
-        config["api_version"] = kwargs.get("api_version") if kwargs.get("api_version") is not None else "2023-03-15-preview"
+        config["api_version"] = (
+            kwargs.get("api_version") if kwargs.get("api_version") is not None else "2023-03-15-preview"
+        )
         # Azure OpenAI has a batch_size limit of 16
         if "batch_size" not in config:
             config["batch_size"] = "16"
@@ -74,7 +80,9 @@ def init_open_ai_from_config(config: dict, credential: Optional[TokenCredential]
     import openai
 
     logger.debug("OpenAI arguments: \n")
-    logger.debug("\n".join(f"{k}={v}" if k != "key" and k != "api_key" else f"{k}=[REDACTED]" for k, v in config.items()))
+    logger.debug(
+        "\n".join(f"{k}={v}" if k != "key" and k != "api_key" else f"{k}=[REDACTED]" for k, v in config.items())
+    )
 
     try:
         if config.get("key") is not None:
@@ -98,13 +106,24 @@ def init_open_ai_from_config(config: dict, credential: Optional[TokenCredential]
                     if connection_obj.type == "azure_open_ai":
                         config["api_base"] = connection_obj.target
                         connection_metadata = connection_obj.metadata
-                        config["api_version"] = connection_obj.metadata.get("apiVersion", connection_metadata.get("ApiVersion", "2023-07-01-preview"))
-                        config["api_type"] = connection_obj.metadata.get("apiType", connection_metadata.get("ApiType", "azure")).lower()
-                elif isinstance(connection, dict) and connection.get("properties", {}).get("category", None) == "AzureOpenAI":
+                        config["api_version"] = connection_obj.metadata.get(
+                            "apiVersion", connection_metadata.get("ApiVersion", "2023-07-01-preview")
+                        )
+                        config["api_type"] = connection_obj.metadata.get(
+                            "apiType", connection_metadata.get("ApiType", "azure")
+                        ).lower()
+                elif (
+                    isinstance(connection, dict)
+                    and connection.get("properties", {}).get("category", None) == "AzureOpenAI"
+                ):
                     config["api_base"] = connection.get("properties", {}).get("target")
                     connection_metadata = connection.get("properties", {}).get("metadata", {})
-                    config["api_version"] = connection_metadata.get("apiVersion", connection_metadata.get("ApiVersion", "2023-03-15-preview"))
-                    config["api_type"] = connection_metadata.get("apiType", connection_metadata.get("ApiType", "azure")).lower()
+                    config["api_version"] = connection_metadata.get(
+                        "apiVersion", connection_metadata.get("ApiVersion", "2023-03-15-preview")
+                    )
+                    config["api_type"] = connection_metadata.get(
+                        "apiType", connection_metadata.get("ApiType", "azure")
+                    ).lower()
 
                 if config["api_type"] == "azure_ad" or config["api_type"] == "azuread":
                     from azure.identity import DefaultAzureCredential
@@ -125,14 +144,17 @@ def init_open_ai_from_config(config: dict, credential: Optional[TokenCredential]
             if hasattr(credential, "key"):
                 config["api_key"] = credential.key  # type: ignore[union-attr]
             else:
-                config["api_key"] = credential.get_token("https://cognitiveservices.azure.com/.default").token  # type: ignore[union-attr]
+                _get_token = credential.get_token("https://cognitiveservices.azure.com/.default")
+                config["api_key"] = _get_token.token
                 config["api_type"] = "azure_ad"
     except Exception as e:
         if "OPENAI_API_KEY" in os.environ:
             logger.warning(f"Failed to get credential for ACS with {e}, falling back to openai 0.x env vars.")
             config["api_key"] = os.environ["OPENAI_API_KEY"]
             config["api_type"] = os.environ.get("OPENAI_API_TYPE", "azure")
-            config["api_base"] = os.environ.get("OPENAI_API_BASE", openai.api_base if hasattr(openai, "api_base") else openai.base_url)
+            config["api_base"] = os.environ.get(
+                "OPENAI_API_BASE", openai.api_base if hasattr(openai, "api_base") else openai.base_url
+            )
             config["api_version"] = os.environ.get("OPENAI_API_VERSION", openai.api_version)
         elif "AZURE_OPENAI_KEY" in os.environ:
             logger.warning(f"Failed to get credential for ACS with {e}, falling back to openai 1.x env vars.")
@@ -166,7 +188,11 @@ def init_llm(model_config: dict, **kwargs):
         model_kwargs["stop"] = model_config.get("stop")
     if model_config.get("kind") == "open_ai" and model_config.get("api_type") == "azure":
         model_config = init_open_ai_from_config(model_config, credential=None)
-        if model_config["model"].startswith("gpt-3.5-turbo") or model_config["model"].startswith("gpt-35-turbo") or model_config["model"].startswith("gpt-4"):
+        if (
+            model_config["model"].startswith("gpt-3.5-turbo")
+            or model_config["model"].startswith("gpt-35-turbo")
+            or model_config["model"].startswith("gpt-4")
+        ):
             logger.info(f"Initializing AzureChatOpenAI with model {model_config['model']} with kwargs: {model_kwargs}")
 
             llm = AzureChatOpenAI(
@@ -180,7 +206,7 @@ def init_llm(model_config: dict, **kwargs):
                 openai_api_version=model_config.get("api_version"),
                 max_retries=model_config.get("max_retries", 3),
                 default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
-                **kwargs
+                **kwargs,
             )  # type: ignore
             if model_config.get("temperature", None) is not None:
                 llm.temperature = model_config.get("temperature")
@@ -195,7 +221,7 @@ def init_llm(model_config: dict, **kwargs):
                 openai_api_key=model_config.get("api_key"),
                 max_retries=model_config.get("max_retries", 3),
                 default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
-                **kwargs
+                **kwargs,
             )  # type: ignore
             if model_config.get("temperature", None) is not None:
                 llm.temperature = model_config.get("temperature")
@@ -208,7 +234,7 @@ def init_llm(model_config: dict, **kwargs):
             model_kwargs=model_kwargs,
             openai_api_key=model_config.get("api_key"),
             default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
-            **kwargs
+            **kwargs,
         )  # type: ignore
         if model_config.get("temperature", None) is not None:
             llm.temperature = model_config.get("temperature")

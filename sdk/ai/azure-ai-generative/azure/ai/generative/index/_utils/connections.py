@@ -27,6 +27,7 @@ except Exception:
 
 logger = get_logger("connections")
 
+
 def get_pinecone_environment(config, credential: Optional[TokenCredential] = None):
     """Get the Pinecone project environment from a connection."""
     connection_type = config.get("connection_type", None)
@@ -44,19 +45,18 @@ def get_connection_credential(config, credential: Optional[TokenCredential] = No
         from azure.core.credentials import AzureKeyCredential
     except ImportError as e:
         raise ValueError(
-            "Could not import azure-core python package. "
-            "Please install it with `pip install azure-core`."
+            "Could not import azure-core python package. " "Please install it with `pip install azure-core`."
         ) from e
     try:
         from azure.identity import DefaultAzureCredential
     except ImportError as e:
         raise ValueError(
-            "Could not import azure-identity python package. "
-            "Please install it with `pip install azure-identity`."
+            "Could not import azure-identity python package. " "Please install it with `pip install azure-identity`."
         ) from e
 
     if config.get("connection_type", None) == "workspace_keyvault":
         from azureml.core import Run, Workspace
+
         run = Run.get_context()
         if hasattr(run, "experiment"):
             ws = run.experiment.workspace
@@ -65,15 +65,19 @@ def get_connection_credential(config, credential: Optional[TokenCredential] = No
                 ws = Workspace(
                     subscription_id=config.get("connection", {}).get("subscription"),
                     resource_group=config.get("connection", {}).get("resource_group"),
-                    workspace_name=config.get("connection", {}).get("workspace")
+                    workspace_name=config.get("connection", {}).get("workspace"),
                 )
             except Exception as e:
                 logger.warning(f"Could not get workspace '{config.get('connection', {}).get('workspace')}': {e}")
                 # Fall back to looking for key in environment.
                 import os
+
                 key = os.environ.get(config.get("connection", {}).get("key"))
                 if key is None:
-                    raise ValueError(f"Could not get workspace '{config.get('connection', {}).get('workspace')}' and no key named '{config.get('connection', {}).get('key')}' in environment")
+                    raise ValueError(
+                        f"Could not get workspace '{config.get('connection', {}).get('workspace')}' and "
+                        + f"no key named '{config.get('connection', {}).get('key')}' in environment"
+                    )
                 return AzureKeyCredential(key)
 
         keyvault = ws.get_default_keyvault()
@@ -84,8 +88,13 @@ def get_connection_credential(config, credential: Optional[TokenCredential] = No
         connection_credential = connection_to_credential(connection)
     elif config.get("connection_type", None) == "environment":
         import os
+
         key = os.environ.get(config.get("connection", {}).get("key", "OPENAI_API_KEY"))
-        connection_credential = (credential if credential is not None else DefaultAzureCredential(process_timeout=60)) if key is None else AzureKeyCredential(key)
+        connection_credential = (
+            (credential if credential is not None else DefaultAzureCredential(process_timeout=60))
+            if key is None
+            else AzureKeyCredential(key)
+        )
     else:
         connection_credential = credential if credential is not None else DefaultAzureCredential(process_timeout=60)
 
@@ -104,13 +113,16 @@ def connection_to_credential(connection: Union[dict, BaseConnection, WorkspaceCo
         auth_type = props.get("authType", props.get("AuthType"))
         if auth_type == "ApiKey":
             from azure.core.credentials import AzureKeyCredential
+
             return AzureKeyCredential(props["credentials"]["key"])
         elif auth_type == "PAT":
             from azure.core.credentials import AccessToken
+
             return AccessToken(props["credentials"]["pat"], props.get("expiresOn", None))
         elif auth_type == "CustomKeys":
             # OpenAI connections are made with CustomKeys auth, so we can try to access the key using known structure
             from azure.core.credentials import AzureKeyCredential
+
             if connection.get("metadata", {}).get("azureml.flow.connection_type", None) == "OpenAI":
                 # Try to get the the key with api_key, if fail, default to regular CustomKeys handling
                 try:
@@ -120,20 +132,25 @@ def connection_to_credential(connection: Union[dict, BaseConnection, WorkspaceCo
                     logger.warning(f"Could not get key using api_key, using default handling: {e}")
             key_dict = props["credentials"]["keys"]
             if len(key_dict.keys()) != 1:
-                raise ValueError(f"Only connections with a single key can be used. Number of keys present: {len(key_dict.keys())}")
+                raise ValueError(
+                    f"Only connections with a single key can be used. Number of keys present: {len(key_dict.keys())}"
+                )
             return AzureKeyCredential(props["credentials"]["keys"][list(key_dict.keys())[0]])
         else:
             raise ValueError(f"Unknown auth type '{auth_type}'")
     elif isinstance(connection, WorkspaceConnection):
         if connection.credentials.type.lower() == "api_key":
             from azure.core.credentials import AzureKeyCredential
+
             return AzureKeyCredential(connection.credentials.key)
         elif connection.credentials.type.lower() == "pat":
             from azure.core.credentials import AccessToken
+
             return AccessToken(connection.credentials.pat, connection.credentials.expires_on)
         elif connection.credentials.type.lower() == "custom_keys":
             if connection._metadata.get("azureml.flow.connection_type", "").lower() == "openai":
                 from azure.core.credentials import AzureKeyCredential
+
                 try:
                     key = connection.credentials.keys.api_key
                     return AzureKeyCredential(key)
@@ -141,25 +158,35 @@ def connection_to_credential(connection: Union[dict, BaseConnection, WorkspaceCo
                     logger.warning(f"Could not get key using api_key, using default handling: {e}")
             key_dict = connection.credentials.keys
             if len(key_dict.keys()) != 1:
-                raise ValueError(f"Only connections with a single key can be used. Number of keys present: {len(key_dict.keys())}")
+                raise ValueError(
+                    f"Only connections with a single key can be used. Number of keys present: {len(key_dict.keys())}"
+                )
             return AzureKeyCredential(connection.credentials.keys[list(key_dict.keys())[0]])
         else:
             raise ValueError(f"Unknown auth type '{connection.credentials.type}' for connection '{connection.name}'")
     else:
         if connection.credentials.type.lower() == "api_key":
             from azure.core.credentials import AzureKeyCredential
+
             return AzureKeyCredential(connection.credentials.key)
         else:
             raise ValueError(f"Unknown auth type '{connection.credentials.type}' for connection '{connection.name}'")
 
 
-def get_connection_by_id_v2(connection_id: str, credential: Optional[TokenCredential] = None, client: str = "sdk") -> Union[Dict[str, Dict[str, Dict[str, Any]]], WorkspaceConnection, BaseConnection]:
+def get_connection_by_id_v2(
+    connection_id: str, credential: Optional[TokenCredential] = None, client: str = "sdk"
+) -> Union[Dict[str, Dict[str, Dict[str, Any]]], WorkspaceConnection, BaseConnection]:
     """
     Get a connection by id using azure.ai.ml or azure.ai.generative.
 
     If azure.ai.ml is installed, use that, otherwise use azure.ai.generative.
     """
-    uri_match = re.match(r"/subscriptions/(.*)/resourceGroups/(.*)/providers/Microsoft.MachineLearningServices/workspaces/(.*)/connections/(.*)", connection_id, flags=re.IGNORECASE)
+    uri_match = re.match(
+        # pylint: disable=line-too-long
+        r"/subscriptions/(.*)/resourceGroups/(.*)/providers/Microsoft.MachineLearningServices/workspaces/(.*)/connections/(.*)",
+        connection_id,
+        flags=re.IGNORECASE,
+    )
 
     if uri_match is None:
         logger.error(f"Invalid connection_id {connection_id}, expecting Azure Machine Learning resource ID")
@@ -185,13 +212,15 @@ def get_connection_by_id_v2(connection_id: str, credential: Optional[TokenCreden
             credential=credential,
             subscription_id=uri_match.group(1),
             resource_group_name=uri_match.group(2),
-            workspace_name=uri_match.group(3)
+            workspace_name=uri_match.group(3),
         )
 
         if os.environ.get("AZUREML_RUN_ID", None) is not None:
             # In AzureML Run context, we need to use workspaces internal endpoint that will accept AzureMLToken auth.
             old_base_url = ml_client.connections._operation._client._base_url
-            ml_client.connections._operation._client._base_url = f"{os.environ.get('AZUREML_SERVICE_ENDPOINT')}/rp/workspaces"
+            ml_client.connections._operation._client._base_url = (
+                f"{os.environ.get('AZUREML_SERVICE_ENDPOINT')}/rp/workspaces"
+            )
 
         logger.info(f"Using ml_client base_url: {ml_client.connections._operation._client._base_url}")
 
@@ -256,33 +285,37 @@ def get_connection_by_name_v2(workspace, name: str) -> dict:
         bearer_token = workspace._auth.token
 
     endpoint = workspace.service_context._get_endpoint("api")
-    url = f"{endpoint}/rp/workspaces/subscriptions/{workspace.subscription_id}/resourcegroups/{workspace.resource_group}/providers/Microsoft.MachineLearningServices/workspaces/{workspace.name}/connections/{name}/listsecrets?api-version=2023-02-01-preview"
-    resp = send_post_request(url, {
-        "Authorization": f"Bearer {bearer_token}",
-        "content-type": "application/json"
-    }, {})
+    url = (
+        f"{endpoint}/rp/workspaces/subscriptions/{workspace.subscription_id}/resourcegroups/"
+        + f"{workspace.resource_group}/providers/Microsoft.MachineLearningServices/workspaces/{workspace.name}/"
+        + f"connections/{name}/listsecrets?api-version=2023-02-01-preview"
+    )
+    resp = send_post_request(url, {"Authorization": f"Bearer {bearer_token}", "content-type": "application/json"}, {})
 
     return resp.json()
 
 
 def get_connection_by_id_v1(connection_id: str, credential: Optional[TokenCredential] = None) -> dict:
     """Get a connection from a workspace."""
-    uri_match = re.match(r"/subscriptions/(.*)/resourceGroups/(.*)/providers/Microsoft.MachineLearningServices/workspaces/(.*)/connections/(.*)", connection_id)
+    uri_match = re.match(
+        # pylint: disable=line-too-long
+        r"/subscriptions/(.*)/resourceGroups/(.*)/providers/Microsoft.MachineLearningServices/workspaces/(.*)/connections/(.*)",
+        connection_id,
+    )
 
     if uri_match is None:
         logger.error(f"Invalid connection_id {connection_id}, expecting Azure Machine Learning resource ID")
         raise ValueError(f"Invalid connection id {connection_id}")
 
     from azureml.core import Run, Workspace
+
     run = Run.get_context()
     if hasattr(run, "experiment"):
         ws = run.experiment.workspace
     else:
         try:
             ws = Workspace(
-                subscription_id=uri_match.group(1),
-                resource_group=uri_match.group(2),
-                workspace_name=uri_match.group(3)
+                subscription_id=uri_match.group(1), resource_group=uri_match.group(2), workspace_name=uri_match.group(3)
             )
         except Exception as e:
             logger.warning(f"Could not get workspace '{uri_match.group(3)}': {e}")
@@ -303,19 +336,27 @@ def send_put_request(url, headers, payload):
 
 def create_connection_v2(workspace, name, category: str, target: str, auth_type: str, credentials: dict, metadata: str):
     """Create a connection in a workspace."""
-    url = f"https://management.azure.com/subscriptions/{workspace.subscription_id}/resourcegroups/{workspace.resource_group}/providers/Microsoft.MachineLearningServices/workspaces/{workspace.name}/connections/{name}?api-version=2023-04-01-preview"
+    url = (
+        f"https://management.azure.com/subscriptions/{workspace.subscription_id}/resourcegroups/"
+        + f"{workspace.resource_group}/providers/Microsoft.MachineLearningServices/workspaces/"
+        + f"{workspace.name}/connections/{name}?api-version=2023-04-01-preview"
+    )
 
-    resp = send_put_request(url, {
-        "Authorization": f"Bearer {workspace._auth.get_token('https://management.azure.com/.default').token}",
-        "content-type": "application/json"
-    }, {
-        "properties": {
-            "category": category,
-            "target": target,
-            "authType": auth_type,
-            "credentials": credentials,
-            "metadata": metadata
-        }
-    })
+    resp = send_put_request(
+        url,
+        {
+            "Authorization": f"Bearer {workspace._auth.get_token('https://management.azure.com/.default').token}",
+            "content-type": "application/json",
+        },
+        {
+            "properties": {
+                "category": category,
+                "target": target,
+                "authType": auth_type,
+                "credentials": credentials,
+                "metadata": metadata,
+            }
+        },
+    )
 
     return resp

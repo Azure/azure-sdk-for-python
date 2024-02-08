@@ -243,7 +243,9 @@ def data_index_incremental_update_acs(
     from azure.ai.generative.index._dataindex.data_index.models import build_model_protocol
     from azure.ai.generative.index._dataindex.dsl._pipeline_decorator import pipeline
 
-    crack_and_chunk_and_embed_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_CRACK_AND_CHUNK_AND_EMBED)
+    crack_and_chunk_and_embed_component = get_component_obj(
+        ml_client, LLMRAGComponentUri.LLM_RAG_CRACK_AND_CHUNK_AND_EMBED
+    )
     update_acs_index_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_UPDATE_ACS_INDEX)
     register_mlindex_asset_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_REGISTER_MLINDEX_ASSET)
 
@@ -367,7 +369,9 @@ def data_index_incremental_update_acs(
         else None,
         embeddings_model=build_model_protocol(data_index.embedding.model),
         aoai_connection_id=_resolve_connection_id(ml_client, data_index.embedding.connection),
-        embeddings_container=Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path) if data_index.embedding.cache_path else None,
+        embeddings_container=Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path)
+        if data_index.embedding.cache_path
+        else None,
         acs_config=json.dumps(acs_config),
         acs_connection_id=_resolve_connection_id(ml_client, data_index.index.connection),
     )
@@ -509,11 +513,15 @@ def data_index_faiss(
         chunk_size=data_index.source.chunk_size,  # type: ignore[arg-type]
         data_source_glob=data_index.source.input_glob,  # type: ignore[arg-type]
         data_source_url=data_index.source.citation_url,  # type: ignore[arg-type]
-        document_path_replacement_regex=json.dumps(data_index.source.citation_url_replacement_regex._to_dict())  # type: ignore[arg-type]
+        document_path_replacement_regex=json.dumps(
+            data_index.source.citation_url_replacement_regex._to_dict()  # type: ignore[arg-type]
+        )
         if data_index.source.citation_url_replacement_regex
         else None,
         aoai_connection_id=_resolve_connection_id(ml_client, data_index.embedding.connection),
-        embeddings_container=Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path) if data_index.embedding.cache_path else None,
+        embeddings_container=Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path)
+        if data_index.embedding.cache_path
+        else None,
     )
     # Hack until full Component classes are implemented that can annotate the optional parameters properly
     component.inputs["data_source_glob"]._meta.optional = True
@@ -667,11 +675,15 @@ def data_index_acs(
         chunk_size=data_index.source.chunk_size,  # type: ignore[arg-type]
         data_source_glob=data_index.source.input_glob,  # type: ignore[arg-type]
         data_source_url=data_index.source.citation_url,  # type: ignore[arg-type]
-        document_path_replacement_regex=json.dumps(data_index.source.citation_url_replacement_regex._to_dict())  # type: ignore[arg-type]
+        document_path_replacement_regex=json.dumps(
+            data_index.source.citation_url_replacement_regex._to_dict()  # type: ignore[arg-type]
+        )
         if data_index.source.citation_url_replacement_regex
         else None,
         aoai_connection_id=_resolve_connection_id(ml_client, data_index.embedding.connection),
-        embeddings_container=Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path) if data_index.embedding.cache_path else None,
+        embeddings_container=Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path)
+        if data_index.embedding.cache_path
+        else None,
     )
     # Hack until full Component classes are implemented that can annotate the optional parameters properly
     component.inputs["data_source_glob"]._meta.optional = True

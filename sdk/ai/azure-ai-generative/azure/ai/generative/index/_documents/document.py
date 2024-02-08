@@ -156,4 +156,5 @@ class StaticDocument(Document):
         """Load the document from a json string."""
         data_dict = json.loads(data)
         metadata = data_dict["metadata"]
-        return cls(data_dict["content"], metadata, data_dict.get("document_id", metadata.get("document_id", metadata.get("id", mmh3.hash128(data_dict["content"])))))
+        info = metadata.get("document_id", metadata.get("id", mmh3.hash128(data_dict["content"])))
+        return cls(data_dict["content"], metadata, data_dict.get("document_id", info))

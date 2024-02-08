@@ -160,7 +160,8 @@ class IndexStore(DictMixin):
     :keyword connection: Connection reference to use for index information,
         only needed for hosted indexes (such as Azure Cognitive Search).
     :type connection: str, optional
-    :keyword config: Configuration for the index. Configuration for the index. Primary use is to configure Azure Cognitive Search specific settings.
+    :keyword config: Configuration for the index. Configuration for the index.
+        Primary use is to configure Azure Cognitive Search specific settings.
         Such as custom `field_mapping` for known field types.
     :type config: dict, optional
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the IndexStore object cannot be validated.
