@@ -61,7 +61,6 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(tags.get("ai.device.model"), "testDeviceModel")
         self.assertEqual(tags.get("ai.device.oemName"), "testDeviceMake")
 
-
     def test_populate_part_a_fields_default(self):
         resource = Resource(
             {"service.name": "testServiceName"})
