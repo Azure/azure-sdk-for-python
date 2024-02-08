@@ -401,7 +401,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     @distributed_trace
     def list_containers(
         self, name_starts_with: Optional[str] = None,
-        include_metadata: Optional[bool] = False,
+        include_metadata: bool = False,
         **kwargs: Any
     ) -> ItemPaged[ContainerProperties]:
         """Returns a generator to list the containers under the specified account.
@@ -763,14 +763,13 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 "Please use 'BlobProperties.name' or any other str input type instead.",
                 DeprecationWarning
             )
+            blob_name = blob.name
+        else:
+            blob_name = blob.name
         if isinstance(container, ContainerProperties):
             container_name = container.name
         else:
             container_name = container
-        if hasattr(blob, 'name'):
-            blob_name = blob.name
-        else:
-            blob_name = blob
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
