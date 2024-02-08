@@ -44,7 +44,6 @@ class OpenAIEmbedder:
         elif batch_size is None:
             batch_size = 1000
         self.batch_size = int(batch_size)
-        self._dynamic_batch_size: Optional[int] = None
 
         if max_retries is None:
             max_retries = 10
@@ -144,16 +143,7 @@ class OpenAIEmbedder:
 
     def _dynamic_batch_size_embed_request(self, tokenized_texts: List[List[int]], **kwargs) -> dict:
         try:
-            if self._dynamic_batch_size is None:
-                return self._embed_request(tokenized_texts=tokenized_texts, **kwargs)
-            else:
-                embedding_response: Dict[str, List] = {"data": []}
-                for i in range(0, len(tokenized_texts), self._dynamic_batch_size):
-                    embedding_response["data"].extend(
-                        self._embed_request(
-                            tokenized_texts=tokenized_texts[i : i + self._dynamic_batch_size], **kwargs
-                        )["data"]
-                    )
+            return self._embed_request(tokenized_texts=tokenized_texts, **kwargs)
         except Exception as e:
             err_msg = str(e)
             if "Too many inputs" not in err_msg:
@@ -163,20 +153,14 @@ class OpenAIEmbedder:
             match = re.match(r".*The max number of inputs is ([0-9]+).*", err_msg)
             if match and match.group(1):
                 try:
-                    self._dynamic_batch_size = int(match.group(1))
+                    self.batch_size = int(match.group(1))
                 except Exception:
-                    logger.error(
-                        "Failed to parse max number of inputs from error message, falling back to batch_size=1."
-                    )
-                    self._dynamic_batch_size = 1
-                logger.warning(f"Reducing batch_size to {self._dynamic_batch_size} and retrying.")
-                embedding_response: Dict[str, List] = {"data": []}  # type: ignore[no-redef]
-                for i in range(0, len(tokenized_texts), self._dynamic_batch_size):
-                    embedding_response["data"].extend(
-                        self._embed_request(
-                            tokenized_texts=tokenized_texts[i : i + self._dynamic_batch_size], **kwargs
-                        )["data"]
-                    )
+                    logger.error("Failed to parse max number of inputs from error message, falling back to batch_size=1.")
+                    self.batch_size = 1
+                logger.warning(f"Reducing batch_size to {self.batch_size} and retrying.")
+                embedding_response: Dict[str, List] = {"data": []}
+                for i in range(0, len(tokenized_texts), self.batch_size):
+                    embedding_response["data"].extend(self._embed_request(tokenized_texts=tokenized_texts[i : i + self.batch_size], **kwargs)["data"])
             else:
                 raise
 
@@ -184,6 +168,8 @@ class OpenAIEmbedder:
 
     def _embed_request(self, tokenized_texts: List[List[int]], **kwargs) -> dict:
         try:
+            min_seconds = 4
+            max_seconds = 10
             total_delay = 0
             last_exception = None
             for retry in range(self.max_retries):
@@ -204,6 +190,7 @@ class OpenAIEmbedder:
                     for retryable_error in self._retryable_openai_errors:
                         if isinstance(e, type(retryable_error)):
                             retrying = True
+                            import openai
 
                             # Retry with retry-after if found in RateLimitError
                             if isinstance(e, self._RateLimitError):
@@ -216,10 +203,10 @@ class OpenAIEmbedder:
                                     # Wait for 1 minute as suggested by openai https://help.openai.com/en/articles/6897202-ratelimiterror
                                     logger.warning("Retry after 60 seconds.")
                                     delay = 60
-                            total_delay += delay
-                            logger.warning(f"Sleeping for {delay} seconds before retrying.")
-                            time.sleep(delay)
-                            break
+                                total_delay += delay
+                                logger.warning(f"Sleeping for {delay} seconds before retrying.")
+                                time.sleep(delay)
+                                break
 
                     if not retrying:
                         break
@@ -254,7 +241,8 @@ class OpenAIEmbedder:
 
             tokens = encoding.encode(
                 text,
-                # TODO: Does this need to be configurable? Our use cases treat all text as raw data.
+                # TODO: Do these need to be configurable? Our use cases treat all text as raw data.
+                allowed_special="all",
                 disallowed_special=(),
             )
             # Text longer than a models context length can be split and the embeddings averaged to approximate full text

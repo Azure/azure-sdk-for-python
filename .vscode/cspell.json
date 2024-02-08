@@ -173,6 +173,7 @@
     "AsyncIterable",
     "asyncio",
     "avroencoder",
+    "Avs",
     "azcmagent",
     "azsdk",
     "azurecr",
@@ -1416,7 +1417,8 @@
         "Docoptype",
         "mycontainer",
         "iscontinuationexpected",
-        "aalapatirvbd"
+        "aalapatirvbd",
+        "unconfigure"
       ]
     },
     {

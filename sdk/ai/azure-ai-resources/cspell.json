@@ -1,3 +1,3 @@
 {
-    "ignoreWords": ["redef", "llms"]
+    "ignoreWords": ["redef"]
 }
