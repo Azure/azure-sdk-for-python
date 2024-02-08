@@ -51,21 +51,25 @@ def distributed_trace(  # pylint:disable=function-redefined
 
 
 def distributed_trace(
-    __func: Optional[Callable[P, T]] = None, **kwargs: Any
+    __func: Optional[Callable[P, T]] = None,
+    *,
+    name_of_span: Optional[str] = None,
+    kind: _SpanKind = _SpanKind.INTERNAL,
+    **kwargs: Any,
 ) -> Any:  # pylint:disable=function-redefined
     """Decorator to apply to function to get traced automatically.
 
     Span will use the func name or "name_of_span".
 
-    :param callable func: A function to decorate
+    :param callable __func: A function to decorate
     :keyword name_of_span: The span name to replace func name if necessary
     :paramtype name_of_span: str
     :keyword kind: The kind of the span. INTERNAL by default.
     :paramtype kind: ~azure.core.tracing.SpanKind
+    :return: The decorated function with tracing enabled.
+    :rtype: Callable[[P], T]
     """
-    name_of_span = kwargs.pop("name_of_span", None)
     tracing_attributes = kwargs.pop("tracing_attributes", {})
-    kind = kwargs.pop("kind", _SpanKind.INTERNAL)
 
     def decorator(func: Callable[P, T]) -> Callable[P, T]:
         @functools.wraps(func)

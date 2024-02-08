@@ -70,8 +70,7 @@ class _SansIOAsyncHTTPPolicyRunner(
         except Exception:  # pylint: disable=broad-except
             await _await_result(self._policy.on_exception, request)
             raise
-        else:
-            await _await_result(self._policy.on_response, request, response)
+        await _await_result(self._policy.on_response, request, response)
         return response
 
 
