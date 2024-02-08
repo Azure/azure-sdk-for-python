@@ -15,7 +15,7 @@ from packaging import version as pkg_version
 from azure.core.credentials import TokenCredential
 from azure.ai.generative.index._documents import Document, DocumentChunksIterator
 from azure.ai.generative.index._embeddings import EmbeddingsContainer
-from azure.ai.resources._index._utils.connections import (
+from azure.ai.generative.index._utils.connections import (
     BaseConnection,
     WorkspaceConnection,
     get_connection_by_id_v2,
@@ -160,7 +160,7 @@ class MLIndex:
             langchain_pkg_version = pkg_version.parse(langchain_version)
 
             if index_kind == "acs":
-                from azure.ai.resources._index._indexes.azure_search import import_azure_search_or_so_help_me
+                from azure.ai.generative.index._indexes.azure_search import import_azure_search_or_so_help_me
 
                 import_azure_search_or_so_help_me()
 
@@ -399,7 +399,7 @@ class MLIndex:
                 api_version=self.index_config.get("api_version", "2023-07-01-preview"),
             )
         elif index_kind == "faiss":
-            from azure.ai.resources._index._indexes.faiss import FaissAndDocStore
+            from azure.ai.generative.index._indexes.faiss import FaissAndDocStore
 
             embeddings = self.get_langchain_embeddings(credential=credential)
 
@@ -459,7 +459,6 @@ class MLIndex:
             else:
                 self.embeddings_config["connection_type"] = "workspace_connection"
                 if isinstance(embedding_connection, str):
-
                     embedding_connection = get_connection_by_id_v2(embedding_connection, credential=credential)
                 self.embeddings_config["connection"] = {"id": get_id_from_connection(embedding_connection)}
         if index_connection:
@@ -468,7 +467,6 @@ class MLIndex:
             else:
                 self.index_config["connection_type"] = "workspace_connection"
                 if isinstance(index_connection, str):
-
                     index_connection = get_connection_by_id_v2(index_connection, credential=credential)
                 self.index_config["connection"] = {"id": get_id_from_connection(index_connection)}
         self.save(just_config=True)  # type: ignore[call-arg]

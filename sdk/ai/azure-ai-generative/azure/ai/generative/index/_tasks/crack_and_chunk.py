@@ -16,6 +16,7 @@ import pandas as pd
 from azure.ai.generative.index._documents import (
     SUPPORTED_EXTENSIONS,
     ChunkedDocument,
+    Document,
     DocumentChunksIterator,
     DocumentSource,
 )
@@ -29,7 +30,6 @@ from azure.ai.generative.index._utils.logging import (
     safe_mlflow_start_run,
     track_activity,
 )
-from azure.ai.resources._index._documents import Document
 
 logger = get_logger("crack_and_chunk")
 

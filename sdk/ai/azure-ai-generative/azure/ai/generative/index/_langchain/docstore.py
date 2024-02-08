@@ -15,7 +15,7 @@ class FileBasedDocStore(Docstore, AddableMixin):
     """Simple docstore which serializes to file and loads into memory."""
 
     def __init__(self, docstore: FileBasedDocstore):
-        """Initialize with azure.ai.resources._index._docstore.FileBasedDocstore."""
+        """Initialize with azure.ai.generative.index._docstore.FileBasedDocstore."""
         self.docstore = docstore
 
     def add(self, texts: Dict[str, LangChainDocument]) -> None:

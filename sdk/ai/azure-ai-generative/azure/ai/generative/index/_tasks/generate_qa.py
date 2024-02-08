@@ -35,7 +35,7 @@ def get_model_config(
     llm_config: Dict[str, Union[str, int]], openai_api_type: str, openai_api_version: str, activity_logger: Logger
 ):
     """Get model_config from llm_config. llm_config format is used in Baker pipelines.
-    model_config format is accepted by `azure.ai.resources._index._models.init_llm()`."""
+    model_config format is accepted by `azure.ai.generative.index._models.init_llm()`."""
     model_config = llm_config.copy()
     model_config["kind"] = model_config["type"]
     del model_config["type"]
