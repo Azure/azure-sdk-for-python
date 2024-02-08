@@ -26,7 +26,7 @@ P = ParamSpec("P")
 T = TypeVar("T")
 
 
-def experimental(wrapped: TExperimental) -> TExperimental:
+def experimental(wrapped: TExperimental) -> Union[TExperimental, Callable[P, T]]:
     """Add experimental tag to a class or a method.
 
     :param wrapped: Either a Class or Function to mark as experimental
@@ -41,11 +41,11 @@ def experimental(wrapped: TExperimental) -> TExperimental:
     return wrapped
 
 
-def _add_class_docstring(cls: Type[T]) -> Type[T]:
+def _add_class_docstring(cls: TExperimental) -> TExperimental:
     """Add experimental tag to the class doc string.
 
     :return: The updated class
-    :rtype: Type[T]
+    :rtype: TExperimental
     """
 
     P2 = ParamSpec("P2")
@@ -73,11 +73,11 @@ def _add_class_docstring(cls: Type[T]) -> Type[T]:
         cls.__doc__ = _add_note_to_docstring(cls.__doc__, doc_string)
     else:
         cls.__doc__ = doc_string + ">"
-    cls.__init__ = _add_class_warning(cls.__init__)
+    cls.__init__ = _add_class_warning(cls.__init__)  # type: ignore[misc]
     return cls
 
 
-def _add_method_docstring(func: Callable[P, T] = None) -> Callable[P, T]:
+def _add_method_docstring(func: Callable[P, T] = None) -> Callable[P, T]:  # type: ignore[assignment]
     """Add experimental tag to the method doc string.
 
     :param func: The function to update
