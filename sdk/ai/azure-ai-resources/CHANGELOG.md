@@ -3,7 +3,6 @@
 ## 1.0.0b7 (Unreleased)
 
 ### Features Added
-
 - Connections LIST operation now supports returning data connections via new optional flag: include_data_connections.
 - Connections have read-only support for 3 new connection types: gen 2, data lake, and azure blob.
 
@@ -11,6 +10,8 @@
 
 ### Bugs Fixed
 - Connections docstrings now discuss scope field.
+
+### Other Changes
 
 ## 1.0.0b6 (2024-02-06)
 
