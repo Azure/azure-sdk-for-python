@@ -64,9 +64,9 @@ def test_case_insensitive_dict_lowerkey_items():
 @pytest.mark.parametrize(
     "other, expected",
     (
-            ({"PLATFORMUPDATEDOMAINCOUNT": 5}, True),
-            ({}, False),
-            (None, False),
+        ({"PLATFORMUPDATEDOMAINCOUNT": 5}, True),
+        ({}, False),
+        (None, False),
     ),
 )
 def test_case_insensitive_dict_equality(other, expected):
