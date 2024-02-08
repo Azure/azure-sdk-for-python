@@ -96,8 +96,9 @@ class ModelBatchDeployment(Deployment):
                 error_threshold=settings.error_threshold,
                 logging_level=settings.logging_level,
             )
-            if self.resources and resources.instance_count is None and settings.instance_count is not None:
-                self.resources.instance_count = settings.instance_count
+            if self.resources is not None:
+                if resources.instance_count is None and settings.instance_count is not None:
+                    self.resources.instance_count = settings.instance_count
             if self.resources is None and settings.instance_count is not None:
                 self.resources = ResourceConfiguration(instance_count=settings.instance_count)
 
