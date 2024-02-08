@@ -114,6 +114,13 @@ async def run_command_line(command_line: List[str], timeout: int) -> str:
             proc = await start_process(command_line)
             stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout)
 
+    except asyncio.TimeoutError as ex:
+        proc.kill()
+        raise CredentialUnavailableError(
+            message="Timed out waiting for Azure PowerShell.\n"
+            "To mitigate this issue, please refer to the troubleshooting guidelines here at "
+            "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot."
+        ) from ex
     except OSError as ex:
         # failed to execute "cmd" or "/bin/sh"; Azure PowerShell may or may not be installed
         error = CredentialUnavailableError(
@@ -122,13 +129,6 @@ async def run_command_line(command_line: List[str], timeout: int) -> str:
             "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot.".format(command_line[0])
         )
         raise error from ex
-    except asyncio.TimeoutError as ex:
-        proc.kill()
-        raise CredentialUnavailableError(
-            message="Timed out waiting for Azure PowerShell.\n"
-            "To mitigate this issue, please refer to the troubleshooting guidelines here at "
-            "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot."
-        ) from ex
 
     decoded_stdout = stdout.decode()
 

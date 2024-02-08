@@ -89,9 +89,6 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
          If however you would like to make sure analysis results do not change over time, set this
          value to a specific model version. Default value is None.
         :paramtype model_version: str
-        :keyword content_type: The format of the HTTP payload. Default value is
-         "application/octet-stream".
-        :paramtype content_type: str
         :return: ImageAnalysisResult. The ImageAnalysisResult is compatible with MutableMapping
         :rtype: ~azure.ai.vision.imageanalysis.models.ImageAnalysisResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -407,8 +404,6 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
          If however you would like to make sure analysis results do not change over time, set this
          value to a specific model version. Default value is None.
         :paramtype model_version: str
-        :keyword content_type: The format of the HTTP payload. Default value is None.
-        :paramtype content_type: str
         :return: ImageAnalysisResult. The ImageAnalysisResult is compatible with MutableMapping
         :rtype: ~azure.ai.vision.imageanalysis.models.ImageAnalysisResult
         :raises ~azure.core.exceptions.HttpResponseError:

@@ -1,0 +1,207 @@
+id: template_eval_flow
+name: Template Evaluation Flow
+inputs:
+  metrics:
+    type: string
+    is_chat_input: false
+  messages:
+    type: list
+    is_chat_input: false
+  deployment_name:
+    type: string
+    is_chat_input: false
+  threshold:
+    type: int
+    default: 3
+    is_chat_input: false
+outputs:
+  gpt_coherence:
+    type: string
+    reference: ${concatenate_metrics.output.results_per_chat.gpt_coherence}
+  gpt_fluency_per_turn:
+    type: string
+    reference: ${concatenate_metrics.output.results_per_turn.gpt_fluency}
+  gpt_relevance:
+    type: string
+    reference: ${concatenate_metrics.output.results_per_chat.gpt_relevance}
+  self_harm_reasoning:
+    type: string
+    reference: ${concatenate_metrics.output.results_per_chat.self_harm_reasoning}
+  self_harm:
+    type: string
+    reference: ${concatenate_metrics.output.results_per_chat.self_harm}
+  gpt_retrieval_score_per_turn:
+    type: string
+    reference: ${concatenate_metrics.output.results_per_turn.gpt_retrieval_score}
+  gpt_groundedness_per_turn:
+    type: string
+    reference: ${concatenate_metrics.output.results_per_turn.gpt_groundedness}
+  hate_fairness_reasoning:
+    type: string
+    reference: ${concatenate_metrics.output.results_per_chat.hate_fairness_reasoning}
+  hate_fairness:
+    type: string
+    reference: ${concatenate_metrics.output.results_per_chat.hate_fairness}
+  gpt_groundedness:
+    type: string
+    reference: ${concatenate_metrics.output.results_per_chat.gpt_groundedness}
+  gpt_retrieval_score:
+    type: string
+    reference: ${concatenate_metrics.output.results_per_chat.gpt_retrieval_score}
+  gpt_relevance_per_turn:
+    type: string
+    reference: ${concatenate_metrics.output.results_per_turn.gpt_relevance}
+  sexual_reasoning:
+    type: string
+    reference: ${concatenate_metrics.output.results_per_chat.sexual_reasoning}
+  gpt_fluency:
+    type: string
+    reference: ${concatenate_metrics.output.results_per_chat.gpt_fluency}
+  sexual:
+    type: string
+    reference: ${concatenate_metrics.output.results_per_chat.sexual}
+  violence_reasoning:
+    type: string
+    reference: ${concatenate_metrics.output.results_per_chat.violence_reasoning}
+  violence:
+    type: string
+    reference: ${concatenate_metrics.output.results_per_chat.violence}
+  gpt_coherence_per_turn:
+    type: string
+    reference: ${concatenate_metrics.output.results_per_turn.gpt_coherence}
+nodes:
+- name: aggregate
+  type: python
+  source:
+    type: code
+    path: aggregate.py
+  inputs:
+    metrics: ${select_metrics.output}
+    results: ${concatenate_metrics.output}
+    thresholds: ${inputs.threshold}
+  aggregation: true
+  use_variants: false
+- name: select_metrics
+  type: python
+  source:
+    type: code
+    path: select_metrics.py
+  inputs:
+    metrics: ${inputs.metrics}
+  use_variants: false
+- name: evaluate_chat_rag
+  type: python
+  source:
+    type: code
+    path: evaluate_chat_rag.py
+  inputs:
+    connection: openai_connection
+    chat: ${inputs.messages}
+    deployment_name: ${inputs.deployment_name}
+    selected_metrics: ${select_metrics.output}
+  activate:
+    when: ${validate_coversation.output}
+    is: true
+  use_variants: false
+- name: evaluate_coherence_fluency
+  type: python
+  source:
+    type: code
+    path: evaluate_coherence_fluency.py
+  inputs:
+    connection: openai_connection
+    deployment_name: ${inputs.deployment_name}
+    parsed_qa: ${parse_chat.output}
+    selected_metrics: ${select_metrics.output}
+  activate:
+    when: ${validate_coversation.output}
+    is: true
+  use_variants: false
+- name: parse_chat
+  type: python
+  source:
+    type: code
+    path: parse_chat.py
+  inputs:
+    chat: ${inputs.messages}
+  activate:
+    when: ${validate_coversation.output}
+    is: true
+  use_variants: false
+- name: concatenate_metrics
+  type: python
+  source:
+    type: code
+    path: concatenate_metrics.py
+  inputs:
+    non_rag_results: ${evaluate_coherence_fluency.output}
+    rag_results: ${evaluate_chat_rag.output}
+    safety_results: ${format_service_output.output}
+    selected_metrics: ${select_metrics.output}
+  use_variants: false
+- name: validate_coversation
+  type: python
+  source:
+    type: code
+    path: validate_coversation.py
+  inputs:
+    chat: ${inputs.messages}
+    selected_metrics: ${select_metrics.output}
+  use_variants: false
+- name: validate_service
+  type: python
+  source:
+    type: code
+    path: validate_service.py
+  inputs:
+    selected_metrics: ${select_metrics.output}
+  use_variants: false
+- name: construct_service_request
+  type: python
+  source:
+    type: code
+    path: construct_service_request.py
+  inputs:
+    selected_metrics: ${select_metrics.output}
+    user_text: ${inputs.messages}
+  activate:
+    when: ${validate_service.output}
+    is: true
+  use_variants: false
+- name: call_rai_service
+  type: python
+  source:
+    type: code
+    path: call_rai_service.py
+  inputs:
+    request_body: ${construct_service_request.output}
+  activate:
+    when: ${validate_service.output}
+    is: true
+  use_variants: false
+- name: parse_service_response
+  type: python
+  source:
+    type: code
+    path: parse_service_response.py
+  inputs:
+    batch_response: ${call_rai_service.output}
+    selected_label_keys: ${select_metrics.output}
+  activate:
+    when: ${validate_service.output}
+    is: true
+  use_variants: false
+- name: format_service_output
+  type: python
+  source:
+    type: code
+    path: format_service_output.py
+  inputs:
+    parsed_responses: ${parse_service_response.output}
+  activate:
+    when: ${validate_service.output}
+    is: true
+  use_variants: false
+node_variants: {}
+environment:
+  python_requirements_txt: requirements.txt
