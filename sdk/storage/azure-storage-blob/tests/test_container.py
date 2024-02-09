@@ -2469,6 +2469,24 @@ class TestStorageContainer(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
+    def test_download_blob_unicode_boundary(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        # bsc._config.max_single_get_size = 1
+        container = self._create_container(bsc)
+        container.upload_blob('encoded', b'\xe4\xbd\xa0\xe5\xa5\xbd\xe4\xb8\x96\xe7\x95\x8c', overwrite=True)
+
+        downloader = container.download_blob('encoded', encoding='utf-8')
+
+        download = downloader.read(5)
+
+        # Act
+        print(download)
+
+    @BlobPreparer()
+    @recorded_by_proxy
     def test_download_blob_with_properties_versioning(self, **kwargs):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")

@@ -586,6 +586,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
         stream = BytesIO()
         remaining_size = size
+        need_chunk = False
 
         # Start by reading from current_content if there is data left
         if self._offset < len(self._current_content):
@@ -599,6 +600,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 self._progress_hook(self._offset, self.size)
 
         if remaining_size > 0:
+            need_chunk = True
             start_range = self._get_downloader_start_with_offset()
 
             # End is the min between the remaining size, the file size, and the end of the specified range
@@ -638,9 +640,23 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
             self._offset += remaining_size
 
+        max_utf_retries = 3
         data = stream.getvalue()
         if self._encoding:
-            return data.decode(self._encoding)
+            while max_utf_retries:
+                try:
+                    ret_data = data.decode(self._encoding)
+                    return ret_data
+                except UnicodeDecodeError:
+                    max_utf_retries = max_utf_retries - 1
+
+                    # If the current content wasn't enough, then the stream should already be buffered
+                    # But to make this **safe** we should check if we are at the boundary of the stream (i.e. need to refill stream)
+                    if not need_chunk:
+                        stream.write(self._current_content[self._offset:self._offset + 1])
+                        self._offset += 1
+                    data = stream.getvalue()
+            raise ValueError("Catastrophic error")
         return data
 
     def readall(self) -> T:
