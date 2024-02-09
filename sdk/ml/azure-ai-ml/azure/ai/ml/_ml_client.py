@@ -521,7 +521,7 @@ class MLClient:
         self._batch_endpoints = BatchEndpointOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_05_2022,
+            self._service_client_10_2023,
             self._operation_container,
             self._credential,
             requests_pipeline=self._requests_pipeline,

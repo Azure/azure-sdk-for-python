@@ -95,10 +95,8 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
         **kwargs,
     ):
 
-        image_content: Union[str, bytes]
-
         if "http" in image_source:
-            result = self.client.analyze(
+            result = self.client.analyze_from_url(
                 image_url=image_source,
                 visual_features=visual_features,
                 language=language,
@@ -147,10 +145,8 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
         **kwargs,
     ):
 
-        image_content: Union[str, bytes]
-
         if "http" in image_source:
-            result = await self.async_client.analyze(
+            result = await self.async_client.analyze_from_url(
                 image_url=image_source,
                 visual_features=visual_features,
                 language=language,
@@ -197,10 +193,9 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
         **kwargs,
     ):
 
-        image_content: Union[str, bytes]
         try:
             if "http" in image_source:
-                result = self.client.analyze(image_url=image_source, visual_features=visual_features)
+                result = self.client.analyze_from_url(image_url=image_source, visual_features=visual_features)
             else:
                 # Load image to analyze into a 'bytes' object
                 with open(image_source, "rb") as f:
@@ -225,11 +220,11 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
         **kwargs,
     ):
 
-        image_content: Union[str, bytes]
-
         try:
             if "http" in image_source:
-                result = await self.async_client.analyze(image_url=image_source, visual_features=visual_features)
+                result = await self.async_client.analyze_from_url(
+                    image_url=image_source, visual_features=visual_features
+                )
             else:
                 # Load image to analyze into a 'bytes' object
                 with open(image_source, "rb") as f:
