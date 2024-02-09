@@ -174,9 +174,9 @@ def init_open_ai_from_config(config: dict, credential: Optional[TokenCredential]
 # TODO: Vendor langchain deps or move to langchain module.
 def init_llm(model_config: dict, **kwargs):
     """Initialize a language model from a model configuration."""
-    from langchain.chat_models.azure_openai import AzureChatOpenAI
-    from langchain.chat_models.openai import ChatOpenAI
-    from langchain.llms import AzureOpenAI
+    from langchain.chat_models.azure_openai import AzureChatOpenAI  # pylint: disable=import-error
+    from langchain.chat_models.openai import ChatOpenAI  # pylint: disable=import-error
+    from langchain.llms import AzureOpenAI  # pylint: disable=import-error
 
     llm = None
     logger.debug(f"model_config: {json.dumps(model_config, indent=2)}")

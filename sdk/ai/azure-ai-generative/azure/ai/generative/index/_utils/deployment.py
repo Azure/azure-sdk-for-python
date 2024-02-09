@@ -3,14 +3,15 @@
 # ---------------------------------------------------------
 """Azure OpenAI deployment related utils."""
 import openai
+from openai.api_resources.deployment import Deployment  # pylint: disable=import-error
+from openai.util import convert_to_dict  # pylint: disable=import-error
+
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.generative.index._utils.connections import (
     connection_to_credential,
     get_metadata_from_connection,
     get_target_from_connection,
 )
-from openai.api_resources.deployment import Deployment
-from openai.util import convert_to_dict
 
 
 def infer_deployment(aoai_connection, model_name):

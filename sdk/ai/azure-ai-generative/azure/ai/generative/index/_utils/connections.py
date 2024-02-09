@@ -55,7 +55,7 @@ def get_connection_credential(config, credential: Optional[TokenCredential] = No
         ) from e
 
     if config.get("connection_type", None) == "workspace_keyvault":
-        from azureml.core import Run, Workspace
+        from azureml.core import Run, Workspace  # pylint: disable=import-error
 
         run = Run.get_context()
         if hasattr(run, "experiment"):
@@ -307,7 +307,7 @@ def get_connection_by_id_v1(connection_id: str, credential: Optional[TokenCreden
         logger.error(f"Invalid connection_id {connection_id}, expecting Azure Machine Learning resource ID")
         raise ValueError(f"Invalid connection id {connection_id}")
 
-    from azureml.core import Run, Workspace
+    from azureml.core import Run, Workspace  # pylint: disable=import-error
 
     run = Run.get_context()
     if hasattr(run, "experiment"):

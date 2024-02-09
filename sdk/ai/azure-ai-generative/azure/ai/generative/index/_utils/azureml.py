@@ -11,7 +11,7 @@ logger = get_logger(__name__)
 
 def get_workspace_from_environment():
     """Get the workspace from the run context if running in Azure, otherwise return None."""
-    from azureml.core import Run
+    from azureml.core import Run  # pylint: disable=import-error
 
     run = Run.get_context()
     if hasattr(run, "experiment"):

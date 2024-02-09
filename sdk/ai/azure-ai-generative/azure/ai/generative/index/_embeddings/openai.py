@@ -5,11 +5,11 @@
 import os
 import time
 from typing import Any, Dict, List, Optional
+from packaging import version
 
 from azure.ai.resources.constants._common import USER_AGENT_HEADER_KEY
 from azure.ai.generative._user_agent import USER_AGENT
 from azure.ai.generative.index._utils.logging import get_logger
-from packaging import version
 
 logger = get_logger("embeddings.openai")
 
