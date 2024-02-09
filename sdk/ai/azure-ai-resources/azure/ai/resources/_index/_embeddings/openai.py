@@ -222,7 +222,7 @@ class OpenAIEmbedder:
         """Embed the given texts."""
         import numpy as np
         import tiktoken
-        from azure.ai.resoures._index._utils import tiktoken_cache_dir
+        from azure.ai.resources._index._utils.tokens import tiktoken_cache_dir
 
         try:
             with tiktoken_cache_dir():
