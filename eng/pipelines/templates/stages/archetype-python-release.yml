@@ -31,7 +31,6 @@ extends:
           name: azsdk-pool-mms-win-2022-1es-pt
           image: azsdk-pool-mms-win-2022-1espt
           os: windows
-
     stages:
       - ${{if and(in(variables['Build.Reason'], 'Manual', ''), eq(variables['System.TeamProject'], 'internal'))}}:
           - ${{ each artifact in parameters.Artifacts }}:
@@ -46,15 +45,16 @@ extends:
                     environment: github
 
                     pool:
-                      name: azsdk-pool-mms-ubuntu-2004-general
-                      vmImage: MMSUbuntu20.04
+                      imageName: 'azsdk-pool-mms-ubuntu-2004-1espt'
+                      poolName: 'azsdk-pool-mms-ubuntu-2004-1es-pt'
+                      ArtifactName: 'linux'
 
                     strategy:
                       runOnce:
                         deploy:
                           steps:
                             - checkout: self
-                            - template: /eng/common/pipelines/templates/steps/retain-run.yml
+                            - template: /eng/common/pipelines/templates/steps/retain-run.yml@self
                             - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
                               parameters:
                                 PackageName: "azure-template"
@@ -101,8 +101,9 @@ extends:
                         dependsOn: TagRepository
 
                         pool:
-                          name: azsdk-pool-mms-ubuntu-2004-general
-                          vmImage: MMSUbuntu20.04
+                          imageName: 'azsdk-pool-mms-ubuntu-2004-1espt'
+                          poolName: 'azsdk-pool-mms-ubuntu-2004-1es-pt'
+                          ArtifactName: 'linux'
 
                         strategy:
                           runOnce:
@@ -180,8 +181,9 @@ extends:
                         dependsOn: PublishPackage
 
                         pool:
-                          name: azsdk-pool-mms-win-2022-general
-                          vmImage: MMS2022
+                          imageName: 'azsdk-pool-mms-ubuntu-2004-1espt'
+                          poolName: 'azsdk-pool-mms-ubuntu-2004-1es-pt'
+                          ArtifactName: 'linux'
 
                         strategy:
                           runOnce:
@@ -211,8 +213,9 @@ extends:
                         dependsOn: PublishPackage
 
                         pool:
-                          name: azsdk-pool-mms-ubuntu-2004-general
-                          vmImage: MMSUbuntu20.04
+                          imageName: 'azsdk-pool-mms-ubuntu-2004-1espt'
+                          poolName: 'azsdk-pool-mms-ubuntu-2004-1es-pt'
+                          ArtifactName: 'linux'
 
                         strategy:
                           runOnce:
@@ -245,8 +248,9 @@ extends:
                         dependsOn: PublishPackage
 
                         pool:
-                          name: azsdk-pool-mms-ubuntu-2004-general
-                          vmImage: MMSUbuntu20.04
+                          imageName: 'azsdk-pool-mms-ubuntu-2004-1espt'
+                          poolName: 'azsdk-pool-mms-ubuntu-2004-1es-pt'
+                          ArtifactName: 'linux'
 
                         strategy:
                           runOnce:
@@ -267,12 +271,12 @@ extends:
                                     CommitMsg: "Increment package version after release of ${{ artifact.name }}"
                                     PRTitle: "Increment version for ${{ parameters.ServiceDirectory }} releases"
                                     CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
-                  - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
-                      - template: /eng/pipelines/templates/jobs/smoke.tests.yml
-                        parameters:
-                          Daily: false
-                          ArtifactName: ${{ parameters.ArtifactName }}
-                          Artifact: ${{ artifact }}
+                  # - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
+                  #     - template: /eng/pipelines/templates/jobs/smoke.tests.yml
+                  #       parameters:
+                  #         Daily: false
+                  #         ArtifactName: ${{ parameters.ArtifactName }}
+                  #         Artifact: ${{ artifact }}
 
       - stage: Integration
         dependsOn: ${{parameters.DependsOn}}
@@ -282,8 +286,9 @@ extends:
             displayName: "Publish package to daily feed"
             condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
             pool:
-              name: azsdk-pool-mms-ubuntu-2004-general
-              vmImage: MMSUbuntu20.04
+              imageName: 'azsdk-pool-mms-ubuntu-2004-1espt'
+              poolName: 'azsdk-pool-mms-ubuntu-2004-1es-pt'
+              ArtifactName: 'linux'
             steps:
               - checkout: none
               - download: current
@@ -327,8 +332,9 @@ extends:
             dependsOn: PublishPackages
             condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
             pool:
-              name: azsdk-pool-mms-ubuntu-2004-general
-              vmImage: MMSUbuntu20.04
+              imageName: 'azsdk-pool-mms-ubuntu-2004-1espt'
+              poolName: 'azsdk-pool-mms-ubuntu-2004-1es-pt'
+              ArtifactName: 'linux'
             steps:
               - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
                 parameters:

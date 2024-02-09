@@ -121,6 +121,7 @@ jobs:
     pool:
       name: $(Pool)
       vmImage: $(OSVmImage)
+      os: $(os)
 
     variables:
       - template: /eng/pipelines/templates/variables/globals.yml
