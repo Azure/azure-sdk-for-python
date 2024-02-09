@@ -150,8 +150,11 @@ def build_packages(
     logger.log(level=logging.INFO, msg=f"Generating Package Using Python {sys.version}")
 
     for package_root in targeted_packages:
-        setup_parsed = ParsedSetup.from_path(package_root)
-
+        logging.log(level=logging.INFO, msg=f"Attempting to build package: {package_root}")
+        try:
+            setup_parsed = ParsedSetup.from_path(package_root)
+        except Exception as e:
+            logging.error(level=logging.INFO, msg=f"Encountered an exception while parsing the package at {package_root}: {e}")
         package_name_in_artifacts = os.path.join(os.path.basename(package_root))
         dist_dir = os.path.join(distribution_directory, package_name_in_artifacts)
 
@@ -165,6 +168,7 @@ def build_packages(
             set_version_py(setup_parsed.setup_filename, new_version)
             set_dev_classifier(setup_parsed.setup_filename, new_version)
 
+        logging.log(level=logging.INFO, msg=f"Entering create package for {package_root}...")
         create_package(package_root, dist_dir)
 
 
@@ -182,7 +186,7 @@ def create_package(
     if setup_parsed.ext_modules:
         run([sys.executable, "-m", "cibuildwheel", "--output-dir", dist], cwd=setup_parsed.folder, check=True)
 
-    logger.log(os.environ)
+    logger.log(level=logging.INFO, msg=os.environ)
 
     try:
         if enable_wheel:
@@ -198,4 +202,4 @@ def create_package(
                 check=True
             )
     except Exception as e:
-        logger.log(f"An unexpected build error has occured: {e}")
+        logger.log(level=logging.ERROR, msg=f"An unexpected build error has occured: {e}")
