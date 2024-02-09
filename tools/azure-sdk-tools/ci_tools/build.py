@@ -11,6 +11,7 @@ from ci_tools.versioning.version_shared import set_version_py, set_dev_classifie
 from ci_tools.versioning.version_set_dev import get_dev_version, format_build_id
 from ci_tools.logging import initialize_logger, run_logged
 
+logger = initialize_logger("build.py")
 
 def build() -> None:
     parser = argparse.ArgumentParser(
@@ -146,7 +147,6 @@ def build_packages(
     build_apiview_artifact: bool = False,
     build_id: str = "",
 ):
-    logger = initialize_logger("build.py")
     logger.log(level=logging.INFO, msg=f"Generating Package Using Python {sys.version}")
 
     for package_root in targeted_packages:
@@ -182,7 +182,7 @@ def create_package(
     if setup_parsed.ext_modules:
         run([sys.executable, "-m", "cibuildwheel", "--output-dir", dist], cwd=setup_parsed.folder, check=True)
 
-    print(os.environ)
+    logger.log(os.environ)
 
     try:
         if enable_wheel:
@@ -198,4 +198,4 @@ def create_package(
                 check=True
             )
     except Exception as e:
-        print(f"An unexpected build error has occured: {e}")
+        logger.log(f"An unexpected build error has occured: {e}")
