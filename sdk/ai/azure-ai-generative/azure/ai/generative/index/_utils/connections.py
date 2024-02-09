@@ -70,8 +70,6 @@ def get_connection_credential(config, credential: Optional[TokenCredential] = No
             except Exception as e:
                 logger.warning(f"Could not get workspace '{config.get('connection', {}).get('workspace')}': {e}")
                 # Fall back to looking for key in environment.
-                import os
-
                 key = os.environ.get(config.get("connection", {}).get("key"))
                 if key is None:
                     raise ValueError(
@@ -87,8 +85,6 @@ def get_connection_credential(config, credential: Optional[TokenCredential] = No
         connection = get_connection_by_id_v2(connection_id, credential=credential)
         connection_credential = connection_to_credential(connection)
     elif config.get("connection_type", None) == "environment":
-        import os
-
         key = os.environ.get(config.get("connection", {}).get("key", "OPENAI_API_KEY"))
         connection_credential = (
             (credential if credential is not None else DefaultAzureCredential(process_timeout=60))
@@ -181,9 +177,12 @@ def get_connection_by_id_v2(
 
     If azure.ai.ml is installed, use that, otherwise use azure.ai.generative.
     """
+    _regex = (
+        r"/subscriptions/(.*)/resourceGroups/(.*)/providers/Microsoft.MachineLearningServices/workspaces"
+        r"/(.*)/connections/(.*)"
+    )
     uri_match = re.match(
-        # pylint: disable=line-too-long
-        r"/subscriptions/(.*)/resourceGroups/(.*)/providers/Microsoft.MachineLearningServices/workspaces/(.*)/connections/(.*)",
+        _regex,
         connection_id,
         flags=re.IGNORECASE,
     )
@@ -297,9 +296,12 @@ def get_connection_by_name_v2(workspace, name: str) -> dict:
 
 def get_connection_by_id_v1(connection_id: str, credential: Optional[TokenCredential] = None) -> dict:
     """Get a connection from a workspace."""
+    _regex = (
+        r"/subscriptions/(.*)/resourceGroups/(.*)/providers/Microsoft.MachineLearningServices/workspaces"
+        r"/(.*)/connections/(.*)"
+    )
     uri_match = re.match(
-        # pylint: disable=line-too-long
-        r"/subscriptions/(.*)/resourceGroups/(.*)/providers/Microsoft.MachineLearningServices/workspaces/(.*)/connections/(.*)",
+        _regex,
         connection_id,
     )
 

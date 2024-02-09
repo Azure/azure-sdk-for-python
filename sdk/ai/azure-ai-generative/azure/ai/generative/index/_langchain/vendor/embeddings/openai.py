@@ -35,8 +35,6 @@ logger = logging.getLogger(__name__)
 
 
 def _create_retry_decorator(embeddings: OpenAIEmbeddings) -> Callable[[Any], Any]:
-    import openai
-
     min_seconds = 4
     max_seconds = 10
     # Wait 2^x * 1 second between each retry starting with
@@ -57,8 +55,6 @@ def _create_retry_decorator(embeddings: OpenAIEmbeddings) -> Callable[[Any], Any
 
 
 def _async_retry_decorator(embeddings: OpenAIEmbeddings) -> Any:
-    import openai
-
     min_seconds = 4
     max_seconds = 10
     # Wait 2^x * 1 second between each retry starting with
@@ -91,8 +87,6 @@ def _async_retry_decorator(embeddings: OpenAIEmbeddings) -> Any:
 # https://stackoverflow.com/questions/76469415/getting-embeddings-of-length-1-from-langchain-openaiembeddings
 def _check_response(response: dict) -> dict:
     if any(len(d["embedding"]) == 1 for d in response["data"]):
-        import openai
-
         raise openai.error.APIError("OpenAI API returned an empty embedding")
     return response
 
@@ -217,11 +211,10 @@ class OpenAIEmbeddings(Embeddings):
             openai_args["engine"] = self.deployment
         if self.openai_proxy:
             try:
-                import openai
+                import openai  # pylint: disable=reimported
             except ImportError:
                 raise ImportError(
-                    "Could not import openai python package. "
-                    "Please install it with `pip install openai`."
+                    "Could not import openai python package. " "Please install it with `pip install openai`."
                 )
 
             openai.proxy = {
@@ -298,13 +291,9 @@ class OpenAIEmbeddings(Embeddings):
         for i in range(len(texts)):
             _result = results[i]
             if len(_result) == 0:
-                average = embed_with_retry(
-                    self,
-                    input="",
-                    **self._invocation_params,
-                )[
-                    "data"
-                ][0]["embedding"]
+                average = embed_with_retry(self, input="", **self._invocation_params,)["data"][
+                    0
+                ]["embedding"]
             else:
                 average = np.average(_result, axis=0, weights=num_tokens_in_batch[i])
             embeddings[i] = (average / np.linalg.norm(average)).tolist()
@@ -368,22 +357,16 @@ class OpenAIEmbeddings(Embeddings):
         for i in range(len(texts)):
             _result = results[i]
             if len(_result) == 0:
-                average = (
-                    await async_embed_with_retry(
-                        self,
-                        input="",
-                        **self._invocation_params,
-                    )
-                )["data"][0]["embedding"]
+                average = (await async_embed_with_retry(self, input="", **self._invocation_params,))["data"][
+                    0
+                ]["embedding"]
             else:
                 average = np.average(_result, axis=0, weights=num_tokens_in_batch[i])
             embeddings[i] = (average / np.linalg.norm(average)).tolist()
 
         return embeddings
 
-    def embed_documents(
-        self, texts: List[str], chunk_size: Optional[int] = 0
-    ) -> List[List[float]]:
+    def embed_documents(self, texts: List[str], chunk_size: Optional[int] = 0) -> List[List[float]]:
         """Call out to OpenAI's embedding endpoint for embedding search docs.
 
         Args:
@@ -398,9 +381,7 @@ class OpenAIEmbeddings(Embeddings):
         #       than the maximum context and use length-safe embedding function.
         return self._get_len_safe_embeddings(texts, engine=self.deployment)
 
-    async def aembed_documents(
-        self, texts: List[str], chunk_size: Optional[int] = 0
-    ) -> List[List[float]]:
+    async def aembed_documents(self, texts: List[str], chunk_size: Optional[int] = 0) -> List[List[float]]:
         """Call out to OpenAI's embedding endpoint async for embedding search docs.
 
         Args:

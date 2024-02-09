@@ -729,7 +729,7 @@ class LLAMACompletionsModel(OpenAICompletionsModel):
 
         # remove prompt text from each response as llama model returns prompt + completion instead of only completion
         # remove any text after the stop tokens, since llama doesn't support stop token
-        for idx, response in enumerate(response_data["samples"]):
+        for idx, _ in enumerate(response_data["samples"]):
             response_data["samples"][idx] = response_data["samples"][idx].replace(prompt, "").strip()
             for stop_token in self.stop:
                 if stop_token in response_data["samples"][idx]:
@@ -783,7 +783,7 @@ class LLAMAChatCompletionsModel(LLAMACompletionsModel):
         # so if we set the system meta prompt as a user message,
         # and if we have the first two messages made by user then we
         # combine the two messages in one message.
-        for idx, x in enumerate(messages):
+        for _, x in enumerate(messages):
             if x["role"] == "system":
                 x["role"] = "user"
         if len(messages) > 1 and messages[0]["role"] == "user" and messages[1]["role"] == "user":

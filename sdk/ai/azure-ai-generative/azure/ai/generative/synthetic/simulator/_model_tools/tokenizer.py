@@ -31,7 +31,7 @@ class Tokenizer:
 
         try:
             encoding = tiktoken.encoding_for_model(model_name)
-        except KeyError as err:
+        except KeyError:
             self._log(
                 f"Couldn't find encoding for '{model_name}'", log_level=logging.WARNING)
 

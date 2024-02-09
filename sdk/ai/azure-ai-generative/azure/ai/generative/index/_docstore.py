@@ -81,7 +81,7 @@ class FileBasedDocstore:
         """Load from JSONL file."""
         from fsspec.core import url_to_fs
 
-        fs, uri = url_to_fs(input_path)
+        fs, _ = url_to_fs(input_path)
 
         documents: Optional[Dict[str, Document]] = {}
         with fs.open(f"{input_path.rstrip('/')}/docs.jsonl") as f:

@@ -34,7 +34,7 @@ class SimulatorTemplates:
 
     def get_template(self, template_name):
         if template_name in self.cached_templates_source:
-            template, template_path, loader_func = self.cached_templates_source[template_name]
+            template, _, _ = self.cached_templates_source[template_name]
             return Template(template_name, template, self._get_template_context_key(template_name))
 
         if template_name not in ALL_TEMPLATES.keys():
@@ -43,7 +43,7 @@ class SimulatorTemplates:
         template_source = self.template_env.loader.get_source(self.template_env, ALL_TEMPLATES[template_name])
         self.cached_templates_source[template_name] = template_source
 
-        template, template_path, loader_func = template_source
+        template, _, _ = template_source
         return Template(template_name, template, self._get_template_context_key(template_name))
 
     def get_template_parameters(self, template_name):

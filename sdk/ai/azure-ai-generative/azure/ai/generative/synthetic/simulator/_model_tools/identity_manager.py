@@ -135,7 +135,6 @@ class CompliantTokenManager(APITokenManager):
         client_id = keyvault.get_secret(name="approvalClientId")
         client_secret = keyvault.get_secret(name="approvalClientSecret")
         tenant_id = keyvault.get_secret(name="approvalTenantId")
-        resource = keyvault.get_secret(name="approvalResource")
 
         self.app = ConfidentialClientApplication(
             client_id=client_id,

@@ -17,7 +17,7 @@ class JsonParser(object):
         value_as_json = None
         try:
             value_as_json = json.loads(value)
-        except Exception as ex:
+        except Exception:
             LOGGER.debug(f"Error parsing as a valid json : {value}")
 
         return value_as_json
@@ -29,7 +29,7 @@ class NumberParser(object):
         value_as_number = None
         try:
             value_as_number = int(value)
-        except Exception as ex:
+        except Exception:
             LOGGER.debug(f"Error parsing as a valid number : {value}")
 
         return value_as_number

@@ -123,7 +123,6 @@ class DummyConversationBot:
             # thus we reverse all rules in history messages,
             # so that messages produced from the other bot passed here as user messages
             messages.extend([turn.to_openai_chat_format(reverse=True) for turn in conversation_history[-max_history:]])
-            prompt_role = ConversationRole.USER.value
             response_data = {
                 "id": "cmpl-uqkvlQyYK7bGYrRHQ0eXlWi8",
                 "object": "text_completion",
@@ -134,7 +133,6 @@ class DummyConversationBot:
             }
         else:
             messages.extend([turn.to_openai_chat_format() for turn in conversation_history[-max_history:]])
-            prompt_role = self.role.value
             response_data = {
                 "id": "cmpl-uqkvlQyYK7bGYrRHQ0eXlWi7",
                 "object": "text_completion",

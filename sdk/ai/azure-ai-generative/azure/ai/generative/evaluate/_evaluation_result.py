@@ -31,7 +31,7 @@ class EvaluationResult(object):
 
     def download_evaluation_artifacts(self, path: str) -> None:
         from mlflow.artifacts import download_artifacts
-        for artifact, artifact_uri in self.artifacts.items():
+        for _, artifact_uri in self.artifacts.items():
             download_artifacts(
                 artifact_uri=artifact_uri,
                 tracking_uri=self.tracking_uri,

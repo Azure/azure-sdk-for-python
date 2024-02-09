@@ -50,7 +50,6 @@ class CodeMetricHandler(MetricHandler):
         with tqdm.tqdm(total=len(self.metrics)) as progress_bar:
             with ThreadPoolExecutor(thread_name_prefix="code_metrics") as thread_pool:
                 for metric in self.metrics:
-                    metric_values = []
                     metric_results_futures.update(
                         {
                             metric.name: thread_pool.submit(
@@ -85,9 +84,7 @@ class CodeMetricHandler(MetricHandler):
 
     def _calculate_metric(self, metric, data, response):
         row_metric_futures = []
-        row_metric_result = []
         row_metric_results = []
-        aggregated_metrics = None
 
         with ThreadPoolExecutor(thread_name_prefix="code_metrics_row") as thread_pool:
             for i in range(0, len(data)):

@@ -4,7 +4,7 @@
 import os
 _template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 
-from .simulator.simulator import Simulator
-from .templates.simulator_templates import SimulatorTemplates
+from .simulator.simulator import Simulator  # pylint: disable=wrong-import-position
+from .templates.simulator_templates import SimulatorTemplates  # pylint: disable=wrong-import-position
 
 __all__ = ["Simulator", "SimulatorTemplates"]

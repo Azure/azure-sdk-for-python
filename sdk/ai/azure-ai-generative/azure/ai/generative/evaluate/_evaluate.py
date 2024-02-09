@@ -281,13 +281,10 @@ def _evaluate(  # pylint: disable=too-many-locals
         if Path(data).exists():
             test_data = load_jsonl(data)
             _data_is_file = True
-    except Exception as ex:
+    except Exception:
         LOGGER.debug("test data is not a file but loaded data")
         test_data = data
         _data_is_file = False
-
-    if "answer" in data_mapping:
-        prediction_data = data_mapping.get("answer")
 
     if task_type not in SUPPORTED_TASK_TYPE:
         raise Exception(f"task type {task_type} is not supported")

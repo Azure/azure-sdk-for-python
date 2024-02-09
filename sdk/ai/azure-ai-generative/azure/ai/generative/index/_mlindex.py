@@ -595,8 +595,7 @@ class MLIndex:
             if embeddings_container is not None:
                 if isinstance(embeddings_container, str) and "://" in embeddings_container:
                     from fsspec.core import url_to_fs
-
-                    fs, uri = url_to_fs(embeddings_container)
+                    _, _ = url_to_fs(embeddings_container)
                 else:
                     embeddings_container = Path(embeddings_container)
                     previous_embeddings_dir_name = None
