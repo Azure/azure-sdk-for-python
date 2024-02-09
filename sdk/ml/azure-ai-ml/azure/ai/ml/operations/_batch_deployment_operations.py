@@ -144,8 +144,8 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
             location = self._get_workspace_location()
             if kwargs.pop("package_model", False):
                 deployment = package_deployment(
-                    deployment, self._all_operations.all_operations
-                )  # type: ignore[assignment,arg-type]
+                    deployment, self._all_operations.all_operations  # type: ignore[assignment,arg-type]
+                )
                 # Bug 2951529
                 module_logger.info("\nStarting deployment")
             deployment_rest = deployment._to_rest_object(location=location)

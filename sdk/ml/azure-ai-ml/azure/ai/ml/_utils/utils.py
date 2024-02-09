@@ -43,7 +43,6 @@ from azure.ai.ml.constants._common import (
     CommonYamlFields,
     DefaultOpenEncoding,
 )
-from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType
 from azure.core.pipeline.policies import RetryPolicy
 
 module_logger = logging.getLogger(__name__)
@@ -508,7 +507,7 @@ def resolve_short_datastore_url(value: Union[PathLike, str], workspace: Operatio
     :return: The resolved URL
     :rtype: Union[PathLike, str]
     """
-    from azure.ai.ml.exceptions import ValidationException
+    from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
 
     # These imports can't be placed in at top file level because it will cause a circular import in
     # exceptions.py via _get_mfe_url_override
