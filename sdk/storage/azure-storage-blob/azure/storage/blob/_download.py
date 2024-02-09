@@ -586,6 +586,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
         stream = BytesIO()
         remaining_size = size
+        # Could possibly use this flag if behavior needs to look different for current content ONLY path vs. get another chunk path
         need_chunk = False
 
         # Start by reading from current_content if there is data left
@@ -600,6 +601,19 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 self._progress_hook(self._offset, self.size)
 
         if remaining_size > 0:
+            # Current Issue: We only buffer up to the exact amount into the stream (i.e. up to the specified # of bytes so still have
+            # unexpected end of data error)
+            # Idea: Always pull a larger than necessary chunk and load the leftover BUT what should be the size of the chunk we get???
+            # i.e. Here if we call read(5) and max chunk size is 1 byte, current_content = b'\xe4` (first byte), then _ChunkDownloader
+            # will load b'\xbd\xa0\xe5\xa5\ (bytes 2-5) into the stream. SO what should be the logic for HOW MUCH to buffer?
+            # Code paths:
+            # 1. This reads up to EOF. Then nothing will be buffered into current_content and if we still can't encode -> raise error
+            # 2. This reads up to n bytes then buffers the rest into current_content. Then if it is short --> use the peeking logic
+            # to process up to the next byte boundary (+/- 3)
+            # tl;dr -- We would need to come up with how to calculate a (reasonable) buffer that may or may not be consumed. We also would
+            # ensure that all current code empties current_content buffer before streaming more data.
+
+            # Here we will flip the flag to True.
             need_chunk = True
             start_range = self._get_downloader_start_with_offset()
 
@@ -650,9 +664,11 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 except UnicodeDecodeError:
                     max_utf_retries = max_utf_retries - 1
 
-                    # If the current content wasn't enough, then the stream should already be buffered
-                    # But to make this **safe** we should check if we are at the boundary of the stream (i.e. need to refill stream)
+                    # If we end up using this flag. Otherwise remove if current_content is properly buffered in both code-path cases
                     if not need_chunk:
+                        # Need to handle the case that the +/- 3 bytes we process at the end is at the boundary of buffered
+                        # data (current_content). This shouldn't happen if the buffer is sufficiently large, but should be
+                        # caught / logic should be better for top-end (maybe min(self._offset + 1, blob_size_in_bytes))
                         stream.write(self._current_content[self._offset:self._offset + 1])
                         self._offset += 1
                     data = stream.getvalue()

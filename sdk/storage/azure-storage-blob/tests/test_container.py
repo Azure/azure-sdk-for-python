@@ -2474,7 +2474,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
-        # bsc._config.max_single_get_size = 1
+        bsc._config.max_single_get_size = 1
         container = self._create_container(bsc)
         container.upload_blob('encoded', b'\xe4\xbd\xa0\xe5\xa5\xbd\xe4\xb8\x96\xe7\x95\x8c', overwrite=True)
 
