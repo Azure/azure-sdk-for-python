@@ -262,14 +262,20 @@ def _evaluate(
         **kwargs
 ):
     try:
-        if Path(data).exists():
-            test_data = load_jsonl(data)
-            _data_is_file = True
+        if isinstance(data, str) or isinstance(data, Path):
+            if Path(data).exists():
+                test_data = load_jsonl(data)
+                _data_is_file = True
+            else:
+                raise Exception(f"{data} does not point to a valid path")
         else:
             # data as list of json objects
-            test_data = [json.loads(line) for line in data]
+            _ = [json.dumps(line) for line in data]
+            test_data = data
     except JSONDecodeError as json_load_error:
         raise Exception("Data could not be loaded. Please validate if data is valid jsonl.")
+    except TypeError:
+        raise Exception("Data is not valid json.")
     except Exception as ex:
         raise Exception(f"Error loading data: {ex}")
         _data_is_file = False
