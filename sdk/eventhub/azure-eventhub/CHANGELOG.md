@@ -1,6 +1,6 @@
 # Release History
 
-## 5.11.6 (2024-02-08)
+## 5.11.6 (2024-02-12)
 
 ### Features Added
 - Added `keep_alive` functionality on EventHubProducerClient to allow for long-living producers. [#33726](https://github.com/Azure/azure-sdk-for-python/issues/33726)
