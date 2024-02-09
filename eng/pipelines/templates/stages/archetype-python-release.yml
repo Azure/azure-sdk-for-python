@@ -1,9 +1,10 @@
-resources:
-  repositories:
-    - repository: 1ESPipelineTemplates
-      type: git
-      name: 1ESPipelineTemplates/1ESPipelineTemplates
-      ref: refs/tags/release
+# if this template is not used from another template or pipline that references the 1ESPipelineTemplates repository, then the following line should be re-enabled
+# resources:
+#   repositories:
+#     - repository: 1ESPipelineTemplates
+#       type: git
+#       name: 1ESPipelineTemplates/1ESPipelineTemplates
+#       ref: refs/tags/release
 
 parameters:
   Artifacts: []
