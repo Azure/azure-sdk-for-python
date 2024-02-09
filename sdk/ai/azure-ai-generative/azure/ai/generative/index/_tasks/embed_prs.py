@@ -7,6 +7,7 @@ import os
 import pathlib
 import time
 import traceback
+from typing import Any
 
 import pandas as pd
 from azure.ai.generative.index._embeddings import EmbeddingsContainer
@@ -22,6 +23,10 @@ from azure.ai.generative.index._utils.logging import (
 )
 
 logger = get_logger("embed_prs")
+
+output_data: Any = None
+embeddings_container: None
+chunk_format: Any = None
 
 
 def main(args, logger, activity_logger):
@@ -118,7 +123,6 @@ def _run_internal(mini_batch, output_data, embeddings):
     :param output_data: The output folder to save data to.
     :param embeddings: The Embeddings object that should be used to embed new data.
     """
-    global chunk_format
     logger.info(f"run method start: {__file__}, run({mini_batch})")
     logger.info(f"Task id: {mini_batch.task_id}")
 
@@ -140,8 +144,5 @@ def _run_internal(mini_batch, output_data, embeddings):
 
 def run(mini_batch):
     """Embed minibatch of chunks."""
-    global output_data
-    global embeddings_container
-
     _run_internal(mini_batch, output_data, embeddings_container)
     return pd.DataFrame({"Files": [os.path.split(file)[-1] for file in mini_batch]})
