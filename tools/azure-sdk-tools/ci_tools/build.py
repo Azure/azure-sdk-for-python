@@ -185,14 +185,12 @@ def create_package(
     if enable_wheel:
         run(
             [sys.executable, "setup.py", "bdist_wheel", "-d", dist],
-            prefix="create_wheel",
             cwd=setup_parsed.folder,
             check=True,
         )
     if enable_sdist:
         run(
             [sys.executable, "setup.py", "sdist", "-d", dist],
-            prefix="create_sdist",
             cwd=setup_parsed.folder,
             check=True,
         )
