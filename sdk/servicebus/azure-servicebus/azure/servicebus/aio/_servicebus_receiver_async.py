@@ -679,8 +679,8 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         self._check_live()
         if max_wait_time is not None and max_wait_time <= 0:
             raise ValueError("The max_wait_time must be greater than 0.")
-        if int(max_message_count) < 0 or int(max_message_count) > 4000:
-            raise ValueError("max_message_count must be between 1 and 4000, inclusive.")
+        if max_message_count is not None and max_message_count <= 0:
+            raise ValueError("The max_message_count must be greater than 0")
         start_time = time.time_ns()
         messages: List[ServiceBusReceivedMessage] = await self._do_retryable_operation(
             self._receive,
@@ -853,8 +853,8 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         self._check_live()
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
-        if int(max_message_count) < 0:
-            raise ValueError("max_message_count must be 1 or greater.")
+        if int(max_message_count) < 0 or int(max_message_count) > 4000:
+            raise ValueError("max_message_count must be between 1 and 4000, inclusive.")
 
         await self._open()
         message = {
