@@ -10,85 +10,110 @@ from typing import Any, AsyncIterable, Callable, Dict, List, Optional, TypeVar
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, ResourceNotModifiedError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models
 from ..._model_base import _deserialize
-from ..._operations._operations import build_schema_registry_get_schema_by_id_request, build_schema_registry_get_schema_by_version_request, build_schema_registry_list_schema_groups_request, build_schema_registry_list_schema_versions_request
+from ..._operations._operations import (
+    build_schema_registry_get_schema_by_id_request,
+    build_schema_registry_get_schema_by_version_request,
+    build_schema_registry_list_schema_groups_request,
+    build_schema_registry_list_schema_versions_request,
+)
 from .._vendor import SchemaRegistryClientMixinABC, raise_if_not_implemented
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-instantiated
-    SchemaRegistryClientMixinABC
-):
 
+class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):  # pylint: disable=abstract-class-instantiated
     def __init__(self) -> None:
-        raise_if_not_implemented(self.__class__, [
-            '_get_schema_id_by_content',
-            '_register_schema',
-        ])
-
+        raise_if_not_implemented(
+            self.__class__,
+            [
+                "_get_schema_properties_by_content",
+                "_register_schema",
+            ],
+        )
 
     @distributed_trace
-    def _list_schema_groups(
-        self,
-        **kwargs: Any
-    ) -> AsyncIterable["_models._models.SchemaGroup"]:
+    def _list_schema_groups(self, **kwargs: Any) -> AsyncIterable[str]:
         """Get list of schema groups.
 
         Gets the list of schema groups user is authorized to access.
 
-        :return: An iterator like instance of SchemaGroup
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.schemaregistry.models.SchemaGroup]
+        :return: An iterator like instance of str
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response == {
-                    "groupName": "str"  # Name of schema group. Required.
-                }
+                response == "str"  # Optional.
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models._models.SchemaGroup]] = kwargs.pop(  # pylint: disable=protected-access
-            'cls', None
-        )
+        cls: ClsType[List[str]] = kwargs.pop("cls", None)
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 _request = build_schema_registry_list_schema_groups_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "fullyQualifiedNamespace": self._serialize.url("self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, 'str', skip_quote=True),
+                    "fullyQualifiedNamespace": self._serialize.url(
+                        "self._config.fully_qualified_namespace",
+                        self._config.fully_qualified_namespace,
+                        "str",
+                        skip_quote=True,
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
                 _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict({
-                    key: [urllib.parse.quote(v) for v in value]    for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()})
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest("GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 path_format_arguments = {
-                    "fullyQualifiedNamespace": self._serialize.url("self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, 'str', skip_quote=True),
+                    "fullyQualifiedNamespace": self._serialize.url(
+                        "self._config.fully_qualified_namespace",
+                        self._config.fully_qualified_namespace,
+                        "str",
+                        skip_quote=True,
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -96,9 +121,9 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models._models.SchemaGroup], deserialized["value"])
+            list_of_elem = _deserialize(List[str], deserialized["value"])
             if cls:
-                list_of_elem = cls(list_of_elem) # type: ignore
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
@@ -106,32 +131,126 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                _request,
-                stream=_stream,
-                **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 if _stream:
-                    await  response.read()  # Load the body in memory and close the socket
+                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
+    @distributed_trace
+    def _list_schema_versions(self, group_name: str, name: str, **kwargs: Any) -> AsyncIterable[int]:
+        """List schema versions.
 
+        Gets the list of all versions of one schema.
+
+        :param group_name: Name of schema group. Required.
+        :type group_name: str
+        :param name: Name of schema. Required.
+        :type name: str
+        :return: An iterator like instance of int
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[int]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == 0  # Optional.
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[int]] = kwargs.pop("cls", None)
+
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_schema_registry_list_schema_versions_request(
+                    group_name=group_name,
+                    name=name,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "fullyQualifiedNamespace": self._serialize.url(
+                        "self._config.fully_qualified_namespace",
+                        self._config.fully_qualified_namespace,
+                        "str",
+                        skip_quote=True,
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "fullyQualifiedNamespace": self._serialize.url(
+                        "self._config.fully_qualified_namespace",
+                        self._config.fully_qualified_namespace,
+                        "str",
+                        skip_quote=True,
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[int], deserialized["value"])
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def _get_schema_by_id(
-        self,
-        id: str,
-        **kwargs: Any
-    ) -> bytes:
+    async def _get_schema_by_id(self, id: str, **kwargs: Any) -> bytes:
         """Get a registered schema by its unique ID reference.
 
         Gets a registered schema by its unique ID.  Azure Schema Registry guarantees that ID is unique
@@ -144,18 +263,18 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[bytes] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[bytes] = kwargs.pop("cls", None)
 
-        
         _request = build_schema_registry_get_schema_by_id_request(
             id=id,
             api_version=self._config.api_version,
@@ -163,151 +282,44 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
             params=_params,
         )
         path_format_arguments = {
-            "fullyQualifiedNamespace": self._serialize.url("self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, 'str', skip_quote=True),
+            "fullyQualifiedNamespace": self._serialize.url(
+                "self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", True)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
-        response_headers['Schema-Id']=self._deserialize('str', response.headers.get('Schema-Id'))
-        response_headers['Schema-Id-Location']=self._deserialize('str', response.headers.get('Schema-Id-Location'))
-        response_headers['Schema-Group-Name']=self._deserialize('str', response.headers.get('Schema-Group-Name'))
-        response_headers['Schema-Name']=self._deserialize('str', response.headers.get('Schema-Name'))
-        response_headers['Schema-Version']=self._deserialize('int', response.headers.get('Schema-Version'))
-        response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Schema-Id"] = self._deserialize("str", response.headers.get("Schema-Id"))
+        response_headers["Schema-Id-Location"] = self._deserialize("str", response.headers.get("Schema-Id-Location"))
+        response_headers["Schema-Group-Name"] = self._deserialize("str", response.headers.get("Schema-Group-Name"))
+        response_headers["Schema-Name"] = self._deserialize("str", response.headers.get("Schema-Name"))
+        response_headers["Schema-Version"] = self._deserialize("int", response.headers.get("Schema-Version"))
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
         await response.read()
         deserialized = response.content
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers) # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
-    @distributed_trace
-    def _list_schema_versions(
-        self,
-        group_name: str,
-        name: str,
-        **kwargs: Any
-    ) -> AsyncIterable["_models._models.SchemaVersion"]:
-        """List schema versions.
-
-        Gets the list of all versions of one schema.
-
-        :param group_name: Name of schema group. Required.
-        :type group_name: str
-        :param name: Name of schema. Required.
-        :type name: str
-        :return: An iterator like instance of SchemaVersion
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.schemaregistry.models.SchemaVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "schemaVersion": 0  # Version number of specific schema. Required.
-                }
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models._models.SchemaVersion]] = kwargs.pop(  # pylint: disable=protected-access
-            'cls', None
-        )
-
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-        def prepare_request(next_link=None):
-            if not next_link:
-                
-                _request = build_schema_registry_list_schema_versions_request(
-                    group_name=group_name,
-                    name=name,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "fullyQualifiedNamespace": self._serialize.url("self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, 'str', skip_quote=True),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict({
-                    key: [urllib.parse.quote(v) for v in value]    for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()})
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest("GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
-                path_format_arguments = {
-                    "fullyQualifiedNamespace": self._serialize.url("self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, 'str', skip_quote=True),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models._models.SchemaVersion], deserialized["value"])
-            if cls:
-                list_of_elem = cls(list_of_elem) # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                _request,
-                stream=_stream,
-                **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                if _stream:
-                    await  response.read()  # Load the body in memory and close the socket
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
-
     @distributed_trace_async
-    async def _get_schema_by_version(
-        self,
-        group_name: str,
-        name: str,
-        schema_version: int,
-        **kwargs: Any
-    ) -> bytes:
+    async def _get_schema_by_version(self, group_name: str, name: str, version: int, **kwargs: Any) -> bytes:
         """Get specific schema versions.
 
         Gets one specific version of one schema.
@@ -316,68 +328,66 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         :type group_name: str
         :param name: Name of schema. Required.
         :type name: str
-        :param schema_version: Version number of specific schema. Required.
-        :type schema_version: int
+        :param version: Version number of specific schema. Required.
+        :type version: int
         :return: bytes
         :rtype: bytes
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[bytes] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[bytes] = kwargs.pop("cls", None)
 
-        
         _request = build_schema_registry_get_schema_by_version_request(
             group_name=group_name,
             name=name,
-            schema_version=schema_version,
+            version=version,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "fullyQualifiedNamespace": self._serialize.url("self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, 'str', skip_quote=True),
+            "fullyQualifiedNamespace": self._serialize.url(
+                "self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", True)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             if _stream:
-                await  response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
-        response_headers['Schema-Id']=self._deserialize('str', response.headers.get('Schema-Id'))
-        response_headers['Schema-Id-Location']=self._deserialize('str', response.headers.get('Schema-Id-Location'))
-        response_headers['Schema-Group-Name']=self._deserialize('str', response.headers.get('Schema-Group-Name'))
-        response_headers['Schema-Name']=self._deserialize('str', response.headers.get('Schema-Name'))
-        response_headers['Schema-Version']=self._deserialize('int', response.headers.get('Schema-Version'))
-        response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Schema-Id"] = self._deserialize("str", response.headers.get("Schema-Id"))
+        response_headers["Schema-Id-Location"] = self._deserialize("str", response.headers.get("Schema-Id-Location"))
+        response_headers["Schema-Group-Name"] = self._deserialize("str", response.headers.get("Schema-Group-Name"))
+        response_headers["Schema-Name"] = self._deserialize("str", response.headers.get("Schema-Name"))
+        response_headers["Schema-Version"] = self._deserialize("int", response.headers.get("Schema-Version"))
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
         await response.read()
         deserialized = response.content
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers) # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
-
-

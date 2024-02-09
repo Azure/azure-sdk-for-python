@@ -13,8 +13,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class SchemaFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Represents the format of the schema to be stored by the Schema Registry service.
-    """
+    """Represents the format of the schema to be stored by the Schema Registry service."""
 
     AVRO = "Avro"
     """Represents the Apache Avro schema format."""
@@ -27,6 +26,7 @@ class SchemaFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 __all__: List[str] = []  # Add all objects you want publicly available to users at this package level
+
 
 def patch_sdk():
     """Do not remove from this file.

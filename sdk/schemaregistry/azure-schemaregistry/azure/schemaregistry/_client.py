@@ -21,11 +21,12 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
+
 class SchemaRegistryClient(SchemaRegistryClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """SchemaRegistryClient.
 
     :param fully_qualified_namespace: The Schema Registry service endpoint, for example
-     'my-namespace.servicebus.windows.net'. Required.
+     'https://my-namespace.servicebus.windows.net'. Required.
     :type fully_qualified_namespace: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
@@ -34,31 +35,36 @@ class SchemaRegistryClient(SchemaRegistryClientOperationsMixin):  # pylint: disa
     :paramtype api_version: str
     """
 
-    def __init__(
-        self,
-        fully_qualified_namespace: str,
-        credential: "TokenCredential",
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, fully_qualified_namespace: str, credential: "TokenCredential", **kwargs: Any) -> None:
         super().__init__()
-        _endpoint = '{fullyQualifiedNamespace}'
-        self._config = SchemaRegistryClientConfiguration(fully_qualified_namespace=fully_qualified_namespace, credential=credential, **kwargs)
-        _policies = kwargs.pop('policies', None)
+        _endpoint = "{fullyQualifiedNamespace}"
+        self._config = SchemaRegistryClientConfiguration(
+            fully_qualified_namespace=fully_qualified_namespace, credential=credential, **kwargs
+        )
+        _policies = kwargs.pop("policies", None)
         if _policies is None:
-            _policies = [policies.RequestIdPolicy(**kwargs),self._config.headers_policy,self._config.user_agent_policy,self._config.proxy_policy,policies.ContentDecodePolicy(**kwargs),self._config.redirect_policy,self._config.retry_policy,self._config.authentication_policy,self._config.custom_hook_policy,self._config.logging_policy,policies.DistributedTracingPolicy(**kwargs),policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,self._config.http_logging_policy]
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
         self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
-
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-
-    def send_request(
-        self,
-        request: HttpRequest, *, stream: bool = False,
-        **kwargs: Any
-    ) -> HttpResponse:
+    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -78,7 +84,9 @@ class SchemaRegistryClient(SchemaRegistryClientOperationsMixin):  # pylint: disa
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "fullyQualifiedNamespace": self._serialize.url("self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, 'str', skip_quote=True),
+            "fullyQualifiedNamespace": self._serialize.url(
+                "self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, "str", skip_quote=True
+            ),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

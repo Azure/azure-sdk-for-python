@@ -3,20 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from typing import (
-    Any,
-    Callable,
-    Optional,
-    Type,
-    Union,
-    cast,
-    Mapping,
-    TYPE_CHECKING,
-    Tuple,
-    TypeVar,
-    overload
-)
+from typing import Any, Callable, Optional, Type, Union, cast, Mapping, TYPE_CHECKING, Tuple, TypeVar, overload
 import json
+
 try:
     import jsonschema
 except ImportError:
@@ -47,9 +36,8 @@ if TYPE_CHECKING:
 # the MessageType object is returned and passed around.
 MessageType = TypeVar("MessageType", bound=MessageTypeProtocol)
 
-def get_jsonschema_validator(
-    draft_identifier: Union[str, "JsonSchemaDraftIdentifier"]
-) -> "Validator":
+
+def get_jsonschema_validator(draft_identifier: Union[str, "JsonSchemaDraftIdentifier"]) -> "Validator":
     # get draft identifier string
     try:
         draft_identifier = cast("JsonSchemaDraftIdentifier", draft_identifier)
@@ -59,25 +47,23 @@ def get_jsonschema_validator(
 
     # get validator
     try:
-        validator = jsonschema.validators.validator_for(
-            {"$schema": draft_identifier},
-            default=False
-        )
+        validator = jsonschema.validators.validator_for({"$schema": draft_identifier}, default=False)
     except AttributeError:
-        raise ValueError("To use a provided JSON Schema Validator, please install the " \
-            "package with extras: `pip install azure-schemaregistry[jsonencoder]`.") from None
+        raise ValueError(
+            "To use a provided JSON Schema Validator, please install the "
+            "package with extras: `pip install azure-schemaregistry[jsonencoder]`."
+        ) from None
 
     if not validator:
-        raise ValueError(f"{draft_identifier} is not a supported identifier. Please provide a supported " \
-            "JsonSchemaDraftIdentifier value.")
+        raise ValueError(
+            f"{draft_identifier} is not a supported identifier. Please provide a supported "
+            "JsonSchemaDraftIdentifier value."
+        )
 
     return partial(jsonschema_validate, validator=validator)
 
-def jsonschema_validate(
-    validator: "Validator",
-    schema: Mapping[str, Any],
-    content: Mapping[str, Any]
-) -> None:
+
+def jsonschema_validate(validator: "Validator", schema: Mapping[str, Any], content: Mapping[str, Any]) -> None:
     """
     Validates content against provided schema using `jsonschema.Draft4Validator`.
      If invalid, raises Exception. Else, returns None.
@@ -90,8 +76,9 @@ def jsonschema_validate(
     """
     validator(schema).validate(content)
 
+
 def get_loaded_schema(
-    schema: Union[str, Callable],   # TODO: for next beta: check if we want to allow schema generation
+    schema: Union[str, Callable],  # TODO: for next beta: check if we want to allow schema generation
     content: Mapping[str, Any],
 ) -> Tuple[str, str, Mapping[str, Any]]:
     """Returns the tuple: (schema name, schema string, schema dict).
@@ -122,11 +109,12 @@ def get_loaded_schema(
 
     # get schema name for get_schema_properties operation
     try:
-        schema_fullname = schema_dict['title']
+        schema_fullname = schema_dict["title"]
     except KeyError:
         raise ValueError("Schema must have 'title' property.") from None
 
     return schema_fullname, schema_str, schema_dict
+
 
 @overload
 def create_message_content(
@@ -139,6 +127,7 @@ def create_message_content(
 ) -> MessageType:
     ...
 
+
 @overload
 def create_message_content(
     content: Mapping[str, Any],
@@ -148,6 +137,7 @@ def create_message_content(
     message_type: None = None,
 ) -> MessageContent:
     ...
+
 
 def create_message_content(
     content: Mapping[str, Any],
@@ -166,10 +156,10 @@ def create_message_content(
             f"Invalid content value '{content}' for the following schema with schema ID {schema_id}:"
             f"{json.dumps(schema)}",
             details={"schema_id": f"{schema_id}"},
-    ) from exc
+        ) from exc
 
     try:
-        content_bytes = json.dumps(content, separators=(',', ':')).encode()
+        content_bytes = json.dumps(content, separators=(",", ":")).encode()
     except Exception as exc:
         raise InvalidContentError(
             f"Cannot encode value '{content}' for the following schema with schema ID {schema_id}:"
@@ -179,10 +169,7 @@ def create_message_content(
 
     if message_type:
         try:
-            return cast(
-                MessageType,
-                message_type.from_message_content(content_bytes, content_type, **kwargs)
-            )
+            return cast(MessageType, message_type.from_message_content(content_bytes, content_type, **kwargs))
         except AttributeError as exc:
             raise TypeError(
                 f"""Cannot set content and content type on model object. The content model
@@ -195,9 +182,7 @@ def create_message_content(
     return MessageContent({"content": content_bytes, "content_type": content_type})
 
 
-def parse_message(
-    message: Union[MessageType, MessageContent]
-):
+def parse_message(message: Union[MessageType, MessageContent]):
     try:
         message = cast("MessageType", message)
         message_content_dict = message.__message_content__()
@@ -239,9 +224,7 @@ def decode_content(
     try:
         content = json.loads(content)
     except Exception as exc:
-        error_message = (
-            f"Cannot decode value '{content!r}' for schema with schema ID {schema_id}: {schema_definition}"
-        )
+        error_message = f"Cannot decode value '{content!r}' for schema with schema ID {schema_id}: {schema_definition}"
         raise InvalidContentError(
             error_message,
             details={
@@ -250,10 +233,7 @@ def decode_content(
             },
         ) from exc
     try:
-        validate(
-            schema=json.loads(schema_definition),
-            content=cast(Mapping[str, Any], content)
-        )
+        validate(schema=json.loads(schema_definition), content=cast(Mapping[str, Any], content))
     except Exception as exc:
         error_message = (
             f"Invalid content value '{content!r}' for schema with schema ID {schema_id}: {schema_definition}"

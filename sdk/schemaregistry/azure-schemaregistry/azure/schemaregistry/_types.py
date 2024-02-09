@@ -8,4 +8,11 @@
 # --------------------------------------------------------------------------
 
 from typing import Literal, Union
-SchemaContentTypeValues = Union[Literal["application/octet-stream"], Literal["text/plain; charset=utf-8"], Literal["application/json; serialization=Avro"], Literal["application/json; serialization=Json"], Literal["text/vnd.ms.protobuf"]]
+
+SchemaContentTypeValues = Union[
+    Literal["application/octet-stream"],
+    Literal["text/plain; charset=utf-8"],
+    Literal["application/json; serialization=Avro"],
+    Literal["application/json; serialization=Json"],
+    Literal["text/vnd.ms.protobuf"],
+]

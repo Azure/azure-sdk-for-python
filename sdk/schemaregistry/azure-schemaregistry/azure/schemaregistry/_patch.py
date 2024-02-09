@@ -399,9 +399,7 @@ class SchemaProperties:
     def __repr__(self):
         return (
             f"SchemaProperties(id={self.id}, format={self.format}, "
-            f"group_name={self.group_name}, name={self.name}, version={self.version})"[
-                :1024
-            ]
+            f"group_name={self.group_name}, name={self.name}, version={self.version})"[:1024]
         )
 
 
@@ -420,9 +418,7 @@ class Schema:
         self.properties = kwargs.pop("properties")
 
     def __repr__(self):
-        return f"Schema(definition={self.definition}, properties={self.properties})"[
-            :1024
-        ]
+        return f"Schema(definition={self.definition}, properties={self.properties})"[:1024]
 
 
 ###### Encoder Protocols ######

@@ -34,7 +34,6 @@ class Schema(_model_base.Model):
     """The properties of the schema. Required."""
 
 
-
 class SchemaGroup(_model_base.Model):
     """Schema Group resource.
 
@@ -48,7 +47,6 @@ class SchemaGroup(_model_base.Model):
 
     group_name: str = rest_field(name="groupName", visibility=["read"])
     """Name of schema group. Required."""
-
 
 
 class SchemaProperties(_model_base.Model):
@@ -82,7 +80,6 @@ class SchemaProperties(_model_base.Model):
     """Version of schema. Required."""
 
 
-
 class SchemaVersion(_model_base.Model):
     """Schema versions resource.
 
@@ -96,4 +93,3 @@ class SchemaVersion(_model_base.Model):
 
     schema_version: int = rest_field(name="schemaVersion", visibility=["read"])
     """Version number of specific schema. Required."""
-
