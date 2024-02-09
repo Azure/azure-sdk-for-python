@@ -1120,7 +1120,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
 
         kwargs['immutability_policy_expiry'] = immutability_policy.expiry_time
         kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
-        return cast(Dict[str, str], await self._client.blob.set_immutability_policy(cls=return_response_headers, **kwargs))
+        return cast(Dict[str, str],
+                    await self._client.blob.set_immutability_policy(cls=return_response_headers, **kwargs))
 
     @distributed_trace_async
     async def delete_immutability_policy(self, **kwargs: Any) -> None:
