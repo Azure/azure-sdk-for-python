@@ -98,18 +98,22 @@ jobs:
             imageName: 'azsdk-pool-mms-ubuntu-2004-1espt'
             poolName: 'azsdk-pool-mms-ubuntu-2004-1es-pt'
             ArtifactName: 'linux'
+            os: linux
           Windows:
             imageName: 'azsdk-pool-mms-win-2022-1espt'
             poolName: 'azsdk-pool-mms-win-2022-1es-pt'
             ArtifactName: 'windows'
+            os: windows
           Mac:
             imageName: 'macos-11'
             poolName: 'Azure Pipelines'
             ArtifactName: 'mac'
+            os: macos
 
       pool:
         name: $(poolName)
         vmImage: $(imageName)
+        os: $(os)
 
       steps:
       - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml@self
@@ -124,182 +128,161 @@ jobs:
           Artifacts: ${{ parameters.Artifacts }}
           ArtifactSuffix: $(ArtifactName)
 
-  #   - job: 'CoalesceBuildArtifacts'
-  #     displayName: Combine Built Artifacts
-  #     dependsOn: 
-  #       - 'Build'
-  #     timeoutInMinutes: 90
+    - job: 'CoalesceBuildArtifacts'
+      displayName: Combine Built Artifacts
+      dependsOn: 
+        - 'Build'
+      timeoutInMinutes: 90
 
-  #     pool:
-  #       name: azsdk-pool-mms-ubuntu-2004-general
-  #       vmImage: MMSUbuntu20.04
+      pool:
+        name: azsdk-pool-mms-ubuntu-2004-general
+        vmImage: MMSUbuntu20.04
 
-  #     steps:
-  #     - task: DownloadPipelineArtifact@2
-  #       inputs:
-  #         artifactName: 'packages_windows'
-  #         targetPath: $(Build.ArtifactStagingDirectory)/packages
+      steps:
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          artifactName: 'packages_windows'
+          targetPath: $(Build.ArtifactStagingDirectory)/packages
 
-  #     - task: DownloadPipelineArtifact@2
-  #       inputs:
-  #         artifactName: 'packages_mac'
-  #         targetPath: $(Build.ArtifactStagingDirectory)/packages
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          artifactName: 'packages_mac'
+          targetPath: $(Build.ArtifactStagingDirectory)/packages
 
-  #     - task: DownloadPipelineArtifact@2
-  #       inputs:
-  #         artifactName: 'packages_linux'
-  #         targetPath: $(Build.ArtifactStagingDirectory)/packages
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          artifactName: 'packages_linux'
+          targetPath: $(Build.ArtifactStagingDirectory)/packages
 
-  #     - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-  #       parameters:
-  #         ArtifactPath: '$(Build.ArtifactStagingDirectory)/packages'
-  #         ArtifactName: 'packages'
+      - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+        parameters:
+          ArtifactPath: '$(Build.ArtifactStagingDirectory)/packages'
+          ArtifactName: 'packages'
 
-  # - job: 'Build_Extended'
-  #   displayName: Build Extended
-  #   dependsOn: 
-  #     - 'Build'
-  #     - ${{ if eq(parameters['AdvancedBuild'], true) }}:
-  #       - 'CoalesceBuildArtifacts'
-  #   timeoutInMinutes: 90
+  - job: 'Build_Extended'
+    displayName: Build Extended
+    dependsOn: 
+      - 'Build'
+      - ${{ if eq(parameters['AdvancedBuild'], true) }}:
+        - 'CoalesceBuildArtifacts'
+    timeoutInMinutes: 90
 
-  #   pool:
-  #     name: azsdk-pool-mms-ubuntu-2004-general
-  #     vmImage: MMSUbuntu20.04
+    pool:
+      name: azsdk-pool-mms-ubuntu-2004-general
+      vmImage: MMSUbuntu20.04
 
-  #   steps:
-  #   - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-  #     parameters:
-  #       BuildTargetingString: ${{ parameters.BuildTargetingString }}
+    steps:
+    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+      parameters:
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
-  #   - template: ../steps/build-extended-artifacts.yml
-  #     parameters:
-  #       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-  #       BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
-  #       BuildDocs: ${{ parameters.BuildDocs }}
-  #       TestPipeline: ${{ parameters.TestPipeline }}
-  #       Artifacts: ${{ parameters.Artifacts }}
+    - template: ../steps/build-extended-artifacts.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+        BuildDocs: ${{ parameters.BuildDocs }}
+        TestPipeline: ${{ parameters.TestPipeline }}
+        Artifacts: ${{ parameters.Artifacts }}
 
-  # - job: 'Analyze'
-  #   condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
+  - job: 'Analyze'
+    condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
 
-  #   timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+    timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
 
-  #   dependsOn:
-  #     - 'Build_Extended'
+    dependsOn:
+      - 'Build_Extended'
 
-  #   pool:
-  #     name: azsdk-pool-mms-ubuntu-2004-general
-  #     vmImage: MMSUbuntu20.04
+    pool:
+      name: azsdk-pool-mms-ubuntu-2004-1es-pt
+      vmImage: azsdk-pool-mms-ubuntu-2004-1espt
+      os: linux
 
-  #   steps:
-  #   - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-  #     parameters:
-  #       BuildTargetingString: ${{ parameters.BuildTargetingString }}
+    steps:
+    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+      parameters:
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
-  #   - template: /eng/common/pipelines/templates/steps/check-spelling.yml
-  #     parameters:
-  #       ContinueOnError: false
+    - template: /eng/common/pipelines/templates/steps/check-spelling.yml
+      parameters:
+        ContinueOnError: false
 
-  #   - template: /eng/common/pipelines/templates/steps/verify-links.yml
-  #     parameters:
-  #       ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-  #         Directory: ''
-  #         Urls: (eng/common/scripts/get-markdown-files-from-changed-files.ps1)
-  #       ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
-  #         Directory: sdk/${{ parameters.ServiceDirectory }}
-  #       CheckLinkGuidance: $true
+    - template: /eng/common/pipelines/templates/steps/verify-links.yml
+      parameters:
+        ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+          Directory: ''
+          Urls: (eng/common/scripts/get-markdown-files-from-changed-files.ps1)
+        ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+          Directory: sdk/${{ parameters.ServiceDirectory }}
+        CheckLinkGuidance: $true
 
-  #   - template: ../steps/analyze.yml
-  #     parameters:
-  #       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-  #       TestMarkArgument: ${{ parameters.TestMarkArgument }}
-  #       AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
-  #       TestPipeline: ${{ parameters.TestPipeline }}
-  #       Artifacts: ${{ parameters.Artifacts }}
-  #       VerifyAutorest: ${{ parameters.VerifyAutorest }}
-  #       ValidateFormatting: ${{ parameters.ValidateFormatting }}
-  #       GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
+    - template: ../steps/analyze.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        TestPipeline: ${{ parameters.TestPipeline }}
+        Artifacts: ${{ parameters.Artifacts }}
+        VerifyAutorest: ${{ parameters.VerifyAutorest }}
+        ValidateFormatting: ${{ parameters.ValidateFormatting }}
+        GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
 
-  # - job: Compliance
-  #   pool:
-  #     name: azsdk-pool-mms-win-2022-general
-  #     vmImage: MMS2022
+  - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+    parameters:
+      JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
+      DependsOn:
+        - 'Build'
+        - ${{ if eq(parameters['AdvancedBuild'], true) }}:
+          - 'CoalesceBuildArtifacts'
+      MatrixConfigs: ${{ parameters.MatrixConfigs }}
+      MatrixFilters: ${{ parameters.MatrixFilters }}
+      MatrixReplace: ${{ parameters.MatrixReplace }}
+      CloudConfig:
+        Cloud: Public
+      AdditionalParameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestPipeline: ${{ parameters.TestPipeline }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
+        AfterTestSteps: ${{ parameters.AfterTestSteps }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
+        InjectedPackages: ${{ parameters.InjectedPackages }}
+        UnsupportedToxEnvironments: ${{ parameters.UnsupportedToxEnvironments }}
+        TestProxy: ${{ parameters.TestProxy }}
 
-  #   variables:
-  #     Codeql.SkipTaskAutoInjection: false
-  #     Codeql.Enabled: true
-  #     Codeql.Language: python
-  #     Codeql.BuildIdentifier: "${{ parameters.ServiceDirectory }}"
-  #     Codeql.SourceRoot: "sdk/${{ parameters.ServiceDirectory }}"
-
-  #   # per the guidance of the codeql team:
-  #   # https://eng.ms/docs/cloud-ai-platform/devdiv/one-engineering-system-1es/1es-docs/codeql/snippets/codeql-3000-other-issues#timeouts
-  #   timeoutInMinutes: 360
-
-  #   steps:
-  #     - template: /eng/common/pipelines/templates/steps/credscan.yml
-  #       parameters:
-  #         ServiceDirectory: ${{ parameters.ServiceDirectory }}
-  #         BaselineFilePath: $(Build.SourcesDirectory)\eng\python.gdnbaselines
-
-  # - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
-  #   parameters:
-  #     JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
-  #     DependsOn:
-  #       - 'Build'
-  #       - ${{ if eq(parameters['AdvancedBuild'], true) }}:
-  #         - 'CoalesceBuildArtifacts'
-  #     MatrixConfigs: ${{ parameters.MatrixConfigs }}
-  #     MatrixFilters: ${{ parameters.MatrixFilters }}
-  #     MatrixReplace: ${{ parameters.MatrixReplace }}
-  #     CloudConfig:
-  #       Cloud: Public
-  #     AdditionalParameters:
-  #       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-  #       TestPipeline: ${{ parameters.TestPipeline }}
-  #       TestMarkArgument: ${{ parameters.TestMarkArgument }}
-  #       BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
-  #       AfterTestSteps: ${{ parameters.AfterTestSteps }}
-  #       BuildTargetingString: ${{ parameters.BuildTargetingString }}
-  #       TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
-  #       ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
-  #       InjectedPackages: ${{ parameters.InjectedPackages }}
-  #       UnsupportedToxEnvironments: ${{ parameters.UnsupportedToxEnvironments }}
-  #       TestProxy: ${{ parameters.TestProxy }}
-
-  # - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
-  #   parameters:
-  #     JobTemplatePath: /eng/pipelines/templates/jobs/regression.yml
-  #     GenerateJobName: generate_regression_matrix
-  #     SparseCheckoutPaths: [ "scripts/", "sdk/", "tools/azure-sdk-tools/" ]
-  #     MatrixConfigs:
-  #         - Name: Python_regression_envs
-  #           Path: eng/pipelines/templates/stages/regression-job-matrix.json
-  #           Selection: sparse
-  #           GenerateVMJobs: true
-  #     PreGenerationSteps:
-  #       - pwsh: |
-  #           python -m pip install "./tools/azure-sdk-tools[build]"
-  #         displayName: 'Prep Environment'
-  #       - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-  #         parameters:
-  #           BuildTargetingString: ${{ parameters.BuildTargetingString }}
-  #       - task: PythonScript@0
-  #         displayName: 'Ensure service coverage'
-  #         inputs:
-  #           scriptPath: '$(Build.SourcesDirectory)/scripts/devops_tasks/update_regression_services.py'
-  #           arguments: >-
-  #             "$(TargetingString)"
-  #             --service="${{ parameters.ServiceDirectory }}"
-  #             --json=$(Build.SourcesDirectory)/eng/pipelines/templates/stages/regression-job-matrix.json
-  #     CloudConfig:
-  #       Cloud: Public
-  #     DependsOn:
-  #       - 'Build'
-  #       - ${{ if eq(parameters['AdvancedBuild'], true) }}:
-  #         - 'CoalesceBuildArtifacts'
-  #     AdditionalParameters:
-  #       BuildTargetingString: ${{ parameters.BuildTargetingString }}
-  #       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-  #       TestTimeoutInMinutes: 90
+  - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+    parameters:
+      JobTemplatePath: /eng/pipelines/templates/jobs/regression.yml
+      GenerateJobName: generate_regression_matrix
+      SparseCheckoutPaths: [ "scripts/", "sdk/", "tools/azure-sdk-tools/" ]
+      MatrixConfigs:
+          - Name: Python_regression_envs
+            Path: eng/pipelines/templates/stages/regression-job-matrix.json
+            Selection: sparse
+            GenerateVMJobs: true
+      PreGenerationSteps:
+        - pwsh: |
+            python -m pip install "./tools/azure-sdk-tools[build]"
+          displayName: 'Prep Environment'
+        - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+          parameters:
+            BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        - task: PythonScript@0
+          displayName: 'Ensure service coverage'
+          inputs:
+            scriptPath: '$(Build.SourcesDirectory)/scripts/devops_tasks/update_regression_services.py'
+            arguments: >-
+              "$(TargetingString)"
+              --service="${{ parameters.ServiceDirectory }}"
+              --json=$(Build.SourcesDirectory)/eng/pipelines/templates/stages/regression-job-matrix.json
+      CloudConfig:
+        Cloud: Public
+      DependsOn:
+        - 'Build'
+        - ${{ if eq(parameters['AdvancedBuild'], true) }}:
+          - 'CoalesceBuildArtifacts'
+      AdditionalParameters:
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestTimeoutInMinutes: 90
