@@ -8,6 +8,24 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import List
 
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
+
+
+class SchemaFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represents the format of the schema to be stored by the Schema Registry service.
+    """
+
+    AVRO = "Avro"
+    """Represents the Apache Avro schema format."""
+    JSON = "Json"
+    """Represents the JSON schema format."""
+    CUSTOM = "Custom"
+    """Represents a custom schema format."""
+    PROTOBUF = "Protobuf"
+    """Represents a protobuf schema format."""
+
+
 __all__: List[str] = []  # Add all objects you want publicly available to users at this package level
 
 def patch_sdk():

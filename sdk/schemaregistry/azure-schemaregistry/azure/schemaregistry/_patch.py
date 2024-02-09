@@ -29,8 +29,7 @@ from typing_extensions import Protocol, TypedDict
 from azure.core.tracing.decorator import distributed_trace
 
 from ._client import SchemaRegistryClient as GeneratedServiceClient
-from .models._models import SchemaProperties, Schema
-from .models._enums import SchemaFormat
+from .models._patch import SchemaFormat
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -41,6 +40,7 @@ if TYPE_CHECKING:
         """
         Typing for SchemaProperties dict.
         """
+
         id: str
         format: "SchemaFormat"
         group_name: str
@@ -50,9 +50,8 @@ if TYPE_CHECKING:
 
 ###### Response Handlers ######
 
-def _parse_schema_properties_dict(
-    response_headers: Mapping[str, Union[str, int]]
-) -> Dict[str, Union[str, int]]:
+
+def _parse_schema_properties_dict(response_headers: Mapping[str, Union[str, int]]) -> Dict[str, Union[str, int]]:
     return {
         "id": response_headers["Schema-Id"],
         "group_name": response_headers["Schema-Group-Name"],
@@ -70,7 +69,7 @@ def _get_format(content_type: str) -> SchemaFormat:
         except ValueError:
             return SchemaFormat(format.capitalize())
     except IndexError:
-        if 'protobuf' in content_type:
+        if "protobuf" in content_type:
             return SchemaFormat.PROTOBUF
         return SchemaFormat.CUSTOM
 
@@ -94,20 +93,17 @@ def prepare_schema_result(  # pylint:disable=unused-argument
 ) -> Tuple[Union["HttpResponse", "AsyncHttpResponse"], Dict[str, Union[int, str]]]:
     properties_dict = _parse_schema_properties_dict(response_headers)
     # re-generate after multi-content type response fix: https://github.com/Azure/autorest.python/issues/2122
-    properties_dict["format"] = _get_format(
-        cast(str, response_headers.get("Content-Type"))
-    )
+    properties_dict["format"] = _get_format(cast(str, response_headers.get("Content-Type")))
     pipeline_response.http_response.raise_for_status()
     return pipeline_response.http_response, properties_dict
 
 
 ###### Request Helper Functions ######
 
+
 def get_http_request_kwargs(kwargs):
     http_request_keywords = ["params", "headers", "json", "data", "files"]
-    http_request_kwargs = {
-        key: kwargs.pop(key, None) for key in http_request_keywords if key in kwargs
-    }
+    http_request_kwargs = {key: kwargs.pop(key, None) for key in http_request_keywords if key in kwargs}
     return http_request_kwargs
 
 
@@ -119,9 +115,7 @@ def get_content_type(format: str):  # pylint:disable=redefined-builtin
     return f"application/json; serialization={format}"
 
 
-def get_case_insensitive_format(
-    format: Union[str, SchemaFormat]  # pylint:disable=redefined-builtin
-) -> str:
+def get_case_insensitive_format(format: Union[str, SchemaFormat]) -> str:  # pylint:disable=redefined-builtin
     try:
         format = cast(SchemaFormat, format)
         format = format.value
@@ -132,7 +126,8 @@ def get_case_insensitive_format(
 
 ###### Wrapper Class ######
 
-class SchemaRegistryClient(object):
+
+class SchemaRegistryClient:
     """
     SchemaRegistryClient is a client for registering and retrieving schemas from the
      Azure Schema Registry service.
@@ -155,9 +150,7 @@ class SchemaRegistryClient(object):
 
     """
 
-    def __init__(
-        self, fully_qualified_namespace: str, credential: TokenCredential, **kwargs: Any
-    ) -> None:
+    def __init__(self, fully_qualified_namespace: str, credential: TokenCredential, **kwargs: Any) -> None:
         # using composition (not inheriting from generated client) to allow
         # calling different operations conditionally within one method
         if "https://" not in fully_qualified_namespace:
@@ -219,7 +212,7 @@ class SchemaRegistryClient(object):
         # ignoring return type because the generated client operations are not annotated w/ cls return type
         schema_properties: Dict[
             str, Union[int, str]
-        ] = self._generated_client._register_schema( # pylint:disable=protected-access
+        ] = self._generated_client._register_schema(  # pylint:disable=protected-access
             group_name=group_name,
             name=name,
             content=cast(IO[Any], definition),
@@ -235,9 +228,7 @@ class SchemaRegistryClient(object):
         ...
 
     @overload
-    def get_schema(
-        self, *, group_name: str, name: str, version: int, **kwargs: Any
-    ) -> Schema:
+    def get_schema(self, *, group_name: str, name: str, version: int, **kwargs: Any) -> Schema:
         ...
 
     @distributed_trace
@@ -289,7 +280,10 @@ class SchemaRegistryClient(object):
                 schema_id = kwargs.pop("schema_id")
             schema_id = cast(str, schema_id)
             # ignoring return type because the generated client operations are not annotated w/ cls return type
-            http_response, schema_properties = self._generated_client._get_schema_by_id(  # pylint:disable=protected-access
+            (
+                http_response,
+                schema_properties,
+            ) = self._generated_client._get_schema_by_id(  # pylint:disable=protected-access
                 id=schema_id,
                 cls=prepare_schema_result,
                 headers={  # TODO: remove when multiple content types in response are supported
@@ -314,7 +308,7 @@ class SchemaRegistryClient(object):
             http_response, schema_properties = self._generated_client._get_schema_by_version(  # type: ignore
                 group_name=group_name,
                 name=name,
-                schema_version=version,
+                version=version,
                 cls=prepare_schema_result,
                 headers={  # TODO: remove when multiple content types in response are supported
                     "Accept": """application/json; serialization=Avro, application/json; \
@@ -367,7 +361,7 @@ class SchemaRegistryClient(object):
         # ignoring return type because the generated client operations are not annotated w/ cls return type
         schema_properties: Dict[
             str, Union[int, str]
-        ] = self._generated_client._get_schema_id_by_content( # pylint:disable=protected-access
+        ] = self._generated_client._get_schema_properties_by_content(  # pylint:disable=protected-access
             group_name=group_name,
             name=name,
             schema_content=cast(IO[Any], definition),
@@ -379,56 +373,56 @@ class SchemaRegistryClient(object):
         return SchemaProperties(**properties)
 
 
-#class SchemaProperties(object):
-#    """
-#    Meta properties of a schema.
-#
-#    :ivar id: References specific schema in registry namespace.
-#    :vartype id: str
-#    :ivar format: Format for the schema being stored.
-#    :vartype format: ~azure.schemaregistry.SchemaFormat
-#    :ivar group_name: Schema group under which schema is stored.
-#    :vartype group_name: str
-#    :ivar name: Name of schema.
-#    :vartype name: str
-#    :ivar version: Version of schema.
-#    :vartype version: int
-#    """
-#
-#    def __init__(self, **kwargs: Any) -> None:
-#        self.id = kwargs.pop("id")
-#        self.format = kwargs.pop("format")
-#        self.group_name = kwargs.pop("group_name")
-#        self.name = kwargs.pop("name")
-#        self.version = kwargs.pop("version")
-#
-#    def __repr__(self):
-#        return (
-#            f"SchemaProperties(id={self.id}, format={self.format}, "
-#            f"group_name={self.group_name}, name={self.name}, version={self.version})"[
-#                :1024
-#            ]
-#        )
-#
-#
-#class Schema(object):
-#    """
-#    The schema content of a schema, along with id and meta properties.
-#
-#    :ivar definition: The content of the schema.
-#    :vartype definition: str
-#    :ivar properties: The properties of the schema.
-#    :vartype properties: SchemaProperties
-#    """
-#
-#    def __init__(self, **kwargs: Any) -> None:
-#        self.definition = kwargs.pop("definition")
-#        self.properties = kwargs.pop("properties")
-#
-#    def __repr__(self):
-#        return f"Schema(definition={self.definition}, properties={self.properties})"[
-#            :1024
-#        ]
+class SchemaProperties:
+    """
+    Meta properties of a schema.
+
+    :ivar id: References specific schema in registry namespace.
+    :vartype id: str
+    :ivar format: Format for the schema being stored.
+    :vartype format: ~azure.schemaregistry.SchemaFormat
+    :ivar group_name: Schema group under which schema is stored.
+    :vartype group_name: str
+    :ivar name: Name of schema.
+    :vartype name: str
+    :ivar version: Version of schema.
+    :vartype version: int
+    """
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.id = kwargs.pop("id")
+        self.format = kwargs.pop("format")
+        self.group_name = kwargs.pop("group_name")
+        self.name = kwargs.pop("name")
+        self.version = kwargs.pop("version")
+
+    def __repr__(self):
+        return (
+            f"SchemaProperties(id={self.id}, format={self.format}, "
+            f"group_name={self.group_name}, name={self.name}, version={self.version})"[
+                :1024
+            ]
+        )
+
+
+class Schema:
+    """
+    The schema content of a schema, along with id and meta properties.
+
+    :ivar definition: The content of the schema.
+    :vartype definition: str
+    :ivar properties: The properties of the schema.
+    :vartype properties: SchemaProperties
+    """
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.definition = kwargs.pop("definition")
+        self.properties = kwargs.pop("properties")
+
+    def __repr__(self):
+        return f"Schema(definition={self.definition}, properties={self.properties})"[
+            :1024
+        ]
 
 
 ###### Encoder Protocols ######
@@ -477,9 +471,7 @@ class MessageType(Protocol):
     """Message Types that set and get content and content type values internally."""
 
     @classmethod
-    def from_message_content(
-        cls, content: bytes, content_type: str, **kwargs: Any
-    ) -> "MessageType":
+    def from_message_content(cls, content: bytes, content_type: str, **kwargs: Any) -> "MessageType":
         """Creates an object that is a subtype of MessageType, given content type and
          a content value to be set on the object.
 

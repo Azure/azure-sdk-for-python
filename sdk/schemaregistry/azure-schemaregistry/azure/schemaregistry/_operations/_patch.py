@@ -14,7 +14,7 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
-    map_error
+    map_error,
 )
 from azure.core.rest import HttpRequest
 from azure.core.utils import case_insensitive_dict
@@ -29,77 +29,63 @@ if TYPE_CHECKING:
 _SERIALIZER = Serializer()
 
 
-def build_schema_registry_get_schema_id_by_content_request( # pylint: disable=name-too-long
-    group_name: str,
-    name: str,
-    **kwargs: Any
+def build_schema_registry_get_schema_properties_by_content_request(  # pylint: disable=name-too-long
+    group_name: str, name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop('content_type')
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2022-10"))
-    accept = _headers.pop('Accept', "application/json")
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/$schemaGroups/{groupName}/schemas/{name}:get-id"
     path_format_arguments = {
-        "groupName": _SERIALIZER.url("group_name", group_name, 'str'),
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "groupName": _SERIALIZER.url("group_name", group_name, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
 
 def build_schema_registry_register_schema_request(  # pylint: disable=name-too-long
-    group_name: str,
-    name: str,
-    **kwargs: Any
+    group_name: str, name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop('content_type')
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2022-10"))
-    accept = _headers.pop('Accept', "application/json")
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10"))
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/$schemaGroups/{groupName}/schemas/{name}"
     path_format_arguments = {
-        "groupName": _SERIALIZER.url("group_name", group_name, 'str'),
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "groupName": _SERIALIZER.url("group_name", group_name, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="PUT",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
 
 class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
     """
@@ -107,16 +93,12 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
     """
 
     @distributed_trace
-    def _get_schema_id_by_content(  # pylint: disable=inconsistent-return-statements
-        self,
-        group_name: str,
-        name: str,
-        schema_content: IO,
-        **kwargs: Any
+    def _get_schema_properties_by_content(  # pylint: disable=inconsistent-return-statements
+        self, group_name: str, name: str, schema_content: IO, **kwargs: Any
     ) -> None:
-        """Get ID for existing schema.
+        """Get properties for existing schema.
 
-        Gets the ID referencing an existing schema within the specified schema group, as matched by
+        Gets the properties referencing an existing schema within the specified schema group, as matched by
         schema content comparison.
 
         :param group_name: Name of schema group. Required.
@@ -138,21 +120,19 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            304: ResourceNotModifiedError
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop('content_type', _headers.pop('Content-Type', "text/plain; charset=utf-8"))
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "text/plain; charset=utf-8"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _content = schema_content
 
-        request = build_schema_registry_get_schema_id_by_content_request(
+        request = build_schema_registry_get_schema_properties_by_content_request(
             group_name=group_name,
             name=name,
             content_type=content_type,
@@ -163,19 +143,14 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
         )
         path_format_arguments = {
             "fullyQualifiedNamespace": self._serialize.url(
-                "self._config.fully_qualified_namespace",
-                self._config.fully_qualified_namespace,
-                'str',
-                skip_quote=True
+                "self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, "str", skip_quote=True
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -187,24 +162,19 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
-        response_headers['Schema-Id']=self._deserialize('str', response.headers.get('Schema-Id'))
-        response_headers['Schema-Id-Location']=self._deserialize('str', response.headers.get('Schema-Id-Location'))
-        response_headers['Schema-Group-Name']=self._deserialize('str', response.headers.get('Schema-Group-Name'))
-        response_headers['Schema-Name']=self._deserialize('str', response.headers.get('Schema-Name'))
-        response_headers['Schema-Version']=self._deserialize('int', response.headers.get('Schema-Version'))
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Schema-Id"] = self._deserialize("str", response.headers.get("Schema-Id"))
+        response_headers["Schema-Id-Location"] = self._deserialize("str", response.headers.get("Schema-Id-Location"))
+        response_headers["Schema-Group-Name"] = self._deserialize("str", response.headers.get("Schema-Group-Name"))
+        response_headers["Schema-Name"] = self._deserialize("str", response.headers.get("Schema-Name"))
+        response_headers["Schema-Version"] = self._deserialize("int", response.headers.get("Schema-Version"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-
     @distributed_trace
     def _register_schema(  # pylint: disable=inconsistent-return-statements
-        self,
-        group_name: str,
-        name: str,
-        content: IO,
-        **kwargs: Any
+        self, group_name: str, name: str, content: IO, **kwargs: Any
     ) -> None:
         """Register new schema.
 
@@ -231,17 +201,15 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            304: ResourceNotModifiedError
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop('content_type', _headers.pop('Content-Type', "text/plain; charset=utf-8"))
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "text/plain; charset=utf-8"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _content = content
 
@@ -256,19 +224,14 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
         )
         path_format_arguments = {
             "fullyQualifiedNamespace": self._serialize.url(
-                "self._config.fully_qualified_namespace",
-                self._config.fully_qualified_namespace,
-                'str',
-                skip_quote=True
+                "self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, "str", skip_quote=True
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -280,12 +243,12 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
-        response_headers['Schema-Id']=self._deserialize('str', response.headers.get('Schema-Id'))
-        response_headers['Schema-Id-Location']=self._deserialize('str', response.headers.get('Schema-Id-Location'))
-        response_headers['Schema-Group-Name']=self._deserialize('str', response.headers.get('Schema-Group-Name'))
-        response_headers['Schema-Name']=self._deserialize('str', response.headers.get('Schema-Name'))
-        response_headers['Schema-Version']=self._deserialize('int', response.headers.get('Schema-Version'))
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Schema-Id"] = self._deserialize("str", response.headers.get("Schema-Id"))
+        response_headers["Schema-Id-Location"] = self._deserialize("str", response.headers.get("Schema-Id-Location"))
+        response_headers["Schema-Group-Name"] = self._deserialize("str", response.headers.get("Schema-Group-Name"))
+        response_headers["Schema-Name"] = self._deserialize("str", response.headers.get("Schema-Name"))
+        response_headers["Schema-Version"] = self._deserialize("int", response.headers.get("Schema-Version"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
@@ -294,6 +257,7 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
 __all__: List[str] = [
     "SchemaRegistryClientOperationsMixin",
 ]  # Add all objects you want publicly available to users at this package level
+
 
 def patch_sdk():
     """Do not remove from this file.
