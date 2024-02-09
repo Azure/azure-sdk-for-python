@@ -13,7 +13,7 @@ parameters:
 steps:
   - ${{ if parameters.SubscriptionConfiguration }}:
     - pwsh: |
-        Write-Host ${{ parameters.SubscriptionConfiguration }}
+        Write-Host '${{ parameters.SubscriptionConfiguration }}'
       displayName: Display SubscriptionConfiguration variable
     - pwsh: |
         $config = @'
