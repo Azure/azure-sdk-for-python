@@ -864,7 +864,8 @@ class ServiceBusReceiver(
         timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> int:
-        """  This operation deletes messages in the queue that are older than the specified enqueued time, 
+        """
+        This operation deletes messages in the queue that are older than the specified enqueued time,
          up to 4,000 messages.
 
         :param int max_message_count: The maximum number of messages to delete. The default value is 1.
