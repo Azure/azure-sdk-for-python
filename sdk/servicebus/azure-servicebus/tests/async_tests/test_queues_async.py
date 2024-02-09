@@ -2864,3 +2864,32 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
             receiver = sb_client.get_queue_receiver(servicebus_queue.name, receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE)
             async with receiver:
                 assert await receiver_peek.delete_messages() == 0
+
+    @pytest.mark.asyncio
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
+    async def test_message_deleted_maximum_async(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
+        with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, uamqp_transport=uamqp_transport) as sb_client:
+
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            batch_message = await sender.create_message_batch()
+            for _ in range(4001):
+                try:
+                    batch_message.add_message(ServiceBusMessage("Message inside a ServiceBusMessageBatch"))
+                except ValueError:
+                    # ServiceBusMessageBatch object reaches max_size.
+                    # New ServiceBusMessageBatch object can be created here to send more data.
+                    break
+            await sender.send_messages(batch_message)
+
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name)
+            number_deleted_messages = 0
+            async with receiver:
+                number_deleted_messages = await receiver.delete_messages(max_message_count=4000, enqueued_time_older_than_utc=datetime.utcnow())
+            assert number_deleted_messages == 4000
