@@ -118,6 +118,8 @@ def build() -> None:
 
     build_id = format_build_id(args.build_id or DEFAULT_BUILD_ID)
 
+    logging.info(f"building packages {targeted_packages} to {artifact_directory} with build_id {build_id}")
+
     build_packages(
         targeted_packages,
         artifact_directory,
