@@ -535,11 +535,11 @@ def data_index_acs(
         acs_config: str,
         acs_connection_id: str,
         embeddings_container: Input,
-        chunk_size: int = 1024,
-        data_source_glob: str = None,  # type: ignore[assignment]
-        data_source_url: str = None,  # type: ignore[assignment]
-        document_path_replacement_regex: str = None,  # type: ignore[assignment]
-        aoai_connection_id: str = None,  # type: ignore[assignment]
+        chunk_size: Optional[int] = 1024,
+        data_source_glob: Optional[str] = None,
+        data_source_url: Optional[str] = None,
+        document_path_replacement_regex: Optional[str] = None,
+        aoai_connection_id: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Generate embeddings for a `input_data` source and push them into an Azure Cognitive Search index.
@@ -636,12 +636,12 @@ def data_index_acs(
         embeddings_model=build_model_protocol(data_index.embedding.model),
         acs_config=json.dumps(acs_config),
         acs_connection_id=_resolve_connection_id(ml_client, data_index.index.connection),
-        chunk_size=data_index.source.chunk_size,  # type: ignore[arg-type]
-        data_source_glob=data_index.source.input_glob,  # type: ignore[arg-type]
-        data_source_url=data_index.source.citation_url,  # type: ignore[arg-type]
+        chunk_size=data_index.source.chunk_size,
+        data_source_glob=data_index.source.input_glob,
+        data_source_url=data_index.source.citation_url,
         document_path_replacement_regex=json.dumps(data_index.source.citation_url_replacement_regex._to_dict())
         if data_index.source.citation_url_replacement_regex
-        else "",
+        else None,
         aoai_connection_id=_resolve_connection_id(ml_client, data_index.embedding.connection),
         embeddings_container=Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path)
         if data_index.embedding.cache_path
