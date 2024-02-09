@@ -631,7 +631,6 @@ def data_index_acs(
     if data_index.index.config is not None:
         acs_config.update(data_index.index.config)
 
-    data: str = json.dumps(data_index.source.citation_url_replacement_regex._to_dict())
     component = data_index_acs_pipeline(
         input_data=input_data,
         embeddings_model=build_model_protocol(data_index.embedding.model),
@@ -640,7 +639,9 @@ def data_index_acs(
         chunk_size=data_index.source.chunk_size,  # type: ignore[arg-type]
         data_source_glob=data_index.source.input_glob,  # type: ignore[arg-type]
         data_source_url=data_index.source.citation_url,  # type: ignore[arg-type]
-        document_path_replacement_regex=data if data_index.source.citation_url_replacement_regex else None,
+        document_path_replacement_regex=json.dumps(data_index.source.citation_url_replacement_regex._to_dict())
+        if data_index.source.citation_url_replacement_regex
+        else "",
         aoai_connection_id=_resolve_connection_id(ml_client, data_index.embedding.connection),
         embeddings_container=Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path)
         if data_index.embedding.cache_path
