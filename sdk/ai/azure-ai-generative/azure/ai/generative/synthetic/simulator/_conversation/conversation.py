@@ -12,12 +12,26 @@ from .conversation_turn import ConversationTurn
 from .constants import ConversationRole
 
 
-def is_closing_message(response: str):
+def is_closing_message(response:any, recursion_depth: int = 0):
+    if (recursion_depth > 10):
+        raise Exception("Exceeded max call depth in is_closing_message")
+    
+    # recursively go through each inner dictionary in the JSON dict and check if any value entry contains a closing message
+    if type(response) is dict:
+        for value in response.values():
+            if is_closing_message(value, recursion_depth=recursion_depth+1):
+                return True
+    elif type(response) is str:
+        return is_closing_message_helper(response)
+    
+    return False
+
+def is_closing_message_helper(response: str):
     message = response.lower()
     if "?" in message.lower():
         return False
-    punctuation = [".", ",", "!", ";", ":"]
-    for p in punctuation:
+    punc = [".", ",", "!", ";", ":"]
+    for p in punc:
         message = message.replace(p, "")
     if (
         "bye" not in message.lower().split()
@@ -36,9 +50,7 @@ async def simulate_conversation(
     history_limit: int = 5,
     api_call_delay_sec: float = 0,
     logger: logging.Logger = logging.getLogger(__name__),
-    mlflow_logger: Optional[Any] = None,
-    template_paramaters: Optional[dict] = None,
-    simulate_callback: Optional[Callable[[str, Sequence[Union[Dict, ConversationTurn]], Optional[dict]], str]] = None,
+    mlflow_logger=None,
 ):
     """
     Simulate a conversation between the given bots.
@@ -82,45 +94,30 @@ async def simulate_conversation(
         (current_turn < turn_limit)
     ):
         try:
-            current_character_idx = current_turn % 2
-            # if there is only one bot, means using customized simulate callback
-            # in the customer bot turn, instead of using the customer bot, need to invoke the simulate callback
-            if len(bots) < 2 and current_character_idx == 1:
-                question = conversation_history[-1].message
-                # TODO: Fix Bug 2816997
-                response = await simulate_callback(question, conversation_history, template_paramaters)  # type: ignore[misc]
-                # add the generated response to the list of generated responses
-                conversation_history.append(
-                    ConversationTurn(
-                        role=ConversationRole.ASSISTANT,
-                        name="ChatBot",
-                        message=response,
-                    ))
-            else:
-                current_bot = bots[current_character_idx]
-                # invoke Bot to generate response given the input request
-                logger.info(f"-- Sending to {current_bot.role.value}")
-                # pass only the last generated turn without passing the bot name.
-                response, request, time_taken, full_response = await current_bot.generate_response(
-                    session=session,
-                    conversation_history=conversation_history,
-                    max_history=history_limit,
-                    turn_number=current_turn,
-                )
-                # add the generated response to the list of generated responses
-                conversation_history.append(
-                    ConversationTurn(
-                        role=current_bot.role,
-                        name=current_bot.name,
-                        message=response["samples"][0],
-                        full_response=full_response,
-                        request=request,
-                    ))
+            current_character_idx = current_turn % len(bots)
+            current_bot = bots[current_character_idx]
+            # invoke Bot to generate response given the input request
+            logger.info(f"-- Sending to {current_bot.role.value}")
+            # pass only the last generated turn without passing the bot name.
+            response, request, time_taken, full_response = await current_bot.generate_response(
+                session=session,
+                conversation_history=conversation_history,
+                max_history=history_limit,
+                turn_number=current_turn,
+            )
 
             # check if conversation id is null, which means conversation starter was used. use id from next turn
             if conversation_id is None and 'id' in response:
                 conversation_id = response["id"]
-            
+            # add the generated response to the list of generated responses
+            conversation_history.append(
+                ConversationTurn(
+                    role=current_bot.role,
+                    name=current_bot.name,
+                    message=response["samples"][0],
+                    full_response=full_response,
+                    request=request,
+                ))
             logger.info(f"Last turn: {conversation_history[-1]}")
             if mlflow_logger is not None:
                 logger_tasks.append(  # schedule logging but don't get blocked by it
@@ -129,8 +126,7 @@ async def simulate_conversation(
                     )
                 )
         except Exception as e:
-            logger.warning(f"Error: {e}")
-            raise e
+            logger.warning("Error:" + str(e))
             if mlflow_logger is not None:
                 logger_tasks.append(  # schedule logging but don't get blocked by it
                     asyncio.create_task(mlflow_logger.log_error())
