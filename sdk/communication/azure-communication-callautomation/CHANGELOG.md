@@ -7,8 +7,8 @@
 - Start, Stop, Update transcript added.
 - Start, Stop hold music added.
 - Introduced `MicrosoftTeamsAppIdentifier` for MS Teams automated scenarios.
-- Introduced `TeamsComplianceRecordingStatusChanged` event.
-- Introduced `TeamsRecordingStatusChanged` event.
+- Introduced `TeamsComplianceRecordingStateChanged` event.
+- Introduced `TeamsRecordingStateChanged` event.
 
 ### Breaking Changes
 
