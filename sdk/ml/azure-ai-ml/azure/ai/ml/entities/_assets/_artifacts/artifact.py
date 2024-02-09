@@ -17,7 +17,7 @@ class ArtifactStorageInfo:
         name: str,
         version: str,
         relative_path: str,
-        datastore_arm_id: str,
+        datastore_arm_id: Optional[str],
         container_name: str,
         storage_account_url: Optional[str] = None,
         is_file: Optional[bool] = None,

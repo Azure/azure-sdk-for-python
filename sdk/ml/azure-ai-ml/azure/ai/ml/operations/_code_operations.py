@@ -120,6 +120,15 @@ class CodeOperations(_ScopeDependentOperations):
             sas_uri = None
             blob_uri = None
 
+            if not name and version:
+                raise ValidationException(
+                    message="Name and version must be specified for the code asset.",
+                    target=ErrorTarget.CODE,
+                    no_personal_data_message="Name and version must be specified for the code asset.",
+                    error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.INVALID_VALUE,
+                )
+
             if self._registry_name:
                 sas_uri = get_sas_uri_for_registry_asset(
                     service_client=self._service_client,
@@ -127,7 +136,12 @@ class CodeOperations(_ScopeDependentOperations):
                     version=version,
                     resource_group=self._resource_group_name,
                     registry=self._registry_name,
-                    body=get_asset_body_for_registry_storage(self._registry_name, "codes", name, version),
+                    body=get_asset_body_for_registry_storage(
+                        self._registry_name,
+                        "codes",
+                        name,  # type: ignore[arg-type]
+                        version,  # type: ignore[arg-type]
+                    ),
                 )
             else:
                 snapshot_path_info = _get_snapshot_path_info(code)
@@ -150,8 +164,8 @@ class CodeOperations(_ScopeDependentOperations):
                     sas_info = get_storage_info_for_non_registry_asset(
                         service_client=self._service_client,
                         workspace_name=self._workspace_name,
-                        name=name,
-                        version=version,
+                        name=name,  # type: ignore[arg-type]
+                        version=version,  # type: ignore[arg-type]
                         resource_group=self._resource_group_name,
                     )
                     sas_uri = sas_info["sas_uri"]

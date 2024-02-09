@@ -117,7 +117,8 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
 
     def _to_rest_object(self) -> JobBase:
         self._validate()
-        self.command = map_single_brackets_and_warn(self.command)
+        if self.command:
+            self.command = map_single_brackets_and_warn(self.command)  # type: ignore[arg-type]
         modified_properties = copy.deepcopy(self.properties)
         # Remove any properties set on the service as read-only
         modified_properties.pop("_azureml.ComputeTargetType", None)

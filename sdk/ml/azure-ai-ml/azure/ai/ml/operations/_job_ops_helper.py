@@ -275,7 +275,7 @@ def stream_logs_until_completion(
                 legacy_folder_name = "/azureml-logs/"
             _current_logs_dict = (
                 list_logs_in_datastore(
-                    ds_properties,
+                    ds_properties,  # type: ignore[arg-type]
                     prefix=str(prefix),
                     legacy_log_folder_name=legacy_folder_name,
                 )

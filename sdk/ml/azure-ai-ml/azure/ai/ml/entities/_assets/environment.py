@@ -449,7 +449,7 @@ def _deserialize(
     """
 
     if input:
-        path = _resolve_path(base_path=base_path, input=input)
+        path = str(_resolve_path(base_path=base_path, input=input))
         data: Union[str, Dict] = ""
         if is_conda:
             data = load_yaml(path)

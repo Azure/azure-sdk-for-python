@@ -111,7 +111,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         try:
             if not environment.version and environment._auto_increment_version:
                 environment.version = _get_next_version_from_container(
-                    name=environment.name,
+                    name=environment.name,  # type: ignore[arg-type]
                     container_operation=self._containers_operations,
                     resource_group_name=self._operation_scope.resource_group_name,
                     workspace_name=self._workspace_name,
@@ -164,8 +164,8 @@ class EnvironmentOperations(_ScopeDependentOperations):
                     body=get_asset_body_for_registry_storage(
                         self._registry_name,
                         "environments",
-                        environment.name,
-                        environment.version,
+                        environment.name,  # type: ignore[arg-type]
+                        environment.version,  # type: ignore[arg-type]
                     ),
                 )
 
@@ -274,7 +274,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
             )
 
         if label:
-            return _resolve_label_to_asset(self, name, label)
+            return _resolve_label_to_asset(self, name, label)  # type: ignore[return-value]
 
         if not version:
             msg = "Must provide either version or label."

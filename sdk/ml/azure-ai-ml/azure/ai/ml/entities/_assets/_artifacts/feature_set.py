@@ -118,7 +118,8 @@ class FeatureSet(Artifact):
         featureset = FeatureSet(
             id=featureset_rest_object.id,
             name=arm_id_object.asset_name,
-            version=arm_id_object.asset_version,
+            version=arm_id_object.asset_version,  # type: ignore[union-attr]
+            # Bug 2951894
             description=featureset_rest_object_details.description,
             tags=featureset_rest_object_details.tags,
             entities=featureset_rest_object_details.entities,

@@ -198,8 +198,7 @@ class RegexPattern(Pattern):
 
             The default implementation simply returns *pattern* and :data:`True`.
         """
-        regex_pattern: PatternHint[str]
-        return regex_pattern, True
+        return pattern, True  # type: ignore[return-value]
 
 
 @dataclasses.dataclass()

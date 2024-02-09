@@ -86,10 +86,10 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
     def _to_rest_object(self) -> JobBase:
         image_classification_multilabel_task = RestImageClassificationMultilabel(
             target_column_name=self.target_column_name,
-            training_data=self.training_data,
-            validation_data=self.validation_data,
+            training_data=self.training_data,  # type: ignore[arg-type]
+            validation_data=self.validation_data,  # type: ignore[arg-type]
             validation_data_size=self.validation_data_size,
-            limit_settings=self._limits._to_rest_object() if self._limits else None,
+            limit_settings=self._limits._to_rest_object() if self._limits else None,  # type: ignore[arg-type]
             sweep_settings=self._sweep._to_rest_object() if self._sweep else None,
             model_settings=self._training_parameters._to_rest_object() if self._training_parameters else None,
             search_space=(

@@ -358,7 +358,7 @@ class NodeInput(InputOutputBase):
                 )
             return _data
         # for data binding case, set is_singular=False for case like "${{parent.inputs.job_in_folder}}/sample1.csv"
-        if isinstance(_data, Input) or is_data_binding_expression(_data, is_singular=False):
+        if isinstance(_data, Input) or is_data_binding_expression(_data, is_singular=False):  # type: ignore[arg-type]
             return _data
         if isinstance(_data, (Data, Model)):
             return _data_to_input(_data)

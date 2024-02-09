@@ -136,13 +136,17 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
             operation_config=self._operation_config,
         )
         if isinstance(deployment, PipelineComponentBatchDeployment):
-            self._validate_component(deployment, orchestrators)  # type: ignore
+            self._validate_component(deployment, orchestrators)
         else:
-            upload_dependencies(deployment, orchestrators)
+            upload_dependencies(deployment, orchestrators)  # type: ignore[arg-type]
+            # Bug 2951529
         try:
             location = self._get_workspace_location()
             if kwargs.pop("package_model", False):
-                deployment = package_deployment(deployment, self._all_operations.all_operations)
+                deployment = package_deployment(
+                    deployment, self._all_operations.all_operations
+                )  # type: ignore[assignment,arg-type]
+                # Bug 2951529
                 module_logger.info("\nStarting deployment")
             deployment_rest = deployment._to_rest_object(location=location)
             if isinstance(deployment, PipelineComponentBatchDeployment):  # pylint: disable=no-else-return

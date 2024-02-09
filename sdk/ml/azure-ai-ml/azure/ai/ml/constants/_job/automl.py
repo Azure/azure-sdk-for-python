@@ -112,5 +112,5 @@ class NlpModels(Enum):
 
 
 TrainingMode.__doc__ = "Mode to enable/disable distributed training."
-TabularTrainingMode = experimental(TrainingMode)
+TabularTrainingMode = experimental(TrainingMode)  # type: ignore[var-annotated]
 TabularTrainingMode.__name__ = "TabularTrainingMode"

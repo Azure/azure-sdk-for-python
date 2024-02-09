@@ -9,11 +9,12 @@ import os
 import uuid
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, Optional, Tuple, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, TypeVar, Union
 
 from typing_extensions import Literal
 
 from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
+from azure.ai.ml._artifacts._file_storage_helper import FileStorageClient
 from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
 from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata
 from azure.ai.ml._restclient.v2022_10_01.models import DatastoreType
@@ -74,7 +75,7 @@ def get_datastore_info(
     *,
     credential=None,
     **kwargs,
-) -> Dict[Literal["storage_type", "storage_account", "account_url", "container_name", "credential"], str]:
+) -> Dict[str, str]:
     """Get datastore account, type, and auth information.
 
     :param operations: DatastoreOperations object
@@ -85,8 +86,9 @@ def get_datastore_info(
         credentials from the datastore, which requires authorization to perform action
         'Microsoft.MachineLearningServices/workspaces/datastores/listSecrets/action' over target datastore.
     :paramtype credential: str
-    :return: The dictionary with datastore info
-    :rtype: Dict[Literal["storage_type", "storage_account", "account_url", "container_name"], str]
+    :return: The dictionary with datastore info. Keys are 'storage_type', 'storage_account', 'account_url', and
+        'container_name'.
+    :rtype: Dict[str, str]
     """
     datastore_info: Dict = {}
     if name:
@@ -165,9 +167,9 @@ def list_logs_in_datastore(
         storage_type=ds_info["storage_type"],
     )
 
-    items = storage_client.list(starts_with=prefix + "/user_logs/")
+    items = storage_client.list(starts_with=prefix + "/user_logs/")  # type: ignore[union-attr]
     # Append legacy log files if present
-    items.extend(storage_client.list(starts_with=prefix + legacy_log_folder_name))
+    items.extend(storage_client.list(starts_with=prefix + legacy_log_folder_name))  # type: ignore[union-attr]
 
     log_dict = {}
     for item_name in items:
@@ -247,21 +249,26 @@ def upload_artifact(
         local_path,
         asset_hash=asset_hash,
         show_progress=show_progress,
-        name=asset_name,
+        name=asset_name,  # type: ignore[arg-type]
         version=asset_version,
         ignore_file=ignore_file,
     )
+
+    if isinstance(storage_client, BlobStorageClient):
+        container = storage_client.container
+    elif isinstance(storage_client, Gen2StorageClient):
+        container = storage_client.file_system
+    elif isinstance(storage_client, FileStorageClient):
+        container = storage_client.file_share
 
     artifact = ArtifactStorageInfo(
         name=artifact_info["name"],
         version=artifact_info["version"],
         relative_path=artifact_info["remote path"],
         datastore_arm_id=get_datastore_arm_id(datastore_name, operation_scope) if not sas_uri else None,
-        container_name=(
-            storage_client.container if isinstance(storage_client, BlobStorageClient) else storage_client.file_system
-        ),
+        container_name=container,
         storage_account_url=datastore_info.get("account_url") if not sas_uri else sas_uri,
-        indicator_file=artifact_info["indicator file"],
+        indicator_file=artifact_info["indicator file"],  # type: ignore[index]
         is_file=Path(local_path).is_file(),
     )
     return artifact
@@ -294,7 +301,7 @@ def download_artifact(
     if datastore_info is None:
         datastore_info = get_datastore_info(datastore_operation, datastore_name)
     storage_client = get_storage_client(**datastore_info)
-    storage_client.download(starts_with=starts_with, destination=destination)
+    storage_client.download(starts_with=str(starts_with), destination=destination)
     return destination
 
 
@@ -320,7 +327,7 @@ def download_artifact_from_storage_url(
     datastore_name = _get_datastore_name(datastore_name=datastore_name)
     datastore_info = get_datastore_info(datastore_operation, datastore_name)
     starts_with = get_artifact_path_from_storage_url(
-        blob_url=str(blob_url), container_name=datastore_info.get("container_name")
+        blob_url=str(blob_url), container_name=datastore_info.get("container_name")  # type: ignore[arg-type]
     )
     return download_artifact(
         starts_with=starts_with,
@@ -381,7 +388,7 @@ def _upload_to_datastore(
 ) -> ArtifactStorageInfo:
     _validate_path(path, _type=artifact_type)
     if not ignore_file:
-        ignore_file = get_ignore_file(path)
+        ignore_file = get_ignore_file(Path(path))
     if not asset_hash:
         asset_hash = get_object_hash(path, ignore_file)
     artifact = upload_artifact(
@@ -549,13 +556,13 @@ def _check_and_upload_env_build_context(
     return environment
 
 
-def _get_snapshot_path_info(artifact) -> Optional[Tuple[Path, IgnoreFile, str]]:
+def _get_snapshot_path_info(artifact) -> Optional[Tuple[Path, Union[Any, IgnoreFile], Optional[str]]]:
     """
     Validate an Artifact's local path and get its resolved path, ignore file, and hash. If no local path, return None.
     :param artifact: Artifact object
     :type artifact: azure.ai.ml.entities._assets._artifacts.artifact.Artifact
     :return: Artifact's path, ignorefile, and hash
-    :rtype: Tuple[os.PathLike, IgnoreFile, str]
+    :rtype: Optional[Tuple[Path, Union[Any, IgnoreFile], Optional[str]]]
     """
     if (
         hasattr(artifact, "local_path")

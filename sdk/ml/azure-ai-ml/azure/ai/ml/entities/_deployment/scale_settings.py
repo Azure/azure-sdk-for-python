@@ -88,7 +88,7 @@ class DefaultScaleSettings(OnlineScaleSettings):
         if not other:
             return False
         # only compare mutable fields
-        res: bool = self.type.lower() == other.type.lower()
+        res: bool = self.type.lower() == other.type.lower()  # type: ignore[union-attr]
         return res
 
     def __ne__(self, other: object) -> bool:
@@ -162,7 +162,7 @@ class TargetUtilizationScaleSettings(OnlineScaleSettings):
             return False
         # only compare mutable fields
         return (
-            self.type.lower() == other.type.lower()
+            self.type.lower() == other.type.lower()  # type: ignore[union-attr]
             and self.min_instances == other.min_instances
             and self.max_instances == other.max_instances
             and self.polling_interval == other.polling_interval

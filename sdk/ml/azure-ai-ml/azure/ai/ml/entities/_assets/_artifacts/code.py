@@ -64,7 +64,7 @@ class Code(Artifact):
         self._arm_type = ArmConstants.CODE_VERSION_TYPE
         if self.path and os.path.isabs(self.path):
             # Only calculate hash for local files
-            self._ignore_file = get_ignore_file(self.path) if ignore_file is None else ignore_file
+            self._ignore_file = get_ignore_file(Path(self.path)) if ignore_file is None else ignore_file
             self._hash_sha256 = get_content_hash(self.path, self._ignore_file)
 
     @classmethod

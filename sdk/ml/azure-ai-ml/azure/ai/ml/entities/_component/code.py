@@ -58,7 +58,7 @@ class ComponentIgnoreFile(IgnoreFile):
         return True
 
     @property
-    def base_path(self) -> Union[str, Path]:
+    def base_path(self) -> Union[str, Path]:  # type: ignore[override]
         """Get the base path of the ignore file.
 
         :return: The base path.
@@ -78,7 +78,7 @@ class ComponentIgnoreFile(IgnoreFile):
         self._base_path = directory_path
         return self
 
-    def is_file_excluded(self, file_path: Union[str, Path]) -> bool:
+    def is_file_excluded(self, file_path: Union[str, Path]) -> bool:  # type: ignore[override]
         """Check if a file should be excluded based on the ignore file rules.
 
         :param file_path: The file path.

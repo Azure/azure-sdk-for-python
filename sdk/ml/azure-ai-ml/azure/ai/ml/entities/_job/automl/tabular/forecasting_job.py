@@ -417,7 +417,7 @@ class ForecastingJob(AutoMLTabular):
         ensemble_model_download_timeout: Optional[int] = None,
         allowed_training_algorithms: Optional[List[str]] = None,
         blocked_training_algorithms: Optional[List[str]] = None,
-        training_mode: Optional[Union[str, TabularTrainingMode]] = None,
+        training_mode: Optional[Union[str, TabularTrainingMode]] = None,  # type: ignore[valid-type]
     ) -> None:
         """
         The method to configure forecast training related settings.

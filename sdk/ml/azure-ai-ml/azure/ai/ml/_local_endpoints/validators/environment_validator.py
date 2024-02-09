@@ -50,7 +50,7 @@ def get_environment_artifacts(
         if isinstance(deployment.environment, Environment):
             environment_asset = deployment.environment
         else:
-            name, version = parse_name_version(deployment.environment)
+            name, version = parse_name_version(deployment.environment)  # type: ignore[arg-type]
             label = None
             if not version:
                 name, label = parse_name_label(deployment.environment)

@@ -261,7 +261,8 @@ class DataOperations(_ScopeDependentOperations):
                 )
 
             if label:
-                return _resolve_label_to_asset(self, name, label)
+                return _resolve_label_to_asset(self, name, label)  # type: ignore[return-value]
+                # Bug 2951636
 
             if not version:
                 msg = "Must provide either version or label."
@@ -356,7 +357,13 @@ class DataOperations(_ScopeDependentOperations):
                     version=version,
                     resource_group=self._resource_group_name,
                     registry=self._registry_name,
-                    body=get_asset_body_for_registry_storage(self._registry_name, "data", name, version),
+                    body=get_asset_body_for_registry_storage(
+                        self._registry_name,
+                        "data",
+                        name,  # type: ignore[arg-type]
+                        version,  # type: ignore[arg-type]
+                    ),
+                    # Bug 2951636
                 )
 
             referenced_uris = self._validate(data)
@@ -455,11 +462,12 @@ class DataOperations(_ScopeDependentOperations):
         if "${{name}}" not in str(data_import.path):
             data_import.path = data_import.path.rstrip("/") + "/${{name}}"  # type: ignore
         import_job = import_data_func(
-            description=data_import.description or experiment_name,
-            display_name=experiment_name,
-            experiment_name=experiment_name,
-            compute="serverless",
-            source=data_import.source,
+            # Bug 2951636 for type ignore comments
+            description=data_import.description or experiment_name,  # type: ignore[arg-type]
+            display_name=experiment_name,  # type: ignore[arg-type]
+            experiment_name=experiment_name,  # type: ignore[arg-type]
+            compute="serverless",  # type: ignore[arg-type]
+            source=data_import.source,  # type: ignore[arg-type]
             outputs={
                 "sink": Output(
                     type=data_import.type,
@@ -556,7 +564,8 @@ class DataOperations(_ScopeDependentOperations):
             mltable_metadata_schema = self._try_get_mltable_metadata_jsonschema(data._mltable_schema_url)
             if mltable_metadata_schema and not data._skip_validation:
                 validate_mltable_metadata(
-                    mltable_metadata_dict=metadata_contents,
+                    mltable_metadata_dict=metadata_contents,  # type: ignore[arg-type]
+                    # Bug 2951636
                     mltable_schema=mltable_metadata_schema,
                 )
             return cast(Optional[List[str]], metadata.referenced_uris())

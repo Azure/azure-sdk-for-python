@@ -5,7 +5,7 @@
 import logging
 import os
 import re
-from typing import Any, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
 from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
 from azure.ai.ml._artifacts._constants import STORAGE_URI_REGEX
@@ -40,7 +40,7 @@ class AzureMLDatastorePathUri:
     '
     """
 
-    def __init__(self, uri: Union[os.PathLike, str]):
+    def __init__(self, uri: Union[os.PathLike, str]):  # pylint: disable=too-many-statements
         uri = str(uri)
         if uri.startswith(FILE_PREFIX):
             uri = uri[len(FILE_PREFIX) :]
@@ -129,8 +129,8 @@ class AzureMLDatastorePathUri:
 
 
 def get_storage_client(
-    credential: str,
-    storage_account: str,
+    credential: Optional[str],
+    storage_account: Optional[str],
     storage_type: Union[DatastoreType, str] = DatastoreType.AZURE_BLOB,
     account_url: Optional[str] = None,
     container_name: Optional[str] = None,
@@ -138,9 +138,9 @@ def get_storage_client(
     """Return a storage client class instance based on the storage account type.
 
     :param credential: The credential
-    :type credential: str
+    :type credential: Optional[str]
     :param storage_account: The storage_account name
-    :type storage_account: str
+    :type storage_account: Optional[str]
     :param storage_type: The storage type
     :type storage_type: Union[DatastoreType, str]
     :param account_url: The account url
@@ -148,9 +148,9 @@ def get_storage_client(
     :param container_name: The container name
     :type container_name: Optional[str]
     :return: The storage client
-    :rtype: Union[BlobStorageClient, FileStorageClient, Gen2StorageClient]
+    :rtype: Dict[Union[BlobStorageClient, FileStorageClient, Gen2StorageClient], Any]
     """
-    client_builders = {
+    client_builders: Dict[str, Any] = {
         DatastoreType.AZURE_BLOB: lambda credential, container_name, account_url: BlobStorageClient(
             credential=credential, account_url=account_url, container_name=container_name
         ),
@@ -177,6 +177,7 @@ def get_storage_client(
     storage_endpoint = _get_storage_endpoint_from_metadata()
     if not account_url and storage_endpoint:
         account_url = STORAGE_ACCOUNT_URLS[storage_type].format(storage_account, storage_endpoint)
+
     return client_builders[storage_type](credential, container_name, account_url)
 
 

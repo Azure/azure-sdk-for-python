@@ -95,7 +95,7 @@ class FixedInputData(MonitorInputData):
     @classmethod
     def _from_rest_object(cls, obj: RestFixedInputData) -> "FixedInputData":
         return cls(
-            data_context=camel_to_snake(obj.data_context),
+            data_context=camel_to_snake(obj.data_context),  # type: ignore[arg-type]
             target_columns=obj.columns,
             job_type=obj.job_input_type,
             uri=obj.uri,
@@ -144,7 +144,7 @@ class TrailingInputData(MonitorInputData):
     @classmethod
     def _from_rest_object(cls, obj: RestTrailingInputData) -> "TrailingInputData":
         return cls(
-            data_context=snake_to_camel(obj.data_context),
+            data_context=snake_to_camel(obj.data_context),  # type: ignore[arg-type]
             target_columns=obj.columns,
             job_type=obj.job_input_type,
             uri=obj.uri,
@@ -196,7 +196,7 @@ class StaticInputData(MonitorInputData):
     @classmethod
     def _from_rest_object(cls, obj: RestStaticInputData) -> "StaticInputData":
         return cls(
-            data_context=snake_to_camel(obj.data_context),
+            data_context=snake_to_camel(obj.data_context),  # type: ignore[arg-type]
             target_columns=obj.columns,
             job_type=obj.job_input_type,
             uri=obj.uri,

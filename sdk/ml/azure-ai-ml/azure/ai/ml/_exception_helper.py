@@ -83,7 +83,7 @@ def get_entity_type(error: Union[str, SchemaValidationError, ValidationException
 
 def format_details_section(
     error: Union[str, SchemaValidationError, ValidationException], details: str, entity_type: str
-) -> Tuple[Dict[str, bool], str]:
+) -> Tuple[Dict[ValidationErrorType, bool], str]:
     """Builds strings for details of the error message template's Details section.
 
     :param error: The validation error
@@ -93,7 +93,7 @@ def format_details_section(
     :param entity_type: The entity type
     :type entity_type: str
     :return: Error type map and formatted message
-    :rtype: Tuple[Dict[str, bool], str]
+    :rtype: Tuple[Dict[ValidationErrorType, bool], str]
     """
 
     error_types = {
@@ -167,14 +167,14 @@ def format_details_section(
 
 
 def format_errors_and_resolutions_sections(
-    entity_type: str, error_types: Dict[str, bool], cli: bool
+    entity_type: str, error_types: Dict[ValidationErrorType, bool], cli: bool
 ) -> Tuple[str, str]:
     """Builds strings for details of the error message template's Errors and Resolutions sections.
 
     :param entity_type: The entity type
     :type entity_type: str
     :param error_types: A dict that specifies which errors were encountered
-    :type error_types: Dict[str, bool]
+    :type error_types: Dict[ValidationErrorType, bool]
     :param cli: Whether this was invoked from Azure CLI AzureML extension.
     :type cli: bool
     :return: Error and Resolution messages

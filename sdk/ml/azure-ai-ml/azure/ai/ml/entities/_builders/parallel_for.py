@@ -273,14 +273,15 @@ class ParallelFor(LoopNode, NodeIOMixin):
         body_component: Optional[Union[str, Component]] = None,
     ) -> MutableValidationResult:
         validation_result = cls._create_empty_validation_result()
+
         if items is not None:
             if isinstance(items, str):
                 # TODO: remove the validation
                 # try to deserialize str if it's a json string
                 try:
-                    items = json.loads(items)
+                    items = json.loads(items)  # type: ignore[arg-type]
                 except json.JSONDecodeError as e:
-                    if not is_data_binding_expression(items, ["parent"]):
+                    if not is_data_binding_expression(items, ["parent"]):  # type: ignore[arg-type]
                         validation_result.append_error(
                             yaml_path="items",
                             message=f"Items is neither a valid JSON string due to {e} or a binding string.",

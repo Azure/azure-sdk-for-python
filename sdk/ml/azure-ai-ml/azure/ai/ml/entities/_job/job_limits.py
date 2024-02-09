@@ -49,13 +49,14 @@ class CommandJobLimits(JobLimits):
             :caption: Configuring a CommandJob with CommandJobLimits.
     """
 
-    def __init__(self, *, timeout: Optional[Union[int, str]] = None) -> None:
+    def __init__(self, *, timeout: Optional[int] = None) -> None:
         super().__init__()
         self.type = JobType.COMMAND
-        self.timeout = timeout
+        self.timeout: Optional[int] = timeout
 
     def _to_rest_object(self) -> RestCommandJobLimits:
-        if is_data_binding_expression(self.timeout):
+        if is_data_binding_expression(self.timeout):  # type: ignore[arg-type]
+            # Bug 2951704
             return RestCommandJobLimits(timeout=self.timeout)
         return RestCommandJobLimits(timeout=to_iso_duration_format(self.timeout))
 
@@ -150,8 +151,9 @@ class SweepJobLimits(JobLimits):
         return RestSweepJobLimits(
             max_concurrent_trials=self.max_concurrent_trials,
             max_total_trials=self.max_total_trials,
-            timeout=to_iso_duration_format(self.timeout),
-            trial_timeout=to_iso_duration_format(self.trial_timeout),
+            timeout=to_iso_duration_format(self.timeout),  # type: ignore[arg-type]
+            trial_timeout=to_iso_duration_format(self.trial_timeout),  # type: ignore[arg-type]
+            # Bug 2951704
         )
 
     @classmethod

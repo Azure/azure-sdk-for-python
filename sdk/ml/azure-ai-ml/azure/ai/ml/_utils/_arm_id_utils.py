@@ -399,17 +399,24 @@ def is_singularity_short_name_for_resource(name: Any) -> bool:
 
 def get_arm_id_with_version(
     operation_scope: OperationScope,
-    provider_name: str,
-    provider_value: str,
-    provider_version: str,
+    provider_name: Optional[str],
+    provider_value: Optional[str],
+    provider_version: Optional[str],
 ):
-    return PROVIDER_RESOURCE_ID_WITH_VERSION.format(
-        operation_scope.subscription_id,
-        operation_scope.resource_group_name,
-        operation_scope.workspace_name,
-        provider_name,
-        provider_value,
-        provider_version,
+    if all([provider_name, provider_value, provider_version]):
+        return PROVIDER_RESOURCE_ID_WITH_VERSION.format(
+            operation_scope.subscription_id,
+            operation_scope.resource_group_name,
+            operation_scope.workspace_name,
+            provider_name,
+            provider_value,
+            provider_version,
+        )
+    raise ValidationException(
+        error_type=ValidationErrorType.INVALID_VALUE,
+        error_category=ErrorCategory.USER_ERROR,
+        message="provider_name, provider_value, and provider_version cannot be null.",
+        no_personal_data_message="provider_name, provider_value, and provider_version cannot be null.",
     )
 
 
@@ -426,7 +433,7 @@ def remove_aml_prefix(resource_id: Optional[str]) -> Optional[str]:
     return resource_id
 
 
-def get_resource_name_from_arm_id(resource_id: str) -> str:
+def get_resource_name_from_arm_id(resource_id: Optional[str]) -> str:
     # parse arm id to datastore name
     return AMLNamedArmId(resource_id).asset_name
 

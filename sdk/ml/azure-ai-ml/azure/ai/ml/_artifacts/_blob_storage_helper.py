@@ -67,7 +67,7 @@ class BlobStorageClient:
         self,
         source: str,
         name: str,
-        version: str,
+        version: Optional[str],
         ignore_file: IgnoreFile = IgnoreFile(None),
         asset_hash: Optional[str] = None,
         show_progress: bool = True,
@@ -140,7 +140,7 @@ class BlobStorageClient:
             # upload must be completed before we try to generate confirmation file
             while self.uploaded_file_count < self.total_file_count:
                 time.sleep(0.5)
-            self._set_confirmation_metadata(name, version)
+            self._set_confirmation_metadata(name, version)  # type: ignore[arg-type]
         except AssetNotChangedError:
             name = str(self.name)
             version = str(self.version)

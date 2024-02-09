@@ -204,7 +204,8 @@ class Data(Artifact):
         data = Data(
             id=data_rest_object.id,
             name=arm_id_object.asset_name,
-            version=arm_id_object.asset_version,
+            version=arm_id_object.asset_version,  # type: ignore[union-attr]
+            # Bug 2951893
             path=path,
             type=getDataAssetType(data_rest_object_details.data_type),
             description=data_rest_object_details.description,
@@ -232,7 +233,7 @@ class Data(Artifact):
         if not asset_artifact.datastore_arm_id and asset_artifact.full_storage_path:
             self.path = asset_artifact.full_storage_path
         else:
-            groups = re.search(regex, asset_artifact.datastore_arm_id)
+            groups = re.search(regex, asset_artifact.datastore_arm_id)  # type: ignore[arg-type]
             if groups:
                 datastore_name = groups.group(1)
                 self.path = SHORT_URI_FORMAT.format(datastore_name, asset_artifact.relative_path)
