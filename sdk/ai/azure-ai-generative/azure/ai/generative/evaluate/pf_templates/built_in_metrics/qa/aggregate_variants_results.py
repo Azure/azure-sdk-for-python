@@ -12,17 +12,21 @@ def aggregate_results(results: List[dict], selected_metrics: List[dict], thresho
         threshold = np.float16(thresholds[0])
     else:
         threshold = RAIService.HARM_SEVERITY_THRESHOLD
+    print(threshold)
 
     aggregate_results = {}
     for result in results:
         if not result:
             continue
-        for name, value in result.items():
+        for name in result.keys():
             if name in selected_quality_metrics or name in selected_safety_metrics:
                 if name not in aggregate_results.keys():
                     aggregate_results[name] = []
+                metric_value = result[name]
+                if name in selected_safety_metrics:
+                    metric_value = result[name + "_score"]
                 try:
-                    float_val = float(value)
+                    float_val = float(metric_value)
                 except Exception:
                     float_val = np.nan
                 aggregate_results[name].append(float_val)
