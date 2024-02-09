@@ -106,6 +106,8 @@ def build() -> None:
     else:
         target_dir = repo_root
 
+    logging.info(f"Searching for packages starting from {target_dir} with glob string {args.glob_string} and package filter {args.package_filter_string}")
+
     targeted_packages = discover_targeted_packages(
         args.glob_string,
         target_dir,
