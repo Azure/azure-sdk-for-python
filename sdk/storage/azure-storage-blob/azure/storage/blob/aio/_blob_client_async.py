@@ -16,7 +16,6 @@ from typing_extensions import Self
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
