@@ -148,7 +148,7 @@ class MLIndex:
 
         return embeddings.as_langchain_embeddings(credential=credential)
 
-    # pylint: disable=too-many-locals
+    # pylint: disable=too-many-locals, too-many-branches, too-many-statements
     def as_langchain_vectorstore(self, credential: Optional[TokenCredential] = None):
         """Converts MLIndex to a retriever object that can be used with langchain, may download files."""
         with track_activity(logger, "MLIndex.as_langchain_vectorstore") as activity_logger:

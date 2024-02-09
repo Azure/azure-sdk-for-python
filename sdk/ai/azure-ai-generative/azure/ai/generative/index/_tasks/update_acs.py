@@ -218,7 +218,8 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
         logger.info(f"Search index {acs_config['index_name']} already exists")
 
 
-def create_index_from_raw_embeddings(  # pylint: disable=too-many-locals
+# pylint: disable=too-many-locals, too-many-branches, too-many-statements
+def create_index_from_raw_embeddings(
     emb: EmbeddingsContainer,
     acs_config={},
     connection={},

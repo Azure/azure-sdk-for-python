@@ -14,7 +14,7 @@ from azure.ai.resources.operations._acs_output_config import ACSOutputConfig
 from azure.ai.resources.operations._index_data_source import ACSSource, LocalSource
 
 
-def build_index(  # pylint: disable=too-many-locals
+def build_index(  # pylint: disable=too-many-locals, too-many-statements
     *,
     output_index_name: str,
     vector_store: str,

@@ -75,6 +75,7 @@ def parse_model_uri(uri: str, **kwargs) -> dict:
     return config
 
 
+# pylint: disable=too-many-branches, too-many-statements
 def init_open_ai_from_config(config: dict, credential: Optional[TokenCredential]) -> Dict:
     """Initialize an OpenAI model from a configuration dictionary."""
     import openai

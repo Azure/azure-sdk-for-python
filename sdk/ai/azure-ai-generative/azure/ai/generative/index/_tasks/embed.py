@@ -213,7 +213,7 @@ def _merge_and_log_worker_results(results_queue, merged_results: dict, activity_
     return merged_results
 
 
-def create_embeddings(
+def create_embeddings(  # pylint: disable=too-many-statements
     chunks: Iterator[Document],
     embeddings_model_uri: str,
     connection_args: dict,

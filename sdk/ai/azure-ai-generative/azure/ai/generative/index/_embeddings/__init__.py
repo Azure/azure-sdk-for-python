@@ -557,7 +557,7 @@ class EmbeddingsContainer:
 
         return self
 
-    def load_v2(self, dir_name: str, embeddings_container_path):
+    def load_v2(self, dir_name: str, embeddings_container_path):  # pylint: disable=too-many-statements
         """Load embeddings from a directory assuming file format version 2."""
         path = Path(embeddings_container_path) / dir_name
 
@@ -674,7 +674,7 @@ class EmbeddingsContainer:
         else:
             raise ValueError(f"Schema version {file_format_version} is not supported")
 
-    # pylint: disable=too-many-locals
+    # pylint: disable=too-many-locals, too-many-statements
     def save_v2(self, path: Union[Path, str], with_metadata=True, suffix: Optional[str] = None):
         """Save the embeddings to a directory using file format version 2."""
         path = Path(path)

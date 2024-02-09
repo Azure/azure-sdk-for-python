@@ -40,7 +40,7 @@ DOCUMENT_LOGGING_VERBOSITY = 2
 
 
 # TODO: Make `activity_logger` optional, maybe simple interface that User could implement?
-# pylint: disable=too-many-locals
+# pylint: disable=too-many-locals, too-many-branches, too-many-statements
 def crack_and_chunk_and_embed(
     logger,
     activity_logger,

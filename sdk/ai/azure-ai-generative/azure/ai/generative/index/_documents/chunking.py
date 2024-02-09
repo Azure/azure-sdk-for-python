@@ -154,7 +154,7 @@ file_extension_splitters = {
 }
 
 
-def split_documents(
+def split_documents(  # pylint: disable=too-many-statements
     documents: Iterable[ChunkedDocument], splitter_args: dict, file_extension_splitters=file_extension_splitters
 ) -> Iterator[ChunkedDocument]:
     """Split documents into chunks."""
