@@ -12,6 +12,7 @@ from ._models import AddParticipantResponse
 from ._models import AddParticipantSucceeded
 from ._models import AnswerCallRequest
 from ._models import AzureOpenAIDialog
+from ._models import AzureOpenAIDialogUpdate
 from ._models import BaseDialog
 from ._models import BlobStorage
 from ._models import CallConnected
@@ -49,6 +50,8 @@ from ._models import DialogSensitivityUpdate
 from ._models import DialogStarted
 from ._models import DialogStateResponse
 from ._models import DialogTransfer
+from ._models import DialogUpdateBase
+from ._models import DialogUpdated
 from ._models import DtmfOptions
 from ._models import DtmfResult
 from ._models import ExternalStorage
@@ -105,6 +108,7 @@ from ._models import TransferCallResponse
 from ._models import TransferToParticipantRequest
 from ._models import UnmuteParticipantsRequest
 from ._models import UnmuteParticipantsResponse
+from ._models import UpdateDialogRequest
 from ._models import UpdateTranscriptionRequest
 from ._models import UserConsent
 
@@ -142,6 +146,7 @@ __all__ = [
     "AddParticipantSucceeded",
     "AnswerCallRequest",
     "AzureOpenAIDialog",
+    "AzureOpenAIDialogUpdate",
     "BaseDialog",
     "BlobStorage",
     "CallConnected",
@@ -179,6 +184,8 @@ __all__ = [
     "DialogStarted",
     "DialogStateResponse",
     "DialogTransfer",
+    "DialogUpdateBase",
+    "DialogUpdated",
     "DtmfOptions",
     "DtmfResult",
     "ExternalStorage",
@@ -235,6 +242,7 @@ __all__ = [
     "TransferToParticipantRequest",
     "UnmuteParticipantsRequest",
     "UnmuteParticipantsResponse",
+    "UpdateDialogRequest",
     "UpdateTranscriptionRequest",
     "UserConsent",
     "CallConnectionState",

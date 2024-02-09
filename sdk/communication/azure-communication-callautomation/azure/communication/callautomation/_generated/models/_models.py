@@ -287,6 +287,11 @@ class AnswerCallRequest(_serialization.Model):
     :ivar answered_by: The identifier of the call automation entity which answers the call.
     :vartype answered_by:
      ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
+    :ivar source_caller_id_number: The source caller Id, a phone number, that's will be used when
+     inviting a pstn target.
+     Required only when transferring call to PSTN, if this is an incoming voip call.
+    :vartype source_caller_id_number:
+     ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
     """
 
     _validation = {
@@ -302,6 +307,7 @@ class AnswerCallRequest(_serialization.Model):
         "transcription_configuration": {"key": "transcriptionConfiguration", "type": "TranscriptionConfiguration"},
         "call_intelligence_options": {"key": "callIntelligenceOptions", "type": "CallIntelligenceOptions"},
         "answered_by": {"key": "answeredBy", "type": "CommunicationUserIdentifierModel"},
+        "source_caller_id_number": {"key": "sourceCallerIdNumber", "type": "PhoneNumberIdentifierModel"},
     }
 
     def __init__(
@@ -314,6 +320,7 @@ class AnswerCallRequest(_serialization.Model):
         transcription_configuration: Optional["_models.TranscriptionConfiguration"] = None,
         call_intelligence_options: Optional["_models.CallIntelligenceOptions"] = None,
         answered_by: Optional["_models.CommunicationUserIdentifierModel"] = None,
+        source_caller_id_number: Optional["_models.PhoneNumberIdentifierModel"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -335,6 +342,11 @@ class AnswerCallRequest(_serialization.Model):
         :keyword answered_by: The identifier of the call automation entity which answers the call.
         :paramtype answered_by:
          ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
+        :keyword source_caller_id_number: The source caller Id, a phone number, that's will be used
+         when inviting a pstn target.
+         Required only when transferring call to PSTN, if this is an incoming voip call.
+        :paramtype source_caller_id_number:
+         ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
         """
         super().__init__(**kwargs)
         self.incoming_call_context = incoming_call_context
@@ -344,6 +356,7 @@ class AnswerCallRequest(_serialization.Model):
         self.transcription_configuration = transcription_configuration
         self.call_intelligence_options = call_intelligence_options
         self.answered_by = answered_by
+        self.source_caller_id_number = source_caller_id_number
 
 
 class BaseDialog(_serialization.Model):
@@ -408,6 +421,72 @@ class AzureOpenAIDialog(BaseDialog):
     def __init__(self, *, context: Dict[str, JSON], **kwargs: Any) -> None:
         """
         :keyword context: Dialog context. Required.
+        :paramtype context: dict[str, JSON]
+        """
+        super().__init__(context=context, **kwargs)
+        self.kind: str = "AzureOpenAI"
+
+
+class DialogUpdateBase(_serialization.Model):
+    """DialogUpdateBase.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureOpenAIDialogUpdate
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar kind: Determines the type of the dialog. Required. Known values are: "powerVirtualAgents"
+     and "azureOpenAI".
+    :vartype kind: str or ~azure.communication.callautomation.models.DialogInputType
+    :ivar context: Dialog context.
+    :vartype context: dict[str, JSON]
+    """
+
+    _validation = {
+        "kind": {"required": True},
+    }
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+        "context": {"key": "context", "type": "{object}"},
+    }
+
+    _subtype_map = {"kind": {"AzureOpenAI": "AzureOpenAIDialogUpdate"}}
+
+    def __init__(self, *, context: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
+        """
+        :keyword context: Dialog context.
+        :paramtype context: dict[str, JSON]
+        """
+        super().__init__(**kwargs)
+        self.kind: Optional[str] = None
+        self.context = context
+
+
+class AzureOpenAIDialogUpdate(DialogUpdateBase):
+    """Azure Open AI Dialog for UpdateDialog API Call.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar kind: Determines the type of the dialog. Required. Known values are: "powerVirtualAgents"
+     and "azureOpenAI".
+    :vartype kind: str or ~azure.communication.callautomation.models.DialogInputType
+    :ivar context: Dialog context.
+    :vartype context: dict[str, JSON]
+    """
+
+    _validation = {
+        "kind": {"required": True},
+    }
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+        "context": {"key": "context", "type": "{object}"},
+    }
+
+    def __init__(self, *, context: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
+        """
+        :keyword context: Dialog context.
         :paramtype context: dict[str, JSON]
         """
         super().__init__(context=context, **kwargs)
@@ -2239,6 +2318,73 @@ class DialogTransfer(_serialization.Model):
         self.correlation_id = None
 
 
+class DialogUpdated(_serialization.Model):
+    """DialogUpdated.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar operation_context: Used by customers when calling answerCall action to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
+     services.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar dialog_input_type: Determines the type of the dialog. Known values are:
+     "powerVirtualAgents" and "azureOpenAI".
+    :vartype dialog_input_type: str or ~azure.communication.callautomation.models.DialogInputType
+    :ivar dialog_id: Dialog ID.
+    :vartype dialog_id: str
+    :ivar ivr_context: Ivr Context.
+    :vartype ivr_context: JSON
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    """
+
+    _validation = {
+        "operation_context": {"readonly": True},
+        "result_information": {"readonly": True},
+        "dialog_id": {"readonly": True},
+        "ivr_context": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "dialog_input_type": {"key": "dialogInputType", "type": "str"},
+        "dialog_id": {"key": "dialogId", "type": "str"},
+        "ivr_context": {"key": "ivrContext", "type": "object"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+    }
+
+    def __init__(
+        self, *, dialog_input_type: Optional[Union[str, "_models.DialogInputType"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword dialog_input_type: Determines the type of the dialog. Known values are:
+         "powerVirtualAgents" and "azureOpenAI".
+        :paramtype dialog_input_type: str or ~azure.communication.callautomation.models.DialogInputType
+        """
+        super().__init__(**kwargs)
+        self.operation_context = None
+        self.result_information = None
+        self.dialog_input_type = dialog_input_type
+        self.dialog_id = None
+        self.ivr_context = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
+
+
 class DtmfOptions(_serialization.Model):
     """Options for DTMF recognition.
 
@@ -2793,6 +2939,9 @@ class PlayOptions(_serialization.Model):
 
     :ivar loop: The option to play the provided audio source in loop when set to true. Required.
     :vartype loop: bool
+    :ivar interrupt_call_media_operation: If set play can barge into other existing
+     queued-up/currently-processing requests.
+    :vartype interrupt_call_media_operation: bool
     """
 
     _validation = {
@@ -2801,15 +2950,20 @@ class PlayOptions(_serialization.Model):
 
     _attribute_map = {
         "loop": {"key": "loop", "type": "bool"},
+        "interrupt_call_media_operation": {"key": "interruptCallMediaOperation", "type": "bool"},
     }
 
-    def __init__(self, *, loop: bool, **kwargs: Any) -> None:
+    def __init__(self, *, loop: bool, interrupt_call_media_operation: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword loop: The option to play the provided audio source in loop when set to true. Required.
         :paramtype loop: bool
+        :keyword interrupt_call_media_operation: If set play can barge into other existing
+         queued-up/currently-processing requests.
+        :paramtype interrupt_call_media_operation: bool
         """
         super().__init__(**kwargs)
         self.loop = loop
+        self.interrupt_call_media_operation = interrupt_call_media_operation
 
 
 class PlayRequest(_serialization.Model):
@@ -4877,6 +5031,57 @@ class UnmuteParticipantsResponse(_serialization.Model):
         :paramtype operation_context: str
         """
         super().__init__(**kwargs)
+        self.operation_context = operation_context
+
+
+class UpdateDialogRequest(_serialization.Model):
+    """UpdateDialogRequest.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar dialog: Dialog context. Required.
+    :vartype dialog: ~azure.communication.callautomation.models.DialogUpdateBase
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
+    :ivar operation_context: The value to identify context of the operation.
+    :vartype operation_context: str
+    """
+
+    _validation = {
+        "dialog": {"required": True},
+    }
+
+    _attribute_map = {
+        "dialog": {"key": "dialog", "type": "DialogUpdateBase"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
+        "operation_context": {"key": "operationContext", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        dialog: "_models.DialogUpdateBase",
+        operation_callback_uri: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword dialog: Dialog context. Required.
+        :paramtype dialog: ~azure.communication.callautomation.models.DialogUpdateBase
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
+        """
+        super().__init__(**kwargs)
+        self.dialog = dialog
+        self.operation_callback_uri = operation_callback_uri
         self.operation_context = operation_context
 
 
