@@ -182,15 +182,20 @@ def create_package(
     if setup_parsed.ext_modules:
         run([sys.executable, "-m", "cibuildwheel", "--output-dir", dist], cwd=setup_parsed.folder, check=True)
 
-    if enable_wheel:
-        run(
-            [sys.executable, "setup.py", "bdist_wheel", "-d", dist],
-            cwd=setup_parsed.folder,
-            check=True,
-        )
-    if enable_sdist:
-        run(
-            [sys.executable, "setup.py", "sdist", "-d", dist],
-            cwd=setup_parsed.folder,
-            check=True,
-        )
+    print(os.environ)
+
+    try:
+        if enable_wheel:
+            run(
+                [sys.executable, "setup.py", "bdist_wheel", "-d", dist],
+                cwd=setup_parsed.folder,
+                check=True
+            )
+        if enable_sdist:
+            run(
+                [sys.executable, "setup.py", "sdist", "-d", dist],
+                cwd=setup_parsed.folder,
+                check=True
+            )
+    except Exception as e:
+        print(f"An unexpected build error has occured: {e}")
