@@ -54,7 +54,7 @@ with servicebus_client:
         # Deleting Messages
         new_time = datetime.now(timezone.utc) + timedelta(hours=10)
         print(f"Deleting messages that are older than {new_time}")
-        deleted_msgs = receiver.delete_batch_messages(
+        deleted_msgs = receiver.delete_messages(
             max_message_count=200,
             enqueued_time_older_than_utc=new_time
         )
@@ -68,12 +68,11 @@ with servicebus_client:
         # Deleting Messages
         new_time = datetime.now(timezone.utc) + timedelta(hours=10)
         print(f"Deleting messages that are older than {new_time}")
-        deleted_msgs = receiver.delete_batch_messages(
+        deleted_msgs = receiver.delete_messages(
             max_message_count=200,
             enqueued_time_older_than_utc=new_time
         )
         print(f"{deleted_msgs} messages deleted.")
-
 
         # Try to receive after deleting
         received_msgs = receiver.receive_messages(max_message_count=200, max_wait_time=5)

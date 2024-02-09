@@ -856,7 +856,7 @@ class ServiceBusReceiver(
         with receive_trace_context_manager(self, span_name=SPAN_NAME_PEEK, links=links, start_time=start_time):
             return messages
 
-    def delete_batch_messages(
+    def delete_messages(
         self,
         max_message_count: int = 1,
         enqueued_time_older_than_utc: datetime.datetime = datetime.datetime.now(datetime.timezone.utc),

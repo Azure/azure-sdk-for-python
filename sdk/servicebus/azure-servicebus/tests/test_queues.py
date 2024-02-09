@@ -3279,13 +3279,13 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
             receiver = sb_client.get_queue_receiver(servicebus_queue.name, receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE)
             number_deleted_messages = 0
             with receiver:
-                number_deleted_messages = receiver.delete_batch_messages(max_message_count=10, enqueued_time_older_than_utc=datetime.utcnow())
+                number_deleted_messages = receiver.delete_messages(max_message_count=10, enqueued_time_older_than_utc=datetime.utcnow())
             assert number_deleted_messages == 10
 
             receiver_peek = sb_client.get_queue_receiver(servicebus_queue.name)
             with receiver_peek:
-                assert receiver_peek.delete_batch_messages() == 0
+                assert receiver_peek.delete_messages() == 0
 
             receiver = sb_client.get_queue_receiver(servicebus_queue.name, receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE)
             with receiver:
-                assert receiver_peek.delete_batch_messages() == 0
+                assert receiver_peek.delete_messages() == 0

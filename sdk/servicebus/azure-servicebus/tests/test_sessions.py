@@ -1392,7 +1392,7 @@ class TestServiceBusSession(AzureMgmtRecordedTestCase):
                 max_wait_time=5,
                 receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE
             ) as receiver:
-                number_deleted_messages = receiver.delete_batch_messages()
+                number_deleted_messages = receiver.delete_messages()
             assert number_deleted_messages == 1
 
             with sb_client.get_subscription_receiver(
@@ -1402,5 +1402,5 @@ class TestServiceBusSession(AzureMgmtRecordedTestCase):
                 max_wait_time=5,
                 receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE
             ) as receiver:
-                number_deleted_messages = receiver.delete_batch_messages()
+                number_deleted_messages = receiver.delete_messages()
             assert number_deleted_messages == 1
