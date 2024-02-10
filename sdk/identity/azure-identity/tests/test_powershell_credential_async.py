@@ -247,7 +247,14 @@ async def test_windows_event_loop():
 
 
 @pytest.mark.skipif(not sys.platform.startswith("win"), reason="tests Windows-specific behavior")
-async def test_windows_powershell_fallback():
+@pytest.mark.parametrize(
+    "error_message",
+    (
+        "'pwsh' is not recognized as an internal or external command,\r\noperable program or batch file.",
+        "some other message",
+    ),
+)
+async def test_windows_powershell_fallback(error_message):
     """On Windows, the credential should fall back to powershell.exe when pwsh.exe isn't on the path"""
 
     calls = 0
@@ -259,8 +266,8 @@ async def test_windows_powershell_fallback():
         if args[-1].startswith("pwsh"):
             assert calls == 1, 'credential should invoke "pwsh" only once'
             stdout = ""
-            stderr = "'pwsh' is not recognized as an internal or external command,\r\noperable program or batch file."
-            return_code = 1
+            stderr = error_message
+            return_code = 9009
         else:
             assert args[-1].startswith("powershell"), 'credential should fall back to "powershell"'
             stdout = NO_AZ_ACCOUNT_MODULE
@@ -270,10 +277,11 @@ async def test_windows_powershell_fallback():
         communicate = Mock(return_value=get_completed_future((stdout.encode(), stderr.encode())))
         return Mock(communicate=communicate, returncode=return_code)
 
-    credential = AzurePowerShellCredential()
-    with pytest.raises(CredentialUnavailableError, match=AZ_ACCOUNT_NOT_INSTALLED):
-        with patch(CREATE_SUBPROCESS_EXEC, mock_exec):
-            await credential.get_token("scope")
+    with patch(AzurePowerShellCredential.__module__ + ".sys.platform", "win32"):
+        credential = AzurePowerShellCredential()
+        with pytest.raises(CredentialUnavailableError, match=AZ_ACCOUNT_NOT_INSTALLED):
+            with patch(CREATE_SUBPROCESS_EXEC, mock_exec):
+                await credential.get_token("scope")
 
     assert calls == 2
 
