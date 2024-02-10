@@ -61,6 +61,7 @@ def test_discovery_omit_regression():
     assert [os.path.basename(result) for result in storage_results] == [
         "azure-storage-blob",
         "azure-storage-blob-changefeed",
+        "azure-storage-extensions",
         "azure-storage-file-datalake",
         "azure-storage-file-share",
         "azure-storage-queue"

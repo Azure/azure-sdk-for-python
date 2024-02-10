@@ -6,8 +6,8 @@ import pytest
 from ci_tools.parsing import update_build_config, get_build_config, get_config_setting
 
 integration_folder = os.path.join(os.path.dirname(__file__), "integration")
-pyproject_folder = os.path.join(integration_folder, "scenarios", "sample_pyprojects")
-pyproject_file = os.path.join(integration_folder, "scenarios", "sample_pyprojects", "pyproject.toml")
+pyproject_folder = os.path.join(integration_folder, "scenarios", "pyproject_build_config")
+pyproject_file = os.path.join(integration_folder, "scenarios", "pyproject_build_config", "pyproject.toml")
 
 
 @pytest.mark.parametrize(

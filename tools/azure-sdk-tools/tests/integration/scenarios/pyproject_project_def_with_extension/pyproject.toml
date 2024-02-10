@@ -38,6 +38,7 @@ repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvau
 [tool.setuptools.dynamic]
 version = {attr = "azure.keyvault.keys.__version__"}
 
+# include-package-data bit defaults to TRUE if using python -m build to assemble package
 [tool.setuptools.package-data]
 "py.typed" = ["py.typed"]
 
@@ -47,4 +48,3 @@ exclude = ["samples", "tests", "azure", "azure.keyvault"]
 [tool.azure-sdk-build]
 pyright = false
 type_check_samples = false
-strict_sphinx = true
