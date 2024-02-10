@@ -160,14 +160,13 @@ def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
     collected_top_level_directories = []
 
     for glob_string in individual_globs:
-        breakpoint()
         globbed = glob.glob(os.path.join(target_root_dir, glob_string, "setup.py")) + glob.glob(
             os.path.join(target_root_dir, "sdk/*/", glob_string, "setup.py")
         )
         collected_top_level_directories.extend([os.path.dirname(p) for p in globbed])
 
     logging.debug("Discovered the following top level directories: {}".format(list(set(collected_top_level_directories))))
-    breakpoint()
+
     # deduplicate, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
     return list(set(collected_top_level_directories))
 
