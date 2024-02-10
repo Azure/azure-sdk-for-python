@@ -18,8 +18,9 @@
     {
       "CoverageConfig": {
         "ubuntu2004_39_coverage": {
-          "OSVmImage": "MMSUbuntu20.04",
-          "Pool": "azsdk-pool-mms-ubuntu-2004-general",
+          "OSVmImage": "azsdk-pool-mms-ubuntu-2004-1espt",
+          "Pool": "azsdk-pool-mms-ubuntu-2004-1es-pt",
+          "os": "linux",
           "PythonVersion": "3.9",
           "CoverageArg": "",
           "TestSamples": "false"
@@ -29,8 +30,9 @@
     {
       "Config": {
         "Ubuntu2004_312": {
-          "OSVmImage": "MMSUbuntu20.04",
-          "Pool": "azsdk-pool-mms-ubuntu-2004-general",
+          "OSVmImage": "azsdk-pool-mms-ubuntu-2004-1espt",
+          "Pool": "azsdk-pool-mms-ubuntu-2004-1es-pt",
+          "os": "linux",
           "PythonVersion": "3.12",
           "CoverageArg": "--disablecov",
           "TestSamples": "false"
