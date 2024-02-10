@@ -154,19 +154,20 @@ def generate_difference(original_packages: List[str], filtered_packages: List[st
 
 def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
     if glob_string:
-        individual_globs = glob_string.split(",")
+        individual_globs = [glob_string.strip() for glob_string in glob_string.split(",")]
     else:
         individual_globs = "azure-*"
     collected_top_level_directories = []
 
     for glob_string in individual_globs:
+        breakpoint()
         globbed = glob.glob(os.path.join(target_root_dir, glob_string, "setup.py")) + glob.glob(
             os.path.join(target_root_dir, "sdk/*/", glob_string, "setup.py")
         )
         collected_top_level_directories.extend([os.path.dirname(p) for p in globbed])
 
     logging.debug("Discovered the following top level directories: {}".format(list(set(collected_top_level_directories))))
-
+    breakpoint()
     # deduplicate, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
     return list(set(collected_top_level_directories))
 
