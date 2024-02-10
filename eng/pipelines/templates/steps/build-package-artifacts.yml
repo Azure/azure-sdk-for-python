@@ -104,13 +104,6 @@ steps:
         ArtifactPath: '$(Build.SourcesDirectory)/.logs'
         ArtifactName: 'build_logs'
 
-    - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-      - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
-        displayName: 'Generate BOM'
-        condition: succeededOrFailed()
-        inputs:
-          BuildDropPath: $(Build.ArtifactStagingDirectory)
-
       - template: /eng/common/pipelines/templates/steps/publish-artifact.yml@self
         parameters:
           ArtifactPath: '$(Build.ArtifactStagingDirectory)/_manifest'
@@ -126,13 +119,6 @@ steps:
       parameters:
         ArtifactPath: '$(Build.SourcesDirectory)/.logs'
         ArtifactName: 'build_logs_${{ parameters.ArtifactSuffix }}'
-
-    - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-      - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
-        displayName: 'Generate BOM'
-        condition: succeededOrFailed()
-        inputs:
-          BuildDropPath: $(Build.ArtifactStagingDirectory)
 
       - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
         parameters:
