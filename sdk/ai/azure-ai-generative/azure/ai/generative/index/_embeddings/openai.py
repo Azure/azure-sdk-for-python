@@ -34,7 +34,7 @@ class OpenAIEmbedder:
     ):
         """Initialize an OpenAI Embedding client."""
         self.api_base = api_base
-        self.api_type = api_type
+        self.api_type = api_type.lower()
         self.api_key = api_key or os.getenv("AZURE_OPENAI_KEY") or ""
         # TODO: If azure_credential set, check api_type is azure or azure_ad and setup auth accordingly
         self.azure_credential = azure_credential
@@ -108,7 +108,7 @@ class OpenAIEmbedder:
         else:
             self.openai_v1plus = False
             self.api_version = api_version if api_version else "2023-03-15-preview"
-            self.embedding_client = openai.Embeddings
+            self.embedding_client = openai.Embedding
             self._params = {
                 "model": self.model,
                 "api_base": self.api_base,
@@ -160,6 +160,7 @@ class OpenAIEmbedder:
                 raise
 
             import re
+
             match = re.match(r".*The max number of inputs is ([0-9]+).*", err_msg)
             if match and match.group(1):
                 try:
@@ -194,7 +195,10 @@ class OpenAIEmbedder:
                         **kwargs,
                     )
                     if self.openai_v1plus:
-                        response = {"object": "list", "data": [{"object": "embedding", "embedding": d.embedding} for d in response.data]}
+                        response = {
+                            "object": "list",
+                            "data": [{"object": "embedding", "embedding": d.embedding} for d in response.data],
+                        }
                     return response
                 except Exception as e:
                     err_msg = str(e)
@@ -216,10 +220,10 @@ class OpenAIEmbedder:
                                     # Wait for 1 minute as suggested by openai https://help.openai.com/en/articles/6897202-ratelimiterror
                                     logger.warning("Retry after 60 seconds.")
                                     delay = 60
-                            total_delay += delay
-                            logger.warning(f"Sleeping for {delay} seconds before retrying.")
-                            time.sleep(delay)
-                            break
+                                total_delay += delay
+                                logger.warning(f"Sleeping for {delay} seconds before retrying.")
+                                time.sleep(delay)
+                                break
 
                     if not retrying:
                         break
