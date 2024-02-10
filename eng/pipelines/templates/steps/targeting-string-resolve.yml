@@ -7,8 +7,6 @@ steps:
   - pwsh: |
       $setting = "${{ parameters.BuildTargetingString }}"
 
-      Write-Host "The parameterized value is ${{ parameters.BuildTargetingString }}"
-
       # if the variable is not set, it'll just come back as the variable name. otherwise it's set.
       if ('$(BuildTargetingString)' -ne ('$' + '(BuildTargetingString)')) {
           Write-Host "The variable named BuildTargetingString is set to $(BuildTargetingString)"

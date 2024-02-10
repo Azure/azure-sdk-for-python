@@ -78,11 +78,6 @@ steps:
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
   - pwsh: |
-      python setup.py bdist_wheel --dist-dir $(Build.ArtifactStagingDirectory)
-    displayName: "fake build"
-    workingDirectory: $(Build.SourcesDirectory)/sdk/core/azure-core
-
-  - pwsh: |
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
     displayName: 'Generate Packages'
     condition: succeededOrFailed()

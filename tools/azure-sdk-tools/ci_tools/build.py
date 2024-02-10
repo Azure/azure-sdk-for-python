@@ -106,7 +106,7 @@ def build() -> None:
     else:
         target_dir = repo_root
 
-    logging.info(f"Searching for packages starting from {target_dir} with glob string {args.glob_string} and package filter {args.package_filter_string}")
+    logger.debug(f"Searching for packages starting from {target_dir} with glob string {args.glob_string} and package filter {args.package_filter_string}")
 
     targeted_packages = discover_targeted_packages(
         args.glob_string,
@@ -116,11 +116,10 @@ def build() -> None:
         compatibility_filter=True,
         include_inactive=args.inactive,
     )
+
     artifact_directory = get_artifact_directory(args.distribution_directory)
 
     build_id = format_build_id(args.build_id or DEFAULT_BUILD_ID)
-
-    logging.info(f"building packages {targeted_packages} to {artifact_directory} with build_id {build_id}")
 
     build_packages(
         targeted_packages,
@@ -151,14 +150,10 @@ def build_packages(
     build_apiview_artifact: bool = False,
     build_id: str = "",
 ):
-    logger.log(level=logging.INFO, msg=f"Generating Package Using Python {sys.version}")
+    logger.log(level=logging.INFO, msg=f"Generating {targeted_packages} using python{sys.version}")
 
     for package_root in targeted_packages:
-        logging.log(level=logging.INFO, msg=f"Attempting to build package: {package_root}")
-        try:
-            setup_parsed = ParsedSetup.from_path(package_root)
-        except Exception as e:
-            logging.error(level=logging.INFO, msg=f"Encountered an exception while parsing the package at {package_root}: {e}")
+        setup_parsed = ParsedSetup.from_path(package_root)
         package_name_in_artifacts = os.path.join(os.path.basename(package_root))
         dist_dir = os.path.join(distribution_directory, package_name_in_artifacts)
 
@@ -172,7 +167,6 @@ def build_packages(
             set_version_py(setup_parsed.setup_filename, new_version)
             set_dev_classifier(setup_parsed.setup_filename, new_version)
 
-        logging.log(level=logging.INFO, msg=f"Entering create package for {package_root}...")
         create_package(package_root, dist_dir)
 
 
@@ -190,20 +184,17 @@ def create_package(
     if setup_parsed.ext_modules:
         run([sys.executable, "-m", "cibuildwheel", "--output-dir", dist], cwd=setup_parsed.folder, check=True)
 
-    logger.log(level=logging.INFO, msg=os.environ)
+    logger.debug(level=logging.INFO, msg=f"Attempting to build {setup_parsed.name} using python{sys.version}.")
 
-    try:
-        if enable_wheel:
-            run(
-                [sys.executable, "setup.py", "bdist_wheel", "-d", dist],
-                cwd=setup_parsed.folder,
-                check=True
-            )
-        if enable_sdist:
-            run(
-                [sys.executable, "setup.py", "sdist", "-d", dist],
-                cwd=setup_parsed.folder,
-                check=True
-            )
-    except Exception as e:
-        logger.log(level=logging.ERROR, msg=f"An unexpected build error has occured: {e}")
+    if enable_wheel:
+        run(
+            [sys.executable, "setup.py", "bdist_wheel", "-d", dist],
+            cwd=setup_parsed.folder,
+            check=True
+        )
+    if enable_sdist:
+        run(
+            [sys.executable, "setup.py", "sdist", "-d", dist],
+            cwd=setup_parsed.folder,
+            check=True
+        )

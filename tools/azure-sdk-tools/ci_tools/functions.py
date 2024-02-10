@@ -165,8 +165,6 @@ def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
         )
         collected_top_level_directories.extend([os.path.dirname(p) for p in globbed])
 
-    logging.debug("Discovered the following top level directories: {}".format(list(set(collected_top_level_directories))))
-
     # deduplicate, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
     return list(set(collected_top_level_directories))
 
