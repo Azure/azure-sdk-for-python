@@ -104,11 +104,6 @@ steps:
         ArtifactPath: '$(Build.SourcesDirectory)/.logs'
         ArtifactName: 'build_logs'
 
-      - template: /eng/common/pipelines/templates/steps/publish-artifact.yml@self
-        parameters:
-          ArtifactPath: '$(Build.ArtifactStagingDirectory)/_manifest'
-          ArtifactName: 'packages_manifest'
-
   - ${{ if ne(parameters.ArtifactSuffix, '') }}:
     - template: /eng/common/pipelines/templates/steps/publish-artifact.yml@self
       parameters:
@@ -119,8 +114,3 @@ steps:
       parameters:
         ArtifactPath: '$(Build.SourcesDirectory)/.logs'
         ArtifactName: 'build_logs_${{ parameters.ArtifactSuffix }}'
-
-      - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-        parameters:
-          ArtifactPath: '$(Build.ArtifactStagingDirectory)/_manifest'
-          ArtifactName: 'packages_manifest_${{ parameters.ArtifactSuffix }}'
