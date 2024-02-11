@@ -29,8 +29,8 @@ AZURE_STORAGE_TABLES_ENDPOINT=<The Storage Tables endpoint in the format 'https:
 When `devtools_testutils` is installed, you will have access to the `perfstress` command line tool, which will scan the current module for runable perf tests. Only a specific test can be run at a time (i.e. there is no "run all" feature).
 
 ```cmd
-(env) ~/azure-core> cd tests
-(env) ~/azure-core/tests> perfstress
+(env) ~/core/corehttp> cd tests
+(env) ~/core/corehttp/tests> perfstress
 ```
 
 Using the `perfstress` command alone will list the available perf tests found.
@@ -78,5 +78,5 @@ The options that are additionally available for `ListEntitiesPageableTest`:
 ## Example command
 
 ```cmd
-(env) ~/azure-core> perfstress DownloadBinaryDataTest --aad --transport requests --size=20480 --parallel=2
+(env) ~/core/corehttp> perfstress DownloadBinaryDataTest --aad --transport requests --size=20480 --parallel=2
 ```
