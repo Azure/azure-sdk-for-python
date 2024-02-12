@@ -240,6 +240,7 @@ class TikaLoader(BaseDocumentLoader):
 def extract_text_document_title(text: str, file_name: str) -> Tuple[str, str]:
     """Extract a title from a text document."""
     file_extension = Path(file_name).suffix
+    title: Any = None
     if file_extension == ".md":
         heading_0 = re.search(r"#\s.*", text)
         if heading_0:
@@ -289,7 +290,6 @@ def extract_text_document_title(text: str, file_name: str) -> Tuple[str, str]:
         except StopIteration:
             title = file_name
         return f"Title: {title}", title
-    title = None
     first_text_line = None
     title_prefix = "title: "
     for line in text.splitlines():
