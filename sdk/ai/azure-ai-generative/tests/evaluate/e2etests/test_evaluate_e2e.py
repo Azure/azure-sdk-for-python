@@ -4,6 +4,7 @@
 
 import logging
 import os
+import pathlib
 
 import numpy as np
 import pandas as pd
@@ -185,3 +186,67 @@ class TestEvaluate(AzureRecordedTestCase):
 
         assert "gpt_groundedness" in columns_in_tabular_data
         assert "gpt_retrieval_score" in columns_in_tabular_data
+
+    def test_invalid_data(self, e2e_openai_api_base, e2e_openai_api_key, e2e_openai_completion_deployment_name, tmpdir):
+        data_path = os.path.join(pathlib.Path(__file__).parent.parent.resolve(), "data")
+        data_file = os.path.join(data_path, "invalid_data.jsonl")
+
+
+        with pytest.raises(Exception) as ex:
+            output_path = tmpdir + "/evaluation_output"
+
+            result = evaluate(  # This will log metric/artifacts using mlflow
+                evaluation_name="rag-chat-1",
+                data=data_file,
+                task_type="qa",
+                model_config={
+                    "api_version": "2023-07-01-preview",
+                    "api_base": e2e_openai_api_base,
+                    "api_type": "azure",
+                    "api_key": e2e_openai_api_key,
+                    "deployment_id": e2e_openai_completion_deployment_name,
+                },
+                data_mapping={
+                    "questions": "question",
+                    "contexts": "context",
+                    "y_pred": "answer",
+                    "y_test": "truth",
+                },
+                output_path=output_path
+            )
+
+        assert "Data could not be loaded. Please validate if data is valid jsonl." in str(ex.value)
+
+    def test_missing_data(self, e2e_openai_api_base, e2e_openai_api_key, e2e_openai_completion_deployment_name, tmpdir):
+        data_path = os.path.join(pathlib.Path(__file__).parent.parent.resolve(), "data")
+        data_file = os.path.join(data_path, "missing_data.jsonl")
+
+        custom_metric_name = "custom_relevance"
+        from azure.ai.generative.evaluate.metrics import PromptMetric
+        custom_prompt_metric = PromptMetric.from_template(path="test_template.jinja2", name=custom_metric_name)
+
+        with pytest.raises(Exception) as ex:
+            output_path = tmpdir + "/evaluation_output"
+
+            result = evaluate(  # This will log metric/artifacts using mlflow
+                evaluation_name="rag-chat-1",
+                data=data_file,
+                task_type="qa",
+                metrics_list=[custom_prompt_metric, "gpt_groundedness"],
+                model_config={
+                    "api_version": "2023-07-01-preview",
+                    "api_base": "base", #e2e_openai_api_base,
+                    "api_type": "azure",
+                    "api_key": "key", #e2e_openai_api_key,
+                    "deployment_id": "dep", #e2e_openai_completion_deployment_name,
+                },
+                data_mapping={
+                    "questions": "question",
+                    "contexts": "context",
+                    "y_pred": "answer",
+                    "y_test": "truth",
+                },
+                output_path=output_path
+            )
+
+        assert "context data needed for metric calculation not found" in str(ex.value)
