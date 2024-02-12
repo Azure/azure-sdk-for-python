@@ -200,6 +200,9 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             inputs=from_rest_inputs_to_dataset_literal(rest_command_job.inputs),
             outputs=from_rest_data_outputs(rest_command_job.outputs),
             queue_settings=QueueSettings._from_rest_object(rest_command_job.queue_settings),
+            default_datastore=rest_command_job.environment_variables.get("default_datastore", None)
+            if rest_command_job.environment_variables is not None
+            else None,
         )
         # Handle special case of local job
         if (
