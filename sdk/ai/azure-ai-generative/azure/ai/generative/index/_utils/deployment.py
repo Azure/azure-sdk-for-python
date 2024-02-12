@@ -9,8 +9,7 @@ from azure.ai.generative.index._utils.connections import (
     get_metadata_from_connection,
     get_target_from_connection,
 )
-from openai.api_resources.deployment import Deployment
-from openai.util import convert_to_dict
+from packaging import version
 
 
 def infer_deployment(aoai_connection, model_name):
@@ -29,6 +28,12 @@ def infer_deployment(aoai_connection, model_name):
         openai.base_url = api_base
     credential = connection_to_credential(aoai_connection)
     openai.api_key = credential.key if isinstance(credential, AzureKeyCredential) else credential.get_token().token
+
+    if version.parse(openai.version.VERSION) >= version.parse("1.0.0"):
+        from openai.resources import Deployment
+    else:
+        from openai.api_resources.deployment import Deployment
+
     deployment_list = convert_to_dict(
         Deployment.list(api_key=openai.api_key, api_base=api_base, api_type=openai.api_type)
     )
@@ -38,3 +43,23 @@ def infer_deployment(aoai_connection, model_name):
     raise Exception(
         f"Deployment for model={model_name} not found in AOAI workspace. Please retry with correct model name or create a deployment."
     )
+
+def convert_to_dict(obj: object) -> dict:
+    """
+    Converts a OpenAIObject back to a regular dict.
+
+    Nested OpenAIObjects are also converted back to regular dicts.
+
+    :param obj: The OpenAIObject to convert.
+
+    :returns: The OpenAIObject as a dict.
+    """
+    if isinstance(obj, list):
+        return [convert_to_dict(i) for i in obj]
+    # This works by virtue of the fact that OpenAIObjects _are_ dicts. The dict
+    # comprehension returns a regular dict and recursively applies the
+    # conversion to each value.
+    elif isinstance(obj, dict):
+        return {k: convert_to_dict(v) for k, v in obj.items()}
+    else:
+        return obj
