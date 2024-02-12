@@ -31,6 +31,7 @@ from azure.core.pipeline.transport import RequestsTransport
 from utils import HTTP_REQUESTS
 
 
+@pytest.mark.live_test_only
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_decompress_plain_no_header(http_request):
     # expect plain text
@@ -79,6 +80,7 @@ def test_compress_plain_no_header(http_request):
     assert decoded == "test"
 
 
+@pytest.mark.live_test_only
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_decompress_compressed_no_header(http_request):
     # expect compressed text
@@ -158,6 +160,7 @@ def test_decompress_plain_header_offline(port, http_request):
             list(data)
 
 
+@pytest.mark.live_test_only
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_compress_plain_header(http_request):
     # expect plain text
@@ -204,6 +207,7 @@ def test_decompress_compressed_header_offline(port, http_request):
         assert decoded == "test"
 
 
+@pytest.mark.live_test_only
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_compress_compressed_header(http_request):
     # expect compressed text
