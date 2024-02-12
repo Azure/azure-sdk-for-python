@@ -310,14 +310,10 @@ extends:
                       - pwsh: >
                           $fileCount = (Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}} | ? {$_.Name -match "-[0-9]*.[0-9]*.[0-9]*a[0-9]*" } | Measure-Object).Count
 
-
-
                           if ($fileCount -eq 0) {
                             Write-Host "No alpha packages for ${{artifact.name}} to publish."
                             exit 0
                           }
-
-
 
                           twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*-*a*.whl
 

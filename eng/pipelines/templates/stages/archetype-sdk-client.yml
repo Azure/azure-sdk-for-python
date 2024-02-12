@@ -132,18 +132,18 @@ extends:
           - template: /eng/pipelines/templates/variables/globals.yml@self
 
       # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
-      # - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
-      #     - template: archetype-python-release.yml@self
-      #       parameters:
-      #         DependsOn: Build
-      #         ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      #         Artifacts: ${{ parameters.Artifacts }}
-      #         ${{ if eq(parameters.ServiceDirectory, 'template') }}:
-      #           TestPipeline: true
-      #         ArtifactName: packages_extended
-      #         DocArtifact: documentation
-      #         TargetDocRepoOwner: ${{ parameters.TargetDocRepoOwner }}
-      #         TargetDocRepoName: ${{ parameters.TargetDocRepoName }}
-      #         DevFeedName: ${{ parameters.DevFeedName }}
+      - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
+          - template: archetype-python-release.yml@self
+            parameters:
+              DependsOn: Build
+              ServiceDirectory: ${{ parameters.ServiceDirectory }}
+              Artifacts: ${{ parameters.Artifacts }}
+              ${{ if eq(parameters.ServiceDirectory, 'template') }}:
+                TestPipeline: true
+              ArtifactName: packages_extended
+              DocArtifact: documentation
+              TargetDocRepoOwner: ${{ parameters.TargetDocRepoOwner }}
+              TargetDocRepoName: ${{ parameters.TargetDocRepoName }}
+              DevFeedName: ${{ parameters.DevFeedName }}
 
 
