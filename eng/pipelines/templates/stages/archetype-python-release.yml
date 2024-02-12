@@ -301,7 +301,7 @@ extends:
                   python -m pip install twine
                 displayName: Install Twine
 
-              - template: ../steps/auth-dev-feed.yml@self
+              - template: /eng/pipelines/templates/steps/auth-dev-feed.yml@self
                 parameters:
                   DevFeedName: ${{ parameters.DevFeedName }}
 
