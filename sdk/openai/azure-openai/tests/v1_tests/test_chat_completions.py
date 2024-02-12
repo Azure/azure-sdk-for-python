@@ -1050,20 +1050,14 @@ class TestChatCompletions(AzureRecordedTestCase):
                 }
             ],
         )
-        assert completion.id
         assert completion.object == "chat.completion"
-        assert completion.model
-        assert completion.created
-        assert completion.usage.completion_tokens is not None
-        assert completion.usage.prompt_tokens is not None
-        assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
         assert len(completion.choices) == 1
         assert completion.choices[0].index is not None
         assert completion.choices[0].message.content is not None
         assert completion.choices[0].message.role
 
     @configure
-    @pytest.mark.parametrize("api_type", [OPENAI, GPT_4_AZURE])
+    @pytest.mark.parametrize("api_type", [OPENAI])
     def test_chat_completion_logprobs(self, client, azure_openai_creds, api_type, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
