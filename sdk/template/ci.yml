@@ -34,7 +34,6 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: template
-    BuildTargetingString: "azure-*, azure-template"
     ValidateFormatting: true
     Artifacts:
     - name: azure-template
