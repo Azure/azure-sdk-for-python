@@ -327,7 +327,8 @@ class DatabaseProxy(object):
                 unique_key_policy=unique_key_policy,
                 conflict_resolution_policy=conflict_resolution_policy,
                 analytical_storage_ttl=analytical_storage_ttl,
-                computed_properties=computed_properties
+                computed_properties=computed_properties,
+                **kwargs
             )
 
     @distributed_trace

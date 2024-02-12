@@ -324,7 +324,8 @@ class DatabaseProxy(object):
                 unique_key_policy=unique_key_policy,
                 conflict_resolution_policy=conflict_resolution_policy,
                 analytical_storage_ttl=analytical_storage_ttl,
-                computed_properties=computed_properties
+                computed_properties=computed_properties,
+                **kwargs
             )
 
     def get_container_client(self, container: Union[str, ContainerProxy, Dict[str, Any]]) -> ContainerProxy:
