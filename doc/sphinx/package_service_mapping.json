@@ -1,4 +1,739 @@
 {
+  "azure-mgmt-workloadmonitor": {
+      "service_name": "workloadmonitor",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.workloadmonitor"
+      ]
+  },
+  "azure-mgmt-hybridcontainerservice": {
+      "service_name": "hybridcontainerservice",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.hybridcontainerservice"
+      ]
+  },
+  "azure-mgmt-core": {
+      "service_name": "core",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.core"
+      ]
+  },
+  "azure-mgmt-elasticsan": {
+      "service_name": "elasticsan",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.elasticsan"
+      ]
+  },
+  "azure-mgmt-redisenterprise": {
+      "service_name": "redisenterprise",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.redisenterprise"
+      ]
+  },
+  "azure-mgmt-support": {
+      "service_name": "support",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.support"
+      ]
+  },
+  "azure-mgmt-qumulo": {
+      "service_name": "qumulo",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.qumulo"
+      ]
+  },
+  "azure-mgmt-networkcloud": {
+      "service_name": "networkcloud",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.networkcloud"
+      ]
+  },
+  "azure-mgmt-quota": {
+      "service_name": "quota",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.quota"
+      ]
+  },
+  "azure-mgmt-orbital": {
+      "service_name": "orbital",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.orbital"
+      ]
+  },
+  "azure-mgmt-hdinsightcontainers": {
+      "service_name": "hdinsight",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.hdinsightcontainers"
+      ]
+  },
+  "azure-mgmt-securityinsight": {
+      "service_name": "securityinsight",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.securityinsight"
+      ]
+  },
+  "azure-mgmt-avs": {
+      "service_name": "compute",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.avs"
+      ]
+  },
+  "azure-mgmt-recoveryservicesdatareplication": {
+      "service_name": "recoveryservicesdatareplication",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.recoveryservicesdatareplication"
+      ]
+  },
+  "azure-mgmt-nginx": {
+      "service_name": "nginx",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.nginx"
+      ]
+  },
+  "azure-mgmt-selfhelp": {
+      "service_name": "selfhelp",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.selfhelp"
+      ]
+  },
+  "azure-mgmt-webpubsub": {
+      "service_name": "webpubsub",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.webpubsub"
+      ]
+  },
+  "azure-mgmt-quantum": {
+      "service_name": "quantum",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.quantum"
+      ]
+  },
+  "azure-mgmt-guestconfig": {
+      "service_name": "machinelearning",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.guestconfig"
+      ]
+  },
+  "azure-mgmt-securitydevops": {
+      "service_name": "securitydevops",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.securitydevops"
+      ]
+  },
+  "azure-mgmt-networkfunction": {
+      "service_name": "networkfunction",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.networkfunction"
+      ]
+  },
+  "azure-mgmt-resourceconnector": {
+      "service_name": "resourceconnector",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.resourceconnector"
+      ]
+  },
+  "azure-mgmt-workloads": {
+      "service_name": "workloads",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.workloads"
+      ]
+  },
+  "azure-mgmt-graphservices": {
+      "service_name": "graphservices",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.graphservices"
+      ]
+  },
+  "azure-mgmt-purview": {
+      "service_name": "purview",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.purview"
+      ]
+  },
+  "azure-mgmt-digitaltwins": {
+      "service_name": "digitaltwins",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.digitaltwins"
+      ]
+  },
+  "azure-mgmt-storagepool": {
+      "service_name": "storagepool",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.storagepool"
+      ]
+  },
+  "azure-mgmt-managedapplications": {
+      "service_name": "managedapplications",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.managedapplications"
+      ]
+  },
+  "azure-mgmt-storageimportexport": {
+      "service_name": "storage",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.storageimportexport"
+      ]
+  },
+  "azure-mgmt-regionmove": {
+      "service_name": "regionmove",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.regionmove"
+      ]
+  },
+  "azure-mgmt-baremetalinfrastructure": {
+      "service_name": "baremetalinfrastructure",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.baremetalinfrastructure"
+      ]
+  },
+  "azure-mgmt-hybridkubernetes": {
+      "service_name": "hybridkubernetes",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.hybridkubernetes"
+      ]
+  },
+  "azure-mgmt-changeanalysis": {
+      "service_name": "changeanalysis",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.changeanalysis"
+      ]
+  },
+  "azure-mgmt-redhatopenshift": {
+      "service_name": "redhatopenshift",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.redhatopenshift"
+      ]
+  },
+  "azure-mgmt-paloaltonetworksngfw": {
+      "service_name": "paloaltonetworks",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.paloaltonetworksngfw"
+      ]
+  },
+  "azure-mgmt-servicefabricmanagedclusters": {
+      "service_name": "servicefabricmanagedclusters",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.servicefabricmanagedclusters"
+      ]
+  },
+  "azure-mgmt-documentdb": {
+      "service_name": "cosmos",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.documentdb"
+      ]
+  },
+  "azure-mgmt-dashboard": {
+      "service_name": "dashboard",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.dashboard"
+      ]
+  },
+  "azure-mgmt-fluidrelay": {
+      "service_name": "fluidrelay",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.fluidrelay"
+      ]
+  },
+  "azure-mgmt-synapse": {
+      "service_name": "synapse",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.synapse"
+      ]
+  },
+  "azure-mgmt-playwrighttesting": {
+      "service_name": "playwrighttesting",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.playwrighttesting"
+      ]
+  },
+  "azure-mgmt-recoveryservicessiterecovery": {
+      "service_name": "recoveryservices",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.recoveryservicessiterecovery"
+      ]
+  },
+  "azure-mgmt-operationsmanagement": {
+      "service_name": "operationsmanagement",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.operationsmanagement"
+      ]
+  },
+  "azure-mgmt-dataprotection": {
+      "service_name": "dataprotection",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.dataprotection"
+      ]
+  },
+  "azure-mgmt-streamanalytics": {
+      "service_name": "streamanalytics",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.streamanalytics"
+      ]
+  },
+  "azure-mgmt-databoxedge": {
+      "service_name": "databoxedge",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.databoxedge"
+      ]
+  },
+  "azure-mgmt-networkanalytics": {
+      "service_name": "networkanalytics",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.networkanalytics"
+      ]
+  },
+  "azure-mgmt-elastic": {
+      "service_name": "elastic",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.elastic"
+      ]
+  },
+  "azure-mgmt-videoanalyzer": {
+      "service_name": "videoanalyzer",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.videoanalyzer"
+      ]
+  },
+  "azure-mgmt-cosmosdbforpostgresql": {
+      "service_name": "cosmosdbforpostgresql",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.cosmosdbforpostgresql"
+      ]
+  },
+  "azure-mgmt-storagemover": {
+      "service_name": "storagemover",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.storagemover"
+      ]
+  },
+  "azure-mgmt-mobilenetwork": {
+      "service_name": "mobilenetwork",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.mobilenetwork"
+      ]
+  },
+  "azure-mgmt-education": {
+      "service_name": "education",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.education"
+      ]
+  },
+  "azure-mgmt-containerservicefleet": {
+      "service_name": "containerservice",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.containerservicefleet"
+      ]
+  },
+  "azure-mgmt-servicelinker": {
+      "service_name": "servicelinker",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.servicelinker"
+      ]
+  },
+  "azure-mgmt-iotfirmwaredefense": {
+      "service_name": "iotfirmwaredefense",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.iotfirmwaredefense"
+      ]
+  },
+  "azure-mgmt-springappdiscovery": {
+      "service_name": "springappdiscovery",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.springappdiscovery"
+      ]
+  },
+  "azure-mgmt-timeseriesinsights": {
+      "service_name": "timeseriesinsights",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.timeseriesinsights"
+      ]
+  },
+  "azure-mgmt-app": {
+      "service_name": "app",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.app"
+      ]
+  },
+  "azure-mgmt-testbase": {
+      "service_name": "testbase",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.testbase"
+      ]
+  },
+  "azure-mgmt-managednetworkfabric": {
+      "service_name": "managednetworkfabric",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.managednetworkfabric"
+      ]
+  },
+  "azure-mgmt-logz": {
+      "service_name": "logz",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.logz"
+      ]
+  },
+  "azure-mgmt-edgeorder": {
+      "service_name": "edgeorder",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.edgeorder"
+      ]
+  },
+  "azure-mgmt-newrelicobservability": {
+      "service_name": "newrelicobservability",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.newrelicobservability"
+      ]
+  },
+  "azure-mgmt-maintenance": {
+      "service_name": "maintenance",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.maintenance"
+      ]
+  },
+  "azure-mgmt-databox": {
+      "service_name": "databox",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.databox"
+      ]
+  },
+  "azure-mgmt-dynatrace": {
+      "service_name": "dynatrace",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.dynatrace"
+      ]
+  },
+  "azure-mgmt-healthbot": {
+      "service_name": "healthbot",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.healthbot"
+      ]
+  },
+  "azure-mgmt-confidentialledger": {
+      "service_name": "confidentialledger",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.confidentialledger"
+      ]
+  },
+  "azure-mgmt-hardwaresecuritymodules": {
+      "service_name": "hardwaresecuritymodules",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.hardwaresecuritymodules"
+      ]
+  },
+  "azure-mgmt-devcenter": {
+      "service_name": "devcenter",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.devcenter"
+      ]
+  },
+  "azure-mgmt-desktopvirtualization": {
+      "service_name": "desktopvirtualization",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.desktopvirtualization"
+      ]
+  },
+  "azure-mgmt-voiceservices": {
+      "service_name": "voiceservices",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.voiceservices"
+      ]
+  },
+  "azure-mgmt-oep": {
+      "service_name": "oep",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.oep"
+      ]
+  },
+  "azure-mgmt-sphere": {
+      "service_name": "sphere",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.sphere"
+      ]
+  },
+  "azure-mgmt": {
+      "service_name": "core",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt"
+      ]
+  },
+  "azure-mgmt-kubernetesconfiguration": {
+      "service_name": "kubernetesconfiguration",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.kubernetesconfiguration"
+      ]
+  },
+  "azure-mgmt-loadtesting": {
+      "service_name": "loadtesting",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.loadtesting"
+      ]
+  },
+  "azure-mgmt-hybridconnectivity": {
+      "service_name": "hybridconnectivity",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.hybridconnectivity"
+      ]
+  },
+  "azure-mgmt-hybridnetwork": {
+      "service_name": "hybridnetwork",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.hybridnetwork"
+      ]
+  },
+  "azure-mgmt-devhub": {
+      "service_name": "devhub",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.devhub"
+      ]
+  },
+  "azure-mgmt-powerbidedicated": {
+      "service_name": "powerbidedicated",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.powerbidedicated"
+      ]
+  },
+  "azure-mgmt-confluent": {
+      "service_name": "confluent",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.confluent"
+      ]
+  },
+  "azure-mgmt-scvmm": {
+      "service_name": "scvmm",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.scvmm"
+      ]
+  },
+  "azure-mgmt-datadog": {
+      "service_name": "datadog",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.datadog"
+      ]
+  },
+  "azure-mgmt-customproviders": {
+      "service_name": "customproviders",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.customproviders"
+      ]
+  },
+  "azure-mgmt-portal": {
+      "service_name": "portal",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.portal"
+      ]
+  },
+  "azure-mgmt-billingbenefits": {
+      "service_name": "billingbenefits",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.billingbenefits"
+      ]
+  },
+  "azure-mgmt-deviceupdate": {
+      "service_name": "deviceupdate",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.deviceupdate"
+      ]
+  },
+  "azure-mgmt-resourcemover": {
+      "service_name": "resourcemover",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.resourcemover"
+      ]
+  },
+  "azure-mgmt-chaos": {
+      "service_name": "chaos",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.chaos"
+      ]
+  },
+  "azure-mgmt-dnsresolver": {
+      "service_name": "dnsresolver",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.dnsresolver"
+      ]
+  },
+  "azure-mgmt-connectedvmware": {
+      "service_name": "connectedvmware",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.connectedvmware"
+      ]
+  },
+  "azure-mgmt-defendereasm": {
+      "service_name": "defendereasm",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.defendereasm"
+      ]
+  },
+  "azure-mgmt-extendedlocation": {
+      "service_name": "extendedlocation",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.extendedlocation"
+      ]
+  },
+  "azure-mgmt-servicenetworking": {
+      "service_name": "servicenetworking",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.servicenetworking"
+      ]
+  },
+  "azure-mgmt-resourcehealth": {
+      "service_name": "resourcehealth",
+      "category": "Management",
+      "namespaces": [
+          "azure.mgmt.resourcehealth"
+      ]
+  },
+  "azure-mgmt-azurestackhci": {
+		"service_name": "Azure Stack HCI",
+		"category": "Client",
+    "namespaces": [
+      "azure.mgmt.azurestackhci"
+    ]
+	},
+  "azure-mgmt-azurestack": {
+		"service_name": "Azure Stack",
+		"category": "Client",
+    "namespaces": [
+      "azure.mgmt.azurestack"
+    ]
+	},
+  "azure-mgmt-azurearcdata": {
+		"service_name": "Azure Arc Data",
+		"category": "Client",
+    "namespaces": [
+      "azure.mgmt.azurearcdata"
+    ]
+	},
+  "azure-mgmt-automanage": {
+		"service_name": "Auto Manage",
+		"category": "Client",
+    "namespaces": [
+      "azure.mgmt.automanage"
+    ]
+	},
+  "azure-mgmt-appcontainers": {
+		"service_name": "App Containers",
+		"category": "Client",
+    "namespaces": [
+      "azure.mgmt.appcontainers"
+    ]
+	},
+  "azure-mgmt-appcomplianceautomation": {
+		"service_name": "App Compliance Automation",
+		"category": "Client",
+    "namespaces": [
+      "azure.mgmt.appcomplianceautomation"
+    ]
+	},
+  "azure-mgmt-agrifood": {
+		"service_name": "Agrifood",
+		"category": "Client",
+    "namespaces": [
+      "azure.mgmt.agrifood"
+    ]
+	},
+  "azure-mgmt-apicenter": {
+		"service_name": "API Center",
+		"category": "Client",
+    "namespaces": [
+      "azure.mgmt.apicenter"
+    ]
+	},
   "azure-applicationinsights": {
 		"service_name": "Application Insights",
 		"category": "Client",
@@ -955,7 +1690,9 @@
     "category": "Management",
     "service_name": "App Configuration",
     "namespaces": [
-      "azure.mgmt.appconfiguration"
+      "azure.mgmt.appconfiguration.v2022_03_01_preview",
+      "azure.mgmt.appconfiguration.v2022_05_01",
+      "azure.mgmt.appconfiguration.v2023_03_01"
     ]
   },
   "azure-mgmt-privatedns": {

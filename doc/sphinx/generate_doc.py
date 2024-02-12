@@ -75,6 +75,7 @@ Submodules
 
 # Update the code to compute this list automatically
 MULTIAPI_VERSION_NAMESPACE = [
+    "azure.mgmt.appconfiguration",
     "azure.mgmt.storage",
     "azure.mgmt.web",
     "azure.mgmt.network",
