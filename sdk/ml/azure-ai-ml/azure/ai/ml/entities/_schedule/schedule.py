@@ -76,7 +76,7 @@ class Schedule(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, Resource)
         self.display_name = display_name
         self._is_enabled: bool = is_enabled
         self._provisioning_state: str = provisioning_state
-        self._type = None
+        self._type: Any = None
 
     def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
         """Dump the schedule content into a file in YAML format.

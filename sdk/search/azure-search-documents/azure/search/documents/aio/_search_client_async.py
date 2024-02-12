@@ -296,6 +296,7 @@ class SearchClient(HeadersMixin):
              vector search is performed. Default is 'preFilter'. Known values are: "postFilter" and "preFilter".
         :paramtype vector_filter_mode: str or VectorFilterMode
         :return: A list of documents (dicts) matching the specified search criteria.
+        :return: List of search results.
         :rtype:  AsyncSearchItemPaged[dict]
 
         .. admonition:: Example:
@@ -427,7 +428,7 @@ class SearchClient(HeadersMixin):
             included in the results.
         :keyword int top: The number of suggestions to retrieve. The value must be a number between 1 and
             100. The default is 5.
-        :return: List of documents.
+        :return: List of suggestion results.
         :rtype:  list[dict]
 
         .. admonition:: Example:
@@ -472,6 +473,7 @@ class SearchClient(HeadersMixin):
         suggester_name: str,
         *,
         mode: Optional[Union[str, AutocompleteMode]] = None,
+        filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
         highlight_post_tag: Optional[str] = None,
         highlight_pre_tag: Optional[str] = None,
@@ -508,6 +510,7 @@ class SearchClient(HeadersMixin):
             terms. Target fields must be included in the specified suggester.
         :keyword int top: The number of auto-completed terms to retrieve. This must be a value between 1 and
             100. The default is 5.
+        :return: List of auto-completion results.
         :rtype:  list[Dict]
 
         .. admonition:: Example:
@@ -520,7 +523,7 @@ class SearchClient(HeadersMixin):
                 :caption: Get a auto-completions.
         """
         autocomplete_mode = mode
-        filter_arg = kwargs.pop("filter", None)
+        filter_arg = filter
         search_fields_str = ",".join(search_fields) if search_fields else None
         query = AutocompleteQuery(
             search_text=search_text,

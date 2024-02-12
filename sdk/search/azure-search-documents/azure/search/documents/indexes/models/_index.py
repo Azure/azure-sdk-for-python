@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
+from typing import Any, Dict, Union, List, Optional
 
 from .._generated import _serialization
 from ._edm import Collection, ComplexType, String
@@ -11,6 +11,7 @@ from .._generated.models import (
     SearchField as _SearchField,
     SearchIndex as _SearchIndex,
     PatternTokenizer as _PatternTokenizer,
+    LexicalAnalyzerName,
 )
 from ._models import (
     pack_analyzer,
@@ -19,8 +20,6 @@ from ._models import (
     SearchResourceEncryptionKey,
 )
 
-if TYPE_CHECKING:
-    from typing import Any, Dict
 
 __all__ = ("ComplexField", "SearchableField", "SimpleField")
 
@@ -265,8 +264,17 @@ class SearchField(_serialization.Model):
         )
 
 
-def SimpleField(**kw):
-    # type: (**Any) -> SearchField
+def SimpleField(
+    *,
+    name: str,
+    type: str,
+    key: bool = False,
+    hidden: bool = False,
+    filterable: bool = False,
+    sortable: bool = False,
+    facetable: bool = False,
+    **kw  # pylint:disable=unused-argument
+) -> SearchField:
     """Configure a simple field for an Azure Search Index
 
     :keyword name: Required. The name of the field, which must be unique within the fields collection
@@ -311,19 +319,38 @@ def SimpleField(**kw):
         on). Fields of type SearchFieldDataType.GeographyPoint or
         Collection(SearchFieldDataType.GeographyPoint) cannot be facetable. Default is False.
     :paramtype facetable: bool
+    :return: The search field object.
+    :rtype:  SearchField
     """
-    result = {"name": kw.get("name"), "type": kw.get("type")}  # type: Dict[str, Any]
-    result["key"] = kw.get("key", False)
-    result["searchable"] = False
-    result["filterable"] = kw.get("filterable", False)
-    result["facetable"] = kw.get("facetable", False)
-    result["sortable"] = kw.get("sortable", False)
-    result["hidden"] = kw.get("hidden", False)
+    result: Dict[str, Any] = {
+        "name": name,
+        "type": type,
+        "key": key,
+        "searchable": False,
+        "filterable": filterable,
+        "facetable": facetable,
+        "sortable": sortable,
+        "hidden": hidden,
+    }
     return SearchField(**result)
 
 
-def SearchableField(**kw):
-    # type: (**Any) -> SearchField
+def SearchableField(
+    *,
+    name: str,
+    collection: bool = False,
+    key: bool = False,
+    hidden: bool = False,
+    searchable: bool = True,
+    filterable: bool = False,
+    sortable: bool = False,
+    facetable: bool = False,
+    analyzer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
+    search_analyzer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
+    index_analyzer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
+    synonym_map_names: Optional[List[str]] = None,
+    **kw  # pylint:disable=unused-argument
+) -> SearchField:
     """Configure a searchable text field for an Azure Search Index
 
     :keyword name: Required. The name of the field, which must be unique within the fields collection
@@ -438,29 +465,38 @@ def SearchableField(**kw):
         query terms targeting that field are expanded at query-time using the rules in the synonym map.
         This attribute can be changed on existing fields.
     :paramtype synonym_map_names: list[str]
-
+    :return: The search field object.
+    :rtype:  SearchField
     """
-    typ = Collection(String) if kw.get("collection", False) else String
-    result = {"name": kw.get("name"), "type": typ}  # type: Dict[str, Any]
-    result["key"] = kw.get("key", False)
-    result["searchable"] = kw.get("searchable", True)
-    result["filterable"] = kw.get("filterable", False)
-    result["facetable"] = kw.get("facetable", False)
-    result["sortable"] = kw.get("sortable", False)
-    result["hidden"] = kw.get("hidden", False)
-    if "analyzer_name" in kw:
-        result["analyzer_name"] = kw["analyzer_name"]
-    if "search_analyzer_name" in kw:
-        result["search_analyzer_name"] = kw["search_analyzer_name"]
-    if "index_analyzer_name" in kw:
-        result["index_analyzer_name"] = kw["index_analyzer_name"]
-    if "synonym_map_names" in kw:
-        result["synonym_map_names"] = kw["synonym_map_names"]
+    typ = Collection(String) if collection else String
+    result: Dict[str, Any] = {
+        "name": name,
+        "type": typ,
+        "key": key,
+        "searchable": searchable,
+        "filterable": filterable,
+        "facetable": facetable,
+        "sortable": sortable,
+        "hidden": hidden,
+    }
+    if analyzer_name:
+        result["analyzer_name"] = analyzer_name
+    if search_analyzer_name:
+        result["search_analyzer_name"] = search_analyzer_name
+    if index_analyzer_name:
+        result["index_analyzer_name"] = index_analyzer_name
+    if synonym_map_names:
+        result["synonym_map_names"] = synonym_map_names
     return SearchField(**result)
 
 
-def ComplexField(**kw):
-    # type: (**Any) -> SearchField
+def ComplexField(
+    *,
+    name: str,
+    collection: bool = False,
+    fields: Optional[List[SearchField]] = None,
+    **kw  # pylint:disable=unused-argument
+) -> SearchField:
     """Configure a Complex or Complex collection field for an Azure Search
     Index
 
@@ -469,14 +505,13 @@ def ComplexField(**kw):
     :paramtype name: str
     :keyword collection: Whether this complex field is a collection (default False)
     :paramtype collection: bool
-    :paramtype type: str or ~azure.search.documents.indexes.models.DataType
     :keyword fields: A list of sub-fields
-    :paramtype fields: list[~azure.search.documents.indexes.models.Field]
-
+    :paramtype fields: list[~azure.search.documents.indexes.models.SearchField]
+    :return: The search field object.
+    :rtype:  SearchField
     """
-    typ = Collection(ComplexType) if kw.get("collection", False) else ComplexType
-    result = {"name": kw.get("name"), "type": typ}  # type: Dict[str, Any]
-    result["fields"] = kw.get("fields")
+    typ = Collection(ComplexType) if collection else ComplexType
+    result: Dict[str, Any] = {"name": name, "type": typ, "fields": fields}
     return SearchField(**result)
 
 
