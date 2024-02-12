@@ -241,7 +241,7 @@ def _create_mlindex_from_existing_acs(
     path = Path.cwd() / f"import-acs-{acs_config.acs_index_name}-mlindex"
 
     path.mkdir(exist_ok=True)
-    with open(path / "MLIndex", "w") as f:
+    with open(path / "MLIndex", "w", encoding="utf-8") as f:
         yaml.dump(mlindex_config, f)
 
     return Index(

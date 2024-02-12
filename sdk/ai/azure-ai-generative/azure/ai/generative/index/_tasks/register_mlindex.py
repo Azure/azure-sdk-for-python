@@ -71,7 +71,7 @@ def main(args, run, logger, activity_logger):
         path_1 + path_2,
         data_version.asset_id,
     )
-    with open(args.output_asset_id, "w") as f:
+    with open(args.output_asset_id, "w", encoding="utf-8") as f:
         f.write(asset_id)
 
     logger.info(f"Finished Registering MLIndex Asset '{args.asset_name}', version = {data_version.version_id}")

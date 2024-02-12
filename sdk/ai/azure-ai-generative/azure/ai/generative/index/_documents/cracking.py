@@ -352,7 +352,7 @@ def crack_documents(
             mode = "rb"
 
         try:
-            with open(source.path, mode=mode) as f:  # type: ignore[arg-type]
+            with open(source.path, mode=mode, encoding="utf-8") as f:  # type: ignore[arg-type]
                 loader = loader_cls(**{"file": f, "document_source": source, "metadata": {}})
                 file_pre_yield_time = time.time()
                 total_time += file_pre_yield_time - file_start_time
@@ -361,7 +361,7 @@ def crack_documents(
             # if loader_cls has a fallback_loader, try that
             if hasattr(loader_cls, "fallback_loader"):
                 fallback_loader_cls = loader_cls.fallback_loader()
-                with open(source.path, mode=mode) as f:  # type: ignore[arg-type]
+                with open(source.path, mode=mode, encoding="utf-8") as f:  # type: ignore[arg-type]
                     loader = fallback_loader_cls(**{"file": f, "document_source": source, "metadata": {}})
                     file_pre_yield_time = time.time()
                     total_time += file_pre_yield_time - file_start_time

@@ -21,7 +21,7 @@ _EXP_NAME = "experiment"
 _RUN_ID = "runid"
 
 def load_jsonl(path):
-    with open(path, "r") as f:
+    with open(path, "r", encoding="utf-8") as f:
         return [json.loads(line) for line in f.readlines()]
 
 def load_jsonl_to_df(path):
@@ -44,7 +44,7 @@ def run_pf_flow_with_dict_list(flow_path, data: List[Dict], flow_params=None):
 
     with tempfile.TemporaryDirectory() as tmpdir:
         tmp_path = os.path.join(tmpdir, "test_data.jsonl")
-        with open(tmp_path, "w") as f:
+        with open(tmp_path, "w", encoding="utf-8") as f:
             for line in data:
                 f.write(json.dumps(line) + "\n")
 

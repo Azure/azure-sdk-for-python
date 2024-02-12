@@ -43,7 +43,7 @@ def read_chunks_into_documents(files: List[pathlib.Path], chunk_format: str = "c
         max_chunk_len = 0
         num_chunks = 0
         if file_name.lower().endswith(".jsonl") or chunk_format == "jsonl":
-            with open(chunk_file) as f:
+            with open(chunk_file, encoding="utf-8") as f:
                 for line in f:
                     doc = StaticDocument.loads(line.strip())
                     max_chunk_len = max(max_chunk_len, len(doc.data))

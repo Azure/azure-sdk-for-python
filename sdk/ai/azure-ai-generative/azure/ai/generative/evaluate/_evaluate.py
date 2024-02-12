@@ -398,7 +398,7 @@ def _evaluate(  # pylint: disable=too-many-locals, too-many-branches, too-many-s
 
                         # Log the full value as an artifact.
                         param_path = os.path.join(tmpdir, param_name)
-                        with open(param_path, "w") as f:
+                        with open(param_path, "w", encoding="utf-8") as f:
                             f.write(param_value)
                         mlflow.log_artifact(param_path)
                     else:

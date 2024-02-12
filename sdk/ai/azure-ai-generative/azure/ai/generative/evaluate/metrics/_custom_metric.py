@@ -100,7 +100,7 @@ class PromptMetric(Metric):
 
         env = Environment()
 
-        with open(path) as template_file:
+        with open(path, encoding="utf-8") as template_file:
             template_content = template_file.read()
             template = env.parse(template_content, name="test")
 

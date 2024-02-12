@@ -55,7 +55,7 @@ def write_chunks_to_jsonl(chunks: List[Document], output_path):
     output_dir = Path(output_path).parent
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    with open(output_path, "w") as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         for chunk in chunks:
             f.write(chunk.dumps())
             f.write("\n")
