@@ -12,6 +12,8 @@ from typing import List
         ("sphinx", ["*"], True),
         ("sphinx", ["a*"], False),
         ("sphinx", [""], False),
+        ("sphinx", ["sphinx2"], False),
+        ("sphinx", ["whl"], False),
         ("sphinx", ["sphinx"], True),
         ("sphinx", ["sphinx "], False),
         ("azure-storage-blob", ["azure-*"], True),
