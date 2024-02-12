@@ -229,6 +229,7 @@ def create_index_from_raw_embeddings(
 ) -> MLIndex:
     """Upload an EmbeddingsContainer to Azure Cognitive Search and return an MLIndex."""
     with track_activity(
+        # pylint: disable=protected-access
         logger, "update_acs", custom_dimensions={"num_documents": len(emb._document_embeddings)}
     ) as activity_logger:
         logger.info("Updating ACS index")
@@ -285,7 +286,7 @@ def create_index_from_raw_embeddings(
         def batched_docs_to_delete(embeddings_container) -> Iterator[List[Dict[str, str]]]:
             num_deleted_ids = 0
             deleted_ids = []
-            for source_id, source in emb._deleted_sources.items():
+            for source_id, source in emb._deleted_sources.items():  # pylint: disable=protected-access
                 logger.info(f"Deleting all documents from source: {source_id}")
                 for doc_id in source.document_ids:
                     num_deleted_ids += 1
@@ -298,7 +299,7 @@ def create_index_from_raw_embeddings(
 
             msg = "adding individual documents marked for deletion"
             logger.info(f"{len(deleted_ids)} documents from sources marked for deletion, " + msg)
-            for doc_id in emb._deleted_documents:
+            for doc_id in emb._deleted_documents:  # pylint: disable=protected-access
                 num_deleted_ids += 1
                 deleted_ids.append({"id": base64.urlsafe_b64encode(doc_id.encode("utf-8")).decode("utf-8")})
                 if len(deleted_ids) == AZURE_SEARCH_DOCUMENT_ACTION_BATCH_LIMIT:
@@ -344,7 +345,7 @@ def create_index_from_raw_embeddings(
         last_doc_prefix = None
         doc_prefix_count = 0
         skipped_prefix_documents = 0
-        for doc_id, emb_doc in emb._document_embeddings.items():
+        for doc_id, emb_doc in emb._document_embeddings.items():  # pylint: disable=protected-access
             doc_prefix = doc_id.split(".")[0]
             if doc_prefix != last_doc_prefix:
                 if doc_prefix_count > 0:
@@ -442,6 +443,7 @@ def create_index_from_raw_embeddings(
 
         duration = time.time() - t1
         msg = f"took {duration:.4f} seconds"
+        # pylint: disable=protected-access
         logger.info(f"Built index from {num_source_docs} documents and {len(emb._document_embeddings)} chunks, " + msg)
         activity_logger.info(
             "Built index", extra={"properties": {"num_source_docs": num_source_docs, "duration": duration}}

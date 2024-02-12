@@ -104,6 +104,7 @@ def create_index_from_raw_embeddings(
         documents and IDs of deleted documents. 2 will log all document_ids as they are processed.
     """
     with track_activity(
+        # pylint: disable=protected-access
         logger, "create_index_from_raw_embeddings", custom_dimensions={"num_documents": len(emb._document_embeddings)}
     ) as activity_logger:
         logger.info("Updating Pinecone index")
@@ -159,7 +160,7 @@ def create_index_from_raw_embeddings(
 
         # Delete removed documents
         deleted_ids = []
-        for (source_id, source) in emb._deleted_sources.items():
+        for (source_id, source) in emb._deleted_sources.items():  # pylint: disable=protected-access
             logger.info(f"Deleting all documents from source: {source_id}")
             for doc_id in source.document_ids:
                 deleted_ids.append(base64.urlsafe_b64encode(doc_id.encode("utf-8")).decode("utf-8"))
@@ -168,7 +169,7 @@ def create_index_from_raw_embeddings(
 
         msg = "adding individual documents marked for deletion"
         logger.info(f"Total {len(deleted_ids)} documents from sources marked for deletion, " + msg)
-        for doc_id in emb._deleted_documents:
+        for doc_id in emb._deleted_documents:  # pylint: disable=protected-access
             deleted_ids.append(base64.urlsafe_b64encode(doc_id.encode("utf-8")).decode("utf-8"))
             if verbosity > 1:
                 logger.info(f"Marked document for deletion: {doc_id}")
@@ -198,7 +199,7 @@ def create_index_from_raw_embeddings(
             doc_prefix_count = 0
             skipped_doc_prefix_count = 0
 
-            for doc_id, emb_doc in emb._document_embeddings.items():
+            for doc_id, emb_doc in emb._document_embeddings.items():  # pylint: disable=protected-access
                 doc_prefix = doc_id.split(".")[0]
                 if doc_prefix != last_doc_prefix:
                     if doc_prefix_count > 0:
@@ -308,6 +309,7 @@ def create_index_from_raw_embeddings(
             duration = time.time() - t1
             msg = f"took {duration:.4f} seconds"
             logger.info(
+                # pylint: disable=protected-access
                 f"Built index from {num_source_docs} documents and {len(emb._document_embeddings)} chunks, " + msg
             )
             activity_logger.info(

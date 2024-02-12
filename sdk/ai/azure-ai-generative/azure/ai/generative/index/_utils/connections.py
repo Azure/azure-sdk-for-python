@@ -143,6 +143,7 @@ def connection_to_credential(connection: Union[dict, BaseConnection, WorkspaceCo
 
             return AccessToken(connection.credentials.pat, connection.credentials.expires_on)
         if connection.credentials.type.lower() == "custom_keys":
+            # pylint: disable=protected-access
             if connection._metadata.get("azureml.flow.connection_type", "").lower() == "openai":
                 from azure.core.credentials import AzureKeyCredential
 
@@ -196,7 +197,7 @@ def get_connection_by_id_v2(
         from azure.identity import DefaultAzureCredential
 
         if os.environ.get("AZUREML_RUN_ID", None) is not None:
-            credential = AzureMLTokenAuthentication._initialize_aml_token_auth()
+            credential = AzureMLTokenAuthentication._initialize_aml_token_auth()  # pylint: disable=protected-access
         else:
             credential = credential if credential is not None else DefaultAzureCredential(process_timeout=60)
 
@@ -213,23 +214,25 @@ def get_connection_by_id_v2(
 
         if os.environ.get("AZUREML_RUN_ID", None) is not None:
             # In AzureML Run context, we need to use workspaces internal endpoint that will accept AzureMLToken auth.
+            # pylint: disable=protected-access
             old_base_url = ml_client.connections._operation._client._base_url
-            ml_client.connections._operation._client._base_url = (
+            ml_client.connections._operation._client._base_url = (  # pylint: disable=protected-access
                 f"{os.environ.get('AZUREML_SERVICE_ENDPOINT')}/rp/workspaces"
             )
 
+        # pylint: disable=protected-access
         logger.info(f"Using ml_client base_url: {ml_client.connections._operation._client._base_url}")
 
-        list_secrets_response = ml_client.connections._operation.list_secrets(
+        list_secrets_response = ml_client.connections._operation.list_secrets(  # pylint: disable=protected-access
             connection_name=uri_match.group(4),
             resource_group_name=ml_client.resource_group_name,
             workspace_name=ml_client.workspace_name,
         )
-        connection = WorkspaceConnection._from_rest_object(list_secrets_response)
+        connection = WorkspaceConnection._from_rest_object(list_secrets_response)  # pylint: disable=protected-access
         logger.info(f"Got Connection: {connection.id}")
 
         if os.environ.get("AZUREML_RUN_ID", None) is not None:
-            ml_client.connections._operation._client._base_url = old_base_url
+            ml_client.connections._operation._client._base_url = old_base_url  # pylint: disable=protected-access
     else:
         logger.info("Getting workspace connection via REST as fallback")
         return get_connection_by_id_v1(connection_id, credential)
@@ -272,12 +275,13 @@ def get_metadata_from_connection(connection: Union[dict, WorkspaceConnection, Ba
 
 def get_connection_by_name_v2(workspace, name: str) -> dict:
     """Get a connection from a workspace."""
-    if hasattr(workspace._auth, "get_token"):
+    if hasattr(workspace._auth, "get_token"):  # pylint: disable=protected-access
+        # pylint: disable=protected-access
         bearer_token = workspace._auth.get_token("https://management.azure.com/.default").token
     else:
-        bearer_token = workspace._auth.token
+        bearer_token = workspace._auth.token  # pylint: disable=protected-access
 
-    endpoint = workspace.service_context._get_endpoint("api")
+    endpoint = workspace.service_context._get_endpoint("api")  # pylint: disable=protected-access
     url = (
         f"{endpoint}/rp/workspaces/subscriptions/{workspace.subscription_id}/resourcegroups/"
         + f"{workspace.resource_group}/providers/Microsoft.MachineLearningServices/workspaces/{workspace.name}/"
@@ -341,6 +345,7 @@ def create_connection_v2(workspace, name, category: str, target: str, auth_type:
     resp = send_put_request(
         url,
         {
+            # pylint: disable=protected-access
             "Authorization": f"Bearer {workspace._auth.get_token('https://management.azure.com/.default').token}",
             "content-type": "application/json",
         },

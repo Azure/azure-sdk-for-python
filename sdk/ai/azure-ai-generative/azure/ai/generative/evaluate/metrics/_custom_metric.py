@@ -108,5 +108,5 @@ class PromptMetric(Metric):
 
         metric = PromptMetric(name=name, prompt=template_content)
 
-        metric._template_variable = template_variables
+        metric._template_variable = template_variables  # pylint: disable=protected-access
         return metric

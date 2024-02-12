@@ -936,7 +936,7 @@ class EmbeddingsContainer:
         """
         document_embeddings = self._get_embeddings_internal(input_documents)
         new_embeddings = EmbeddingsContainer(self.kind, **self.arguments)
-        new_embeddings._document_embeddings = document_embeddings
+        new_embeddings._document_embeddings = document_embeddings  # pylint: disable=protected-access
         new_embeddings.statistics = self.statistics.copy()
         return new_embeddings
 

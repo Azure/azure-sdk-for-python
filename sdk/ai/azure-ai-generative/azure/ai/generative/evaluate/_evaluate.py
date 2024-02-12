@@ -297,7 +297,7 @@ def _evaluate(  # pylint: disable=too-many-locals, too-many-branches, too-many-s
         metrics_config.update({"data_mapping": data_mapping})
 
     with mlflow.start_run(
-        nested=True if mlflow.active_run() else False, run_name=evaluation_name
+        nested=mlflow.active_run(), run_name=evaluation_name
     ) as run, RedirectUserOutputStreams(logger=LOGGER) as _:
 
         log_property_and_tag(
@@ -322,6 +322,7 @@ def _evaluate(  # pylint: disable=too-many-locals, too-many-branches, too-many-s
 
         if custom_prompt_metrics:
             for metric in custom_prompt_metrics:
+                # pylint: disable=protected-access
                 metrics_config.setdefault(metric.name, {param: param for param in metric._template_variable})
 
             prompt_metric_handler = PromptMetricHandler(

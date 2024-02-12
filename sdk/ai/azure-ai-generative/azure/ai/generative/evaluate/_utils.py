@@ -82,7 +82,7 @@ def _has_column(data, column_name):
     if data is None:
         return False
     for d in data:
-        return False if d.get(column_name) is None else True
+        return not (d.get(column_name) is None)
 
 
 def _is_flow(asset):
@@ -120,7 +120,7 @@ def _get_artifact_dir_path(path):
 
     artifact_repo = get_artifact_repository(artifact_uri=artifact_uri)
 
-    content_info = artifact_repo.artifacts._client.run_artifacts.get_by_id(
+    content_info = artifact_repo.artifacts._client.run_artifacts.get_by_id(  # pylint: disable=protected-access
         subscription_id=run_info_dict[_SUB_ID], resource_group_name=run_info_dict[_RES_GRP],
         workspace_name=run_info_dict[_WS_NAME], run_id=run_info_dict[_RUN_ID], experiment_name=run_info_dict[_EXP_NAME],
         path=path)

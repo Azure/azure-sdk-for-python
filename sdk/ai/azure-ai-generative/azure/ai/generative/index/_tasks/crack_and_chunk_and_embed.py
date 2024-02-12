@@ -88,6 +88,7 @@ def crack_and_chunk_and_embed(
     source_documents = files_to_document_source(
         source_uri,
         source_glob,
+        # pylint: disable=protected-access
         citation_url if citation_url is not None else DocumentChunksIterator._infer_base_url_from_git(source_uri),
         process_url,
     )
@@ -102,6 +103,7 @@ def crack_and_chunk_and_embed(
         mtime = source_doc.mtime
         # Currently there's no lookup at filename level, only document_ids (post chunking)
         # TODO: Save document_source table along side embedded documents table
+        # pylint: disable=protected-access
         existing_embedded_source = embeddings_container._document_sources.get(source_doc.filename)
         if existing_embedded_source:
             if existing_embedded_source.source.mtime is not None and existing_embedded_source.source.mtime >= mtime:
@@ -114,21 +116,21 @@ def crack_and_chunk_and_embed(
                     msg = f"mtime {mtime} is newer than existing mtime {existing_embedded_source.source.mtime}"
                     logger.info(f"EMBEDDING: source '{source_doc.filename}' as " + msg)
                 sources_to_embed[source_doc.filename] = source_doc
-            del embeddings_container._document_sources[source_doc.filename]
+            del embeddings_container._document_sources[source_doc.filename]  # pylint: disable=protected-access
         else:
             if verbosity >= SOURCE_LOGGING_VERBOSITY:
                 logger.info(f"EMBEDDING: source '{source_doc.filename}' as no existing embedding found")
             sources_to_embed[source_doc.filename] = source_doc
 
-    deleted_sources = embeddings_container._document_sources
+    deleted_sources = embeddings_container._document_sources  # pylint: disable=protected-access
     for deleted_source in deleted_sources.values():
         if verbosity >= SOURCE_LOGGING_VERBOSITY:
             msg = f"REMOVING: source '{deleted_source.source.filename}' "
             logger.info(msg + "from EmbeddingsContainer as it no longer exists in source")
 
     # Reset EmbeddingsContainer._document_sources, ready to add reused sources
-    embeddings_container._document_sources = OrderedDict()
-    embeddings_container._deleted_sources = deleted_sources
+    embeddings_container._document_sources = OrderedDict()  # pylint: disable=protected-access
+    embeddings_container._deleted_sources = deleted_sources  # pylint: disable=protected-access
 
     logger.info(
         "Finished processing sources:\n"
@@ -139,13 +141,15 @@ def crack_and_chunk_and_embed(
 
     documents_embedded = OrderedDict()
     for reused_source in reused_sources.values():
+        # pylint: disable=protected-access
         embeddings_container._document_sources[reused_source.source.filename] = reused_source
         for doc_id in reused_source.document_ids:
             if verbosity >= DOCUMENT_LOGGING_VERBOSITY:
                 logger.info(f"REUSING: chunk '{doc_id}' from source '{reused_source.source.filename}'")
             # Track reused EmbeddedDocuments and remove from EmbeddingsContainer to track documents deleted from source
+            # pylint: disable=protected-access
             documents_embedded[doc_id] = embeddings_container._document_embeddings[doc_id]
-            del embeddings_container._document_embeddings[doc_id]
+            del embeddings_container._document_embeddings[doc_id]  # pylint: disable=protected-access
 
     # Now we have sources_to_embed that we need to chunk, compare with existing embedded documents, and embed,
     # then merge with reused_sources
@@ -176,6 +180,7 @@ def crack_and_chunk_and_embed(
             document_hash = hashlib.sha256(document_data.encode("utf-8")).hexdigest()
             document.metadata["content_hash"] = document_hash
 
+            # pylint: disable=protected-access
             existing_embedded_document = embeddings_container._document_embeddings.get(document.document_id)
             if existing_embedded_document:
                 if existing_embedded_document.document_hash == document_hash:
@@ -188,18 +193,19 @@ def crack_and_chunk_and_embed(
                         msg = f"EMBEDDING: chunk '{document.document_id}' as hash {document_hash} "
                         logger.info(msg + f"is different than existing hash {existing_embedded_document.document_hash}")
                     documents_to_embed.append(document)
-                del embeddings_container._document_embeddings[document.document_id]
+                del embeddings_container._document_embeddings[document.document_id]  # pylint: disable=protected-access
             else:
                 if verbosity >= DOCUMENT_LOGGING_VERBOSITY:
                     logger.info(f"EMBEDDING: chunk '{document.document_id}' as no existing embedding found")
                 documents_to_embed.append(document)
             source_doc_ids.append(document.document_id)
 
+        # pylint: disable=protected-access
         embeddings_container._document_sources[chunked_doc.source.filename] = EmbeddedDocumentSource(
             chunked_doc.source, source_doc_ids
         )
 
-    deleted_documents = embeddings_container._document_embeddings
+    deleted_documents = embeddings_container._document_embeddings  # pylint: disable=protected-access
     for document in deleted_documents.values():
         if verbosity >= DOCUMENT_LOGGING_VERBOSITY:
             logger.debug(
@@ -230,7 +236,7 @@ def crack_and_chunk_and_embed(
             "model": embeddings_container.arguments.get("model", ""),
         },
     ) as activity_logger:
-        embeddings = embeddings_container._embed_fn(
+        embeddings = embeddings_container._embed_fn(  # pylint: disable=protected-access
             data_to_embed, activity_logger=activity_logger  # type: ignore[call-arg]
         )
 
@@ -245,8 +251,8 @@ def crack_and_chunk_and_embed(
         )
 
     # Set and save with EmbeddingsContainer (snapshot of state for this Run)
-    embeddings_container._document_embeddings = documents_embedded
-    embeddings_container._deleted_documents = deleted_documents
+    embeddings_container._document_embeddings = documents_embedded  # pylint: disable=protected-access
+    embeddings_container._deleted_documents = deleted_documents  # pylint: disable=protected-access
 
     file_count = len(sources_to_embed) + len(reused_sources)
     logger.info(

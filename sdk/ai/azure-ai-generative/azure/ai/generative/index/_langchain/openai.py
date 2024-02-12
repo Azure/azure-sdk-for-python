@@ -64,11 +64,17 @@ def patch_openai_embedding_retries(logger, activity_logger, max_seconds_retrying
 
         if version.parse(openai.version.VERSION) >= version.parse("1.0.0"):
             retry_exceptions = (
+                # pylint: disable=protected-access
                 retry_if_exception_type(openai._exceptions.APITimeoutError)
+                # pylint: disable=protected-access
                 | retry_if_exception_type(openai._exceptions.APIError)
+                # pylint: disable=protected-access
                 | retry_if_exception_type(openai._exceptions.APIConnectionError)
+                # pylint: disable=protected-access
                 | retry_if_exception_type(openai._exceptions.RateLimitError)
+                # pylint: disable=protected-access
                 | retry_if_exception_type(openai._exceptions.InternalServerError)
+                # pylint: disable=protected-access
                 | retry_if_exception_type(openai._exceptions.APIResponseValidationError)
             )
         else:
@@ -93,4 +99,4 @@ def patch_openai_embedding_retries(logger, activity_logger, max_seconds_retrying
             before_sleep=_log_it,
         )
 
-    langchain_openai._create_retry_decorator = _create_retry_decorator
+    langchain_openai._create_retry_decorator = _create_retry_decorator  # pylint: disable=protected-access

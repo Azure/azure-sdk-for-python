@@ -44,6 +44,7 @@ def main(args, logger, activity_logger):
         with rslex_uri_volume_mount(parent, f"{os.getcwd()}/raw_embeddings", options=mnt_options) as mount_context:
             logger.info("Loading Embeddings")
             emb = EmbeddingsContainer.load(embeddings_dir_name, mount_context.mount_point)
+            # pylint: disable=protected-access
             activity_logger.activity_info["num_documents"] = len(emb._document_embeddings)
             emb.write_as_faiss_mlindex(Path(args.output))
     except Exception as e:

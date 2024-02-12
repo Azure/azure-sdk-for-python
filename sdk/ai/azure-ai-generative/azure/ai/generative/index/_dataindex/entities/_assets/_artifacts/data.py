@@ -21,4 +21,4 @@ def _resolve_cls_and_type(cls, data, params_override):
 
 
 # Override the _resolve_cls_and_type function in the Data class to support serilization of DataIndex
-Data._resolve_cls_and_type = _resolve_cls_and_type
+Data._resolve_cls_and_type = _resolve_cls_and_type  # pylint: disable=protected-access

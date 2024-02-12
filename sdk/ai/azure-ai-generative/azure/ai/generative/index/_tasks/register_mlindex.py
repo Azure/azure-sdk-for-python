@@ -62,7 +62,9 @@ def main(args, run, logger, activity_logger):
         },
     )
 
+    # pylint: disable=protected-access
     path_1 = f"azureml://subscriptions/{ws._subscription_id}/resourcegroups/{ws._resource_group}/providers"
+    # pylint: disable=protected-access
     path_2 = f"/Microsoft.MachineLearningServices/workspaces/{ws._workspace_name}/data"
     asset_id = re.sub(
         "azureml://locations/(.*)/workspaces/(.*)/data",
