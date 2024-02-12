@@ -51,6 +51,7 @@ jobs:
   pool:
     name: ${{ parameters.Pool }}
     vmImage: ${{ parameters.OsVmImage }}
+    os: ${{ parameters.OS }}
   ${{ if parameters.DependsOn }}:
     dependsOn: ${{ parameters.DependsOn }}
   steps:

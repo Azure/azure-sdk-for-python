@@ -168,8 +168,8 @@ jobs:
     timeoutInMinutes: 90
 
     pool:
-      imageName: 'azsdk-pool-mms-ubuntu-2004-1espt'
-      poolName: 'azsdk-pool-mms-ubuntu-2004-1es-pt'
+      name: azsdk-pool-mms-ubuntu-2004-1es-pt
+      vmImage: azsdk-pool-mms-ubuntu-2004-1espt
       os: linux
 
     steps:
