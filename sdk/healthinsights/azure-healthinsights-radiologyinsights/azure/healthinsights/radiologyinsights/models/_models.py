@@ -1358,11 +1358,15 @@ class ProcedureRecommendation(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar kind: Required. Default value is None.
     :vartype kind: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
+    extension: Optional[List["_models.Extension"]] = rest_field()
+    """Additional Content defined by implementations."""
     kind: str = rest_discriminator(name="kind")
     """Required. Default value is None."""
 
@@ -1371,6 +1375,7 @@ class ProcedureRecommendation(_model_base.Model):
         self,
         *,
         kind: str,
+        extension: Optional[List["_models.Extension"]] = None,
     ):
         ...
 
@@ -1390,6 +1395,8 @@ class GenericProcedureRecommendation(ProcedureRecommendation, discriminator="gen
 
     All required parameters must be populated in order to send to server.
 
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar kind: Procedure type : generic. Required. Default value is
      "genericProcedureRecommendation".
     :vartype kind: str
@@ -1413,6 +1420,7 @@ class GenericProcedureRecommendation(ProcedureRecommendation, discriminator="gen
         self,
         *,
         code: "_models.CodeableConcept",
+        extension: Optional[List["_models.Extension"]] = None,
         description: Optional[str] = None,
     ):
         ...
@@ -1539,6 +1547,8 @@ class ImagingProcedureRecommendation(ProcedureRecommendation, discriminator="ima
 
     All required parameters must be populated in order to send to server.
 
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar kind: Procedure type : imaging. Required. Default value is
      "imagingProcedureRecommendation".
     :vartype kind: str
@@ -1561,6 +1571,7 @@ class ImagingProcedureRecommendation(ProcedureRecommendation, discriminator="ima
         self,
         *,
         imaging_procedures: List["_models.ImagingProcedure"],
+        extension: Optional[List["_models.Extension"]] = None,
         procedure_codes: Optional[List["_models.CodeableConcept"]] = None,
     ):
         ...
@@ -3008,8 +3019,6 @@ class RecommendationFinding(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar extension: Additional Content defined by implementations.
-    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar finding: Finding linked to a recommendation.
     :vartype finding: ~azure.healthinsights.radiologyinsights.models.Observation
     :ivar critical_finding: Critical result linked to a recommendation.
@@ -3018,10 +3027,10 @@ class RecommendationFinding(_model_base.Model):
      "present", "differential", "ruleOut", and "conditional".
     :vartype recommendation_finding_status: str or
      ~azure.healthinsights.radiologyinsights.models.RecommendationFindingStatusType
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     """
 
-    extension: Optional[List["_models.Extension"]] = rest_field()
-    """Additional Content defined by implementations."""
     finding: Optional["_models.Observation"] = rest_field()
     """Finding linked to a recommendation."""
     critical_finding: Optional["_models.CriticalResult"] = rest_field(name="criticalFinding")
@@ -3031,15 +3040,17 @@ class RecommendationFinding(_model_base.Model):
     )
     """Recommendation finding status. Required. Known values are: \"present\", \"differential\",
      \"ruleOut\", and \"conditional\"."""
+    extension: Optional[List["_models.Extension"]] = rest_field()
+    """Additional Content defined by implementations."""
 
     @overload
     def __init__(
         self,
         *,
         recommendation_finding_status: Union[str, "_models.RecommendationFindingStatusType"],
-        extension: Optional[List["_models.Extension"]] = None,
         finding: Optional["_models.Observation"] = None,
         critical_finding: Optional["_models.CriticalResult"] = None,
+        extension: Optional[List["_models.Extension"]] = None,
     ):
         ...
 
