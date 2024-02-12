@@ -105,7 +105,8 @@ class AIResourceOperations:
     def begin_update(
         self, *, ai_resource: AIResource, update_dependent_resources: bool = False, **kwargs
     ) -> LROPoller[AIResource]:
-        """Update the name, description, tags, PNA, manageNetworkSettings, or encryption of a Resource
+        """Update the name, description, tags, PNA, manageNetworkSettings, 
+        container registry, or encryption of a Resource.
 
         :keyword ai_resource: AI resource definition.
         :paramtype ai_resource: ~azure.ai.resources.entities.AIResource
