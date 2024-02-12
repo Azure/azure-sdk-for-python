@@ -77,6 +77,6 @@ setup(
         "Source": "https://github.com/Azure/azure-sdk-python",
     },
     package_data={
-        'azure.ai.resources': ['py.typed'],
+        'azure.ai.resources': ['py.typed', 'azure/ai/resources/_index/_utils/encodings/*'],
     },
 )
