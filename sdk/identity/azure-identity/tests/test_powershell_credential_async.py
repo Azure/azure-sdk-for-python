@@ -100,7 +100,9 @@ async def test_get_token(stderr):
     command = args[-1]
     assert command.startswith("pwsh -NoProfile -NonInteractive -EncodedCommand ")
 
-    encoded_script = command.split()[-1]
+    match = re.search(r"-EncodedCommand\s+(\S+)", command)
+    assert match, "couldn't find encoded script in command line"
+    encoded_script = match.groups()[0]
     decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
     assert "TenantId" not in decoded_script
     assert "Get-AzAccessToken -ResourceUrl '{}'".format(scope) in decoded_script
@@ -277,11 +279,10 @@ async def test_windows_powershell_fallback(error_message):
         communicate = Mock(return_value=get_completed_future((stdout.encode(), stderr.encode())))
         return Mock(communicate=communicate, returncode=return_code)
 
-    with patch(AzurePowerShellCredential.__module__ + ".sys.platform", "win32"):
-        credential = AzurePowerShellCredential()
-        with pytest.raises(CredentialUnavailableError, match=AZ_ACCOUNT_NOT_INSTALLED):
-            with patch(CREATE_SUBPROCESS_EXEC, mock_exec):
-                await credential.get_token("scope")
+    credential = AzurePowerShellCredential()
+    with pytest.raises(CredentialUnavailableError, match=AZ_ACCOUNT_NOT_INSTALLED):
+        with patch(CREATE_SUBPROCESS_EXEC, mock_exec):
+            await credential.get_token("scope")
 
     assert calls == 2
 
@@ -294,7 +295,9 @@ async def test_multitenant_authentication():
     async def fake_exec(*args, **_):
         command = args[2]
         assert command.startswith("pwsh -NoProfile -NonInteractive -EncodedCommand ")
-        encoded_script = command.split()[-1]
+        match = re.search(r"-EncodedCommand\s+(\S+)", command)
+        assert match, "couldn't find encoded script in command line"
+        encoded_script = match.groups()[0]
         decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
         match = re.search(r"Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)
         tenant = match[2]
@@ -325,7 +328,9 @@ async def test_multitenant_authentication_not_allowed():
     async def fake_exec(*args, **_):
         command = args[2]
         assert command.startswith("pwsh -NoProfile -NonInteractive -EncodedCommand ")
-        encoded_script = command.split()[-1]
+        match = re.search(r"-EncodedCommand\s+(\S+)", command)
+        assert match, "couldn't find encoded script in command line"
+        encoded_script = match.groups()[0]
         decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
         match = re.search(r"Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)
         tenant = match[2]

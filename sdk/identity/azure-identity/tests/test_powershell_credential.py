@@ -110,7 +110,9 @@ def test_get_token(stderr):
     command = args[0][-1]
     assert command.startswith("pwsh -NoProfile -NonInteractive -EncodedCommand ")
 
-    encoded_script = command.split()[-1]
+    match = re.search(r"-EncodedCommand\s+(\S+)", command)
+    assert match, "couldn't find encoded script in command line"
+    encoded_script = match.groups()[0]
     decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
     assert "TenantId" not in decoded_script
     assert "Get-AzAccessToken -ResourceUrl '{}'".format(scope) in decoded_script
@@ -295,7 +297,9 @@ def test_multitenant_authentication():
 
     def fake_Popen(command, **_):
         assert command[-1].startswith("pwsh -NoProfile -NonInteractive -EncodedCommand ")
-        encoded_script = command[-1].split()[-1]
+        match = re.search(r"-EncodedCommand\s+(\S+)", command[-1])
+        assert match, "couldn't find encoded script in command line"
+        encoded_script = match.groups()[0]
         decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
         match = re.search(r"Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)
         tenant = match.groups()[1]
@@ -325,7 +329,9 @@ def test_multitenant_authentication_not_allowed():
 
     def fake_Popen(command, **_):
         assert command[-1].startswith("pwsh -NoProfile -NonInteractive -EncodedCommand ")
-        encoded_script = command[-1].split()[-1]
+        match = re.search(r"-EncodedCommand\s+(\S+)", command[-1])
+        assert match, "couldn't find encoded script in command line"
+        encoded_script = match.groups()[0]
         decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
         match = re.search(r"Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)
         tenant = match.groups()[1]
