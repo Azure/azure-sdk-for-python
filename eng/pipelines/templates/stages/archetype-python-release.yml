@@ -260,7 +260,7 @@ stages:
 
   - stage: Integration
     dependsOn: "${{parameters.DependsOn}}"
-    condition: succeededOrFailed("${{parameters.DependsOn}}")
+    condition: succeededOrFailed('${{parameters.DependsOn}}')
     jobs:
       - job: PublishPackages
         displayName: "Publish package to daily feed"
