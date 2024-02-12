@@ -15,11 +15,9 @@ class ConversationTurn(object):
     def to_openai_chat_format(self, reverse=False):
         if reverse is False:
             return {"role": self.role.value, "content": self.message}
-        else:
-            if self.role == ConversationRole.ASSISTANT:
-                return {"role": ConversationRole.USER.value, "content": self.message}
-            else:
-                return {"role": ConversationRole.ASSISTANT.value, "content": self.message}
+        if self.role == ConversationRole.ASSISTANT:
+            return {"role": ConversationRole.USER.value, "content": self.message}
+        return {"role": ConversationRole.ASSISTANT.value, "content": self.message}
 
     def to_annotation_format(self, turn_number: int):
         return {

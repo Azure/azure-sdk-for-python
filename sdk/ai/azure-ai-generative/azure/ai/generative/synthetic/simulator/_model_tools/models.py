@@ -30,12 +30,11 @@ def get_model_class_from_url(endpoint_url: str):
 
     if endpoint_path.endswith("chat/completions"):
         return OpenAIChatCompletionsModel
-    elif "/rainbow" in endpoint_path:
+    if "/rainbow" in endpoint_path:
         return OpenAIMultiModalCompletionsModel
-    elif endpoint_path.endswith("completions"):
+    if endpoint_path.endswith("completions"):
         return OpenAICompletionsModel
-    else:
-        raise ValueError(f"Unknown API type for endpoint {endpoint_url}")
+    raise ValueError(f"Unknown API type for endpoint {endpoint_url}")
 
 
 # ===================== HTTP Retry ======================

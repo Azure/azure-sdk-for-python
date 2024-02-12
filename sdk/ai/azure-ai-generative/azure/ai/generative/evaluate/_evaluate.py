@@ -250,20 +250,20 @@ def evaluate(
                 )
             results_list.append(evaluation_results)
         return results_list
-    else:
-        evaluation_result = _evaluate(
-            evaluation_name=evaluation_name,
-            target=target,
-            data=data,
-            task_type=task_type,
-            model_config=model_config_dict,
-            data_mapping=data_mapping,
-            metrics=metrics_list,
-            output_path=output_path,
-            **kwargs,
-        )
 
-        return evaluation_result
+    evaluation_result = _evaluate(
+        evaluation_name=evaluation_name,
+        target=target,
+        data=data,
+        task_type=task_type,
+        model_config=model_config_dict,
+        data_mapping=data_mapping,
+        metrics=metrics_list,
+        output_path=output_path,
+        **kwargs,
+    )
+
+    return evaluation_result
 
 
 def _evaluate(  # pylint: disable=too-many-locals, too-many-branches, too-many-statements

@@ -160,8 +160,7 @@ class AugLoopClient:
                 self.reconnect_and_attempt_session_init()
 
                 return self.send_signal_and_wait_for_annotation(message=message, isInRecursiveCall=True)
-            else:
-                return {"success": False}
+            return {"success": False}
         except Exception as e:
             self.logger.error(f"Error: {str(e)}")
             # TODO: adding detailed message is not working, e disappears

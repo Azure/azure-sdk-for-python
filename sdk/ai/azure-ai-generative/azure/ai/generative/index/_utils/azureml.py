@@ -17,8 +17,7 @@ def get_workspace_from_environment():
     if hasattr(run, "experiment"):
         # We are running in Azure
         return run.experiment.workspace
-    else:
-        return None
+    return None
 
 
 def get_secret_from_workspace(name: str, workspace=None) -> str:

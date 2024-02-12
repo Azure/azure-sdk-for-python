@@ -43,7 +43,7 @@ def build_token_manager(
             auth_header=authorization_header,
             logger=logger,
         )
-    elif authorization_type == "managed_identity":
+    if authorization_type == "managed_identity":
         if endpoint_type == "azure_endpoint":
             token_scope = TokenScope.AZURE_ENDPOINT
         elif endpoint_type == "azure_openai_api":
@@ -55,14 +55,13 @@ def build_token_manager(
             auth_header=authorization_header,
             logger=logger,
         )
-    elif authorization_type == "compliant":
+    if authorization_type == "compliant":
         return CompliantTokenManager(
             keyvault=keyvault,
             auth_header=authorization_header,
             logger=logger,
         )
-    else:
-        raise ValueError(f"Unknown authorization_type: {authorization_type}")
+    raise ValueError(f"Unknown authorization_type: {authorization_type}")
 
 
 class APITokenManager(ABC):

@@ -48,13 +48,13 @@ def parse_git_url(git_url: str) -> GitRepoBranch:
     if match is None:
         # Try the original to see if git likes it
         return GitRepoBranch(git_url=git_url)
-    elif match.group(1) is not None:
+    if match.group(1) is not None:
         # Has .git suffix, leave as is
         return GitRepoBranch(git_url=match.group(0))
-    elif match.group(2) is not None:
+    if match.group(2) is not None:
         # Missing .git suffix, and references a specific branch
         return GitRepoBranch(git_url=f"{match.group(2)}.git", branch_name=match.group(3))
-    elif match.group(4) is not None:
+    if match.group(4) is not None:
         # Missing .git suffix, and references the default branch
         return GitRepoBranch(git_url=f"{match.group(4)}.git")
 

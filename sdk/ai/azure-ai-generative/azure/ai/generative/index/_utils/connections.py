@@ -111,11 +111,11 @@ def connection_to_credential(connection: Union[dict, BaseConnection, WorkspaceCo
             from azure.core.credentials import AzureKeyCredential
 
             return AzureKeyCredential(props["credentials"]["key"])
-        elif auth_type == "PAT":
+        if auth_type == "PAT":
             from azure.core.credentials import AccessToken
 
             return AccessToken(props["credentials"]["pat"], props.get("expiresOn", None))
-        elif auth_type == "CustomKeys":
+        if auth_type == "CustomKeys":
             # OpenAI connections are made with CustomKeys auth, so we can try to access the key using known structure
             from azure.core.credentials import AzureKeyCredential
 
@@ -132,18 +132,17 @@ def connection_to_credential(connection: Union[dict, BaseConnection, WorkspaceCo
                     f"Only connections with a single key can be used. Number of keys present: {len(key_dict.keys())}"
                 )
             return AzureKeyCredential(props["credentials"]["keys"][list(key_dict.keys())[0]])
-        else:
-            raise ValueError(f"Unknown auth type '{auth_type}'")
+        raise ValueError(f"Unknown auth type '{auth_type}'")
     elif isinstance(connection, WorkspaceConnection):
         if connection.credentials.type.lower() == "api_key":
             from azure.core.credentials import AzureKeyCredential
 
             return AzureKeyCredential(connection.credentials.key)
-        elif connection.credentials.type.lower() == "pat":
+        if connection.credentials.type.lower() == "pat":
             from azure.core.credentials import AccessToken
 
             return AccessToken(connection.credentials.pat, connection.credentials.expires_on)
-        elif connection.credentials.type.lower() == "custom_keys":
+        if connection.credentials.type.lower() == "custom_keys":
             if connection._metadata.get("azureml.flow.connection_type", "").lower() == "openai":
                 from azure.core.credentials import AzureKeyCredential
 
@@ -158,15 +157,13 @@ def connection_to_credential(connection: Union[dict, BaseConnection, WorkspaceCo
                     f"Only connections with a single key can be used. Number of keys present: {len(key_dict.keys())}"
                 )
             return AzureKeyCredential(connection.credentials.keys[list(key_dict.keys())[0]])
-        else:
-            raise ValueError(f"Unknown auth type '{connection.credentials.type}' for connection '{connection.name}'")
+        raise ValueError(f"Unknown auth type '{connection.credentials.type}' for connection '{connection.name}'")
     else:
         if connection.credentials.type.lower() == "api_key":
             from azure.core.credentials import AzureKeyCredential
 
             return AzureKeyCredential(connection.credentials.key)
-        else:
-            raise ValueError(f"Unknown auth type '{connection.credentials.type}' for connection '{connection.name}'")
+        raise ValueError(f"Unknown auth type '{connection.credentials.type}' for connection '{connection.name}'")
 
 
 def get_connection_by_id_v2(
@@ -244,36 +241,33 @@ def get_id_from_connection(connection: Union[dict, WorkspaceConnection, BaseConn
     """Get a connection id from a connection."""
     if isinstance(connection, dict):
         return connection["id"]
-    elif isinstance(connection, WorkspaceConnection):
+    if isinstance(connection, WorkspaceConnection):
         return connection.id
-    elif isinstance(connection, BaseConnection):
+    if isinstance(connection, BaseConnection):
         return connection.id
-    else:
-        raise ValueError(f"Unknown connection type: {type(connection)}")
+    raise ValueError(f"Unknown connection type: {type(connection)}")
 
 
 def get_target_from_connection(connection: Union[dict, WorkspaceConnection, BaseConnection]) -> str:
     """Get a connection target from a connection."""
     if isinstance(connection, dict):
         return connection["properties"]["target"]
-    elif isinstance(connection, WorkspaceConnection):
+    if isinstance(connection, WorkspaceConnection):
         return connection.target
-    elif isinstance(connection, BaseConnection):
+    if isinstance(connection, BaseConnection):
         return connection.target
-    else:
-        raise ValueError(f"Unknown connection type: {type(connection)}")
+    raise ValueError(f"Unknown connection type: {type(connection)}")
 
 
 def get_metadata_from_connection(connection: Union[dict, WorkspaceConnection, BaseConnection]) -> dict:
     """Get a connection metadata from a connection."""
     if isinstance(connection, dict):
         return connection["properties"]["metadata"]
-    elif isinstance(connection, WorkspaceConnection):
+    if isinstance(connection, WorkspaceConnection):
         return connection.metadata
-    elif isinstance(connection, BaseConnection):
+    if isinstance(connection, BaseConnection):
         return connection.metadata
-    else:
-        raise ValueError(f"Unknown connection type: {type(connection)}")
+    raise ValueError(f"Unknown connection type: {type(connection)}")
 
 
 def get_connection_by_name_v2(workspace, name: str) -> dict:

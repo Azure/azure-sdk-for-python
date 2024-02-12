@@ -97,7 +97,7 @@ def decode_example(example: str, label_keys: List[str], encoding: Encoding = Enc
     example = example.strip()
     if encoding == Encoding.JSON:
         return try_decode_json(example, label_keys)
-    elif encoding == Encoding.XML:
+    if encoding == Encoding.XML:
         raise NotImplementedError("XML encoding not implemented.")
     else:
         raise ValueError(f"Unknown encoding {encoding}.")
@@ -149,11 +149,10 @@ def get_majority_value(numbers):
         logger.info(f"Majority value is {majority_dic}")
         return majority_dic
 
-    else:
-        counter = Counter(numbers)
-        majority_value, _ = counter.most_common(1)[0]
-        logger.info(f"Majority value is {majority_value}")
-        return majority_value
+    counter = Counter(numbers)
+    majority_value, _ = counter.most_common(1)[0]
+    logger.info(f"Majority value is {majority_value}")
+    return majority_value
 
 
 def try_parse_samples(

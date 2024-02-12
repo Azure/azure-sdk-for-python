@@ -31,9 +31,9 @@ chunk_format: Any = None
 
 def main(args, logger, activity_logger):
     """Embedding entrypoint for ParallelRunStep."""
-    global output_data
-    global embeddings_container
-    global chunk_format
+    global output_data  # pylint: disable=global-statement
+    global embeddings_container  # pylint: disable=global-statement
+    global chunk_format  # pylint: disable=global-statement
     output_data = args.output_data
     chunk_format = args.chunk_format
 

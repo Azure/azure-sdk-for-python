@@ -103,7 +103,7 @@ def format_multimodal_prompt(
 
 
 def _compile_prompt_images_pattern() -> None:
-    global IMAGES_PATTERN
+    global IMAGES_PATTERN  # pylint: disable=global-statement
     if isinstance(IMAGES_PATTERN, str):
         images_pattern_text: str = IMAGES_PATTERN
         IMAGES_PATTERN = re.compile(images_pattern_text)  # type: ignore[assignment]

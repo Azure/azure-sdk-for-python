@@ -53,8 +53,7 @@ def patch_openai_embedding_retries(logger, activity_logger, max_seconds_retrying
             first_retry = self.activity_logger.activity_info.get("first_retry", None)
             if first_retry:
                 return (datetime.utcnow() - first_retry).seconds >= self.max_delay
-            else:
-                return False
+            return False
 
     # Copied from
     # https://github.com/hwchase17/langchain/blob/

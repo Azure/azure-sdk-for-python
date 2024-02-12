@@ -328,7 +328,7 @@ def validate_datatype(key: str, val: Any):
     """Assert that the given value is a valid data type"""
     if isinstance(val, (bool, int, float, str)):
         return
-    elif isinstance(val, dict):
+    if isinstance(val, dict):
         assert "value" in val, f"Each label in a few_shot example needs a 'value' key: {key} - {val}"
     else:
         raise ValueError(f"Unsupported data type in few_shot example: {key} - {val}")

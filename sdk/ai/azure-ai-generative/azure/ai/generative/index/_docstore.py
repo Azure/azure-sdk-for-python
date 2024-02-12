@@ -57,8 +57,7 @@ class FileBasedDocstore:
         """
         if search not in self._dict:
             return f"ID {search} not found."
-        else:
-            return self._dict[search]
+        return self._dict[search]
 
     def save(self, output_path: str):
         """

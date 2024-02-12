@@ -44,8 +44,7 @@ class MetricHandler(object):
         if self.data_mapping:
             rename_map = {v: k for k, v in self.data_mapping.items()}
             return self.input_output_data.rename(columns=rename_map)
-        else:
-            return self.input_output_data
+        return self.input_output_data
 
     def _get_data_for_pf_by_task_type(self, metrics):
         metrics_calculation_data = self._get_data_for_pf()

@@ -52,8 +52,7 @@ class FileBasedDocStore(Docstore, AddableMixin):
         if isinstance(doc, Document):
             found_doc: Document = doc
             return LangChainDocument(page_content=found_doc.page_content, metadata=found_doc.metadata)
-        else:
-            return doc
+        return doc
 
     def save(self, output_path: str):
         """

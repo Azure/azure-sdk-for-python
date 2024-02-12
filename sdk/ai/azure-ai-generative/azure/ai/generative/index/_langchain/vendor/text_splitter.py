@@ -140,8 +140,7 @@ class TextSplitter(BaseDocumentTransformer, ABC):
         text = text.strip()
         if text == "":
             return None
-        else:
-            return text
+        return text
 
     def _merge_splits(self, splits: Iterable[str], separator: str) -> List[str]:
         # We now want to combine these smaller pieces into medium size
@@ -436,11 +435,10 @@ class MarkdownHeaderTextSplitter:
         # aggregate these into chunks based on common metadata
         if not self.return_each_line:
             return self.aggregate_lines_to_chunks(lines_with_metadata)
-        else:
-            return [
-                Document(page_content=chunk["content"], metadata=chunk["metadata"])
-                for chunk in lines_with_metadata
-            ]
+        return [
+            Document(page_content=chunk["content"], metadata=chunk["metadata"])
+            for chunk in lines_with_metadata
+        ]
 
 
 # should be in newer Python versions (3.10+)
@@ -701,7 +699,7 @@ class RecursiveCharacterTextSplitter(TextSplitter):
                 " ",
                 "",
             ]
-        elif language == Language.GO:
+        if language == Language.GO:
             return [
                 # Split along function definitions
                 "\nfunc ",
@@ -719,7 +717,7 @@ class RecursiveCharacterTextSplitter(TextSplitter):
                 " ",
                 "",
             ]
-        elif language == Language.JAVA:
+        if language == Language.JAVA:
             return [
                 # Split along class definitions
                 "\nclass ",
@@ -740,7 +738,7 @@ class RecursiveCharacterTextSplitter(TextSplitter):
                 " ",
                 "",
             ]
-        elif language == Language.JS:
+        if language == Language.JS:
             return [
                 # Split along function definitions
                 "\nfunction ",
@@ -761,7 +759,7 @@ class RecursiveCharacterTextSplitter(TextSplitter):
                 " ",
                 "",
             ]
-        elif language == Language.PHP:
+        if language == Language.PHP:
             return [
                 # Split along function definitions
                 "\nfunction ",
@@ -780,7 +778,7 @@ class RecursiveCharacterTextSplitter(TextSplitter):
                 " ",
                 "",
             ]
-        elif language == Language.PROTO:
+        if language == Language.PROTO:
             return [
                 # Split along message definitions
                 "\nmessage ",
@@ -800,7 +798,7 @@ class RecursiveCharacterTextSplitter(TextSplitter):
                 " ",
                 "",
             ]
-        elif language == Language.PYTHON:
+        if language == Language.PYTHON:
             return [
                 # First, try to split along class definitions
                 "\nclass ",
@@ -812,7 +810,7 @@ class RecursiveCharacterTextSplitter(TextSplitter):
                 " ",
                 "",
             ]
-        elif language == Language.RST:
+        if language == Language.RST:
             return [
                 # Split along section titles
                 "\n=+\n",
@@ -826,7 +824,7 @@ class RecursiveCharacterTextSplitter(TextSplitter):
                 " ",
                 "",
             ]
-        elif language == Language.RUBY:
+        if language == Language.RUBY:
             return [
                 # Split along method definitions
                 "\ndef ",
@@ -845,7 +843,7 @@ class RecursiveCharacterTextSplitter(TextSplitter):
                 " ",
                 "",
             ]
-        elif language == Language.RUST:
+        if language == Language.RUST:
             return [
                 # Split along function definitions
                 "\nfn ",
@@ -864,7 +862,7 @@ class RecursiveCharacterTextSplitter(TextSplitter):
                 " ",
                 "",
             ]
-        elif language == Language.SCALA:
+        if language == Language.SCALA:
             return [
                 # Split along class definitions
                 "\nclass ",
@@ -885,7 +883,7 @@ class RecursiveCharacterTextSplitter(TextSplitter):
                 " ",
                 "",
             ]
-        elif language == Language.SWIFT:
+        if language == Language.SWIFT:
             return [
                 # Split along function definitions
                 "\nfunc ",
@@ -906,7 +904,7 @@ class RecursiveCharacterTextSplitter(TextSplitter):
                 " ",
                 "",
             ]
-        elif language == Language.MARKDOWN:
+        if language == Language.MARKDOWN:
             return [
                 # First, try to split along Markdown headings (starting with level 2)
                 "\n#{1,6} ",
@@ -926,7 +924,7 @@ class RecursiveCharacterTextSplitter(TextSplitter):
                 " ",
                 "",
             ]
-        elif language == Language.LATEX:
+        if language == Language.LATEX:
             return [
                 # First, try to split along Latex sections
                 "\n\\\\chapter{",
@@ -950,7 +948,7 @@ class RecursiveCharacterTextSplitter(TextSplitter):
                 " ",
                 "",
             ]
-        elif language == Language.HTML:
+        if language == Language.HTML:
             return [
                 # First, try to split along HTML tags
                 "<body",
@@ -982,7 +980,7 @@ class RecursiveCharacterTextSplitter(TextSplitter):
                 "<title",
                 "",
             ]
-        elif language == Language.SOL:
+        if language == Language.SOL:
             return [
                 # Split along compiler information definitions
                 "\npragma ",
@@ -1012,11 +1010,10 @@ class RecursiveCharacterTextSplitter(TextSplitter):
                 " ",
                 "",
             ]
-        else:
-            raise ValueError(
-                f"Language {language} is not supported! "
-                f"Please choose from {list(Language)}"
-            )
+        raise ValueError(
+            f"Language {language} is not supported! "
+            f"Please choose from {list(Language)}"
+        )
 
 
 class NLTKTextSplitter(TextSplitter):

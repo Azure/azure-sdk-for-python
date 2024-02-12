@@ -91,5 +91,4 @@ async def azure_cognitive_services_caption(
 
             return build_description(response_data, tag_confidence_thresh)
 
-        else:
-            raise Exception(f"Received unexpected HTTP status: {response.status} {await response.text()}")
+        raise Exception(f"Received unexpected HTTP status: {response.status} {await response.text()}")

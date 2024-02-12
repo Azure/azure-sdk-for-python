@@ -27,8 +27,7 @@ def load_jsonl(path):
 def load_jsonl_to_df(path):
     if os.path.exists(path) and os.path.isfile(path):
         return pd.read_json(path, lines=True)
-    else:
-        raise Exception("File not found: {}".format(path))
+    raise Exception("File not found: {}".format(path))
 
 def df_to_dict_list(df, extra_kwargs: Optional[Dict] = None):
     if extra_kwargs is not None:
@@ -89,8 +88,7 @@ def _has_column(data, column_name):
 def _is_flow(asset):
     if _is_flow_local(asset):
         return True
-    else:
-        return False
+    return False
 
 
 def _is_flow_local(path):

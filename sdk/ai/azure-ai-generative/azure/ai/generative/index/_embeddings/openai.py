@@ -146,14 +146,13 @@ class OpenAIEmbedder:
         try:
             if self._dynamic_batch_size is None:
                 return self._embed_request(tokenized_texts=tokenized_texts, **kwargs)
-            else:
-                embedding_response: Dict[str, List] = {"data": []}
-                for i in range(0, len(tokenized_texts), self._dynamic_batch_size):
-                    embedding_response["data"].extend(
-                        self._embed_request(
-                            tokenized_texts=tokenized_texts[i : i + self._dynamic_batch_size], **kwargs
-                        )["data"]
-                    )
+            embedding_response: Dict[str, List] = {"data": []}
+            for i in range(0, len(tokenized_texts), self._dynamic_batch_size):
+                embedding_response["data"].extend(
+                    self._embed_request(
+                        tokenized_texts=tokenized_texts[i : i + self._dynamic_batch_size], **kwargs
+                    )["data"]
+                )
         except Exception as e:
             err_msg = str(e)
             if "Too many inputs" not in err_msg:

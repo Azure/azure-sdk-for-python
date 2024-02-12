@@ -135,14 +135,13 @@ def create_index_from_raw_embeddings(
                 duration = time.time() - start_time
                 activity_logger.info("Deleting documents succeeded", extra={"properties": {"duration": duration}})
                 return True
-            else:
-                response_code = results["code"] if "code" in results else ""
-                response_msg = results["message"] if "message" in results else ""
-                logger.error(
-                    f"Deleting documents failed with code {response_code} and message '{response_msg}'",
-                    extra={"properties": {"code": response_code, "message": response_msg}},
-                )
-                return False
+            response_code = results["code"] if "code" in results else ""
+            response_msg = results["message"] if "message" in results else ""
+            logger.error(
+                f"Deleting documents failed with code {response_code} and message '{response_msg}'",
+                extra={"properties": {"code": response_code, "message": response_msg}},
+            )
+            return False
 
         def process_upsert_results(results, batch_size, start_time):
             if results["upserted_count"] == batch_size:
@@ -152,12 +151,11 @@ def create_index_from_raw_embeddings(
                     extra={"properties": {"num_docs_upserted": batch_size, "duration": duration}},
                 )
                 return True
-            else:
-                logger.error(
-                    "Failed to upsert all documents",
-                    extra={"properties": {"num_docs_upserted": results["upserted_count"], "duration": duration}},
-                )
-                return False
+            logger.error(
+                "Failed to upsert all documents",
+                extra={"properties": {"num_docs_upserted": results["upserted_count"], "duration": duration}},
+            )
+            return False
 
         # Delete removed documents
         deleted_ids = []

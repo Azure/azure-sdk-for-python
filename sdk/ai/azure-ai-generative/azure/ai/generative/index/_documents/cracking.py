@@ -262,7 +262,7 @@ def extract_text_document_title(text: str, file_name: str) -> Tuple[str, str]:
         except StopIteration:
             title = file_name
         return title, (clean_title if len(clean_title) > 0 else file_name)
-    elif file_extension == ".py":
+    if file_extension == ".py":
         import ast
 
         def _get_topdocstring(text):
@@ -280,7 +280,7 @@ def extract_text_document_title(text: str, file_name: str) -> Tuple[str, str]:
             pass
 
         return f"Title: {title}", title
-    elif file_extension == ".html" or file_extension == ".htm":
+    if file_extension == ".html" or file_extension == ".htm":
         from bs4 import BeautifulSoup
 
         soup = BeautifulSoup(text, "html.parser")
@@ -289,21 +289,20 @@ def extract_text_document_title(text: str, file_name: str) -> Tuple[str, str]:
         except StopIteration:
             title = file_name
         return f"Title: {title}", title
-    else:
-        title = None
-        first_text_line = None
-        title_prefix = "title: "
-        for line in text.splitlines():
-            if line.startswith(title_prefix):
-                title = line[len(title_prefix) :].strip()
-                break
-            if first_text_line is None and any(c.isalnum() for c in line):
-                first_text_line = line.strip()
+    title = None
+    first_text_line = None
+    title_prefix = "title: "
+    for line in text.splitlines():
+        if line.startswith(title_prefix):
+            title = line[len(title_prefix) :].strip()
+            break
+        if first_text_line is None and any(c.isalnum() for c in line):
+            first_text_line = line.strip()
 
-        if title is None:
-            title = first_text_line if first_text_line is not None else file_name
+    if title is None:
+        title = first_text_line if first_text_line is not None else file_name
 
-        return f"Title: {title}", title
+    return f"Title: {title}", title
 
 
 file_extension_loaders = {

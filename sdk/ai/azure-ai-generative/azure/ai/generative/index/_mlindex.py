@@ -234,20 +234,19 @@ class MLIndex:
                         ),
                         user_agent=f"azureml-rag=={version}/mlindex,langchain=={langchain_version}",
                     )
-                else:
-                    from azure.ai.generative.index._langchain.acs import AzureCognitiveSearchVectorStore
+                from azure.ai.generative.index._langchain.acs import AzureCognitiveSearchVectorStore
 
-                    msg = f"azure-search-documents=={azure_search_documents_version} not compatible "
-                    logger.warning(msg + "langchain.vectorstores.azuresearch yet, using REST client based VectorStore.")
+                msg = f"azure-search-documents=={azure_search_documents_version} not compatible "
+                logger.warning(msg + "langchain.vectorstores.azuresearch yet, using REST client based VectorStore.")
 
-                    return AzureCognitiveSearchVectorStore(
-                        index_name=self.index_config.get("index", ""),
-                        endpoint=index_endpoint,
-                        embeddings=self.get_langchain_embeddings(credential=credential),
-                        field_mapping=self.index_config.get("field_mapping", {}),
-                        credential=connection_credential,
-                    )
-            elif index_kind == "faiss":
+                return AzureCognitiveSearchVectorStore(
+                    index_name=self.index_config.get("index", ""),
+                    endpoint=index_endpoint,
+                    embeddings=self.get_langchain_embeddings(credential=credential),
+                    field_mapping=self.index_config.get("field_mapping", {}),
+                    credential=connection_credential,
+                )
+            if index_kind == "faiss":
                 from fsspec.core import url_to_fs
 
                 store = None
@@ -309,7 +308,7 @@ class MLIndex:
                 else:
                     raise ValueError(f"Unknown engine: {engine}")
                 return store
-            elif index_kind == "pinecone":
+            if index_kind == "pinecone":
                 try:
                     import pinecone  # pylint: disable=import-error
                     from azure.core.credentials import AzureKeyCredential
@@ -346,8 +345,7 @@ class MLIndex:
                 except Exception as e:
                     logger.error(f"Failed to create Pinecone vectorstore due to: {e}")
                     raise
-            else:
-                raise ValueError(f"Unknown index kind: {index_kind}")
+            raise ValueError(f"Unknown index kind: {index_kind}")
 
     def as_langchain_retriever(self, credential: Optional[TokenCredential] = None, **kwargs):
         """Converts MLIndex to a retriever object that can be used with langchain, may download files."""
@@ -372,12 +370,11 @@ class MLIndex:
                 ).as_retriever(**kwargs)
 
             return self.as_langchain_vectorstore(credential=credential).as_retriever(**kwargs)
-        elif index_kind == "faiss":
+        if index_kind == "faiss":
             return self.as_langchain_vectorstore(credential=credential).as_retriever(**kwargs)
-        elif index_kind == "pinecone":
+        if index_kind == "pinecone":
             return self.as_langchain_vectorstore(credential=credential).as_retriever(**kwargs)
-        else:
-            raise ValueError(f"Unknown index kind: {index_kind}")
+        raise ValueError(f"Unknown index kind: {index_kind}")
 
     def as_native_index_client(self, credential: Optional[TokenCredential] = None):
         """
@@ -399,13 +396,13 @@ class MLIndex:
                 user_agent=f"azureml-rag=={version}/mlindex",
                 api_version=self.index_config.get("api_version", "2023-07-01-preview"),
             )
-        elif index_kind == "faiss":
+        if index_kind == "faiss":
             from azure.ai.generative.index._indexes.faiss import FaissAndDocStore
 
             embeddings = self.get_langchain_embeddings(credential=credential)
 
             return FaissAndDocStore.load(self.base_uri, embeddings.embed_query)
-        elif index_kind == "pinecone":
+        if index_kind == "pinecone":
             import pinecone  # pylint: disable=import-error
             from azure.core.credentials import AzureKeyCredential
 
@@ -417,8 +414,7 @@ class MLIndex:
             environment = get_pinecone_environment(self.index_config, credential=credential)
             pinecone.init(api_key=connection_credential.key, environment=environment)
             return pinecone.Index(self.index_config.get("index"))
-        else:
-            raise ValueError(f"Unknown index kind: {index_kind}")
+        raise ValueError(f"Unknown index kind: {index_kind}")
 
     def __repr__(self):
         """Returns a string representation of the MLIndex object."""

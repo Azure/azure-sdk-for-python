@@ -85,9 +85,8 @@ def _completion_with_retries(*args, **kwargs):
                         max_tokens=kwargs["max_tokens"],
                     )
                 return response.choices[0].message.content, dict(response.usage)
-            else:
-                response = openai.ChatCompletion.create(*args, **kwargs)
-                return response["choices"][0].message.content, response["usage"]
+            response = openai.ChatCompletion.create(*args, **kwargs)
+            return response["choices"][0].message.content, response["usage"]
         except _RETRY_ERRORS as e:
             if n > _MAX_RETRIES:
                 raise
@@ -132,9 +131,8 @@ async def _completion_with_retries_async(*args, **kwargs):
                         max_tokens=kwargs["max_tokens"],
                     )
                 return response.choices[0].message.content, dict(response.usage)
-            else:
-                response = openai.ChatCompletion.create(*args, **kwargs)
-                return response["choices"][0].message.content, response["usage"]
+            response = openai.ChatCompletion.create(*args, **kwargs)
+            return response["choices"][0].message.content, response["usage"]
         except _RETRY_ERRORS as e:
             if n > _MAX_RETRIES:
                 raise

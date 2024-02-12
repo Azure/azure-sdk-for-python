@@ -82,7 +82,7 @@ class Simulator:
 
             return self.create_bot(role, assistant_template, assistant_parameters, self.userConnection)
 
-        elif role == ConversationRole.USER:
+        if role == ConversationRole.USER:
             return self.create_bot(role, template, parameters, self.systemConnection)
 
     async def simulate_async(
@@ -145,8 +145,7 @@ class Simulator:
     def _to_citation_content(self, obj):
         if isinstance(obj, str):
             return obj
-        else:
-            return json.dumps(obj)
+        return json.dumps(obj)
 
     def _get_callback_citations(self, callback_citations: dict, turn_num: Optional[int] = None):
         if turn_num == None:

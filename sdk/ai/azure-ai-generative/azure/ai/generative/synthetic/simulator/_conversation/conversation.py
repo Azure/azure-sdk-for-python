@@ -145,8 +145,7 @@ async def simulate_conversation(
 
     if mlflow_logger is not None:
         return conversation_id, conversation_history, logger_tasks
-    else:
-        return conversation_id, conversation_history
+    return conversation_id, conversation_history
 
 
 def play_conversation(conversation_id: str, conversation_history: List[ConversationTurn]):

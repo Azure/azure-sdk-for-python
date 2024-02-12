@@ -56,7 +56,7 @@ def get_langchain_embeddings(
             max_retries=arguments.get("embedding_ctx_length", None),
         )
         return embedder
-    elif embedding_kind == "hugging_face":
+    if embedding_kind == "hugging_face":
         from azure.ai.generative.index._langchain.vendor.embeddings.huggingface import HuggingFaceEmbeddings
 
         args = copy.deepcopy(arguments)
@@ -86,7 +86,7 @@ def get_langchain_embeddings(
                 return self.embeddings.embed_query(query)
 
         return ActivitySafeHuggingFaceEmbeddings(HuggingFaceEmbeddings(model_name=model_name))
-    elif embedding_kind == "none":
+    if embedding_kind == "none":
 
         class NoneEmbeddings(Embedder):
             def embed_documents(self, documents: List[str], **kwargs) -> List[List[float]]:
@@ -96,10 +96,9 @@ def get_langchain_embeddings(
                 return []
 
         return NoneEmbeddings()
-    elif embedding_kind == "custom":
+    if embedding_kind == "custom":
         raise NotImplementedError("Custom embeddings are not supported yet.")
-    else:
-        raise ValueError(f"Unknown embedding kind: {embedding_kind}")
+    raise ValueError(f"Unknown embedding kind: {embedding_kind}")
 
 
 def get_embed_fn(
@@ -177,23 +176,22 @@ def get_embed_fn(
                     activity_logger.activity_info["num_tokens"] = embedder.statistics.get("num_tokens", 0)
 
         return embed
-    elif embedding_kind == "hugging_face":
+    if embedding_kind == "hugging_face":
         embedder: Union[OpenAIEmbedder, Embedder] = get_langchain_embeddings(  # type: ignore[no-redef]
             embedding_kind, arguments, credential=credential
         )
 
         return embedder.embed_documents
-    elif embedding_kind == "custom":
+    if embedding_kind == "custom":
 
         def load_pickled_function(pickled_embedding_fn):
 
             return cloudpickle.loads(gzip.decompress(pickled_embedding_fn))
 
         return arguments.get("embedding_fn", None) or load_pickled_function(arguments.get("pickled_embedding_fn"))
-    elif embedding_kind == "none":
+    if embedding_kind == "none":
         return get_langchain_embeddings(embedding_kind, arguments, credential=credential).embed_documents
-    else:
-        raise ValueError(f"Invalid embeddings kind: {embedding_kind}")
+    raise ValueError(f"Invalid embeddings kind: {embedding_kind}")
 
 
 def get_query_embed_fn(
@@ -220,23 +218,22 @@ def get_query_embed_fn(
         )
 
         return embedder.embed_query
-    elif embedding_kind == "hugging_face":
+    if embedding_kind == "hugging_face":
         embedder: Union[OpenAIEmbedder, Embedder] = get_langchain_embeddings(  # type: ignore[no-redef]
             embedding_kind, arguments, credential=credential
         )
 
         return embedder.embed_query
-    elif embedding_kind == "custom":
+    if embedding_kind == "custom":
 
         def load_pickled_function(pickled_embedding_fn):
 
             return cloudpickle.loads(gzip.decompress(pickled_embedding_fn))
 
         return arguments.get("embedding_fn", None) or load_pickled_function(arguments.get("pickled_embedding_fn"))
-    elif embedding_kind == "none":
+    if embedding_kind == "none":
         return get_langchain_embeddings(embedding_kind, arguments, credential=credential).embed_query
-    else:
-        raise ValueError("Invalid embeddings kind.")
+    raise ValueError("Invalid embeddings kind.")
 
 
 @dataclass
@@ -479,7 +476,7 @@ class EmbeddingsContainer:
         if schema_version == "1":
             embeddings = EmbeddingsContainer(metadata["kind"], **metadata["arguments"])
             return embeddings
-        elif schema_version == "2":
+        if schema_version == "2":
             kind = metadata["kind"]
             del metadata["kind"]
             if kind == "custom":
@@ -488,8 +485,7 @@ class EmbeddingsContainer:
 
             embeddings = EmbeddingsContainer(kind, **metadata)
             return embeddings
-        else:
-            raise ValueError(f"Schema version {schema_version} is not supported")
+        raise ValueError(f"Schema version {schema_version} is not supported")
 
     @staticmethod
     def load(dir_name: str, embeddings_container_path, metadata_only=False):
@@ -669,10 +665,9 @@ class EmbeddingsContainer:
         """Save the embeddings to a directory."""
         if file_format_version == "1":
             return self.save_v1(path, with_metadata, suffix)
-        elif file_format_version == "2":
+        if file_format_version == "2":
             return self.save_v2(path, with_metadata, suffix)
-        else:
-            raise ValueError(f"Schema version {file_format_version} is not supported")
+        raise ValueError(f"Schema version {file_format_version} is not supported")
 
     # pylint: disable=too-many-locals, too-many-statements
     def save_v2(self, path: Union[Path, str], with_metadata=True, suffix: Optional[str] = None):
@@ -889,10 +884,9 @@ class EmbeddingsContainer:
         """Returns the embedding dimensions."""
         if self.dimension is not None:
             return self.dimension
-        elif len(self._document_embeddings) > 0:
+        if len(self._document_embeddings) > 0:
             return len(next(iter(self._document_embeddings.values())).get_embeddings())
-        else:
-            return None
+        return None
 
     def as_langchain_embeddings(self, credential: Optional[TokenCredential] = None) -> Embedder:
         """Returns a langchain Embedder that can be used to embed text."""
@@ -923,8 +917,7 @@ class EmbeddingsContainer:
                 return enc.decode(tokens)
 
             return truncate_by_tokens
-        else:
-            return lambda text: text
+        return lambda text: text
 
     def embed(self, input_documents: Union[Iterator[Document], BaseLoader, DocumentChunksIterator]):
         """

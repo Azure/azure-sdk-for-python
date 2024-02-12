@@ -171,8 +171,7 @@ class LoggerFactory:
             child_logger = logger.getChild(name)
             child_logger.addHandler(self.appinsights)
             return _log_activity(child_logger, name, activity_type, custom_dimensions)
-        else:
-            return _run_without_logging(logger, name, activity_type, custom_dimensions)
+        return _run_without_logging(logger, name, activity_type, custom_dimensions)
 
     def telemetry_info(self, logger, message, custom_dimensions={}):
         """Track info with given logger."""

@@ -54,8 +54,7 @@ def line_map(
     def get_error_file(error_file_path: Optional[pathlib.Path]):
         if error_file_path:
             return open(error_file_path, "a", encoding=error_encoding)
-        else:
-            return tempfile.TemporaryFile(mode="w", encoding="utf-8-sig")
+        return tempfile.TemporaryFile(mode="w", encoding="utf-8-sig")
 
     successful_lines = 0
     error_lines = 0

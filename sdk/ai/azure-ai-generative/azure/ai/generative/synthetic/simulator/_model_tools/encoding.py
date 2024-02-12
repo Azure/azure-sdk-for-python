@@ -36,7 +36,7 @@ def encode_example(
     if encoding.value == Encoding.JSON.value:
         # Dump JSON with keys double-quoted and final comma removed
         return json.dumps(example, indent=indent, quote_keys=True, trailing_commas=False)
-    elif encoding.value == Encoding.XML.value:
+    if encoding.value == Encoding.XML.value:
         raise NotImplementedError('XML encoding not implemented.')
     else:
         raise ValueError(f'Unknown encoding {encoding} ({type(encoding)}).')

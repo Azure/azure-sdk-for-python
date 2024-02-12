@@ -134,8 +134,7 @@ class AzureCognitiveSearchVectorStore(VectorStore):
                         doc.metadata["content_vector"] = (item.get(self.field_mapping["embedding"], []),)
                     results.append((doc, item["@search.score"]))
                 return results
-            else:
-                logger.info("no value in response from ACS")
+            logger.info("no value in response from ACS")
         else:
             logger.info("empty response from ACS")
 

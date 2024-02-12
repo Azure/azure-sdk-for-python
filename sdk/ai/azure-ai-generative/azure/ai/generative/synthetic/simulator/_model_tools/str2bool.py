@@ -19,7 +19,7 @@ def str2bool(val):
     if isinstance(val, str):
         if val.lower() in ("yes", "true", "t", "y", "1"):
             return True
-        elif val.lower() in ("no", "false", "f", "n", "0"):
+        if val.lower() in ("no", "false", "f", "n", "0"):
             return False
     else:
         raise argparse.ArgumentTypeError("Boolean value expected.")
