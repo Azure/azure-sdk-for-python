@@ -27,10 +27,13 @@ parameters:
   default: []
 - name: Pool
   type: string
-  default: azsdk-pool-mms-ubuntu-2204-general
+  default: azsdk-pool-mms-ubuntu-2004-1es-pt
 - name: OsVmImage
   type: string
-  default: ubuntu-22.04
+  default: azsdk-pool-mms-ubuntu-2004-1espt
+- name: OS
+  type: string
+  default: linux
 # This parameter is only necessary if there are multiple invocations of this template within the SAME STAGE.
 # When that occurs, provide a name other than the default value.
 - name: GenerateJobName
