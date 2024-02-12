@@ -55,20 +55,20 @@ extends:
                           steps:
                             - checkout: self
                             - template: /eng/common/pipelines/templates/steps/retain-run.yml@self
-                            - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+                            - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml@self
                               parameters:
                                 PackageName: "azure-template"
                                 ServiceDirectory: "template"
                                 TestPipeline: ${{ parameters.TestPipeline }}
 
                             - ${{if ne(artifact.skipVerifyChangeLog, 'true')}}:
-                                - template: /eng/common/pipelines/templates/steps/verify-changelog.yml
+                                - template: /eng/common/pipelines/templates/steps/verify-changelog.yml@self
                                   parameters:
                                     PackageName: ${{artifact.name}}
                                     ServiceName: ${{parameters.ServiceDirectory}}
                                     ForRelease: true
 
-                            - template: /eng/common/pipelines/templates/steps/verify-restapi-spec-location.yml
+                            - template: /eng/common/pipelines/templates/steps/verify-restapi-spec-location.yml@self
                               parameters:
                                 PackageName: ${{artifact.name}}
                                 ServiceDirectory: ${{parameters.ServiceDirectory}}
@@ -85,7 +85,7 @@ extends:
                               workingDirectory: $(Pipeline.Workspace)
                               displayName: Output Visible Artifacts
 
-                            - template: /eng/common/pipelines/templates/steps/create-tags-and-git-release.yml
+                            - template: /eng/common/pipelines/templates/steps/create-tags-and-git-release.yml@self
                               parameters:
                                 ArtifactLocation: $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}
                                 PackageRepository: PyPI
@@ -195,7 +195,7 @@ extends:
                                   workingDirectory: $(Pipeline.Workspace)
                                   displayName: Output Visible Artifacts
 
-                                - template: /eng/common/pipelines/templates/steps/publish-blobs.yml
+                                - template: /eng/common/pipelines/templates/steps/publish-blobs.yml@self
                                   parameters:
                                     FolderForUpload: '$(Pipeline.Workspace)/${{parameters.DocArtifact}}/${{artifact.name}}'
                                     BlobSASKey: '$(azure-sdk-docs-prod-sas)'
@@ -221,13 +221,13 @@ extends:
                           runOnce:
                             deploy:
                               steps:
-                                - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+                                - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml@self
                                   parameters:
                                     Paths:
                                       - sdk/**/*.md
                                       - .github/CODEOWNERS
                                 - download: current
-                                - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
+                                - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml@self
                                   parameters:
                                     PackageInfoLocations:
                                       - $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/${{artifact.name}}.json
@@ -264,7 +264,7 @@ extends:
                                 - pwsh: >
                                     sdk_increment_version --package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}
                                   displayName: Increment package version
-                                - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
+                                - template: /eng/common/pipelines/templates/steps/create-pull-request.yml@self
                                   parameters:
                                     RepoName: azure-sdk-for-python
                                     PRBranchName: increment-package-version-${{ parameters.ServiceDirectory }}-$(Build.BuildId)
@@ -301,7 +301,7 @@ extends:
                   python -m pip install twine
                 displayName: Install Twine
 
-              - template: ../steps/auth-dev-feed.yml
+              - template: ../steps/auth-dev-feed.yml@self
                 parameters:
                   DevFeedName: ${{ parameters.DevFeedName }}
 
@@ -332,7 +332,7 @@ extends:
               poolName: 'azsdk-pool-mms-ubuntu-2004-1es-pt'
               ArtifactName: 'linux'
             steps:
-              - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+              - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml@self
                 parameters:
                   Paths:
                     - sdk/**/*.md
@@ -342,7 +342,7 @@ extends:
                   Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/
                 displayName: Show visible artifacts
 
-              - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
+              - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml@self
                 parameters:
                   PackageInfoLocations:
                     - ${{ each artifact in parameters.Artifacts }}:
@@ -359,5 +359,5 @@ extends:
                   PackageSourceOverride: ${{parameters.PackageSourceOverride}}
                   DocValidationImageId: ${{parameters.DocValidationImageId}}
 
-              - template: /eng/common/pipelines/templates/steps/docsms-ensure-validation.yml
+              - template: /eng/common/pipelines/templates/steps/docsms-ensure-validation.yml@self
 
