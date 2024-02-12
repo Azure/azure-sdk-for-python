@@ -439,7 +439,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         :paramtype etag: str
         :keyword headers: headers to use for the request
         :paramtype headers: Mapping[str, str]
-        :return: A tuple with the first item being true/false if a change is detected. The second item is the updated value if a change was detected.
+        :return: A tuple with the first item being true/false if a change is detected. The second item is the updated value if a change was
+        detected.
         :rtype: Tuple[bool, Union[ConfigurationSetting, None]]
         """
         try:
