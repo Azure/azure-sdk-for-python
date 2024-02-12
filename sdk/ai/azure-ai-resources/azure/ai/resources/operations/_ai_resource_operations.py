@@ -111,6 +111,7 @@ class AIResourceOperations:
         :keyword ai_resource: AI resource definition.
         :paramtype ai_resource: ~azure.ai.resources.entities.AIResource
         :keyword update_dependent_resources: Whether to update dependent resources. Defaults to False.
+            This must be set to true in order to update the container registry.
         :paramtype update_dependent_resources: boolean
         :return: An instance of LROPoller that returns the updated AI resource.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.resources.entities.AIResource]
