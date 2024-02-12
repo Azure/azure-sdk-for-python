@@ -343,7 +343,4 @@ def compare_string_to_glob_array(string: str, glob_array: List[str]) -> bool:
     """
     This function is used to easily compare a string to a set of glob strings, if it matches any of them, returns True.
     """
-    for glob in glob_array:
-        if fnmatch.fnmatch(string, glob):
-            return True
-    return False
+    return any([fnmatch.fnmatch(string, glob) for glob in glob_array])
