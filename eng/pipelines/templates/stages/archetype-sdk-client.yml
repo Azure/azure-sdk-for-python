@@ -135,7 +135,7 @@ extends:
       - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
           - template: archetype-python-release.yml@self
             parameters:
-              DependsOn: Build
+              DependsOn: "Build"
               ServiceDirectory: ${{ parameters.ServiceDirectory }}
               Artifacts: ${{ parameters.Artifacts }}
               ${{ if eq(parameters.ServiceDirectory, 'template') }}:
