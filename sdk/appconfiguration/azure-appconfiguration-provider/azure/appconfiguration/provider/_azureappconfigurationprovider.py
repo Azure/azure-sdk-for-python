@@ -494,29 +494,10 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         success = False
         need_refresh = False
         try:
-            updated_sentinel_keys = dict(self._refresh_on)
-            feature_flag_sentinel_keys = dict(self._refresh_on_feature_flags)
-            headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
             if self._refresh_on:
-                for (key, label), etag in updated_sentinel_keys.items():
-                    changed, updated_sentinel = self._check_configuration_setting(
-                        key=key, label=label, etag=etag, headers=headers, **kwargs
-                    )
-                    if changed:
-                        need_refresh = True
-                    if updated_sentinel is not None:
-                        updated_sentinel_keys[(key, label)] = updated_sentinel.etag
-            if not need_refresh and self._feature_flag_refresh_enabled:
-                for (key, label), etag in feature_flag_sentinel_keys.items():
-                    changed, updated_sentinel = self._check_configuration_setting(
-                        key=key, label=label, etag=etag, headers=headers, **kwargs
-                    )
-                    if changed:
-                        need_refresh = True
-                        break
-            # Need to only update once, no matter how many sentinels are updated
-            if need_refresh:
-                self._load_all(headers=headers, sentinel_keys=updated_sentinel_keys, **kwargs)
+                need_refresh = self._refresh_configuration_settings(**kwargs)
+            if self._feature_flag_refresh_enabled:
+                need_refresh = self._refresh_feature_flags(**kwargs) or need_refresh
             # Even if we don't need to refresh, we should reset the timer
             self._refresh_timer.reset()
             success = True
@@ -532,6 +513,41 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 self._refresh_timer.backoff()
             elif need_refresh and self._on_refresh_success:
                 self._on_refresh_success()
+
+    def _refresh_configuration_settings(self, **kwargs) -> bool:
+        need_refresh = False
+        updated_sentinel_keys = dict(self._refresh_on)
+        headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
+        for (key, label), etag in updated_sentinel_keys.items():
+            changed, updated_sentinel = self._check_configuration_setting(
+                key=key, label=label, etag=etag, headers=headers, **kwargs
+            )
+            if changed:
+                need_refresh = True
+            if updated_sentinel is not None:
+                updated_sentinel_keys[(key, label)] = updated_sentinel.etag
+        # Need to only update once, no matter how many sentinels are updated
+        if need_refresh:
+            configuration_settings, sentinel_keys = self._load_configuration_settings(**kwargs)
+            if self._feature_flag_enabled:
+                configuration_settings[FEATURE_MANAGEMENT_KEY] = self._dict[FEATURE_MANAGEMENT_KEY]
+            with self._update_lock:
+                self._refresh_on = sentinel_keys
+                self._dict = configuration_settings
+        return need_refresh
+
+    def refresh_feature_flags(self, **kwargs) -> bool:
+        feature_flag_sentinel_keys = dict(self._refresh_on_feature_flags)
+        headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
+        for (key, label), etag in feature_flag_sentinel_keys.items():
+            changed = self._check_configuration_setting(key=key, label=label, etag=etag, headers=headers, **kwargs)
+            if changed:
+                feature_flags, feature_flag_sentinel_keys = self._load_feature_flags(**kwargs)
+                with self._update_lock:
+                    self._dict[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags
+                self._refresh_on_feature_flags = feature_flag_sentinel_keys
+                return True
+        return False
 
     def _check_configuration_setting(
         self, key, label, etag, headers, **kwargs
