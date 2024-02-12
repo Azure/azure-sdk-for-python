@@ -16,7 +16,6 @@ from azure.ai.ml.constants._common import (
     CONNECTION_CONTAINER_NAME_KEY,
 )
 from azure.ai.ml.entities._credentials import ApiKeyConfiguration
-from .workspace_connection import WorkspaceConnection
 from azure.ai.ml._schema.workspace.connections.workspace_connection_subtypes import (
     AzureAISearchWorkspaceConnectionSchema,
     AzureAIServiceWorkspaceConnectionSchema,
@@ -24,7 +23,7 @@ from azure.ai.ml._schema.workspace.connections.workspace_connection_subtypes imp
     AzureBlobStoreWorkspaceConnectionSchema,
 )
 from azure.ai.ml._restclient.v2024_01_01_preview.models import ConnectionCategory
-
+from .workspace_connection import WorkspaceConnection
 
 # Dev notes: Any new classes require modifying the elif chains in the following functions in the
 # WorkspaceConnection parent class: _from_rest_object, _get_entity_class_from_type, _get_schema_class_from_type
@@ -57,7 +56,13 @@ class AzureOpenAIWorkspaceConnection(WorkspaceConnection):
         **kwargs: Any,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
-        super().__init__(target=target, type=camel_to_snake(ConnectionCategory.AZURE_OPEN_AI), credentials=credentials, from_child=True, **kwargs)
+        super().__init__(
+            target=target,
+            type=camel_to_snake(ConnectionCategory.AZURE_OPEN_AI),
+            credentials=credentials,
+            from_child=True,
+            **kwargs
+        )
 
         if not hasattr(self, 'tags') or self.tags is None:
             self.tags = {}
@@ -145,7 +150,13 @@ class AzureAISearchWorkspaceConnection(WorkspaceConnection):
         **kwargs: Any,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
-        super().__init__(target=target, type=camel_to_snake(ConnectionCategory.COGNITIVE_SEARCH), credentials=credentials, from_child=True, **kwargs)
+        super().__init__(
+            target=target,
+            type=camel_to_snake(ConnectionCategory.COGNITIVE_SEARCH),
+            credentials=credentials,
+            from_child=True,
+            **kwargs
+        )
 
         if not hasattr(self, 'tags') or self.tags is None:
             self.tags = {}
@@ -212,7 +223,13 @@ class AzureAIServiceWorkspaceConnection(WorkspaceConnection):
         **kwargs: Any,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
-        super().__init__(target=target, type=camel_to_snake(ConnectionCategory.COGNITIVE_SERVICE), credentials=credentials, from_child=True, **kwargs)
+        super().__init__(
+            target=target,
+            type=camel_to_snake(ConnectionCategory.COGNITIVE_SERVICE),
+            credentials=credentials,
+            from_child=True,
+            **kwargs
+        )
 
         if not hasattr(self, 'tags') or self.tags is None:
             self.tags = {}
@@ -305,7 +322,11 @@ class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
         # to silently run over user inputted connections if they want to play with them locally, so double-check
         # kwargs for them.
         super().__init__(
-            target=target, type=camel_to_snake(ConnectionCategory.AZURE_BLOB), credentials=kwargs.pop("credentials", None), from_child=True, **kwargs
+            target=target,
+            type=camel_to_snake(ConnectionCategory.AZURE_BLOB),
+            credentials=kwargs.pop("credentials", None),
+            from_child=True,
+            **kwargs,
         )
 
         if not hasattr(self, 'tags') or self.tags is None:
@@ -322,16 +343,16 @@ class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
         return AzureBlobStoreWorkspaceConnectionSchema
 
     @property
-    def container_name(self) -> str:
+    def container_name(self) -> Optional[str]:
         """The name of the workspace connection's container.
 
         :return: The name of the container.
-        :rtype: str
+        :rtype: Optional[str]
         """
-        if self.tags is not None and CONNECTION_CONTAINER_NAME_KEY in self.tags:
-            return self.tags[CONNECTION_CONTAINER_NAME_KEY]
-        return ""
-    
+        if self.tags is not None:
+            return self.tags.get(CONNECTION_CONTAINER_NAME_KEY, None)
+        return None
+
     @container_name.setter
     def container_name(self, value: str) -> None:
         """Set the container name of the workspace connection.
@@ -344,16 +365,16 @@ class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
         self.tags[CONNECTION_CONTAINER_NAME_KEY] = value
 
     @property
-    def account_name(self) -> str:
+    def account_name(self) -> Optional[str]:
         """The name of the workspace connection's account
 
         :return: The name of the account.
-        :rtype: str
+        :rtype: Optional[str]
         """
-        if self.tags is not None and CONNECTION_ACCOUNT_NAME_KEY in self.tags:
-            return self.tags[CONNECTION_ACCOUNT_NAME_KEY]
-        return ""
-    
+        if self.tags is not None:
+            return self.tags.get(CONNECTION_ACCOUNT_NAME_KEY, None)
+        return None
+
     @account_name.setter
     def account_name(self, value: str) -> None:
         """Set the account name of the workspace connection.

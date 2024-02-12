@@ -110,11 +110,10 @@ class WorkspaceConnection(Resource):
                     f"Cannot instantiate a base WorkspaceConnection with a type of {type}. "
                     f"Please use the appropriate subclass {correct_class.__name__} instead."
                 )
-            else:
-                warnings.warn(
-                    f"The workspace connection of {type} has additional fields and should not be instantiated directly "
-                    f"from the WorkspaceConnection class. Please use its subclass {correct_class.__name__} instead.",
-                )
+            warnings.warn(
+                f"The workspace connection of {type} has additional fields and should not be instantiated directly "
+                f"from the WorkspaceConnection class. Please use its subclass {correct_class.__name__} instead.",
+            )
 
         super().__init__(**kwargs)
 
@@ -384,13 +383,10 @@ class WorkspaceConnection(Resource):
             ConnectionCategory.AZURE_OPEN_AI.lower(): AzureOpenAIWorkspaceConnection,
             ConnectionCategory.COGNITIVE_SEARCH.lower(): AzureAISearchWorkspaceConnection,
             ConnectionCategory.COGNITIVE_SERVICE.lower(): AzureAIServiceWorkspaceConnection,
-            ConnectionCategory.AZURE_BLOB.lower(): AzureBlobStoreWorkspaceConnection,  # TODO replace with real connection category when available.
+            ConnectionCategory.AZURE_BLOB.lower(): AzureBlobStoreWorkspaceConnection,
         }
         cat = _snake_to_camel(conn_type).lower()
-        conn_class: Type = WorkspaceConnection
-        if cat in CONNECTION_CATEGORY_TO_SUBCLASS_MAP:
-            conn_class = CONNECTION_CATEGORY_TO_SUBCLASS_MAP[cat]
-        return conn_class
+        return CONNECTION_CATEGORY_TO_SUBCLASS_MAP.get(cat, WorkspaceConnection)
 
     @classmethod
     def _get_schema_class_from_type(cls, conn_type: Optional[str]) -> Type:
@@ -414,7 +410,11 @@ class WorkspaceConnection(Resource):
         """Helper function that returns the required metadata fields for specific workspace
         connection type. This parent function returns nothing, but needs to be overwritten by child
         classes, which are created under the expectation that they have extra fields that need to be
-        accounted for."""
+        accounted for.
+        
+        :return: A list of the required metadata fields for the specific workspace connection type.
+        :rtype: List[str]
+        """
         return []
 
     @classmethod
