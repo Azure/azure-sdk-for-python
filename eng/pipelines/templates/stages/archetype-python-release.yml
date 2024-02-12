@@ -46,8 +46,8 @@ extends:
 
                     pool:
                       imageName: 'azsdk-pool-mms-ubuntu-2004-1espt'
-                      poolName: 'azsdk-pool-mms-ubuntu-2004-1es-pt'
-                      ArtifactName: 'linux'
+                      name: 'azsdk-pool-mms-ubuntu-2004-1es-pt'
+                      os: 'linux'
 
                     strategy:
                       runOnce:
@@ -102,8 +102,8 @@ extends:
 
                         pool:
                           imageName: 'azsdk-pool-mms-ubuntu-2004-1espt'
-                          poolName: 'azsdk-pool-mms-ubuntu-2004-1es-pt'
-                          ArtifactName: 'linux'
+                          name: 'azsdk-pool-mms-ubuntu-2004-1es-pt'
+                          os: 'linux'
 
                         strategy:
                           runOnce:
@@ -181,10 +181,9 @@ extends:
                         dependsOn: PublishPackage
 
                         pool:
-                          imageName: 'azsdk-pool-mms-ubuntu-2004-1espt'
-                          poolName: 'azsdk-pool-mms-ubuntu-2004-1es-pt'
-                          ArtifactName: 'linux'
-
+                          name: azsdk-pool-mms-ubuntu-2004-1es-pt
+                          vmImage: azsdk-pool-mms-ubuntu-2004-1espt
+                          os: linux
                         strategy:
                           runOnce:
                             deploy:
@@ -213,9 +212,9 @@ extends:
                         dependsOn: PublishPackage
 
                         pool:
-                          imageName: 'azsdk-pool-mms-ubuntu-2004-1espt'
-                          poolName: 'azsdk-pool-mms-ubuntu-2004-1es-pt'
-                          ArtifactName: 'linux'
+                          name: azsdk-pool-mms-ubuntu-2004-1es-pt
+                          vmImage: azsdk-pool-mms-ubuntu-2004-1espt
+                          os: linux
 
                         strategy:
                           runOnce:
@@ -248,9 +247,9 @@ extends:
                         dependsOn: PublishPackage
 
                         pool:
-                          imageName: 'azsdk-pool-mms-ubuntu-2004-1espt'
-                          poolName: 'azsdk-pool-mms-ubuntu-2004-1es-pt'
-                          ArtifactName: 'linux'
+                          name: azsdk-pool-mms-ubuntu-2004-1es-pt
+                          vmImage: azsdk-pool-mms-ubuntu-2004-1espt
+                          os: linux
 
                         strategy:
                           runOnce:
@@ -287,9 +286,9 @@ extends:
             displayName: "Publish package to daily feed"
             condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
             pool:
-              imageName: 'azsdk-pool-mms-ubuntu-2004-1espt'
-              poolName: 'azsdk-pool-mms-ubuntu-2004-1es-pt'
-              ArtifactName: 'linux'
+              name: azsdk-pool-mms-ubuntu-2004-1es-pt
+              vmImage: azsdk-pool-mms-ubuntu-2004-1espt
+              os: linux
             steps:
               - checkout: none
               - download: current
@@ -327,9 +326,9 @@ extends:
             dependsOn: PublishPackages
             condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
             pool:
-              imageName: 'azsdk-pool-mms-ubuntu-2004-1espt'
-              poolName: 'azsdk-pool-mms-ubuntu-2004-1es-pt'
-              ArtifactName: 'linux'
+              name: azsdk-pool-mms-ubuntu-2004-1es-pt
+              vmImage: azsdk-pool-mms-ubuntu-2004-1espt
+              os: linux
             steps:
               - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml@self
                 parameters:
