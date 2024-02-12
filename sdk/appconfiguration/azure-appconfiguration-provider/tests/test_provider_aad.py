@@ -52,7 +52,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         )
         assert client["message"] == "test"
         assert "test.trimmed" not in client
-        assert "FeatureManagementFeatureFlags" not in client
+        assert "FeatureManagement" not in client
 
     # method: provider_selectors
     @recorded_by_proxy
