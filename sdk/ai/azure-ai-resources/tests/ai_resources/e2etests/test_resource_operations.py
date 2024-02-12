@@ -35,7 +35,7 @@ class TestResources:
             description="Transient test object. Delete if seen.",
             resource_group=ai_client.resource_group_name,
             default_project_resource_group=f"/subscriptions/{ai_client.subscription_id}/resourceGroups/{ai_client.resource_group_name}",
-            container_registry="some-registry-name/a/a/a/a/a/a/a/a/a",
+            container_registry=f"/subscriptions/{ai_client.subscription_id}/resourceGroups/{ai_client.resource_group_name}/providers/Microsoft.ContainerRegistry/registries/old_registry",
         )
         created_poller = ai_client.ai_resources.begin_create(ai_resource=new_local_resource)
         created_resource = created_poller.result()
@@ -44,9 +44,10 @@ class TestResources:
         assert new_local_resource.default_project_resource_group == new_local_resource.default_project_resource_group
         assert new_local_resource.container_registry == new_local_resource.container_registry
 
-        new_registry = "new-registry-name/a/a/a/a/a/a/a/a/a"
+        new_registry = f"/subscriptions/{ai_client.subscription_id}/resourceGroups/{ai_client.resource_group_name}/providers/Microsoft.ContainerRegistry/registries/new_registry"
         created_resource.container_registry = new_registry
-        updated_poller = ai_client.ai_resources.begin_update(ai_resource=created_resource)
+        # update dependent resources is required to change container registry without a rejection + warning
+        updated_poller = ai_client.ai_resources.begin_update(ai_resource=created_resource, update_dependent_resources=True)
         updated_resource = updated_poller.result()
         assert updated_resource.container_registry == new_registry
 
