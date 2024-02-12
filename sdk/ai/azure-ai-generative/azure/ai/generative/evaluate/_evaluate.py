@@ -296,9 +296,9 @@ def _evaluate(  # pylint: disable=too-many-locals, too-many-branches, too-many-s
     if data_mapping:
         metrics_config.update({"data_mapping": data_mapping})
 
-    with mlflow.start_run(
-        nested=mlflow.active_run(), run_name=evaluation_name
-    ) as run, RedirectUserOutputStreams(logger=LOGGER) as _:
+    with mlflow.start_run(nested=mlflow.active_run(), run_name=evaluation_name) as run, RedirectUserOutputStreams(
+        logger=LOGGER
+    ) as _:
 
         log_property_and_tag(
             "_azureml.evaluation_run",
@@ -387,8 +387,10 @@ def _evaluate(  # pylint: disable=too-many-locals, too-many-branches, too-many-s
                     # But since we control how params are logged, this is prob fine for now.
 
                     if ex.error_code == ErrorCode.Name(INVALID_PARAMETER_VALUE):
-                        msg = f"Parameter {param_name} value is too long to log. "
-                        LOGGER.warning(msg + "Truncating and logging it as an artifact.")
+                        LOGGER.warning(  # pylint: disable=logging-not-lazy
+                            f"Parameter {param_name} value is too long to log. "
+                            + "Truncating and logging it as an artifact."
+                        )
 
                         # Truncate the value to 500 bytes and log it.
                         truncated_value = param_value.encode("utf-8")[:500].decode("utf-8", "ignore")

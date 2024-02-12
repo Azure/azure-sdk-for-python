@@ -31,7 +31,7 @@ class ConversationWriter:
 
     def drain(self):
         logger.info(f"Draining {self._queue.qsize()} entries to {self._file_path.name}")
-        with open(self._file_path, "a") as f:
+        with open(self._file_path, "a", encoding="utf-8") as f:
             while not self._queue.empty():
                 line = self._queue.get_nowait()
                 f.write(line)

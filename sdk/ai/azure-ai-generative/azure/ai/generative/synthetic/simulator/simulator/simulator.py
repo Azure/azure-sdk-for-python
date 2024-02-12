@@ -73,7 +73,7 @@ class Simulator:
 
     def setup_bot(self, role: Union[str, ConversationRole], template: str, parameters: dict):
         if role == ConversationRole.ASSISTANT:
-            with open(BASIC_MD, "r") as f:
+            with open(BASIC_MD, "r", encoding="utf-8") as f:
                 chatbot_name_key = "chatbot_name"
                 assistant_template = f.read()
                 assistant_parameters = {chatbot_name_key: "ChatBot"}

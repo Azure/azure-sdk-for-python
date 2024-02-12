@@ -93,11 +93,11 @@ class PromptTemplate:
         if few_shot_filename is None:
             few_shot_example = None
         else:
-            with open(few_shot_filename, "r") as f:
+            with open(few_shot_filename, "r", encoding="utf-8") as f:
                 few_shot_example = dict(json.loads(f.readline().strip()))
 
         # Load one input_example
-        with open(input_filename, "r") as f:
+        with open(input_filename, "r", encoding="utf-8") as f:
             input_example = dict(json.loads(f.readline().strip()))
 
         return cls.from_examples(input_example, few_shot_example, **config_params)

@@ -259,7 +259,7 @@ class QADataGenerator:
     def _get_template(self, filename) -> str:
         logger.debug(f"Getting prompt template from {filename} file")
         filepath = os.path.join(_TEMPLATES_DIR, filename)
-        with open(filepath) as f:
+        with open(filepath, encoding="utf-8") as f:
             template = f.read()
         return template
 

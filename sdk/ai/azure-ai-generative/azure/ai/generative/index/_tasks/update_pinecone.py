@@ -334,7 +334,7 @@ def create_index_from_raw_embeddings(
         if output_path is not None:
             output = Path(output_path)
             output.mkdir(parents=True, exist_ok=True)
-            with open(output / "MLIndex", "w") as f:
+            with open(output / "MLIndex", "w", encoding="utf-8") as f:
                 yaml.dump(mlindex_config, f)
 
     mlindex = MLIndex(uri=output_path, mlindex_config=mlindex_config)

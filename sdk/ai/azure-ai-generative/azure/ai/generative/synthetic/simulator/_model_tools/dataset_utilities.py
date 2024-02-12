@@ -10,7 +10,7 @@ from typing import Iterator, Tuple, Any
 
 def jsonl_file_iter(filepath: str) -> Iterator[Tuple[int, dict]]:
     '''Generate pool data from filepath, used to load from file iteratively.'''
-    with open(filepath, 'r') as f:
+    with open(filepath, 'r', encoding="utf-8") as f:
         for idx, line in enumerate(f):
             if line.strip():
                 yield idx, json.loads(line)

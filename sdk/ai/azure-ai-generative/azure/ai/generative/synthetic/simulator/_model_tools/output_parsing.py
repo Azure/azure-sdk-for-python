@@ -23,7 +23,7 @@ def flatten_outputs(
     """Flatten batched outputs from JobManager into a format where each line is a single example."""
     # loop over the jobs
     # save jobs in array first to sort based on input idx before writing
-    with open(input_path, "r") as f_in, open(output_path, "w") as f_out:
+    with open(input_path, "r", encoding="utf-8") as f_in, open(output_path, "w", encoding="utf-8") as f_out:
         output_list = []
         for line_idx, line in enumerate(f_in):
             # skip empty lines
