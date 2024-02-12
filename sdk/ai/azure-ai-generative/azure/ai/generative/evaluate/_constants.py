@@ -37,6 +37,7 @@ class EvaluationMetrics:
     HATE_FAIRNESS = "hate_fairness"
     VIOLENCE = "violence"
     SELF_HARM = "self_harm"
+    SEXUAL = "sexual"
 
 
 class QaMetrics:
@@ -58,7 +59,8 @@ class QaMetrics:
         EvaluationMetrics.BERTSCORE,
         EvaluationMetrics.HATE_FAIRNESS,
         EvaluationMetrics.VIOLENCE,
-        EvaluationMetrics.SELF_HARM
+        EvaluationMetrics.SELF_HARM,
+        EvaluationMetrics.SEXUAL
     ]
 
 
@@ -74,7 +76,8 @@ class ChatMetrics:
         EvaluationMetrics.GPT_RETRIEVAL_SCORE,
         EvaluationMetrics.HATE_FAIRNESS,
         EvaluationMetrics.VIOLENCE,
-        EvaluationMetrics.SELF_HARM
+        EvaluationMetrics.SELF_HARM,
+        EvaluationMetrics.SEXUAL
     ]
 
 
