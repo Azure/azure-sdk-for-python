@@ -109,7 +109,7 @@ extends:
               AfterTestSteps: ${{ parameters.AfterTestSteps }}
               BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
               TestMarkArgument: ${{ parameters.TestMarkArgument }}
-              BuildTargetingString: ${{ parameters.BuildTargetingString }}'
+              BuildTargetingString: ${{ parameters.BuildTargetingString }}
               TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
               ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
               InjectedPackages: ${{ parameters.InjectedPackages }}
