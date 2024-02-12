@@ -11,7 +11,7 @@ sdist = false
 breaking = false
 bandit = false
 # these can be any number of suppressions. note that * present means that ALL warnings will be suppressed for this package
-suppressed_build_warnings = ["*"]
+suppressed_skip_warnings = ["*"]
 
 [tool.cibuildwheel]
 build = ["cp38*", "cp39*", "cp310*", "cp311*", "cp312*", "pp38*", "pp39*", "pp310*"]

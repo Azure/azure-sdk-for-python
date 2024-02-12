@@ -108,7 +108,7 @@ class ParsedSetup:
         return get_config_setting(self.folder, setting, default)
 
     def is_reporting_suppressed(self, setting: str) -> bool:
-        return compare_string_to_glob_array(setting, self.get_config_setting("suppressed_build_warnings", []))
+        return compare_string_to_glob_array(setting, self.get_config_setting("suppressed_skip_warnings", []))
 
 
 def update_build_config(package_path: str, new_build_config: Dict[str, Any]) -> Dict[str, Any]:
