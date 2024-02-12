@@ -55,7 +55,7 @@ ENV_AZURE_OPENAI_SEARCH_ENDPOINT = "AZURE_OPENAI_SEARCH_ENDPOINT"
 ENV_AZURE_OPENAI_SEARCH_KEY = "AZURE_OPENAI_SEARCH_KEY"
 ENV_AZURE_OPENAI_SEARCH_INDEX = "AZURE_OPENAI_SEARCH_INDEX"
 
-ENV_AZURE_OPENAI_API_VERSION = "2023-12-01-preview"
+ENV_AZURE_OPENAI_API_VERSION = "2024-02-15-preview"
 ENV_AZURE_OPENAI_COMPLETIONS_NAME = "gpt-35-turbo-instruct"
 ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME = "gpt-35-turbo-16k"
 ENV_AZURE_OPENAI_EMBEDDINGS_NAME = "text-embedding-ada-002"
@@ -357,32 +357,3 @@ def configure_v0(f):
 
     return wrapper
 
-
-def setup_adapter(deployment_id):
-
-    class CustomAdapter(requests.adapters.HTTPAdapter):
-
-        def send(self, request, **kwargs):
-            request.url = f"{openai.api_base}/openai/deployments/{deployment_id}/extensions/chat/completions?api-version={openai.api_version}"
-            return super().send(request, **kwargs)
-
-    session = requests.Session()
-
-    session.mount(
-        prefix=f"{openai.api_base}/openai/deployments/{deployment_id}",
-        adapter=CustomAdapter()
-    )
-
-    openai.requestssession = session
-
-
-def setup_adapter_async(deployment_id):
-
-    class CustomAdapterAsync(aiohttp.ClientRequest):
-
-        async def send(self, conn) -> aiohttp.ClientResponse:
-            self.url = yarl.URL(f"{openai.api_base}/openai/deployments/{deployment_id}/extensions/chat/completions?api-version={openai.api_version}")
-            return await super().send(conn)
-    
-    session = aiohttp.ClientSession(request_class=CustomAdapterAsync)
-    openai.aiosession.set(session)

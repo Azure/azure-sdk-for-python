@@ -119,6 +119,7 @@ class JobTierNames:
         Basic = "basic"
         Standard = "standard"
         Premium = "premium"
+        Null = "Null"
 
     class RestNames:
         Spot = "Spot"
@@ -135,7 +136,7 @@ class JobTierNames:
 
     REST_TO_ENTITY = {v: k for k, v in ENTITY_TO_REST.items()}
 
-    ALLOWED_NAMES = [EntityNames.Spot, EntityNames.Basic, EntityNames.Standard, EntityNames.Premium]
+    ALLOWED_NAMES = [EntityNames.Spot, EntityNames.Basic, EntityNames.Standard, EntityNames.Premium, EntityNames.Null]
 
 
 class JobPriorityValues:

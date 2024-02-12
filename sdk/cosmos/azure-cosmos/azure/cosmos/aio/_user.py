@@ -83,15 +83,12 @@ class UserProxy:
         :rtype: Dict[str, Any]
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
 
         self._properties = await self.client_connection.ReadUser(
             user_link=self.user_link,
             options=request_options,
             **kwargs
         )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, self._properties)
         return self._properties
 
     @distributed_trace
@@ -176,13 +173,10 @@ class UserProxy:
         :rtype: ~azure.cosmos.Permission
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
 
         permission_resp = await self.client_connection.ReadPermission(
             permission_link=self._get_permission_link(permission), options=request_options, **kwargs
         )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, permission_resp)
         return Permission(
             id=permission_resp["id"],
             user_link=self.user_link,
@@ -206,14 +200,10 @@ class UserProxy:
         :rtype: ~azure.cosmos.Permission
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
 
         permission = await self.client_connection.CreatePermission(
             user_link=self.user_link, permission=body, options=request_options, **kwargs
         )
-
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, permission)
 
         return Permission(
             id=permission["id"],
@@ -239,14 +229,10 @@ class UserProxy:
         :rtype: ~azure.cosmos.Permission
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
 
         permission = await self.client_connection.UpsertPermission(
             user_link=self.user_link, permission=body, options=request_options, **kwargs
         )
-
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, permission)
 
         return Permission(
             id=permission["id"],
@@ -280,14 +266,10 @@ class UserProxy:
         :rtype: ~azure.cosmos.Permission
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
 
         permission_resp = await self.client_connection.ReplacePermission(
             permission_link=self._get_permission_link(permission), permission=body, options=request_options, **kwargs
         )  # type: Dict[str, str]
-
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, permission_resp)
 
         return Permission(
             id=permission_resp["id"],
@@ -317,10 +299,7 @@ class UserProxy:
         :rtype: None
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
 
         await self.client_connection.DeletePermission(
             permission_link=self._get_permission_link(permission), options=request_options, **kwargs
         )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, None)

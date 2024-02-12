@@ -81,17 +81,17 @@ def crack_and_chunk_and_embed_and_index(
             if index_connection is not None:
                 connection_args["connection_type"] = "workspace_connection"
                 if isinstance(embeddings_connection, str):
-                    from azure.ai.resources._index._utils.connections import get_connection_by_id_v2
+                    from azure.ai.generative.index._utils.connections import get_connection_by_id_v2
 
                     connection_args["connection"] = {"id": index_connection}
                     connection = get_connection_by_id_v2(index_connection)
                 else:
-                    from azure.ai.resources._index._utils.connections import get_id_from_connection
+                    from azure.ai.generative.index._utils.connections import get_id_from_connection
 
                     connection_args["connection"] = {"id": get_id_from_connection(index_connection)}
                     connection = index_connection
 
-                from azure.ai.resources._index._utils.connections import (
+                from azure.ai.generative.index._utils.connections import (
                     get_metadata_from_connection,
                     get_target_from_connection,
                 )
@@ -107,7 +107,7 @@ def crack_and_chunk_and_embed_and_index(
             )
         elif index_type == "faiss":
             logger.info(f"Creating Faiss index from embeddings_container with config {index_config}")
-            mlindex = embeddings_container.write_as_faiss_mlindex(output_path, engine="azure.ai.resources._index._indexes.faiss.FaissAndDocStore")
+            mlindex = embeddings_container.write_as_faiss_mlindex(output_path, engine="azure.ai.generative.index._indexes.faiss.FaissAndDocStore")
         else:
             raise ValueError(f"Unsupported index_type {index_type}")
 

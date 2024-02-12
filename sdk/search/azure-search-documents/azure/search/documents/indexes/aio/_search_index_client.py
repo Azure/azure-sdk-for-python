@@ -163,7 +163,13 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         return result.as_dict()
 
     @distributed_trace_async
-    async def delete_index(self, index: Union[str, SearchIndex], **kwargs: Any) -> None:
+    async def delete_index(
+        self,
+        index: Union[str, SearchIndex],
+        *,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs: Any
+    ) -> None:
         """Deletes a search index and all the documents it contains. The model must be
         provided instead of the name to use the access conditions
 
@@ -183,9 +189,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
                 :caption: Delete an index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(
-            index, kwargs.pop("match_condition", MatchConditions.Unconditionally)
-        )
+        error_map, access_condition = get_access_conditions(index, match_condition)
         kwargs.update(access_condition)
         try:
             index_name = index.name  # type: ignore
@@ -378,8 +382,8 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         the SynonymMap model must be provided instead of the name. It is enough to provide
         the name of the synonym map to delete unconditionally.
 
-        :param name: The synonym map name or object to delete
-        :type name: str or ~azure.search.documents.indexes.models.SynonymMap
+        :param synonym_map: The synonym map name or object to delete
+        :type synonym_map: str or ~azure.search.documents.indexes.models.SynonymMap
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
 
