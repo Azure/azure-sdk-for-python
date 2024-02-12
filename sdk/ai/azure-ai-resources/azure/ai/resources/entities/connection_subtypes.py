@@ -327,6 +327,10 @@ class AzureBlobStoreConnection(BaseConnection):
     :type name: str
     :param target: The URL or ARM resource ID of the resource.
     :type target: str
+    :param container_name: The container name of the connection.
+    :type container_name: str
+    :param account_name: The account name of the connection.
+    :type account_name: str
     :param is_shared: For connections created for a project, this determines if the connection
         is shared amongst other connections with that project's parent AI resource. Defaults to True.
     :type is_shared: bool
@@ -352,15 +356,15 @@ class AzureBlobStoreConnection(BaseConnection):
         )
 
     @property
-    def container_name(self) -> str:
+    def container_name(self) -> Optional[str]:
         """The container name of the connection.
 
         :return: the container name of the connection.
-        :rtype: str
+        :rtype: Optional[str]
         """
-        if self._workspace_connection.tags is not None and CONNECTION_CONTAINER_NAME_KEY in self._workspace_connection.tags:
-            return self._workspace_connection.tags[CONNECTION_CONTAINER_NAME_KEY]
-        return ""
+        if self._workspace_connection.tags is not None:
+            return self._workspace_connection.tags.get(CONNECTION_CONTAINER_NAME_KEY, None)
+        return None
     
     @container_name.setter
     def container_name(self, value: str) -> None:
@@ -372,15 +376,15 @@ class AzureBlobStoreConnection(BaseConnection):
         self._workspace_connection.tags[CONNECTION_CONTAINER_NAME_KEY] = value
 
     @property
-    def account_name(self) -> str:
+    def account_name(self) -> Optional[str]:
         """The account name of the connection.
 
         :return: the account name of the connection.
-        :rtype: str
+        :rtype: Optional[str]
         """
-        if self._workspace_connection.tags is not None and CONNECTION_ACCOUNT_NAME_KEY in self._workspace_connection.tags:
-            return self._workspace_connection.tags[CONNECTION_ACCOUNT_NAME_KEY]
-        return ""
+        if self._workspace_connection.tags is not None:
+            return self._workspace_connection.tags.get(CONNECTION_ACCOUNT_NAME_KEY, None)
+        return None
     
     @account_name.setter
     def account_name(self, value: str) -> None:

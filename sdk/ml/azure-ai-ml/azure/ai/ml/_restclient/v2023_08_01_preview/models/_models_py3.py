@@ -23790,7 +23790,7 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
         self.auth_type = 'None'  # type: str
 
 
-class NoneDatastoreNoneAuthTypeWorkspaceConnectionPropertiesentials(DatastoreCredentials):
+class NoneDatastoreCredentials(DatastoreCredentials):
     """Empty/none datastore credentials.
 
     All required parameters must be populated in order to send to Azure.
