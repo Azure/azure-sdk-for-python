@@ -7,8 +7,7 @@
   "matrix": {
     "Agent": {
       "windows-2022": { "OSVmImage": "azsdk-pool-mms-win-2022-1espt", "Pool": "azsdk-pool-mms-win-2022-1es-pt", "os": "windows" },
-      "ubuntu-20.04": { "OSVmImage": "azsdk-pool-mms-ubuntu-2004-1espt", "Pool": "azsdk-pool-mms-ubuntu-2004-1es-pt", "os": "linux"},
-      "macos-11": { "OSVmImage": "macos-11", "Pool": "Azure Pipelines", "os": "macos" }
+      "ubuntu-20.04": { "OSVmImage": "azsdk-pool-mms-ubuntu-2004-1espt", "Pool": "azsdk-pool-mms-ubuntu-2004-1es-pt", "os": "linux"}
     },
     "PythonVersion": [ "3.8", "pypy3.9", "3.11", "3.10" ],
     "CoverageArg": "--disablecov",
