@@ -88,6 +88,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
         services: Optional[Dict] = None,
+        default_datastore: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         kwargs[TYPE] = JobType.COMMAND
@@ -100,6 +101,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         self.limits = limits
         self.identity = identity
         self.services = services
+        self.default_datastore = default_datastore
 
     @property
     def parameters(self) -> Dict[str, str]:
@@ -133,7 +135,8 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
                     resources.properties = {}
                 # This is the format of the October Api response. We need to match it exactly
                 resources.properties[LOCAL_COMPUTE_PROPERTY] = {LOCAL_COMPUTE_PROPERTY: True}
-
+        if self.default_datastore:
+            self.environment_variables["default_datastore"] = self.default_datastore
         properties = RestCommandJob(
             display_name=self.display_name,
             description=self.description,
