@@ -315,7 +315,7 @@ class AIResource:
     def container_registry(self) -> str:
         """The container_registry of the resource.
 
-        :return: Name of the resource.
+        :return: Name of the container registry.
         :rtype: str
         """
         return self._workspace_hub.container_registry
@@ -324,7 +324,7 @@ class AIResource:
     def container_registry(self, value: str):
         """Set the container_registry of the resource.
 
-        :param value: The new type to assign to the resource.
+        :param value: The new container registry to assign to the resource.
         :type value: str
         """
         if not value:
