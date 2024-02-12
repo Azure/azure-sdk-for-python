@@ -14,6 +14,9 @@ from types import FunctionType
 
 import mlflow
 import pandas as pd
+from azure.core.tracing.decorator import distributed_trace
+from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, \
+    ActivityLogger
 
 from mlflow.entities import Metric
 from mlflow.exceptions import MlflowException
@@ -121,8 +124,7 @@ def _validate_metrics(metrics, task_type):
         raise Exception("Unsupported metric found in the list")
 
     counter = Counter(
-        builtin_metrics + [metric.name for metric in prompt_metrics] + [metric.__name__ for metric in code_metrics]
-    )
+        builtin_metrics + [metric.name for metric in prompt_metrics] + [metric.__name__ for metric in code_metrics])
     duplicates = [key for key, value in counter.items() if value > 1]
     if len(duplicates) > 0:
         raise Exception(f"Duplicate metric name found {duplicates}. Metric names should be unique")
@@ -198,15 +200,13 @@ def evaluate(
         if isinstance(model_config, Dict):
             model_config_dict = model_config
         elif isinstance(model_config, AzureOpenAIModelConfiguration):
-            model_config_dict.update(
-                {
-                    "api_version": model_config.api_version,
-                    "api_base": model_config.api_base,
-                    "api_type": "azure",
-                    "api_key": model_config.api_key,
-                    "deployment_id": model_config.deployment_name,
-                }
-            )
+            model_config_dict.update({
+                "api_version": model_config.api_version,
+                "api_base": model_config.api_base,
+                "api_type": "azure",
+                "api_key": model_config.api_key,
+                "deployment_id": model_config.deployment_name
+            })
 
     if data_mapping:
         import warnings
@@ -278,12 +278,22 @@ def _evaluate(  # pylint: disable=too-many-locals, too-many-branches, too-many-s
     **kwargs,
 ):
     try:
-        if Path(data).exists():
-            test_data = load_jsonl(data)
-            _data_is_file = True
-    except Exception:
-        LOGGER.debug("test data is not a file but loaded data")
-        test_data = data
+        if isinstance(data, str) or isinstance(data, Path):
+            if Path(data).exists():
+                test_data = load_jsonl(data)
+                _data_is_file = True
+            else:
+                raise Exception(f"{data} does not point to a valid path")
+        else:
+            # data as list of json objects
+            _ = [json.dumps(line) for line in data]
+            test_data = data
+    except JSONDecodeError as json_load_error:
+        raise Exception("Data could not be loaded. Please validate if data is valid jsonl.")
+    except TypeError:
+        raise Exception("Data is not valid json.")
+    except Exception as ex:
+        raise Exception(f"Error loading data: {ex}")
         _data_is_file = False
 
     if task_type not in SUPPORTED_TASK_TYPE:
@@ -490,7 +500,6 @@ def _get_chat_instance_table(metrics):
 
 
 def _get_instance_table(metrics, task_type, asset_handler):
-
     instance_level_metrics_table = pd.DataFrame(metrics.get("artifacts"))
 
     combined_table = pd.concat(
