@@ -271,8 +271,9 @@ extends:
                                     CommitMsg: "Increment package version after release of ${{ artifact.name }}"
                                     PRTitle: "Increment version for ${{ parameters.ServiceDirectory }} releases"
                                     CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
+                  # todo: update the smoke test matrix as necessary.
                   # - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
-                  #     - template: /eng/pipelines/templates/jobs/smoke.tests.yml
+                  #     - template: /eng/pipelines/templates/jobs/smoke.tests.yml@self
                   #       parameters:
                   #         Daily: false
                   #         ArtifactName: ${{ parameters.ArtifactName }}
@@ -316,9 +317,7 @@ extends:
                           }
 
                           twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*-*a*.whl
-
                           echo "Uploaded whl to devops feed $(DevFeedName)"
-
                           twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*-*a*.tar.gz
 
                           echo "Uploaded sdist to devops feed $(DevFeedName)"

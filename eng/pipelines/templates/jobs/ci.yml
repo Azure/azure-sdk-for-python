@@ -168,8 +168,9 @@ jobs:
     timeoutInMinutes: 90
 
     pool:
-      name: azsdk-pool-mms-ubuntu-2004-general
-      vmImage: MMSUbuntu20.04
+      imageName: 'azsdk-pool-mms-ubuntu-2004-1espt'
+      poolName: 'azsdk-pool-mms-ubuntu-2004-1es-pt'
+      os: linux
 
     steps:
     - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
@@ -229,6 +230,8 @@ jobs:
   - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
     parameters:
       JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
+      OsVmImage: 'azsdk-pool-mms-ubuntu-2004-1espt'
+      Pool: 'azsdk-pool-mms-ubuntu-2004-1es-pt'
       DependsOn:
         - 'Build'
         - ${{ if eq(parameters['AdvancedBuild'], true) }}:
@@ -254,6 +257,8 @@ jobs:
   - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
     parameters:
       JobTemplatePath: /eng/pipelines/templates/jobs/regression.yml
+      OsVmImage: 'azsdk-pool-mms-ubuntu-2004-1espt'
+      Pool: 'azsdk-pool-mms-ubuntu-2004-1es-pt'
       GenerateJobName: generate_regression_matrix
       SparseCheckoutPaths: [ "scripts/", "sdk/", "tools/azure-sdk-tools/" ]
       MatrixConfigs:
