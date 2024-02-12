@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 from typing import Any, Dict, Union, List, Optional
 
-from .._generated import _serialization
 from ._edm import Collection, ComplexType, String
 from .._generated.models import (
     SearchField as _SearchField,
@@ -24,7 +23,7 @@ from ._models import (
 __all__ = ("ComplexField", "SearchableField", "SimpleField")
 
 
-class SearchField(_serialization.Model):
+class SearchField:
     # pylint: disable=too-many-instance-attributes
     """Represents a field in an index definition, which describes the name, data type, and search behavior of a field.
 
@@ -165,35 +164,7 @@ class SearchField(_serialization.Model):
     :vartype fields: list[~azure.search.documents.indexes.models.SearchField]
     """
 
-    _validation = {
-        "name": {"required": True},
-        "type": {"required": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "key": {"key": "key", "type": "bool"},
-        "hidden": {"key": "hidden", "type": "bool"},
-        "searchable": {"key": "searchable", "type": "bool"},
-        "filterable": {"key": "filterable", "type": "bool"},
-        "sortable": {"key": "sortable", "type": "bool"},
-        "facetable": {"key": "facetable", "type": "bool"},
-        "analyzer_name": {"key": "analyzerName", "type": "str"},
-        "search_analyzer_name": {"key": "searchAnalyzerName", "type": "str"},
-        "index_analyzer_name": {"key": "indexAnalyzerName", "type": "str"},
-        "normalizer_name": {"key": "normalizerName", "type": "str"},
-        "synonym_map_names": {"key": "synonymMapNames", "type": "[str]"},
-        "fields": {"key": "fields", "type": "[SearchField]"},
-        "vector_search_dimensions": {"key": "vectorSearchDimensions", "type": "int"},
-        "vector_search_profile_name": {
-            "key": "vectorSearchProfile",
-            "type": "str",
-        },
-    }
-
     def __init__(self, **kwargs):
-        super(SearchField, self).__init__(**kwargs)
         self.name = kwargs["name"]
         self.type = kwargs["type"]
         self.key = kwargs.get("key", None)
@@ -515,7 +486,7 @@ def ComplexField(
     return SearchField(**result)
 
 
-class SearchIndex(_serialization.Model):
+class SearchIndex:
     # pylint: disable=too-many-instance-attributes
     """Represents a search index definition, which describes the fields and search behavior of an index.
 
@@ -567,35 +538,7 @@ class SearchIndex(_serialization.Model):
     :vartype e_tag: str
     """
 
-    _validation = {
-        "name": {"required": True},
-        "fields": {"required": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "fields": {"key": "fields", "type": "[SearchField]"},
-        "scoring_profiles": {"key": "scoringProfiles", "type": "[ScoringProfile]"},
-        "default_scoring_profile": {"key": "defaultScoringProfile", "type": "str"},
-        "cors_options": {"key": "corsOptions", "type": "CorsOptions"},
-        "suggesters": {"key": "suggesters", "type": "[SearchSuggester]"},
-        "analyzers": {"key": "analyzers", "type": "[LexicalAnalyzer]"},
-        "tokenizers": {"key": "tokenizers", "type": "[LexicalTokenizer]"},
-        "token_filters": {"key": "tokenFilters", "type": "[TokenFilter]"},
-        "char_filters": {"key": "charFilters", "type": "[CharFilter]"},
-        "normalizers": {"key": "normalizers", "type": "[LexicalNormalizer]"},
-        "encryption_key": {
-            "key": "encryptionKey",
-            "type": "SearchResourceEncryptionKey",
-        },
-        "similarity": {"key": "similarity", "type": "SimilarityAlgorithm"},
-        "semantic_search": {"key": "semantic", "type": "SemanticSearch"},
-        "vector_search": {"key": "vectorSearch", "type": "VectorSearch"},
-        "e_tag": {"key": "@odata\\.etag", "type": "str"},
-    }
-
     def __init__(self, **kwargs):
-        super(SearchIndex, self).__init__(**kwargs)
         self.name = kwargs["name"]
         self.fields = kwargs["fields"]
         self.scoring_profiles = kwargs.get("scoring_profiles", None)

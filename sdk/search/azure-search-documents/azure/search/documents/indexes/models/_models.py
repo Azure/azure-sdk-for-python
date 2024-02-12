@@ -7,7 +7,6 @@
 from typing import Any, List, Optional
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
-from .._generated import _serialization
 from .._generated.models import (
     LexicalAnalyzer,
     LexicalTokenizer,
@@ -33,7 +32,7 @@ from .._generated.models import (
 DELIMITER = "|"
 
 
-class SearchIndexerSkillset(_serialization.Model):
+class SearchIndexerSkillset:
     """A list of skills.
 
     All required parameters must be populated in order to send to Azure.
@@ -64,34 +63,6 @@ class SearchIndexerSkillset(_serialization.Model):
      services, and is only available for paid services created on or after January 1, 2019.
     :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
     """
-
-    _validation = {
-        "name": {"required": True},
-        "skills": {"required": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-        "skills": {"key": "skills", "type": "[SearchIndexerSkill]"},
-        "cognitive_services_account": {
-            "key": "cognitiveServices",
-            "type": "CognitiveServicesAccount",
-        },
-        "knowledge_store": {
-            "key": "knowledgeStore",
-            "type": "SearchIndexerKnowledgeStore",
-        },
-        "index_projections": {
-            "key": "indexProjections",
-            "type": "SearchIndexerIndexProjections",
-        },
-        "e_tag": {"key": "@odata\\.etag", "type": "str"},
-        "encryption_key": {
-            "key": "encryptionKey",
-            "type": "SearchResourceEncryptionKey",
-        },
-    }
 
     def __init__(
         self,
@@ -385,7 +356,7 @@ class SentimentSkill(SearchIndexerSkill):
         return None
 
 
-class AnalyzeTextOptions(_serialization.Model):
+class AnalyzeTextOptions:
     """Specifies some text and analysis components used to break that text into tokens.
 
     All required parameters must be populated in order to send to Azure.
@@ -672,7 +643,7 @@ class PatternTokenizer(LexicalTokenizer):
         )
 
 
-class SearchResourceEncryptionKey(_serialization.Model):
+class SearchResourceEncryptionKey:
     """A customer-managed encryption key in Azure Key Vault. Keys that you create and manage can be
     used to encrypt or decrypt data-at-rest in Azure Cognitive Search, such as indexes and synonym maps.
 
@@ -695,20 +666,6 @@ class SearchResourceEncryptionKey(_serialization.Model):
     :ivar application_secret: The authentication key of the specified AAD application.
     :vartype application_secret: str
     """
-
-    _validation = {
-        "key_name": {"required": True},
-        "key_version": {"required": True},
-        "vault_uri": {"required": True},
-    }
-
-    _attribute_map = {
-        "key_name": {"key": "keyVaultKeyName", "type": "str"},
-        "key_version": {"key": "keyVaultKeyVersion", "type": "str"},
-        "vault_uri": {"key": "keyVaultUri", "type": "str"},
-        "application_id": {"key": "applicationId", "type": "str"},
-        "application_secret": {"key": "applicationSecret", "type": "str"},
-    }
 
     def __init__(self, **kwargs):
         super(SearchResourceEncryptionKey, self).__init__(**kwargs)
@@ -752,7 +709,7 @@ class SearchResourceEncryptionKey(_serialization.Model):
         )
 
 
-class SynonymMap(_serialization.Model):
+class SynonymMap:
     """Represents a synonym map definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -779,23 +736,6 @@ class SynonymMap(_serialization.Model):
     :ivar e_tag: The ETag of the synonym map.
     :vartype e_tag: str
     """
-
-    _validation = {
-        "name": {"required": True},
-        "format": {"required": True, "constant": True},
-        "synonyms": {"required": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "format": {"key": "format", "type": "str"},
-        "synonyms": {"key": "synonyms", "type": "[str]"},
-        "encryption_key": {
-            "key": "encryptionKey",
-            "type": "SearchResourceEncryptionKey",
-        },
-        "e_tag": {"key": "@odata\\.etag", "type": "str"},
-    }
 
     format = "solr"
 
@@ -827,7 +767,7 @@ class SynonymMap(_serialization.Model):
         )
 
 
-class SearchIndexerDataSourceConnection(_serialization.Model):
+class SearchIndexerDataSourceConnection:
     """Represents a datasource connection definition, which can be used to configure an indexer.
 
     All required parameters must be populated in order to send to Azure.
@@ -861,35 +801,6 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
      on or after January 1, 2019.
     :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
     """
-
-    _validation = {
-        "name": {"required": True},
-        "type": {"required": True},
-        "connection_string": {"required": True},
-        "container": {"required": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "connection_string": {"key": "connectionString", "type": "str"},
-        "container": {"key": "container", "type": "SearchIndexerDataContainer"},
-        "data_change_detection_policy": {
-            "key": "dataChangeDetectionPolicy",
-            "type": "DataChangeDetectionPolicy",
-        },
-        "data_deletion_detection_policy": {
-            "key": "dataDeletionDetectionPolicy",
-            "type": "DataDeletionDetectionPolicy",
-        },
-        "encryption_key": {
-            "key": "encryptionKey",
-            "type": "SearchResourceEncryptionKey",
-        },
-        "e_tag": {"key": "@odata\\.etag", "type": "str"},
-        "identity": {"key": "identity", "type": "SearchIndexerDataIdentity"},
-    }
 
     def __init__(self, **kwargs):
         super(SearchIndexerDataSourceConnection, self).__init__(**kwargs)
