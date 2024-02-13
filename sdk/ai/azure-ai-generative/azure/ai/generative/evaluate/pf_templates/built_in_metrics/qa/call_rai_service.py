@@ -13,12 +13,13 @@ def submit_annotation(cred, request_body):
             method="POST",
             json=request_body,
         )
+
         if response.status_code != 202:
-            print("Fail evaluating '%s' with error message: %s", request_body["UserTextList"], response.text)
+            print("Fail evaluating '%s' with error message: %s" %(request_body["UserTextList"], response.text))
             response.raise_for_status()
     except AttributeError as e:
         response = None
-        print("Fail evaluating '%s' with error message: %s", request_body["UserTextList"], e)
+        print("Fail evaluating '%s' with error message: %s" % (request_body["UserTextList"], e))
     if response is not None:
         json_obj = response.json()
     else:
@@ -69,6 +70,7 @@ def retrieve_annotation_result(cred, submitannotation_response):
 # Please update the function name/signature per need
 @tool
 def call_rai_service(request_body: dict) -> dict:
+    #rai = RAIService()
     cred = get_cred()
     submitannotation_response = submit_annotation(cred, request_body)
     annotation_result = retrieve_annotation_result(cred, submitannotation_response)
