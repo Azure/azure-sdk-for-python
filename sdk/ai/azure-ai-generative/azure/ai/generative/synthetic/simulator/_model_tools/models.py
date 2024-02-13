@@ -58,11 +58,11 @@ class AsyncHTTPClientWithRetry:
 
         self.client = RetryClient(trace_configs=[trace_config], retry_options=retry_options)
 
-    async def on_request_start(self, session, trace_config_ctx, params):
+    async def on_request_start(self, trace_config_ctx, params):
         current_attempt = trace_config_ctx.trace_request_ctx["current_attempt"]
         self.logger.info("[ATTEMPT %s] Sending %s request to %s" % (current_attempt, params.method, params.url))
 
-    async def on_request_end(self, session, trace_config_ctx, params):
+    async def on_request_end(self, trace_config_ctx, params):
         current_attempt = trace_config_ctx.trace_request_ctx["current_attempt"]
         request_headers = dict(params.response.request_info.headers)
         if "Authorization" in request_headers:
@@ -251,6 +251,7 @@ class OpenAICompletionsModel(LLMBase):
         presence_penalty: Optional[float] = 0,
         stop: Optional[Union[List[str], str]] = None,
         image_captions: Dict[str, str] = {},
+        # pylint: disable=unused-argument
         images_dir: Optional[str] = None,  # Note: unused, kept for class compatibility
     ):
         super().__init__(endpoint_url=endpoint_url, name=name, additional_headers=additional_headers)
@@ -511,7 +512,7 @@ class OpenAICompletionsModel(LLMBase):
 
                 time_taken = time.time() - time_start
 
-                parsed_response = self._parse_response(response_data, request_data=request_data)
+                parsed_response = self._parse_response(response_data)
             else:
                 raise HTTPException(
                     reason=f"Received unexpected HTTP status: {response.status} {await response.text()}"
@@ -524,7 +525,7 @@ class OpenAICompletionsModel(LLMBase):
             "full_response": full_response,
         }
 
-    def _parse_response(self, response_data: dict, request_data: Optional[dict] = None) -> dict:
+    def _parse_response(self, response_data: dict) -> dict:
         # https://platform.openai.com/docs/api-reference/completions
         samples = []
         finish_reason = []
