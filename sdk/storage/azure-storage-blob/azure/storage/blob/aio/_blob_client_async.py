@@ -2388,7 +2388,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
     async def get_page_range_diff_for_managed_disk(
         self, previous_snapshot_url: str,
         offset: Optional[int] = None,
-        length:Optional[int] = None,
+        length: Optional[int] = None,
         **kwargs: Any
     ) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]:
         """Returns the list of valid page ranges for a managed disk or snapshot.
@@ -2514,7 +2514,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         """
         options = _set_sequence_number_options(sequence_number_action, sequence_number=sequence_number, **kwargs)
         try:
-            return cast(Dict[str, Any],await self._client.page_blob.update_sequence_number(**options))
+            return cast(Dict[str, Any], await self._client.page_blob.update_sequence_number(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -2572,7 +2572,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _resize_blob_options(size=size, **kwargs)
         try:
-            return cast(Dict[str, Any],await self._client.page_blob.resize(**options))
+            return cast(Dict[str, Any], await self._client.page_blob.resize(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 
