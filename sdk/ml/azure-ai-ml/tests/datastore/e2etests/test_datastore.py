@@ -9,6 +9,7 @@ from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
 from azure.ai.ml.entities._datastore._on_prem import HdfsDatastore
 from azure.ai.ml.entities._datastore.datastore import Datastore
 
+
 def b64read(p):
     from base64 import b64encode
 

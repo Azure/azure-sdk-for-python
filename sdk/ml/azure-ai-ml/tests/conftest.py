@@ -1105,6 +1105,7 @@ def default_storage_account(request):
 
 # Datastore fixtures
 
+
 @pytest.fixture
 def blob_store_file() -> str:
     return "./tests/test_configs/datastore/blob_store.yml"

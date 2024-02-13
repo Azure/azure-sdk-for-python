@@ -21,6 +21,7 @@ from azure.ai.ml.constants._common import WorkspaceConnectionTypes
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.ml.entities._datastore.datastore import Datastore
 
+
 @pytest.mark.xdist_group(name="workspace_connection")
 @pytest.mark.e2etest
 @pytest.mark.core_sdk_test
@@ -485,13 +486,13 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
 
     @pytest.mark.shareTest
     def test_workspace_connection_data_connection_listing(
-            self,
-            client: MLClient,
-            randstr: Callable[[], str],
-            account_keys: Tuple[str, str],
-            blob_store_file: str,
-            storage_account_name: str,
-        ) -> None:
+        self,
+        client: MLClient,
+        randstr: Callable[[], str],
+        account_keys: Tuple[str, str],
+        blob_store_file: str,
+        storage_account_name: str,
+    ) -> None:
         # Workspace connections cannot be used to CREATE datastore connections, so we need
         # to use normal datastore operations to first make a blob datastore that we can
         # then use to test against the data connection listing functionality.
@@ -528,6 +529,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         client.datastores.delete(random_name)
         with pytest.raises(Exception):
             client.datastores.get(random_name)
+
 
 # Helper function copied from datstore e2e test.
 def datastore_create_get_list(client: MLClient, datastore: Datastore, random_name: str) -> Datastore:

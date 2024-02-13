@@ -61,10 +61,10 @@ class AzureOpenAIWorkspaceConnection(WorkspaceConnection):
             type=camel_to_snake(ConnectionCategory.AZURE_OPEN_AI),
             credentials=credentials,
             from_child=True,
-            **kwargs
+            **kwargs,
         )
 
-        if not hasattr(self, 'tags') or self.tags is None:
+        if not hasattr(self, "tags") or self.tags is None:
             self.tags = {}
         self.tags[CONNECTION_API_VERSION_KEY] = api_version
         self.tags[CONNECTION_API_TYPE_KEY] = api_type
@@ -96,7 +96,7 @@ class AzureOpenAIWorkspaceConnection(WorkspaceConnection):
         :param value: The new api version to set.
         :type value: str
         """
-        if not hasattr(self, 'tags') or self.tags is None:
+        if not hasattr(self, "tags") or self.tags is None:
             self.tags = {}
         self.tags[CONNECTION_API_VERSION_KEY] = value
 
@@ -119,7 +119,7 @@ class AzureOpenAIWorkspaceConnection(WorkspaceConnection):
         :param value: The new api type to set.
         :type value: str
         """
-        if not hasattr(self, 'tags') or self.tags is None:
+        if not hasattr(self, "tags") or self.tags is None:
             self.tags = {}
         self.tags[CONNECTION_API_TYPE_KEY] = value
 
@@ -155,10 +155,10 @@ class AzureAISearchWorkspaceConnection(WorkspaceConnection):
             type=camel_to_snake(ConnectionCategory.COGNITIVE_SEARCH),
             credentials=credentials,
             from_child=True,
-            **kwargs
+            **kwargs,
         )
 
-        if not hasattr(self, 'tags') or self.tags is None:
+        if not hasattr(self, "tags") or self.tags is None:
             self.tags = {}
         self.tags[CONNECTION_API_VERSION_KEY] = api_version
 
@@ -189,7 +189,7 @@ class AzureAISearchWorkspaceConnection(WorkspaceConnection):
         :param value: The new api version to set.
         :type value: str
         """
-        if not hasattr(self, 'tags') or self.tags is None:
+        if not hasattr(self, "tags") or self.tags is None:
             self.tags = {}
         self.tags[CONNECTION_API_VERSION_KEY] = value
 
@@ -228,10 +228,10 @@ class AzureAIServiceWorkspaceConnection(WorkspaceConnection):
             type=camel_to_snake(ConnectionCategory.COGNITIVE_SERVICE),
             credentials=credentials,
             from_child=True,
-            **kwargs
+            **kwargs,
         )
 
-        if not hasattr(self, 'tags') or self.tags is None:
+        if not hasattr(self, "tags") or self.tags is None:
             self.tags = {}
         self.tags[CONNECTION_API_VERSION_KEY] = api_version
         self.tags[CONNECTION_KIND_KEY] = kind
@@ -263,7 +263,7 @@ class AzureAIServiceWorkspaceConnection(WorkspaceConnection):
         :param value: The new api version to set.
         :type value: str
         """
-        if not hasattr(self, 'tags') or self.tags is None:
+        if not hasattr(self, "tags") or self.tags is None:
             self.tags = {}
         self.tags[CONNECTION_API_VERSION_KEY] = value
 
@@ -329,7 +329,7 @@ class AzureBlobStoreWorkspaceConnection(WorkspaceConnection):
             **kwargs,
         )
 
-        if not hasattr(self, 'tags') or self.tags is None:
+        if not hasattr(self, "tags") or self.tags is None:
             self.tags = {}
         self.tags[CONNECTION_CONTAINER_NAME_KEY] = container_name
         self.tags[CONNECTION_ACCOUNT_NAME_KEY] = account_name
