@@ -234,6 +234,13 @@ class SearchField:
             vector_search_profile_name=search_field.vector_search_profile_name,
         )
 
+    def serialize(self):
+        return self._to_generated().serialize()
+
+    @classmethod
+    def deserialize(cls, data):
+        return cls._from_generated(_SearchField.deserialize(data))
+
 
 def SimpleField(
     *,
@@ -634,6 +641,13 @@ class SearchIndex:
             e_tag=search_index.e_tag,
             vector_search=search_index.vector_search,
         )
+
+    def serialize(self):
+        return self._to_generated().serialize()
+
+    @classmethod
+    def deserialize(cls, data):
+        return cls._from_generated(_SearchIndex.deserialize(data))
 
 
 def pack_search_field(search_field: SearchField) -> _SearchField:

@@ -122,6 +122,13 @@ class SearchIndexerSkillset:
         kwargs["skills"] = custom_skills
         return cls(**kwargs)
 
+    def serialize(self):
+        return self._to_generated().serialize()
+
+    @classmethod
+    def deserialize(cls, data):
+        return cls._from_generated(_SearchIndexerSkillset.deserialize(data))
+
 
 class EntityRecognitionSkillVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the Entity Recognition skill version to use."""
@@ -397,21 +404,7 @@ class AnalyzeTextOptions:
     :vartype char_filters: list[str]
     """
 
-    _validation = {
-        "text": {"required": True},
-    }
-
-    _attribute_map = {
-        "text": {"key": "text", "type": "str"},
-        "analyzer_name": {"key": "analyzerName", "type": "str"},
-        "tokenizer_name": {"key": "tokenizerName", "type": "str"},
-        "normalizer_name": {"key": "normalizerName", "type": "str"},
-        "token_filters": {"key": "tokenFilters", "type": "[str]"},
-        "char_filters": {"key": "charFilters", "type": "[str]"},
-    }
-
     def __init__(self, **kwargs):
-        super(AnalyzeTextOptions, self).__init__(**kwargs)
         self.text = kwargs["text"]
         self.analyzer_name = kwargs.get("analyzer_name", None)
         self.tokenizer_name = kwargs.get("tokenizer_name", None)
@@ -428,6 +421,9 @@ class AnalyzeTextOptions:
             token_filters=self.token_filters,
             char_filters=self.char_filters,
         )
+
+    def serialize(self):
+        return self._to_analyze_request().serialize()
 
 
 class CustomAnalyzer(LexicalAnalyzer):
@@ -668,7 +664,6 @@ class SearchResourceEncryptionKey:
     """
 
     def __init__(self, **kwargs):
-        super(SearchResourceEncryptionKey, self).__init__(**kwargs)
         self.key_name = kwargs["key_name"]
         self.key_version = kwargs["key_version"]
         self.vault_uri = kwargs["vault_uri"]
@@ -708,6 +703,13 @@ class SearchResourceEncryptionKey:
             application_secret=application_secret,
         )
 
+    def serialize(self):
+        return self._to_generated().serialize()
+
+    @classmethod
+    def deserialize(cls, data):
+        return cls._from_generated(_SearchResourceEncryptionKey.deserialize(data))
+
 
 class SynonymMap:
     """Represents a synonym map definition.
@@ -740,7 +742,6 @@ class SynonymMap:
     format = "solr"
 
     def __init__(self, **kwargs):
-        super(SynonymMap, self).__init__(**kwargs)
         self.name = kwargs["name"]
         self.synonyms = kwargs["synonyms"]
         self.encryption_key = kwargs.get("encryption_key", None)
@@ -765,6 +766,13 @@ class SynonymMap:
             encryption_key=SearchResourceEncryptionKey._from_generated(synonym_map.encryption_key),
             e_tag=synonym_map.e_tag,
         )
+
+    def serialize(self):
+        return self._to_generated().serialize()
+
+    @classmethod
+    def deserialize(cls, data):
+        return cls._from_generated(_SynonymMap.deserialize(data))
 
 
 class SearchIndexerDataSourceConnection:
@@ -803,7 +811,6 @@ class SearchIndexerDataSourceConnection:
     """
 
     def __init__(self, **kwargs):
-        super(SearchIndexerDataSourceConnection, self).__init__(**kwargs)
         self.name = kwargs["name"]
         self.description = kwargs.get("description", None)
         self.type = kwargs["type"]
@@ -851,6 +858,13 @@ class SearchIndexerDataSourceConnection:
             encryption_key=search_indexer_data_source.encryption_key,
             identity=search_indexer_data_source.identity,
         )
+
+    def serialize(self):
+        return self._to_generated().serialize()
+
+    @classmethod
+    def deserialize(cls, data):
+        return cls._from_generated(_SearchIndexerDataSource.deserialize(data))
 
 
 def pack_analyzer(analyzer):
