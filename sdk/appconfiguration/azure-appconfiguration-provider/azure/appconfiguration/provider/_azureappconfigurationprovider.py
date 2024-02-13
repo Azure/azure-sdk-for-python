@@ -544,7 +544,10 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             if changed:
                 feature_flags, feature_flag_sentinel_keys = self._load_feature_flags(**kwargs)
                 with self._update_lock:
-                    self._dict[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags
+                    updated_configurations: Dict[str, Any] = {}
+                    updated_configurations[FEATURE_MANAGEMENT_KEY] = {}
+                    updated_configurations[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags
+                    self._dict.update(updated_configurations)
                 self._refresh_on_feature_flags = feature_flag_sentinel_keys
                 return True
         return False
