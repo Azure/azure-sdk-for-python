@@ -8,7 +8,7 @@ def parse_single_sample(response: dict, selected_metrics: dict) -> list:
     parsed_response = []
     for key in response:
         if selected_label_keys[key]:
-            harm_type = key
+            harm_type = key#.replace("_flattened.md", "")
             parsed_harm_response = {}
             try:
                 harm_response = eval(response[key])
@@ -30,7 +30,6 @@ def parse_single_sample(response: dict, selected_metrics: dict) -> list:
 
                 # get content harm metric_value
                 if 'label' in harm_response:
-                    #parsed_harm_response[harm_type] = harm_response['label']
                     metric_value = harm_response['label']
                 elif 'valid' in harm_response:
                     metric_value = 0 if harm_response['valid'] else np.nan
@@ -73,9 +72,6 @@ def parse_response(batch_response: List[dict], selected_label_keys: dict) -> Lis
 
     parsed_response = []
     for single_sample_response in batch_response:
-        try:
-            parsed_single_sample_response = parse_single_sample(single_sample_response, selected_label_keys)
-        except Exception:
-            parsed_single_sample_response = []
+        parsed_single_sample_response = parse_single_sample(single_sample_response, selected_label_keys)
         parsed_response.append(parsed_single_sample_response)
     return parsed_response
