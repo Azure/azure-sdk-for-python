@@ -1,3 +1,7 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
 # This file has been slightly modified to not rely on Pydantic.
 # Last Sync: 2023-09-05
 # Tag: v0.0.220

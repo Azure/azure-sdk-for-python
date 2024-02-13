@@ -1,3 +1,7 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
 """Interface to access to place that stores documents."""
 from abc import ABC, abstractmethod
 from typing import Dict, Union

@@ -1,3 +1,7 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
 from typing import Dict, Optional
 
 from azure.ai.generative.evaluate._utils import _get_ai_studio_url

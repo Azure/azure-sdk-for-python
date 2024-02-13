@@ -1,3 +1,7 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
 # This file has been slightly modified to not rely on Pydantic for the Document class.
 # Last Sync: 2023-08-24
 # Commit: 3e5cda3405ec1aa369fe90253d88f3e26a03db10
