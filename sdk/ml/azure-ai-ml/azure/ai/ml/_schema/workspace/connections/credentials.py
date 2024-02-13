@@ -5,9 +5,8 @@
 # pylint: disable=unused-argument
 
 ##### DEV NOTE: For some reason, these schemas correlate to the classes defined in ~azure.ai.ml.entities._credentials.
-# There used to be a credentials.py file in ~azure.ai.ml.entities.workspace.connections, but it was, as far as I could tell,
-# never used. So I removed it and added this comment.
-
+# There used to be a credentials.py file in ~azure.ai.ml.entities.workspace.connections,
+# but it was, as far as I could tell, never used. So I removed it and added this comment.
 
 from typing import Dict
 

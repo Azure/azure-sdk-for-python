@@ -411,7 +411,7 @@ class WorkspaceConnection(Resource):
         connection type. This parent function returns nothing, but needs to be overwritten by child
         classes, which are created under the expectation that they have extra fields that need to be
         accounted for.
-        
+
         :return: A list of the required metadata fields for the specific workspace connection type.
         :rtype: List[str]
         """
