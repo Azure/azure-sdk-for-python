@@ -594,6 +594,9 @@ class CallConnectionProperties(_serialization.Model):  # pylint: disable=too-man
      in the request.
     :vartype answered_by:
      ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
+    :ivar original_pstn_target: The original PSTN target of the incoming Call.
+    :vartype original_pstn_target:
+     ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
     """
 
     _attribute_map = {
@@ -609,6 +612,7 @@ class CallConnectionProperties(_serialization.Model):  # pylint: disable=too-man
         "source": {"key": "source", "type": "CommunicationIdentifierModel"},
         "correlation_id": {"key": "correlationId", "type": "str"},
         "answered_by": {"key": "answeredBy", "type": "CommunicationUserIdentifierModel"},
+        "original_pstn_target": {"key": "originalPSTNTarget", "type": "PhoneNumberIdentifierModel"},
     }
 
     def __init__(
@@ -626,6 +630,7 @@ class CallConnectionProperties(_serialization.Model):  # pylint: disable=too-man
         source: Optional["_models.CommunicationIdentifierModel"] = None,
         correlation_id: Optional[str] = None,
         answered_by: Optional["_models.CommunicationUserIdentifierModel"] = None,
+        original_pstn_target: Optional["_models.PhoneNumberIdentifierModel"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -662,6 +667,9 @@ class CallConnectionProperties(_serialization.Model):  # pylint: disable=too-man
          provided in the request.
         :paramtype answered_by:
          ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
+        :keyword original_pstn_target: The original PSTN target of the incoming Call.
+        :paramtype original_pstn_target:
+         ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
         """
         super().__init__(**kwargs)
         self.call_connection_id = call_connection_id
@@ -676,6 +684,7 @@ class CallConnectionProperties(_serialization.Model):  # pylint: disable=too-man
         self.source = source
         self.correlation_id = correlation_id
         self.answered_by = answered_by
+        self.original_pstn_target = original_pstn_target
 
 
 class CallDisconnected(_serialization.Model):
@@ -3474,7 +3483,7 @@ class RecordingStateChanged(_serialization.Model):
     :vartype state: str or ~azure.communication.callautomation.models.RecordingState
     :ivar start_date_time: The time of the recording started.
     :vartype start_date_time: ~datetime.datetime
-    :ivar recording_type: Known values are: "acs" and "teams".
+    :ivar recording_type: Known values are: "acs", "teams", and "teamsCompliance".
     :vartype recording_type: str or ~azure.communication.callautomation.models.RecordingType
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
@@ -3513,7 +3522,7 @@ class RecordingStateChanged(_serialization.Model):
         """
         :keyword state: Known values are: "active" and "inactive".
         :paramtype state: str or ~azure.communication.callautomation.models.RecordingState
-        :keyword recording_type: Known values are: "acs" and "teams".
+        :keyword recording_type: Known values are: "acs", "teams", and "teamsCompliance".
         :paramtype recording_type: str or ~azure.communication.callautomation.models.RecordingType
         """
         super().__init__(**kwargs)
@@ -3533,7 +3542,7 @@ class RecordingStateResponse(_serialization.Model):
     :vartype recording_id: str
     :ivar recording_state: Known values are: "active" and "inactive".
     :vartype recording_state: str or ~azure.communication.callautomation.models.RecordingState
-    :ivar recording_type: Known values are: "acs" and "teams".
+    :ivar recording_type: Known values are: "acs", "teams", and "teamsCompliance".
     :vartype recording_type: str or ~azure.communication.callautomation.models.RecordingType
     """
 
@@ -3556,7 +3565,7 @@ class RecordingStateResponse(_serialization.Model):
         :paramtype recording_id: str
         :keyword recording_state: Known values are: "active" and "inactive".
         :paramtype recording_state: str or ~azure.communication.callautomation.models.RecordingState
-        :keyword recording_type: Known values are: "acs" and "teams".
+        :keyword recording_type: Known values are: "acs", "teams", and "teamsCompliance".
         :paramtype recording_type: str or ~azure.communication.callautomation.models.RecordingType
         """
         super().__init__(**kwargs)
@@ -4444,6 +4453,132 @@ class StopTranscriptionRequest(_serialization.Model):
         self.operation_context = operation_context
 
 
+class TeamsComplianceRecordingStateChanged(_serialization.Model):
+    """TeamsComplianceRecordingStateChanged.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar recording_id: The call recording id.
+    :vartype recording_id: str
+    :ivar state: Known values are: "active" and "inactive".
+    :vartype state: str or ~azure.communication.callautomation.models.RecordingState
+    :ivar start_date_time: The time of the recording started.
+    :vartype start_date_time: ~datetime.datetime
+    :ivar recording_type: Known values are: "acs", "teams", and "teamsCompliance".
+    :vartype recording_type: str or ~azure.communication.callautomation.models.RecordingType
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    """
+
+    _validation = {
+        "recording_id": {"readonly": True},
+        "start_date_time": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "recording_id": {"key": "recordingId", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "start_date_time": {"key": "startDateTime", "type": "iso-8601"},
+        "recording_type": {"key": "recordingType", "type": "str"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        state: Optional[Union[str, "_models.RecordingState"]] = None,
+        recording_type: Optional[Union[str, "_models.RecordingType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword state: Known values are: "active" and "inactive".
+        :paramtype state: str or ~azure.communication.callautomation.models.RecordingState
+        :keyword recording_type: Known values are: "acs", "teams", and "teamsCompliance".
+        :paramtype recording_type: str or ~azure.communication.callautomation.models.RecordingType
+        """
+        super().__init__(**kwargs)
+        self.recording_id = None
+        self.state = state
+        self.start_date_time = None
+        self.recording_type = recording_type
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
+
+
+class TeamsRecordingStateChanged(_serialization.Model):
+    """TeamsRecordingStateChanged.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar recording_id: The call recording id.
+    :vartype recording_id: str
+    :ivar state: Known values are: "active" and "inactive".
+    :vartype state: str or ~azure.communication.callautomation.models.RecordingState
+    :ivar start_date_time: The time of the recording started.
+    :vartype start_date_time: ~datetime.datetime
+    :ivar recording_type: Known values are: "acs", "teams", and "teamsCompliance".
+    :vartype recording_type: str or ~azure.communication.callautomation.models.RecordingType
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    """
+
+    _validation = {
+        "recording_id": {"readonly": True},
+        "start_date_time": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "recording_id": {"key": "recordingId", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "start_date_time": {"key": "startDateTime", "type": "iso-8601"},
+        "recording_type": {"key": "recordingType", "type": "str"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        state: Optional[Union[str, "_models.RecordingState"]] = None,
+        recording_type: Optional[Union[str, "_models.RecordingType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword state: Known values are: "active" and "inactive".
+        :paramtype state: str or ~azure.communication.callautomation.models.RecordingState
+        :keyword recording_type: Known values are: "acs", "teams", and "teamsCompliance".
+        :paramtype recording_type: str or ~azure.communication.callautomation.models.RecordingType
+        """
+        super().__init__(**kwargs)
+        self.recording_id = None
+        self.state = state
+        self.start_date_time = None
+        self.recording_type = recording_type
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
+
+
 class TextSource(_serialization.Model):
     """TextSource.
 
@@ -4578,57 +4713,6 @@ class TranscriptionConfiguration(_serialization.Model):
 
 class TranscriptionFailed(_serialization.Model):
     """TranscriptionFailed.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
-     request to the response event.
-    :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code, sub-code and message.
-    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
-    :ivar transcription_update: Defines the result for TranscriptionUpdate with the current status
-     and the details about the status.
-    :vartype transcription_update: ~azure.communication.callautomation.models.TranscriptionUpdate
-    :ivar call_connection_id: Call connection ID.
-    :vartype call_connection_id: str
-    :ivar server_call_id: Server call ID.
-    :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
-    :vartype correlation_id: str
-    """
-
-    _validation = {
-        "operation_context": {"readonly": True},
-        "result_information": {"readonly": True},
-        "transcription_update": {"readonly": True},
-        "call_connection_id": {"readonly": True},
-        "server_call_id": {"readonly": True},
-        "correlation_id": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "operation_context": {"key": "operationContext", "type": "str"},
-        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
-        "transcription_update": {"key": "transcriptionUpdate", "type": "TranscriptionUpdate"},
-        "call_connection_id": {"key": "callConnectionId", "type": "str"},
-        "server_call_id": {"key": "serverCallId", "type": "str"},
-        "correlation_id": {"key": "correlationId", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.operation_context = None
-        self.result_information = None
-        self.transcription_update = None
-        self.call_connection_id = None
-        self.server_call_id = None
-        self.correlation_id = None
-
-
-class TranscriptionResumed(_serialization.Model):
-    """TranscriptionResumed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 

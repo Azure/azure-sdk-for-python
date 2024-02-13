@@ -96,10 +96,11 @@ from ._models import StartHoldMusicRequest
 from ._models import StartTranscriptionRequest
 from ._models import StopHoldMusicRequest
 from ._models import StopTranscriptionRequest
+from ._models import TeamsComplianceRecordingStateChanged
+from ._models import TeamsRecordingStateChanged
 from ._models import TextSource
 from ._models import TranscriptionConfiguration
 from ._models import TranscriptionFailed
-from ._models import TranscriptionResumed
 from ._models import TranscriptionStarted
 from ._models import TranscriptionStopped
 from ._models import TranscriptionUpdate
@@ -230,10 +231,11 @@ __all__ = [
     "StartTranscriptionRequest",
     "StopHoldMusicRequest",
     "StopTranscriptionRequest",
+    "TeamsComplianceRecordingStateChanged",
+    "TeamsRecordingStateChanged",
     "TextSource",
     "TranscriptionConfiguration",
     "TranscriptionFailed",
-    "TranscriptionResumed",
     "TranscriptionStarted",
     "TranscriptionStopped",
     "TranscriptionUpdate",
