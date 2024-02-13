@@ -23,7 +23,8 @@
 """
 from typing import Any, Mapping
 
-from .documents import PermissionMode
+# Keeping this import for API backcompat
+from .documents import PermissionMode  # pylint: disable=unused-import
 
 
 class Permission:
