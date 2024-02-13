@@ -137,7 +137,6 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
             orderby=order_by,
             filter=filter,
             metricnamespace=metric_namespace,
-            connection_verify=False,
             **kwargs
         )
         return MetricsQueryResult._from_generated(generated)  # pylint: disable=protected-access

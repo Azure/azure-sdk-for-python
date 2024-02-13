@@ -31,6 +31,7 @@ from azure.core.exceptions import DecodeError
 from utils import HTTP_REQUESTS
 
 
+@pytest.mark.live_test_only
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_decompress_plain_no_header(http_request):
@@ -51,6 +52,7 @@ async def test_decompress_plain_no_header(http_request):
         assert decoded == "test"
 
 
+@pytest.mark.live_test_only
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_compress_plain_no_header(http_request):
@@ -71,6 +73,7 @@ async def test_compress_plain_no_header(http_request):
         assert decoded == "test"
 
 
+@pytest.mark.live_test_only
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_decompress_compressed_no_header(http_request):
@@ -94,6 +97,7 @@ async def test_decompress_compressed_no_header(http_request):
             pass
 
 
+@pytest.mark.live_test_only
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_compress_compressed_no_header(http_request):
@@ -141,6 +145,7 @@ async def test_decompress_plain_header(http_request):
             pass
 
 
+@pytest.mark.live_test_only
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_compress_plain_header(http_request):
@@ -161,6 +166,7 @@ async def test_compress_plain_header(http_request):
         assert decoded == "test"
 
 
+@pytest.mark.live_test_only
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_decompress_compressed_header(http_request):

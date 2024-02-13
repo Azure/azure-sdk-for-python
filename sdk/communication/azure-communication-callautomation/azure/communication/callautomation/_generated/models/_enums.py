@@ -169,6 +169,7 @@ class RecordingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ACS = "acs"
     TEAMS = "teams"
+    TEAMS_COMPLIANCE = "teamsCompliance"
 
 
 class TranscriptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
