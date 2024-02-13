@@ -359,6 +359,51 @@ class AnswerCallRequest(_serialization.Model):
         self.source_caller_id_number = source_caller_id_number
 
 
+class AnswerFailed(_serialization.Model):
+    """AnswerFailed event.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    """
+
+    _validation = {
+        "operation_context": {"readonly": True},
+        "result_information": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.operation_context = None
+        self.result_information = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
+
+
 class BaseDialog(_serialization.Model):
     """BaseDialog.
 
@@ -612,7 +657,7 @@ class CallConnectionProperties(_serialization.Model):  # pylint: disable=too-man
         "source": {"key": "source", "type": "CommunicationIdentifierModel"},
         "correlation_id": {"key": "correlationId", "type": "str"},
         "answered_by": {"key": "answeredBy", "type": "CommunicationUserIdentifierModel"},
-        "original_pstn_target": {"key": "originalPSTNTarget", "type": "PhoneNumberIdentifierModel"},
+        "original_pstn_target": {"key": "originalPstnTarget", "type": "PhoneNumberIdentifierModel"},
     }
 
     def __init__(
@@ -1605,6 +1650,51 @@ class ContinuousDtmfRecognitionToneReceived(_serialization.Model):
         self.sequence_id = None
         self.tone = tone
         self.operation_context = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
+
+
+class CreateCallFailed(_serialization.Model):
+    """The CreateCallFailed event.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    """
+
+    _validation = {
+        "operation_context": {"readonly": True},
+        "result_information": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.operation_context = None
+        self.result_information = None
         self.call_connection_id = None
         self.server_call_id = None
         self.correlation_id = None
