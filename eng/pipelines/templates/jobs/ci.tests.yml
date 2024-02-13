@@ -63,7 +63,7 @@ jobs:
 
     pool:
       name: $(Pool)
-      image: $(OSVmImage)
+      vmImage: $(OSVmImage)
       os: $(os)
 
     ${{ if eq(parameters.UsePlatformContainer, 'true') }}:
