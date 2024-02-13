@@ -122,7 +122,7 @@ def chunk_embedder(
         logger.info(f"chunk_embedder_{worker_id} started")
 
         embedder = load_embeddings_container(
-            embeddings_model_uri, connection_args, logger, embeddings_container, worker_id
+            embeddings_model_uri, connection_args, logger, embeddings_container
         )
 
         with track_activity(logger, f"embed.chunk_embedder_{worker_id}") as activity_logger:

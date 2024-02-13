@@ -412,7 +412,7 @@ def _evaluate(  # pylint: disable=too-many-locals, too-many-branches, too-many-s
                     else:
                         raise ex
 
-            eval_artifact_df = _get_instance_table(metrics_results, task_type, asset_handler).to_json(
+            eval_artifact_df = _get_instance_table(metrics_results, asset_handler).to_json(
                 orient="records", lines=True, force_ascii=False
             )
             # eval_artifact_df = result.to_json(orient="records", lines=True, force_ascii=False)
