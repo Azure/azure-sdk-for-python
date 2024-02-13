@@ -84,6 +84,7 @@ class PromptTemplate:
         # Use example_prefix to find and split output examples from the model
         example_heading = self.input_example_pattern.replace(r"{example_index}", r"[\d]+")
         self.output_split_pattern = re.compile(example_heading)
+        self.batched_prompt_suffix: Any = None
 
     @classmethod
     def from_files(cls, input_filename: str, few_shot_filename: Optional[str], **config_params):

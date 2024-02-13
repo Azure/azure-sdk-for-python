@@ -5,6 +5,7 @@
 import sys
 import traceback
 import tempfile
+from typing import Any
 import mlflow
 
 
@@ -25,6 +26,10 @@ class RedirectUserOutputStreams(object):
     def __init__(self, logger):
         self.logger = logger
         self.user_log_path = tempfile.mkstemp(suffix="_stdout_stderr.txt")[1]
+
+        self.user_log_fp: Any = None
+        self.original_stdout: Any = None
+        self.original_stderr: Any = None
 
     def __enter__(self):
         self.logger.debug("Redirecting user output to {0}".format(self.user_log_path))

@@ -18,20 +18,12 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.ai.generative._telemetry import (
     ActivityType,
     monitor_with_activity,
-    monitor_with_telemetry_mixin,
     ActivityLogger,
 )
 
 from mlflow.entities import Metric
 from mlflow.exceptions import MlflowException
 from mlflow.protos.databricks_pb2 import ErrorCode, INVALID_PARAMETER_VALUE
-
-from azure.core.tracing.decorator import distributed_trace
-from azure.ai.generative._telemetry import (
-    ActivityType,
-    monitor_with_activity,
-    ActivityLogger,
-)
 
 from azure.ai.generative.evaluate._metric_handler import MetricHandler
 from azure.ai.generative.evaluate._metrics_handler._code_metric_handler import CodeMetricHandler

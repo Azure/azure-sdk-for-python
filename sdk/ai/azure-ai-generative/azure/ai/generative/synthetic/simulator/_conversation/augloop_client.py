@@ -87,6 +87,9 @@ class AugLoopClient:
 
         self.setup_session_after_init()
 
+        self.prevId: str = ""
+        self.id: str = ""
+
     # Deleting (Calling destructor)
     def __del__(self):
         self.logger.info(f"Closing Websocket")
@@ -192,7 +195,7 @@ class AugLoopClient:
         self.send_message_to_al(
             f'{{"cv":"{self.augLoopParams.cvBase}.{self.sequence}","seq":{self.sequence},"ops":[{{"parentPath":["session","doc"],"prevId":"{self.prevId}","items":[{{"id":"{self.id}","body":{{"{self.augLoopParams.signalMessageParamName}":"{message}", {self.augLoopParams.signalOtherParams} "H_":{{"T_":"{self.augLoopParams.signalType}","B_":["{self.augLoopParams.signalBaseType}"]}}}},"contextId":"C{self.sequence}"}}],"H_":{{"T_":"AugLoop_Core_AddOperation","B_":["AugLoop_Core_OperationWithSiblingContext","AugLoop_Core_Operation"]}}}}],"H_":{{"T_":"AugLoop_Session_Protocol_SyncMessage","B_":["AugLoop_Session_Protocol_Message"]}},"messageId":"c{self.sequence}"}}'
         )
-        self.prevId: str = self.id
+        self.prevId = self.id
 
     def reconnect_and_attempt_session_init(self):
         if self.sessionKey == None or self.sessionKey == "":
