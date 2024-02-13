@@ -261,7 +261,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                 thread_id=thread.id,
                 assistant_id=assistant.id,
                 instructions="Please address the user as Jane Doe.",
-                # additional_instructions="After solving each equation, say 'Isn't math fun?'",
+                # additional_instructions="After solving each equation, say 'Isn't math fun?'",  # not supported by AOAI yet
             )
 
             start_time = time.time()
@@ -303,6 +303,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             assert delete_thread.id == thread.id
             assert delete_thread.deleted is True
 
+    @pytest.mark.skip("AOAI does not support retrieval tools yet")
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [ASST_AZURE, GPT_4_OPENAI])
