@@ -23,6 +23,8 @@
 """
 from typing import Any, Mapping
 
+from .documents import PermissionMode
+
 
 class Permission:
     """Represents a Permission object in the Azure Cosmos DB SQL API service.
