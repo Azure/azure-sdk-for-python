@@ -156,6 +156,7 @@ def command(
     ] = None,
     job_tier: Optional[str] = None,
     priority: Optional[str] = None,
+    default_datastore: Optional[str] = None,
     **kwargs: Any,
 ) -> Command:
     """Creates a Command object which can be used inside a dsl.pipeline function or used as a standalone Command job.
@@ -283,6 +284,7 @@ def command(
         environment=environment,
         environment_variables=environment_variables,
         services=services,
+        default_datastore=default_datastore,
         **kwargs,
     )
 
