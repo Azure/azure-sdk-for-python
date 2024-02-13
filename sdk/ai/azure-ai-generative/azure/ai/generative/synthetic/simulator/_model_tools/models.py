@@ -635,7 +635,7 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
             **request_params,
         )
 
-    def _parse_response(self, response_data: dict, request_data: Optional[dict] = None) -> dict:
+    def _parse_response(self, response_data: dict) -> dict:
         # https://platform.openai.com/docs/api-reference/chat
         samples = []
         finish_reason = []

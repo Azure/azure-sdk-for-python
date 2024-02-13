@@ -73,7 +73,6 @@ class DummyConversationBot:
 
     async def generate_response(
         self,
-        session: RetryClient,
         conversation_history: List[ConversationTurn],
         max_history: int,
         turn_number: int = 0,
@@ -83,7 +82,6 @@ class DummyConversationBot:
 
         Parameters
         ----------
-        session: The aiohttp session to use for the request.
         conversation_history: The turns in the conversation so far.
         request_params: Parameters used to query GPT-4 model.
 

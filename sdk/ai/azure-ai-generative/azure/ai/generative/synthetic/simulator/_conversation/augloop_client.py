@@ -32,7 +32,6 @@ class AugLoopParams:
         cvBase: str = "eAieZY/LoqYfURDv1ao1W3",
         sessionId: str = "1ecf6906-090a-45b1-8d79-88defc62d3cc",
         runtimeVersion: str = "2.34.97",
-        scenario: str = "",
         otherTokenKeyVaultSecretNames: list = [],
     ):
         self.url = url

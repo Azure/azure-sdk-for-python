@@ -283,7 +283,7 @@ def create_index_from_raw_embeddings(
             return []
 
         # Delete removed documents
-        def batched_docs_to_delete(embeddings_container) -> Iterator[List[Dict[str, str]]]:
+        def batched_docs_to_delete() -> Iterator[List[Dict[str, str]]]:
             num_deleted_ids = 0
             deleted_ids = []
             for source_id, source in emb._deleted_sources.items():  # pylint: disable=protected-access
@@ -313,7 +313,7 @@ def create_index_from_raw_embeddings(
 
             logger.info(f"Total {num_deleted_ids} documents marked for deletion")
 
-        for delete_batch in batched_docs_to_delete(emb):
+        for delete_batch in batched_docs_to_delete():
             logger.info(f"Deleting {len(delete_batch)} documents from ACS")
             start_time = time.time()
             results = search_client.delete_documents(delete_batch)

@@ -65,7 +65,7 @@ def build_token_manager(
 
 
 class APITokenManager(ABC):
-    def __init__(self, logger, auth_header="Bearer", **kwargs):
+    def __init__(self, logger, auth_header="Bearer"):
         self.logger = logger
         self.auth_header = auth_header
         self.lock = asyncio.Lock()

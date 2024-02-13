@@ -230,7 +230,7 @@ class OpenAIEmbeddings(Embeddings):
     # please refer to
     # https://github.com/openai/openai-cookbook/blob/main/examples/Embedding_long_inputs.ipynb
     def _get_len_safe_embeddings(
-        self, texts: List[str], *, engine: str, chunk_size: Optional[int] = None
+        self, texts: List[str], *, chunk_size: Optional[int] = None
     ) -> List[List[float]]:
         embeddings: List[List[float]] = [[] for _ in range(len(texts))]
         try:
@@ -307,7 +307,7 @@ class OpenAIEmbeddings(Embeddings):
     # please refer to
     # https://github.com/openai/openai-cookbook/blob/main/examples/Embedding_long_inputs.ipynb
     async def _aget_len_safe_embeddings(
-        self, texts: List[str], *, engine: str, chunk_size: Optional[int] = None
+        self, texts: List[str], *, chunk_size: Optional[int] = None
     ) -> List[List[float]]:
         embeddings: List[List[float]] = [[] for _ in range(len(texts))]
         try:
@@ -370,13 +370,11 @@ class OpenAIEmbeddings(Embeddings):
 
         return embeddings
 
-    def embed_documents(self, texts: List[str], chunk_size: Optional[int] = 0) -> List[List[float]]:
+    def embed_documents(self, texts: List[str]) -> List[List[float]]:
         """Call out to OpenAI's embedding endpoint for embedding search docs.
 
         Args:
             texts: The list of texts to embed.
-            chunk_size: The chunk size of embeddings. If None, will use the chunk size
-                specified by the class.
 
         Returns:
             List of embeddings, one for each text.
@@ -385,7 +383,7 @@ class OpenAIEmbeddings(Embeddings):
         #       than the maximum context and use length-safe embedding function.
         return self._get_len_safe_embeddings(texts, engine=self.deployment)
 
-    async def aembed_documents(self, texts: List[str], chunk_size: Optional[int] = 0) -> List[List[float]]:
+    async def aembed_documents(self, texts: List[str]) -> List[List[float]]:
         """Call out to OpenAI's embedding endpoint async for embedding search docs.
 
         Args:

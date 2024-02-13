@@ -76,7 +76,7 @@ except Exception:
 
 
 @contextmanager
-def _run_without_logging(logger, activity_name, activity_type, custom_dimensions):
+def _run_without_logging(logger):
     yield ActivityLoggerAdapter(logger, {})
 
 
@@ -139,7 +139,7 @@ class LoggerFactory:
                     logger.addHandler(self.stdout)
         return self
 
-    def with_appinsights(self, verbosity=logging.INFO):
+    def with_appinsights(self):
         """Set whether to log track_* events to appinsights."""
         if telemetry_enabled and self.appinsights is None:
             import atexit
@@ -319,7 +319,7 @@ def safe_mlflow_log_metric(*args, logger, **kwargs):
 
 
 @contextmanager
-def safe_mlflow_start_run(*args, logger, **kwargs):
+def safe_mlflow_start_run(logger):
     """Start mlflow run if enabled."""
     if mlflow_enabled():
         import mlflow

@@ -473,7 +473,6 @@ class MLIndex:
     def set_embeddings_connection(
         self,
         connection: Optional[Union[str, BaseConnection, WorkspaceConnection]],
-        credential: Optional[TokenCredential] = None,
     ) -> "MLIndex":
         """Set the embeddings connection used by the MLIndex."""
         return self.override_connections(embedding_connection=connection)

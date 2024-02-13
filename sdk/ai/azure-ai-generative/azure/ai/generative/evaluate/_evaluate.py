@@ -14,16 +14,15 @@ from types import FunctionType
 
 import mlflow
 import pandas as pd
+from mlflow.entities import Metric
+from mlflow.exceptions import MlflowException
+from mlflow.protos.databricks_pb2 import ErrorCode, INVALID_PARAMETER_VALUE
 from azure.core.tracing.decorator import distributed_trace
 from azure.ai.generative._telemetry import (
     ActivityType,
     monitor_with_activity,
     ActivityLogger,
 )
-
-from mlflow.entities import Metric
-from mlflow.exceptions import MlflowException
-from mlflow.protos.databricks_pb2 import ErrorCode, INVALID_PARAMETER_VALUE
 
 from azure.ai.generative.evaluate._metric_handler import MetricHandler
 from azure.ai.generative.evaluate._metrics_handler._code_metric_handler import CodeMetricHandler
@@ -498,7 +497,7 @@ def _get_chat_instance_table(metrics):
     return instance_level_metrics_table
 
 
-def _get_instance_table(metrics, task_type, asset_handler):
+def _get_instance_table(metrics, asset_handler):
     instance_level_metrics_table = pd.DataFrame(metrics.get("artifacts"))
 
     combined_table = pd.concat(

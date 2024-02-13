@@ -117,7 +117,7 @@ class PromptMetricHandler(MetricHandler):
 
         return results
 
-    async def _compute_metrics(self, metrics):
+    async def _compute_metrics(self):
         tasks = []
         metrics_dict = {"artifacts": {}, "metrics": {}}
         for metric in self.metrics:

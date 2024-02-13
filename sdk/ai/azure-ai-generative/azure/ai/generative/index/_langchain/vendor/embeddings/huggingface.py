@@ -57,7 +57,7 @@ class HuggingFaceEmbeddings(Embeddings):
     multi_process: bool = False
     """Run encode() on multiple GPUs."""
 
-    def __post_init__(self, **kwargs: Any):
+    def __post_init__(self):
         """Initialize the sentence_transformer."""
         try:
             import sentence_transformers
@@ -142,7 +142,7 @@ class HuggingFaceInstructEmbeddings(Embeddings):
     query_instruction: str = DEFAULT_QUERY_INSTRUCTION
     """Instruction to use for embedding query."""
 
-    def __post_init__(self, **kwargs: Any):
+    def __post_init__(self):
         """Initialize the sentence_transformer."""
         try:
             from InstructorEmbedding import INSTRUCTOR
@@ -214,7 +214,7 @@ class HuggingFaceBgeEmbeddings(Embeddings):
     query_instruction: str = DEFAULT_QUERY_BGE_INSTRUCTION_EN
     """Instruction to use for embedding query."""
 
-    def __post_init__(self, **kwargs: Any):
+    def __post_init__(self):
         """Initialize the sentence_transformer."""
         try:
             import sentence_transformers

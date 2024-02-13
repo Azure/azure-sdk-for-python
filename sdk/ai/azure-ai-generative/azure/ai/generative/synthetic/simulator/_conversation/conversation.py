@@ -148,7 +148,7 @@ async def simulate_conversation(
     return conversation_id, conversation_history
 
 
-def play_conversation(conversation_id: str, conversation_history: List[ConversationTurn]):
+def play_conversation(conversation_history: List[ConversationTurn]):
     """
     Play the given conversation.
     """

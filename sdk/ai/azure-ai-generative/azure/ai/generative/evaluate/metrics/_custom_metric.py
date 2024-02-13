@@ -5,7 +5,7 @@ import abc
 
 
 class Metric(metaclass=abc.ABCMeta):
-    def __init__(self, *, name, description, **kwargs):
+    def __init__(self, *, name, description):
         self.name = name
         self.description = description
 
@@ -52,7 +52,7 @@ class CodeMetric(Metric):
     :paramtype aggregator: Callable
     """
 
-    def __init__(self, *, name, calculate, description=None, **kwargs):
+    def __init__(self, *, name, calculate, description=None):
         super(CodeMetric, self).__init__(name=name, description=description)
         self.calculate = calculate
 

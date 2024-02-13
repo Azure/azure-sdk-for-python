@@ -100,7 +100,6 @@ class FAISS(VectorStore):
         embeddings: Iterable[List[float]],
         metadatas: Optional[List[dict]] = None,
         ids: Optional[List[str]] = None,
-        **kwargs: Any,
     ) -> List[str]:
         if not isinstance(self.docstore, AddableMixin):
             raise ValueError(

@@ -235,7 +235,7 @@ def get_connection_by_id_v2(
             ml_client.connections._operation._client._base_url = old_base_url  # pylint: disable=protected-access
     else:
         logger.info("Getting workspace connection via REST as fallback")
-        return get_connection_by_id_v1(connection_id, credential)
+        return get_connection_by_id_v1(connection_id)
 
     return connection
 
@@ -292,7 +292,7 @@ def get_connection_by_name_v2(workspace, name: str) -> dict:
     return resp.json()
 
 
-def get_connection_by_id_v1(connection_id: str, credential: Optional[TokenCredential] = None) -> dict:
+def get_connection_by_id_v1(connection_id: str) -> dict:
     """Get a connection from a workspace."""
     _regex = (
         r"/subscriptions/(.*)/resourceGroups/(.*)/providers/Microsoft.MachineLearningServices/workspaces"

@@ -86,7 +86,6 @@ def load_embeddings_container(
     connection_args: dict,
     logger,
     embeddings_container_path: Optional[str] = None,
-    worker_id=0,
 ):
     """Loads embeddings container from uri or from previous run."""
     embeddings_container = None
@@ -113,7 +112,6 @@ def chunk_embedder(
     connection_args,
     embeddings_container,
     output,
-    logger_queue,
 ):
     """Embeds chunks from queue and writes to output path."""
     try:

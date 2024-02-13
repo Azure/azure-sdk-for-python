@@ -77,7 +77,7 @@ def get_langchain_embeddings(
                 """Initialize the ActivitySafeHuggingFaceEmbeddings."""
                 self.embeddings = embeddings
 
-            def embed_documents(self, documents: List[str], **kwargs) -> List[List[float]]:
+            def embed_documents(self, documents: List[str]) -> List[List[float]]:
                 """Embed the given documents."""
                 return self.embeddings.embed_documents(documents)
 
@@ -89,10 +89,10 @@ def get_langchain_embeddings(
     if embedding_kind == "none":
 
         class NoneEmbeddings(Embedder):
-            def embed_documents(self, documents: List[str], **kwargs) -> List[List[float]]:
+            def embed_documents(self, documents: List[str]) -> List[List[float]]:
                 return [[]] * len(documents)
 
-            def embed_query(self, query: str) -> List[float]:
+            def embed_query(self) -> List[float]:
                 return []
 
         return NoneEmbeddings()

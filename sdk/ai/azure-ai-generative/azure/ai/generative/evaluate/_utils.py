@@ -82,7 +82,7 @@ def _has_column(data, column_name):
     if data is None:
         return False
     for d in data:
-        return not (d.get(column_name) is None)
+        return not d.get(column_name) is None
 
 
 def _is_flow(asset):

@@ -187,7 +187,7 @@ class QADataGenerator:
     _PARSING_ERR_UNEQUAL_Q_AFTER_MOD = "Parsing error: Unequal question count after modification"
     _PARSING_ERR_FIRST_LINE = "Parsing error: First line must be a question"
 
-    def __init__(self, model_config: Dict, **kwargs: Any):
+    def __init__(self, model_config: Dict):
         """Initialize QADataGenerator using Azure OpenAI details."""
         import openai
 
@@ -328,7 +328,7 @@ class QADataGenerator:
                 )
             # Only the question key is required in non-conversation cases,
             # we can default to chat_history as chat_history_key
-            elif not ("question_key" in field_mapping):
+            elif not "question_key" in field_mapping:
                 raise Exception(
                     f"Field mapping for Promptflow output with {qa_type} must contain following keys: question_key"
                 )
