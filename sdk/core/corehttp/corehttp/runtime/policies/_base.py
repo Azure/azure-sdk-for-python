@@ -29,6 +29,7 @@ import copy
 import logging
 
 from typing import Generic, TypeVar, Union, Any, Optional, Awaitable, Dict, TYPE_CHECKING
+from typing_extensions import Protocol, runtime_checkable
 
 if TYPE_CHECKING:
     from ...runtime.pipeline import PipelineRequest, PipelineResponse
@@ -61,7 +62,8 @@ class HTTPPolicy(abc.ABC, Generic[HTTPRequestType, HTTPResponseType]):
         """
 
 
-class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
+@runtime_checkable
+class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType], Protocol):
     """Represents a sans I/O policy.
 
     SansIOHTTPPolicy is a base class for policies that only modify or
