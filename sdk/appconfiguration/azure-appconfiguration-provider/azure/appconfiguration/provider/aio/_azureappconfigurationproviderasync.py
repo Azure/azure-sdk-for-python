@@ -428,7 +428,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 self._dict = configuration_settings
         return need_refresh
 
-    async def refresh_feature_flags(self, **kwargs) -> bool:
+    async def _refresh_feature_flags(self, **kwargs) -> bool:
         feature_flag_sentinel_keys = dict(self._refresh_on_feature_flags)
         headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
         for (key, label), etag in feature_flag_sentinel_keys.items():

@@ -33,6 +33,7 @@ try:
                 refresh_interval=1,
                 on_refresh_success=mock_callback,
                 feature_flag_enabled=True,
+                feature_flag_refresh_enabled=True,
             ) as client:
                 assert client["refresh_message"] == "original value"
                 assert client["my_json"]["key"] == "value"
@@ -40,31 +41,41 @@ try:
                 assert has_feature_flag(client, "Alpha")
                 setting = await client._client.get_configuration_setting(key="refresh_message")
                 setting.value = "updated value"
+                feature_flag = await client._client.get_configuration_setting(key=".appconfig.featureflag/Alpha")
+                feature_flag.enabled = True
                 await client._client.set_configuration_setting(setting)
+                await client._client.set_configuration_setting(feature_flag)
 
                 # Waiting for the refresh interval to pass
                 time.sleep(2)
 
                 await client.refresh()
                 assert client["refresh_message"] == "updated value"
+                assert has_feature_flag(client, "Alpha", True)
                 assert mock_callback.call_count == 1
 
                 setting.value = "original value"
+                feature_flag.enabled = False
                 await client._client.set_configuration_setting(setting)
+                await client._client.set_configuration_setting(feature_flag)
 
                 # Waiting for the refresh interval to pass
                 time.sleep(2)
 
                 await client.refresh()
                 assert client["refresh_message"] == "original value"
+                assert has_feature_flag(client, "Alpha", False)
                 assert mock_callback.call_count == 2
 
                 setting.value = "updated value 2"
+                feature_flag.enabled = True
                 await client._client.set_configuration_setting(setting)
+                await client._client.set_configuration_setting(feature_flag)
 
                 # Not waiting for the refresh interval to pass
                 await client.refresh()
                 assert client["refresh_message"] == "original value"
+                assert has_feature_flag(client, "Alpha", False)
                 assert mock_callback.call_count == 2
 
                 setting.value = "original value"

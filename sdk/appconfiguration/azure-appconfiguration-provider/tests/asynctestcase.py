@@ -152,8 +152,8 @@ async def setup_configs(client, keyvault_secret_url):
             await client.set_configuration_setting(config)
 
 
-def has_feature_flag(client, feature_id):
+def has_feature_flag(client, feature_id, enabled=False):
     for feature_flag in client["FeatureManagement"]["FeatureFlags"]:
         if feature_flag["id"] == feature_id:
-            return True
+            return feature_flag["enabled"] == enabled
     return False
