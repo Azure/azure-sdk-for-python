@@ -320,7 +320,7 @@ class FAISS(VectorStore):
         )
         return [doc for doc, _ in docs_and_scores]
 
-    def max_marginal_relevance_search_with_score_by_vector(
+    def max_marginal_relevance_search_with_score_by_vector(  # pylint: disable=name-too-long
         self,
         embedding: List[float],
         *,

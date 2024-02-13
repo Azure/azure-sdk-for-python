@@ -144,7 +144,7 @@ class AzureCognitiveSearchVectorStore(VectorStore):
         """Add texts to the vector store."""
         raise NotImplementedError
 
-    def similarity_search_by_vector_with_relevance_scores(
+    def similarity_search_by_vector_with_relevance_scores(  # pylint: disable=name-too-long
         self, vector: List[float], k: int = 4, **kwargs: Any
     ) -> List[Tuple[Document, float]]:
         """Search for similar documents by vector with relevance scores."""

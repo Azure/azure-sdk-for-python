@@ -50,7 +50,7 @@ class AzureOpenAIClient:
                 return ex
 
     @staticmethod
-    def get_chat_completion_content_from_response(response):
+    def get_chat_completion_content_from_response(response):  # pylint: disable=name-too-long
         if isinstance(response, ChatCompletion):
             return response.choices[0].message.content
         return None
