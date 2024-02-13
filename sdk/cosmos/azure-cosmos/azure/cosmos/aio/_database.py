@@ -160,7 +160,7 @@ class DatabaseProxy(object):
     async def create_container(
         self,
         id: str,
-        partition_key: Optional[PartitionKey],
+        partition_key: PartitionKey,
         *,
         indexing_policy: Optional[Dict[str, str]] = None,
         default_ttl: Optional[int] = None,
@@ -265,7 +265,7 @@ class DatabaseProxy(object):
     @distributed_trace_async
     async def create_container_if_not_exists(
         self,
-        id: str,  # pylint: disable=redefined-builtin
+        id: str,
         partition_key: PartitionKey,
         **kwargs: Any
     ) -> ContainerProxy:
