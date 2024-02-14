@@ -69,6 +69,7 @@ jobs:
       pool:
         name: ${{ poolDefinition.Pool }} 
         os: ${{ poolDefinition.os}}
+        demands: ${{ poolDefinitiuon.demands }}
 
       variables:
       - template: ../variables/globals.yml

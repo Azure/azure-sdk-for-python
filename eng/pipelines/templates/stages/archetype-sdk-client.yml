@@ -88,36 +88,42 @@ parameters:
       - OSVmImage: azsdk-pool-mms-win-2022-1espt
         Pool: azsdk-pool-mms-win-2022-1es-pt
         os: windows
+        demands: "Image -eq windows-2022"
         PythonVersion: 3.8
         CoverageArg: --disablecov
         TestSamples: false
       - OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
         Pool: azsdk-pool-mms-ubuntu-2004-1es-pt
         os: linux
+        demands: "Image -eq ubuntu-20.04"
         PythonVersion: pypy3.9
         CoverageArg: --disablecov
         TestSamples: false
       - OSVmImage: macos-latest
         Pool: Azure Pipelines
         os: macOs
+        demands: "Image -eq macos-11"
         PythonVersion: 3.11
         CoverageArg: --disablecov
         TestSamples: false
       - OSVmImage: azsdk-pool-mms-win-2022-1espt
         Pool: azsdk-pool-mms-win-2022-1es-pt
         os: windows
+        demands: "Image -eq windows-2022"
         PythonVersion: 3.10
         CoverageArg: --disablecov
         TestSamples: false
       - OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
         Pool: azsdk-pool-mms-ubuntu-2004-1es-pt
         os: linux
+        demands: "Image -eq ubuntu-20.04"
         PythonVersion: 3.9
         CoverageArg: ""
         TestSamples: false
       - OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
         Pool: azsdk-pool-mms-ubuntu-2004-1es-pt
         os: linux
+        demands: "Image -eq ubuntu-20.04"
         PythonVersion: 3.12
         CoverageArg: --disablecov
         TestSamples: false
