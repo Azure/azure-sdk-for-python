@@ -29,8 +29,6 @@ parameters:
   - name: InjectedPackages
     type: string
     default: ''
-  - name: Matrix
-    type: string
   - name: DependsOn
     type: object
     default: []
@@ -72,10 +70,6 @@ jobs:
       pool:
         name: ${{ poolDefinition.Pool }} 
         os: ${{ poolDefinition.os}}
-
-      ${{ if eq(parameters.UsePlatformContainer, 'true') }}:
-        # Add a default so the job doesn't fail when the matrix is empty
-        container: $[ variables['Container'] ]
 
       variables:
       - template: ../variables/globals.yml
