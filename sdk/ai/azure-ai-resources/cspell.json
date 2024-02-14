@@ -1,6 +1,7 @@
 {
     "ignoreWords": [
-        "redef"
+        "redef",
+        "llm"
     ],
     "ignorePaths": [
         "sdk/ai/azure-ai-resources/azure/ai/resources/_index/_utils/encodings/*"
