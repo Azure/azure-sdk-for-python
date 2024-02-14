@@ -352,8 +352,6 @@
 # PRLabel: %Document Intelligence
 /sdk/documentintelligence/                                           @YalinLi0312
 
-# AzureSDKOwners: @xiangyan99
-# ServiceLabel: %Cognitive - Metrics Advisor
 # PRLabel: %Cognitive - Metrics Advisor
 /sdk/metricsadvisor/                                                 @xiangyan99 @kristapratico @iscai-msft
 
