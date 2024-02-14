@@ -115,17 +115,18 @@ steps:
 
   - ${{ parameters.AfterTestSteps }}
 
-  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-    parameters:
-      ArtifactPath: '$(Build.SourcesDirectory)/_coverage'
-      ArtifactName: '$(System.StageName)_$(Agent.JobName)_coverage'
-      CustomCondition: ${{ ne(parameters['CoverageArg'], '--disablecov') }}
+  - ${{ if ne(parameters['CoverageArg'], '--disablecov') }}:
+    - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+      parameters:
+        ArtifactPath: '$(Build.SourcesDirectory)/_coverage'
+        ArtifactName: '$(System.StageName)_$(Agent.JobName)_coverage'
 
-  - pwsh: |
-      python -m pip install coverage==7.2.5
-      python scripts/devops_tasks/create_coverage.py
-    displayName: Create Coverage Report
-    condition: and(succeeded(), ${{ ne(parameters['CoverageArg'], '--disablecov') }})
+  - ${{ if ne(parameters['CoverageArg'], '--disablecov') }}:
+    - pwsh: |
+        python -m pip install coverage==7.2.5
+        python scripts/devops_tasks/create_coverage.py
+      displayName: Create Coverage Report
+      condition: succeeded()
 
   - task: PythonScript@0
     displayName: 'Test Samples'
@@ -151,10 +152,11 @@ steps:
       testRunTitle: '${{ parameters.ServiceDirectory }} ${{ parameters.CloudName }} $(Agent.JobName)'
       failTaskOnFailedTests: true
 
-  - task: PublishCodeCoverageResults@1
-    displayName: 'Publish Code Coverage to DevOps'
-    continueOnError: true
-    condition: and(succeeded(), ${{ ne(parameters['CoverageArg'], '--disablecov') }}
-    inputs:
-      codeCoverageTool: Cobertura
-      summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
+  - ${{ if ne(parameters['CoverageArg'], '--disablecov') }}:
+    - task: PublishCodeCoverageResults@1
+      displayName: 'Publish Code Coverage to DevOps'
+      continueOnError: true
+      condition: succeeded()
+      inputs:
+        codeCoverageTool: Cobertura
+        summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
