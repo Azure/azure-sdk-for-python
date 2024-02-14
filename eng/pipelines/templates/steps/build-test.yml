@@ -119,13 +119,13 @@ steps:
     parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/_coverage'
       ArtifactName: '$(System.StageName)_$(Agent.JobName)_coverage'
-      CustomCondition: ne(parameters['CoverageArg'], '--disablecov')
+      CustomCondition: ${{ ne(parameters['CoverageArg'], '--disablecov') }}
 
   - pwsh: |
       python -m pip install coverage==7.2.5
       python scripts/devops_tasks/create_coverage.py
     displayName: Create Coverage Report
-    condition: and(succeeded(), ne(parameters['CoverageArg'], '--disablecov'))
+    condition: and(succeeded(), ${{ ne(parameters['CoverageArg'], '--disablecov') }})
 
   - task: PythonScript@0
     displayName: 'Test Samples'
@@ -154,7 +154,7 @@ steps:
   - task: PublishCodeCoverageResults@1
     displayName: 'Publish Code Coverage to DevOps'
     continueOnError: true
-    condition: and(succeeded(), ne(parameters['CoverageArg'], '--disablecov'))
+    condition: and(succeeded(), ${{ ne(parameters['CoverageArg'], '--disablecov') }}
     inputs:
       codeCoverageTool: Cobertura
       summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
