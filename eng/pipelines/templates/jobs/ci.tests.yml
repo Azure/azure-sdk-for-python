@@ -83,7 +83,7 @@ jobs:
 
       - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
         parameters:
-          AgentImage: $(OSVmImage)
+          AgentImage: ${{ poolDefinition.OSVmImage }}
 
       - task: UsePythonVersion@0
         inputs:
