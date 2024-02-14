@@ -19,8 +19,10 @@ from ._registry_component_containers_operations import RegistryComponentContaine
 from ._registry_component_versions_operations import RegistryComponentVersionsOperations
 from ._registry_data_containers_operations import RegistryDataContainersOperations
 from ._registry_data_versions_operations import RegistryDataVersionsOperations
+from ._registry_data_references_operations import RegistryDataReferencesOperations
 from ._registry_environment_containers_operations import RegistryEnvironmentContainersOperations
 from ._registry_environment_versions_operations import RegistryEnvironmentVersionsOperations
+from ._marketplace_subscriptions_operations import MarketplaceSubscriptionsOperations
 from ._registry_model_containers_operations import RegistryModelContainersOperations
 from ._registry_model_versions_operations import RegistryModelVersionsOperations
 from ._batch_endpoints_operations import BatchEndpointsOperations
@@ -50,6 +52,15 @@ from ._online_endpoints_operations import OnlineEndpointsOperations
 from ._online_deployments_operations import OnlineDeploymentsOperations
 from ._schedules_operations import SchedulesOperations
 from ._serverless_endpoints_operations import ServerlessEndpointsOperations
+from ._operations import Operations
+from ._workspaces_operations import WorkspacesOperations
+from ._workspace_connections_operations import WorkspaceConnectionsOperations
+from ._endpoint_deployment_operations import EndpointDeploymentOperations
+from ._endpoint_operations import EndpointOperations
+from ._managed_network_settings_rule_operations import ManagedNetworkSettingsRuleOperations
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from ._private_link_resources_operations import PrivateLinkResourcesOperations
+from ._managed_network_provisions_operations import ManagedNetworkProvisionsOperations
 
 __all__ = [
     'UsagesOperations',
@@ -65,8 +76,10 @@ __all__ = [
     'RegistryComponentVersionsOperations',
     'RegistryDataContainersOperations',
     'RegistryDataVersionsOperations',
+    'RegistryDataReferencesOperations',
     'RegistryEnvironmentContainersOperations',
     'RegistryEnvironmentVersionsOperations',
+    'MarketplaceSubscriptionsOperations',
     'RegistryModelContainersOperations',
     'RegistryModelVersionsOperations',
     'BatchEndpointsOperations',
@@ -96,4 +109,13 @@ __all__ = [
     'OnlineDeploymentsOperations',
     'SchedulesOperations',
     'ServerlessEndpointsOperations',
+    'Operations',
+    'WorkspacesOperations',
+    'WorkspaceConnectionsOperations',
+    'EndpointDeploymentOperations',
+    'EndpointOperations',
+    'ManagedNetworkSettingsRuleOperations',
+    'PrivateEndpointConnectionsOperations',
+    'PrivateLinkResourcesOperations',
+    'ManagedNetworkProvisionsOperations',
 ]

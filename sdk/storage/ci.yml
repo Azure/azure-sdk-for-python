@@ -31,13 +31,12 @@ extends:
     ServiceDirectory: storage
     TestProxy: true
     TestTimeoutInMinutes: 120
-    # Override the base matrix due to the issues with building cryptography on unsupported platforms
-    # https://github.com/Azure/azure-sdk-for-python/issues/17837
     MatrixConfigs:
       - Name: storage_ci_matrix
         Path: eng/pipelines/templates/stages/platform-matrix-excluding-pypy.json
         Selection: sparse
         GenerateVMJobs: true
+    AdvancedBuild: true
     Artifacts:
     - name: azure-storage-blob
       safeName: azurestorageblob
@@ -49,6 +48,11 @@ extends:
       safeName: azurestoragefiledatalake
     - name: azure-storage-queue
       safeName: azurestoragequeue
+    - name: azure-storage-extensions
+      safeName: azurestorageextensions
+      # Pure C-based storage extension package, not generating docs at this moment.
+      skipPublishDocs: true
+      skipPublishDocMs: true
     - name: azure-mgmt-storage
       safeName: azuremgmtstorage
     - name: azure-mgmt-storagecache

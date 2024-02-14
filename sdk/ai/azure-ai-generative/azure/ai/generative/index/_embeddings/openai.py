@@ -6,6 +6,8 @@ import os
 import time
 from typing import Any, Dict, List, Optional
 
+from azure.ai.resources.constants._common import USER_AGENT_HEADER_KEY
+from azure.ai.generative._user_agent import USER_AGENT
 from azure.ai.generative.index._utils.logging import get_logger
 from packaging import version
 
@@ -77,11 +79,14 @@ class OpenAIEmbedder:
                     api_key=self.api_key,
                     api_version=self.api_version,
                     azure_endpoint=self.api_base,
+                    azure_deployment=self.deployment,
+                    default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
                 )
             else:
                 client = openai.OpenAI(
                     api_key=self.api_key,
                     base_url=self.api_base,
+                    default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
                 )
 
             self.embedding_client = client.embeddings
@@ -230,9 +235,11 @@ class OpenAIEmbedder:
         """Embed the given texts."""
         import numpy as np
         import tiktoken
+        from azure.ai.generative.index._utils.tokens import tiktoken_cache_dir
 
         try:
-            encoding = tiktoken.encoding_for_model(self.model)
+            with tiktoken_cache_dir():
+                encoding = tiktoken.encoding_for_model(self.model)
         except KeyError:
             logger.warning("Warning: model not found. Using cl100k_base encoding.")
             model = "cl100k_base"

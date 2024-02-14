@@ -43,6 +43,7 @@ from .partition_key import _Empty, _Undefined
 
 if TYPE_CHECKING:
     from ._cosmos_client_connection import CosmosClientConnection
+    from .aio._cosmos_client_connection_async import CosmosClientConnection as AsyncClientConnection
 
 
 _COMMON_OPTIONS = {
@@ -107,7 +108,7 @@ def build_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
-        cosmos_client_connection: "CosmosClientConnection",
+        cosmos_client_connection: Union["CosmosClientConnection", "AsyncClientConnection"],
         default_headers: Mapping[str, Any],
         verb: str,
         path: str,
@@ -765,8 +766,7 @@ def _replace_throughput(
             max_throughput = throughput.auto_scale_max_throughput
             increment_percent = throughput.auto_scale_increment_percent
             if max_throughput is not None:
-                new_throughput_properties['content']['offerAutopilotSettings'][
-                    'maxThroughput'] = max_throughput
+                new_throughput_properties['content']['offerAutopilotSettings']['maxThroughput'] = max_throughput
                 if increment_percent:
                     new_throughput_properties['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy']['incrementPercent'] = increment_percent  # pylint: disable=line-too-long
                 if throughput.offer_throughput:

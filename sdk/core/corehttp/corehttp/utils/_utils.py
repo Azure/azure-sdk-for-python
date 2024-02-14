@@ -15,8 +15,14 @@ from typing import (
     Tuple,
     Union,
     Dict,
+    cast,
+    Sequence,
+    TYPE_CHECKING,
 )
 from urllib.parse import urlparse
+
+if TYPE_CHECKING:
+    from corehttp.rest._helpers import FileType, FilesType
 
 
 class _FixedOffset(datetime.tzinfo):
@@ -150,3 +156,11 @@ class CaseInsensitiveDict(MutableMapping[str, Any]):
 
     def __repr__(self) -> str:
         return str(dict(self.items()))
+
+
+def get_file_items(files: "FilesType") -> Sequence[Tuple[str, "FileType"]]:
+    if isinstance(files, Mapping):
+        # casting because ItemsView technically isn't a Sequence, even
+        # though realistically it is ordered python 3.7 and after
+        return cast(Sequence[Tuple[str, "FileType"]], files.items())
+    return files

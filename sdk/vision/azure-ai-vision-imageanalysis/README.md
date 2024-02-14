@@ -9,8 +9,8 @@ Use the Image Analysis client library to:
 * Get the analysis result
 
 [Product documentation](https://learn.microsoft.com/azure/ai-services/computer-vision/overview-image-analysis?tabs=4-0) 
-| [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/vision/azure-ai-vision-imageanalysis/samples)
-| [Vision Studio](https://portal.vision.cognitive.azure.com/gallery/imageanalysis)
+| [Samples](https://aka.ms/azsdk/image-analysis/samples/python)
+| [Vision Studio](https://aka.ms/vision-studio/image-analysis)
 | [API reference documentation](https://aka.ms/azsdk/image-analysis/ref-docs/python)
 | [Package (Pypi)](https://aka.ms/azsdk/image-analysis/package/pypi)
 | [SDK source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/vision/azure-ai-vision-imageanalysis/azure/ai/vision/imageanalysis)
@@ -71,11 +71,16 @@ client = ImageAnalysisClient(
 
 <!-- END SNIPPET -->
 
-A synchronous client supports synchronous analysis methods, meaning they will block until the service responds with analysis results. The code snippets below all use synchronous methods because it's easier for a getting-started guide. The SDK offers equivalent asynchronous APIs which are often preferred. To create an asynchronous client, simply update the above code to import `ImageAnalysisClient` from the `aio` namespace:
+A synchronous client supports synchronous analysis methods, meaning they will block until the service responds with analysis results. The code snippets below all use synchronous methods because it's easier for a getting-started guide. The SDK offers equivalent asynchronous APIs which are often preferred. To create an asynchronous client, do the following:
 
-```python
-from azure.ai.vision.imageanalysis.aio import ImageAnalysisClient
-```
+* Update the above code to import `ImageAnalysisClient` from the `aio` namespace:
+    ```python
+    from azure.ai.vision.imageanalysis.aio import ImageAnalysisClient
+    ```
+* Install the additional package [aiohttp](https://pypi.org/project/aiohttp/):
+    ```bash
+    pip install aiohttp
+    ```
 
 ## Key concepts
 
@@ -163,7 +168,7 @@ This example is similar to the above, expect it calls the `analyze` method and p
 
 ```python
 # Get a caption for the image. This will be a synchronously (blocking) call.
-result = client.analyze(
+result = client.analyze_from_url(
     image_url="https://aka.ms/azsdk/image-analysis/sample.jpg",
     visual_features=[VisualFeatures.CAPTION],
     gender_neutral_caption=True,  # Optional (default is False)
@@ -219,7 +224,7 @@ This example is similar to the above, expect it calls the `analyze` method and p
 
 ```python
 # Extract text (OCR) from an image stream. This will be a synchronously (blocking) call.
-result = client.analyze(
+result = client.analyze_from_url(
     image_url="https://aka.ms/azsdk/image-analysis/sample.jpg",
     visual_features=[VisualFeatures.READ]
 )

@@ -6,9 +6,10 @@
 
 from base64 import b64encode
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as DatastoreData, DatastoreType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as DatastoreData
+from azure.ai.ml._restclient.v2023_04_01_preview.models import DatastoreType
 from azure.ai.ml._restclient.v2023_04_01_preview.models import HdfsDatastore as RestHdfsDatastore
 from azure.ai.ml._schema._datastore._on_prem import HdfsSchema
 from azure.ai.ml._utils._experimental import experimental
@@ -56,8 +57,8 @@ class HdfsDatastore(Datastore):
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
-        credentials: Union[KerberosKeytabCredentials, KerberosPasswordCredentials],
-        **kwargs
+        credentials: Optional[Union[KerberosKeytabCredentials, KerberosPasswordCredentials]],
+        **kwargs: Any
     ):
         kwargs[TYPE] = DatastoreType.HDFS
         super().__init__(
@@ -84,11 +85,12 @@ class HdfsDatastore(Datastore):
         return DatastoreData(properties=hdfs_ds)
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "HdfsDatastore":
-        return load_from_dict(HdfsSchema, data, context, additional_message)
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "HdfsDatastore":
+        res: HdfsDatastore = load_from_dict(HdfsSchema, data, context, additional_message)
+        return res
 
     @classmethod
-    def _from_rest_object(cls, datastore_resource: DatastoreData):
+    def _from_rest_object(cls, datastore_resource: DatastoreData) -> "HdfsDatastore":
         properties: RestHdfsDatastore = datastore_resource.properties
         return HdfsDatastore(
             name=datastore_resource.name,
@@ -101,17 +103,19 @@ class HdfsDatastore(Datastore):
             tags=properties.tags,
         )
 
-    def __eq__(self, other) -> bool:
-        return (
+    def __eq__(self, other: Any) -> bool:
+        res: bool = (
             super().__eq__(other)
             and self.hdfs_server_certificate == other.hdfs_server_certificate
             and self.name_node_address == other.name_node_address
             and self.protocol == other.protocol
         )
+        return res
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)
 
     def _to_dict(self) -> Dict:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
-        return HdfsSchema(context=context).dump(self)
+        res: dict = HdfsSchema(context=context).dump(self)
+        return res

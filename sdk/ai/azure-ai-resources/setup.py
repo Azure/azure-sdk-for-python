@@ -50,6 +50,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
@@ -76,6 +77,6 @@ setup(
         "Source": "https://github.com/Azure/azure-sdk-python",
     },
     package_data={
-        'azure.ai.resources': ['py.typed'],
+        'azure.ai.resources': ['py.typed', 'azure/ai/resources/_index/_utils/encodings/*'],
     },
 )
