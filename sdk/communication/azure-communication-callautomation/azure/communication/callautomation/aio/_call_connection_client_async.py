@@ -473,6 +473,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         loop: bool = False,
         operation_context: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
+        interrupt_call_media_operation: Optional[bool] = None,
         **kwargs
     ) -> None:
         """Play media to all participants in this call.
@@ -490,6 +491,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
+        :keyword interrupt_call_media_operation: If set play can barge into other existing
+         queued-up/currently-processing requests.
+        :paramtype interrupt_call_media_operation: bool
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -503,6 +507,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             loop=loop,
             operation_context=operation_context,
             operation_callback_url=operation_callback_url,
+            interrupt_call_media_operation=interrupt_call_media_operation,
             **kwargs
         )
 
