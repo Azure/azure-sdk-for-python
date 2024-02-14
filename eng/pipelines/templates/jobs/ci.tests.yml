@@ -61,9 +61,9 @@ jobs:
         - ${{ parameters.DependsOn }}
 
       pool:
-        name: ${{ poolDefinition.Pool }} 
+        name: $(Pool)
         os: ${{ poolDefinition.os}}
-        vmImage: "${{ poolDefinition.OSVmImage }}"
+        vmImage: "$(VMImage)"
 
       variables:
       - template: ../variables/globals.yml
@@ -122,7 +122,7 @@ jobs:
             - template: ../steps/set-dev-build.yml
               parameters:
                 ServiceDirectory: ${{ parameters.ServiceDirectory }}
-            
+
             - ${{ each step in parameters.BeforeTestSteps }}:
               -  ${{ step }}
           AfterTestSteps: ${{ parameters.AfterTestSteps }}
