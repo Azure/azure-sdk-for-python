@@ -90,7 +90,7 @@ parameters:
         Pool: azsdk-pool-mms-win-2022-1es-pt
         os: windows
         demands: "ImageOverride -equals windows-2022"
-        PythonVersion: 3.8
+        PythonVersion: "3.8"
         CoverageArg: --disablecov
         TestSamples: false
       - OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
