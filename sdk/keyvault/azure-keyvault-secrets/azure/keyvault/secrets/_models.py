@@ -24,7 +24,7 @@ class SecretProperties(object):
     :keyword bool managed: True if the secret's lifetime is managed by Key Vault. If this secret is backing a
         certificate, this will be True.
     :keyword tags: Application specific metadata in the form of key-value pairs.
-    :paramtype tags: dict[str, str]
+    :paramtype tags: dict[str, str] or None
     """
 
     def __init__(
