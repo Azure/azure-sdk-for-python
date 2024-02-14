@@ -14,6 +14,7 @@
 - `asyncio` is no longer directly referenced by the library
   ([#33819](https://github.com/Azure/azure-sdk-for-python/pull/33819))
 - Updated minimum `azure-core` version to 1.29.5
+- Dropped `azure-common` requirement
 
 ## 4.9.0b3 (2023-11-03)
 
