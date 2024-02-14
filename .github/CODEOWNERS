@@ -22,9 +22,13 @@
 /sdk/ @lmazuel
 
 # Core
+# AzureSDKOwners: @lmazuel
+# ServiceLabel: %Core.Http
 # PRLabel: %Core.Http
 /sdk/core/corehttp/                                                  @pvaneck @lmazuel @annatisch @johanste @xiangyan99 @iscai-msft @kashifkhan
 
+# AzureSDKOwners: @lmazuel
+# ServiceLabel: %Azure.Core
 # PRLabel: %Azure.Core
 /sdk/core/                                                           @lmazuel @annatisch @johanste
 /sdk/core/azure-core/                                                @lmazuel @annatisch @johanste @xiangyan99 @tjprescott @iscai-msft @kashifkhan
@@ -42,15 +46,21 @@
 # PRLabel: %AgriFood
 /sdk/agrifood/azure-agrifood-farming/                                @bhargav-kansagara
 
+# AzureSDKOwners: @xiangyan99
+# ServiceLabel: %Azure.Identity
 # PRLabel: %Azure.Identity
 /sdk/identity/                                                       @pvaneck @xiangyan99 @Azure/azure-sdk-write-identity
 
+# AzureSDKOwners: @kashifkhan
+# ServiceLabel: %Event Hubs
 # PRLabel: %Event Hubs
 /sdk/eventhub/                                                       @annatisch @kashifkhan @swathipil @l0lawrence
 
 # PRLabel: %Storage
 /sdk/storage/                                                        @annatisch @jalauzon-msft @vincenttran-msft
 
+# AzureSDKOwners: @YalinLi0312
+# ServiceLabel: %App Configuration
 # PRLabel: %App Configuration
 /sdk/appconfiguration/                                               @YalinLi0312
 
@@ -102,6 +112,8 @@
 # PRLabel: %Content Safety
 /sdk/contentsafety/                                                  @mengaims @JieZhou000
 
+# AzureSDKOwners: @mccoyp
+# ServiceLabel: %KeyVault
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @mccoyp
 
@@ -114,12 +126,18 @@
 # PRLabel: %Monitor
 /sdk/loganalytics/                                                   @pvaneck
 
+# AzureSDKOwners: @pvaneck
+# ServiceLabel: %Monitor
 # PRLabel: %Monitor
 /sdk/monitor/azure-monitor-ingestion/                                @pvaneck @Azure/azure-sdk-write-monitor-data-plane
 
+# AzureSDKOwners: @pvaneck
+# ServiceLabel: %Monitor
 # PRLabel: %Monitor
 /sdk/monitor/azure-monitor-query/                                    @pvaneck @Azure/azure-sdk-write-monitor-data-plane
 
+# AzureSDKOwners: @pvaneck
+# ServiceLabel: %Monitor
 # PRLabel: %Monitor
 /sdk/monitor/*                                                       @pvaneck
 
@@ -138,6 +156,8 @@
 # PRLabel: %Container Instances
 /sdk/containerinstance/                                              @samkreter @xizhamsft
 
+# AzureSDKOwners: @YalinLi0312
+# ServiceLabel: %Container Registry
 # PRLabel: %Container Registry
 /sdk/containerregistry/                                              @YalinLi0312
 
@@ -161,6 +181,8 @@
 # PRLabel: %Device Update
 /sdk/deviceupdate/                                                   @dpokluda @sedols
 
+# AzureSDKOwners: @l0lawrence
+# ServiceLabel: %Event Grid
 # PRLabel: %Event Grid
 /sdk/eventgrid/                                                      @lmazuel @l0lawrence
 
@@ -277,6 +299,8 @@
 /sdk/mixedreality/azure-mixedreality-authentication/                 @RamonArguelles
 /sdk/remoterendering/                                                @FlorianBorn71
 
+# AzureSDKOwners: @kristapratico
+# ServiceLabel: %OpenAI
 # PRLabel: %OpenAI
 /sdk/openai/                                                         @kristapratico @glecaros
 
@@ -286,9 +310,13 @@
 # PRLabel: %Recovery Services
 /sdk/recoveryservices/                                               @DheerendraRathor
 
+# AzureSDKOwners: @kashifkhan
+# ServiceLabel: %Schema Registry
 # PRLabel: %Schema Registry
 /sdk/schemaregistry/                                                 @kashifkhan @swathipil
 
+# AzureSDKOwners: @xiangyan99
+# ServiceLabel: %Search
 # PRLabel: %Search
 /sdk/search/                                                         @xiangyan99
 
@@ -298,6 +326,8 @@
 # PRLabel: %SQL
 /sdk/sql/                                                            @jaredmoo
 
+# AzureSDKOwners: @kashifkhan
+# ServiceLabel: %Service Bus
 # PRLabel: %Service Bus
 /sdk/servicebus/                                                     @annatisch @kashifkhan @swathipil @l0lawrence
 
@@ -307,21 +337,31 @@
 # PRLabel: %EngSys
 /sdk/template/                                                       @scbedd @weshaggard @benbp
 
+# AzureSDKOwners: @kristapratico
+# ServiceLabel: %Cognitive - Text Analytics
 # PRLabel: %Cognitive - Text Analytics
 /sdk/textanalytics/                                                  @kristapratico @quentinRobinson @wangyuantao
 
+# AzureSDKOwners: @YalinLi0312
+# ServiceLabel: %Cognitive - Form Recognizer
 # PRLabel: %Cognitive - Form Recognizer
 /sdk/formrecognizer/                                                 @YalinLi0312
 
+# AzureSDKOwners: @YalinLi0312
+# ServiceLabel: %Document Intelligence
 # PRLabel: %Document Intelligence
 /sdk/documentintelligence/                                           @YalinLi0312
 
+# AzureSDKOwners: @xiangyan99
+# ServiceLabel: %Cognitive - Metrics Advisor
 # PRLabel: %Cognitive - Metrics Advisor
 /sdk/metricsadvisor/                                                 @xiangyan99 @kristapratico @iscai-msft
 
 # PRLabel: %Cognitive - Anomaly Detector
 /sdk/anomalydetector/                                                @conhua @mengaims @juaduan @moreOver0
 
+# AzureSDKOwners: @kristapratico
+# ServiceLabel: %Cognitive - Translator
 # PRLabel: %Cognitive - Translator
 /sdk/translation/                                                    @kristapratico
 /sdk/translation/azure-ai-translation-text/                          @MikeyMCZ
@@ -335,12 +375,16 @@
 # PRLabel: %Graph
 /sdk/graphrbac/                                                      @msyyc @ChenxiJiang333
 
+# AzureSDKOwners: @YalinLi0312
+# ServiceLabel: %Tables
 # PRLabel: %Tables
 /sdk/tables/                                                         @YalinLi0312
 
 # PRLabel: %Media
 /sdk/media/                                                          @naiteeks @giakas
 
+# AzureSDKOwners: @YalinLi0312
+# ServiceLabel: %Container Registry
 # PRLabel: %Container Registry
 /sdk/containerregistry/                                              @YalinLi0312
 
