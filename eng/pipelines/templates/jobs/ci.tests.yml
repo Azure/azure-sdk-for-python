@@ -44,12 +44,6 @@ parameters:
   - name: PoolStrategy
     type: object
     default: []
-  # - OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
-  #   Pool: azsdk-pool-mms-ubuntu-2004-1es-pt
-  #   os: linux
-  #   PythonVersion: 3.12
-  #   CoverageArg: --disablecov
-  #   TestSamples: false
 
 jobs:
 
@@ -114,7 +108,7 @@ jobs:
           TestMarkArgument: ${{ parameters.TestMarkArgument }}
           AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
           CoverageArg: ${{ poolDefinition.CoverageArg }}
-          PythonVersion: ${{ poolDefinition.PythonVersion }}
+          PythonVersion: "${{ poolDefinition.PythonVersion }}"
           ToxTestEnv: $(toxenv)
           ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
           InjectedPackages: $(InjectedPackages)
