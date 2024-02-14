@@ -1573,9 +1573,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 "Please use 'BlobProperties.name' or any other str input type instead.",
                 DeprecationWarning
             )
-        try:
-            blob_name = blob.get('name')  # type: ignore
-        except AttributeError:
+        if hasattr(blob, 'name'):
+            blob_name = blob.get('name') # type: ignore[attr-defined]
+        else:
             blob_name = blob
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
