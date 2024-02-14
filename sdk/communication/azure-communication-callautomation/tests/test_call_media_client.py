@@ -103,7 +103,7 @@ class TestCallMediaClient(unittest.TestCase):
         self.call_media_operations.play = mock_play
         play_source = FileSource(url=self.url)
 
-        self.call_connection_client.play_media_to_all(play_source=play_source)
+        self.call_connection_client.play_media_to_all(play_source=play_source, interrupt_call_media_operation=True)
 
         expected_play_request = PlayRequest(
             play_sources=[play_source._to_generated()],
@@ -145,7 +145,7 @@ class TestCallMediaClient(unittest.TestCase):
         self.call_media_operations.play = mock_play
         play_source = FileSource(url=self.url)
 
-        self.call_connection_client.play_media(play_source=play_source)
+        self.call_connection_client.play_media(play_source=play_source, interrupt_call_media_operation=True)
 
         expected_play_request = PlayRequest(
             play_sources=[play_source._to_generated()],
