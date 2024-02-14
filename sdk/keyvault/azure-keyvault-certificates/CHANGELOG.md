@@ -15,6 +15,7 @@
   ([#33819](https://github.com/Azure/azure-sdk-for-python/pull/33819))
 - Key Vault API version `7.5` is now the default
 - Updated minimum `azure-core` version to 1.29.5
+- Dropped `azure-common` requirement
 
 ## 4.8.0b3 (2023-11-03)
 
