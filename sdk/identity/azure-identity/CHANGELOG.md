@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed an issue in `AzurePowerShellCredential` where if `pwsh` isn't available and the Command Prompt language is not English, it would not fall back to `powershell`. ([#34271](https://github.com/Azure/azure-sdk-for-python/pull/34271))
+
 ### Other Changes
 
 ## 1.16.0b1 (2024-02-06)
