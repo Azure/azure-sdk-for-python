@@ -44,7 +44,6 @@ parameters:
   - name: PoolStrategy
     type: object
     default: []
-
   # - OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
   #   Pool: azsdk-pool-mms-ubuntu-2004-1es-pt
   #   os: linux
