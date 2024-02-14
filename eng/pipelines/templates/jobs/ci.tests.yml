@@ -43,92 +43,99 @@ parameters:
   - name: TestProxy
     type: boolean
     default: false
+  - name: PoolStrategy
+    type: object
+    default: []
+
+  # - OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
+  #   Pool: azsdk-pool-mms-ubuntu-2004-1es-pt
+  #   os: linux
+  #   PythonVersion: 3.12
+  #   CoverageArg: --disablecov
+  #   TestSamples: false
 
 jobs:
-  - job:
-    displayName: 'Test'
-    condition: |
-      and(
-        succeededOrFailed(),
-        ne(variables['Skip.Test'], 'true'),
-        ne(${{ parameters.Matrix }}, '{}')
-      )
-    timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
 
-    dependsOn:
-       - ${{ parameters.DependsOn }}
+  - ${{ each poolDefinition in parameters.PoolStrategy }}:
+    - job:
+      displayName: 'Test ${{ poolDefinition.os }} ${{ poolDefinition.PythonVersion }}'
+      condition: |
+        and(
+          succeededOrFailed(),
+          ne(variables['Skip.Test'], 'true'),
+          ne(${{ parameters.Matrix }}, '{}')
+        )
+      timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
 
-    strategy:
-      matrix: $[ ${{ parameters.Matrix }} ]
+      dependsOn:
+        - ${{ parameters.DependsOn }}
 
-    pool:
-      name: $(Pool)
-      image: $(OsVmImage)
-      os: $(os)
+      pool:
+        name: ${{ poolDefinition.Pool }} 
+        os: ${{ poolDefinition.os}}
 
-    ${{ if eq(parameters.UsePlatformContainer, 'true') }}:
-      # Add a default so the job doesn't fail when the matrix is empty
-      container: $[ variables['Container'] ]
+      ${{ if eq(parameters.UsePlatformContainer, 'true') }}:
+        # Add a default so the job doesn't fail when the matrix is empty
+        container: $[ variables['Container'] ]
 
-    variables:
-    - template: ../variables/globals.yml
-    - name: InjectedPackages
-      value: ${{ parameters.InjectedPackages }}
+      variables:
+      - template: ../variables/globals.yml
+      - name: InjectedPackages
+        value: ${{ parameters.InjectedPackages }}
 
-    steps:
-    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-      parameters:
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+      steps:
+      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+        parameters:
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
-    - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
-      parameters:
-        AgentImage: $(OSVmImage)
+      - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
+        parameters:
+          AgentImage: $(OSVmImage)
 
-    - task: UsePythonVersion@0
-      inputs:
-        versionSpec: '3.8'
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.8'
 
-    - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
-      parameters:
-        PackageName: "azure-template"
-        ServiceDirectory: "template"
-        TestPipeline: ${{ parameters.TestPipeline }}
+      - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+        parameters:
+          PackageName: "azure-template"
+          ServiceDirectory: "template"
+          TestPipeline: ${{ parameters.TestPipeline }}
 
-    - pwsh: |
-        python -m pip install "tools/azure-sdk-tools[build]"
-      displayName: Install build tooling
+      - pwsh: |
+          python -m pip install "tools/azure-sdk-tools[build]"
+        displayName: Install build tooling
 
-    - task: PythonScript@0
-      displayName: 'Set Tox Environment'
-      inputs:
-        scriptPath: 'scripts/devops_tasks/set_tox_environment.py'
-        arguments: >-
-          --unsupported="$(UnsupportedToxEnvironments)"
-          --override="$(Run.ToxCustomEnvs)"
-          --team-project="$(System.TeamProject)"
+      - task: PythonScript@0
+        displayName: 'Set Tox Environment'
+        inputs:
+          scriptPath: 'scripts/devops_tasks/set_tox_environment.py'
+          arguments: >-
+            --unsupported="$(UnsupportedToxEnvironments)"
+            --override="$(Run.ToxCustomEnvs)"
+            --team-project="$(System.TeamProject)"
 
-    - template: ../steps/build-test.yml
-      parameters:
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
-        OSVmImage: $(OSVmImage)
-        CoverageArg: $(CoverageArg)
-        PythonVersion: $(PythonVersion)
-        ToxTestEnv: $(toxenv)
-        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
-        InjectedPackages: $(InjectedPackages)
-        TestProxy: ${{ parameters.TestProxy }}
-        BeforeTestSteps:
-          - task: DownloadPipelineArtifact@2
-            inputs:
-              artifactName: 'packages'
-              targetPath: $(Build.ArtifactStagingDirectory)
+      - template: ../steps/build-test.yml
+        parameters:
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          TestMarkArgument: ${{ parameters.TestMarkArgument }}
+          AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+          CoverageArg: ${{ poolDefinition.CoverageArg }}
+          PythonVersion: ${{ poolDefinition.PythonVersion }}
+          ToxTestEnv: $(toxenv)
+          ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
+          InjectedPackages: $(InjectedPackages)
+          TestProxy: ${{ parameters.TestProxy }}
+          BeforeTestSteps:
+            - task: DownloadPipelineArtifact@2
+              inputs:
+                artifactName: 'packages'
+                targetPath: $(Build.ArtifactStagingDirectory)
 
-          - template: ../steps/set-dev-build.yml
-            parameters:
-              ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          
-          - ${{ each step in parameters.BeforeTestSteps }}:
-            -  ${{ step }}
-        AfterTestSteps: ${{ parameters.AfterTestSteps }}
+            - template: ../steps/set-dev-build.yml
+              parameters:
+                ServiceDirectory: ${{ parameters.ServiceDirectory }}
+            
+            - ${{ each step in parameters.BeforeTestSteps }}:
+              -  ${{ step }}
+          AfterTestSteps: ${{ parameters.AfterTestSteps }}

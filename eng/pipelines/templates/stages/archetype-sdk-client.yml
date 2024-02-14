@@ -82,6 +82,45 @@ parameters:
   - name: AdvancedBuild
     type: boolean
     default: false
+  - name: PoolStrategy
+    type: object
+    default: 
+      - OSVmImage: azsdk-pool-mms-win-2022-1espt
+        Pool: azsdk-pool-mms-win-2022-1es-pt
+        os: windows
+        PythonVersion: 3.8
+        CoverageArg: --disablecov
+        TestSamples: false
+      - OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
+        Pool: azsdk-pool-mms-ubuntu-2004-1es-pt
+        os: linux
+        PythonVersion: pypy3.9
+        CoverageArg: --disablecov
+        TestSamples: false
+      - OSVmImage: macos-latest
+        Pool: Azure Pipelines
+        os: macOs
+        PythonVersion: 3.11
+        CoverageArg: --disablecov
+        TestSamples: false
+      - OSVmImage: azsdk-pool-mms-win-2022-1espt
+        Pool: azsdk-pool-mms-win-2022-1es-pt
+        os: windows
+        PythonVersion: 3.10
+        CoverageArg: --disablecov
+        TestSamples: false
+      - OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
+        Pool: azsdk-pool-mms-ubuntu-2004-1es-pt
+        os: linux
+        PythonVersion: 3.9
+        CoverageArg: ""
+        TestSamples: false
+      - OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
+        Pool: azsdk-pool-mms-ubuntu-2004-1es-pt
+        os: linux
+        PythonVersion: 3.12
+        CoverageArg: --disablecov
+        TestSamples: false
 
 
 extends:
@@ -127,6 +166,7 @@ extends:
               TestProxy: ${{ parameters.TestProxy }}
               GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
               AdvancedBuild: ${{ parameters.AdvancedBuild }}
+              PoolStrategy: ${{ parameters.PoolStrategy }}
 
         variables:
           - template: /eng/pipelines/templates/variables/globals.yml@self
