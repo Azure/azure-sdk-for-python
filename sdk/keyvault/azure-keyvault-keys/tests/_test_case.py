@@ -102,7 +102,7 @@ class KeysClientPreparer(AzureRecordedTestCase):
         if self.is_live:
             os.environ["AZURE_TENANT_ID"] = os.environ["KEYVAULT_TENANT_ID"]
             os.environ["AZURE_CLIENT_ID"] = os.environ["KEYVAULT_CLIENT_ID"]
-            os.environ["AZURE_CLIENT_SECRET"] = os.environ["KEYVAULT_CLIENT_SECRET"]
+            os.environ["AZURE_CLIENT_SECRET"] = os.environ.get("KEYVAULT_CLIENT_SECRET", "")  # Empty for user auth
 
     def _skip_if_not_configured(self, api_version, is_hsm):
 

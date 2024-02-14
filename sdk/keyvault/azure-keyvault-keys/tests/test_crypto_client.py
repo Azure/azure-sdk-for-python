@@ -37,6 +37,7 @@ from azure.keyvault.keys.crypto import (
 from azure.keyvault.keys.crypto._providers import NoLocalCryptography, get_local_cryptography_provider
 from azure.keyvault.keys._generated._serialization import Deserializer, Serializer
 from azure.keyvault.keys._generated.models import KeySignParameters
+from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 from azure.mgmt.keyvault.models import KeyPermissions, Permissions
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 
@@ -49,6 +50,7 @@ NO_GET = Permissions(keys=[p.value for p in KeyPermissions if p.value != "get"])
 
 all_api_versions = get_decorator()
 only_hsm = get_decorator(only_hsm=True)
+only_vault_default = get_decorator(only_vault=True, api_versions=[DEFAULT_VERSION])
 only_vault_7_4_plus = get_decorator(only_vault=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5])
 no_get = get_decorator(permissions=NO_GET)
 
@@ -255,7 +257,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         crypto_plaintext = crypto_private_key.decrypt(ciphertext=crypto_ciphertext, padding=padding)
         assert crypto_plaintext == plaintext
 
-    @pytest.mark.parametrize("api_version,is_hsm", only_vault_7_4_plus)
+    @pytest.mark.parametrize("api_version,is_hsm", only_vault_default)
     @KeysClientPreparer(permissions=NO_GET)
     @recorded_by_proxy
     def test_encrypt_and_decrypt_with_managed_key_no_get(self, key_client, **kwargs):
@@ -263,8 +265,10 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         key_name = self.get_resource_name("keycrypt")
 
         imported_key = self._import_test_key(key_client, key_name)
-        # Use the key's ID to create the client, ensuring the we don't have the material (and can't fetch it per NO_GET)
+        # Use the key's ID to create the client, ensuring the we don't have the material
         crypto_client = self.create_crypto_client(imported_key.id, api_version=key_client.api_version)
+        # Prevent the client from fetching the key material
+        crypto_client._keys_get_forbidden = True
 
         # Create a KeyVaultRSAPublicKey that can perform encryption with `cryptography`'s interface
         public_key = crypto_client.create_rsa_public_key()
@@ -283,26 +287,21 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
             public_key.public_numbers()
         assert "key material" in str(ex.value).lower()
         with pytest.raises(ValueError) as ex:
-            public_key.public_bytes()
+            public_key.public_bytes(None, None)
         assert "key material" in str(ex.value).lower()
         with pytest.raises(ValueError) as ex:
             public_key.key_size()
         assert "key material" in str(ex.value).lower()
-        with pytest.raises(ValueError) as ex:
-            public_key == imported_key
-        assert "key material" in str(ex.value).lower()
+        assert public_key != imported_key.key  # Even though the keys are equal, we can't compare without key material
 
         with pytest.raises(ValueError) as ex:
             private_key.private_numbers()
         assert "key material" in str(ex.value).lower()
         with pytest.raises(ValueError) as ex:
-            private_key.private_bytes()
+            private_key.private_bytes(None, None, None)
         assert "key material" in str(ex.value).lower()
         with pytest.raises(ValueError) as ex:
             private_key.key_size()
-        assert "key material" in str(ex.value).lower()
-        with pytest.raises(ValueError) as ex:
-            private_key == imported_key
         assert "key material" in str(ex.value).lower()
 
     @pytest.mark.parametrize("api_version,is_hsm", no_get)

@@ -296,16 +296,14 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
         :param object other: Another object to compare with this instance. Currently, only comparisons with
             `KeyVaultRSAPrivateKey` or `JsonWebKey` instances are supported.
 
-        :returns: True if the objects are equal; False otherwise.
+        :returns: True if the objects are equal; False if the objects are unequal or if key material can't be obtained
+            from Key Vault for comparison.
         :rtype: bool
 
         :raises ValueError: if the client is unable to obtain the key material from Key Vault.
         """
         if self._key is None:
-            raise ValueError(
-                "Key material could not be obtained from Key Vault. Only remote cryptographic operations "
-                "(encrypt, verify) can be performed."
-            )
+            return False
 
         if isinstance(other, KeyVaultRSAPublicKey):
             return all(getattr(self._key, field) == getattr(other._key, field) for field in self._key._FIELDS)
