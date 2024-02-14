@@ -84,7 +84,7 @@ parameters:
     default: false
   - name: PoolStrategy
     type: object
-    default: 
+    default:
       - OSVmImage: azsdk-pool-mms-win-2022-1espt
         Pool: azsdk-pool-mms-win-2022-1es-pt
         os: windows
@@ -97,9 +97,9 @@ parameters:
         PythonVersion: pypy3.9
         CoverageArg: --disablecov
         TestSamples: false
-      - OSVmImage: macos-latest
+      - OSVmImage: macos-11
         Pool: Azure Pipelines
-        os: macOs
+        os: macOS
         PythonVersion: 3.11
         CoverageArg: --disablecov
         TestSamples: false

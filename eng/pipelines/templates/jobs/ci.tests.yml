@@ -67,7 +67,8 @@ jobs:
         - ${{ parameters.DependsOn }}
 
       pool:
-        name: ${{ poolDefinition.Pool }} 
+        vmImage: ${{ poolDefinition.OSVmImage }}
+        name: ${{ poolDefinition.Pool }}
         os: ${{ poolDefinition.os}}
 
       variables:
@@ -127,7 +128,7 @@ jobs:
             - template: ../steps/set-dev-build.yml
               parameters:
                 ServiceDirectory: ${{ parameters.ServiceDirectory }}
-            
+
             - ${{ each step in parameters.BeforeTestSteps }}:
               -  ${{ step }}
           AfterTestSteps: ${{ parameters.AfterTestSteps }}
