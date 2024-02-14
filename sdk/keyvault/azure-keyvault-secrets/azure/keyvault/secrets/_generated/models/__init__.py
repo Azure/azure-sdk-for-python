@@ -6,23 +6,21 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models_py3 import Attributes
-from ._models_py3 import BackupSecretResult
-from ._models_py3 import DeletedSecretBundle
-from ._models_py3 import DeletedSecretItem
-from ._models_py3 import DeletedSecretListResult
-from ._models_py3 import Error
-from ._models_py3 import KeyVaultError
-from ._models_py3 import SecretAttributes
-from ._models_py3 import SecretBundle
-from ._models_py3 import SecretItem
-from ._models_py3 import SecretListResult
-from ._models_py3 import SecretProperties
-from ._models_py3 import SecretRestoreParameters
-from ._models_py3 import SecretSetParameters
-from ._models_py3 import SecretUpdateParameters
+from ._models import Attributes
+from ._models import BackupSecretResult
+from ._models import DeletedSecretBundle
+from ._models import DeletedSecretItem
+from ._models import Error
+from ._models import KeyVaultError
+from ._models import SecretAttributes
+from ._models import SecretBundle
+from ._models import SecretItem
+from ._models import SecretProperties
+from ._models import SecretRestoreParameters
+from ._models import SecretSetParameters
+from ._models import SecretUpdateParameters
 
-from ._key_vault_client_enums import DeletionRecoveryLevel
+from ._enums import DeletionRecoveryLevel
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -32,13 +30,11 @@ __all__ = [
     "BackupSecretResult",
     "DeletedSecretBundle",
     "DeletedSecretItem",
-    "DeletedSecretListResult",
     "Error",
     "KeyVaultError",
     "SecretAttributes",
     "SecretBundle",
     "SecretItem",
-    "SecretListResult",
     "SecretProperties",
     "SecretRestoreParameters",
     "SecretSetParameters",
