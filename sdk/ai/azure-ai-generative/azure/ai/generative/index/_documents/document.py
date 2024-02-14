@@ -48,22 +48,18 @@ class Document(ABC):
     @abstractmethod
     def modified_time(self) -> Any:
         """Get the modified time of the document."""
-        pass
 
     @abstractmethod
     def load_data(self) -> str:
         """Load the data of the document."""
-        pass
 
     @abstractmethod
     def get_metadata(self) -> dict:
         """Get the metadata of the document."""
-        pass
 
     @abstractmethod
     def set_metadata(self, metadata: dict):
         """Set the metadata of the document."""
-        pass
 
     @property
     def page_content(self) -> str:
@@ -83,13 +79,11 @@ class Document(ABC):
     @abstractmethod
     def dumps(self) -> str:
         """Dump the document to a json string."""
-        pass
 
     @classmethod
     @abstractmethod
     def loads(cls, data: str) -> "Document":
         """Load the document from a json string."""
-        pass
 
 
 class StaticDocument(Document):
@@ -105,7 +99,7 @@ class StaticDocument(Document):
             if filename is not None:
                 document_id = f"{filename}{metadata.get('source', {}).get('chunk_id', '')}"
             else:
-                document_id = str(mmh3.hash128(data))
+                document_id = str(mmh3.hash128(data))  # pylint: disable=c-extension-no-member
 
         super().__init__(document_id)
         self.data = data
@@ -156,5 +150,6 @@ class StaticDocument(Document):
         """Load the document from a json string."""
         data_dict = json.loads(data)
         metadata = data_dict["metadata"]
+        # pylint: disable=c-extension-no-member
         info = metadata.get("document_id", metadata.get("id", mmh3.hash128(data_dict["content"])))
         return cls(data_dict["content"], metadata, data_dict.get("document_id", info))

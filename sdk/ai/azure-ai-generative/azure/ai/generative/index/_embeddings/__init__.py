@@ -262,12 +262,10 @@ class EmbeddedDocument(ABC):
     @abstractmethod
     def get_data(self) -> str:
         """Get the data of the document."""
-        pass
 
     @abstractmethod
     def get_embeddings(self) -> List[float]:
         """Get the embeddings of the document."""
-        pass
 
 
 class DataEmbeddedDocument(EmbeddedDocument):

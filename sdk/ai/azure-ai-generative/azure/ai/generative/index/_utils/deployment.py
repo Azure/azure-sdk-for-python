@@ -29,6 +29,7 @@ def infer_deployment(aoai_connection, model_name):
     else:
         openai.base_url = api_base
     credential = connection_to_credential(aoai_connection)
+    # pylint: disable=no-member
     openai.api_key = credential.key if isinstance(credential, AzureKeyCredential) else credential.get_token().token
     deployment_list = convert_to_dict(
         Deployment.list(api_key=openai.api_key, api_base=api_base, api_type=openai.api_type)

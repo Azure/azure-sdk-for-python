@@ -48,11 +48,11 @@ def _create_retry_decorator(embeddings: OpenAIEmbeddings) -> Callable[[Any], Any
         stop=stop_after_attempt(embeddings.max_retries),
         wait=wait_exponential(multiplier=1, min=min_seconds, max=max_seconds),
         retry=(
-            retry_if_exception_type(openai.error.Timeout)
-            | retry_if_exception_type(openai.error.APIError)
-            | retry_if_exception_type(openai.error.APIConnectionError)
-            | retry_if_exception_type(openai.error.RateLimitError)
-            | retry_if_exception_type(openai.error.ServiceUnavailableError)
+            retry_if_exception_type(openai.error.Timeout)  # pylint: disable=no-member
+            | retry_if_exception_type(openai.error.APIError)  # pylint: disable=no-member
+            | retry_if_exception_type(openai.error.APIConnectionError)  # pylint: disable=no-member
+            | retry_if_exception_type(openai.error.RateLimitError)  # pylint: disable=no-member
+            | retry_if_exception_type(openai.error.ServiceUnavailableError)  # pylint: disable=no-member
         ),
         before_sleep=before_sleep_log(logger, logging.WARNING),
     )
@@ -68,11 +68,11 @@ def _async_retry_decorator(embeddings: OpenAIEmbeddings) -> Any:
         stop=stop_after_attempt(embeddings.max_retries),
         wait=wait_exponential(multiplier=1, min=min_seconds, max=max_seconds),
         retry=(
-            retry_if_exception_type(openai.error.Timeout)
-            | retry_if_exception_type(openai.error.APIError)
-            | retry_if_exception_type(openai.error.APIConnectionError)
-            | retry_if_exception_type(openai.error.RateLimitError)
-            | retry_if_exception_type(openai.error.ServiceUnavailableError)
+            retry_if_exception_type(openai.error.Timeout)  # pylint: disable=no-member
+            | retry_if_exception_type(openai.error.APIError)  # pylint: disable=no-member
+            | retry_if_exception_type(openai.error.APIConnectionError)  # pylint: disable=no-member
+            | retry_if_exception_type(openai.error.RateLimitError)  # pylint: disable=no-member
+            | retry_if_exception_type(openai.error.ServiceUnavailableError)  # pylint: disable=no-member
         ),
         before_sleep=before_sleep_log(logger, logging.WARNING),
     )
@@ -91,7 +91,7 @@ def _async_retry_decorator(embeddings: OpenAIEmbeddings) -> Any:
 # https://stackoverflow.com/questions/76469415/getting-embeddings-of-length-1-from-langchain-openaiembeddings
 def _check_response(response: dict) -> dict:
     if any(len(d["embedding"]) == 1 for d in response["data"]):
-        raise openai.error.APIError("OpenAI API returned an empty embedding")
+        raise openai.error.APIError("OpenAI API returned an empty embedding")  # pylint: disable=no-member
     return response
 
 
@@ -159,8 +159,8 @@ class OpenAIEmbeddings(Embeddings):
             query_result = embeddings.embed_query(text)
 
     """
-
-    client: Any = openai.Embedding  #: :meta private:
+    #: :meta private:
+    client: Any = openai.Embedding  # pylint: disable=no-member
     model: str = "text-embedding-ada-002"
     deployment: str = model  # to support Azure OpenAI Service custom deployment names
     openai_api_version: Optional[str] = None

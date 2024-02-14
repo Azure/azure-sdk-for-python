@@ -79,11 +79,11 @@ def patch_openai_embedding_retries(logger, activity_logger, max_seconds_retrying
             )
         else:
             retry_exceptions = (
-                retry_if_exception_type(openai.error.Timeout)
-                | retry_if_exception_type(openai.error.APIError)
-                | retry_if_exception_type(openai.error.APIConnectionError)
-                | retry_if_exception_type(openai.error.RateLimitError)
-                | retry_if_exception_type(openai.error.ServiceUnavailableError)
+                retry_if_exception_type(openai.error.Timeout)  # pylint: disable=no-member
+                | retry_if_exception_type(openai.error.APIError)  # pylint: disable=no-member
+                | retry_if_exception_type(openai.error.APIConnectionError)  # pylint: disable=no-member
+                | retry_if_exception_type(openai.error.RateLimitError)  # pylint: disable=no-member
+                | retry_if_exception_type(openai.error.ServiceUnavailableError)  # pylint: disable=no-member
             )
 
         min_seconds = 4

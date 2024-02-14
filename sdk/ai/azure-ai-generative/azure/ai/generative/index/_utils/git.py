@@ -83,6 +83,7 @@ def clone_repo(git_url: str, local_path: Path, branch: Optional[str] = None, aut
             depth=1 if git_repo_branch.branch_name is None else None,
         )
     except git.exc.GitError as e:
+        # pylint: disable=no-member
         logger.error(f"Failed to clone to {local_path}\ngit stdout: {e.stdout}\ngit stderr: {e.stderr}")
 
         raise e

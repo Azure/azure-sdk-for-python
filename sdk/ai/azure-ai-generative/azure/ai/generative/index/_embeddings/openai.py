@@ -108,7 +108,7 @@ class OpenAIEmbedder:
         else:
             self.openai_v1plus = False
             self.api_version = api_version if api_version else "2023-03-15-preview"
-            self.embedding_client = openai.Embeddings
+            self.embedding_client = openai.Embeddings  # pylint: disable=no-member
             self._params = {
                 "model": self.model,
                 "api_base": self.api_base,
@@ -120,13 +120,13 @@ class OpenAIEmbedder:
             if self.deployment is not None:
                 self._params["engine"] = self.deployment
             self._retry_exceptions = [
-                openai.error.Timeout,
-                openai.error.APIError,
-                openai.error.APIConnectionError,
-                openai.error.RateLimitError,
-                openai.error.ServiceUnavailableError,
+                openai.error.Timeout,  # pylint: disable=no-member
+                openai.error.APIError,  # pylint: disable=no-member
+                openai.error.APIConnectionError,  # pylint: disable=no-member
+                openai.error.RateLimitError,  # pylint: disable=no-member
+                openai.error.ServiceUnavailableError,  # pylint: disable=no-member
             ]
-            self._RateLimitError = openai.error.RateLimitError
+            self._RateLimitError = openai.error.RateLimitError  # pylint: disable=no-member
 
         self._statistics = {
             "num_retries": 0,

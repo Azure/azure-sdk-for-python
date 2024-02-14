@@ -73,12 +73,10 @@ class BaseDocumentLoader(ABC):
     @abstractmethod
     def file_extensions(self) -> List[str]:
         """Return the file extensions of the file types to be loaded."""
-        pass
 
     @abstractmethod
     def load(self) -> List[Document]:
         """Load file contents into Document(s)."""
-        pass
 
 
 class TextFileIOLoader(BaseDocumentLoader):
@@ -278,7 +276,6 @@ def extract_text_document_title(text: str, file_name: str) -> Tuple[str, str]:
                 title = f"{file_name}: {docstring}"
         except Exception as e:
             logger.warning(f"Failed to get docstring for {file_name}. Exception message: {e}")
-            pass
 
         return f"Title: {title}", title
     if file_extension == ".html" or file_extension == ".htm":

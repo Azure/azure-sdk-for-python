@@ -161,7 +161,6 @@ class DocumentChunksIterator(Iterator):
                 except Exception as e:
                     url = f"{remote_url}\nbecause: {e}"
                     logger.warning(f"Failed to parse org, project and repo from Azure DevOps remote url: " + url)
-                    pass
             else:
                 # Infer branch from repo
                 remote_url = f"{remote_url}/blob/{repo.active_branch.name}"

@@ -103,7 +103,7 @@ class MLIndex:
                         # Need to get underlying fs path
                         self.base_uri = mlindex_file.fs._path.split("/MLIndex")[0]
                     else:
-                        self.base_uri = mlindex_file.path.split("/MLIndex")[0]
+                        self.base_uri = mlindex_file.path.split("/MLIndex")[0]  # pylint: disable=no-member
 
                     with mlindex_file as f:
                         mlindex_config = yaml.safe_load(f)
@@ -604,7 +604,6 @@ class MLIndex:
                         logger.warning(
                             f"failed to get latest folder from {embeddings_container} with {e}.", extra={"print": True}
                         )
-                        pass
                     if previous_embeddings_dir_name is not None:
                         try:
                             embeddings = EmbeddingsContainer.load(previous_embeddings_dir_name, embeddings_container)
@@ -613,7 +612,6 @@ class MLIndex:
                                 f"failed to load embeddings from {embeddings_container} with {e}.",
                                 extra={"print": True},
                             )
-                            pass
         finally:
             if embeddings is None:
                 logger.info("Creating new EmbeddingsContainer")

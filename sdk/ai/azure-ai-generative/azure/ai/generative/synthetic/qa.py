@@ -32,11 +32,11 @@ try:
         _RETRY_ERRORS: Tuple = (openai.APIConnectionError, openai.APIError, openai.APIStatusError)
     else:
         _RETRY_ERRORS: Tuple = (  # type: ignore[no-redef]
-            openai.error.ServiceUnavailableError,
-            openai.error.APIError,
-            openai.error.RateLimitError,
-            openai.error.APIConnectionError,
-            openai.error.Timeout,
+            openai.error.ServiceUnavailableError,  # pylint: disable=no-member
+            openai.error.APIError,  # pylint: disable=no-member
+            openai.error.RateLimitError,  # pylint: disable=no-member
+            openai.error.APIConnectionError,  # pylint: disable=no-member
+            openai.error.Timeout,  # pylint: disable=no-member
         )
 
 except ImportError as e:
@@ -85,7 +85,7 @@ def _completion_with_retries(*args, **kwargs):
                         max_tokens=kwargs["max_tokens"],
                     )
                 return response.choices[0].message.content, dict(response.usage)
-            response = openai.ChatCompletion.create(*args, **kwargs)
+            response = openai.ChatCompletion.create(*args, **kwargs)  # pylint: disable=no-member
             return response["choices"][0].message.content, response["usage"]
         except _RETRY_ERRORS as e:
             if n > _MAX_RETRIES:
@@ -131,7 +131,7 @@ async def _completion_with_retries_async(*args, **kwargs):
                         max_tokens=kwargs["max_tokens"],
                     )
                 return response.choices[0].message.content, dict(response.usage)
-            response = openai.ChatCompletion.create(*args, **kwargs)
+            response = openai.ChatCompletion.create(*args, **kwargs)  # pylint: disable=no-member
             return response["choices"][0].message.content, response["usage"]
         except _RETRY_ERRORS as e:
             if n > _MAX_RETRIES:

@@ -517,7 +517,7 @@ class FAISS(VectorStore):
                 faiss = FAISS.from_texts(texts, embeddings)
         """
         embeddings = embedding.embed_documents(texts)
-        return cls.__from(
+        return cls.__from(  # pylint: disable=no-member
             texts,
             embeddings,
             embedding,
@@ -556,7 +556,7 @@ class FAISS(VectorStore):
         """
         texts = [t[0] for t in text_embeddings]
         embeddings = [t[1] for t in text_embeddings]
-        return cls.__from(
+        return cls.__from(  # pylint: disable=no-member
             texts,
             embeddings,
             embedding,
