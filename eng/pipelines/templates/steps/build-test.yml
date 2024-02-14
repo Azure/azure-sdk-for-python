@@ -114,11 +114,6 @@ steps:
 
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
-      ArtifactPath: '$(Build.SourcesDirectory)/.logs'
-      ArtifactName: '$(System.StageName)_$(Agent.JobName)_logs'
-
-  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-    parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/_tox_logs'
       ArtifactName: '$(System.StageName)_$(Agent.JobName)_tox_logs'
       CustomCondition: failed()

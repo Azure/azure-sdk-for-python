@@ -27,11 +27,11 @@ class VSCodeClient(object):
         devcontainer = DevContainerResolver(
             image=image_name,
             environment=environment,
-            mounts=volumes,
+            mounts=volumes,  # type: ignore[arg-type]
             labels=labels,
         )
         devcontainer.write_file(build_directory)
-        return devcontainer.local_path
+        return str(devcontainer.local_path)
 
     def invoke_dev_container(self, devcontainer_path: str, app_path: str) -> None:
         hex_encoded_devcontainer_path = _encode_hex(devcontainer_path)
@@ -43,7 +43,8 @@ class VSCodeClient(object):
         try:
             run_cli_command(command)
         except Exception as e:
-            output = e.output.decode(encoding="UTF-8")  # pylint: disable=no-member
+            # pylint: disable=no-member
+            output = e.output.decode(encoding="UTF-8")  # type: ignore[attr-defined]
             raise VSCodeCommandNotFound(output) from e
 
 

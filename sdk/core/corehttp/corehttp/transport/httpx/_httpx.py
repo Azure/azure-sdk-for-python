@@ -80,7 +80,7 @@ class HttpXTransport(HttpTransport):
     def __exit__(self, *args) -> None:
         self.close()
 
-    def send(self, request: HttpRequest, **kwargs) -> HttpResponse:
+    def send(self, request: HttpRequest, *, stream: bool = False, **kwargs) -> HttpResponse:
         """Send a request and get back a response.
 
         :param request: The request object to be sent.
@@ -90,7 +90,6 @@ class HttpXTransport(HttpTransport):
         :rtype: ~corehttp.rest.HttpResponse
         """
         self.open()
-        stream_response = kwargs.pop("stream", False)
         connect_timeout = kwargs.pop("connection_timeout", self.connection_config.get("connection_timeout"))
         read_timeout = kwargs.pop("read_timeout", self.connection_config.get("read_timeout"))
         # not needed here as its already handled during init
@@ -112,9 +111,9 @@ class HttpXTransport(HttpTransport):
         # Cast for typing since we know it's not None after the open call
         client = cast(httpx.Client, self.client)
         try:
-            if stream_response:
+            if stream:
                 req = client.build_request(**parameters)
-                response = client.send(req, stream=stream_response)
+                response = client.send(req, stream=stream)
             else:
                 response = client.request(**parameters)
         except (httpx.ReadTimeout, httpx.ProtocolError) as err:
@@ -123,7 +122,7 @@ class HttpXTransport(HttpTransport):
             raise ServiceRequestError(err, error=err) from err
 
         retval = HttpXTransportResponse(request, response)
-        if not stream_response:
+        if not stream:
             _handle_non_stream_rest_response(retval)
         return retval
 
@@ -169,7 +168,7 @@ class AsyncHttpXTransport(AsyncHttpTransport):
     async def __aexit__(self, *args) -> None:
         await self.close()
 
-    async def send(self, request: HttpRequest, **kwargs) -> AsyncHttpResponse:
+    async def send(self, request: HttpRequest, *, stream: bool = False, **kwargs) -> AsyncHttpResponse:
         """Send the request using this HTTP sender.
 
         :param request: The request object to be sent.
@@ -179,7 +178,6 @@ class AsyncHttpXTransport(AsyncHttpTransport):
         :rtype: ~corehttp.rest.AsyncHttpResponse
         """
         await self.open()
-        stream_response = kwargs.pop("stream", False)
         connect_timeout = kwargs.pop("connection_timeout", self.connection_config.get("connection_timeout"))
         read_timeout = kwargs.pop("read_timeout", self.connection_config.get("read_timeout"))
         # not needed here as its already handled during init
@@ -198,9 +196,9 @@ class AsyncHttpXTransport(AsyncHttpTransport):
         response = None
         client = cast(httpx.AsyncClient, self.client)
         try:
-            if stream_response:
+            if stream:
                 req = client.build_request(**parameters)
-                response = await client.send(req, stream=stream_response)
+                response = await client.send(req, stream=stream)
             else:
                 response = await client.request(**parameters)
         except (httpx.ReadTimeout, httpx.ProtocolError) as err:
@@ -209,6 +207,6 @@ class AsyncHttpXTransport(AsyncHttpTransport):
             raise ServiceRequestError(err, error=err) from err
 
         retval = AsyncHttpXTransportResponse(request, response)
-        if not stream_response:
+        if not stream:
             await _handle_non_stream_rest_response_async(retval)
         return retval

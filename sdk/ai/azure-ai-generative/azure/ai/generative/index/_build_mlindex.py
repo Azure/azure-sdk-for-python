@@ -6,11 +6,12 @@ from pathlib import Path
 from typing import Dict, Optional, Union
 
 import yaml  # type: ignore[import]
+from packaging import version
 
-from azure.ai.resources.entities.mlindex import Index
-from azure.ai.resources.operations._index_data_source import ACSSource, LocalSource
-from azure.ai.resources.operations._acs_output_config import ACSOutputConfig
 from azure.ai.resources._utils._open_ai_utils import build_open_ai_protocol
+from azure.ai.resources.entities.mlindex import Index
+from azure.ai.resources.operations._acs_output_config import ACSOutputConfig
+from azure.ai.resources.operations._index_data_source import ACSSource, LocalSource
 
 
 def build_index(
@@ -59,6 +60,7 @@ def build_index(
     splitter_args= {
         'chunk_size': chunk_size,
         'chunk_overlap': chunk_overlap,
+        'use_rcts': True
     }
     if max_sample_files is not None:
         splitter_args["max_sample_files"] = max_sample_files
@@ -89,10 +91,16 @@ def build_index(
                 "endpoint": aoai_connection["properties"]["target"]
             }
         else:
+            import openai
+            api_key = "OPENAI_API_KEY"
+            api_base = "OPENAI_API_BASE"
+            if version.parse(openai.version.VERSION) >= version.parse("1.0.0"):
+                api_key = "AZURE_OPENAI_KEY"
+                api_base = "AZURE_OPENAI_ENDPOINT"
             connection_args = {
                 "connection_type": "environment",
-                "connection": {"key": "OPENAI_API_KEY"},
-                "endpoint": os.getenv("OPENAI_API_BASE"),
+                "connection": {"key": api_key},
+                "endpoint": os.getenv(api_base),
             }
     embedder = EmbeddingsContainer.from_uri(
         uri=embeddings_model,

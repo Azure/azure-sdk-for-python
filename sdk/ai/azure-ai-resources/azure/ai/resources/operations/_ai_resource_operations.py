@@ -105,11 +105,13 @@ class AIResourceOperations:
     def begin_update(
         self, *, ai_resource: AIResource, update_dependent_resources: bool = False, **kwargs
     ) -> LROPoller[AIResource]:
-        """Update the name, description, tags, PNA, manageNetworkSettings, or encryption of a Resource
+        """Update the name, description, tags, PNA, manageNetworkSettings, 
+        container registry, or encryption of a Resource.
 
         :keyword ai_resource: AI resource definition.
         :paramtype ai_resource: ~azure.ai.resources.entities.AIResource
         :keyword update_dependent_resources: Whether to update dependent resources. Defaults to False.
+            This must be set to true in order to update the container registry.
         :paramtype update_dependent_resources: boolean
         :return: An instance of LROPoller that returns the updated AI resource.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.resources.entities.AIResource]

@@ -15,13 +15,16 @@ param testApplicationOid string
 param acrName string = 'acr${uniqueString(resourceGroup().id)}'
 
 @description('The latest AKS version available in the region.')
-param latestAksVersion string
+param latestAksVersion string = '1.27.7'
 
 @description('The SSH public key to use for the Linux VMs.')
-param sshPubKey string
+param sshPubKey string = ''
 
 @description('The admin user name for the Linux VMs.')
 param adminUserName string = 'azureuser'
+
+@description('Whether live resources should be provisioned. Defaults to false.')
+param provisionLiveResources bool = false
 
 // See https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles
 var blobContributor = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe') // Storage Blob Data Contributor
@@ -30,52 +33,62 @@ var websiteContributor = subscriptionResourceId('Microsoft.Authorization/roleDef
 // Cluster parameters
 var kubernetesVersion = latestAksVersion
 
-resource userAssignedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
+resource userAssignedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = if (provisionLiveResources) {
   name: baseName
   location: location
 }
 
-resource blobRoleWeb 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource blobRoleWeb 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (provisionLiveResources) {
   scope: storageAccount
   name: guid(resourceGroup().id, blobContributor)
   properties: {
-    principalId: web.identity.principalId
+    principalId: provisionLiveResources ? web.identity.principalId : ''
     roleDefinitionId: blobContributor
     principalType: 'ServicePrincipal'
   }
 }
 
-resource blobRoleFunc 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource blobRoleFunc 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (provisionLiveResources) {
   scope: storageAccount
   name: guid(resourceGroup().id, blobContributor, 'azureFunction')
   properties: {
-    principalId: azureFunction.identity.principalId
+    principalId: provisionLiveResources ? azureFunction.identity.principalId : ''
     roleDefinitionId: blobContributor
     principalType: 'ServicePrincipal'
   }
 }
 
-resource blobRoleCluster 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource blobRoleCluster 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (provisionLiveResources) {
   scope: storageAccount
   name: guid(resourceGroup().id, blobContributor, 'kubernetes')
   properties: {
-    principalId: kubernetesCluster.identity.principalId
+    principalId: provisionLiveResources ? kubernetesCluster.identity.principalId : ''
     roleDefinitionId: blobContributor
     principalType: 'ServicePrincipal'
   }
 }
 
-resource blobRole2 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource vmRoleCluster 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (provisionLiveResources) {
+  scope: storageAccount
+  name: guid(resourceGroup().id, blobContributor, 'vm')
+  properties: {
+    principalId: provisionLiveResources ? virtualMachine.identity.principalId : ''
+    roleDefinitionId: blobContributor
+    principalType: 'ServicePrincipal'
+  }
+}
+
+resource blobRole2 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (provisionLiveResources) {
   scope: storageAccount2
   name: guid(resourceGroup().id, blobContributor, userAssignedIdentity.id)
   properties: {
-    principalId: userAssignedIdentity.properties.principalId
+    principalId: provisionLiveResources ? userAssignedIdentity.properties.principalId : ''
     roleDefinitionId: blobContributor
     principalType: 'ServicePrincipal'
   }
 }
 
-resource webRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource webRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (provisionLiveResources) {
   scope: web
   name: guid(resourceGroup().id, websiteContributor, 'web')
   properties: {
@@ -85,7 +98,7 @@ resource webRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   }
 }
 
-resource webRole2 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource webRole2 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (provisionLiveResources) {
   scope: azureFunction
   name: guid(resourceGroup().id, websiteContributor, 'azureFunction')
   properties: {
@@ -95,7 +108,7 @@ resource webRole2 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   }
 }
 
-resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = if (provisionLiveResources) {
   name: baseName
   location: location
   sku: {
@@ -107,7 +120,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
   }
 }
 
-resource storageAccount2 'Microsoft.Storage/storageAccounts@2021-08-01' = {
+resource storageAccount2 'Microsoft.Storage/storageAccounts@2021-08-01' = if (provisionLiveResources) {
   name: '${baseName}2'
   location: location
   sku: {
@@ -119,7 +132,7 @@ resource storageAccount2 'Microsoft.Storage/storageAccounts@2021-08-01' = {
   }
 }
 
-resource farm 'Microsoft.Web/serverfarms@2021-03-01' = {
+resource farm 'Microsoft.Web/serverfarms@2021-03-01' = if (provisionLiveResources) {
   name: '${baseName}_farm'
   location: location
   sku: {
@@ -135,14 +148,14 @@ resource farm 'Microsoft.Web/serverfarms@2021-03-01' = {
   kind: 'app,linux'
 }
 
-resource web 'Microsoft.Web/sites@2022-09-01' = {
+resource web 'Microsoft.Web/sites@2022-09-01' = if (provisionLiveResources) {
   name: '${baseName}webapp'
   location: location
   kind: 'app'
   identity: {
     type: 'SystemAssigned, UserAssigned'
     userAssignedIdentities: {
-      '${userAssignedIdentity.id}' : { }
+      '${provisionLiveResources ? userAssignedIdentity.id: ''}' : { }
     }
   }
   properties: {
@@ -161,15 +174,15 @@ resource web 'Microsoft.Web/sites@2022-09-01' = {
         }
         {
           name: 'IDENTITY_STORAGE_NAME_1'
-          value: storageAccount.name
+          value: provisionLiveResources ? storageAccount.name : 'null'
         }
         {
           name: 'IDENTITY_STORAGE_NAME_2'
-          value: storageAccount2.name
+          value: provisionLiveResources ? storageAccount2.name : null
         }
         {
           name: 'IDENTITY_USER_DEFINED_IDENTITY_CLIENT_ID'
-          value: userAssignedIdentity.properties.clientId
+          value: provisionLiveResources ? userAssignedIdentity.properties.clientId : null
         }
         {
           name: 'SCM_DO_BUILD_DURING_DEPLOYMENT'
@@ -180,14 +193,14 @@ resource web 'Microsoft.Web/sites@2022-09-01' = {
   }
 }
 
-resource azureFunction 'Microsoft.Web/sites@2022-09-01' = {
+resource azureFunction 'Microsoft.Web/sites@2022-09-01' = if (provisionLiveResources) {
   name: '${baseName}func'
   location: location
   kind: 'functionapp'
   identity: {
     type: 'SystemAssigned, UserAssigned'
     userAssignedIdentities: {
-      '${userAssignedIdentity.id}' : { }
+      '${provisionLiveResources ? userAssignedIdentity.id: ''}' : { }
     }
   }
   properties: {
@@ -202,23 +215,23 @@ resource azureFunction 'Microsoft.Web/sites@2022-09-01' = {
       appSettings: [
         {
           name: 'IDENTITY_STORAGE_NAME_1'
-          value: storageAccount.name
+          value: provisionLiveResources ? storageAccount.name : null
         }
         {
           name: 'IDENTITY_STORAGE_NAME_2'
-          value: storageAccount2.name
+          value: provisionLiveResources ? storageAccount2.name : null
         }
         {
           name: 'IDENTITY_USER_DEFINED_IDENTITY_CLIENT_ID'
-          value: userAssignedIdentity.properties.clientId
+          value: provisionLiveResources ? userAssignedIdentity.properties.clientId : null
         }
         {
           name: 'AzureWebJobsStorage'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${provisionLiveResources ? storageAccount.name : ''};EndpointSuffix=${provisionLiveResources ? environment().suffixes.storage : ''};AccountKey=${provisionLiveResources ? storageAccount.listKeys().keys[0].value : ''}'
         }
         {
           name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${provisionLiveResources ? storageAccount.name : ''};EndpointSuffix=${provisionLiveResources ? environment().suffixes.storage : ''};AccountKey=${provisionLiveResources ? storageAccount.listKeys().keys[0].value: ''}'
         }
         {
           name: 'WEBSITE_CONTENTSHARE'
@@ -237,7 +250,7 @@ resource azureFunction 'Microsoft.Web/sites@2022-09-01' = {
   }
 }
 
-resource publishPolicyWeb 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2022-09-01' = {
+resource publishPolicyWeb 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2022-09-01' = if (provisionLiveResources) {
   kind: 'app'
   parent: web
   name: 'scm'
@@ -246,7 +259,7 @@ resource publishPolicyWeb 'Microsoft.Web/sites/basicPublishingCredentialsPolicie
   }
 }
 
-resource publishPolicyFunction 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2022-09-01' = {
+resource publishPolicyFunction 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2022-09-01' = if (provisionLiveResources) {
   kind: 'functionapp'
   parent: azureFunction
   name: 'scm'
@@ -255,7 +268,7 @@ resource publishPolicyFunction 'Microsoft.Web/sites/basicPublishingCredentialsPo
   }
 }
 
-resource acrResource 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' = {
+resource acrResource 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' = if (provisionLiveResources) {
   name: acrName
   location: location
   sku: {
@@ -266,7 +279,7 @@ resource acrResource 'Microsoft.ContainerRegistry/registries@2023-01-01-preview'
   }
 }
 
-resource kubernetesCluster 'Microsoft.ContainerService/managedClusters@2023-06-01' = {
+resource kubernetesCluster 'Microsoft.ContainerService/managedClusters@2023-06-01' = if (provisionLiveResources) {
   name: baseName
   location: location
   identity: {
@@ -313,14 +326,102 @@ resource kubernetesCluster 'Microsoft.ContainerService/managedClusters@2023-06-0
   }
 }
 
-output IDENTITY_WEBAPP_NAME string = web.name
-output IDENTITY_USER_DEFINED_IDENTITY string = userAssignedIdentity.id
-output IDENTITY_USER_DEFINED_IDENTITY_CLIENT_ID string = userAssignedIdentity.properties.clientId
-output IDENTITY_USER_DEFINED_IDENTITY_NAME string = userAssignedIdentity.name
-output IDENTITY_STORAGE_NAME_1 string = storageAccount.name
-output IDENTITY_STORAGE_NAME_2 string = storageAccount2.name
-output IDENTITY_FUNCTION_NAME string = azureFunction.name
-output IDENTITY_AKS_CLUSTER_NAME string = kubernetesCluster.name
-output IDENTITY_AKS_POD_NAME string = 'python-test-app'
-output IDENTITY_ACR_NAME string = acrResource.name
-output IDENTITY_ACR_LOGIN_SERVER string = acrResource.properties.loginServer
+resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' = if (provisionLiveResources) {
+  name: '${baseName}vnet'
+  location: location
+  properties: {
+    addressSpace: {
+      addressPrefixes: [
+        '10.0.0.0/16'
+      ]
+    }
+    subnets: [
+      {
+        name: '${baseName}subnet'
+        properties: {
+          addressPrefix: '10.0.0.0/24'
+        }
+      }
+    ]
+  }
+}
+
+resource networkInterface 'Microsoft.Network/networkInterfaces@2021-02-01' = if (provisionLiveResources) {
+  name: '${baseName}NIC'
+  location: location
+  properties: {
+    ipConfigurations: [
+      {
+        name: 'myIPConfig'
+        properties: {
+          privateIPAllocationMethod: 'Dynamic'
+          subnet: {
+            id: provisionLiveResources ? vnet.properties.subnets[0].id : ''
+          }
+        }
+      }
+    ]
+  }
+}
+
+resource virtualMachine 'Microsoft.Compute/virtualMachines@2020-06-01' = if (provisionLiveResources) {
+  name: '${baseName}vm'
+  location: location
+  identity: {
+    type: 'SystemAssigned, UserAssigned'
+    userAssignedIdentities: {
+      '${provisionLiveResources ? userAssignedIdentity.id: ''}' : { }
+    }
+  }
+  properties: {
+    hardwareProfile: {
+      vmSize: 'Standard_DS1_v2'
+    }
+    osProfile: {
+      computerName: '${baseName}vm'
+      adminUsername: adminUserName
+      linuxConfiguration: {
+        disablePasswordAuthentication: true
+        ssh: {
+          publicKeys: [
+            {
+              path: '/home/${adminUserName}/.ssh/authorized_keys'
+              keyData: sshPubKey
+            }
+          ]
+        }
+      }
+    }
+    storageProfile: {
+      imageReference: {
+        publisher: 'Canonical'
+        offer: '0001-com-ubuntu-server-jammy'
+        sku: '22_04-lts-gen2'
+        version: 'latest'
+      }
+      osDisk: {
+          createOption: 'FromImage'
+      }
+    }
+    networkProfile: {
+      networkInterfaces: [{
+          id: provisionLiveResources ? networkInterface.id : ''
+      }]
+    }
+  }
+}
+
+
+output IDENTITY_WEBAPP_NAME string = provisionLiveResources ? web.name : ''
+output IDENTITY_USER_DEFINED_IDENTITY string = provisionLiveResources ? userAssignedIdentity.id : ''
+output IDENTITY_USER_DEFINED_IDENTITY_CLIENT_ID string = provisionLiveResources ? userAssignedIdentity.properties.clientId : ''
+output IDENTITY_USER_DEFINED_IDENTITY_NAME string = provisionLiveResources ? userAssignedIdentity.name : ''
+output IDENTITY_STORAGE_NAME_1 string = provisionLiveResources ? storageAccount.name : ''
+output IDENTITY_STORAGE_NAME_2 string = provisionLiveResources ? storageAccount2.name : ''
+output IDENTITY_FUNCTION_NAME string = provisionLiveResources ? azureFunction.name : ''
+output IDENTITY_AKS_CLUSTER_NAME string = provisionLiveResources ? kubernetesCluster.name : ''
+output IDENTITY_AKS_POD_NAME string = provisionLiveResources ? 'python-test-app' : ''
+output IDENTITY_ACR_NAME string = provisionLiveResources ? acrResource.name : ''
+output IDENTITY_ACR_LOGIN_SERVER string = provisionLiveResources ? acrResource.properties.loginServer : ''
+output IDENTITY_VM_NAME string = provisionLiveResources ? virtualMachine.name : ''
+output IDENTITY_LIVE_RESOURCES_PROVISIONED string = provisionLiveResources ? 'true' : ''

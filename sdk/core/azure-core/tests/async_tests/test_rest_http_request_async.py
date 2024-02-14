@@ -9,6 +9,7 @@
 import pytest
 from azure.core.rest import HttpRequest
 import collections.abc
+from utils import NamedIo
 
 
 @pytest.fixture
@@ -94,3 +95,40 @@ async def test_read_content(assert_aiterator_body):
     await assert_aiterator_body(request, b"test 123")
     # in this case, request._data is what we end up passing to the requests transport
     assert isinstance(request._data, collections.abc.AsyncIterable)
+
+
+@pytest.mark.asyncio
+async def test_multipart_tuple_input_multiple_same_name(client):
+    request = HttpRequest(
+        "POST",
+        url="/multipart/tuple-input-multiple-same-name",
+        files=[
+            ("file", ("firstFileName", NamedIo("firstFile"), "image/pdf")),
+            ("file", ("secondFileName", NamedIo("secondFile"), "image/png")),
+        ],
+    )
+    (await client.send_request(request)).raise_for_status()
+
+
+@pytest.mark.asyncio
+async def test_multipart_tuple_input_multiple_same_name_with_tuple_file_value(client):
+    request = HttpRequest(
+        "POST",
+        url="/multipart/tuple-input-multiple-same-name-with-tuple-file-value",
+        files=[("images", ("foo.png", NamedIo("notMyName.pdf"), "image/png")), ("images", NamedIo("foo.png"))],
+    )
+    (await client.send_request(request)).raise_for_status()
+
+
+@pytest.mark.asyncio
+async def test_data_and_file_input_same_name(client):
+    request = HttpRequest(
+        "POST",
+        url="/multipart/data-and-file-input-same-name",
+        data={"message": "Hello, world!"},
+        files=[
+            ("file", ("firstFileName", NamedIo("firstFile"), "image/pdf")),
+            ("file", ("secondFileName", NamedIo("secondFile"), "image/png")),
+        ],
+    )
+    (await client.send_request(request)).raise_for_status()

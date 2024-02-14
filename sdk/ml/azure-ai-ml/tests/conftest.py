@@ -1101,3 +1101,51 @@ def materialization_identity_client_id(request):
 def default_storage_account(request):
     value = request.config.option.default_storage_account
     return value
+
+
+# Datastore fixtures
+
+
+@pytest.fixture
+def blob_store_file() -> str:
+    return "./tests/test_configs/datastore/blob_store.yml"
+
+
+@pytest.fixture
+def blob_store_credential_less_file() -> str:
+    return "./tests/test_configs/datastore/credential_less_blob_store.yml"
+
+
+@pytest.fixture
+def file_store_file() -> str:
+    return "./tests/test_configs/datastore/file_store.yml"
+
+
+@pytest.fixture
+def adls_gen1_file() -> str:
+    return "./tests/test_configs/datastore/adls_gen1.yml"
+
+
+@pytest.fixture
+def adls_gen1_credential_less_file() -> str:
+    return "./tests/test_configs/datastore/credential_less_adls_gen1.yml"
+
+
+@pytest.fixture
+def adls_gen2_file() -> str:
+    return "./tests/test_configs/datastore/adls_gen2.yml"
+
+
+@pytest.fixture
+def adls_gen2_credential_less_file() -> str:
+    return "./tests/test_configs/datastore/credential_less_adls_gen2.yml"
+
+
+@pytest.fixture
+def hdfs_keytab_file() -> str:
+    return "./tests/test_configs/datastore/hdfs_kerberos_keytab.yml"
+
+
+@pytest.fixture
+def hdfs_pw_file() -> str:
+    return "./tests/test_configs/datastore/hdfs_kerberos_pw.yml"

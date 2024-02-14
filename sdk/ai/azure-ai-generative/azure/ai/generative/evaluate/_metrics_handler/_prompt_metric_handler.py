@@ -9,12 +9,16 @@ import numpy as np
 import pandas as pd
 import logging
 import tqdm.asyncio
+from numpy import NaN
 
 from .._client.openai_client import AzureOpenAIClient
 from .._metric_handler import MetricHandler
 from ..metrics._custom_metric import PromptMetric
+from ..metrics._parsers import JsonParser, NumberParser
 
 LOGGER = logging.getLogger(__name__)
+
+SUPPORTED_PARSERS = [JsonParser, NumberParser]
 
 
 class PromptMetricHandler(MetricHandler):
@@ -23,6 +27,7 @@ class PromptMetricHandler(MetricHandler):
             task_type,
             prediction_data,
             test_data,
+            input_output_data,
             metrics_mapping=None,
             metrics=None,
     ):
@@ -32,6 +37,7 @@ class PromptMetricHandler(MetricHandler):
             test_data=test_data,
             metrics_mapping=metrics_mapping,
             metrics=metrics,
+            input_output_data=input_output_data,
         )
 
         self._validate()
@@ -42,6 +48,7 @@ class PromptMetricHandler(MetricHandler):
         if not all(supported_list):
             raise Exception \
                 (f"{self.__class__.__name__} supports only {PromptMetric.__class__.__name__} type of metrics")
+
 
     def _convert_metric_to_message(self, metric, data):
         from jinja2 import Template
@@ -65,8 +72,6 @@ class PromptMetricHandler(MetricHandler):
                 data_source = self.test_data
             elif data_column in self.prediction_data.columns:
                 data_source = self.prediction_data
-            elif self.truth_data is not None and data_column in self.truth_data.columns:
-                data_source = self.truth_data
 
             if data_source is None:
                 raise Exception(f"{data_column} data needed for metric calculation not found")
@@ -78,11 +83,32 @@ class PromptMetricHandler(MetricHandler):
 
         return data_as_jsonl
 
+    def _parser_response(self, value, metric):
+        result = {metric.name: NaN}
+        parsed_value = None
+
+        for parser in SUPPORTED_PARSERS:
+            parsed_value = parser.parse(value)
+            if parsed_value:
+                result = parsed_value
+                break
+
+        if parsed_value:
+            if isinstance(parsed_value, dict):
+                result = {f"{metric.name}_{key}": value for key, value in parsed_value.items()}
+            else:
+                result = {metric.name: parsed_value}
+
+        if parsed_value is None:
+            LOGGER.debug("Result from LLM should be in json format or a number")
+
+        return result
+
     async def _compute_metric_row(self, metric, data):
         message = self._convert_metric_to_message(metric, data)
         response = await self._client.bounded_chat_completion(message)
         content = self._client.get_chat_completion_content_from_response(response)
-        result = metric._parser.parse(content if content is not None else response, metric)
+        result = self._parser_response(content if content is not None else response, metric)
         return result
 
     async def _compute_metric(self, metric):
@@ -100,16 +126,6 @@ class PromptMetricHandler(MetricHandler):
             results["artifacts"].update({
                 key: [row[key] for row in responses]
             })
-
-        if metric.aggregator:
-            aggregated_values = metric.aggregator(
-                values=results.get("artifacts").get(metric.name)
-            )
-            results["metrics"].update(
-                {
-                    f"{key}_{metric.name}": value for key, value in aggregated_values.items()
-                }
-            )
 
         return results
 
