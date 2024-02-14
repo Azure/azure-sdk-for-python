@@ -1,19 +1,46 @@
 parameters:
-  AdditionalTestArgs: ''
-  TestMarkArgument: ''
-  EnvVars: {}
-  ServiceDirectory: ''
-  CloudName: ''
-  PythonVersion: ''
-  BeforeTestSteps: []
-  AfterTestSteps: []
-  CoverageArg: ''
-  ToxTestEnv: ""
-  RunCoverage: ne(variables['CoverageArg'], '--disablecov')
-  ToxEnvParallel: ''
-  InjectedPackages: ''
-  DevFeedName: 'public/azure-sdk-for-python'
-  TestProxy: false
+  - name: ServiceDirectory
+    type: string
+    default: not-specified
+  - name: EnvVars
+    type: object
+    default: {}
+  - name: AdditionalTestArgs
+    type: string
+    default: ''
+  - name: TestMarkArgument
+    type: string
+    default: ''
+  - name: CloudName
+    type: string
+    default: ''
+  - name: PythonVersion
+    type: string
+    default: ''
+  - name: BeforeTestSteps
+    type: object
+    default: []
+  - name: AfterTestSteps
+    type: object
+    default: []
+  - name: CoverageArg
+    type: string
+    default: ''
+  - name: ToxTestEnv
+    type: string
+    default: ''
+  - name: ToxEnvParallel
+    type: string
+    default: ''
+  - name: InjectedPackages
+    type: string
+    default: ''
+  - name: DevFeedName
+    type: string
+    default: 'public/azure-sdk-for-python'
+  - name: TestProxy
+    type: boolean
+    default: false
 
 # The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
 #     eng/pipelines/templates/jobs/ci.tests.yml
@@ -92,13 +119,13 @@ steps:
     parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/_coverage'
       ArtifactName: '$(System.StageName)_$(Agent.JobName)_coverage'
-      CustomCondition: '${{ parameters.RunCoverage }}'
+      CustomCondition: ne(parameters['CoverageArg'], '--disablecov')
 
   - pwsh: |
       python -m pip install coverage==7.2.5
       python scripts/devops_tasks/create_coverage.py
     displayName: Create Coverage Report
-    condition: and(succeeded(), ${{ parameters.RunCoverage }})
+    condition: and(succeeded(), ne(parameters['CoverageArg'], '--disablecov'))
 
   - task: PythonScript@0
     displayName: 'Test Samples'
@@ -127,7 +154,7 @@ steps:
   - task: PublishCodeCoverageResults@1
     displayName: 'Publish Code Coverage to DevOps'
     continueOnError: true
-    condition: and(succeeded(), ${{ parameters.RunCoverage }})
+    condition: and(succeeded(), ne(parameters['CoverageArg'], '--disablecov'))
     inputs:
       codeCoverageTool: Cobertura
       summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
