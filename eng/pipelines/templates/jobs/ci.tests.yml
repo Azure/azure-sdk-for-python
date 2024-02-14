@@ -32,8 +32,8 @@ parameters:
   - name: Matrix
     type: string
   - name: DependsOn
-    type: string
-    default: ''
+    type: object
+    default: []
   - name: UsePlatformContainer
     type: boolean
     default: false
