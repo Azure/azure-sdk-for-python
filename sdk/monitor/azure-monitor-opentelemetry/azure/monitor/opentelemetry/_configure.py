@@ -69,9 +69,8 @@ def configure_azure_monitor(**kwargs) -> None:
      `{"azure_sdk": {"enabled": False}, "flask": {"enabled": False}, "django": {"enabled": True}}`
      will disable Azure Core Tracing and the Flask instrumentation but leave Django and the other default
      instrumentations enabled.
-    :keyword list[SpanProcessor] span_processors: List of `SpanProcessor`s to process every span prior to
-     exporting. Will be run sequentially.
-    :paramtype SpanProcessor: ~opentelemetry.sdk.trace.SpanProcessor
+    :keyword list[~opentelemetry.sdk.trace.SpanProcessor] span_processors: List of `SpanProcessor`s to 
+     process every span prior to exporting. Will be run sequentially.
     :keyword str storage_directory: Storage directory in which to store retry files. Defaults to
      `<tempfile.gettempdir()>/Microsoft/AzureMonitor/opentelemetry-python-<your-instrumentation-key>`.
     :rtype: None
@@ -109,12 +108,12 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
         resource=resource
     )
     set_tracer_provider(tracer_provider)
+    for span_processor in configurations[SPAN_PROCESSORS_ARG]: # type: ignore
+        get_tracer_provider().add_span_processor(span_processor) # type: ignore
     trace_exporter = AzureMonitorTraceExporter(**configurations)
     bsp = BatchSpanProcessor(
         trace_exporter,
     )
-    for span_processor in configurations[SPAN_PROCESSORS_ARG]: # type: ignore
-        get_tracer_provider().add_span_processor(span_processor) # type: ignore
     get_tracer_provider().add_span_processor(bsp) # type: ignore
     if _is_instrumentation_enabled(configurations, _AZURE_SDK_INSTRUMENTATION_NAME):
         settings.tracing_implementation = OpenTelemetrySpan
