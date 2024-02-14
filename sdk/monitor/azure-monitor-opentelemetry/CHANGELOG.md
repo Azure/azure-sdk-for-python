@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Add custom span processors configuration option
+    ([#34252](https://github.com/Azure/azure-sdk-for-python/pull/34252))
+
 ### Bugs Fixed
 
 ### Other Changes
