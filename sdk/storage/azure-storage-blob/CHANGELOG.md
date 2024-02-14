@@ -1,6 +1,6 @@
 # Release History
 
-## 12.20.0b1 (Unreleased)
+## 12.20.0b1 (2024-03-05)
 
 This version and all future versions will require Python 3.8+. Python 3.7 is no longer supported.
 
@@ -207,7 +207,7 @@ This version and all future versions will require Python 3.6+. Python 2.7 is no 
     - `set_immutability_policy`
 - Encryption Scope is now supported for Sync Blob Copy (`copy_from_url()`).
 - Encryption Scope is now supported as a SAS permission.
-- Added support for blob names containing invalid XML characters. 
+- Added support for blob names containing invalid XML characters.
   Previously \uFFFE and \uFFFF would fail if present in blob name.
 - Added support for listing system containers with get_blob_containers().
 - Added support for `find_blobs_by_tags()` on a container.
@@ -258,7 +258,7 @@ This version and all future versions will require Python 3.6+. Python 2.7 is no 
 
 **Fixes**
 - Blob Client Typing annotation issues have been resolved, specifically `invalid type inference` issues (#19906)
-- Duplicate type signature issue has been resolved (#19739) 
+- Duplicate type signature issue has been resolved (#19739)
 
 ## 12.9.0 (2021-09-15)
 **Stable release of preview features**

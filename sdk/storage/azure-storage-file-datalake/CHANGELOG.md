@@ -1,6 +1,6 @@
 # Release History
 
-## 12.15.0b1 (Unreleased)
+## 12.15.0b1 (2024-03-05)
 
 This version and all future versions will require Python 3.8+. Python 3.7 is no longer supported.
 
@@ -191,7 +191,7 @@ in a future release.
     - `permanent_delete`
     - `set_immutability_policy`
 **Fixes**
-- `FileSystemProperties` was not subscriptable. Now it is both subscriptable and attributes can also be accessed directly (#20772) 
+- `FileSystemProperties` was not subscriptable. Now it is both subscriptable and attributes can also be accessed directly (#20772)
 - Datalake Client Typing annotation issues have been resolved (#19906)
 
 ## 12.5.0 (2021-09-15)
