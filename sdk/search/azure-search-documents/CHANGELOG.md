@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed the issue that `SearchIndexerSkillset`, `SearchField`, `SearchIndex`, etc. could not be serialized.
+
 ### Other Changes
 
 ## 11.6.0b1 (2024-01-31)
