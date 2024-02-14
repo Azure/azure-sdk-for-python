@@ -1196,7 +1196,7 @@ class EmbeddingsContainer:
 
     @staticmethod
     @contextlib.contextmanager
-    def mount_and_load(
+    def mount_and_load(  # pylint: disable=inconsistent-return-statements
         embeddings_cache_path: Optional[Union[str, Path]], activity_logger=None
     ) -> Iterator[Optional["EmbeddingsContainer"]]:
         """

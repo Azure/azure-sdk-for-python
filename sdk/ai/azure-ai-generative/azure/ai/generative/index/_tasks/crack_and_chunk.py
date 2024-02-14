@@ -71,8 +71,7 @@ def str2bool(v):
         return v
     if v.lower() in ("yes", "true", "t", "y", "1"):
         return True
-    if v.lower() in ("no", "false", "f", "n", "0"):
-        return False
+    return False
 
 
 def custom_loading(python_file_path: str, ext_loaders, ext_splitters):

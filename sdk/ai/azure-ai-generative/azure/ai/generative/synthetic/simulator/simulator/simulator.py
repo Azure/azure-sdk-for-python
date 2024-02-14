@@ -84,6 +84,8 @@ class Simulator:
 
         if role == ConversationRole.USER:
             return self.create_bot(role, template, parameters, self.systemConnection)
+        
+        return None  # Add a return statement to handle other cases
 
     async def simulate_async(
         self,
