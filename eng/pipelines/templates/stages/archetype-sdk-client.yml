@@ -99,9 +99,9 @@ parameters:
         PythonVersion: pypy3.9
         CoverageArg: --disablecov
         TestSamples: false
-      - OSVmImage: macos-latest
+      - OSVmImage: macos-11
         Pool: Azure Pipelines
-        os: macOs
+        os: macOS
         demands: "ImageOverride -equals macos-11"
         PythonVersion: 3.11
         CoverageArg: --disablecov
