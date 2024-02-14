@@ -100,7 +100,7 @@ async def simulate_conversation(
             else:
                 current_bot = bots[current_character_idx]
                 # invoke Bot to generate response given the input request
-                logger.info(f"-- Sending to {current_bot.role.value}")
+                logger.info("-- Sending to %s", current_bot.role.value)
                 # pass only the last generated turn without passing the bot name.
                 response, request, time_taken, full_response = await current_bot.generate_response(
                     session=session,
@@ -123,13 +123,13 @@ async def simulate_conversation(
             if conversation_id is None and "id" in response:
                 conversation_id = response["id"]
 
-            logger.info(f"Last turn: {conversation_history[-1]}")
+            logger.info("Last turn: %s", conversation_history[-1])
             if mlflow_logger is not None:
                 logger_tasks.append(  # schedule logging but don't get blocked by it
                     asyncio.create_task(mlflow_logger.log_successful_response(time_taken))
                 )
         except Exception as e:
-            logger.warning(f"Error: {e}")
+            logger.warning("Error: %s", e)
             raise e
             if mlflow_logger is not None:
                 logger_tasks.append(  # schedule logging but don't get blocked by it

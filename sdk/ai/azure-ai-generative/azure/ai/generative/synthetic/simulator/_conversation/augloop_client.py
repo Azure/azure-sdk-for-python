@@ -68,16 +68,27 @@ class AugLoopClient:
 
         self.logger = logging.getLogger(repr(self))
 
-        self.logger.info(f"Connecting Websocket")
-        self.websocket = websocket.create_connection(self.augLoopParams.url)
+        self.logger.info("Connecting Websocket")
+
+        url = self.augLoopParams.url
+        clientAppName = self.augLoopParams.clientAppName
+        sessionId = self.augLoopParams.sessionId
+        flights = self.augLoopParams.flights
+        runtimeVersion = self.augLoopParams.runtimeVersion
+        cvBase = self.augLoopParams.cvBase
+        sequence = self.sequence
+
+        self.websocket = websocket.create_connection(url)
 
         # send session init
         # pylint: disable=line-too-long
         self.send_message_to_al(
-            f'{{"protocolVersion":2,"clientMetadata":{{"appName":"{self.augLoopParams.clientAppName}","appPlatform":"Client","sessionId":"{self.augLoopParams.sessionId}","flights":"{self.augLoopParams.flights}","appVersion":"","uiLanguage":"","roamingServiceAppId":0,"runtimeVersion":"{self.augLoopParams.runtimeVersion}","docSessionId":"{self.augLoopParams.sessionId}"}},"extensionConfigs":[],"returnWorkflowInputTypes":false,"enableRemoteExecutionNotification":false,"H_":{{"T_":"AugLoop_Session_Protocol_SessionInitMessage","B_":["AugLoop_Session_Protocol_Message"]}},"cv":"{self.augLoopParams.cvBase}.{self.sequence}","messageId":"c{self.sequence}"}}'
+            '{{"protocolVersion":2,"clientMetadata":{{"appName":"{0}","appPlatform":"Client","sessionId":"{1}","flights":"{2}","appVersion":"","uiLanguage":"","roamingServiceAppId":0,"runtimeVersion":"{3}","docSessionId":"{1}"}},"extensionConfigs":[],"returnWorkflowInputTypes":false,"enableRemoteExecutionNotification":false,"H_":{{"T_":"AugLoop_Session_Protocol_SessionInitMessage","B_":["AugLoop_Session_Protocol_Message"]}},"cv":"{4}.{5}","messageId":"c{5}"}}'.format(
+                clientAppName, sessionId, flights, runtimeVersion, cvBase, sequence
+            )
         )
         message = self.websocket.recv()
-        self.logger.info(f"SessionInit Response: {message}")
+        self.logger.info("SessionInit Response: %s", message)
 
         sessionInitResponse = json.loads(message)
         self.sessionKey = sessionInitResponse["sessionKey"]
@@ -91,7 +102,7 @@ class AugLoopClient:
 
     # Deleting (Calling destructor)
     def __del__(self):
-        self.logger.info(f"Closing Websocket")
+        self.logger.info("Closing Websocket")
         self.websocket.close()
 
     def send_signal_and_wait_for_annotation(self, message: str, isInRecursiveCall: bool = False):
@@ -101,7 +112,7 @@ class AugLoopClient:
             responseMessage = None
             while True:
                 responseMessage = self.websocket.recv()
-                self.logger.info(f"Received message: {responseMessage}")
+                self.logger.info("Received message: %s", responseMessage)
 
                 if (
                     responseMessage != None
@@ -164,10 +175,10 @@ class AugLoopClient:
                 return self.send_signal_and_wait_for_annotation(message=message, isInRecursiveCall=True)
             return {"success": False}
         except Exception as e:
-            self.logger.error(f"Error: {str(e)}")
+            self.logger.error("Error: %s" % str(e))
             # TODO: adding detailed message is not working, e disappears
             # if 'Expecting value: line 1 column 1 (char 0)' in str(e):
-            #     self.logger.error(f"Check that augloop_bot_path_to_message param points to a JSON in the response")
+            #     self.logger.error("Check that augloop_bot_path_to_message param points to a JSON in the response")
             return {"success": False}
 
     def send_message_to_al(self, message: str):
@@ -183,7 +194,7 @@ class AugLoopClient:
         message = " ".join(lines)
 
         if "authToken" not in message:
-            self.logger.info(f"Sending message to AL: {message}")
+            self.logger.info("Sending message to AL: %s", message)
 
         self.websocket.send(message)
 
@@ -200,26 +211,36 @@ class AugLoopClient:
         if self.sessionKey == None or self.sessionKey == "":
             raise Exception("SessionKey Not Found!!")
 
-        self.logger.info(f"Connecting Websocket again")
+        self.logger.info("Connecting Websocket again")
         self.websocket = websocket.create_connection(self.augLoopParams.url)
 
         # send session init
         # pylint: disable=line-too-long
         self.send_message_to_al(
-            f'{{"protocolVersion":2,"clientMetadata":{{"appName":"{self.augLoopParams.clientAppName}","appPlatform":"Client","sessionKey":"{self.sessionKey}","origin":"{self.origin}","anonymousToken":"{self.anonToken}","sessionId":"{self.augLoopParams.sessionId}","flights":"{self.augLoopParams.flights}","appVersion":"","uiLanguage":"","roamingServiceAppId":0,"runtimeVersion":"{self.augLoopParams.runtimeVersion}","docSessionId":"{self.augLoopParams.sessionId}"}},"extensionConfigs":[],"returnWorkflowInputTypes":false,"enableRemoteExecutionNotification":false,"H_":{{"T_":"AugLoop_Session_Protocol_SessionInitMessage","B_":["AugLoop_Session_Protocol_Message"]}},"cv":"{self.augLoopParams.cvBase}.{self.sequence}","messageId":"c{self.sequence}"}}'
+            '{{"protocolVersion":2,"clientMetadata":{{"appName":"{0}","appPlatform":"Client","sessionKey":"{1}","origin":"{2}","anonymousToken":"{3}","sessionId":"{4}","flights":"{5}","appVersion":"","uiLanguage":"","roamingServiceAppId":0,"runtimeVersion":"{6}","docSessionId":"{4}"}},"extensionConfigs":[],"returnWorkflowInputTypes":false,"enableRemoteExecutionNotification":false,"H_":{{"T_":"AugLoop_Session_Protocol_SessionInitMessage","B_":["AugLoop_Session_Protocol_Message"]}},"cv":"{7}.{8}","messageId":"c{8}"}}'.format(
+                self.augLoopParams.clientAppName,
+                self.sessionKey,
+                self.origin,
+                self.anonToken,
+                self.augLoopParams.sessionId,
+                self.augLoopParams.flights,
+                self.augLoopParams.runtimeVersion,
+                self.augLoopParams.cvBase,
+                self.sequence,
+            )
         )
 
         maxRetry = 3
         while True:
             message = self.websocket.recv()
-            self.logger.info(f"Re-SessionInit Response: {message}")
+            self.logger.info("Re-SessionInit Response: %s", message)
 
             if message == None or message.find("AugLoop_Session_Protocol_SessionInitResponse") == -1:
                 maxRetry = maxRetry - 1
                 if maxRetry == 0:
                     raise Exception("SessionInit response not found!!")
                 else:
-                    self.logger.info(f"This is not session init, response so waiting on next response")
+                    self.logger.info("This is not session init, response so waiting on next response")
                     continue
 
             sessionInitResponse = json.loads(message)
@@ -231,9 +252,7 @@ class AugLoopClient:
 
         if self.sessionKey != oldSessionKey:
             msg = f"new: {sessionInitResponse['sessionKey']}"
-            self.logger.warn(
-                f"Connected to a different session, previous: {self.sessionKey}, " + msg
-            )
+            self.logger.warn(f"Connected to a different session, previous: {self.sessionKey}, " + msg)
 
             self.setup_session_after_init()
 
@@ -241,27 +260,36 @@ class AugLoopClient:
         # Activate annotation
         # pylint: disable=line-too-long
         self.send_message_to_al(
-            f'{{"annotationType":"{self.augLoopParams.annotationType}","token":"{self.augLoopParams.annotationType}-1","ignoreExistingAnnotations":false,"H_":{{"T_":"AugLoop_Session_Protocol_AnnotationActivationMessage","B_":["AugLoop_Session_Protocol_Message"]}},"cv":"{self.augLoopParams.cvBase}.{self.sequence}","messageId":"c{self.sequence}"}}'
+            '{{"annotationType":"{0}","token":"{1}-1","ignoreExistingAnnotations":false,"H_":{{"T_":"AugLoop_Session_Protocol_AnnotationActivationMessage","B_":["AugLoop_Session_Protocol_Message"]}},"cv":"{2}.{3}","messageId":"c{3}"}}'.format(
+                self.augLoopParams.annotationType,
+                self.augLoopParams.annotationType,
+                self.augLoopParams.cvBase,
+                self.sequence,
+            )
         )
         message = self.websocket.recv()
-        self.logger.info(f"Ack for activate annotation: {message}")
+        self.logger.info("Ack for activate annotation: %s", message)
 
         # auth token message
         token = self.get_auth_token()
         # pylint: disable=line-too-long
         self.send_message_to_al(
-            f'{{"authToken":"{token}","H_":{{"T_":"AugLoop_Session_Protocol_TokenProvisionMessage","B_":["AugLoop_Session_Protocol_Message"]}},"cv":"{self.augLoopParams.cvBase}.{self.sequence}","messageId":"c{self.sequence}"}}'
+            '{{"authToken":"{0}","H_":{{"T_":"AugLoop_Session_Protocol_TokenProvisionMessage","B_":["AugLoop_Session_Protocol_Message"]}},"cv":"{1}.{2}","messageId":"c{2}"}}'.format(
+                token, self.augLoopParams.cvBase, self.sequence
+            )
         )
         message = self.websocket.recv()
-        self.logger.info(f"Ack for auth token message: {message}")
+        self.logger.info("Ack for auth token message: %s", message)
 
         # add doc container to session
         # pylint: disable=line-too-long
         self.send_message_to_al(
-            f'{{"cv":"{self.augLoopParams.cvBase}.{self.sequence}","seq":{self.sequence},"ops":[{{"parentPath":["session"],"prevId":"#head","items":[{{"id":"doc","body":{{"isReadonly":false,"H_":{{"T_":"AugLoop_Core_Document","B_":["AugLoop_Core_TileGroup"]}}}},"contextId":"C{self.sequence}"}}],"H_":{{"T_":"AugLoop_Core_AddOperation","B_":["AugLoop_Core_OperationWithSiblingContext","AugLoop_Core_Operation"]}}}}],"H_":{{"T_":"AugLoop_Session_Protocol_SyncMessage","B_":["AugLoop_Session_Protocol_Message"]}},"messageId":"c{self.sequence}"}}'
+            '{{"cv":"{0}.{1}","seq":{1},"ops":[{{"parentPath":["session"],"prevId":"#head","items":[{{"id":"doc","body":{{"isReadonly":false,"H_":{{"T_":"AugLoop_Core_Document","B_":["AugLoop_Core_TileGroup"]}}}},"contextId":"C{1}"}}],"H_":{{"T_":"AugLoop_Core_AddOperation","B_":["AugLoop_Core_OperationWithSiblingContext","AugLoop_Core_Operation"]}}}}],"H_":{{"T_":"AugLoop_Session_Protocol_SyncMessage","B_":["AugLoop_Session_Protocol_Message"]}},"messageId":"c{1}"}}'.format(
+                self.augLoopParams.cvBase, self.sequence
+            )
         )
         message = self.websocket.recv()
-        self.logger.info(f"Ack for seed doc: {message}")
+        self.logger.info("Ack for seed doc: {}".format(message))
 
         self.prevId = "#head"
 
@@ -269,7 +297,7 @@ class AugLoopClient:
         # get augloop auth token
         identity_client_id = os.environ.get("DEFAULT_IDENTITY_CLIENT_ID", None)
         if identity_client_id is not None:
-            self.logger.info(f"Using DEFAULT_IDENTITY_CLIENT_ID: {identity_client_id}")
+            self.logger.info("Using DEFAULT_IDENTITY_CLIENT_ID: %s", identity_client_id)
             credential = ManagedIdentityCredential(client_id=identity_client_id)
         else:
             # Good for local testing.
@@ -279,7 +307,7 @@ class AugLoopClient:
         secret_client = SecretClient(vault_url=self.augLoopParams.authTokenKeyVaultUrl, credential=credential)
         auth_token = secret_client.get_secret(self.augLoopParams.authTokenKeyVaultSecretName).value
         self.logger.info(
-            f"Obtained augloop auth token using AzureCliCredential: {auth_token and not auth_token.isspace()}"
+            "Obtained augloop auth token using AzureCliCredential: %s", auth_token and not auth_token.isspace()
         )
         return auth_token
 
@@ -287,7 +315,7 @@ class AugLoopClient:
         # get augloop auth token
         identity_client_id = os.environ.get("DEFAULT_IDENTITY_CLIENT_ID", None)
         if identity_client_id is not None:
-            self.logger.info(f"Using DEFAULT_IDENTITY_CLIENT_ID: {identity_client_id}")
+            self.logger.info("Using DEFAULT_IDENTITY_CLIENT_ID: {}".format(identity_client_id))
             credential = ManagedIdentityCredential(client_id=identity_client_id)
         else:
             # Good for local testing.
@@ -299,6 +327,6 @@ class AugLoopClient:
         for name in self.augLoopParams.otherTokenKeyVaultSecretNames:
             tokens[name] = secret_client.get_secret(name).value
         self.logger.info(
-            f"Obtained token '{name}' using AzureCliCredential: {tokens[name] and not tokens[name].isspace()}"
+            "Obtained token '%s' using AzureCliCredential: %s", name, tokens[name] and not tokens[name].isspace()
         )
         return tokens

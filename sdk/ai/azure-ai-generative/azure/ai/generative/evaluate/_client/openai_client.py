@@ -46,7 +46,7 @@ class AzureOpenAIClient:
                 )
                 return result
             except Exception as ex:
-                LOGGER.debug(f"Failed to call llm with exception :  {str(ex)}")
+                LOGGER.debug("Failed to call llm with exception : %s", str(ex))
                 return ex
 
     @staticmethod

@@ -30,7 +30,7 @@ class ConversationWriter:
         await self._queue.put(json.dumps(formatted_conversation) + "\n")
 
     def drain(self):
-        logger.info(f"Draining {self._queue.qsize()} entries to {self._file_path.name}")
+        logger.info("Draining %s entries to %s", self._queue.qsize(), self._file_path.name)
         with open(self._file_path, "a", encoding="utf-8") as f:
             while not self._queue.empty():
                 line = self._queue.get_nowait()

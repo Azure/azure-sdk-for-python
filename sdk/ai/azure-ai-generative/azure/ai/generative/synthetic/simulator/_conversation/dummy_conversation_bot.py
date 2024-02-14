@@ -53,8 +53,9 @@ class DummyConversationBot:
             if "conversation_starter" in self.persona_template_args:
                 self.logger.info(
                     "This simulated bot will use the provided conversation starter "
-                    f'"{repr(self.persona_template_args["conversation_starter"])[:400]}"'
-                    "instead of generating a turn using a LLM"
+                    '"%s"'
+                    "instead of generating a turn using a LLM",
+                    repr(self.persona_template_args["conversation_starter"])[:400]
                 )
                 self.conversation_starter = self.persona_template_args["conversation_starter"]
             else:
@@ -95,7 +96,7 @@ class DummyConversationBot:
         # check if this is the first turn and the conversation_starter is not None,
         # return the conversations starter rather than generating turn using LLM
         if turn_number == 0 and self.conversation_starter is not None and self.conversation_starter != "":
-            self.logger.info(f"Returning conversation starter: {self.conversation_starter}")
+            self.logger.info("Returning conversation starter: %s", self.conversation_starter)
             time_taken = 0
 
             samples = [self.conversation_starter]

@@ -42,7 +42,7 @@ class CodeMetricHandler(MetricHandler):
             raise Exception(f"{self.__class__.__name__} supports only {CodeMetric.__class__.__name__} type of metrics")
 
     def calculate_metrics(self):
-        LOGGER.info(f"Calculating code metrics : {[metric.name for metric in self.metrics]}")
+        LOGGER.info("Calculating code metrics : %s", [metric.name for metric in self.metrics])
         metrics_dict = {"artifacts": {}, "metrics": {}}
         metric_results_futures = {}
         test_data_as_dict = self.test_data.to_dict("records")

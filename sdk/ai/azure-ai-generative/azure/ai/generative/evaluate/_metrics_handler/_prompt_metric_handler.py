@@ -133,6 +133,6 @@ class PromptMetricHandler(MetricHandler):
         return metrics_dict
 
     def calculate_metrics(self):
-        LOGGER.info(f"Calculating prompt metric {[metric.name for metric in self.metrics]}")
+        LOGGER.info("Calculating prompt metric %s", [metric.name for metric in self.metrics])
         result = asyncio.run(self._compute_metrics(), debug=True)
         return result

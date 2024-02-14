@@ -91,7 +91,7 @@ def _completion_with_retries(*args, **kwargs):
             if n > _MAX_RETRIES:
                 raise
             secs = 2**n
-            logger.warning(f"Retrying after {secs}s. API call failed due to {e.__class__.__name__}: {e}")
+            logger.warning("Retrying after %ss. API call failed due to %s: %s" % (secs, e.__class__.__name__, e))
             time.sleep(secs)
             n += 1
             continue
@@ -137,7 +137,7 @@ async def _completion_with_retries_async(*args, **kwargs):
             if n > _MAX_RETRIES:
                 raise
             secs = 2**n
-            logger.warning(f"Retrying after {secs}s. API call failed due to {e.__class__.__name__}: {e}")
+            logger.warning("Retrying after %ss. API call failed due to %s: %s", secs, e.__class__.__name__, e)
             await asyncio.sleep(secs)
             n += 1
             continue
@@ -220,7 +220,7 @@ class QADataGenerator:
             raise ValueError("num_questions must be an integer greater than zero")
 
     def _get_messages_for_qa_type(self, qa_type: QAType, text: str, num_questions: int) -> List:
-        logger.debug(f"Getting prompt messages for {qa_type} QA type")
+        logger.debug("Getting prompt messages for %s QA type", qa_type)
         template_filename = {
             QAType.SHORT_ANSWER: "prompt_qa_short_answer.txt",
             QAType.LONG_ANSWER: "prompt_qa_long_answer.txt",
@@ -257,7 +257,7 @@ class QADataGenerator:
 
     @lru_cache
     def _get_template(self, filename) -> str:
-        logger.debug(f"Getting prompt template from {filename} file")
+        logger.debug("Getting prompt template from %s file", filename)
         filepath = os.path.join(_TEMPLATES_DIR, filename)
         with open(filepath, encoding="utf-8") as f:
             template = f.read()

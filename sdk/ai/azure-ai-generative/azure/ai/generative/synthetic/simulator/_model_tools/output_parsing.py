@@ -31,10 +31,10 @@ def flatten_outputs(
                 continue
 
             job = dict(json.loads(line.strip()))
-            logger.info(f"Processing job found on line #{line_idx} containing inputs: {job['input_idx']}.")
+            logger.info("Processing job found on line #{} containing inputs: {}.".format(line_idx, job["input_idx"]))
 
             if "output_examples" not in job:
-                logger.info(f"Couldn't find output_examples in job found on line #{line_idx}.")
+                logger.info("Couldn't find output_examples in job found on line #{}.".format(line_idx))
                 continue
 
             # Ignore samples which failed to parse or decode
@@ -129,7 +129,7 @@ def try_decode_json(example: str, label_keys: List[str]) -> Dict[str, Any]:
 
 
 def get_majority_value(numbers):
-    logger.info(f"#######################\nGetting majority for {numbers}\n#########################")
+    logger.info("#######################\nGetting majority for {}\n#########################".format(numbers))
     # check if passed list contains dictionaries rather than values
     is_dic = any(type(element) is dict for element in numbers)
     if is_dic:
@@ -146,12 +146,12 @@ def get_majority_value(numbers):
                     _numbers.append(item[key])
             maj_val = get_majority_value(_numbers)
             majority_dic[key] = maj_val
-        logger.info(f"Majority value is {majority_dic}")
+        logger.info("Majority value is %s", majority_dic)
         return majority_dic
 
     counter = Counter(numbers)
     majority_value, _ = counter.most_common(1)[0]
-    logger.info(f"Majority value is {majority_value}")
+    logger.info("Majority value is %s", majority_value)
     return majority_value
 
 
@@ -180,11 +180,13 @@ def try_parse_samples(
             sample_examples = prompt_template.split_output_examples(sample)
 
             if len(sample_examples) < n_inputs:
-                raise ValueError(f"Expected at least {n_inputs} examples, but got {len(sample_examples)}")
+                raise ValueError("Expected at least {} examples, but got {}".format(n_inputs, len(sample_examples)))
 
             sample_examples = sample_examples[:n_inputs]  # truncate to n_inputs
         except Exception as e:
-            logger.info(f"Failed to split: Job #{job_idx} - sample #{sample_idx + 1}/{n_samples}. Error: {e}")
+            logger.info(
+                "Failed to split: Job #{} - sample #{}/{}. Error: {}".format(job_idx, sample_idx + 1, n_samples, e)
+            )
             output_examples.append(None)
             num_failed += 1
             continue
@@ -200,7 +202,7 @@ def try_parse_samples(
             # If we failed to decode, add empty dicts to output examples
             output_examples.append([{} for _ in range(len(sample_examples))])
             num_failed += 1
-            logger.exception(f"Failed to decode: Job #{job_idx} - sample #{sample_idx + 1}/{n_samples}")
+            logger.exception("Failed to decode: Job #{} - sample #{}/{}".format(job_idx, sample_idx + 1, n_samples))
 
     return num_failed, output_examples
 
