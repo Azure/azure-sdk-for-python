@@ -70,7 +70,7 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
 
     async def get_answers(self) -> Optional[List[QueryAnswerResult]]:
         """Return semantic answers. Only included if the semantic ranker is used
-        and answers are requested in the search query via the answers parameter.
+        and answers are requested in the search query via the query_answer parameter.
 
         :return: Answers.
         :rtype: list[~azure.search.documents.QueryAnswerResult]

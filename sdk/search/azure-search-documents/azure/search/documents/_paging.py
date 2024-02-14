@@ -86,7 +86,7 @@ class SearchItemPaged(ItemPaged[ReturnType]):
 
     def get_answers(self) -> Optional[List[QueryAnswerResult]]:
         """Return semantic answers. Only included if the semantic ranker is used
-        and answers are requested in the search query via the answers parameter.
+        and answers are requested in the search query via the query_answer parameter.
 
         :return: answers
         :rtype: list[~azure.search.documents.models.QueryAnswerResult] or None
