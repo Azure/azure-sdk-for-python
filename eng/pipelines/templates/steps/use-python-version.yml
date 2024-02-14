@@ -37,7 +37,7 @@ steps:
 
   # use
   - task: UsePythonVersion@0
-    displayName: "Use Python $(PythonVersion)"
+    displayName: "Use Python ${{ parameters.versionSpec }}"
     condition: and(succeeded(), not(eq(variables.ManualInstallNecessary, 'true')))
     inputs:
       versionSpec: ${{ parameters.versionSpec }}
