@@ -62,8 +62,7 @@ jobs:
       condition: |
         and(
           succeededOrFailed(),
-          ne(variables['Skip.Test'], 'true'),
-          ne(${{ parameters.Matrix }}, '{}')
+          ne(variables['Skip.Test'], 'true')
         )
       timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
 
