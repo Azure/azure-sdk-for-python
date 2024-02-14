@@ -231,6 +231,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         key_name = self.get_resource_name("keycrypt")
 
         imported_key = self._import_test_key(key_client, key_name)
+        # Use the key's ID to create the client, ensuring the material is fetched when the RSA key is created
         crypto_client = self.create_crypto_client(imported_key.id, api_version=key_client.api_version)
 
         # Create a KeyVaultRSAPublicKey that can perform encryption with `cryptography`'s interface
@@ -253,6 +254,56 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         crypto_private_key = crypto_client.create_rsa_private_key().private_numbers().private_key()
         crypto_plaintext = crypto_private_key.decrypt(ciphertext=crypto_ciphertext, padding=padding)
         assert crypto_plaintext == plaintext
+
+    @pytest.mark.parametrize("api_version,is_hsm", only_vault_7_4_plus)
+    @KeysClientPreparer(permissions=NO_GET)
+    @recorded_by_proxy
+    def test_encrypt_and_decrypt_with_managed_key_no_get(self, key_client, **kwargs):
+        set_bodiless_matcher()
+        key_name = self.get_resource_name("keycrypt")
+
+        imported_key = self._import_test_key(key_client, key_name)
+        # Use the key's ID to create the client, ensuring the we don't have the material (and can't fetch it per NO_GET)
+        crypto_client = self.create_crypto_client(imported_key.id, api_version=key_client.api_version)
+
+        # Create a KeyVaultRSAPublicKey that can perform encryption with `cryptography`'s interface
+        public_key = crypto_client.create_rsa_public_key()
+        algorithm = SHA1()
+        mgf = MGF1(algorithm)
+        padding = OAEP(mgf, algorithm, None)
+        ciphertext = public_key.encrypt(self.plaintext, padding)
+
+        # Create a KeyVaultRSAPrivateKey that can perform decryption with `cryptography`'s interface
+        private_key = crypto_client.create_rsa_private_key()
+        plaintext = private_key.decrypt(ciphertext=ciphertext, padding=padding)
+        assert self.plaintext == plaintext
+
+        # Ensure we raise for operations that can't be performed without local key material
+        with pytest.raises(ValueError) as ex:
+            public_key.public_numbers()
+        assert "key material" in str(ex.value).lower()
+        with pytest.raises(ValueError) as ex:
+            public_key.public_bytes()
+        assert "key material" in str(ex.value).lower()
+        with pytest.raises(ValueError) as ex:
+            public_key.key_size()
+        assert "key material" in str(ex.value).lower()
+        with pytest.raises(ValueError) as ex:
+            public_key == imported_key
+        assert "key material" in str(ex.value).lower()
+
+        with pytest.raises(ValueError) as ex:
+            private_key.private_numbers()
+        assert "key material" in str(ex.value).lower()
+        with pytest.raises(ValueError) as ex:
+            private_key.private_bytes()
+        assert "key material" in str(ex.value).lower()
+        with pytest.raises(ValueError) as ex:
+            private_key.key_size()
+        assert "key material" in str(ex.value).lower()
+        with pytest.raises(ValueError) as ex:
+            private_key == imported_key
+        assert "key material" in str(ex.value).lower()
 
     @pytest.mark.parametrize("api_version,is_hsm", no_get)
     @KeysClientPreparer(permissions=NO_GET)
