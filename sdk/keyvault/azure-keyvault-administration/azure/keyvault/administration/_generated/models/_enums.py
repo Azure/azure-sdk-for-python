@@ -96,8 +96,6 @@ class RoleScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Global scope"""
     KEYS = "/keys"
     """Keys scope"""
-    GLOBAL_ENUM = "/"
-    """Global scope"""
 
 
 class RoleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
