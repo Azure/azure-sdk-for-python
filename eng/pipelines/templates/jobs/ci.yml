@@ -244,6 +244,7 @@ jobs:
       InjectedPackages: ${{ parameters.InjectedPackages }}
       UnsupportedToxEnvironments: ${{ parameters.UnsupportedToxEnvironments }}
       TestProxy: ${{ parameters.TestProxy }}
+      PoolStrategy: ${{ parameters.PoolStrategy }}
       DependsOn:
         - 'Build'
         - ${{ if eq(parameters['AdvancedBuild'], true) }}:
