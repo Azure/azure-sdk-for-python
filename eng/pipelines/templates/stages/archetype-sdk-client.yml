@@ -143,8 +143,8 @@ extends:
           image: azsdk-pool-mms-win-2022-1espt
           os: windows
         credscan:
-          suppressionFile: '$(INETROOT)/eng/CredScanSuppression.json'
-          scanFolder: '$(INETROOT)/credscan.tsv'
+          suppressionFile: '$(INETROOT)\\eng\\CredScanSuppression.json'
+          scanFolder: '$(INETROOT)\\credscan.tsv'
           toolVersion: '2.3.12.23'
 
     stages:
