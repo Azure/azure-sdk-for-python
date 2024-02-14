@@ -250,4 +250,4 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [python_logger]: https://docs.python.org/3/library/logging.html#logger-objects
 [python_logging_level]: https://docs.python.org/3/library/logging.html#levels
 [samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples
-[samples_manual]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/manual.py
+[samples_manual]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/manually_instrumented.py
