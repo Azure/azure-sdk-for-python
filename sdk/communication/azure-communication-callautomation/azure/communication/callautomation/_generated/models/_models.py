@@ -3403,6 +3403,67 @@ class StartCallRecordingRequest(_serialization.Model):
         self.channel_affinity = channel_affinity
 
 
+class TeamsComplianceRecordingStateChanged(_serialization.Model):
+    """TeamsComplianceRecordingStateChanged.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation.
+    :vartype correlation_id: str
+    :ivar recording_id: The call recording id.
+    :vartype recording_id: str
+    :ivar state: Known values are: "active" and "inactive".
+    :vartype state: str or ~azure.communication.callautomation.models.RecordingState
+    :ivar start_date_time: The time of the recording started.
+    :vartype start_date_time: ~datetime.datetime
+    """
+
+    _validation = {
+        "recording_id": {"readonly": True},
+        "start_date_time": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+        "recording_id": {"key": "recordingId", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "start_date_time": {"key": "startDateTime", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        state: Optional[Union[str, "_models.RecordingState"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword call_connection_id: Call connection ID.
+        :paramtype call_connection_id: str
+        :keyword server_call_id: Server call ID.
+        :paramtype server_call_id: str
+        :keyword correlation_id: Correlation ID for event to call correlation.
+        :paramtype correlation_id: str
+        :keyword state: Known values are: "active" and "inactive".
+        :paramtype state: str or ~azure.communication.callautomation.models.RecordingState
+        """
+        super().__init__(**kwargs)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.recording_id = None
+        self.state = state
+        self.start_date_time = None
+
+
 class TextSource(_serialization.Model):
     """TextSource.
 

@@ -72,6 +72,7 @@ from ._models import SpeechOptions
 from ._models import SpeechResult
 from ._models import SsmlSource
 from ._models import StartCallRecordingRequest
+from ._models import TeamsComplianceRecordingStateChanged
 from ._models import TextSource
 from ._models import TransferCallResponse
 from ._models import TransferToParticipantRequest
@@ -161,6 +162,7 @@ __all__ = [
     "SpeechResult",
     "SsmlSource",
     "StartCallRecordingRequest",
+    "TeamsComplianceRecordingStateChanged",
     "TextSource",
     "TransferCallResponse",
     "TransferToParticipantRequest",
