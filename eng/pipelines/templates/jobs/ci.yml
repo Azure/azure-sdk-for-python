@@ -69,7 +69,7 @@ parameters:
     default: []
 
 jobs:
-  
+
   - ${{ if eq(parameters['AdvancedBuild'], false) }}:
     - job: 'Build'
       timeoutInMinutes: 90
@@ -133,7 +133,7 @@ jobs:
 
     - job: 'CoalesceBuildArtifacts'
       displayName: Combine Built Artifacts
-      dependsOn: 
+      dependsOn:
         - 'Build'
       timeoutInMinutes: 90
 
@@ -164,7 +164,7 @@ jobs:
 
   - job: 'Build_Extended'
     displayName: Build Extended
-    dependsOn: 
+    dependsOn:
       - 'Build'
       - ${{ if eq(parameters['AdvancedBuild'], true) }}:
         - 'CoalesceBuildArtifacts'
@@ -246,7 +246,6 @@ jobs:
       TestProxy: ${{ parameters.TestProxy }}
       PoolStrategy: ${{ parameters.PoolStrategy }}
       DependsOn:
-        - 'Build'
         - ${{ if eq(parameters['AdvancedBuild'], true) }}:
           - 'CoalesceBuildArtifacts'
 
