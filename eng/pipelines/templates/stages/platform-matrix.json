@@ -6,9 +6,9 @@
   },
   "matrix": {
     "Agent": {
-      "windows-2022": { "OSVmImage": "azsdk-pool-mms-win-2022-1espt", "Pool": "azsdk-pool-mms-win-2022-1es-pt", "os": "windows" },
-      "ubuntu-20.04": { "OSVmImage": "azsdk-pool-mms-ubuntu-2004-1espt", "Pool": "azsdk-pool-mms-ubuntu-2004-1es-pt", "os": "linux"},
-      "macos-11": { "OSVmImage": "macos-latest", "Pool": "Azure Pipelines", "os": "macOs" }
+      "windows-2022": { "OSVmImage": "env:WINDOWSVMIMAGE", "Pool": "env:WINDOWSPOOL" },
+      "ubuntu-20.04": { "OSVmImage": "env:LINUXVMIMAGE", "Pool": "env:LINUXPOOL" },
+      "macos-11": { "OSVmImage": "env:MACOSIMAGE", "Pool": "env:MACPOOenv:MACPOOL" }
     },
     "PythonVersion": [ "3.8", "pypy3.9", "3.11", "3.10" ],
     "CoverageArg": "--disablecov",
@@ -18,9 +18,8 @@
     {
       "CoverageConfig": {
         "ubuntu2004_39_coverage": {
-          "OSVmImage": "azsdk-pool-mms-ubuntu-2004-1espt",
-          "Pool": "azsdk-pool-mms-ubuntu-2004-1es-pt",
-          "os": "linux",
+          "OSVmImage": "env:LINUXIMAGE",
+          "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.9",
           "CoverageArg": "",
           "TestSamples": "false"
@@ -30,9 +29,8 @@
     {
       "Config": {
         "Ubuntu2004_312": {
-          "OSVmImage": "azsdk-pool-mms-ubuntu-2004-1espt",
-          "Pool": "azsdk-pool-mms-ubuntu-2004-1es-pt",
-          "os": "linux",
+          "OSVmImage": "env:LINUXIMAGE",
+          "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.12",
           "CoverageArg": "--disablecov",
           "TestSamples": "false"

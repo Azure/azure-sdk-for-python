@@ -82,53 +82,6 @@ parameters:
   - name: AdvancedBuild
     type: boolean
     default: false
-  # demands currently not used, as I have been unable to get this to work. See https://dev.azure.com/azure-sdk/internal/_build/results?buildId=3496406&view=logs&j=913ce52b-8ad3-5a93-c0fe-123235d07c67
-  - name: PoolStrategy
-    type: object
-    default: 
-      - OSVmImage: azsdk-pool-mms-win-2022-1espt
-        Pool: azsdk-pool-mms-win-2022-1es-pt
-        os: windows
-        demands: "ImageOverride -equals windows-2022"
-        PythonVersion: "3.8"
-        CoverageArg: --disablecov
-        TestSamples: false
-      - OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
-        Pool: azsdk-pool-mms-ubuntu-2004-1es-pt
-        os: linux
-        demands: "ImageOverride -equals ubuntu-20.04"
-        PythonVersion: "pypy3.9"
-        CoverageArg: --disablecov
-        TestSamples: false
-      - OSVmImage: macos-11
-        Pool: Azure Pipelines
-        os: macOS
-        demands: "ImageOverride -equals macos-11"
-        PythonVersion: "3.11"
-        CoverageArg: --disablecov
-        TestSamples: false
-      - OSVmImage: azsdk-pool-mms-win-2022-1espt
-        Pool: azsdk-pool-mms-win-2022-1es-pt
-        os: windows
-        demands: "ImageOverride -equals windows-2022"
-        PythonVersion: "3.10.*"
-        CoverageArg: --disablecov
-        TestSamples: false
-      - OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
-        Pool: azsdk-pool-mms-ubuntu-2004-1es-pt
-        os: linux
-        demands: "ImageOverride -equals ubuntu-20.04"
-        PythonVersion: "3.9"
-        CoverageArg: ""
-        TestSamples: false
-      - OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
-        Pool: azsdk-pool-mms-ubuntu-2004-1es-pt
-        os: linux
-        demands: "ImageOverride -equals ubuntu-20.04"
-        PythonVersion: "3.12"
-        CoverageArg: --disablecov
-        TestSamples: false
-
 
 extends:
   ${{ if eq(variables['System.TeamProject'], 'internal') }}:
@@ -179,7 +132,6 @@ extends:
               TestProxy: ${{ parameters.TestProxy }}
               GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
               AdvancedBuild: ${{ parameters.AdvancedBuild }}
-              PoolStrategy: ${{ parameters.PoolStrategy }}
 
         variables:
           - template: /eng/pipelines/templates/variables/globals.yml@self

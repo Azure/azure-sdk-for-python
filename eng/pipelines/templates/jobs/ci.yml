@@ -64,12 +64,9 @@ parameters:
   - name: AdvancedBuild
     type: boolean
     default: false
-  - name: PoolStrategy
-    type: object
-    default: []
 
 jobs:
-  
+
   - ${{ if eq(parameters['AdvancedBuild'], false) }}:
     - job: 'Build'
       timeoutInMinutes: 90
@@ -133,7 +130,7 @@ jobs:
 
     - job: 'CoalesceBuildArtifacts'
       displayName: Combine Built Artifacts
-      dependsOn: 
+      dependsOn:
         - 'Build'
       timeoutInMinutes: 90
 
@@ -164,7 +161,7 @@ jobs:
 
   - job: 'Build_Extended'
     displayName: Build Extended
-    dependsOn: 
+    dependsOn:
       - 'Build'
       - ${{ if eq(parameters['AdvancedBuild'], true) }}:
         - 'CoalesceBuildArtifacts'
@@ -230,61 +227,40 @@ jobs:
         ValidateFormatting: ${{ parameters.ValidateFormatting }}
         GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
 
-
-  - template: /eng/pipelines/templates/jobs/ci.tests.yml
+  - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
     parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      TestPipeline: ${{ parameters.TestPipeline }}
-      TestMarkArgument: ${{ parameters.TestMarkArgument }}
-      BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
-      AfterTestSteps: ${{ parameters.AfterTestSteps }}
-      BuildTargetingString: ${{ parameters.BuildTargetingString }}
-      TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
-      ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
-      InjectedPackages: ${{ parameters.InjectedPackages }}
-      UnsupportedToxEnvironments: ${{ parameters.UnsupportedToxEnvironments }}
-      TestProxy: ${{ parameters.TestProxy }}
-      PoolStrategy: ${{ parameters.PoolStrategy }}
+      JobTemplatePath: /eng/pipelines/templates/jobs/regression.yml
+      OsVmImage: azsdk-pool-mms-ubuntu-2004-1espt
+      Pool: azsdk-pool-mms-ubuntu-2004-1es-pt
+      GenerateJobName: generate_regression_matrix
+      SparseCheckoutPaths: [ "scripts/", "sdk/", "tools/azure-sdk-tools/" ]
+      MatrixConfigs:
+          - Name: Python_regression_envs
+            Path: eng/pipelines/templates/stages/regression-job-matrix.json
+            Selection: sparse
+            GenerateVMJobs: true
+      PreGenerationSteps:
+        - pwsh: |
+            python -m pip install "./tools/azure-sdk-tools[build]"
+          displayName: 'Prep Environment'
+        - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+          parameters:
+            BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        - task: PythonScript@0
+          displayName: 'Ensure service coverage'
+          inputs:
+            scriptPath: '$(Build.SourcesDirectory)/scripts/devops_tasks/update_regression_services.py'
+            arguments: >-
+              "$(TargetingString)"
+              --service="${{ parameters.ServiceDirectory }}"
+              --json=$(Build.SourcesDirectory)/eng/pipelines/templates/stages/regression-job-matrix.json
+      CloudConfig:
+        Cloud: Public
       DependsOn:
         - 'Build'
         - ${{ if eq(parameters['AdvancedBuild'], true) }}:
           - 'CoalesceBuildArtifacts'
-
-  # todo, re-enable after figuring out matrix strategy
-  # - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
-  #   parameters:
-  #     JobTemplatePath: /eng/pipelines/templates/jobs/regression.yml
-  #     OsVmImage: azsdk-pool-mms-ubuntu-2004-1espt
-  #     Pool: azsdk-pool-mms-ubuntu-2004-1es-pt
-  #     GenerateJobName: generate_regression_matrix
-  #     SparseCheckoutPaths: [ "scripts/", "sdk/", "tools/azure-sdk-tools/" ]
-  #     MatrixConfigs:
-  #         - Name: Python_regression_envs
-  #           Path: eng/pipelines/templates/stages/regression-job-matrix.json
-  #           Selection: sparse
-  #           GenerateVMJobs: true
-  #     PreGenerationSteps:
-  #       - pwsh: |
-  #           python -m pip install "./tools/azure-sdk-tools[build]"
-  #         displayName: 'Prep Environment'
-  #       - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-  #         parameters:
-  #           BuildTargetingString: ${{ parameters.BuildTargetingString }}
-  #       - task: PythonScript@0
-  #         displayName: 'Ensure service coverage'
-  #         inputs:
-  #           scriptPath: '$(Build.SourcesDirectory)/scripts/devops_tasks/update_regression_services.py'
-  #           arguments: >-
-  #             "$(TargetingString)"
-  #             --service="${{ parameters.ServiceDirectory }}"
-  #             --json=$(Build.SourcesDirectory)/eng/pipelines/templates/stages/regression-job-matrix.json
-  #     CloudConfig:
-  #       Cloud: Public
-  #     DependsOn:
-  #       - 'Build'
-  #       - ${{ if eq(parameters['AdvancedBuild'], true) }}:
-  #         - 'CoalesceBuildArtifacts'
-  #     AdditionalParameters:
-  #       BuildTargetingString: ${{ parameters.BuildTargetingString }}
-  #       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-  #       TestTimeoutInMinutes: 90
+      AdditionalParameters:
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestTimeoutInMinutes: 90
