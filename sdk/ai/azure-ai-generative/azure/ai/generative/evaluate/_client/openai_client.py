@@ -3,21 +3,23 @@
 # ---------------------------------------------------------
 import asyncio
 import logging
+from typing import Any, Dict, Optional
 
 from openai import AsyncAzureOpenAI
 from openai.types.chat.chat_completion import ChatCompletion
 
 from azure.ai.generative.evaluate._user_agent import USER_AGENT
 from azure.ai.generative.constants._common import USER_AGENT_HEADER_KEY
+from azure.core.credentials import TokenCredential
 
 semaphore = asyncio.Semaphore(10)
 
 LOGGER = logging.getLogger(__name__)
 
 
-class AzureOpenAIClient:
-
-    def __init__(self, openai_params):
+class AzureOpenAIClient:  # pylint: disable=client-accepts-api-version-keyword
+    # pylint: disable=unused-argument
+    def __init__(self, openai_params: Dict, credential: Optional[TokenCredential] = None, **kwargs: Any) -> None:
         self._azure_endpoint = openai_params.get("azure_endpoint", None) if openai_params.get("azure_endpoint", None) \
             else openai_params.get("api_base", None)
         self._api_key = openai_params.get("api_key", None)
@@ -35,7 +37,7 @@ class AzureOpenAIClient:
             },
         )
 
-    async def bounded_chat_completion(self, messages):
+    async def bounded_chat_completion(self, messages: Any) -> Any:
         async with semaphore:
             try:
                 result = await self._client.with_options(max_retries=5).chat.completions.create(
@@ -49,8 +51,7 @@ class AzureOpenAIClient:
                 LOGGER.debug("Failed to call llm with exception : %s", str(ex))
                 return ex
 
-    @staticmethod
-    def get_chat_completion_content_from_response(response):  # pylint: disable=name-too-long
+    def get_chat_completion_content_from_response(self, response: Any) -> Any:  # pylint: disable=name-too-long
         if isinstance(response, ChatCompletion):
             return response.choices[0].message.content
         return None

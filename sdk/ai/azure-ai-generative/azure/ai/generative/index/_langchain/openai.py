@@ -42,7 +42,7 @@ def patch_openai_embedding_retries(logger, activity_logger, max_seconds_retrying
         # 'timestamp': str(datetime.utcnow()), 'sleep': retry_state.next_action.sleep
         # })]
 
-    class stop_after_delay_that_works(stop_base):
+    class StopAfterDelayThatWorks(stop_base):
         """Stop when the time from the first attempt >= limit."""
 
         def __init__(self, max_delay, activity_logger) -> None:
@@ -93,7 +93,7 @@ def patch_openai_embedding_retries(logger, activity_logger, max_seconds_retrying
         return retry(
             reraise=True,
             # stop=stop_after_attempt(embeddings.max_retries),
-            stop=stop_after_delay_that_works(max_seconds_retrying, activity_logger),
+            stop=StopAfterDelayThatWorks(max_seconds_retrying, activity_logger),
             wait=wait_exponential(multiplier=1, min=min_seconds, max=max_seconds),
             retry=retry_exceptions,
             before_sleep=_log_it,

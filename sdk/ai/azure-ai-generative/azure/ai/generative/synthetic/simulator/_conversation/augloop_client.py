@@ -5,10 +5,12 @@
 import os
 import json
 import logging
+from typing import Any, Dict, Optional
 import websocket
 from jsonpath_ng import parse
 from websocket import WebSocketConnectionClosedException
 from azure.identity import ManagedIdentityCredential, AzureCliCredential
+from azure.core.credentials import TokenCredential
 from azure.keyvault.secrets import SecretClient
 
 
@@ -58,11 +60,11 @@ class AugLoopParams:
             self.signalOtherParams = self.signalOtherParams + ","
 
 
-class AugLoopClient:
+class AugLoopClient:  # pylint: disable=client-accepts-api-version-keyword
     def __init__(
-        self,
-        augLoopParams: AugLoopParams,
-    ):
+        # pylint: disable=unused-argument
+        self, augLoopParams: AugLoopParams, credential: Optional[TokenCredential] = None, **kwargs: Any
+    ) -> None:
         self.augLoopParams = augLoopParams
         self.sequence = 0
 
@@ -101,11 +103,11 @@ class AugLoopClient:
         self.id: str = ""
 
     # Deleting (Calling destructor)
-    def __del__(self):
+    def __del__(self):  # pylint: disable=client-method-name-no-double-underscore
         self.logger.info("Closing Websocket")
         self.websocket.close()
 
-    def send_signal_and_wait_for_annotation(self, message: str, isInRecursiveCall: bool = False):
+    def send_signal_and_wait_for_annotation(self, message: str, isInRecursiveCall: bool = False) -> Dict:
         try:
             self.send_signal_message(message)
 
@@ -181,7 +183,7 @@ class AugLoopClient:
             #     self.logger.error("Check that augloop_bot_path_to_message param points to a JSON in the response")
             return {"success": False}
 
-    def send_message_to_al(self, message: str):
+    def send_message_to_al(self, message: str) -> None:
         self.sequence += 1
 
         # make sure message does not have any new line characters
@@ -198,7 +200,7 @@ class AugLoopClient:
 
         self.websocket.send(message)
 
-    def send_signal_message(self, message: str):
+    def send_signal_message(self, message: str) -> None:
         self.id = f"id{self.sequence}"
         message = message.replace('"', '\\"')
         # pylint: disable=line-too-long
@@ -207,7 +209,7 @@ class AugLoopClient:
         )
         self.prevId = self.id
 
-    def reconnect_and_attempt_session_init(self):
+    def reconnect_and_attempt_session_init(self) -> None:
         if self.sessionKey == None or self.sessionKey == "":
             raise Exception("SessionKey Not Found!!")
 
@@ -256,7 +258,7 @@ class AugLoopClient:
 
             self.setup_session_after_init()
 
-    def setup_session_after_init(self):
+    def setup_session_after_init(self) -> None:
         # Activate annotation
         # pylint: disable=line-too-long
         self.send_message_to_al(
@@ -293,7 +295,7 @@ class AugLoopClient:
 
         self.prevId = "#head"
 
-    def get_auth_token(self):
+    def get_auth_token(self) -> Any:
         # get augloop auth token
         identity_client_id = os.environ.get("DEFAULT_IDENTITY_CLIENT_ID", None)
         if identity_client_id is not None:
@@ -311,7 +313,7 @@ class AugLoopClient:
         )
         return auth_token
 
-    def get_other_tokens(self):
+    def get_other_tokens(self) -> Dict:
         # get augloop auth token
         identity_client_id = os.environ.get("DEFAULT_IDENTITY_CLIENT_ID", None)
         if identity_client_id is not None:
