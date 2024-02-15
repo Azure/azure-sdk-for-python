@@ -12,7 +12,7 @@ from azure.ai.resources._utils._open_ai_utils import build_open_ai_protocol
 from azure.ai.resources.entities.mlindex import Index
 from azure.ai.resources.operations._acs_output_config import ACSOutputConfig
 from azure.ai.resources.operations._index_data_source import ACSSource, LocalSource
-from azure.ai.resources._telemetry.aoai_injector import inject_openai_headers
+from azure.ai.generative._telemetry.aoai_injector import inject_openai_headers
 
 
 @inject_openai_headers

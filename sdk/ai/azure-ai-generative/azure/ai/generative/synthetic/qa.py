@@ -17,7 +17,7 @@ try:
     from azure.ai.resources.entities import BaseConnection
     from azure.ai.generative.constants._common import USER_AGENT_HEADER_KEY
     from azure.identity import DefaultAzureCredential
-    from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, ActivityLogger
+    from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, ActivityLogger, inject_openai_headers
     from azure.core.tracing.decorator import distributed_trace
     from azure.ai.generative._user_agent import USER_AGENT
 except ImportError as e:
@@ -56,6 +56,7 @@ _DEFAULT_AOAI_VERSION = "2023-07-01-preview"
 _MAX_RETRIES = 7
 
 
+@inject_openai_headers
 def _completion_with_retries(*args, **kwargs):
     n = 1
     while True:
