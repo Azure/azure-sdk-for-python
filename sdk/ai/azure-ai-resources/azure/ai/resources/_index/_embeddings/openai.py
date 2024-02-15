@@ -35,7 +35,6 @@ class OpenAIEmbedder:
         openai_passthrough_args: Optional[dict] = None,
     ):
         """Initialize an OpenAI Embedding client."""
-
         self.api_base = api_base
         self.api_type = api_type
         self.api_key = api_key or os.getenv("AZURE_OPENAI_KEY") or ""

@@ -42,7 +42,6 @@ class PromptMetricHandler(MetricHandler):
             metrics=metrics,
             input_output_data=input_output_data,
         )
-        
         self._validate()
         self._client = AzureOpenAIClient(openai_params=metrics_mapping["openai_params"])
 

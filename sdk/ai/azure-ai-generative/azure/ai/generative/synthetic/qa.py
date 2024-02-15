@@ -60,7 +60,6 @@ _MAX_RETRIES = 7
 
 @inject_openai_headers
 def _completion_with_retries(*args, **kwargs):
-
     n = 1
     while True:
         try:
@@ -69,7 +68,7 @@ def _completion_with_retries(*args, **kwargs):
                     from openai import AzureOpenAI
                     client = AzureOpenAI(
                         azure_endpoint = kwargs["api_base"], 
-                        api_key=kwargs["api_key"],  
+                        api_key=kwargs["api_key"],
                         api_version=kwargs["api_version"],
                         default_headers={USER_AGENT_HEADER_KEY: USER_AGENT},
                     )

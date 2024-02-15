@@ -49,7 +49,6 @@ class AzureOpenAIConnection(BaseConnection):
         api_type: str = "Azure",
         **kwargs,
     ) -> None:
-
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="azure_open_ai", credentials=credentials, api_version=api_version, api_type=api_type, **kwargs)
 

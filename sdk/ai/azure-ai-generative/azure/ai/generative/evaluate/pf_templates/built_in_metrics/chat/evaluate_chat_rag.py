@@ -13,7 +13,6 @@ from azure.ai.resources._telemetry import inject_openai_headers
 @inject_openai_headers
 @tool
 def evaluate_chat_rag(chat: [str], connection: AzureOpenAIConnection, deployment_name: str, selected_metrics: dict) -> dict:
-
     y_pred = [chat]
     openai_params = get_openai_parameters(connection, deployment_name)
 

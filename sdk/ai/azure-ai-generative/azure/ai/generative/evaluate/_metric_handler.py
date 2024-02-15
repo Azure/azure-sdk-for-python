@@ -36,7 +36,6 @@ class MetricHandler(object):
             metrics=None,
             data_mapping: Optional[Dict]=None,
     ):
-
         self.task_type = task_type
         self.prediction_data = prediction_data
         self.input_output_data = input_output_data
