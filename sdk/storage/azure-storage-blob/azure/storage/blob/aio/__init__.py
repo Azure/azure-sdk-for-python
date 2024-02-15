@@ -72,7 +72,10 @@ async def upload_blob_to_url(
     :rtype: dict(str, Any)
     """
     async with BlobClient.from_blob_url(blob_url, credential=credential) as client:
-        return await client.upload_blob(data=data, blob_type=BlobType.BlockBlob, **kwargs)  # type: ignore [no-any-return]
+        return await client.upload_blob(
+            data=data,
+            blob_type=BlobType.BlockBlob,
+            **kwargs)  # type: ignore [no-any-return]
 
 
 # Download data to specified open file-handle.
