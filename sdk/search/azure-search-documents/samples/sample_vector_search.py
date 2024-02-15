@@ -184,7 +184,7 @@ def simple_hybrid_search():
         vector_queries=[vector_query],
         select=["hotelId", "hotelName"],
     )
-    print(results.get_answers())
+
     for result in results:
         print(result)
     # [END simple_hybrid_search]

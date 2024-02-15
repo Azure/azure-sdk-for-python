@@ -55,6 +55,7 @@ class TestBackupClientTests(KeyVaultTestCase):
         backup_poller = client.begin_backup(blob_storage_url=container_uri, sas_token=sas_token)
 
         # create a new poller from a continuation token
+        # pass `sas_token` as a positional parameter to ensure backwards compatibility
         token = backup_poller.continuation_token()
         rehydrated = client.begin_backup(container_uri, sas_token, continuation_token=token)
 
@@ -67,6 +68,7 @@ class TestBackupClientTests(KeyVaultTestCase):
         restore_poller = client.begin_restore(folder_url=backup_operation.folder_url, sas_token=sas_token)
 
         # create a new poller from a continuation token
+        # pass `sas_token` as a positional parameter to ensure backwards compatibility
         token = restore_poller.continuation_token()
         rehydrated = client.begin_restore(backup_operation.folder_url, sas_token, continuation_token=token)
 
@@ -110,8 +112,6 @@ class TestBackupClientTests(KeyVaultTestCase):
     @recorded_by_proxy
     def test_backup_client_polling(self, client, **kwargs):
         set_bodiless_matcher()
-        # if not self.is_live:
-        #     pytest.skip("Poller requests are incompatible with vcrpy in playback")
 
         # backup the vault
         container_uri = kwargs.pop("container_uri")
