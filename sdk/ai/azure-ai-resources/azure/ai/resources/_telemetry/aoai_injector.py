@@ -147,7 +147,7 @@ def available_openai_apis_and_injectors():
     yield from _generate_api_and_injector(_openai_api_list())
 
 
-def inject_openai_api():
+def inject_openai_headers():
     """This function:
     1. Modifies the create methods of the OpenAI API classes to inject logic before calling the original methods.
     It stores the original methods as _original attributes of the create methods.

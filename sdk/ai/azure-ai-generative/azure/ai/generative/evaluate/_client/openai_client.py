@@ -7,7 +7,7 @@ import logging
 from openai import AsyncAzureOpenAI
 from openai.types.chat.chat_completion import ChatCompletion
 
-from azure.ai.resources._telemetry import inject_openai_api
+from azure.ai.resources._telemetry import inject_openai_headers
 from azure.ai.generative.evaluate._user_agent import USER_AGENT
 from azure.ai.generative.constants._common import USER_AGENT_HEADER_KEY
 
@@ -20,7 +20,7 @@ class AzureOpenAIClient:
 
     def __init__(self, openai_params):
 
-        inject_openai_api()
+        inject_openai_headers()
 
         self._azure_endpoint = openai_params.get("azure_endpoint", None) if openai_params.get("azure_endpoint", None) \
             else openai_params.get("api_base", None)

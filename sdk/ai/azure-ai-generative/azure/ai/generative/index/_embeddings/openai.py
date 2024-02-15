@@ -7,7 +7,7 @@ import time
 from typing import Any, Dict, List, Optional
 
 from azure.ai.resources.constants._common import USER_AGENT_HEADER_KEY
-from azure.ai.resources._telemetry import inject_openai_api
+from azure.ai.resources._telemetry import inject_openai_headers
 from azure.ai.generative._user_agent import USER_AGENT
 from azure.ai.generative.index._utils.logging import get_logger
 from packaging import version
@@ -69,7 +69,7 @@ class OpenAIEmbedder:
         try:
             import openai
 
-            inject_openai_api()
+            inject_openai_headers()
         except ImportError as e:
             raise ImportError("Please install openai via `pip install openai`") from e
 

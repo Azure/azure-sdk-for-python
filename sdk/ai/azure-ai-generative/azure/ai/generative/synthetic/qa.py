@@ -20,7 +20,7 @@ try:
     from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, ActivityLogger
     from azure.core.tracing.decorator import distributed_trace
     from azure.ai.generative._user_agent import USER_AGENT
-    from azure.ai.resources._telemetry import inject_openai_api
+    from azure.ai.resources._telemetry import inject_openai_headers
 except ImportError as e:
     print("In order to use qa, please install the 'qa_generation' extra of azure-ai-generative")
     raise e
@@ -59,7 +59,7 @@ _MAX_RETRIES = 7
 
 
 def _completion_with_retries(*args, **kwargs):
-    inject_openai_api()
+    inject_openai_headers()
 
     n = 1
     while True:

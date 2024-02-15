@@ -8,7 +8,7 @@ import os
 from typing import Dict, Optional, Union
 
 from azure.core.credentials import TokenCredential
-from azure.ai.resources._telemetry import inject_openai_api
+from azure.ai.resources._telemetry import inject_openai_headers
 from azure.ai.generative.constants._common import USER_AGENT_HEADER_KEY
 from azure.ai.generative.index._utils.connections import (
     connection_to_credential,
@@ -157,7 +157,7 @@ def init_llm(model_config: dict, **kwargs):
     from langchain.chat_models.openai import ChatOpenAI
     from langchain.llms import AzureOpenAI
 
-    inject_openai_api()
+    inject_openai_headers()
 
     llm = None
     logger.debug(f"model_config: {json.dumps(model_config, indent=2)}")

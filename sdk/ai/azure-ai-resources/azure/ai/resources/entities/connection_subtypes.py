@@ -15,7 +15,7 @@ from azure.ai.ml.constants._common import (
     CONNECTION_ACCOUNT_NAME_KEY,
     CONNECTION_CONTAINER_NAME_KEY,
 )
-from azure.ai.resources._telemetry import inject_openai_api
+from azure.ai.resources._telemetry import inject_openai_headers
 
 from .base_connection import BaseConnection
 
@@ -50,7 +50,7 @@ class AzureOpenAIConnection(BaseConnection):
         api_type: str = "Azure",
         **kwargs,
     ) -> None:
-        inject_openai_api()
+        inject_openai_headers()
 
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="azure_open_ai", credentials=credentials, api_version=api_version, api_type=api_type, **kwargs)

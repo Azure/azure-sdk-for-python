@@ -4,7 +4,7 @@
 
 from typing import Callable, Dict, List, Union, Optional, Sequence
 
-from azure.ai.resources._telemetry import inject_openai_api
+from azure.ai.resources._telemetry import inject_openai_headers
 from azure.ai.generative.synthetic.simulator._conversation import (
     ConversationBot,
     ConversationRole,
@@ -36,7 +36,7 @@ class Simulator:
         userConnection: Optional["AzureOpenAIModelConfiguration"] = None,  # type: ignore[name-defined]
         simulate_callback: Optional[Callable[[str, Sequence[Union[Dict, ConversationTurn]], Optional[Dict]], str]] = None,
     ):
-        inject_openai_api()
+        inject_openai_headers()
 
         self.userConnection = self._to_openai_chat_completion_model(userConnection)
         self.systemConnection = self._to_openai_chat_completion_model(systemConnection)

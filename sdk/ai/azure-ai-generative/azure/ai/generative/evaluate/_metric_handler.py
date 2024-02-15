@@ -10,7 +10,7 @@ from typing import Dict, Optional
 
 from azure.ai.generative.evaluate._constants import TASK_TYPE_TO_METRICS_MAPPING, CHAT
 from ._user_agent import USER_AGENT
-from azure.ai.resources._telemetry import inject_openai_api
+from azure.ai.resources._telemetry import inject_openai_headers
 
 
 from ._utils import run_pf_flow_with_dict_list, df_to_dict_list, wait_for_pf_run_to_complete
@@ -35,7 +35,7 @@ class MetricHandler(object):
             metrics=None,
             data_mapping: Optional[Dict]=None,
     ):
-        inject_openai_api()
+        inject_openai_headers()
 
         self.task_type = task_type
         self.prediction_data = prediction_data

@@ -6,7 +6,7 @@ import os
 import time
 from typing import Any, Dict, List, Optional
 
-from azure.ai.resources._telemetry import inject_openai_api
+from azure.ai.resources._telemetry import inject_openai_headers
 from azure.ai.resources.constants._common import USER_AGENT_HEADER_KEY
 from azure.ai.resources._user_agent import USER_AGENT
 from azure.ai.resources._index._utils.logging import get_logger
@@ -35,7 +35,7 @@ class OpenAIEmbedder:
     ):
         """Initialize an OpenAI Embedding client."""
 
-        inject_openai_api()
+        inject_openai_headers()
 
         self.api_base = api_base
         self.api_type = api_type
