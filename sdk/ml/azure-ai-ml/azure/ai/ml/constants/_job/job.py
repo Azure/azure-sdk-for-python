@@ -115,6 +115,7 @@ class JobServiceTypeNames:
 
 class JobTierNames:
     class EntityNames:
+        Null = "null"
         Spot = "spot"
         Basic = "basic"
         Standard = "standard"
@@ -122,12 +123,14 @@ class JobTierNames:
         Null = "Null"
 
     class RestNames:
+        Null = "Null"
         Spot = "Spot"
         Basic = "Basic"
         Standard = "Standard"
         Premium = "Premium"
 
     ENTITY_TO_REST = {
+        EntityNames.Null: RestNames.Null,
         EntityNames.Spot: RestNames.Spot,
         EntityNames.Basic: RestNames.Basic,
         EntityNames.Standard: RestNames.Standard,
