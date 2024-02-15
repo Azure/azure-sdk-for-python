@@ -5,8 +5,8 @@
 from abc import ABC, abstractmethod
 from typing import Iterator, List, Optional
 
-from azure.ai.generative.index._langchain.vendor.schema.document import Document
-from azure.ai.generative.index._langchain.vendor.text_splitter import RecursiveCharacterTextSplitter, TextSplitter
+from azure.ai.resources._index._langchain.vendor.schema.document import Document
+from azure.ai.resources._index._langchain.vendor.text_splitter import RecursiveCharacterTextSplitter, TextSplitter
 
 
 class BaseLoader(ABC):
