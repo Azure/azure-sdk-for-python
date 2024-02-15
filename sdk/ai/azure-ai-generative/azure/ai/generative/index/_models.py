@@ -151,13 +151,12 @@ def init_open_ai_from_config(config: dict, credential: Optional[TokenCredential]
 
 
 # TODO: Vendor langchain deps or move to langchain module.
+@inject_openai_headers
 def init_llm(model_config: dict, **kwargs):
     """Initialize a language model from a model configuration."""
     from langchain.chat_models.azure_openai import AzureChatOpenAI
     from langchain.chat_models.openai import ChatOpenAI
     from langchain.llms import AzureOpenAI
-
-    inject_openai_headers()
 
     llm = None
     logger.debug(f"model_config: {json.dumps(model_config, indent=2)}")

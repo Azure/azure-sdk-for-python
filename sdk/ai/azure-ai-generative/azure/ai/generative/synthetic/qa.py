@@ -58,8 +58,8 @@ _MAX_RETRIES = 7
 
 
 
+@inject_openai_headers
 def _completion_with_retries(*args, **kwargs):
-    inject_openai_headers()
 
     n = 1
     while True:

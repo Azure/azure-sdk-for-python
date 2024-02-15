@@ -25,6 +25,7 @@ NODE_LIST_BY_TASK = {
 
 class MetricHandler(object):
 
+    @inject_openai_headers
     def __init__(
             self,
             task_type,
@@ -35,7 +36,6 @@ class MetricHandler(object):
             metrics=None,
             data_mapping: Optional[Dict]=None,
     ):
-        inject_openai_headers()
 
         self.task_type = task_type
         self.prediction_data = prediction_data

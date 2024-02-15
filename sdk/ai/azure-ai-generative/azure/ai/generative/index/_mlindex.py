@@ -54,12 +54,11 @@ class MLIndex:
         "url": "User facing citation URL for indexed document",
     }
 
-    inject_openai_headers()
-
     base_uri: str
     index_config: dict
     embeddings_config: dict
 
+    @inject_openai_headers
     def __init__(self, uri: Optional[Union[str, Path]] = None, mlindex_config: Optional[dict] = None):
         """
         Initialize MLIndex from a URI or AzureML Data Asset.

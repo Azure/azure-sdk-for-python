@@ -24,6 +24,7 @@ SUPPORTED_PARSERS = [JsonParser, NumberParser]
 
 
 class PromptMetricHandler(MetricHandler):
+    @inject_openai_headers
     def __init__(
             self,
             task_type,
@@ -41,8 +42,6 @@ class PromptMetricHandler(MetricHandler):
             metrics=metrics,
             input_output_data=input_output_data,
         )
-
-        inject_openai_headers()
         
         self._validate()
         self._client = AzureOpenAIClient(openai_params=metrics_mapping["openai_params"])

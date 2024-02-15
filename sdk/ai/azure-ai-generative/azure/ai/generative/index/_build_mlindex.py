@@ -14,6 +14,7 @@ from azure.ai.resources.operations._acs_output_config import ACSOutputConfig
 from azure.ai.resources.operations._index_data_source import ACSSource, LocalSource
 
 
+@inject_openai_headers
 def build_index(
     *,
     output_index_name: str,

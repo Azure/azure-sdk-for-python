@@ -21,15 +21,13 @@ class Index:
     tags: Optional[Dict[str, str]] = None
     properties: Optional[Dict[str, str]] = None
 
-
+    @inject_openai_headers
     def query(self, text: str):
         try:
             from azure.ai.resources._index._mlindex import MLIndex as InternalMLIndex
         except ImportError as e:
             print("In order to query an Index, you must have azure-ai-generative[index] installed")
             raise e
-
-        inject_openai_headers()
 
         retriever = InternalMLIndex(str(self.path)).as_langchain_retriever()
         return retriever.get_relevant_documents(text)

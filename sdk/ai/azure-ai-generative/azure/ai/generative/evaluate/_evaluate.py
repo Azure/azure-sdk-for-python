@@ -120,6 +120,7 @@ def _validate_metrics(metrics, task_type):
     return builtin_metrics, prompt_metrics, code_metrics
 
 
+@inject_openai_headers
 @distributed_trace
 @monitor_with_activity(package_logger, "Evaluate", ActivityType.PUBLICAPI)
 def evaluate(
@@ -178,8 +179,6 @@ def evaluate(
             :caption: Evaluates target or data with custom evaluation metrics.
 
     """
-
-    inject_openai_headers()
 
     results_list = []
     if "tracking_uri" in kwargs:

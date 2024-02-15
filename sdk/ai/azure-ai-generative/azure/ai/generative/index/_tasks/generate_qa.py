@@ -82,8 +82,8 @@ def get_model_config(llm_config: Dict[str, Union[str, int]], openai_api_type: st
     return model_config
 
 
+@inject_openai_headers
 def main(parser_args, run, logger: Logger, activity_logger: Logger):
-    inject_openai_headers()
 
     start_time = time.time()
     activity_logger.info(f"llm_config: {parser_args.llm_config}")

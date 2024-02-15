@@ -6,12 +6,13 @@ from utils import get_openai_parameters, filter_metrics
 from azure.ai.resources._telemetry import inject_openai_headers
 
 
+
 # The inputs section will change based on the arguments of the tool function, after you save the code
 # Adding type to arguments and return value will help the system show the types properly
 # Please update the function name/signature per need
+@inject_openai_headers
 @tool
 def evaluate_chat_rag(chat: [str], connection: AzureOpenAIConnection, deployment_name: str, selected_metrics: dict) -> dict:
-    inject_openai_headers()
 
     y_pred = [chat]
     openai_params = get_openai_parameters(connection, deployment_name)

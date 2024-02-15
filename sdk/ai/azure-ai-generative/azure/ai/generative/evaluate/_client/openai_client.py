@@ -18,9 +18,8 @@ LOGGER = logging.getLogger(__name__)
 
 class AzureOpenAIClient:
 
+    @inject_openai_headers
     def __init__(self, openai_params):
-
-        inject_openai_headers()
 
         self._azure_endpoint = openai_params.get("azure_endpoint", None) if openai_params.get("azure_endpoint", None) \
             else openai_params.get("api_base", None)

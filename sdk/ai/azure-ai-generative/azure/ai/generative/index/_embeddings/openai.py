@@ -18,6 +18,7 @@ logger = get_logger("embeddings.openai")
 class OpenAIEmbedder:
     """OpenAI Embedding client wrapper with retries."""
 
+    @inject_openai_headers
     def __init__(
         self,
         api_base: str,
@@ -69,7 +70,6 @@ class OpenAIEmbedder:
         try:
             import openai
 
-            inject_openai_headers()
         except ImportError as e:
             raise ImportError("Please install openai via `pip install openai`") from e
 

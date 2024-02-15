@@ -18,6 +18,7 @@ logger = get_logger("embeddings.openai")
 class OpenAIEmbedder:
     """OpenAI Embedding client wrapper with retries."""
 
+    @inject_openai_headers
     def __init__(
         self,
         api_base: str,
@@ -34,8 +35,6 @@ class OpenAIEmbedder:
         openai_passthrough_args: Optional[dict] = None,
     ):
         """Initialize an OpenAI Embedding client."""
-
-        inject_openai_headers()
 
         self.api_base = api_base
         self.api_type = api_type

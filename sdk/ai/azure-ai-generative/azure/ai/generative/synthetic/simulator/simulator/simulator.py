@@ -30,13 +30,13 @@ USER_MD = os.path.join(template_dir, "user.md")  # type: ignore[has-type]
 
 
 class Simulator:
+    @inject_openai_headers
     def __init__(
         self,
         systemConnection: Optional["AzureOpenAIModelConfiguration"] = None,  # type: ignore[name-defined]
         userConnection: Optional["AzureOpenAIModelConfiguration"] = None,  # type: ignore[name-defined]
         simulate_callback: Optional[Callable[[str, Sequence[Union[Dict, ConversationTurn]], Optional[Dict]], str]] = None,
     ):
-        inject_openai_headers()
 
         self.userConnection = self._to_openai_chat_completion_model(userConnection)
         self.systemConnection = self._to_openai_chat_completion_model(systemConnection)
