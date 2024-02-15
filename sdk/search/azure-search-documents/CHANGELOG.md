@@ -94,7 +94,7 @@
 
 > These changes do not impact the API of stable versions such as 11.3.0.
 > Only code written against a beta version such as 11.4.0b6 may be affected.
-- Renamed `vector_search_configuration` to `vector_search_profile_name` in `SearchField`.
+- Renamed `vector_search_configuration` to `vector_search_profile` in `SearchField`.
 - Renamed `vectors` to `vector_queries` in `Search` method.
 - Renamed `azure.search.documents.models.Vector` to `azure.search.documents.models.VectorQuery`.
 - Stopped supporting api version `V2023_07_01_PREVIEW` anymore.
