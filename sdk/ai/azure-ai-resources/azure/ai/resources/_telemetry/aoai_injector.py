@@ -11,8 +11,10 @@ from importlib.metadata import version
 
 import openai
 
-from promptflow.contracts.trace import TraceType
-from promptflow._core.tracer import _traced_async, _traced_sync
+from promptflow._core.openai_injector import {
+    inject_function_async,
+    inject_function_sync,
+}
 
 from azure.ai.resources.constants._common import USER_AGENT_HEADER
 from azure.ai.resources._user_agent import USER_AGENT
@@ -20,18 +22,7 @@ from azure.ai.resources._user_agent import USER_AGENT
 IS_LEGACY_OPENAI = version("openai").startswith("0.")
 
 
-def inject_function_async(args_to_ignore=None, trace_type=TraceType.LLM):
-    def decorator(func):
-        return _traced_async(func, args_to_ignore=args_to_ignore, trace_type=trace_type)
-
-    return decorator
-
-
-def inject_function_sync(args_to_ignore=None, trace_type=TraceType.LLM):
-    def decorator(func):
-        return _traced_sync(func, args_to_ignore=args_to_ignore, trace_type=trace_type)
-
-    return decorator
+"""Code modified from promptflow SDK openai_injector.py to inject telemetry headers into OpenAI API requests. """
 
 
 def get_aoai_telemetry_headers() -> dict:
@@ -170,12 +161,3 @@ def inject_openai_headers():
         openai.api_base = os.environ.get("OPENAI_API_BASE", openai.api_base)
         openai.api_type = os.environ.get("OPENAI_API_TYPE", openai.api_type)
         openai.api_version = os.environ.get("OPENAI_API_VERSION", openai.api_version)
-
-
-def recover_openai_api():
-    """This function restores the original create methods of the OpenAI API classes
-    by assigning them back from the _original attributes of the modified methods.
-    """
-    for api, method, _ in available_openai_apis_and_injectors():
-        if hasattr(getattr(api, method), "_original"):
-            setattr(api, method, getattr(getattr(api, method), "_original"))
