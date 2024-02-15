@@ -11,10 +11,10 @@ from importlib.metadata import version
 
 import openai
 
-from promptflow._core.openai_injector import {
+from promptflow._core.openai_injector import (
     inject_function_async,
     inject_function_sync,
-}
+)
 
 from azure.ai.resources.constants._common import USER_AGENT_HEADER
 from azure.ai.resources._user_agent import USER_AGENT
