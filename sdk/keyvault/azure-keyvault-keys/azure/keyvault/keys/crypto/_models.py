@@ -299,8 +299,6 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
         :returns: True if the objects are equal; False if the objects are unequal or if key material can't be obtained
             from Key Vault for comparison.
         :rtype: bool
-
-        :raises ValueError: if the client is unable to obtain the key material from Key Vault.
         """
         if self._key is None:
             return False
