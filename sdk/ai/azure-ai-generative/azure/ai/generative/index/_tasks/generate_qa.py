@@ -12,6 +12,7 @@ from typing import Dict, Union
 import openai
 import pandas as pd
 from azureml.core import Run
+from azure.ai.resources._telemetry import inject_openai_api
 from azure.ai.generative.index.data_generation.qa import QADataGenerator, GenerationResult, QAType
 from azure.ai.generative.index._utils.connections import (get_connection_by_id_v2,
                                            get_connection_credential,
@@ -82,6 +83,8 @@ def get_model_config(llm_config: Dict[str, Union[str, int]], openai_api_type: st
 
 
 def main(parser_args, run, logger: Logger, activity_logger: Logger):
+    inject_openai_api()
+
     start_time = time.time()
     activity_logger.info(f"llm_config: {parser_args.llm_config}")
     llm_config = json.loads(parser_args.llm_config)

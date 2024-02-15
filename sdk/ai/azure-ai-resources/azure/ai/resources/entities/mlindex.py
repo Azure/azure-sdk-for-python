@@ -9,6 +9,7 @@ from dataclasses import dataclass
 
 from azure.ai.ml.entities import Data
 from azure.ai.resources.entities import AzureOpenAIConnection, AzureAISearchConnection
+from azure.ai.resources._telemetry import inject_openai_api
 
 
 @dataclass
@@ -27,6 +28,8 @@ class Index:
         except ImportError as e:
             print("In order to query an Index, you must have azure-ai-generative[index] installed")
             raise e
+
+        inject_openai_api()
 
         retriever = InternalMLIndex(str(self.path)).as_langchain_retriever()
         return retriever.get_relevant_documents(text)

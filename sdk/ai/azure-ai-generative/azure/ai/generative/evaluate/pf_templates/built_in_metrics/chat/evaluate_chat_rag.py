@@ -3,6 +3,7 @@ from azureml.metrics import compute_metrics, constants
 from azureml.metrics.common.exceptions import ValidationException
 from promptflow.connections import AzureOpenAIConnection
 from utils import get_openai_parameters, filter_metrics
+from azure.ai.resources._telemetry import inject_openai_api
 
 
 # The inputs section will change based on the arguments of the tool function, after you save the code
@@ -10,6 +11,8 @@ from utils import get_openai_parameters, filter_metrics
 # Please update the function name/signature per need
 @tool
 def evaluate_chat_rag(chat: [str], connection: AzureOpenAIConnection, deployment_name: str, selected_metrics: dict) -> dict:
+    inject_openai_api()
+
     y_pred = [chat]
     openai_params = get_openai_parameters(connection, deployment_name)
 

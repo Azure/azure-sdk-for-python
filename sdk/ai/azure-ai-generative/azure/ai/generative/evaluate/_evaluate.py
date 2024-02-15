@@ -39,6 +39,7 @@ from ._metrics_handler._prompt_metric_handler import PromptMetricHandler
 from ._utils import _write_properties_to_run_history
 from .metrics._custom_metric import CodeMetric, PromptMetric, Metric as GenAIMetric
 from azure.ai.resources.entities import AzureOpenAIModelConfiguration
+from azure.ai.resources._telemetry import inject_openai_api
 
 LOGGER = logging.getLogger(__name__)
 
@@ -177,6 +178,8 @@ def evaluate(
             :caption: Evaluates target or data with custom evaluation metrics.
 
     """
+
+    inject_openai_api()
 
     results_list = []
     if "tracking_uri" in kwargs:

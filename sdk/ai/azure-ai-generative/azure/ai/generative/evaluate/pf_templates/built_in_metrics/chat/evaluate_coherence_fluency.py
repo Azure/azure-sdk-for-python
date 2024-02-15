@@ -2,12 +2,15 @@ from promptflow import tool
 from azureml.metrics import compute_metrics, constants
 from promptflow.connections import AzureOpenAIConnection
 from utils import get_openai_parameters, filter_metrics
+from azure.ai.resources._telemetry import inject_openai_api
 
 # The inputs section will change based on the arguments of the tool function, after you save the code
 # Adding type to arguments and return value will help the system show the types properly
 # Please update the function name/signature per need
 @tool
 def evaluate_coherence_fluency(parsed_qa: dict, connection: AzureOpenAIConnection, deployment_name: str, selected_metrics: dict):
+    inject_openai_api()
+
     openai_params = get_openai_parameters(connection, deployment_name)
 
     metrics_config = {

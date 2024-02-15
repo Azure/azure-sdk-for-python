@@ -11,6 +11,7 @@ from typing import Any, Dict, Iterator, Optional, Union
 
 import yaml  # type: ignore[import]
 from azure.core.credentials import TokenCredential
+from azure.ai.resources._telemetry import inject_openai_api
 from azure.ai.generative.index._documents import Document, DocumentChunksIterator
 from azure.ai.generative.index._embeddings import EmbeddingsContainer
 from azure.ai.generative.index._utils.connections import (
@@ -52,6 +53,8 @@ class MLIndex:
         "title": "Title of indexed document",
         "url": "User facing citation URL for indexed document",
     }
+
+    inject_openai_api()
 
     base_uri: str
     index_config: dict

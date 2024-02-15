@@ -11,6 +11,8 @@ import logging
 import tqdm.asyncio
 from numpy import NaN
 
+from azure.ai.resources._telemetry import inject_openai_api
+
 from .._client.openai_client import AzureOpenAIClient
 from .._metric_handler import MetricHandler
 from ..metrics._custom_metric import PromptMetric
@@ -40,6 +42,8 @@ class PromptMetricHandler(MetricHandler):
             input_output_data=input_output_data,
         )
 
+        inject_openai_api()
+        
         self._validate()
         self._client = AzureOpenAIClient(openai_params=metrics_mapping["openai_params"])
 
