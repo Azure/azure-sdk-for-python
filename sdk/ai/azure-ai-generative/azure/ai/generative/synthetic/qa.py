@@ -15,7 +15,6 @@ try:
     from typing import Dict, List, Tuple, Any, Union, Optional
     from collections import defaultdict
     from azure.ai.resources.entities import BaseConnection
-    from azure.ai.resources._telemetry.aoai_injector import inject_openai_headers
     from azure.ai.generative.constants._common import USER_AGENT_HEADER_KEY
     from azure.identity import DefaultAzureCredential
     from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, ActivityLogger
@@ -57,8 +56,6 @@ _DEFAULT_AOAI_VERSION = "2023-07-01-preview"
 _MAX_RETRIES = 7
 
 
-
-@inject_openai_headers
 def _completion_with_retries(*args, **kwargs):
     n = 1
     while True:
