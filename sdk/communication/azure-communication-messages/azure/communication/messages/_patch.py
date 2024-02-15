@@ -77,7 +77,7 @@ class NotificationMessagesClient(NotificationMessagesClientGenerated):
 class MessageTemplateClient(MessageTemplateClientGenerated):
     """A client to interact with the AzureCommunicationService Messaging service.
 
-    This client provides Adavanced Messaging .
+    This client provides Advanced Messaging.
 
     :param str endpoint:
         The endpoint of the Azure Communication resource.

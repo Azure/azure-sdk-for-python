@@ -17,7 +17,7 @@ USAGE:
 
     Set the environment variable with your own value before running the sample:
     1) COMMUNICATION_SAMPLES_CONNECTION_STRING - the connection string in your ACS resource
-    2) RECIPIENT_PHONE_NUMBER - a phone number with Whatsapp capabilites. Use list for recepient phone number.
+    2) RECIPIENT_PHONE_NUMBER - a phone number with Whatsapp capabilities. Use list for recipient phone number.
     3) WHATSAPP_CHANNEL_ID - Channel created in Azure portal for Advanced Messaging.
 """
 

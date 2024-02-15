@@ -11,7 +11,7 @@ FILE: send_template_notification_messages.py
 
 DESCRIPTION:
     This sample demonstrates sending an Whatsapp template message from business phone number to a single user. 
-    Template to be used in the sample needs to be created in WhatsApp WABA account first.
+    Template to be used in the sample needs to be created in WhatsApp Business account first.
     Follow the instructions in the Meta Business Help Center at https://www.facebook.com/business/help/2055875911147364?id=2129163877102343.
     The NotificationMessageClient is authenticated using a connection string.
 USAGE:
@@ -19,7 +19,7 @@ USAGE:
 
     Set the environment variable with your own value before running the sample:
     1) COMMUNICATION_SAMPLES_CONNECTION_STRING - the connection string in your ACS resource
-    2) RECIPIENT_PHONE_NUMBER - a phone number with Whatsapp capabilites. Use list for recepient phone number.
+    2) RECIPIENT_PHONE_NUMBER - a phone number with Whatsapp capabilities. Use list for recipient phone number.
     3) WHATSAPP_CHANNEL_ID - Channel created in Azure portal for Advanced Messaging.
 """
 

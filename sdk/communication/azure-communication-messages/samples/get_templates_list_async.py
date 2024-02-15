@@ -10,7 +10,7 @@
 FILE: get_templates_list_async.py
 
 DESCRIPTION:
-    This sample demonstrates fetching WhatsApp templates created in your WhatsApp WABA account. The NotificationMessageClient is 
+    This sample demonstrates fetching WhatsApp templates created in your WhatsApp Business account. The NotificationMessageClient is 
     authenticated using a connection string.
 USAGE:
     python get_templates_list_async.py
@@ -39,10 +39,10 @@ class GetTemplatesSampleAsync(object):
         
         # calling send() with whatsapp message details
         async with message_template_client:
-            template_list = message_template_client.get_templates(self.channel_id)
+            template_list = message_template_client.list_templates(self.channel_id)
             async_list_data = [x async for x in template_list]
             if (template_list is not None):
-                 print("Successfully retreived {} templates from channel_id {}."
+                 print("Successfully retrieved {} templates from channel_id {}."
                  .format(len(list(async_list_data)), self.channel_id))
             else:
                  print("Failed to fetch WhatsApp templates.")
