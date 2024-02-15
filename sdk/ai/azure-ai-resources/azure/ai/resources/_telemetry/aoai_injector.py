@@ -4,18 +4,21 @@
 
 import asyncio
 import functools
-import importlib
-import logging
-import os
-from importlib.metadata import version
 
 from azure.ai.resources.constants._common import USER_AGENT_HEADER
 from azure.ai.resources._user_agent import USER_AGENT
 
-IS_LEGACY_OPENAI = version("openai").startswith("0.")
-
 
 """Code modified from promptflow SDK openai_injector.py to inject telemetry headers into OpenAI API requests. """
+
+try:
+    from importlib.metadata import version
+    from importlib import import_module
+
+    import_module("openai")
+    IS_LEGACY_OPENAI = version("openai").startswith("0.")
+except ImportError:
+    IS_LEGACY_OPENAI = None
 
 
 def get_aoai_telemetry_headers() -> dict:
