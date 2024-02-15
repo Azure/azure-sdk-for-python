@@ -205,6 +205,7 @@ from ._workspace.connections.workspace_connection_subtypes import (
     AzureAISearchWorkspaceConnection,
     AzureAIServiceWorkspaceConnection,
     AzureOpenAIWorkspaceConnection,
+    AzureBlobStoreWorkspaceConnection,
 )
 from ._workspace.customer_managed_key import CustomerManagedKey
 from ._workspace.diagnose import (
@@ -285,6 +286,7 @@ __all__ = [
     "WorkspaceKeys",
     "WorkspaceConnection",
     "AzureOpenAIWorkspaceConnection",
+    "AzureBlobStoreWorkspaceConnection",
     "AzureAISearchWorkspaceConnection",
     "AzureAIServiceWorkspaceConnection",
     "DiagnoseRequestProperties",

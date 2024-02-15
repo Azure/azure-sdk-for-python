@@ -52,6 +52,15 @@ from ._online_endpoints_operations import OnlineEndpointsOperations
 from ._online_deployments_operations import OnlineDeploymentsOperations
 from ._schedules_operations import SchedulesOperations
 from ._serverless_endpoints_operations import ServerlessEndpointsOperations
+from ._operations import Operations
+from ._workspaces_operations import WorkspacesOperations
+from ._workspace_connections_operations import WorkspaceConnectionsOperations
+from ._endpoint_deployment_operations import EndpointDeploymentOperations
+from ._endpoint_operations import EndpointOperations
+from ._managed_network_settings_rule_operations import ManagedNetworkSettingsRuleOperations
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from ._private_link_resources_operations import PrivateLinkResourcesOperations
+from ._managed_network_provisions_operations import ManagedNetworkProvisionsOperations
 
 __all__ = [
     'UsagesOperations',
@@ -100,4 +109,13 @@ __all__ = [
     'OnlineDeploymentsOperations',
     'SchedulesOperations',
     'ServerlessEndpointsOperations',
+    'Operations',
+    'WorkspacesOperations',
+    'WorkspaceConnectionsOperations',
+    'EndpointDeploymentOperations',
+    'EndpointOperations',
+    'ManagedNetworkSettingsRuleOperations',
+    'PrivateEndpointConnectionsOperations',
+    'PrivateLinkResourcesOperations',
+    'ManagedNetworkProvisionsOperations',
 ]

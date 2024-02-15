@@ -10,6 +10,8 @@
 
 - Update configure_azure_monitor signature and Django sample
     ([#33834](https://github.com/Azure/azure-sdk-for-python/pull/33834))
+- Remove support for Python 3.7
+    ([#34252](https://github.com/Azure/azure-sdk-for-python/pull/34252))
 
 ## 1.2.0 (2024-01-18)
 

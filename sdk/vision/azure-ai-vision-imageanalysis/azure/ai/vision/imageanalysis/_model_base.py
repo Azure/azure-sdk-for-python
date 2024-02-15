@@ -16,7 +16,7 @@ import base64
 import re
 import copy
 import typing
-import email
+import email.utils
 from datetime import datetime, date, time, timedelta, timezone
 from json import JSONEncoder
 import isodate
@@ -462,7 +462,13 @@ def _get_rest_field(
 
 
 def _create_value(rf: typing.Optional["_RestField"], value: typing.Any) -> typing.Any:
-    return _deserialize(rf._type, value) if (rf and rf._is_model) else _serialize(value, rf._format if rf else None)
+    if not rf:
+        return _serialize(value, None)
+    if rf._is_multipart_file_input:
+        return value
+    if rf._is_model:
+        return _deserialize(rf._type, value)
+    return _serialize(value, rf._format)
 
 
 class Model(_MyMutableMapping):
@@ -559,7 +565,14 @@ class Model(_MyMutableMapping):
         for k, v in self.items():
             if exclude_readonly and k in readonly_props:  # pyright: ignore[reportUnboundVariable]
                 continue
-            result[k] = Model._as_dict_value(v, exclude_readonly=exclude_readonly)
+            is_multipart_file_input = False
+            try:
+                is_multipart_file_input = next(
+                    rf for rf in self._attr_to_rest_field.values() if rf._rest_name == k
+                )._is_multipart_file_input
+            except StopIteration:
+                pass
+            result[k] = v if is_multipart_file_input else Model._as_dict_value(v, exclude_readonly=exclude_readonly)
         return result
 
     @staticmethod
@@ -567,7 +580,7 @@ class Model(_MyMutableMapping):
         if v is None or isinstance(v, _Null):
             return None
         if isinstance(v, (list, tuple, set)):
-            return [Model._as_dict_value(x, exclude_readonly=exclude_readonly) for x in v]
+            return type(v)(Model._as_dict_value(x, exclude_readonly=exclude_readonly) for x in v)
         if isinstance(v, dict):
             return {dk: Model._as_dict_value(dv, exclude_readonly=exclude_readonly) for dk, dv in v.items()}
         return v.as_dict(exclude_readonly=exclude_readonly) if hasattr(v, "as_dict") else v
@@ -762,6 +775,7 @@ class _RestField:
         visibility: typing.Optional[typing.List[str]] = None,
         default: typing.Any = _UNSET,
         format: typing.Optional[str] = None,
+        is_multipart_file_input: bool = False,
     ):
         self._type = type
         self._rest_name_input = name
@@ -771,6 +785,7 @@ class _RestField:
         self._is_model = False
         self._default = default
         self._format = format
+        self._is_multipart_file_input = is_multipart_file_input
 
     @property
     def _rest_name(self) -> str:
@@ -816,8 +831,16 @@ def rest_field(
     visibility: typing.Optional[typing.List[str]] = None,
     default: typing.Any = _UNSET,
     format: typing.Optional[str] = None,
+    is_multipart_file_input: bool = False,
 ) -> typing.Any:
-    return _RestField(name=name, type=type, visibility=visibility, default=default, format=format)
+    return _RestField(
+        name=name,
+        type=type,
+        visibility=visibility,
+        default=default,
+        format=format,
+        is_multipart_file_input=is_multipart_file_input,
+    )
 
 
 def rest_discriminator(

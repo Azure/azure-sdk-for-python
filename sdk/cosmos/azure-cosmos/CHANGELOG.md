@@ -1,5 +1,16 @@
 ## Release History
 
+### 4.5.2b5 (Unreleased)
+
+#### Features Added
+
+#### Breaking Changes
+
+#### Bugs Fixed
+
+#### Other Changes
+* Marked `computed_properties` keyword as provisional, un-marked `continuation_token_limit` as provisional. See [PR 34207](https://github.com/Azure/azure-sdk-for-python/pull/34207).
+
 ### 4.5.2b4 (2024-02-02)
 This version and all future versions will require Python 3.8+.
 
