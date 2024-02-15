@@ -286,13 +286,12 @@ def _evaluate(  # pylint: disable=too-many-locals, too-many-branches, too-many-s
             # data as list of json objects
             _ = [json.dumps(line) for line in data]
             test_data = data
-    except JSONDecodeError:
-        raise Exception("Data could not be loaded. Please validate if data is valid jsonl.")
-    except TypeError:
-        raise Exception("Data is not valid json.")
+    except JSONDecodeError as jde:
+        raise Exception("Data could not be loaded. Please validate if data is valid jsonl.") from jde
+    except TypeError as te:
+        raise Exception("Data is not valid json.") from te
     except Exception as ex:
-        raise Exception(f"Error loading data: {ex}")
-        _data_is_file = False
+        raise Exception(f"Error loading data: {ex}") from ex
 
     if task_type not in SUPPORTED_TASK_TYPE:
         raise Exception(f"task type {task_type} is not supported")

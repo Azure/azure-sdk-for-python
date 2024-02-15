@@ -216,10 +216,10 @@ class OpenAIEmbeddings(Embeddings):
         if self.openai_proxy:
             try:
                 import openai  # pylint: disable=reimported
-            except ImportError:
+            except ImportError as e:
                 raise ImportError(
                     "Could not import openai python package. " "Please install it with `pip install openai`."
-                )
+                ) from e
 
             openai.proxy = {
                 "http": self.openai_proxy,
@@ -235,12 +235,12 @@ class OpenAIEmbeddings(Embeddings):
         embeddings: List[List[float]] = [[] for _ in range(len(texts))]
         try:
             import tiktoken
-        except ImportError:
+        except ImportError as e:
             raise ImportError(
                 "Could not import tiktoken python package. "
                 "This is needed in order to for OpenAIEmbeddings. "
                 "Please install it with `pip install tiktoken`."
-            )
+            ) from e
 
         tokens = []
         indices = []
@@ -312,12 +312,12 @@ class OpenAIEmbeddings(Embeddings):
         embeddings: List[List[float]] = [[] for _ in range(len(texts))]
         try:
             import tiktoken
-        except ImportError:
+        except ImportError as e:
             raise ImportError(
                 "Could not import tiktoken python package. "
                 "This is needed in order to for OpenAIEmbeddings. "
                 "Please install it with `pip install tiktoken`."
-            )
+            ) from e
 
         tokens = []
         indices = []

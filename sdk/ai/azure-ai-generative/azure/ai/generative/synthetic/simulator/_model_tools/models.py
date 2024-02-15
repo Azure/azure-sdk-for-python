@@ -445,7 +445,7 @@ class OpenAICompletionsModel(LLMBase):
                         error_msg = (
                             f"Error rate is more than {request_error_rate_threshold:.0%} -- something is broken!"
                         )
-                        raise Exception(error_msg)
+                        raise Exception(error_msg) from e
 
                 response[self.prompt_idx_key] = prompt_idx
                 output_collector.append(response)

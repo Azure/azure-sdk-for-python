@@ -88,11 +88,11 @@ class DocumentChunksIterator(Iterator):
         #     self.span = tracer.start_span('DocumentChunksIterator::__next__')
         try:
             return next(self.document_chunks_iterator)
-        except StopIteration:
+        except StopIteration as e:
             self.document_chunks_iterator = None
             if self.span is not None:
                 self.span.end()
-            raise StopIteration
+            raise StopIteration from e
 
     def document_statistics(self):
         """

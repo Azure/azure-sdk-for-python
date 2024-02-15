@@ -43,11 +43,11 @@ class UnstructuredBaseLoader(BaseLoader, ABC):
         try:
             # pylint: disable=unused-import
             import unstructured  # noqa:F401
-        except ImportError:
+        except ImportError as e:
             raise ValueError(
                 "unstructured package not found, please install it with "
                 "`pip install unstructured`"
-            )
+            ) from e
         _valid_modes = {"single", "elements", "paged"}
         if mode not in _valid_modes:
             raise ValueError(

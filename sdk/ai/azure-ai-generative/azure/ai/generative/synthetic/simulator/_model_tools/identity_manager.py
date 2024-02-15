@@ -134,6 +134,7 @@ class CompliantTokenManager(APITokenManager):
         client_id = keyvault.get_secret(name="approvalClientId")
         client_secret = keyvault.get_secret(name="approvalClientSecret")
         tenant_id = keyvault.get_secret(name="approvalTenantId")
+        self.resource = keyvault.get_secret(name="approvalResource")
 
         self.app = ConfidentialClientApplication(
             client_id=client_id,
@@ -142,5 +143,5 @@ class CompliantTokenManager(APITokenManager):
         )
 
     async def get_token(self):
-        result = app.acquire_token_for_client(scopes=[resource + "/.default"])
+        result = self.app.acquire_token_for_client(scopes=[self.resource + "/.default"])
         return result["access_token"]

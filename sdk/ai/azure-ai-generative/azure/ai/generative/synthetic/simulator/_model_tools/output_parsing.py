@@ -31,10 +31,10 @@ def flatten_outputs(
                 continue
 
             job = dict(json.loads(line.strip()))
-            logger.info("Processing job found on line #{} containing inputs: {}.".format(line_idx, job["input_idx"]))
+            logger.info("Processing job found on line #%s containing inputs: %s." % (line_idx, job["input_idx"]))
 
             if "output_examples" not in job:
-                logger.info("Couldn't find output_examples in job found on line #{}.".format(line_idx))
+                logger.info("Couldn't find output_examples in job found on line #%s." % line_idx)
                 continue
 
             # Ignore samples which failed to parse or decode
@@ -129,7 +129,7 @@ def try_decode_json(example: str, label_keys: List[str]) -> Dict[str, Any]:
 
 
 def get_majority_value(numbers):
-    logger.info("#######################\nGetting majority for {}\n#########################".format(numbers))
+    logger.info("#######################\nGetting majority for %s\n#########################", numbers)
     # check if passed list contains dictionaries rather than values
     is_dic = any(type(element) is dict for element in numbers)
     if is_dic:
@@ -185,7 +185,7 @@ def try_parse_samples(
             sample_examples = sample_examples[:n_inputs]  # truncate to n_inputs
         except Exception as e:
             logger.info(
-                "Failed to split: Job #{} - sample #{}/{}. Error: {}".format(job_idx, sample_idx + 1, n_samples, e)
+                "Failed to split: Job #%d - sample #%d/%d. Error: %s" % (job_idx, sample_idx + 1, n_samples, e)
             )
             output_examples.append(None)
             num_failed += 1
@@ -202,7 +202,7 @@ def try_parse_samples(
             # If we failed to decode, add empty dicts to output examples
             output_examples.append([{} for _ in range(len(sample_examples))])
             num_failed += 1
-            logger.exception("Failed to decode: Job #{} - sample #{}/{}".format(job_idx, sample_idx + 1, n_samples))
+            logger.exception("Failed to decode: Job #%d - sample #%d/%d" % (job_idx, sample_idx + 1, n_samples))
 
     return num_failed, output_examples
 

@@ -52,18 +52,18 @@ class AzureCognitiveSearchVectorStore(VectorStore):
         """Initialize a vector store from an Azure Cognitive Search Index."""
         try:
             from azure.identity import DefaultAzureCredential
-        except ImportError:
+        except ImportError as e:
             raise ValueError(
                 "Could not import azure-identity python package. "
                 "Please install it with `pip install azure-identity`."
-            )
+            ) from e
         try:
             # pylint: disable=unused-import
             from azure.core.credentials import AzureKeyCredential  # noqa:F401
-        except ImportError:
+        except ImportError as e:
             raise ValueError(
                 "Could not import azure-core python package. Please install it with `pip install azure-core`."
-            )
+            ) from e
         self.endpoint = endpoint
         self.index_name = index_name
         self.credential = credential if credential is not None else DefaultAzureCredential(process_timeout=60)

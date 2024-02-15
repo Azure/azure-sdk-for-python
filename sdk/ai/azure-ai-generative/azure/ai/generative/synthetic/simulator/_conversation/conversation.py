@@ -131,10 +131,6 @@ async def simulate_conversation(
         except Exception as e:
             logger.warning("Error: %s", e)
             raise e
-            if mlflow_logger is not None:
-                logger_tasks.append(  # schedule logging but don't get blocked by it
-                    asyncio.create_task(mlflow_logger.log_error())
-                )
 
         # Increment outside the try block so we don't get stuck if
         # an exception is thrown

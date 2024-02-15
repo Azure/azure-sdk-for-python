@@ -75,7 +75,7 @@ def get_connection_credential(config, credential: Optional[TokenCredential] = No
                     raise ValueError(
                         f"Could not get workspace '{config.get('connection', {}).get('workspace')}' and "
                         + f"no key named '{config.get('connection', {}).get('key')}' in environment"
-                    )
+                    ) from e
                 return AzureKeyCredential(key)
 
         keyvault = ws.get_default_keyvault()

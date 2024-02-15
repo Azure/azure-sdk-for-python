@@ -39,12 +39,12 @@ def dependable_faiss_import(no_avx2: Optional[bool] = None) -> Any:
             from faiss import swigfaiss as faiss
         else:
             import faiss
-    except ImportError:
+    except ImportError as e:
         raise ImportError(
             "Could not import faiss python package. "
             "Please install it with `pip install faiss` "
             "or `pip install faiss-cpu` (depending on Python version)."
-        )
+        ) from e
     return faiss
 
 

@@ -203,11 +203,11 @@ class TextSplitter(BaseDocumentTransformer, ABC):
             def _huggingface_tokenizer_length(text: str) -> int:
                 return len(tokenizer.encode(text))
 
-        except ImportError:
+        except ImportError as e:
             raise ValueError(
                 "Could not import transformers python package. "
                 "Please install it with `pip install transformers`."
-            )
+            ) from e
         return cls(length_function=_huggingface_tokenizer_length, **kwargs)
 
     @classmethod
@@ -222,12 +222,12 @@ class TextSplitter(BaseDocumentTransformer, ABC):
         """Text splitter that uses tiktoken encoder to count length."""
         try:
             import tiktoken
-        except ImportError:
+        except ImportError as e:
             raise ImportError(
                 "Could not import tiktoken python package. "
                 "This is needed in order to calculate max_tokens_for_prompt. "
                 "Please install it with `pip install tiktoken`."
-            )
+            ) from e
 
         if model_name is not None:
             enc = tiktoken.encoding_for_model(model_name)
@@ -486,12 +486,12 @@ class TokenTextSplitter(TextSplitter):
         super().__init__(**kwargs)
         try:
             import tiktoken
-        except ImportError:
+        except ImportError as e:
             raise ImportError(
                 "Could not import tiktoken python package. "
                 "This is needed in order to for TokenTextSplitter. "
                 "Please install it with `pip install tiktoken`."
-            )
+            ) from e
 
         if model_name is not None:
             enc = tiktoken.encoding_for_model(model_name)
@@ -534,12 +534,12 @@ class SentenceTransformersTokenTextSplitter(TextSplitter):
 
         try:
             from sentence_transformers import SentenceTransformer
-        except ImportError:
+        except ImportError as e:
             raise ImportError(
                 "Could not import sentence_transformer python package. "
                 "This is needed in order to for SentenceTransformersTokenTextSplitter. "
                 "Please install it with `pip install sentence-transformers`."
-            )
+            ) from e
 
         self.model_name = model_name
         self._model = SentenceTransformer(self.model_name)
@@ -1031,10 +1031,10 @@ class NLTKTextSplitter(TextSplitter):
             from nltk.tokenize import sent_tokenize
 
             self._tokenizer = sent_tokenize
-        except ImportError:
+        except ImportError as e:
             raise ImportError(
                 "NLTK is not installed, please install it with `pip install nltk`."
-            )
+            ) from e
         self._separator = separator
 
     def split_text(self, text: str) -> List[str]:

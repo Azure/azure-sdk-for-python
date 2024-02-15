@@ -196,14 +196,12 @@ class MLIndex:
                 search_client_version = pkg_version.parse(azure_search_documents_version)
                 langchain_pkg_version = pkg_version.parse(langchain_version)
 
-                if (  # pylint: disable=too-many-boolean-expressions
-                    search_client_version > pkg_version.parse("11.4.0b6")
-                    and search_client_version <= pkg_version.parse("11.4.0b8")
+                if (
+                    pkg_version.parse("11.4.0b8") >= search_client_version > pkg_version.parse("11.4.0b6")
                     and langchain_pkg_version > pkg_version.parse("0.0.273")
                 ) or (
                     search_client_version == pkg_version.parse("11.4.0b6")
-                    and langchain_pkg_version < pkg_version.parse("0.0.273")
-                    and langchain_pkg_version >= pkg_version.parse("0.0.198")
+                    and pkg_version.parse("0.0.273") > langchain_pkg_version >= pkg_version.parse("0.0.198")
                 ):
                     from langchain.vectorstores import azuresearch  # pylint: disable=import-error
 
@@ -470,6 +468,7 @@ class MLIndex:
                 if isinstance(index_connection, str):
                     index_connection = get_connection_by_id_v2(index_connection, credential=credential)
                 self.index_config["connection"] = {"id": get_id_from_connection(index_connection)}
+        # pylint: disable=no-value-for-parameter
         self.save(just_config=True)  # type: ignore[call-arg]
         # TODO: Bug 2877747
         return self

@@ -281,7 +281,7 @@ class AugLoopClient:  # pylint: disable=client-accepts-api-version-keyword
             )
         )
         message = self.websocket.recv()
-        self.logger.info("Ack for auth token message: %s", message)
+        self.logger.info("Ack for auth token message: %s" % message)
 
         # add doc container to session
         # pylint: disable=line-too-long
@@ -291,7 +291,7 @@ class AugLoopClient:  # pylint: disable=client-accepts-api-version-keyword
             )
         )
         message = self.websocket.recv()
-        self.logger.info("Ack for seed doc: {}".format(message))
+        self.logger.info("Ack for seed doc: %s" % message)
 
         self.prevId = "#head"
 
@@ -317,7 +317,7 @@ class AugLoopClient:  # pylint: disable=client-accepts-api-version-keyword
         # get augloop auth token
         identity_client_id = os.environ.get("DEFAULT_IDENTITY_CLIENT_ID", None)
         if identity_client_id is not None:
-            self.logger.info("Using DEFAULT_IDENTITY_CLIENT_ID: {}".format(identity_client_id))
+            self.logger.info("Using DEFAULT_IDENTITY_CLIENT_ID: %s" % identity_client_id)
             credential = ManagedIdentityCredential(client_id=identity_client_id)
         else:
             # Good for local testing.
