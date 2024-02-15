@@ -123,7 +123,9 @@ class Pipeline(ContextManager["Pipeline"], Generic[HTTPRequestType, HTTPResponse
         self._transport = transport
 
         for policy in policies or []:
-            if isinstance(policy, SansIOHTTPPolicy):
+            if hasattr(policy, "send"):
+                self._impl_policies.append(policy)
+            elif isinstance(policy, SansIOHTTPPolicy):
                 self._impl_policies.append(_SansIOHTTPPolicyRunner(policy))
             elif policy:
                 self._impl_policies.append(policy)

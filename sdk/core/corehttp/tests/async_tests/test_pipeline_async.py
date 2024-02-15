@@ -28,6 +28,13 @@ from utils import ASYNC_TRANSPORTS
 
 @pytest.mark.asyncio
 async def test_sans_io_exception():
+
+    class SansIOHTTPPolicyImpl(SansIOHTTPPolicy):
+        def on_request(self, request):
+            pass
+        def on_response(self, request, response):
+            pass
+
     class BrokenSender(AsyncHttpTransport):
         async def send(self, request, **config):
             raise ValueError("Broken")
@@ -42,7 +49,7 @@ async def test_sans_io_exception():
             """Raise any exception triggered within the runtime context."""
             return self.close()
 
-    pipeline = AsyncPipeline(BrokenSender(), [SansIOHTTPPolicy()])
+    pipeline = AsyncPipeline(BrokenSender(), [SansIOHTTPPolicyImpl()])
 
     req = HttpRequest("GET", "/")
     with pytest.raises(ValueError):

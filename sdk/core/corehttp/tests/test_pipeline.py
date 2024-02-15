@@ -31,6 +31,13 @@ from utils import SYNC_TRANSPORTS
 
 
 def test_sans_io_exception():
+
+    class SansIOHTTPPolicyImpl(SansIOHTTPPolicy):
+        def on_request(self, request):
+            pass
+        def on_response(self, request, response):
+            pass
+
     class BrokenSender(HttpTransport):
         def send(self, request, **config):
             raise ValueError("Broken")
@@ -45,7 +52,7 @@ def test_sans_io_exception():
             """Raise any exception triggered within the runtime context."""
             return self.close()
 
-    pipeline = Pipeline(BrokenSender(), [SansIOHTTPPolicy()])
+    pipeline = Pipeline(BrokenSender(), [SansIOHTTPPolicyImpl()])
 
     req = HttpRequest("GET", "/")
     with pytest.raises(ValueError):
