@@ -276,7 +276,7 @@ def _evaluate(  # pylint: disable=too-many-locals, too-many-branches, too-many-s
     **kwargs,
 ):
     try:
-        if isinstance(data, str) or isinstance(data, Path):
+        if isinstance(data, (str, Path)):
             if Path(data).exists():
                 test_data = load_jsonl(data)
                 _data_is_file = True
@@ -286,7 +286,7 @@ def _evaluate(  # pylint: disable=too-many-locals, too-many-branches, too-many-s
             # data as list of json objects
             _ = [json.dumps(line) for line in data]
             test_data = data
-    except JSONDecodeError as json_load_error:
+    except JSONDecodeError:
         raise Exception("Data could not be loaded. Please validate if data is valid jsonl.")
     except TypeError:
         raise Exception("Data is not valid json.")

@@ -288,9 +288,9 @@ class OpenAIEmbeddings(Embeddings):
 
         results: List[List[List[float]]] = [[] for _ in range(len(texts))]
         num_tokens_in_batch: List[List[int]] = [[] for _ in range(len(texts))]
-        for i in range(len(indices)):
-            results[indices[i]].append(batched_embeddings[i])
-            num_tokens_in_batch[indices[i]].append(len(tokens[i]))
+        for idx, value in enumerate(indices):
+            results[value].append(batched_embeddings[idx])
+            num_tokens_in_batch[value].append(len(tokens[idx]))
 
         for i in range(len(texts)):
             _result = results[i]
@@ -354,9 +354,9 @@ class OpenAIEmbeddings(Embeddings):
 
         results: List[List[List[float]]] = [[] for _ in range(len(texts))]
         num_tokens_in_batch: List[List[int]] = [[] for _ in range(len(texts))]
-        for i in range(len(indices)):
-            results[indices[i]].append(batched_embeddings[i])
-            num_tokens_in_batch[indices[i]].append(len(tokens[i]))
+        for idx, value in enumerate(indices):
+            results[value].append(batched_embeddings[idx])
+            num_tokens_in_batch[value].append(len(tokens[idx]))
 
         for i in range(len(texts)):
             _result = results[i]

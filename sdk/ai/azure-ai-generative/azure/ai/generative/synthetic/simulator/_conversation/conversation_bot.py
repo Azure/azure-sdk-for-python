@@ -115,7 +115,7 @@ class ConversationBot:
 
         # The ChatAPI must respond as ASSISTANT, so if this bot is USER, we need to reverse the messages
         if (self.role == ConversationRole.USER) and (
-            isinstance(self.model, OpenAIChatCompletionsModel) or isinstance(self.model, LLAMAChatCompletionsModel)
+            isinstance(self.model, (OpenAIChatCompletionsModel, LLAMAChatCompletionsModel))
         ):
             # in here we need to simulate the user, The chatapi only generate turn as assistant and
             # can't generate turn as user

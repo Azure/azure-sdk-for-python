@@ -295,9 +295,9 @@ class OpenAIEmbedder:
 
         embedding_results: List[List[List[float]]] = [[] for _ in range(len(texts))]
         num_tokens_in_batch: List[List[int]] = [[] for _ in range(len(texts))]
-        for i in range(len(tokenized_texts_to_original_texts_indices)):
-            embedding_results[tokenized_texts_to_original_texts_indices[i]].append(batched_embeddings[i])
-            num_tokens_in_batch[tokenized_texts_to_original_texts_indices[i]].append(len(tokenized_texts[i]))
+        for idx, value in enumerate(tokenized_texts_to_original_texts_indices):
+            embedding_results[value].append(batched_embeddings[idx])
+            num_tokens_in_batch[value].append(len(tokenized_texts[idx]))
 
         embeddings: List[List[float]] = [[] for _ in range(len(texts))]
         for i in range(len(texts)):
