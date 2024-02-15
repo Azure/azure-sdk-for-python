@@ -6,36 +6,34 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models_py3 import Attributes
-from ._models_py3 import Error
-from ._models_py3 import FullBackupOperation
-from ._models_py3 import KeyVaultError
-from ._models_py3 import Permission
-from ._models_py3 import RestoreOperation
-from ._models_py3 import RestoreOperationParameters
-from ._models_py3 import RoleAssignment
-from ._models_py3 import RoleAssignmentCreateParameters
-from ._models_py3 import RoleAssignmentFilter
-from ._models_py3 import RoleAssignmentListResult
-from ._models_py3 import RoleAssignmentProperties
-from ._models_py3 import RoleAssignmentPropertiesWithScope
-from ._models_py3 import RoleDefinition
-from ._models_py3 import RoleDefinitionCreateParameters
-from ._models_py3 import RoleDefinitionFilter
-from ._models_py3 import RoleDefinitionListResult
-from ._models_py3 import RoleDefinitionProperties
-from ._models_py3 import SASTokenParameter
-from ._models_py3 import SelectiveKeyRestoreOperation
-from ._models_py3 import SelectiveKeyRestoreOperationParameters
-from ._models_py3 import Setting
-from ._models_py3 import SettingsListResult
-from ._models_py3 import UpdateSettingRequest
+from ._models import Attributes
+from ._models import Error
+from ._models import FullBackupOperation
+from ._models import KeyVaultError
+from ._models import Permission
+from ._models import RestoreOperation
+from ._models import RestoreOperationParameters
+from ._models import RoleAssignment
+from ._models import RoleAssignmentCreateParameters
+from ._models import RoleAssignmentFilter
+from ._models import RoleAssignmentProperties
+from ._models import RoleAssignmentPropertiesWithScope
+from ._models import RoleDefinition
+from ._models import RoleDefinitionCreateParameters
+from ._models import RoleDefinitionFilter
+from ._models import RoleDefinitionProperties
+from ._models import SASTokenParameter
+from ._models import SelectiveKeyRestoreOperation
+from ._models import SelectiveKeyRestoreOperationParameters
+from ._models import Setting
+from ._models import SettingsListResult
+from ._models import UpdateSettingRequest
 
-from ._key_vault_client_enums import DataAction
-from ._key_vault_client_enums import RoleDefinitionType
-from ._key_vault_client_enums import RoleScope
-from ._key_vault_client_enums import RoleType
-from ._key_vault_client_enums import SettingTypeEnum
+from ._enums import DataAction
+from ._enums import RoleDefinitionType
+from ._enums import RoleScope
+from ._enums import RoleType
+from ._enums import SettingTypeEnum
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -51,13 +49,11 @@ __all__ = [
     "RoleAssignment",
     "RoleAssignmentCreateParameters",
     "RoleAssignmentFilter",
-    "RoleAssignmentListResult",
     "RoleAssignmentProperties",
     "RoleAssignmentPropertiesWithScope",
     "RoleDefinition",
     "RoleDefinitionCreateParameters",
     "RoleDefinitionFilter",
-    "RoleDefinitionListResult",
     "RoleDefinitionProperties",
     "SASTokenParameter",
     "SelectiveKeyRestoreOperation",

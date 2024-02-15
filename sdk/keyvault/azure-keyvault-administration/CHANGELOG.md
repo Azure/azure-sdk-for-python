@@ -3,6 +3,7 @@
 ## 4.4.0b3 (Unreleased)
 
 ### Features Added
+- Added support for service API version `7.5`
 
 ### Breaking Changes
 
@@ -10,6 +11,9 @@
 
 ### Other Changes
 - Python 3.7 is no longer supported. Please use Python version 3.8 or later.
+- Key Vault API version `7.5` is now the default
+- Updated minimum `azure-core` version to 1.29.5
+- Dropped `azure-common` requirement
 
 ## 4.4.0b2 (2023-11-03)
 
