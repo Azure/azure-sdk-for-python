@@ -32,6 +32,8 @@ parameters:
   - name: DependsOn
     type: object
     default: []
+  - name: Matrix
+    type: string
   - name: UsePlatformContainer
     type: boolean
     default: false
@@ -41,88 +43,89 @@ parameters:
   - name: TestProxy
     type: boolean
     default: false
-  - name: PoolStrategy
-    type: object
-    default: []
+  - name: OSName
+    type: string
 
 jobs:
+  - job:
+    displayName: 'Test'
+    condition: |
+      and(
+        succeededOrFailed(),
+        ne(variables['Skip.Test'], 'true'),
+        ne(${{ parameters.Matrix }}, '{}')
+      )
+    timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
 
-  - ${{ each poolDefinition in parameters.PoolStrategy }}:
-    - job:
-      displayName: 'Test ${{ poolDefinition.os }} ${{ poolDefinition.PythonVersion }}'
-      condition: |
-        and(
-          succeededOrFailed(),
-          ne(variables['Skip.Test'], 'true')
-        )
-      timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+    dependsOn:
+      - ${{ parameters.DependsOn }}
 
-      dependsOn:
-        - ${{ parameters.DependsOn }}
+    strategy:
+      matrix: $[ ${{ parameters.Matrix }} ]
 
-      pool:
-        name: ${{ poolDefinition.Pool }} 
-        os: ${{ poolDefinition.os}}
-        vmImage: "${{ poolDefinition.OSVmImage }}"
+    pool:
+      name: $(Pool)
+      vmImage: $(OSVmImage)
+      os: ${{ parameters.OSName }}
 
-      variables:
-      - template: ../variables/globals.yml
-      - name: InjectedPackages
-        value: ${{ parameters.InjectedPackages }}
+    variables:
+    - template: ../variables/globals.yml
+    - name: InjectedPackages
+      value: ${{ parameters.InjectedPackages }}
 
-      steps:
-      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-        parameters:
-          BuildTargetingString: ${{ parameters.BuildTargetingString }}
+    steps:
+    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+      parameters:
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
-      - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
-        parameters:
-          AgentImage: ${{ poolDefinition.OSVmImage }}
+    - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
+      parameters:
+        AgentImage: ${{ parameters.OSName }}
 
-      - task: UsePythonVersion@0
-        inputs:
-          versionSpec: '3.8'
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.8'
 
-      - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
-        parameters:
-          PackageName: "azure-template"
-          ServiceDirectory: "template"
-          TestPipeline: ${{ parameters.TestPipeline }}
+    - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+      parameters:
+        PackageName: "azure-template"
+        ServiceDirectory: "template"
+        TestPipeline: ${{ parameters.TestPipeline }}
 
-      - pwsh: |
-          python -m pip install "tools/azure-sdk-tools[build]"
-        displayName: Install build tooling
+    - pwsh: |
+        python -m pip install "tools/azure-sdk-tools[build]"
+      displayName: Install build tooling
 
-      - task: PythonScript@0
-        displayName: 'Set Tox Environment'
-        inputs:
-          scriptPath: 'scripts/devops_tasks/set_tox_environment.py'
-          arguments: >-
-            --unsupported="$(UnsupportedToxEnvironments)"
-            --override="$(Run.ToxCustomEnvs)"
-            --team-project="$(System.TeamProject)"
+    - task: PythonScript@0
+      displayName: 'Set Tox Environment'
+      inputs:
+        scriptPath: 'scripts/devops_tasks/set_tox_environment.py'
+        arguments: >-
+          --unsupported="$(UnsupportedToxEnvironments)"
+          --override="$(Run.ToxCustomEnvs)"
+          --team-project="$(System.TeamProject)"
 
-      - template: ../steps/build-test.yml
-        parameters:
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          TestMarkArgument: ${{ parameters.TestMarkArgument }}
-          AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
-          CoverageArg: ${{ poolDefinition.CoverageArg }}
-          PythonVersion: "${{ poolDefinition.PythonVersion }}"
-          ToxTestEnv: $(toxenv)
-          ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
-          InjectedPackages: $(InjectedPackages)
-          TestProxy: ${{ parameters.TestProxy }}
-          BeforeTestSteps:
-            - task: DownloadPipelineArtifact@2
-              inputs:
-                artifactName: 'packages'
-                targetPath: $(Build.ArtifactStagingDirectory)
+    - template: ../steps/build-test.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        CoverageArg: $(CoverageArg)
+        PythonVersion: $(PythonVersion)
+        ToxTestEnv: $(toxenv)
+        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
+        InjectedPackages: $(InjectedPackages)
+        TestProxy: ${{ parameters.TestProxy }}
+        BeforeTestSteps:
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifactName: 'packages'
+              targetPath: $(Build.ArtifactStagingDirectory)
 
-            - template: ../steps/set-dev-build.yml
-              parameters:
-                ServiceDirectory: ${{ parameters.ServiceDirectory }}
-            
-            - ${{ each step in parameters.BeforeTestSteps }}:
-              -  ${{ step }}
-          AfterTestSteps: ${{ parameters.AfterTestSteps }}
+          - template: ../steps/set-dev-build.yml
+            parameters:
+              ServiceDirectory: ${{ parameters.ServiceDirectory }}
+
+          - ${{ each step in parameters.BeforeTestSteps }}:
+            -  ${{ step }}
+        AfterTestSteps: ${{ parameters.AfterTestSteps }}
