@@ -4,6 +4,7 @@
 
 import asyncio
 import functools
+from typing import Optional
 
 from azure.ai.resources.constants._common import USER_AGENT_HEADER
 from azure.ai.resources._user_agent import USER_AGENT
@@ -16,7 +17,7 @@ try:
     from importlib import import_module
 
     import_module("openai")
-    IS_LEGACY_OPENAI = version("openai").startswith("0.")
+    IS_LEGACY_OPENAI: Optional[bool] = version("openai").startswith("0.")
 except ImportError:
     IS_LEGACY_OPENAI = None
 
