@@ -361,13 +361,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         if not message.application_properties:
             message = message._replace(application_properties={})
-        # TODO: fix error when typing pyamqp: `Property "application_properties" defined in "Message" is read-only `
-        # may be able to add @property.setter to app props in pyamqp.Message to fix this
-        message.application_properties = cast(  # type: ignore[misc]
-            Dict[Union[str, bytes], Any], message.application_properties
-        )
-        # casting from Optional to Dict above for use with setdefault
-        message.application_properties.setdefault(key, value)
+        cast(Dict[Union[str, bytes], Any], message.application_properties).setdefault(key, value)
         return message
 
     @staticmethod
