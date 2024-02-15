@@ -8,7 +8,7 @@ from azure.ai.ml._telemetry import ActivityType, log_activity, monitor_with_acti
 from azure.ai.ml._utils._logger_utils import initialize_logger_info
 
 from .logging_handler import get_appinsights_log_handler, ActivityLogger
-from .aoai_injector import get_aoai_telemetry_headers, inject_operation_headers, IS_LEGACY_OPENAI
+from .aoai_injector import get_aoai_telemetry_headers, inject_openai_headers, IS_LEGACY_OPENAI
 
 
 __all__ = [
@@ -20,6 +20,6 @@ __all__ = [
     "ActivityLogger",
     "initialize_logger_info",
     "get_aoai_telemetry_headers",
-    "inject_operation_headers",
+    "inject_openai_headers",
     "IS_LEGACY_OPENAI",
 ]

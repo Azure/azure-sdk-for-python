@@ -2,14 +2,14 @@ import pytest
 
 from azure.ai.resources._telemetry.aoai_injector import (
     get_aoai_telemetry_headers,
-    inject_operation_headers,
+    inject_openai_headers,
     IS_LEGACY_OPENAI,
 )
 
 
 @pytest.mark.unittest
-def test_inject_operation_headers_sync():
-    @inject_operation_headers
+def test_inject_openai_headers_sync():
+    @inject_openai_headers
     def f(**kwargs):
         return kwargs
 
