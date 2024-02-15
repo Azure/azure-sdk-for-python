@@ -115,7 +115,6 @@ class JobServiceTypeNames:
 
 class JobTierNames:
     class EntityNames:
-        Null = "null"
         Spot = "spot"
         Basic = "basic"
         Standard = "standard"
