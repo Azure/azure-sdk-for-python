@@ -18,7 +18,7 @@
     {
       "CoverageConfig": {
         "ubuntu2004_39_coverage": {
-          "OSVmImage": "env:LINUXIMAGE",
+          "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.9",
           "CoverageArg": "",
@@ -29,7 +29,7 @@
     {
       "Config": {
         "Ubuntu2004_312": {
-          "OSVmImage": "env:LINUXIMAGE",
+          "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.12",
           "CoverageArg": "--disablecov",
