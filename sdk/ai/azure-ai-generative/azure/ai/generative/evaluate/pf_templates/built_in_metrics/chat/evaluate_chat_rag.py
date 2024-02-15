@@ -3,7 +3,7 @@ from azureml.metrics import compute_metrics, constants
 from azureml.metrics.common.exceptions import ValidationException
 from promptflow.connections import AzureOpenAIConnection
 from utils import get_openai_parameters, filter_metrics
-from azure.ai.resources._telemetry import inject_openai_headers
+from azure.ai.resources._telemetry.aoai_injector import inject_openai_headers
 
 
 

@@ -2,7 +2,7 @@ from promptflow import tool
 from azureml.metrics import compute_metrics, constants
 from promptflow.connections import AzureOpenAIConnection
 from utils import get_openai_parameters, filter_metrics
-from azure.ai.resources._telemetry import inject_openai_headers
+from azure.ai.resources._telemetry.aoai_injector import inject_openai_headers
 
 # The inputs section will change based on the arguments of the tool function, after you save the code
 # Adding type to arguments and return value will help the system show the types properly

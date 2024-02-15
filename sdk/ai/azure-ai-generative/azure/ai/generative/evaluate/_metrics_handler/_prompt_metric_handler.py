@@ -11,7 +11,7 @@ import logging
 import tqdm.asyncio
 from numpy import NaN
 
-from azure.ai.resources._telemetry import inject_openai_headers
+from azure.ai.resources._telemetry.aoai_injector import inject_openai_headers
 
 from .._client.openai_client import AzureOpenAIClient
 from .._metric_handler import MetricHandler

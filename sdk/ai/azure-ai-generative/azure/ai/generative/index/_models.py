@@ -8,7 +8,7 @@ import os
 from typing import Dict, Optional, Union
 
 from azure.core.credentials import TokenCredential
-from azure.ai.resources._telemetry import inject_openai_headers
+from azure.ai.resources._telemetry.aoai_injector import inject_openai_headers
 from azure.ai.generative.constants._common import USER_AGENT_HEADER_KEY
 from azure.ai.generative.index._utils.connections import (
     connection_to_credential,

@@ -12,7 +12,7 @@ from typing import Dict, Union
 import openai
 import pandas as pd
 from azureml.core import Run
-from azure.ai.resources._telemetry import inject_openai_headers
+from azure.ai.resources._telemetry.aoai_injector import inject_openai_headers
 from azure.ai.generative.index.data_generation.qa import QADataGenerator, GenerationResult, QAType
 from azure.ai.generative.index._utils.connections import (get_connection_by_id_v2,
                                            get_connection_credential,

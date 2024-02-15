@@ -7,7 +7,7 @@ import logging
 from openai import AsyncAzureOpenAI
 from openai.types.chat.chat_completion import ChatCompletion
 
-from azure.ai.resources._telemetry import inject_openai_headers
+from azure.ai.resources._telemetry.aoai_injector import inject_openai_headers
 from azure.ai.generative.evaluate._user_agent import USER_AGENT
 from azure.ai.generative.constants._common import USER_AGENT_HEADER_KEY
 

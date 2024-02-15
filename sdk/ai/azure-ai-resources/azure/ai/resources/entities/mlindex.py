@@ -9,7 +9,7 @@ from dataclasses import dataclass
 
 from azure.ai.ml.entities import Data
 from azure.ai.resources.entities import AzureOpenAIConnection, AzureAISearchConnection
-from azure.ai.resources._telemetry import inject_openai_headers
+from azure.ai.resources._telemetry.aoai_injector import inject_openai_headers
 
 
 @dataclass
