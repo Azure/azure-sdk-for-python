@@ -16,7 +16,7 @@ from aiohttp import TraceConfig
 from aiohttp.web import HTTPException
 from aiohttp_retry import RetryClient, RandomRetry
 
-from azure.ai.resources.constants._common import USER_AGENT_HEADER
+from azure.ai.generative.constants._common import USER_AGENT_HEADER
 from azure.ai.generative._user_agent import USER_AGENT
 from .identity_manager import APITokenManager
 from .images import replace_prompt_captions, format_multimodal_prompt
