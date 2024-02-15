@@ -59,11 +59,17 @@ _LONG_POST_INTERVAL_SECONDS = 20
 
 
 class Response:
-
+    """Response that encapsulates pipeline response and response headers from
+    QuickPulse client.
+    """
     def __init__(self, pipeline_response, deserialized, response_headers):
         self._pipeline_response = pipeline_response
         self._deserialized = deserialized
         self._response_headers = response_headers
+
+
+class UnsuccessfulQuickPulsePostError(Exception):
+    """Exception raised to indicate unsuccessful QuickPulse post for backoff logic."""
 
 
 class _QuickpulseExporter(MetricExporter):
@@ -97,7 +103,7 @@ class _QuickpulseExporter(MetricExporter):
         """Exports a batch of metric data
 
         :param metrics_data: OpenTelemetry Metric(s) to export.
-        :type metrics_data: Sequence[~opentelemetry.sdk.metrics._internal.point.MetricsData]
+        :type metrics_data: ~opentelemetry.sdk.metrics._internal.point.MetricsData
         :param timeout_millis: The maximum amount of time to wait for each export. Not currently used.
         :type timeout_millis: float
         :return: The result of the export.
@@ -105,7 +111,7 @@ class _QuickpulseExporter(MetricExporter):
         """
         result = MetricExportResult.SUCCESS
         base_monitoring_data_point = kwargs.get("base_monitoring_data_point")
-        if metrics_data is None or base_monitoring_data_point is None:
+        if base_monitoring_data_point is None:
             return result
         data_points = _metric_to_quick_pulse_data_points(
             metrics_data,
@@ -122,13 +128,14 @@ class _QuickpulseExporter(MetricExporter):
                 cls=Response,
             )
             if not post_response:
+                # If no response, assume unsuccessful
                 result = MetricExportResult.FAILURE
             header = post_response._response_headers.get("x-ms-qps-subscribed")  # pylint: disable=protected-access
             if header != "true":
-                # We raise an exception to indicate that quickpulse is not activated anymore
-                raise Exception()
-        except HttpResponseError:
-            # Errors are not reported
+                # User leaving the live metrics page will be treated as an unsuccessful
+                result = MetricExportResult.FAILURE
+        except Exception:  # pylint: disable=broad-except,invalid-name
+            # Errors are not reported and assumed as unsuccessful
             result = MetricExportResult.FAILURE
         finally:
             detach(token)
@@ -238,7 +245,7 @@ class _QuickpulseMetricReader(MetricReader):
                             self._quick_pulse_state = QuickpulseState.PING_LONG
                 # TODO: Implement redirect
                 else:
-                    # Erroneous responses instigate backoff logic
+                    # Erroneous ping responses instigate backoff logic
                     # Backoff after _LONG_PING_INTERVAL_SECONDS (60s) of no successful requests
                     if self._quick_pulse_state is QuickpulseState.PING_SHORT and \
                         self._elapsed_num_seconds >= _LONG_PING_INTERVAL_SECONDS:
@@ -248,8 +255,8 @@ class _QuickpulseMetricReader(MetricReader):
             print("posting...")
             try:
                 self.collect()
-            except Exception:  # pylint: disable=broad-except,invalid-name
-                # Unsuccessful exports instigate backoff logic
+            except UnsuccessfulQuickPulsePostError:
+                # Unsuccessful posts instigate backoff logic
                 # Backoff after _LONG_POST_INTERVAL_SECONDS (20s) of no successful requests
                 # And resume pinging
                 if self._elapsed_num_seconds >= _LONG_POST_INTERVAL_SECONDS:
@@ -272,9 +279,10 @@ class _QuickpulseMetricReader(MetricReader):
             documents=[],
         )
         if result is MetricExportResult.FAILURE:
-            # There is currently no way to propagate unsuccessful metric post so we raise an exception
-            # MUST handle this exception whenever `collect()` is called
-            raise Exception()
+            # There is currently no way to propagate unsuccessful metric post so
+            # we raise an UnsuccessfulQuickPulsePostError exception. MUST handle
+            # this exception whenever `collect()` is called
+            raise UnsuccessfulQuickPulsePostError()
 
     def shutdown(self, timeout_millis: float = 30_000, **kwargs) -> None:
         self._worker.cancel()
