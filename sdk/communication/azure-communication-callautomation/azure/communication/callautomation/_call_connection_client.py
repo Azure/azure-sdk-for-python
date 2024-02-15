@@ -454,7 +454,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         loop: bool = False,
         operation_context: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
-        interrupt_call_media_operation: bool = False,
+        interrupt_call_media_operation: Optional[bool] = None,
         **kwargs
     ) -> None:
         """Play media to specific participant(s) in this call.
@@ -509,7 +509,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         loop: bool = False,
         operation_context: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
-        interrupt_call_media_operation: bool = False,
+        interrupt_call_media_operation: Optional[bool] = None,
         **kwargs
     ) -> None:
         """Play media to all participants in this call.
