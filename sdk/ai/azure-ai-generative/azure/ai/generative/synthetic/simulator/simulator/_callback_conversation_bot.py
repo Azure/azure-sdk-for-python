@@ -25,7 +25,7 @@ class CallbackConversationBot(ConversationBot):
 
     async def generate_response(
         self,
-        session: "RetryClient",
+        session: "RetryClient", # type: ignore[name-defined]
         conversation_history: List[ConversationTurn],
         max_history: int,
         turn_number: int = 0,
@@ -39,7 +39,6 @@ class CallbackConversationBot(ConversationBot):
         self.logger.info(f"Using user provided callback returning response.")
 
         time_taken = 0
-        request = {}
         try:
             response = {
                 "samples": [result["messages"][-1]["content"]],
@@ -53,7 +52,7 @@ class CallbackConversationBot(ConversationBot):
 
         self.logger.info(f"Parsed callback response")
 
-        return response, request, time_taken, response
+        return response, {}, time_taken, response
 
     def _to_chat_protocol(self, template, conversation_history, template_parameters):
         messages = []

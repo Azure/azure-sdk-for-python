@@ -38,6 +38,7 @@ class ConversationBot:
 
 
         self.role = role
+        self.conversation_template_orig = conversation_template
         self.conversation_template: jinja2.Template = jinja2.Template(
             conversation_template, undefined=jinja2.StrictUndefined
         )
@@ -103,7 +104,7 @@ class ConversationBot:
                 samples = [self.conversation_starter]
             else:
                 self.logger.info(f"Returning conversation starter: {repr(self.persona_template_args['conversation_starter'])[:400]}")
-                samples = [self.conversation_starter.render(**self.persona_template_args)]
+                samples = [self.conversation_starter.render(**self.persona_template_args)] # type: ignore[attr-defined]
             time_taken = 0
 
             finish_reason = ["stop"]
@@ -116,13 +117,15 @@ class ConversationBot:
             full_response = parsed_response
             return parsed_response, {}, time_taken, full_response
 
-        print(f"{self.role} is going to be simulated now with params {self.persona_template_args}")
-
-        prompt = self.conversation_template.render(
-            conversation_turns=conversation_history[-max_history:],
-            role=self.role.value,
-            **self.persona_template_args
-        )
+        try:
+            prompt = self.conversation_template.render(
+                conversation_turns=conversation_history[-max_history:],
+                role=self.role.value,
+                **self.persona_template_args
+            )
+        except:
+            import code
+            code.interact(local=locals())
 
         messages = [{"role": "system", "content": prompt}]
 

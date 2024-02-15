@@ -30,12 +30,12 @@ class Template:
 
 class ContentHarmTemplatesUtils:
     @staticmethod
-    def get_template_category(pkey):
-        return pkey.split("/")[0]
+    def get_template_category(key):
+        return key.split("/")[0]
 
     @staticmethod
-    def get_template_key(pkey):
-        filepath = pkey.rsplit(".json")[0]
+    def get_template_key(key):
+        filepath = key.rsplit(".json")[0]
         parts = str(filepath).split("/")
         filename = ContentHarmTemplatesUtils.json_name_to_md_name(parts[-1])
         prefix = parts[:-1]
@@ -44,10 +44,10 @@ class ContentHarmTemplatesUtils:
         return "/".join(prefix)
 
     @staticmethod
-    def json_name_to_md_name(pname):
-        name = pname.replace("_aml", "")
+    def json_name_to_md_name(name):
+        result = name.replace("_aml", "")
         
-        return name+".md"
+        return result+".md"
 
 
 class SimulatorTemplates:
@@ -89,16 +89,23 @@ class SimulatorTemplates:
         plist = self.categorized_ch_parameters
         ch_templates = []
         for tkey in [k for k in plist.keys() if plist[k]["category"] == template_category]:
+            params = plist[tkey]["parameters"]
+            for p in params:
+                p.update(
+                    {
+                        "ch_template_placeholder" : "{{ch_template_placeholder}}"
+                    }
+                )
+
             template = Template(
                 template_name=tkey,
                 text=None,
                 context_key=[],
                 content_harm=True,
-                template_parameters=plist[tkey]["parameters"]
+                template_parameters=params
             )
 
             ch_templates.append(template)
-
         return ch_templates
 
     def get_template(self, template_name):

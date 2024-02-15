@@ -29,7 +29,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
 
         super().__init__(name=name, *args, **kwargs)
 
-    def format_request_data(self, messages: List[dict], **request_params):
+    def format_request_data(self, messages: List[dict], **request_params): # type: ignore[override]
         request_data = {"messages": messages, **self.get_model_params()}
         request_data.update(request_params)
         return request_data
@@ -89,7 +89,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             "X-ModelType": self.model or "",
         }
         # add all additional headers
-        headers.update(self.additional_headers)
+        headers.update(self.additional_headers) # type: ignore[arg-type]
 
         params = {}
         if self.api_version:
@@ -122,7 +122,8 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             statuses=[202],  # on which statuses to retry
             attempts=7,
             start_timeout=10,
-            max_timeout=40,
+            max_timeout=180,
+            retry_all_server_errors=False
         )
 
         exp_retry_client = AsyncHTTPClientWithRetry(

@@ -12,7 +12,7 @@ from .conversation_turn import ConversationTurn
 from .constants import ConversationRole
 
 
-def is_closing_message(response:any, recursion_depth: int = 0):
+def is_closing_message(response:Any, recursion_depth: int = 0):
     if (recursion_depth > 10):
         raise Exception("Exceeded max call depth in is_closing_message")
     

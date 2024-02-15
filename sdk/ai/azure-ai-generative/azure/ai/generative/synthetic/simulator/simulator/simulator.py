@@ -2,6 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# needed for 'list' type annotations on 3.8
+from __future__ import annotations
+
 from typing import Callable, Dict, List, Union, Optional, Sequence, Any
 from azure.ai.generative.synthetic.simulator._conversation import (
     ConversationBot,
@@ -100,7 +103,7 @@ class Simulator:
             self.ml_client = ai_client._ml_client
             self.token_manager = ManagedIdentityAPITokenManager(
                 token_scope=TokenScope.DEFAULT_AZURE_MANAGEMENT,
-                logger=logging.getLogger("acli token manager"),
+                logger=logging.getLogger("managed identity token manager"),
             )
             self.rai_client = RAIClient(self.ml_client, self.token_manager)
         self.template_handler = SimulatorTemplates(self.rai_client)
@@ -119,7 +122,10 @@ class Simulator:
             temperature=0.0,
         )
 
-    def _to_openai_chat_completion_model(self, config: "AzureOpenAIModelConfiguration"):
+    def _to_openai_chat_completion_model(
+        self, 
+        config: "AzureOpenAIModelConfiguration" # type: ignore[name-defined]
+    ):
         if config is None:
             return None
         token_manager = PlainTokenManager(
@@ -140,8 +146,8 @@ class Simulator:
         role: ConversationRole,
         conversation_template: str,
         instantiation_parameters: dict,
-        adversarial_template_key: str = None,
-        model: Union[LLMBase, OpenAIChatCompletionsModel] = None,  # type: ignore[arg-type]
+        adversarial_template_key: Optional[str] = None,
+        model: Union[LLMBase, OpenAIChatCompletionsModel] = None,  # type: ignore[arg-type,assignment]
     ):
         if role == ConversationRole.USER and self.adversarial:
             model = self._get_user_proxy_completion_model(
@@ -154,9 +160,9 @@ class Simulator:
                 conversation_template=conversation_template,
                 instantiation_parameters=instantiation_parameters,
             )
-        if role == ConversationRole.ASSISTANT and self.simulate_callback:
+        if role == ConversationRole.ASSISTANT:
             dummy_model = lambda: None
-            dummy_model.name = "dummy_model"
+            dummy_model.name = "dummy_model" # type: ignore[attr-defined]
             return CallbackConversationBot(
                 callback=self.simulate_callback,
                 role=role,
@@ -178,9 +184,9 @@ class Simulator:
         self, role: Union[str, ConversationRole], template: "Template", parameters: dict
     ):
         if role == ConversationRole.ASSISTANT:
-            return self._create_bot(role, template, parameters)
+            return self._create_bot(role, str(template), parameters)
         elif role == ConversationRole.USER:
-            if self.adversarial:
+            if template.content_harm:
                 return self._create_bot(
                     role, str(template), parameters, template.template_name
                 )
@@ -196,11 +202,11 @@ class Simulator:
             )
 
     def _join_conversation_starter(self, parameters, to_join):
-        ckey = "conversation_starter"
-        if ckey in parameters.keys():
-            parameters[ckey] = f"{to_join} {parameters[ckey]}"
+        key = "conversation_starter"
+        if key in parameters.keys():
+            parameters[key] = f"{to_join} {parameters[key]}"
         else:
-            parameters[ckey] = to_join
+            parameters[key] = to_join
 
         return parameters
 
@@ -208,13 +214,12 @@ class Simulator:
         self,
         template: "Template",
         max_conversation_turns: int,
-        parameters: list[dict] = [],
+        parameters: List[dict] = [],
         jailbreak: bool = False,
         api_call_retry_max_count: int = 3,
         api_call_retry_sleep_sec: int = 1,
         api_call_delay_sec: float = 0,
-        concurrent_async_task: int = 3,
-        simulation_result_limit: int = 3,
+        concurrent_async_task: int = 3
     ):
         """Asynchronously simulate conversations using the provided template and parameters
 
@@ -236,8 +241,6 @@ class Simulator:
         :paramtype api_call_delay_sec: float, optional
         :keyword concurrent_async_task: The maximum number of asynchronous tasks to run concurrently. Defaults to 3.
         :paramtype concurrent_async_task: int, optional
-        :keyword simulation_result_limit: The maximum number of simulation results to return. Defaults to 3.
-        :paramtype simulation_result_limit: int, optional
 
         :return: A list of dictionaries containing the simulation results.
         :rtype: List[Dict]
@@ -273,7 +276,7 @@ class Simulator:
             for p in t.template_parameters:
                 if jailbreak:
                     self._ensure_service_dependencies()
-                    jailbreak_dataset = await self.rai_client.get_jailbreaks_dataset()
+                    jailbreak_dataset = await self.rai_client.get_jailbreaks_dataset() # type: ignore[union-attr]
                     p = self._join_conversation_starter(
                         p, random.choice(jailbreak_dataset)
                     )
@@ -281,7 +284,7 @@ class Simulator:
                 tasks.append(
                     asyncio.create_task(
                         self._simulate_async(
-                            template=template,
+                            template=t,
                             parameters=p,
                             max_conversation_turns=max_conversation_turns,
                             api_call_retry_max_count=api_call_retry_max_count,
@@ -290,12 +293,6 @@ class Simulator:
                         )
                     )
                 )
-
-                if len(tasks) >= simulation_result_limit:
-                    break
-
-            if len(tasks) >= simulation_result_limit:
-                break
 
         sim_results = await asyncio.gather(*tasks)
 
@@ -327,8 +324,6 @@ class Simulator:
             api_call_delay_sec (float, optional): The time in seconds to wait between API calls. Defaults to 0.
             concurrent_async_task (int, optional): The maximum number of asynchronous tasks to run concurrently.
                 Defaults to 3.
-            simulation_result_limit (int, optional): The maximum number of simulation results to return. Defaults to 3.
-
         Returns:
             List[Dict]: A list of dictionaries containing the simulation results.
 
@@ -440,7 +435,7 @@ class Simulator:
         results,
         template: "Template",
         max_conversation_turns: int,
-        parameters: dict = {},
+        parameters: List[dict] = [],
         jailbreak: bool = False,
         api_call_retry_max_count: int = 3,
         api_call_retry_sleep_sec: int = 1,
@@ -488,7 +483,7 @@ class Simulator:
         :type api_call_retry_sleep_sec: int, optional
         :param api_call_delay_sec: The number of seconds to wait before making a new API call to simulate conversation delay.
         :type api_call_delay_sec: float, optional
-        :return: The outcome of the simulated conversation, including the final state and any data collected.
+        :return: The outcome of the simulated conversations as a list.
         :rtype: List[Dict]
         """
         results = [None]
@@ -533,6 +528,7 @@ class Simulator:
         :return: An instance of simulator configured with the specified function, simulation connection, and AI client.
         :rtype: Simulator
         :raises ValueError: If both `simulator_connection` and `ai_client` are not provided (i.e., both are None).
+
         Any additional keyword arguments (`**kwargs`) will be passed directly to the function `fn`.
         """
         if hasattr(fn, "__wrapped__"):
