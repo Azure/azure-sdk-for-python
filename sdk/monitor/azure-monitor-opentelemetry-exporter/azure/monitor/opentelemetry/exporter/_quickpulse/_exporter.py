@@ -53,9 +53,9 @@ _APPLICATION_INSIGHTS_METRIC_TEMPORALITIES = {
 }
 
 _SHORT_PING_INTERVAL_SECONDS = 5
-_SHORT_POST_INTERVAL_SECONDS = 1
+_POST_INTERVAL_SECONDS = 1
 _LONG_PING_INTERVAL_SECONDS = 60
-_LONG_POST_INTERVAL_SECONDS = 20
+_POST_CANCEL_INTERVAL_SECONDS = 20
 
 
 class Response:
@@ -196,7 +196,7 @@ class QuickpulseState(Enum):
 
     PING_SHORT = _SHORT_PING_INTERVAL_SECONDS
     PING_LONG = _LONG_PING_INTERVAL_SECONDS
-    POST_SHORT = _SHORT_POST_INTERVAL_SECONDS
+    POST_SHORT = _POST_INTERVAL_SECONDS
 
 
 class _QuickpulseMetricReader(MetricReader):
@@ -211,7 +211,7 @@ class _QuickpulseMetricReader(MetricReader):
         self._base_monitoring_data_point = base_monitoring_data_point
         self._elapsed_num_seconds = 0
         self._worker = PeriodicTask(
-            interval=_SHORT_POST_INTERVAL_SECONDS,
+            interval=_POST_INTERVAL_SECONDS,
             function=self._ticker,
             name="QuickpulseMetricReader",
         )
@@ -257,9 +257,9 @@ class _QuickpulseMetricReader(MetricReader):
                 self.collect()
             except UnsuccessfulQuickPulsePostError:
                 # Unsuccessful posts instigate backoff logic
-                # Backoff after _LONG_POST_INTERVAL_SECONDS (20s) of no successful requests
+                # Backoff after _POST_CANCEL_INTERVAL_SECONDS (20s) of no successful requests
                 # And resume pinging
-                if self._elapsed_num_seconds >= _LONG_POST_INTERVAL_SECONDS:
+                if self._elapsed_num_seconds >= _POST_CANCEL_INTERVAL_SECONDS:
                     print("post failed for 20s, switching to pinging")
                     self._quick_pulse_state = QuickpulseState.PING_SHORT
                     self._elapsed_num_seconds = 0
