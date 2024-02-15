@@ -119,7 +119,7 @@ class JobTierNames:
         Basic = "basic"
         Standard = "standard"
         Premium = "premium"
-        Null = "Null"
+        Null = "null"
 
     class RestNames:
         Null = "Null"
