@@ -16,6 +16,8 @@ from aiohttp import TraceConfig
 from aiohttp.web import HTTPException
 from aiohttp_retry import RetryClient, RandomRetry
 
+from azure.ai.resources.constants._common import USER_AGENT_HEADER
+from azure.ai.generative._user_agent import USER_AGENT
 from .identity_manager import APITokenManager
 from .images import replace_prompt_captions, format_multimodal_prompt
 
@@ -470,6 +472,7 @@ class OpenAICompletionsModel(LLMBase):
             "Content-Type": "application/json",
             "X-CV": f"{uuid.uuid4()}",
             "X-ModelType": self.model or '',
+            USER_AGENT_HEADER: USER_AGENT,
         }
 
         if self.token_manager.auth_header == "Bearer":

@@ -4,7 +4,6 @@
 
 from typing import Callable, Dict, List, Union, Optional, Sequence
 
-from azure.ai.resources._telemetry import inject_openai_headers
 from azure.ai.generative.synthetic.simulator._conversation import (
     ConversationBot,
     ConversationRole,
@@ -30,7 +29,6 @@ USER_MD = os.path.join(template_dir, "user.md")  # type: ignore[has-type]
 
 
 class Simulator:
-    @inject_openai_headers
     def __init__(
         self,
         systemConnection: Optional["AzureOpenAIModelConfiguration"] = None,  # type: ignore[name-defined]
