@@ -155,9 +155,11 @@ file_extension_splitters = {
 
 
 def split_documents(  # pylint: disable=too-many-statements
-    documents: Iterable[ChunkedDocument], splitter_args: dict, file_extension_splitters=file_extension_splitters
+    documents: Iterable[ChunkedDocument], splitter_args: dict, file_extension_splitters=None
 ) -> Iterator[ChunkedDocument]:
     """Split documents into chunks."""
+    if file_extension_splitters is None:
+        file_extension_splitters = file_extension_splitters
     total_time: float = 0.0
     total_documents = 0
     total_splits = 0

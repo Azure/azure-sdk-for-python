@@ -372,7 +372,7 @@ class WrappedLangChainDocument(Document):
         return wrapped_doc
 
 
-class EmbeddingsContainer:
+class EmbeddingsContainer:  # pylint: disable=too-many-instance-attributes
     """
     A class for generating embeddings.
 

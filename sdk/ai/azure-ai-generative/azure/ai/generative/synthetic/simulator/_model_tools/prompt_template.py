@@ -24,7 +24,7 @@ class SpecialTokensFormat(Enum):
     CHAT_HARMONY_V3 = 3  # Harmony V3 ChatML Prompt Format using special tokens
 
 
-class PromptTemplate:
+class PromptTemplate:  # pylint: disable=too-many-instance-attributes
     """
     Holds the prompt_template for formatting the metaprompt, input, and few_shot examples.
 
@@ -44,7 +44,7 @@ class PromptTemplate:
         few_shot_example_separator: str = DEFAULT_FEW_SHOT_EXAMPLE_SEPARATOR,
         input_example_pattern: str = DEFAULT_INPUT_EXAMPLE_PATTERN,
         input_example_separator: str = DEFAULT_INPUT_EXAMPLE_SEPARATOR,
-        metadata_keys: List[str] = [],
+        metadata_keys: Optional[List[str]] = None,
         **additional_inputs: Dict[str, str],
     ):
         """Initialize a PromptTemplate from parameters."""

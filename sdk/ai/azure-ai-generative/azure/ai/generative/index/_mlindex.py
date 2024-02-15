@@ -493,7 +493,7 @@ class MLIndex:
         embeddings_container: Optional[Union[str, Path]] = None,
         index_type: str = "faiss",
         index_connection: Optional[str] = None,
-        index_config: Dict[str, Any] = {},
+        index_config: Optional[Dict[str, Any]] = None,
         output_path: Optional[Union[str, Path]] = None,
         credential: Optional[TokenCredential] = None,
     ) -> "MLIndex":
@@ -523,6 +523,9 @@ class MLIndex:
         -------
             MLIndex
         """
+        if index_config is None:
+            index_config = {}
+
         from azure.ai.generative.index._documents import split_documents
 
         with track_activity(logger, "MLIndex.from_files"):
@@ -561,7 +564,7 @@ class MLIndex:
         embeddings_container: Optional[Union[str, Path]] = None,
         index_type: str = "faiss",
         index_connection: Optional[str] = None,
-        index_config: Dict[str, Any] = {},
+        index_config: Optional[Dict[str, Any]] = None,
         output_path: Optional[Union[str, Path]] = None,
         credential: Optional[TokenCredential] = None,
     ) -> "MLIndex":
@@ -585,6 +588,9 @@ class MLIndex:
         -------
             MLIndex
         """
+        if index_config is None:
+            index_config = {}
+
         import time
 
         embeddings = None
@@ -697,7 +703,7 @@ class MLIndex:
         embeddings: EmbeddingsContainer,
         index_type: str,
         index_connection: Optional[str] = None,
-        index_config: Dict[str, Any] = {},
+        index_config: Optional[Dict[str, Any]] = None,
         output_path: Optional[Union[str, Path]] = None,
         credential: Optional[TokenCredential] = None,
     ) -> "MLIndex":
@@ -717,6 +723,8 @@ class MLIndex:
         -------
             MLIndex
         """
+        if index_config is None:
+            index_config = {}
         if output_path is None:
             output_path = Path.cwd() / f"{index_type}_{embeddings.kind}_index"
         if index_type == "faiss":

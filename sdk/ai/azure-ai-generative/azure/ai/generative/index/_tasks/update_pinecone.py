@@ -77,8 +77,8 @@ def create_pinecone_index_sdk(pinecone_config: dict, api_key: str, embeddings: E
 # pylint: disable=too-many-locals, too-many-branches, too-many-statements
 def create_index_from_raw_embeddings(
     emb: EmbeddingsContainer,
-    pinecone_config: dict = {},
-    connection: dict = {},
+    pinecone_config: Optional[dict] = None,
+    connection: Optional[dict] = None,
     output_path: Optional[str] = None,
     credential: Optional[TokenCredential] = None,
     verbosity: int = 1,
@@ -103,6 +103,12 @@ def create_index_from_raw_embeddings(
         verbosity (int): Defaults to 1, which will log aggregate information about
         documents and IDs of deleted documents. 2 will log all document_ids as they are processed.
     """
+    if pinecone_config is None:
+        pinecone_config = {}
+
+    if connection is None:
+        connection = {}
+
     with track_activity(
         # pylint: disable=protected-access
         logger,

@@ -14,7 +14,7 @@ from azure.core.credentials import TokenCredential
 from azure.keyvault.secrets import SecretClient
 
 
-class AugLoopParams:
+class AugLoopParams:  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         url: str,
@@ -34,7 +34,7 @@ class AugLoopParams:
         cvBase: str = "eAieZY/LoqYfURDv1ao1W3",
         sessionId: str = "1ecf6906-090a-45b1-8d79-88defc62d3cc",
         runtimeVersion: str = "2.34.97",
-        otherTokenKeyVaultSecretNames: list = [],
+        otherTokenKeyVaultSecretNames: Optional[list] = None,
     ):
         self.url = url
         self.authTokenKeyVaultUrl = authTokenKeyVaultUrl
@@ -53,7 +53,9 @@ class AugLoopParams:
         self.cvBase = cvBase
         self.sessionId = sessionId
         self.runtimeVersion = runtimeVersion
-        self.otherTokenKeyVaultSecretNames = otherTokenKeyVaultSecretNames
+        self.otherTokenKeyVaultSecretNames = (
+            otherTokenKeyVaultSecretNames if otherTokenKeyVaultSecretNames is not None else []
+        )
 
         # if signalOtherParams is set, make sure it ends with a ","
         if self.signalOtherParams != "" and not self.signalOtherParams.endswith(","):
@@ -63,7 +65,10 @@ class AugLoopParams:
 class AugLoopClient:  # pylint: disable=client-accepts-api-version-keyword
     def __init__(
         # pylint: disable=unused-argument
-        self, augLoopParams: AugLoopParams, credential: Optional[TokenCredential] = None, **kwargs: Any
+        self,
+        augLoopParams: AugLoopParams,
+        credential: Optional[TokenCredential] = None,
+        **kwargs: Any,
     ) -> None:
         self.augLoopParams = augLoopParams
         self.sequence = 0

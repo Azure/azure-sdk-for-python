@@ -306,13 +306,16 @@ class QADataGenerator:
         qa_type: QAType,
         results: Union[List, List[List]],
         output_format: OutputStructure = OutputStructure.PROMPTFLOW,
-        field_mapping: Dict[str, str] = {"chat_history_key": "chat_history", "question_key": "question"},
+        field_mapping: Optional[Dict[str, str]] = None,
     ):
         """Writes results from QA gen to a jsonl file for Promptflow batch run results is either a list of questions
         and answers or list of list of questions and answers grouped by their chunk e.g. [("How are you?",
         "I am good.")] or [ [("How are you?", "I am good.")], [("What can I do?", "Tell me a joke.")]
         """
         data_dict = defaultdict(list)
+
+        if field_mapping is None:
+            field_mapping = {"chat_history_key": "chat_history", "question_key": "question"}
 
         if not isinstance(results[0], List):
             results = [results]

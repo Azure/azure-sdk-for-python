@@ -101,7 +101,7 @@ def get_activity_logging_filter(
 ) -> Callable[[Iterator[DocumentSource], Any], Iterator[DocumentSource]]:
     """Get a filter function with activity logging."""
 
-    def filter_and_log_extensions(
+    def filter_and_log_extensions(  # pylint: disable=dangerous-default-value
         sources: Iterator[DocumentSource], allowed_extensions=SUPPORTED_EXTENSIONS
     ) -> Iterator[DocumentSource]:
         """Filter out sources with extensions not in allowed_extensions."""

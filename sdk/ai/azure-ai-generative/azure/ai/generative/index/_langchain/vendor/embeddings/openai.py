@@ -119,7 +119,7 @@ async def async_embed_with_retry(embeddings: OpenAIEmbeddings, **kwargs: Any) ->
 
 
 @dataclass
-class OpenAIEmbeddings(Embeddings):
+class OpenAIEmbeddings(Embeddings):  # pylint: disable=too-many-instance-attributes
     """OpenAI embedding models.
 
     To use, you should have the ``openai`` python package installed, and the

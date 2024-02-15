@@ -225,13 +225,19 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
 # pylint: disable=too-many-locals, too-many-branches, too-many-statements
 def create_index_from_raw_embeddings(
     emb: EmbeddingsContainer,
-    acs_config={},
-    connection={},
+    acs_config=None,
+    connection=None,
     output_path: Optional[Union[Path, str]] = None,
     credential: Optional[TokenCredential] = None,
     verbosity: int = 1,
 ) -> MLIndex:
     """Upload an EmbeddingsContainer to Azure Cognitive Search and return an MLIndex."""
+    if acs_config is None:
+        acs_config = {}
+
+    if connection is None:
+        connection = {}
+
     with track_activity(
         logger,
         "update_acs",

@@ -322,9 +322,11 @@ SUPPORTED_EXTENSIONS = list(file_extension_loaders.keys())
 
 
 def crack_documents(
-    sources: Iterator[DocumentSource], file_extension_loaders=file_extension_loaders
+    sources: Iterator[DocumentSource], file_extension_loaders=None
 ) -> Iterator[ChunkedDocument]:
     """Crack documents into chunks."""
+    if file_extension_loaders is None:
+        file_extension_loaders = file_extension_loaders
     total_time: float = 0.0
     files_by_extension = {str(ext): 0.0 for ext in file_extension_loaders}
     log_batch_size = 100

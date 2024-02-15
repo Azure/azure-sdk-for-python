@@ -14,7 +14,7 @@ from azure.ai.generative.index._utils.logging import get_logger
 logger = get_logger("embeddings.openai")
 
 
-class OpenAIEmbedder:
+class OpenAIEmbedder:  # pylint: disable=too-many-instance-attributes
     """OpenAI Embedding client wrapper with retries."""
 
     def __init__(

@@ -160,8 +160,10 @@ class LoggerFactory:
             self.loggers[name] = logger
         return self.loggers[name]
 
-    def track_activity(self, logger, name, activity_type=DEFAULT_ACTIVITY_TYPE, custom_dimensions={}):
+    def track_activity(self, logger, name, activity_type=DEFAULT_ACTIVITY_TYPE, custom_dimensions=None):
         """Track the activity of the given logger."""
+        if custom_dimensions is None:
+            custom_dimensions = {}
         if self.appinsights:
             stack = self.get_stack()
             custom_dimensions.update({**default_custom_dimensions, "trace": stack})
@@ -173,8 +175,10 @@ class LoggerFactory:
             return _log_activity(child_logger, name, activity_type, custom_dimensions)
         return _run_without_logging(logger)
 
-    def telemetry_info(self, logger, message, custom_dimensions={}):
+    def telemetry_info(self, logger, message, custom_dimensions=None):
         """Track info with given logger."""
+        if custom_dimensions is None:
+            custom_dimensions = {}
         if self.appinsights:
             payload = custom_dimensions
             payload.update(default_custom_dimensions)
@@ -184,8 +188,10 @@ class LoggerFactory:
                 activity_logger = ActivityLoggerAdapter(child_logger, payload)
                 activity_logger.info(message)
 
-    def telemetry_error(self, logger, message, custom_dimensions={}):
+    def telemetry_error(self, logger, message, custom_dimensions=None):
         """Track error with given logger."""
+        if custom_dimensions is None:
+            custom_dimensions = {}
         if self.appinsights:
             payload = custom_dimensions
             payload.update(default_custom_dimensions)
@@ -271,19 +277,25 @@ def get_logger(name, level=logging.INFO):
     return _logger_factory.get_logger(name, level)
 
 
-def track_activity(logger, name, activity_type=DEFAULT_ACTIVITY_TYPE, custom_dimensions={}):
+def track_activity(logger, name, activity_type=DEFAULT_ACTIVITY_TYPE, custom_dimensions=None):
     """Track the activity with given logger."""
+    if custom_dimensions is None:
+        custom_dimensions = {}
     enable_appinsights_logging()
     return _logger_factory.track_activity(logger, name, activity_type, custom_dimensions)
 
 
-def track_info(logger, message, custom_dimensions={}):
+def track_info(logger, message, custom_dimensions=None):
     """Track info with given logger."""
+    if custom_dimensions is None:
+        custom_dimensions = {}
     return _logger_factory.telemetry_info(logger, message, custom_dimensions)
 
 
-def track_error(logger, message, custom_dimensions={}):
+def track_error(logger, message, custom_dimensions=None):
     """Track error with given logger."""
+    if custom_dimensions is None:
+        custom_dimensions = {}
     return _logger_factory.telemetry_error(logger, message, custom_dimensions)
 
 

@@ -28,7 +28,7 @@ def load_image_binary(image_path: str) -> bytes:
 
 # ================ Prompt Image Replacement ================
 def replace_prompt_captions(
-    prompt: str, captions: dict = {}, logger: logging.Logger = logging.getLogger("Prompt Image Captioner")
+    prompt: str, captions: Optional[dict] = None, logger: logging.Logger = logging.getLogger("Prompt Image Captioner")
 ) -> str:
     """
     Insert captions for images into the prompt.
@@ -36,6 +36,9 @@ def replace_prompt_captions(
     """
     # Compile pattern if not already compiled
     _compile_prompt_images_pattern()
+
+    if captions is None:
+        captions = {}
 
     prompt_data = []
     for text_or_image in IMAGES_PATTERN.split(prompt):
@@ -61,12 +64,15 @@ def replace_prompt_captions(
 def format_multimodal_prompt(
     prompt: str,
     images_dir: Optional[str] = None,
-    captions: dict = {},
+    captions: Optional[dict] = None,
     logger: logging.Logger = logging.getLogger("Prompt Image Formatter"),
 ) -> List[dict]:
     """Formats a prompt with images into a list of dictionaries for the API."""
     # Compile pattern if not already compiled
     _compile_prompt_images_pattern()
+
+    if captions is None:
+        captions = {}
 
     # Split prompt into text and image sections
     prompt_data = []

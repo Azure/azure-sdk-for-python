@@ -215,11 +215,13 @@ class TextSplitter(BaseDocumentTransformer, ABC):
         cls: Type[TS],
         encoding_name: str = "gpt2",
         model_name: Optional[str] = None,
-        allowed_special: Union[Literal["all"], AbstractSet[str]] = set(),
+        allowed_special: Optional[Union[Literal["all"], AbstractSet[str]]] = None,
         disallowed_special: Union[Literal["all"], Collection[str]] = "all",
         **kwargs: Any,
     ) -> TS:
         """Text splitter that uses tiktoken encoder to count length."""
+        if allowed_special is None:
+            allowed_special = set()
         try:
             import tiktoken
         except ImportError as e:
@@ -478,7 +480,7 @@ class TokenTextSplitter(TextSplitter):
         self,
         encoding_name: str = "gpt2",
         model_name: Optional[str] = None,
-        allowed_special: Union[Literal["all"], AbstractSet[str]] = set(),
+        allowed_special: Optional[Union[Literal["all"], AbstractSet[str]]] = None,
         disallowed_special: Union[Literal["all"], Collection[str]] = "all",
         **kwargs: Any,
     ) -> None:
@@ -498,7 +500,7 @@ class TokenTextSplitter(TextSplitter):
         else:
             enc = tiktoken.get_encoding(encoding_name)
         self._tokenizer = enc
-        self._allowed_special = allowed_special
+        self._allowed_special = allowed_special if allowed_special is not None else set()
         self._disallowed_special = disallowed_special
 
     def split_text(self, text: str) -> List[str]:

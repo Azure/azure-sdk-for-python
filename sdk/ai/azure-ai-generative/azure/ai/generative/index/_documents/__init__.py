@@ -33,7 +33,7 @@ class DocumentChunksIterator(Iterator):
         source_loader: Callable[[Iterator[DocumentSource], Any], Iterator[ChunkedDocument]] = crack_documents,
         chunked_document_processors: Optional[
             List[Callable[[Iterable[ChunkedDocument]], Iterator[ChunkedDocument]]]
-        ] = [lambda docs: split_documents(docs, splitter_args={"chunk_size": 1024, "chunk_overlap": 0})],
+        ] = None,
     ):
         """Initialize a document chunks iterator."""
         self.files_source = files_source
@@ -45,7 +45,11 @@ class DocumentChunksIterator(Iterator):
         self.file_filter = file_filter
         self.source_loader = source_loader
 
-        self.chunked_document_processors = chunked_document_processors
+        self.chunked_document_processors = (
+            chunked_document_processors
+            if chunked_document_processors is not None
+            else [lambda docs: split_documents(docs, splitter_args={"chunk_size": 1024, "chunk_overlap": 0})]
+        )
         self.document_chunks_iterator: Optional[Iterator[ChunkedDocument]] = None
         self.__document_statistics = None
         self.span = None
@@ -103,7 +107,7 @@ class DocumentChunksIterator(Iterator):
         """
         return self.__document_statistics
 
-    def _document_statistics(
+    def _document_statistics(  # pylint: disable=dangerous-default-value
         self, sources: Iterable[DocumentSource], allowed_extensions=SUPPORTED_EXTENSIONS
     ) -> Generator[DocumentSource, None, None]:
         """Filter out sources with extensions not in allowed_extensions."""
