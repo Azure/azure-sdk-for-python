@@ -10,14 +10,7 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CommunicationMessagesChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the communication messages channel.
-    """
-
-    WHATS_APP = "whatsApp"
-    """The WhatsApp communication messages channel type."""
-
-class CommunicationMessageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class CommunicationMessageKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of message. Supports text, image, template.
     """
 
@@ -28,7 +21,14 @@ class CommunicationMessageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TEMPLATE = "template"
     """Template message type."""
 
-class MessageTemplateBindingsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class CommunicationMessagesChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the communication messages channel.
+    """
+
+    WHATS_APP = "whatsApp"
+    """The WhatsApp communication messages channel type."""
+
+class MessageTemplateBindingsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the message template.
     """
 
@@ -48,7 +48,7 @@ class MessageTemplateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PAUSED = "paused"
     """Message template is paused."""
 
-class MessageTemplateValueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class MessageTemplateValueKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the template parameter.
     """
 
@@ -64,6 +64,19 @@ class MessageTemplateValueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The location template parameter type."""
     QUICK_ACTION = "quickAction"
     """The quick action template parameter type."""
+
+class RepeatabilityResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Repeatability Result header options.
+    """
+
+    ACCEPTED = "accepted"
+    """If the request was accepted and the server guarantees that the server state reflects a single
+    execution of the operation."""
+    REJECTED = "rejected"
+    """If the request was rejected because the combination of Repeatability-First-Sent and
+    Repeatability-Request-ID were invalid
+    or because the Repeatability-First-Sent value was outside the range of values held by the
+    server."""
 
 class WhatsAppMessageButtonSubType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The WhatsApp button sub type.

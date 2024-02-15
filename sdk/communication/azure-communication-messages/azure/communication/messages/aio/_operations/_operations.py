@@ -22,7 +22,7 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._model_base import SdkJSONEncoder, _deserialize
-from ..._operations._operations import build_message_template_get_templates_request, build_notification_messages_download_media_request, build_notification_messages_send_request
+from ..._operations._operations import build_message_template_list_templates_request, build_notification_messages_download_media_request, build_notification_messages_send_request
 from .._vendor import MessageTemplateClientMixinABC, NotificationMessagesClientMixinABC
 
 if sys.version_info >= (3, 9):
@@ -53,8 +53,6 @@ class NotificationMessagesClientOperationsMixin(   # pylint: disable=name-too-lo
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: SendMessageResult. The SendMessageResult is compatible with MutableMapping
         :rtype: ~azure.communication.messages.models.SendMessageResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -85,8 +83,9 @@ class NotificationMessagesClientOperationsMixin(   # pylint: disable=name-too-lo
                       Business Identifier. Required.
                     "kind": "template",
                     "template": {
-                        "language": "str",  # The codes for the supported languages for
-                          templates. Required.
+                        "language": "str",  # The template's language, in the ISO 639 format,
+                          consist of a two-letter language code followed by an optional two-letter
+                          country code, e.g., 'en' or 'en_US'. Required.
                         "name": "str",  # Name of the template. Required.
                         "bindings": message_template_bindings,
                         "values": [
@@ -112,7 +111,7 @@ class NotificationMessagesClientOperationsMixin(   # pylint: disable=name-too-lo
                         {
                             "refValue": "str",  # The name of the referenced item in the
                               template values. Required.
-                            "subType": "str"  # Optional. The WhatsApp button sub type.
+                            "subType": "str"  # The WhatsApp button sub type. Required.
                               Known values are: "quickReply" and "url".
                         }
                     ],
@@ -172,8 +171,6 @@ class NotificationMessagesClientOperationsMixin(   # pylint: disable=name-too-lo
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: SendMessageResult. The SendMessageResult is compatible with MutableMapping
         :rtype: ~azure.communication.messages.models.SendMessageResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -208,8 +205,6 @@ class NotificationMessagesClientOperationsMixin(   # pylint: disable=name-too-lo
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: SendMessageResult. The SendMessageResult is compatible with MutableMapping
         :rtype: ~azure.communication.messages.models.SendMessageResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -241,11 +236,6 @@ class NotificationMessagesClientOperationsMixin(   # pylint: disable=name-too-lo
 
         :param body: Is one of the following types: NotificationContent, JSON, IO[bytes] Required.
         :type body: ~azure.communication.messages.models.NotificationContent or JSON or IO[bytes]
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: SendMessageResult. The SendMessageResult is compatible with MutableMapping
         :rtype: ~azure.communication.messages.models.SendMessageResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -276,8 +266,9 @@ class NotificationMessagesClientOperationsMixin(   # pylint: disable=name-too-lo
                       Business Identifier. Required.
                     "kind": "template",
                     "template": {
-                        "language": "str",  # The codes for the supported languages for
-                          templates. Required.
+                        "language": "str",  # The template's language, in the ISO 639 format,
+                          consist of a two-letter language code followed by an optional two-letter
+                          country code, e.g., 'en' or 'en_US'. Required.
                         "name": "str",  # Name of the template. Required.
                         "bindings": message_template_bindings,
                         "values": [
@@ -303,7 +294,7 @@ class NotificationMessagesClientOperationsMixin(   # pylint: disable=name-too-lo
                         {
                             "refValue": "str",  # The name of the referenced item in the
                               template values. Required.
-                            "subType": "str"  # Optional. The WhatsApp button sub type.
+                            "subType": "str"  # The WhatsApp button sub type. Required.
                               Known values are: "quickReply" and "url".
                         }
                     ],
@@ -423,8 +414,6 @@ class NotificationMessagesClientOperationsMixin(   # pylint: disable=name-too-lo
 
         :param id: The stream ID. Required.
         :type id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: bytes
         :rtype: bytes
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -485,13 +474,13 @@ class MessageTemplateClientOperationsMixin(
 ):
 
     @distributed_trace
-    def get_templates(
+    def list_templates(
         self,
         channel_id: str,
         **kwargs: Any
     ) -> AsyncIterable["_models.MessageTemplateItem"]:
         # pylint: disable=line-too-long
-        """List all templates for given ACS channel.
+        """List all templates for given Azure Communication Services channel.
 
         :param channel_id: The registration ID of the channel. Required.
         :type channel_id: str
@@ -508,11 +497,13 @@ class MessageTemplateClientOperationsMixin(
                 # JSON input template for discriminator value "whatsApp":
                 message_template_item = {
                     "kind": "whatsApp",
-                    "language": "str",  # The template's language. Required.
+                    "language": "str",  # The template's language, in the ISO 639 format, consist
+                      of a two-letter language code followed by an optional two-letter country code,
+                      e.g., 'en' or 'en_US'. Required.
                     "name": "str",  # The template's name. Required.
                     "status": "str",  # The aggregated template status. Required. Known values
                       are: "approved", "rejected", "pending", and "paused".
-                    "content": {}  # Optional. WhatsApp platform's template content This is the
+                    "content": {}  # Optional. WhatsApp platform's template content. This is the
                       payload returned from WhatsApp API.
                 }
 
@@ -522,6 +513,7 @@ class MessageTemplateClientOperationsMixin(
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[List[_models.MessageTemplateItem]] = kwargs.pop(
             'cls', None
         )
@@ -533,8 +525,9 @@ class MessageTemplateClientOperationsMixin(
         def prepare_request(next_link=None):
             if not next_link:
                 
-                _request = build_message_template_get_templates_request(
+                _request = build_message_template_list_templates_request(
                     channel_id=channel_id,
+                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,

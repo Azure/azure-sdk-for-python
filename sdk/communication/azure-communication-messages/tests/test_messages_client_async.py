@@ -35,17 +35,18 @@ class TestNotificationMessageClientForTextAsync(AsyncMessagesRecordedTestCase):
         phone_number: str = "+14254360097"
         raised = False
 
-        message_client = self.create_notification_message_client()
-
         text_options = TextNotificationContent(
             channel_registration_id="b045be8c-45cd-492a-b2a2-47bae7c36959",
             to= [phone_number],
             content="Thanks for your feedback Hello.")
 
         message_response : MessageReceipt = None
+        message_client: NotificationMessagesClient = self.create_notification_message_client()
+
         try:
-            message_responses = await message_client.send(text_options)
-            message_response = message_responses.receipts[0]
+            async with message_client:
+                message_responses = await message_client.send(text_options)
+                message_response = message_responses.receipts[0]
         except:
             raised = True
             raise
@@ -63,7 +64,7 @@ class TestNotificationMessageClientForTextAsync(AsyncMessagesRecordedTestCase):
             language="ca")
         raised = False
 
-        message_client = self.create_notification_message_client()
+        message_client: NotificationMessagesClient = self.create_notification_message_client()
 
         template_options = TemplateNotificationContent(
             channel_registration_id="b045be8c-45cd-492a-b2a2-47bae7c36959",
@@ -71,9 +72,11 @@ class TestNotificationMessageClientForTextAsync(AsyncMessagesRecordedTestCase):
             template=input_template)
 
         message_response : MessageReceipt = None
+
         try:
-            message_responses = await message_client.send(template_options)
-            message_response = message_responses.receipts[0]
+            async with message_client:
+                message_responses = await message_client.send(template_options)
+                message_response = message_responses.receipts[0]
         except:
             raised = True
             raise
@@ -103,17 +106,18 @@ class TestNotificationMessageClientForTextAsync(AsyncMessagesRecordedTestCase):
             )
         raised = False
 
-        message_client = self.create_notification_message_client()
-
         template_options = TemplateNotificationContent(
             channel_registration_id="b045be8c-45cd-492a-b2a2-47bae7c36959",
             to=[phone_number],
             template=input_template)
 
         message_response : MessageReceipt = None
+        message_client: NotificationMessagesClient = self.create_notification_message_client()
+
         try:
-            message_responses = await message_client.send(template_options)
-            message_response = message_responses.receipts[0]
+            async with message_client:
+                message_responses = await message_client.send(template_options)
+                message_response = message_responses.receipts[0]
         except:
             raised = True
             raise
@@ -129,17 +133,18 @@ class TestNotificationMessageClientForTextAsync(AsyncMessagesRecordedTestCase):
         input_media_uri: str = "https://aka.ms/acsicon1"
         raised = False
 
-        message_client = self.create_notification_message_client()
-
         template_options = MediaNotificationContent(
             channel_registration_id="b045be8c-45cd-492a-b2a2-47bae7c36959",
             to=[phone_number],
             media_uri=input_media_uri)
 
         message_response : MessageReceipt = None
+        message_client: NotificationMessagesClient = self.create_notification_message_client()
+
         try:
-            message_responses = await message_client.send(template_options)
-            message_response = message_responses.receipts[0]
+            async with message_client:
+                message_responses = await message_client.send(template_options)
+                message_response = message_responses.receipts[0]
         except:
             raised = True
             raise
@@ -155,12 +160,13 @@ class TestNotificationMessageClientForTextAsync(AsyncMessagesRecordedTestCase):
         input_media_id: str = "https://aka.ms/acsicon1"
         raised = False
 
-        message_client = self.create_notification_message_client()
+        message_client: NotificationMessagesClient = self.create_notification_message_client()
 
         try:
-            media_stream = await message_client._get_media(input_media_id)
-            with open('media.txt', 'wb') as file:
-                file.write(media_stream)
+            async with message_client:
+                media_stream = await message_client.download_media(input_media_id)
+                with open('media.txt', 'wb') as file:
+                    file.write(media_stream)
         except:
             raised = True
             raise
