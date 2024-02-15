@@ -57,6 +57,7 @@ def test_distributed_tracing_policy_solo(http_request, http_response):
     assert network_span.attributes.get("x-ms-request-id") == "some request id"
     assert network_span.attributes.get("x-ms-client-request-id") == "some client request id"
     assert network_span.attributes.get("http.status_code") == 202
+    assert "error.type" not in network_span.attributes
 
     # Check on_exception
     network_span = root_span.children[1]
@@ -68,6 +69,29 @@ def test_distributed_tracing_policy_solo(http_request, http_response):
     assert network_span.attributes.get("http.user_agent") is None
     assert network_span.attributes.get("x-ms-request-id") == None
     assert network_span.attributes.get("http.status_code") == 504
+    assert network_span.attributes.get("error.type")
+
+
+@pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
+def test_distributed_tracing_policy_error_response(http_request, http_response):
+    """Test policy when the HTTP response corresponds to an error."""
+    settings.tracing_implementation.set_value(FakeSpan)
+    with FakeSpan(name="parent") as root_span:
+        policy = DistributedTracingPolicy(tracing_attributes={"myattr": "myvalue"})
+
+        request = http_request("GET", "http://localhost/temp?query=query")
+
+        pipeline_request = PipelineRequest(request, PipelineContext(None))
+        policy.on_request(pipeline_request)
+
+        response = create_http_response(http_response, request, None)
+        response.headers = request.headers
+        response.status_code = 403
+
+        policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
+        network_span = root_span.children[0]
+        assert network_span.name == "/temp"
+        assert network_span.attributes.get("error.type") == "403"
 
 
 @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))

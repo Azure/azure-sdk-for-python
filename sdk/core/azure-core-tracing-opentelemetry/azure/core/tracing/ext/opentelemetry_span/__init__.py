@@ -45,6 +45,7 @@ __version__ = VERSION
 
 _SUPPRESSED_SPAN_FLAG = "SUPPRESSED_SPAN_FLAG"
 _LAST_UNSUPPRESSED_SPAN = "LAST_UNSUPPRESSED_SPAN"
+_ERROR_SPAN_ATTRIBUTE = "error.type"
 
 
 class OpenTelemetrySpan(HttpSpanMixin, object):
@@ -226,6 +227,8 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
 
     def __exit__(self, exception_type, exception_value, traceback) -> None:
         # Finish the span.
+        if exception_type:
+            self.add_attribute(_ERROR_SPAN_ATTRIBUTE, str(exception_type.__name__))
         if self._current_ctxt_manager:
             self._current_ctxt_manager.__exit__(exception_type, exception_value, traceback)  # pylint: disable=no-member
             self._current_ctxt_manager = None
