@@ -229,6 +229,33 @@ jobs:
 
   - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
     parameters:
+      JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
+      OsVmImage: azsdk-pool-mms-ubuntu-2004-1espt
+      Pool: azsdk-pool-mms-ubuntu-2004-1es-pt
+      DependsOn:
+        - 'Build'
+        - ${{ if eq(parameters['AdvancedBuild'], true) }}:
+          - 'CoalesceBuildArtifacts'
+      MatrixConfigs: ${{ parameters.MatrixConfigs }}
+      MatrixFilters: ${{ parameters.MatrixFilters }}
+      MatrixReplace: ${{ parameters.MatrixReplace }}
+      CloudConfig:
+        Cloud: Public
+      AdditionalParameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestPipeline: ${{ parameters.TestPipeline }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
+        AfterTestSteps: ${{ parameters.AfterTestSteps }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
+        InjectedPackages: ${{ parameters.InjectedPackages }}
+        UnsupportedToxEnvironments: ${{ parameters.UnsupportedToxEnvironments }}
+        TestProxy: ${{ parameters.TestProxy }}
+
+  - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+    parameters:
       JobTemplatePath: /eng/pipelines/templates/jobs/regression.yml
       OsVmImage: azsdk-pool-mms-ubuntu-2004-1espt
       Pool: azsdk-pool-mms-ubuntu-2004-1es-pt

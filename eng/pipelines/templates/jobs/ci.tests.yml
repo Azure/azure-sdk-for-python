@@ -32,6 +32,8 @@ parameters:
   - name: DependsOn
     type: object
     default: []
+  - name: Matrix
+    type: string
   - name: UsePlatformContainer
     type: boolean
     default: false
@@ -108,8 +110,8 @@ jobs:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
-        CoverageArg: ${{ poolDefinition.CoverageArg }}
-        PythonVersion: "${{ poolDefinition.PythonVersion }}"
+        CoverageArg: $(CoverageArg)
+        PythonVersion: $(PythonVersion)
         ToxTestEnv: $(toxenv)
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: $(InjectedPackages)
