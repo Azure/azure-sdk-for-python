@@ -143,7 +143,7 @@ extends:
           image: azsdk-pool-mms-win-2022-1espt
           os: windows
         credscan:
-          suppressionFile: '$(Build.SourcesDirectory)/eng/CredScanSuppression.json'
+          suppressionsFile: '$(Build.SourcesDirectory)/eng/CredScanSuppression.json'
           scanFolder: '$(Build.SourcesDirectory)/credscan.tsv'
           toolVersion: '2.3.12.23'
           baselineFiles: $(Build.SourcesDirectory)/eng/python.gdnbaselines
