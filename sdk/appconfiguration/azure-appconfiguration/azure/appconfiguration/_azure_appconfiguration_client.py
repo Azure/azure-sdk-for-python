@@ -212,14 +212,34 @@ class AzureAppConfigurationClient:
                                     
             result = []
             continuation_token = None
-            for page_etag in page_etags:
+            index = 0
+            try:
+                response = self._impl.get_key_values(  # type: ignore
+                    key=key_filter,
+                    label=label_filter,
+                    accept_datetime=accept_datetime,
+                    select=select,
+                    if_none_match=page_etags[index],
+                    cls=kwargs.pop("cls", lambda objs: [ConfigurationSetting._from_generated(x) for x in objs]),
+                    **kwargs,
+                ).by_page()
+                response.next()
+                result.append(response._current_page)
+                continuation_token = response.continuation_token
+            except ResourceNotModifiedError as e:
+                result.append(None)
+                link = e.response.headers.get('Link', None)
+                continuation_token = link[1:link.index(">")] if link else None
+            index += 1
+            
+            while continuation_token:
                 try:
                     response = self._impl.get_key_values(  # type: ignore
                         key=key_filter,
                         label=label_filter,
                         accept_datetime=accept_datetime,
                         select=select,
-                        if_none_match=page_etag,
+                        if_none_match=page_etags[index] if index < len(page_etags) else None,
                         cls=kwargs.pop("cls", lambda objs: [ConfigurationSetting._from_generated(x) for x in objs]),
                         **kwargs,
                     ).by_page(continuation_token = continuation_token)
@@ -228,43 +248,13 @@ class AzureAppConfigurationClient:
                     continuation_token = response.continuation_token
                 except ResourceNotModifiedError as e:
                     result.append(None)
-                    continuation_token = e.response.headers['Link'][1:e.response.headers['Link'].index(">")]
+                    link = e.response.headers.get('Link', None)
+                    continuation_token = link[1:link.index(">")] if link else None
+                index += 1
                 
             return result
         except binascii.Error as exc:
             raise binascii.Error("Connection string secret has incorrect padding") from exc
-    
-    # @distributed_trace
-    # def monitor_single_page_configuration_settings(
-    #     self,
-    #     *,
-    #     page_etag: str,
-    #     continuation_token: Optional[str],
-    #     key_filter: Optional[str] = None,
-    #     label_filter: Optional[str] = None,
-    #     accept_datetime: Optional[Union[datetime, str]] = None,
-    #     fields: Optional[List[str]] = None,
-    #     **kwargs: Any,
-    # ) -> Optional[ItemPaged[ConfigurationSetting]]:
-    #     breakpoint()
-    #     if fields:
-    #         fields = ["locked" if x == "read_only" else x for x in fields]
-    #     try:
-    #         response = self._impl.get_key_values(  # type: ignore
-    #             key=key_filter,
-    #             label=label_filter,
-    #             accept_datetime=accept_datetime,
-    #             select=fields,
-    #             if_none_match=page_etag,
-    #             cls=kwargs.pop("cls", lambda objs: [ConfigurationSetting._from_generated(x) for x in objs]),
-    #             **kwargs,
-    #         ).by_page(continuation_token = continuation_token)
-    #         response.next()
-    #         return response._current_page
-    #     except ResourceNotModifiedError as e:
-    #         print("No changes")
-    #         pass
-    #     return None 
     
     @distributed_trace
     def get_configuration_setting(
