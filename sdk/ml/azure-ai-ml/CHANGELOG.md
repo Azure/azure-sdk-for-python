@@ -123,6 +123,7 @@
 - Added data import schedule. The class added is `ImportDataSchedule`.
 - Added support to enable data isolation feature at workspace creation stage.
 - Added auto_delete_setting support for asset version in data import job.
+- Switched code snapshot upload from directory-based to container-based design in order to allow finer RBAC within workspaces. A container will be created for each new snapshot. This change does not affect storage costs or snapshot functionality.
 
 ### Bugs Fixed
 
