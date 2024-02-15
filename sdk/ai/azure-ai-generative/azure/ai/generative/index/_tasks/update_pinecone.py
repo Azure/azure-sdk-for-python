@@ -105,7 +105,9 @@ def create_index_from_raw_embeddings(
     """
     with track_activity(
         # pylint: disable=protected-access
-        logger, "create_index_from_raw_embeddings", custom_dimensions={"num_documents": len(emb._document_embeddings)}
+        logger,
+        "create_index_from_raw_embeddings",
+        custom_dimensions={"num_documents": len(emb._document_embeddings)},
     ) as activity_logger:
         logger.info("Updating Pinecone index")
 
@@ -122,8 +124,10 @@ def create_index_from_raw_embeddings(
 
         connection_credential = get_connection_credential(connection, credential=credential)
         if not isinstance(connection_credential, AzureKeyCredential):
-            msg = f"instead got: {type(connection_credential)}"
-            raise ValueError(f"Expected credential to Pinecone index to be an AzureKeyCredential, " + msg)
+            raise ValueError(
+                "Expected credential to Pinecone index to be an AzureKeyCredential, "
+                + f"instead got: {type(connection_credential)}"
+            )
 
         create_pinecone_index_sdk(pinecone_config, connection_credential.key, embeddings=emb)
 
@@ -307,10 +311,10 @@ def create_index_from_raw_embeddings(
                 num_source_docs += len(batch)
 
             duration = time.time() - t1
-            msg = f"took {duration:.4f} seconds"
             logger.info(
                 # pylint: disable=protected-access
-                f"Built index from {num_source_docs} documents and {len(emb._document_embeddings)} chunks, " + msg
+                f"Built index from {num_source_docs} documents and {len(emb._document_embeddings)} chunks, "
+                + f"took {duration:.4f} seconds"
             )
             activity_logger.info(
                 "Built index", extra={"properties": {"num_source_docs": num_source_docs, "duration": duration}}

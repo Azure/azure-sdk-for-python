@@ -32,7 +32,7 @@ class AugLoopConversationBot(ConversationBot):
         instantiation_parameters: A dictionary of parameters that are used to instantiate the conversation template
         """
         if role == ConversationRole.USER:
-            raise Exception(f"AugLoop conversation Bot is not enabled for USER role")
+            raise Exception("AugLoop conversation Bot is not enabled for USER role")
 
         self.role = role
         self.augLoopParams = augLoopParams
@@ -79,7 +79,7 @@ class AugLoopConversationBot(ConversationBot):
         time_taken = time.time() - time_start
 
         if not response_data["success"]:
-            raise Exception(f"Unexpected result from Augloop")
+            raise Exception("Unexpected result from Augloop")
 
         parsed_response = {
             "samples": response_data["messages"],

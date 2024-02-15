@@ -196,7 +196,7 @@ class MLIndex:
                 search_client_version = pkg_version.parse(azure_search_documents_version)
                 langchain_pkg_version = pkg_version.parse(langchain_version)
 
-                if (
+                if (  # pylint: disable=too-many-boolean-expressions
                     search_client_version > pkg_version.parse("11.4.0b6")
                     and search_client_version <= pkg_version.parse("11.4.0b8")
                     and langchain_pkg_version > pkg_version.parse("0.0.273")
@@ -316,8 +316,10 @@ class MLIndex:
 
                     connection_credential = get_connection_credential(self.index_config, credential=credential)
                     if not isinstance(connection_credential, AzureKeyCredential):
-                        msg = f"instead got: {type(connection_credential)}"
-                        raise ValueError(f"Expected credential to Pinecone index to be an AzureKeyCredential, " + msg)
+                        raise ValueError(
+                            "Expected credential to Pinecone index to be an AzureKeyCredential, "
+                            + f"instead got: {type(connection_credential)}"
+                        )
 
                     environment = get_pinecone_environment(self.index_config, credential=credential)
                     pinecone.init(api_key=connection_credential.key, environment=environment)
@@ -408,8 +410,10 @@ class MLIndex:
 
             connection_credential = get_connection_credential(self.index_config, credential=credential)
             if not isinstance(connection_credential, AzureKeyCredential):
-                msg = f"instead got: {type(connection_credential)}"
-                raise ValueError(f"Expected credential to Pinecone index to be an AzureKeyCredential, " + msg)
+                raise ValueError(
+                    "Expected credential to Pinecone index to be an AzureKeyCredential, "
+                    + f"instead got: {type(connection_credential)}"
+                )
 
             environment = get_pinecone_environment(self.index_config, credential=credential)
             pinecone.init(api_key=connection_credential.key, environment=environment)
@@ -590,6 +594,7 @@ class MLIndex:
             if embeddings_container is not None:
                 if isinstance(embeddings_container, str) and "://" in embeddings_container:
                     from fsspec.core import url_to_fs
+
                     _, _ = url_to_fs(embeddings_container)
                 else:
                     embeddings_container = Path(embeddings_container)

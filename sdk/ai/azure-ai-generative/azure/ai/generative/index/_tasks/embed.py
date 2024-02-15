@@ -121,9 +121,7 @@ def chunk_embedder(
         # logger.addHandler(handler)
         logger.info(f"chunk_embedder_{worker_id} started")
 
-        embedder = load_embeddings_container(
-            embeddings_model_uri, connection_args, logger, embeddings_container
-        )
+        embedder = load_embeddings_container(embeddings_model_uri, connection_args, logger, embeddings_container)
 
         with track_activity(logger, f"embed.chunk_embedder_{worker_id}") as activity_logger:
             activity_logger.activity_info["chunk_batches"] = 0
@@ -292,9 +290,9 @@ def create_embeddings(  # pylint: disable=too-many-statements
                     batch_id += 1
                     chunk_batch = []
 
-                msg = f"{num_workers if batch_id > num_workers else batch_id}/{batch_id} batches remaining"
                 logger.info(
-                    f"==== Waiting for embedders to finish, " + msg
+                    "==== Waiting for embedders to finish, "
+                    + f"{num_workers if batch_id > num_workers else batch_id}/{batch_id} batches remaining"
                 )
 
                 # Put sentinel values in the queue to stop the embedder processes

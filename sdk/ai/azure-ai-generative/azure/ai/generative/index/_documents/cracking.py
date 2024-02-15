@@ -215,7 +215,6 @@ class TikaLoader(BaseDocumentLoader):
             logger.warning(f"Unable to extract text from file: {self.document_source.filename}")
             return []
 
-
         try:
             text = re.sub(r"\n{3,}", "\n\n", content)
         except TypeError as e:
@@ -369,5 +368,7 @@ def crack_documents(
     for ext in files_by_extension:
         if files_by_extension[ext] > 0:
             safe_mlflow_log_metric(ext, files_by_extension[ext], logger=logger, step=int(time.time() * 1000))
-    msg = f"Total time to load files: {total_time}\n{json.dumps(files_by_extension, indent=2)}"
-    logger.info(f"[DocumentChunksIterator::crack_documents] " + msg)
+    logger.info(
+        "[DocumentChunksIterator::crack_documents] "
+        + f"Total time to load files: {total_time}\n{json.dumps(files_by_extension, indent=2)}"
+    )

@@ -130,9 +130,11 @@ class DocumentChunksIterator(Iterator):
             ext_kept = _kept_extensions.get(source_path.suffix.lower(), 0)
             _kept_extensions[source_path.suffix.lower()] = ext_kept + 1  # type: ignore[index]
             yield source
-        msg_1 = f"Filtered {self.__document_statistics['skipped_files']} files "  # type: ignore[index]
-        msg_2 = f"out of {self.__document_statistics['total_files']}"  # type: ignore[index]
-        logger.info(f"[DocumentChunksIterator::filter_extensions] " + msg_1 + msg_2)
+        logger.info(
+            "[DocumentChunksIterator::filter_extensions] "
+            + f"Filtered {self.__document_statistics['skipped_files']} files "  # type: ignore[index]
+            + f"out of {self.__document_statistics['total_files']}"  # type: ignore[index]
+        )
         if self.span is not None:
             self.span.set_attributes({f"document_statistics.{k}": v for k, v in self.__document_statistics.items()})
 
@@ -159,8 +161,10 @@ class DocumentChunksIterator(Iterator):
                     # TODO: url encode `repo.active_branch.name`
                     remote_url = repository + f"?version=GB{repo.active_branch.name}&path="
                 except Exception as e:
-                    url = f"{remote_url}\nbecause: {e}"
-                    logger.warning(f"Failed to parse org, project and repo from Azure DevOps remote url: " + url)
+                    logger.warning(
+                        "Failed to parse org, project and repo from Azure DevOps remote url: "
+                        + f"{remote_url}\nbecause: {e}"
+                    )
             else:
                 # Infer branch from repo
                 remote_url = f"{remote_url}/blob/{repo.active_branch.name}"

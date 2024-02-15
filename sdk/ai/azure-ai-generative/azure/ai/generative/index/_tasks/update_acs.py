@@ -124,8 +124,10 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
         # fields.append(SimpleField(name="content_hash", type=SearchFieldDataType.String))
 
         if "content" not in acs_config[MLIndex.INDEX_FIELD_MAPPING_KEY]:
-            msg = f"Please specify a 'content' field in the {MLIndex.INDEX_FIELD_MAPPING_KEY} config."
-            raise RuntimeError(f"ACS index must have a 'content' field. " + msg)
+            raise RuntimeError(
+                "ACS index must have a 'content' field. "
+                + f"Please specify a 'content' field in the {MLIndex.INDEX_FIELD_MAPPING_KEY} config."
+            )
 
         vector_search_args = {}
         if (
@@ -189,8 +191,10 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
                     ]
                 )
             else:
-                msg = f"azure-search-documents version {azure_documents_search_version} is not supported "
-                raise RuntimeError(msg + f"when using embeddings. Please upgrade to 11.4.0b4 or later.")
+                raise RuntimeError(
+                    f"azure-search-documents version {azure_documents_search_version} is not supported "
+                    + "when using embeddings. Please upgrade to 11.4.0b4 or later."
+                )
 
         semantic_config = SemanticConfiguration(
             name="azureml-default",
@@ -229,8 +233,9 @@ def create_index_from_raw_embeddings(
 ) -> MLIndex:
     """Upload an EmbeddingsContainer to Azure Cognitive Search and return an MLIndex."""
     with track_activity(
-        # pylint: disable=protected-access
-        logger, "update_acs", custom_dimensions={"num_documents": len(emb._document_embeddings)}
+        logger,
+        "update_acs",
+        custom_dimensions={"num_documents": len(emb._document_embeddings)},  # pylint: disable=protected-access
     ) as activity_logger:
         logger.info("Updating ACS index")
 

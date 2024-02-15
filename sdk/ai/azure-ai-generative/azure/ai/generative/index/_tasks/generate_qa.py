@@ -10,8 +10,10 @@ from logging import Logger
 from typing import Dict, Union
 
 import openai
+
 # pylint: disable=import-error
 from azureml.core import Run
+
 # pylint: disable=import-error
 from azure.ai.generative.index.data_generation.qa import QADataGenerator, GenerationResult, QAType
 from azure.ai.resources._index._utils.connections import (
@@ -112,8 +114,10 @@ def main(parser_args, run, logger: Logger, activity_logger: Logger):
         result: GenerationResult = getattr(e, "generation_result", None)  # type: ignore[no-redef]
         if result is None or result.data_df.empty:
             raise
-        msg = f"Exception: {traceback.format_exc()}"
-        activity_logger.warn(f"Ignoring exception in QADataGenerator since partial result is available. " + msg)
+        activity_logger.warn(
+            "Ignoring exception in QADataGenerator since partial result is available. "
+            + f"Exception: {traceback.format_exc()}"
+        )
 
     # log run metrics
     generated_size = len(result.data_df.index)

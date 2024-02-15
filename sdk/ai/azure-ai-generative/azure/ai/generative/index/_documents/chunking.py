@@ -250,8 +250,10 @@ def split_documents(  # pylint: disable=too-many-statements
 
     safe_mlflow_log_metric("total_source_documents", total_documents, logger=logger, step=int(time.time() * 1000))
     safe_mlflow_log_metric("total_chunked_documents", total_splits, logger=logger, step=int(time.time() * 1000))
-    msg = f"{total_documents} documents into {total_splits} chunks: {total_time}"
-    logger.info(f"[DocumentChunksIterator::split_documents] Total time to split " + msg)
+    logger.info(
+        "[DocumentChunksIterator::split_documents] Total time to split "
+        + f"{total_documents} documents into {total_splits} chunks: {total_time}"
+    )
 
 
 @dataclass

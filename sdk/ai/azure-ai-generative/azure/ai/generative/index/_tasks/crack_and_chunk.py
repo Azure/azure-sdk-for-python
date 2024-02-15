@@ -124,8 +124,10 @@ def get_activity_logging_filter(
             logger.info(f"Processing file: {source.filename}")
             yield source
         logger.info(f"[DocumentChunksIterator::filter_extensions] Filtered {skipped_files} files out of {total_files}")
-        msg = f"Skipped extensions: {json.dumps(skipped_extensions, indent=2)}"
-        logger.info(f"[DocumentChunksIterator::filter_extensions] " + msg)
+        logger.info(
+            "[DocumentChunksIterator::filter_extensions] "
+            + f"Skipped extensions: {json.dumps(skipped_extensions, indent=2)}"
+        )
         logger.info(
             f"[DocumentChunksIterator::filter_extensions] Kept extensions: {json.dumps(kept_extension, indent=2)}"
         )
@@ -136,8 +138,10 @@ def get_activity_logging_filter(
         if total_files == 0:
             raise Exception(f"No files found in input path using glob {source_glob}")
         if skipped_files == total_files:
-            msg = f"List of supported file extensions is {allowed_extensions}"
-            raise Exception(f"None of the provided file extensions are supported. " + msg)
+            raise Exception(
+                "None of the provided file extensions are supported. "
+                + f"List of supported file extensions is {allowed_extensions}"
+            )
 
     return filter_and_log_extensions
 
