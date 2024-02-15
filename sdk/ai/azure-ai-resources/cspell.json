@@ -1,7 +1,7 @@
 {
     "ignoreWords": [
         "redef",
-        "llm",
+        "llms",
         "etest"
     ],
     "ignorePaths": [
