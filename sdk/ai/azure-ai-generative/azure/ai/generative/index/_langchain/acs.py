@@ -7,7 +7,7 @@ import json
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 from azure.ai.generative.index._utils.logging import get_logger
-from azure.ai.generative.index._utils.requests import send_post_request
+from azure.ai.resources._index._utils.requests import send_post_request
 
 try:
     from langchain.schema.document import Document

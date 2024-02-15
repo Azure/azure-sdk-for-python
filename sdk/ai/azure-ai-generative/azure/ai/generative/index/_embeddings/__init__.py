@@ -21,14 +21,15 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 import yaml  # type: ignore[import]
 from azure.core.credentials import TokenCredential
-from azure.ai.generative.index._documents import Document, DocumentChunksIterator, DocumentSource, StaticDocument
-from azure.ai.generative.index._embeddings.openai import OpenAIEmbedder
+from azure.ai.generative.index._documents import DocumentChunksIterator, DocumentSource
 from azure.ai.generative.index._langchain.vendor.document_loaders.base import BaseLoader
-from azure.ai.generative.index._langchain.vendor.embeddings.base import Embeddings as Embedder
-from azure.ai.generative.index._langchain.vendor.schema.document import Document as LangChainDocument
-from azure.ai.generative.index._models import init_open_ai_from_config, parse_model_uri
 from azure.ai.generative.index._utils.logging import get_logger, track_activity
 from azure.ai.generative.index._utils.tokens import tiktoken_cache_dir
+from azure.ai.resources._index._documents import Document, StaticDocument
+from azure.ai.resources._index._embeddings.openai import OpenAIEmbedder
+from azure.ai.resources._index._langchain.vendor.embeddings.base import Embeddings as Embedder
+from azure.ai.resources._index._langchain.vendor.schema.document import Document as LangChainDocument
+from azure.ai.resources._index._models import init_open_ai_from_config, parse_model_uri
 
 logger = get_logger(__name__)
 
@@ -56,8 +57,8 @@ def get_langchain_embeddings(
             max_retries=arguments.get("embedding_ctx_length", None),
         )
         return embedder
-    if embedding_kind == "hugging_face":
-        from azure.ai.generative.index._langchain.vendor.embeddings.huggingface import HuggingFaceEmbeddings
+    elif embedding_kind == "hugging_face":
+        from azure.ai.resources._index._langchain.vendor.embeddings.huggingface import HuggingFaceEmbeddings
 
         args = copy.deepcopy(arguments)
 
