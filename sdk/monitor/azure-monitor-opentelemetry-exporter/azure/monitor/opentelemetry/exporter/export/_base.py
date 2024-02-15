@@ -322,9 +322,9 @@ class BaseExporter:
                             from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import shutdown_statsbeat_metrics
                             shutdown_statsbeat_metrics()
                             # pylint: disable=lost-exception
-                            return ExportResult.FAILED_NOT_RETRYABLE  # pylint: disable=W0134
+                            return ExportResult.FAILED_NOT_RETRYABLE  # pylint: disable=W0012,W0134
                 # pylint: disable=lost-exception
-                return result  # pylint: disable=W0134
+                return result  # pylint: disable=W0012,W0134
 
         # No spans to export
         self._consecutive_redirects = 0
