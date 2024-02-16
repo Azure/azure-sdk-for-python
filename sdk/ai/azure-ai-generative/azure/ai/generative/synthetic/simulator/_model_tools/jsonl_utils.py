@@ -73,7 +73,7 @@ def line_map(
                         out_file.write("\n")
                         successful_lines += 1
                     except Exception as e:
-                        logger.warn("Caught exception: %s", e)
+                        logger.warning("Caught exception: %s", e)
                         err_file.write(nxt)
                         error_lines += 1
                     current_line += 1

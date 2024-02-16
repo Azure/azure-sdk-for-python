@@ -135,7 +135,7 @@ def get_langchain_splitter(file_extension: str, arguments: dict) -> TextSplitter
         raise ValueError(f"Invalid file_extension: {file_extension}")
 
 
-file_extension_splitters = {
+file_extension_splitters_dict = {
     # Plain text
     ".txt": lambda **kwargs: get_langchain_splitter(".txt", kwargs),
     ".md": lambda **kwargs: get_langchain_splitter(".md", kwargs),
@@ -160,7 +160,7 @@ def split_documents(  # pylint: disable=too-many-statements
 ) -> Iterator[ChunkedDocument]:
     """Split documents into chunks."""
     if file_extension_splitters is None:
-        file_extension_splitters = file_extension_splitters
+        file_extension_splitters = file_extension_splitters_dict
     total_time: float = 0.0
     total_documents = 0
     total_splits = 0

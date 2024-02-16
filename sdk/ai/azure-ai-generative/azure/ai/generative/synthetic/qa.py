@@ -15,6 +15,7 @@ try:
     from collections import defaultdict
     from azure.ai.generative.constants._common import USER_AGENT_HEADER_KEY
     from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, ActivityLogger
+    from azure.core import CaseInsensitiveEnumMeta
     from azure.core.tracing.decorator import distributed_trace
     from azure.ai.generative._user_agent import USER_AGENT
 except ImportError as e:
@@ -87,11 +88,12 @@ def _completion_with_retries(*args, **kwargs):
                 return response.choices[0].message.content, dict(response.usage)
             response = openai.ChatCompletion.create(*args, **kwargs)  # pylint: disable=no-member
             return response["choices"][0].message.content, response["usage"]
-        except _RETRY_ERRORS as e:
+        except _RETRY_ERRORS as e:  # pylint: disable=catching-non-exception
             if n > _MAX_RETRIES:
                 raise
             secs = 2**n
-            logger.warning("Retrying after %ss. API call failed due to %s: %s" % (secs, e.__class__.__name__, e))
+            msg = f"Retrying after {secs}s. API call failed due to {e.__class__.__name__}: {e}"
+            logger.warning(msg)
             time.sleep(secs)
             n += 1
             continue
@@ -133,7 +135,7 @@ async def _completion_with_retries_async(*args, **kwargs):
                 return response.choices[0].message.content, dict(response.usage)
             response = openai.ChatCompletion.create(*args, **kwargs)  # pylint: disable=no-member
             return response["choices"][0].message.content, response["usage"]
-        except _RETRY_ERRORS as e:
+        except _RETRY_ERRORS as e:  # pylint: disable=catching-non-exception
             if n > _MAX_RETRIES:
                 raise
             secs = 2**n
@@ -143,7 +145,7 @@ async def _completion_with_retries_async(*args, **kwargs):
             continue
 
 
-class OutputStructure(str, Enum):
+class OutputStructure(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """OutputStructure defines what structure the QAs should be written to file in."""
 
     PROMPTFLOW = "PROMPTFLOW"
@@ -152,7 +154,7 @@ class OutputStructure(str, Enum):
     """QAs will be in OpenAI message format"""
 
 
-class QAType(str, Enum):
+class QAType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """QAType defines different types of QAs that can be generated."""
 
     SHORT_ANSWER = "SHORT_ANSWER"
@@ -264,7 +266,6 @@ class QADataGenerator:
         return template
 
     def _parse_qa_from_response(self, response_text: str) -> Tuple[List[str], List[str]]:
-        response_text = response_text
         q_prefix, a_prefix = "[Q]: ", "[A]: "
         last_updated = None
         questions, answers = [], []
@@ -331,7 +332,7 @@ class QADataGenerator:
                 )
             # Only the question key is required in non-conversation cases,
             # we can default to chat_history as chat_history_key
-            if not "question_key" in field_mapping:
+            if "question_key" not in field_mapping:
                 raise Exception(
                     f"Field mapping for Promptflow output with {qa_type} must contain following keys: question_key"
                 )

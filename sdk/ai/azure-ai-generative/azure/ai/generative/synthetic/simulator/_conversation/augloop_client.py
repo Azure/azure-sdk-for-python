@@ -134,13 +134,13 @@ class AugLoopClient:  # pylint: disable=client-accepts-api-version-keyword
                 if self.augLoopParams.pathToError != "":
                     error_expr = parse(self.augLoopParams.pathToError)
 
-                    self.logger.warn("Checking for error in response")
+                    self.logger.warning("Checking for error in response")
                     errorMessages = []
                     for errMatch in error_expr.find(response_json):
                         errorMessages.append(f'{errMatch.value["category"]}: {errMatch.value["message"]}')
 
                     if errorMessages is not None and len(errorMessages) > 0:
-                        self.logger.warn("Found Error in response")
+                        self.logger.warning("Found Error in response")
                         return {
                             "id": response_json["cv"],
                             "messages": errorMessages,
@@ -153,7 +153,7 @@ class AugLoopClient:  # pylint: disable=client-accepts-api-version-keyword
                 response_expr = parse(self.augLoopParams.pathToMessages)
                 responseMessages = []
                 for match in response_expr.find(response_json):
-                    if type(match.value) is str:
+                    if isinstance(match.value, str):
                         match_value = json.loads(match.value)
                     else:
                         match_value = match.value
@@ -182,7 +182,7 @@ class AugLoopClient:  # pylint: disable=client-accepts-api-version-keyword
                 return self.send_signal_and_wait_for_annotation(message=message, isInRecursiveCall=True)
             return {"success": False}
         except Exception as e:
-            self.logger.error("Error: %s" % str(e))
+            self.logger.error("Error: %s", str(e))
             # TODO: adding detailed message is not working, e disappears
             # if 'Expecting value: line 1 column 1 (char 0)' in str(e):
             #     self.logger.error("Check that augloop_bot_path_to_message param points to a JSON in the response")
@@ -258,7 +258,7 @@ class AugLoopClient:  # pylint: disable=client-accepts-api-version-keyword
 
         if self.sessionKey != oldSessionKey:
             msg = f"new: {sessionInitResponse['sessionKey']}"
-            self.logger.warn(f"Connected to a different session, previous: {self.sessionKey}, " + msg)
+            self.logger.warning(f"Connected to a different session, previous: {self.sessionKey}, " + msg)
 
             self.setup_session_after_init()
 
@@ -285,7 +285,7 @@ class AugLoopClient:  # pylint: disable=client-accepts-api-version-keyword
             )
         )
         message = self.websocket.recv()
-        self.logger.info("Ack for auth token message: %s" % message)
+        self.logger.info("Ack for auth token message: %s", message)
 
         # add doc container to session
         # pylint: disable=line-too-long
@@ -295,7 +295,7 @@ class AugLoopClient:  # pylint: disable=client-accepts-api-version-keyword
             )
         )
         message = self.websocket.recv()
-        self.logger.info("Ack for seed doc: %s" % message)
+        self.logger.info("Ack for seed doc: %s", message)
 
         self.prevId = "#head"
 
@@ -321,7 +321,7 @@ class AugLoopClient:  # pylint: disable=client-accepts-api-version-keyword
         # get augloop auth token
         identity_client_id = os.environ.get("DEFAULT_IDENTITY_CLIENT_ID", None)
         if identity_client_id is not None:
-            self.logger.info("Using DEFAULT_IDENTITY_CLIENT_ID: %s" % identity_client_id)
+            self.logger.info("Using DEFAULT_IDENTITY_CLIENT_ID: %s", identity_client_id)
             credential = ManagedIdentityCredential(client_id=identity_client_id)
         else:
             # Good for local testing.
@@ -332,7 +332,6 @@ class AugLoopClient:  # pylint: disable=client-accepts-api-version-keyword
         tokens = {}
         for name in self.augLoopParams.otherTokenKeyVaultSecretNames:
             tokens[name] = secret_client.get_secret(name).value
-        self.logger.info(
-            "Obtained token '%s' using AzureCliCredential: %s", name, tokens[name] and not tokens[name].isspace()
-        )
+            msg = f"Obtained token '{name}' using AzureCliCredential: {tokens[name] and not tokens[name].isspace()}"
+            self.logger.info(msg)
         return tokens

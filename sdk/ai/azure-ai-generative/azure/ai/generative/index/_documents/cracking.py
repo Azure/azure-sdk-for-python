@@ -300,7 +300,7 @@ def extract_text_document_title(text: str, file_name: str) -> Tuple[str, str]:
     return f"Title: {title}", title
 
 
-file_extension_loaders = {
+file_extension_loaders_dict = {
     ".txt": TextFileIOLoader,
     ".md": TextFileIOLoader,
     ".html": UnstructuredHTMLFileIOLoader,
@@ -317,7 +317,7 @@ file_extension_loaders = {
 }
 
 
-SUPPORTED_EXTENSIONS = list(file_extension_loaders.keys())
+SUPPORTED_EXTENSIONS = list(file_extension_loaders_dict.keys())
 
 
 def crack_documents(
@@ -325,7 +325,7 @@ def crack_documents(
 ) -> Iterator[ChunkedDocument]:
     """Crack documents into chunks."""
     if file_extension_loaders is None:
-        file_extension_loaders = file_extension_loaders
+        file_extension_loaders = file_extension_loaders_dict
     total_time: float = 0.0
     files_by_extension = {str(ext): 0.0 for ext in file_extension_loaders}
     log_batch_size = 100

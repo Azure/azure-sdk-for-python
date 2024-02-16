@@ -38,7 +38,7 @@ class ConversationBot:
                 - conversation_starter: A sentence that can be used as a conversation starter, if not provided,
                     the first turn will be generated using the LLM
         """
-        if role == ConversationRole.USER and type(model) == LLAMAChatCompletionsModel:
+        if role == ConversationRole.USER and isinstance(model, LLAMAChatCompletionsModel):
             self.logger.info(  # type: ignore[has-type]
                 "We suggest using LLaMa chat model to simulate assistant not to simulate user"
             )

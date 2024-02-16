@@ -275,9 +275,9 @@ class OpenAICompletionsModel(LLMBase):  # pylint: disable=too-many-instance-attr
         if not stop:
             stop = []
         # Else if stop sequence is given as a string (Ex: "["\n", "<im_end>"]"), convert
-        elif type(stop) is str and stop.startswith("[") and stop.endswith("]"):
+        elif isinstance(stop, str) and stop.startswith("[") and stop.endswith("]"):
             stop = eval(stop)
-        elif type(stop) is str:
+        elif isinstance(stop, str):
             stop = [stop]
         self.stop: List = stop  # type: ignore[assignment]
 
@@ -440,7 +440,7 @@ class OpenAICompletionsModel(LLMBase):  # pylint: disable=too-many-instance-attr
                     }
                     await self._add_error()
 
-                    self.logger.exception("Errored on prompt #" + str(prompt_idx))
+                    self.logger.exception("Errored on prompt #%s", str(prompt_idx))
 
                     # if we count too many errors, we stop and raise an exception
                     response_count = await self.get_response_count()
