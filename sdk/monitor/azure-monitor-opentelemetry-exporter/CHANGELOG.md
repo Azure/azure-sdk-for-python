@@ -1,17 +1,36 @@
 # Release History
 
-## 1.0.0b22 (Unreleased)
+## 1.0.0b23 (Unreleased)
 
 ### Features Added
 
-- Add live metrics skeleton + swagger definitions
-    ([#33983](https://github.com/Azure/azure-sdk-for-python/pull/33983))
+- Add device.* to part A fields
+    ([#34229](https://github.com/Azure/azure-sdk-for-python/pull/34229))
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.0.0b22 (2024-02-01)
+
+### Features Added
+
+- Add live metrics skeleton + swagger definitions
+    ([#33983](https://github.com/Azure/azure-sdk-for-python/pull/33983))
+- Only create temporary folder if local storage is enabled without storage directory.
+    ([#34061](https://github.com/Azure/azure-sdk-for-python/pull/34061))
+
+### Bugs Fixed
+
+- Update exception details messsage based on `LogRecord` body
+    ([#34020](https://github.com/Azure/azure-sdk-for-python/pull/34020))
+
+### Other Changes
+
+- Drop support for Python 3.7
+    ([#34105](https://github.com/Azure/azure-sdk-for-python/pull/34105))
 
 ## 1.0.0b21 (2024-01-16)
 

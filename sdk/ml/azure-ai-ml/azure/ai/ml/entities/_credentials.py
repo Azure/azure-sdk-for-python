@@ -5,7 +5,7 @@
 # pylint: disable=protected-access,redefined-builtin
 
 from abc import ABC
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, Type
 
 from azure.ai.ml._azure_environments import _get_active_directory_url_from_metadata
 from azure.ai.ml._restclient.v2022_01_01_preview.models import Identity as RestIdentityConfiguration
@@ -53,20 +53,56 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import UserIdentity as R
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     WorkspaceConnectionAccessKey as RestWorkspaceConnectionAccessKey,
 )
-from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionAuthType
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     WorkspaceConnectionApiKey as RestWorkspaceConnectionApiKey,
 )
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
+from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal, _snake_to_camel
 from azure.ai.ml.constants._common import CommonYamlFields, IdentityType
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin, YamlTranslatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException, ValidationErrorType, ValidationException
 
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    ConnectionAuthType,
+    AccessKeyAuthTypeWorkspaceConnectionProperties,
+    ApiKeyAuthWorkspaceConnectionProperties,
+    ManagedIdentityAuthTypeWorkspaceConnectionProperties,
+    NoneAuthTypeWorkspaceConnectionProperties,
+    PATAuthTypeWorkspaceConnectionProperties,
+    SASAuthTypeWorkspaceConnectionProperties,
+    ServicePrincipalAuthTypeWorkspaceConnectionProperties,
+    UsernamePasswordAuthTypeWorkspaceConnectionProperties,
+)
+
 
 class _BaseIdentityConfiguration(ABC, DictMixin, RestTranslatableMixin):
     def __init__(self) -> None:
-        self.type = None
+        self.type: Any = None
+
+    @classmethod
+    def _get_credential_class_from_rest_type(cls, auth_type: str) -> Type:
+        # Defined in this file instead of in constants file to avoid adding imports there and risking
+        # circular imports. This map links rest enums to the corresponding client classes.
+        # Enums are all lower-cased because rest enums aren't always consistent with their
+        # camel casing rules.
+        # Defined in this class because I didn't want this at the bottom of the file,
+        # but the classes aren't visible to the interpreter at the start of the file.
+        # Technically most of these classes aren't child of _BaseIdentityConfiguration, but
+        # I don't care.
+        REST_CREDENTIAL_TYPE_TO_CLIENT_CLASS_MAP = {
+            ConnectionAuthType.SAS.lower(): SasTokenConfiguration,
+            ConnectionAuthType.PAT.lower(): PatTokenConfiguration,
+            ConnectionAuthType.ACCESS_KEY.lower(): AccessKeyConfiguration,
+            ConnectionAuthType.USERNAME_PASSWORD.lower(): UsernamePasswordConfiguration,
+            ConnectionAuthType.SERVICE_PRINCIPAL.lower(): ServicePrincipalConfiguration,
+            ConnectionAuthType.MANAGED_IDENTITY.lower(): ManagedIdentityConfiguration,
+            ConnectionAuthType.API_KEY.lower(): ApiKeyConfiguration,
+        }
+        if not auth_type:
+            return NoneCredentialConfiguration
+        return REST_CREDENTIAL_TYPE_TO_CLIENT_CLASS_MAP.get(
+            _snake_to_camel(auth_type).lower(), NoneCredentialConfiguration
+        )
 
 
 class AccountKeyConfiguration(RestTranslatableMixin, DictMixin):
@@ -130,6 +166,10 @@ class SasTokenConfiguration(RestTranslatableMixin, DictMixin):
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
+    @classmethod
+    def _get_rest_properties_class(cls) -> Type:
+        return SASAuthTypeWorkspaceConnectionProperties
+
 
 class PatTokenConfiguration(RestTranslatableMixin, DictMixin):
     """Personal access token credentials.
@@ -165,6 +205,10 @@ class PatTokenConfiguration(RestTranslatableMixin, DictMixin):
         if not isinstance(other, PatTokenConfiguration):
             return NotImplemented
         return self.pat == other.pat
+
+    @classmethod
+    def _get_rest_properties_class(cls) -> Type:
+        return PATAuthTypeWorkspaceConnectionProperties
 
 
 class UsernamePasswordConfiguration(RestTranslatableMixin, DictMixin):
@@ -203,6 +247,10 @@ class UsernamePasswordConfiguration(RestTranslatableMixin, DictMixin):
         if not isinstance(other, UsernamePasswordConfiguration):
             return NotImplemented
         return self.username == other.username and self.password == other.password
+
+    @classmethod
+    def _get_rest_properties_class(cls) -> Type:
+        return UsernamePasswordAuthTypeWorkspaceConnectionProperties
 
 
 class BaseTenantCredentials(RestTranslatableMixin, DictMixin, ABC):
@@ -306,6 +354,10 @@ class ServicePrincipalConfiguration(BaseTenantCredentials):
 
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
+
+    @classmethod
+    def _get_rest_properties_class(cls) -> Type:
+        return ServicePrincipalAuthTypeWorkspaceConnectionProperties
 
 
 class CertificateConfiguration(BaseTenantCredentials):
@@ -523,6 +575,10 @@ class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
         if not isinstance(other, ManagedIdentityConfiguration):
             return NotImplemented
         return self.client_id == other.client_id and self.resource_id == other.resource_id
+
+    @classmethod
+    def _get_rest_properties_class(cls) -> Type:
+        return ManagedIdentityAuthTypeWorkspaceConnectionProperties
 
 
 class UserIdentityConfiguration(_BaseIdentityConfiguration):
@@ -763,6 +819,10 @@ class NoneCredentialConfiguration(RestTranslatableMixin):
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
+    @classmethod
+    def _get_rest_properties_class(cls) -> Type:
+        return NoneAuthTypeWorkspaceConnectionProperties
+
 
 class AccessKeyConfiguration(RestTranslatableMixin, DictMixin):
     """Access Key Credentials.
@@ -803,6 +863,9 @@ class AccessKeyConfiguration(RestTranslatableMixin, DictMixin):
             return NotImplemented
         return self.access_key_id == other.access_key_id and self.secret_access_key == other.secret_access_key
 
+    def _get_rest_properties_class(self):
+        return AccessKeyAuthTypeWorkspaceConnectionProperties
+
 
 @experimental
 class ApiKeyConfiguration(RestTranslatableMixin, DictMixin):
@@ -838,3 +901,6 @@ class ApiKeyConfiguration(RestTranslatableMixin, DictMixin):
         if not isinstance(other, ApiKeyConfiguration):
             return NotImplemented
         return bool(self.key == other.key)
+
+    def _get_rest_properties_class(self):
+        return ApiKeyAuthWorkspaceConnectionProperties

@@ -56,10 +56,10 @@ class JobsOperations:
         job_type: Optional[str] = None,
         tag: Optional[str] = None,
         list_view_type: Optional[Union[str, "_models.ListViewType"]] = None,
+        properties: Optional[str] = None,
         asset_name: Optional[str] = None,
         scheduled: Optional[bool] = None,
         schedule_id: Optional[str] = None,
-        properties: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.JobBaseResourceArmPaginatedResult"]:
         """Lists Jobs in the workspace.
@@ -78,15 +78,15 @@ class JobsOperations:
         :type tag: str
         :param list_view_type: View type for including/excluding (for example) archived entities.
         :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
+        :param properties: Comma-separated list of property names (and optionally values). Example:
+         prop1,prop2=value2.
+        :type properties: str
         :param asset_name: Asset name the job's named output is registered with.
         :type asset_name: str
         :param scheduled: Indicator whether the job is scheduled job.
         :type scheduled: bool
         :param schedule_id: The scheduled id for listing the job triggered from.
         :type schedule_id: str
-        :param properties: Comma-separated list of property names (and optionally values). Example:
-         prop1,prop2=value2.
-        :type properties: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either JobBaseResourceArmPaginatedResult or the result of
          cls(response)
@@ -113,10 +113,10 @@ class JobsOperations:
                     job_type=job_type,
                     tag=tag,
                     list_view_type=list_view_type,
+                    properties=properties,
                     asset_name=asset_name,
                     scheduled=scheduled,
                     schedule_id=schedule_id,
-                    properties=properties,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -133,10 +133,10 @@ class JobsOperations:
                     job_type=job_type,
                     tag=tag,
                     list_view_type=list_view_type,
+                    properties=properties,
                     asset_name=asset_name,
                     scheduled=scheduled,
                     schedule_id=schedule_id,
-                    properties=properties,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -440,8 +440,10 @@ class JobsOperations:
         **kwargs: Any
     ) -> "_models.JobBase":
         """Creates and executes a Job.
+        For update case, the Tags in the definition passed in will replace Tags in the existing job.
 
         Creates and executes a Job.
+        For update case, the Tags in the definition passed in will replace Tags in the existing job.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str

@@ -31,7 +31,7 @@ class AzureMonitorQueryLogsTestCase(AzureRecordedTestCase):
         return self.create_client_from_credential(client_class, credential, **kwargs)
 
 
-class AzureMonitorQueryMetricsTestCase(AzureRecordedTestCase):
+class MetricsQueryClientTestCase(AzureRecordedTestCase):
 
     def get_client(self, client_class, credential):
 
@@ -43,7 +43,7 @@ class AzureMonitorQueryMetricsTestCase(AzureRecordedTestCase):
         return self.create_client_from_credential(client_class, credential, **kwargs)
 
 
-class AzureMonitorQueryBatchMetricsTestCase(AzureRecordedTestCase):
+class MetricsClientTestCase(AzureRecordedTestCase):
 
     def get_client(self, client_class, credential, endpoint = None):
 
