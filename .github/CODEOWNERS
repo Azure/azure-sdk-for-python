@@ -74,10 +74,10 @@
 # PRLabel: %Attestation
 /sdk/attestation/azure-security-attestation/                         @anilba06 @Azure/azure-sdk-write-attestation @gkostal
 
-# ServiceOwners: @cRui861
+# ServiceOwners: @cRui861 @paterasMSFT
 # ServiceLabel: %Batch
 # PRLabel: %Batch
-/sdk/batch/                                                          @jingjlii @JJJessieWang @wanghoppe @dpwatrous @wiboris @cRui861
+/sdk/batch/                                                          @jingjlii @JJJessieWang @wanghoppe @dpwatrous @wiboris @cRui861 @paterasMSFT
 
 # PRLabel: %CognitiveServices
 /sdk/cognitiveservices/                                              @kristapratico
@@ -148,6 +148,8 @@
 # PRLabel: %Monitor
 /sdk/monitor/*                                                       @pvaneck
 
+# AzureSDKOwners: @pvaneck
+# ServiceLabel: %Monitor
 # PRLabel: %Monitor - ApplicationInsights
 /sdk/applicationinsights/azure-applicationinsights/                  @azmonapplicationinsights @pvaneck
 
@@ -353,7 +355,6 @@
 # PRLabel: %EngSys
 /sdk/template/                                                       @scbedd @weshaggard @benbp
 
-# AzureSDKOwners: @kristapratico
 # ServiceLabel: %Cognitive - Text Analytics
 # PRLabel: %Cognitive - Text Analytics
 /sdk/textanalytics/                                                  @kristapratico @quentinRobinson @wangyuantao
