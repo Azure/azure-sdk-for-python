@@ -88,11 +88,11 @@ def _completion_with_retries(*args, **kwargs):
                 return response.choices[0].message.content, dict(response.usage)
             response = openai.ChatCompletion.create(*args, **kwargs)  # pylint: disable=no-member
             return response["choices"][0].message.content, response["usage"]
-        except _RETRY_ERRORS as e:  # pylint: disable=catching-non-exception
+        except _RETRY_ERRORS as _re:  # pylint: disable=catching-non-exception
             if n > _MAX_RETRIES:
                 raise
             secs = 2**n
-            msg = f"Retrying after {secs}s. API call failed due to {e.__class__.__name__}: {e}"
+            msg = f"Retrying after {secs}s. API call failed due to {_re.__class__.__name__}: {_re}"
             logger.warning(msg)
             time.sleep(secs)
             n += 1
@@ -135,11 +135,11 @@ async def _completion_with_retries_async(*args, **kwargs):
                 return response.choices[0].message.content, dict(response.usage)
             response = openai.ChatCompletion.create(*args, **kwargs)  # pylint: disable=no-member
             return response["choices"][0].message.content, response["usage"]
-        except _RETRY_ERRORS as e:  # pylint: disable=catching-non-exception
+        except _RETRY_ERRORS as _re:  # pylint: disable=catching-non-exception
             if n > _MAX_RETRIES:
                 raise
             secs = 2**n
-            logger.warning("Retrying after %ss. API call failed due to %s: %s", secs, e.__class__.__name__, e)
+            logger.warning("Retrying after %ss. API call failed due to %s: %s", secs, _re.__class__.__name__, _re)
             await asyncio.sleep(secs)
             n += 1
             continue
@@ -191,7 +191,6 @@ class QADataGenerator:
 
     def __init__(self, model_config: Dict):
         """Initialize QADataGenerator using Azure OpenAI details."""
-        import openai
 
         api_key = "OPENAI_API_KEY"
         api_base = "OPENAI_API_BASE"
@@ -371,9 +370,9 @@ class QADataGenerator:
         # export to jsonl file
         try:
             import pandas as pd
-        except ImportError as e:
+        except ImportError as ie:
             print("In order to write qa data to file, please install pandas")
-            raise e
+            raise ie
 
         data_df = pd.DataFrame(data_dict, columns=list(data_dict.keys()))
         data_df.to_json(output_path, lines=True, orient="records")

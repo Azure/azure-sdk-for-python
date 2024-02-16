@@ -351,59 +351,59 @@ def create_index_from_raw_embeddings(
     return mlindex
 
 
-def main(args, logger, activity_logger):
+def main(_args, _logger, activity_logger):
     try:
         try:
-            pinecone_config = json.loads(args.pinecone_config)
+            pinecone_config = json.loads(_args.pinecone_config)
         except Exception as e:
-            logger.error(f"Failed to parse pinecone_config as json: {e}")
+            _logger.error(f"Failed to parse pinecone_config as json: {e}")
             activity_logger.error("Failed to parse pinecone_config as json")
             raise
 
         connection_args = {}
 
-        if args.connection_id is not None:
+        if _args.connection_id is not None:
             connection_args["connection_type"] = "workspace_connection"
-            connection_args["connection"] = {"id": args.connection_id}
+            connection_args["connection"] = {"id": _args.connection_id}
             from azure.ai.resources._index._utils.connections import (
                 get_connection_by_id_v2,
                 get_metadata_from_connection,
             )
 
-            connection = get_connection_by_id_v2(args.connection_id)
+            connection = get_connection_by_id_v2(_args.connection_id)
             pinecone_config["environment"] = get_metadata_from_connection(connection)["environment"]
 
         # Mount embeddings container and create index from it
-        raw_embeddings_uri = args.embeddings
-        logger.info(f"got embeddings uri as input: {raw_embeddings_uri}")
+        raw_embeddings_uri = _args.embeddings
+        _logger.info(f"got embeddings uri as input: {raw_embeddings_uri}")
         splits = raw_embeddings_uri.split("/")
         embeddings_dir_name = splits.pop(len(splits) - 2)
-        logger.info(f"extracted embeddings directory name: {embeddings_dir_name}")
+        _logger.info(f"extracted embeddings directory name: {embeddings_dir_name}")
         parent = "/".join(splits)
-        logger.info(f"extracted embeddings container path: {parent}")
+        _logger.info(f"extracted embeddings container path: {parent}")
 
         from azureml.dataprep.fuse.dprepfuse import MountOptions, rslex_uri_volume_mount
 
         mnt_options = MountOptions(default_permission=0o555, allow_other=False, read_only=True)
-        logger.info(f"mounting embeddings container from: \n{parent} \n   to: \n{os.getcwd()}/embeddings_mount")
+        _logger.info(f"mounting embeddings container from: \n{parent} \n   to: \n{os.getcwd()}/embeddings_mount")
         with rslex_uri_volume_mount(parent, f"{os.getcwd()}/embeddings_mount", options=mnt_options) as mount_context:
             emb = EmbeddingsContainer.load(embeddings_dir_name, mount_context.mount_point)
             create_index_from_raw_embeddings(
                 emb,
                 pinecone_config=pinecone_config,
                 connection=connection_args,
-                output_path=args.output,
-                verbosity=args.verbosity,
+                output_path=_args.output,
+                verbosity=_args.verbosity,
             )
 
     except Exception as e:
-        logger.error("Failed to update Pinecone index")
+        _logger.error("Failed to update Pinecone index")
         exception_str = str(e)
         if "Cannot find nested property" in exception_str:
             error_msg_1 = f'The vector index provided "{pinecone_config["index_name"]}" has a different schema '
             error_msg_2 = "than outlined in this components description. "
             error_msg_3 = "This can happen if a different embedding model was used previously when updating this index."
-            logger.error(error_msg_1 + error_msg_2 + error_msg_3)
+            _logger.error(error_msg_1 + error_msg_2 + error_msg_3)
             activity_logger.activity_info["error_classification"] = "UserError"
             activity_logger.activity_info["error"] = f"{e.__class__.__name__}: Cannot find nested property"
         elif "Failed to upsert" in exception_str:
@@ -414,13 +414,13 @@ def main(args, logger, activity_logger):
             activity_logger.activity_info["error_classification"] = "SystemError"
         raise e
 
-    logger.info("Updated Pinecone index")
+    _logger.info("Updated Pinecone index")
 
 
-def main_wrapper(args, logger):
-    with track_activity(logger, "update_pinecone") as activity_logger, safe_mlflow_start_run(logger=logger):
+def main_wrapper(_args, _logger):
+    with track_activity(_logger, "update_pinecone") as activity_logger, safe_mlflow_start_run(logger=_logger):
         try:
-            main(args, logger, activity_logger)
+            main(_args, _logger, activity_logger)
         except Exception:
             activity_logger.error(
                 f"update_pinecone failed with exception: {traceback.format_exc()}"

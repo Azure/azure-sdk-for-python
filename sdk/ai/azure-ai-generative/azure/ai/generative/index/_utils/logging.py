@@ -96,10 +96,10 @@ known_modules = [
 class LoggerFactory:
     """Factory for creating loggers."""
 
-    def __init__(self, stdout=False, mlflow=True, verbosity=logging.INFO):
+    def __init__(self, stdout=False, mlflow=True, _verbosity=logging.INFO):
         """Initialize the logger factory."""
         self.loggers = {}
-        self.verbosity = verbosity
+        self.verbosity = _verbosity
         self.stdout = None
         self.with_stdout(stdout)
         self.appinsights = None
@@ -122,12 +122,12 @@ class LoggerFactory:
             self.mlflow = False
         return self
 
-    def with_stdout(self, stdout=True, verbosity=logging.INFO):
+    def with_stdout(self, stdout=True, _verbosity=logging.INFO):
         """Set whether to log to stdout."""
         if stdout:
             # Add stdout handler to any loggers created before enabling stdout.
             self.stdout = logging.StreamHandler(stream=sys.stdout)
-            self.stdout.setLevel(verbosity)
+            self.stdout.setLevel(_verbosity)
             self.stdout.setFormatter(
                 logging.Formatter(
                     "[%(asctime)s] %(levelname)-8s %(name)s - %(message)s (%(filename)s:%(lineno)s)",
@@ -262,9 +262,9 @@ class LoggerFactory:
 _logger_factory = LoggerFactory()
 
 
-def enable_stdout_logging(verbosity=logging.INFO):
+def enable_stdout_logging(_verbosity=logging.INFO):
     """Enable logging to stdout."""
-    _logger_factory.with_stdout(True, verbosity)
+    _logger_factory.with_stdout(True, _verbosity)
 
 
 def enable_appinsights_logging():

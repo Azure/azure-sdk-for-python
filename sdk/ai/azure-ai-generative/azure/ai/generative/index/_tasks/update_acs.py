@@ -308,8 +308,10 @@ def create_index_from_raw_embeddings(
                     if verbosity > 1:
                         logger.info(f"Marked document for deletion: {doc_id}")
 
-            msg = "adding individual documents marked for deletion"
-            logger.info(f"{len(deleted_ids)} documents from sources marked for deletion, " + msg)
+            logger.info(
+                f"{len(deleted_ids)} documents from sources marked for deletion, "
+                + "adding individual documents marked for deletion"
+            )
             for doc_id in emb._deleted_documents:  # pylint: disable=protected-access
                 num_deleted_ids += 1
                 deleted_ids.append({"id": base64.urlsafe_b64encode(doc_id.encode("utf-8")).decode("utf-8")})
@@ -453,9 +455,11 @@ def create_index_from_raw_embeddings(
             num_source_docs += len(batch)
 
         duration = time.time() - t1
-        msg = f"took {duration:.4f} seconds"
         # pylint: disable=protected-access
-        logger.info(f"Built index from {num_source_docs} documents and {len(emb._document_embeddings)} chunks, " + msg)
+        logger.info(
+            f"Built index from {num_source_docs} documents and {len(emb._document_embeddings)} chunks, "
+            + f"took {duration:.4f} seconds"
+        )
         activity_logger.info(
             "Built index", extra={"properties": {"num_source_docs": num_source_docs, "duration": duration}}
         )
@@ -488,27 +492,27 @@ def create_index_from_raw_embeddings(
     return mlindex
 
 
-def main(args, logger, activity_logger):  # pylint: disable=too-many-locals
+def main(_args, _logger, activity_logger):  # pylint: disable=too-many-locals
     try:
         try:
-            acs_config = json.loads(args.acs_config)
+            acs_config = json.loads(_args.acs_config)
         except Exception as e:
-            logger.error(f"Failed to parse acs_config as json: {e}")
+            _logger.error(f"Failed to parse acs_config as json: {e}")
             activity_logger.error("Failed to parse acs_config as json")
             raise
 
         connection_args = {}
 
-        if args.connection_id is not None:
+        if _args.connection_id is not None:
             connection_args["connection_type"] = "workspace_connection"
-            connection_args["connection"] = {"id": args.connection_id}
+            connection_args["connection"] = {"id": _args.connection_id}
             from azure.ai.resources._index._utils.connections import (
                 get_connection_by_id_v2,
                 get_metadata_from_connection,
                 get_target_from_connection,
             )
 
-            connection = get_connection_by_id_v2(args.connection_id)
+            connection = get_connection_by_id_v2(_args.connection_id)
             acs_config["endpoint"] = get_target_from_connection(connection)
             acs_config["api_version"] = get_metadata_from_connection(connection).get("apiVersion", "2023-07-01-preview")
         elif "endpoint_key_name" in acs_config:
@@ -525,39 +529,39 @@ def main(args, logger, activity_logger):  # pylint: disable=too-many-locals
             }
 
         # Mount embeddings container and create index from it
-        raw_embeddings_uri = args.embeddings
-        logger.info(f"got embeddings uri as input: {raw_embeddings_uri}")
+        raw_embeddings_uri = _args.embeddings
+        _logger.info(f"got embeddings uri as input: {raw_embeddings_uri}")
         splits = raw_embeddings_uri.split("/")
         embeddings_dir_name = splits.pop(len(splits) - 2)
-        logger.info(f"extracted embeddings directory name: {embeddings_dir_name}")
+        _logger.info(f"extracted embeddings directory name: {embeddings_dir_name}")
         parent = "/".join(splits)
-        logger.info(f"extracted embeddings container path: {parent}")
+        _logger.info(f"extracted embeddings container path: {parent}")
 
         from azureml.dataprep.fuse.dprepfuse import MountOptions, rslex_uri_volume_mount
 
         mnt_options = MountOptions(default_permission=0o555, allow_other=False, read_only=True)
-        logger.info(f"mounting embeddings container from: \n{parent} \n   to: \n{os.getcwd()}/embeddings_mount")
+        _logger.info(f"mounting embeddings container from: \n{parent} \n   to: \n{os.getcwd()}/embeddings_mount")
         with rslex_uri_volume_mount(parent, f"{os.getcwd()}/embeddings_mount", options=mnt_options) as mount_context:
             emb = EmbeddingsContainer.load(embeddings_dir_name, mount_context.mount_point)
             create_index_from_raw_embeddings(
                 emb,
                 acs_config=acs_config,
                 connection=connection_args,
-                output_path=args.output,
-                verbosity=args.verbosity,
+                output_path=_args.output,
+                verbosity=_args.verbosity,
             )
 
     except Exception as e:
-        logger.error("Failed to update ACS index")
+        _logger.error("Failed to update ACS index")
         exception_str = str(e)
         if "Floats quota has been exceeded for this service." in exception_str:
             url = "https://github.com/Azure/cognitive-search-vector-pr#storage-and-vector-index-size-limits"
-            logger.error(
+            _logger.error(
                 "Floats quota exceeded on Azure Cognitive Search Service. For more information check these docs: " + url
             )
 
             url = "https://learn.microsoft.com/en-us/rest/api/searchservice/get-index-statistics"
-            logger.error("The usage statistic of an index can be checked using this REST API: " + url)
+            _logger.error("The usage statistic of an index can be checked using this REST API: " + url)
             activity_logger.activity_info["error_classification"] = "UserError"
             activity_logger.activity_info[
                 "error"
@@ -566,7 +570,7 @@ def main(args, logger, activity_logger):  # pylint: disable=too-many-locals
             error_msg_1 = f'The vector index provided "{acs_config["index_name"]}" has a different schema '
             error_msg_2 = "than outlined in this components description. "
             error_msg_3 = "This can happen if a different embedding model was used previously when updating this index."
-            logger.error(error_msg_1 + error_msg_2 + error_msg_3)
+            _logger.error(error_msg_1 + error_msg_2 + error_msg_3)
             activity_logger.activity_info["error_classification"] = "UserError"
             activity_logger.activity_info["error"] = f"{e.__class__.__name__}: Cannot find nested property"
         elif "Failed to upload" in exception_str:
@@ -577,13 +581,13 @@ def main(args, logger, activity_logger):  # pylint: disable=too-many-locals
             activity_logger.activity_info["error_classification"] = "SystemError"
         raise e
 
-    logger.info("Updated ACS index")
+    _logger.info("Updated ACS index")
 
 
-def main_wrapper(args, logger):
-    with track_activity(logger, "update_acs") as activity_logger, safe_mlflow_start_run(logger=logger):
+def main_wrapper(_args, _logger):
+    with track_activity(_logger, "update_acs") as activity_logger, safe_mlflow_start_run(logger=_logger):
         try:
-            main(args, logger, activity_logger)
+            main(_args, _logger, activity_logger)
         except Exception:
             activity_logger.error(
                 f"update_acs failed with exception: {traceback.format_exc()}"
