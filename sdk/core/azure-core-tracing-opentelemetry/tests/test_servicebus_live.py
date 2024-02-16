@@ -9,9 +9,15 @@ from opentelemetry.trace import SpanKind
 
 
 class TestServiceBusTracing:
+    def _verify_span_attributes(self, *, span):
+        # Ensure all attributes are set and have a value.
+        for attr in span.attributes:
+            assert span.attributes[attr] is not None and span.attributes[attr] != ""
+
     def _verify_message(self, *, span, dest, server_address):
         assert span.name == "ServiceBus.message"
         assert span.kind == SpanKind.PRODUCER
+        self._verify_span_attributes(span=span)
         assert span.attributes["az.namespace"] == "Microsoft.ServiceBus"
         assert span.attributes["messaging.system"] == "servicebus"
         assert span.attributes["messaging.destination.name"] == dest
@@ -20,6 +26,7 @@ class TestServiceBusTracing:
     def _verify_send(self, *, span, dest, server_address, message_count):
         assert span.name == "ServiceBus.send"
         assert span.kind == SpanKind.CLIENT
+        self._verify_span_attributes(span=span)
         assert span.attributes["az.namespace"] == "Microsoft.ServiceBus"
         assert span.attributes["messaging.system"] == "servicebus"
         assert span.attributes["messaging.destination.name"] == dest
@@ -31,6 +38,7 @@ class TestServiceBusTracing:
     def _verify_receive(self, *, span, dest, server_address, message_count):
         assert span.name == "ServiceBus.receive"
         assert span.kind == SpanKind.CLIENT
+        self._verify_span_attributes(span=span)
         assert span.attributes["az.namespace"] == "Microsoft.ServiceBus"
         assert span.attributes["messaging.system"] == "servicebus"
         assert span.attributes["messaging.destination.name"] == dest
@@ -44,6 +52,7 @@ class TestServiceBusTracing:
     def _verify_complete(self, *, span, dest, server_address):
         assert span.name == "ServiceBus.complete"
         assert span.kind == SpanKind.CLIENT
+        self._verify_span_attributes(span=span)
         assert span.attributes["az.namespace"] == "Microsoft.ServiceBus"
         assert span.attributes["messaging.system"] == "servicebus"
         assert span.attributes["messaging.operation"] == "settle"
