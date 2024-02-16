@@ -95,6 +95,25 @@ def display_critical_results(self,radiology_insights_result):
 
 For detailed conceptual information of this and other inferences please read more [here][inferences].
 
+## Troubleshooting
+
+### General
+
+Health Insights Radiology Insights client library will raise exceptions defined in [Azure Core][azure_core].
+
+### Logging
+
+This library uses the standard [logging](https://docs.python.org/3/library/logging.html) library for logging.
+
+Basic information about HTTP sessions (URLs, headers, etc.) is logged at `INFO` level.
+
+Detailed `DEBUG` level logging, including request/response bodies and **unredacted**
+headers, can be enabled on the client or per-operation with the `logging_enable` keyword argument.
+
+See full SDK logging documentation with examples [here](https://learn.microsoft.com/azure/developer/python/sdk/azure-sdk-logging).
+
+## Next steps
+
 ## Contributing
 
 This project welcomes contributions and suggestions. Most contributions require
