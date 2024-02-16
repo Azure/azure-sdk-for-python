@@ -32,7 +32,7 @@ in the :doc:`Installation Page<installation>`
 System Requirements:
 --------------------
 
-The supported Python versions are 2.7.x, 3.4.x, 3.5.x, 3.6.x and 3.7.x
+The supported Python versions are 3.8.x, 3.9.x, 3.10.x, 3.11.x, and 3.12.x
 To download Python, please visit
 https://www.python.org/download/
 

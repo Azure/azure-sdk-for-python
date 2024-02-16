@@ -4,19 +4,19 @@
 """Azure Cognitive Search vector store."""
 import base64
 import json
-from typing import Any, Iterable, List, Optional, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 from azure.ai.generative.index._utils.logging import get_logger
-from azure.ai.generative.index._utils.requests import send_post_request
+from azure.ai.resources._index._utils.requests import send_post_request
 
 try:
     from langchain.schema.document import Document
     from langchain.schema.embeddings import Embeddings
     from langchain.schema.vectorstore import VectorStore
 except ImportError:
-    from azure.ai.generative.index._langchain.vendor.embeddings.base import Embeddings
-    from azure.ai.generative.index._langchain.vendor.schema.document import Document
-    from azure.ai.generative.index._langchain.vendor.vectorstores.base import VectorStore
+    from azure.ai.resources._index._langchain.vendor.embeddings.base import Embeddings
+    from azure.ai.resources._index._langchain.vendor.schema.document import Document
+    from azure.ai.resources._index._langchain.vendor.vectorstores.base import VectorStore
 
 logger = get_logger("langchain.acs")
 
@@ -91,7 +91,7 @@ class AzureCognitiveSearchVectorStore(VectorStore):
     ) -> List[Tuple[Document, float]]:
         post_url = f"{self.endpoint}/indexes/{self.index_name}/docs/search?api-version=2023-07-01-Preview"
         headers = get_acs_headers(self.credential)
-        post_payload = {}
+        post_payload: Dict[str, Any] = {}
 
         if query is not None:
             logger.info(f"Query: {query}")

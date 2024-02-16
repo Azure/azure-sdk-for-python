@@ -48,12 +48,18 @@ class TestUtils(unittest.TestCase):
         resource = Resource(
             {"service.name": "testServiceName",
              "service.namespace": "testServiceNamespace",
-             "service.instance.id": "testServiceInstanceId"})
+             "service.instance.id": "testServiceInstanceId",
+             "device.id": "testDeviceId",
+             "device.model.name": "testDeviceModel",
+             "device.manufacturer": "testDeviceMake"})
         tags = _utils._populate_part_a_fields(resource)
         self.assertIsNotNone(tags)
         self.assertEqual(tags.get("ai.cloud.role"), "testServiceNamespace.testServiceName")
         self.assertEqual(tags.get("ai.cloud.roleInstance"), "testServiceInstanceId")
         self.assertEqual(tags.get("ai.internal.nodeName"), "testServiceInstanceId")
+        self.assertEqual(tags.get("ai.device.id"), "testDeviceId")
+        self.assertEqual(tags.get("ai.device.model"), "testDeviceModel")
+        self.assertEqual(tags.get("ai.device.oemName"), "testDeviceMake")
 
     def test_populate_part_a_fields_default(self):
         resource = Resource(

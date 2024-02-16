@@ -24,7 +24,7 @@
         "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST": "false"
       }
     },
-    "PythonVersion": ["pypy3.9", "3.7", "3.8", "3.10", "3.11"],
+    "PythonVersion": ["pypy3.9", "3.8", "3.10", "3.11"],
     "CoverageArg": "--disablecov",
     "TestSamples": "false"
   },
@@ -47,7 +47,7 @@
         "Ubuntu2004_3120": {
           "OSVmImage": "MMSUbuntu20.04",
           "Pool": "azsdk-pool-mms-ubuntu-2004-general",
-          "PythonVersion": "3.12.0",
+          "PythonVersion": "3.12",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
           "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST": "true"

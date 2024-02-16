@@ -25,8 +25,9 @@ class ModelOperations():
     def package(
         self,
         model: Union[Model, PromptflowModel],
-        output: Union[str, os.PathLike]=Path.cwd()
+        output: Union[str, Path] = Path.cwd()
     ) -> None:
+        output = Path(output)
         output_path = Path(output/"model_package")
         output_path.mkdir(exist_ok=True)
         if isinstance(model, Model):

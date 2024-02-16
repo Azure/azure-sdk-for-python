@@ -1,8 +1,11 @@
 # Release History
 
-## 1.0.0b20 (Unreleased)
+## 1.0.0b23 (Unreleased)
 
 ### Features Added
+
+- Add device.* to part A fields
+    ([#34229](https://github.com/Azure/azure-sdk-for-python/pull/34229))
 
 ### Breaking Changes
 
@@ -10,10 +13,50 @@
 
 ### Other Changes
 
+## 1.0.0b22 (2024-02-01)
+
+### Features Added
+
+- Add live metrics skeleton + swagger definitions
+    ([#33983](https://github.com/Azure/azure-sdk-for-python/pull/33983))
+- Only create temporary folder if local storage is enabled without storage directory.
+    ([#34061](https://github.com/Azure/azure-sdk-for-python/pull/34061))
+
+### Bugs Fixed
+
+- Update exception details messsage based on `LogRecord` body
+    ([#34020](https://github.com/Azure/azure-sdk-for-python/pull/34020))
+
+### Other Changes
+
+- Drop support for Python 3.7
+    ([#34105](https://github.com/Azure/azure-sdk-for-python/pull/34105))
+
+## 1.0.0b21 (2024-01-16)
+
+### Other Changes
+
+- Update to OTel SKD/API 1.21
+    ([#33864](https://github.com/Azure/azure-sdk-for-python/pull/33864))
+- Update Django sample
+    ([#33834](https://github.com/Azure/azure-sdk-for-python/pull/33834))
+
+## 1.0.0b20 (2024-01-04)
+
+### Other Changes
+
 - Store global instance of `StatsbeatMetric`
     ([#33432](https://github.com/Azure/azure-sdk-for-python/pull/33432))
 - Shutdown statsbeat on customer getting 400 error code
     ([#33489](https://github.com/Azure/azure-sdk-for-python/pull/33489))
+- Track custom events extension in feature statsbeat
+    ([#33667](https://github.com/Azure/azure-sdk-for-python/pull/33667))
+- Readme examples are updated with correct imports
+    ([#33691](https://github.com/Azure/azure-sdk-for-python/pull/33691))
+- Implement distro detection for statsbeat feature
+    ([#33761](https://github.com/Azure/azure-sdk-for-python/pull/33761))
+- Use empty resource for statsbeat `MeterProvider`
+    ([#33768](https://github.com/Azure/azure-sdk-for-python/pull/33768))
 
 ## 1.0.0b19 (2023-11-20)
 

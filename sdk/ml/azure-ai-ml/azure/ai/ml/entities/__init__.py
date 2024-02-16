@@ -169,6 +169,7 @@ from ._monitoring.signals import (
     PredictionDriftSignal,
     ProductionData,
     ReferenceData,
+    ModelPerformanceSignal,
 )
 from ._monitoring.target import MonitoringTarget
 from ._monitoring.thresholds import (
@@ -182,6 +183,9 @@ from ._monitoring.thresholds import (
     GenerationSafetyQualityMonitoringMetricThreshold,
     NumericalDriftMetrics,
     PredictionDriftMetricThreshold,
+    ModelPerformanceMetricThreshold,
+    ModelPerformanceClassificationThresholds,
+    ModelPerformanceRegressionThresholds,
 )
 from ._notification.notification import Notification
 from ._registry.registry import Registry
@@ -201,6 +205,7 @@ from ._workspace.connections.workspace_connection_subtypes import (
     AzureAISearchWorkspaceConnection,
     AzureAIServiceWorkspaceConnection,
     AzureOpenAIWorkspaceConnection,
+    AzureBlobStoreWorkspaceConnection,
 )
 from ._workspace.customer_managed_key import CustomerManagedKey
 from ._workspace.diagnose import (
@@ -281,6 +286,7 @@ __all__ = [
     "WorkspaceKeys",
     "WorkspaceConnection",
     "AzureOpenAIWorkspaceConnection",
+    "AzureBlobStoreWorkspaceConnection",
     "AzureAISearchWorkspaceConnection",
     "AzureAIServiceWorkspaceConnection",
     "DiagnoseRequestProperties",
@@ -434,6 +440,7 @@ __all__ = [
     "FeatureAttributionDriftSignal",
     "CustomMonitoringSignal",
     "GenerationSafetyQualitySignal",
+    "ModelPerformanceSignal",
     "MonitorFeatureFilter",
     "DataSegment",
     "FADProductionData",
@@ -455,6 +462,9 @@ __all__ = [
     "NumericalDriftMetrics",
     "DataQualityMetricsNumerical",
     "DataQualityMetricsCategorical",
+    "ModelPerformanceMetricThreshold",
+    "ModelPerformanceClassificationThresholds",
+    "ModelPerformanceRegressionThresholds",
     "DataCollector",
     "IntellectualProperty",
     "DeploymentCollection",

@@ -689,6 +689,9 @@
                 "description": "[parameters('description')]",
                 "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
                 "hubResourceId": "[parameters('workspace_hub')]",
+                "enableDataIsolation": "[parameters('enable_data_isolation')]",
+                "managedNetwork": "[parameters('managedNetwork')]",
+                "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
                 "serverlessComputeSettings": "[parameters('serverless_compute_settings')]"
             }
         }

@@ -21,7 +21,10 @@
 """
 
 
-class ThroughputProperties(object):
+from typing import Any, Dict, Optional
+
+
+class ThroughputProperties:
     """Represents the throughput properties in an Azure Cosmos DB SQL API container.
 
     To read and update throughput properties, use the associated methods on the :class:`Container`.
@@ -36,11 +39,11 @@ class ThroughputProperties(object):
      the increment percent should be greater than or equal to zero.
     """
 
-    def __init__(self, *args, **kwargs):  # pylint: disable=super-init-not-called
-        self.offer_throughput = args[0] if args else kwargs.get('offer_throughput')
-        self.properties = args[1] if len(args) > 1 else kwargs.get('properties')
-        self.auto_scale_max_throughput = kwargs.get('auto_scale_max_throughput')
-        self.auto_scale_increment_percent = kwargs.get('auto_scale_increment_percent')
+    def __init__(self, *args, **kwargs) -> None:
+        self.offer_throughput: Optional[int] = args[0] if args else kwargs.get('offer_throughput')
+        self.properties: Optional[Dict[str, Any]] = args[1] if len(args) > 1 else kwargs.get('properties')
+        self.auto_scale_max_throughput: Optional[int] = kwargs.get('auto_scale_max_throughput')
+        self.auto_scale_increment_percent: Optional[int] = kwargs.get('auto_scale_increment_percent')
 
 
 Offer = ThroughputProperties
