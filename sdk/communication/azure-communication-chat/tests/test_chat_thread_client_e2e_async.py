@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 import pytest
 import asyncio
-import time
 from datetime import datetime, timezone
 from devtools_testutils import AzureRecordedTestCase, is_live
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -332,7 +331,6 @@ class TestChatThreadClientAsync(AzureRecordedTestCase):
     async def test_send_read_receipt(self):
         async with self.chat_client:
             await self._create_thread()
-            time.sleep(3)
             async with self.chat_thread_client:
                 message_id = await self._send_message()
 

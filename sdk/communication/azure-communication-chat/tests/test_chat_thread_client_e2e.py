@@ -254,7 +254,6 @@ class TestChatThreadClient(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_send_read_receipt(self):
         self._create_thread()
-        time.sleep(3)
         message_id = self._send_message()
 
         self.chat_thread_client.send_read_receipt(message_id)
