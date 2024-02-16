@@ -331,7 +331,7 @@ class QADataGenerator:
                 )
             # Only the question key is required in non-conversation cases,
             # we can default to chat_history as chat_history_key
-            elif not "question_key" in field_mapping:
+            if not "question_key" in field_mapping:
                 raise Exception(
                     f"Field mapping for Promptflow output with {qa_type} must contain following keys: question_key"
                 )

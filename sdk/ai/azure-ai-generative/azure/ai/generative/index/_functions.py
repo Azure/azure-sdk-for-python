@@ -8,6 +8,7 @@ from azure.core.credentials import TokenCredential
 
 from ._mlindex import MLIndex as DataplaneMLIndex
 
+
 def get_langchain_embeddings_from_index(
     path: Optional[Union[str, Path]],
     credential: Optional[TokenCredential] = None,

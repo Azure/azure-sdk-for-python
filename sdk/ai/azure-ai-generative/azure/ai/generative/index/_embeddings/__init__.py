@@ -57,7 +57,7 @@ def get_langchain_embeddings(
             max_retries=arguments.get("embedding_ctx_length", None),
         )
         return embedder
-    elif embedding_kind == "hugging_face":
+    if embedding_kind == "hugging_face":
         from azure.ai.resources._index._langchain.vendor.embeddings.huggingface import HuggingFaceEmbeddings
 
         args = copy.deepcopy(arguments)
@@ -149,8 +149,8 @@ def get_embed_fn(
         )
 
         def embed(texts: List[str], activity_logger=None) -> List[List[float]]:
+            pre_batch = time.time()
             try:
-                pre_batch = time.time()
                 embedded_documents = embedder.embed_documents(texts)
                 return embedded_documents
             except Exception as e:
@@ -1075,10 +1075,10 @@ class EmbeddingsContainer:  # pylint: disable=too-many-instance-attributes
             FaissClass = FAISS
             import_faiss_or_so_help_me = dependable_faiss_import
         elif engine.endswith("indexes.faiss.FaissAndDocStore"):
-            # pylint: disable=import-error
+            # pylint: disable=import-error, no-name-in-module
             from azure.ai.generative.index._docstore import FileBasedDocstore
 
-            # pylint: disable=import-error
+            # pylint: disable=import-error, no-name-in-module
             from azure.ai.generative.index._indexes.faiss import (  # type: ignore[no-redef]
                 FaissAndDocStore,
                 import_faiss_or_so_help_me,

@@ -122,13 +122,13 @@ class AugLoopClient:  # pylint: disable=client-accepts-api-version-keyword
                 self.logger.info("Received message: %s", responseMessage)
 
                 if (
-                    responseMessage != None
+                    responseMessage is not None
                     and self.augLoopParams.annotationType in responseMessage
                     and self.augLoopParams.workflowName in responseMessage
                 ):
                     break
 
-            if responseMessage != None:
+            if responseMessage is not None:
                 response_json = json.loads(responseMessage)
 
                 if self.augLoopParams.pathToError != "":
@@ -139,7 +139,7 @@ class AugLoopClient:  # pylint: disable=client-accepts-api-version-keyword
                     for errMatch in error_expr.find(response_json):
                         errorMessages.append(f'{errMatch.value["category"]}: {errMatch.value["message"]}')
 
-                    if errorMessages != None and len(errorMessages) > 0:
+                    if errorMessages is not None and len(errorMessages) > 0:
                         self.logger.warn("Found Error in response")
                         return {
                             "id": response_json["cv"],
@@ -176,7 +176,7 @@ class AugLoopClient:  # pylint: disable=client-accepts-api-version-keyword
             return {"success": False}
         except WebSocketConnectionClosedException:
             self.logger.info("Websocket is closed. Re-attempting connection")
-            if isInRecursiveCall == False:
+            if isInRecursiveCall is False:
                 self.reconnect_and_attempt_session_init()
 
                 return self.send_signal_and_wait_for_annotation(message=message, isInRecursiveCall=True)
@@ -215,7 +215,7 @@ class AugLoopClient:  # pylint: disable=client-accepts-api-version-keyword
         self.prevId = self.id
 
     def reconnect_and_attempt_session_init(self) -> None:
-        if self.sessionKey == None or self.sessionKey == "":
+        if self.sessionKey is None or self.sessionKey == "":
             raise Exception("SessionKey Not Found!!")
 
         self.logger.info("Connecting Websocket again")
@@ -242,13 +242,12 @@ class AugLoopClient:  # pylint: disable=client-accepts-api-version-keyword
             message = self.websocket.recv()
             self.logger.info("Re-SessionInit Response: %s", message)
 
-            if message == None or message.find("AugLoop_Session_Protocol_SessionInitResponse") == -1:
+            if message is None or message.find("AugLoop_Session_Protocol_SessionInitResponse") == -1:
                 maxRetry = maxRetry - 1
                 if maxRetry == 0:
                     raise Exception("SessionInit response not found!!")
-                else:
-                    self.logger.info("This is not session init, response so waiting on next response")
-                    continue
+                self.logger.info("This is not session init, response so waiting on next response")
+                continue
 
             sessionInitResponse = json.loads(message)
             oldSessionKey = self.sessionKey

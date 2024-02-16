@@ -241,7 +241,7 @@ class LoggerFactory:
             location = os.environ.get("AZUREML_SERVICE_ENDPOINT", "")
         info["location"] = location
         try:
-            from azureml.core import Run  # pylint: disable=import-error
+            from azureml.core import Run  # pylint: disable=import-error, no-name-in-module
 
             run: Run = Run.get_context()
             if hasattr(run, "experiment"):

@@ -396,7 +396,7 @@ class MLIndex:
                 user_agent=f"azureml-rag=={version}/mlindex",
                 api_version=self.index_config.get("api_version", "2023-07-01-preview"),
             )
-        elif index_kind == "faiss":
+        if index_kind == "faiss":
             from azure.ai.resources._index._indexes.faiss import FaissAndDocStore
 
             embeddings = self.get_langchain_embeddings(credential=credential)
@@ -458,7 +458,6 @@ class MLIndex:
             else:
                 self.embeddings_config["connection_type"] = "workspace_connection"
                 if isinstance(embedding_connection, str):
-                    from azure.ai.resources._index._utils.connections import get_connection_by_id_v2
                     embedding_connection = get_connection_by_id_v2(embedding_connection, credential=credential)
                 self.embeddings_config["connection"] = {"id": get_id_from_connection(embedding_connection)}
         if index_connection:
@@ -467,7 +466,6 @@ class MLIndex:
             else:
                 self.index_config["connection_type"] = "workspace_connection"
                 if isinstance(index_connection, str):
-                    from azure.ai.resources._index._utils.connections import get_connection_by_id_v2
                     index_connection = get_connection_by_id_v2(index_connection, credential=credential)
                 self.index_config["connection"] = {"id": get_id_from_connection(index_connection)}
         # pylint: disable=no-value-for-parameter
@@ -597,7 +595,7 @@ class MLIndex:
 
         embeddings = None
         # TODO: Move this logic to load from embeddings_container into EmbeddingsContainer
-        try:
+        try:  # pylint: disable=too-many-nested-blocks
             if embeddings_container is not None:
                 if isinstance(embeddings_container, str) and "://" in embeddings_container:
                     from fsspec.core import url_to_fs
@@ -630,8 +628,6 @@ class MLIndex:
                 if isinstance(embeddings_model, str):
                     connection_args = {}
                     if "open_ai" in embeddings_model:
-                        from azure.ai.resources._index._utils.connections import get_connection_by_id_v2
-
                         if embeddings_connection:
                             if isinstance(embeddings_connection, str):
                                 embeddings_connection: Union[  # type: ignore[no-redef]
@@ -740,7 +736,6 @@ class MLIndex:
             )
         elif index_type == "acs":
             from azure.ai.generative.index._tasks.update_acs import create_index_from_raw_embeddings
-            from azure.ai.resources._index._utils.connections import get_connection_by_id_v2
 
             if not index_connection:
                 index_config = {

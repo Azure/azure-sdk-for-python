@@ -8,6 +8,7 @@ import tempfile
 import time
 import logging
 from collections import Counter
+from json import JSONDecodeError
 from pathlib import Path
 from typing import Callable, Optional, Dict, List, Union
 from types import FunctionType

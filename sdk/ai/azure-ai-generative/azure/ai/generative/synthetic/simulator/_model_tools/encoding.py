@@ -38,5 +38,4 @@ def encode_example(
         return json.dumps(example, indent=indent, quote_keys=True, trailing_commas=False)
     if encoding.value == Encoding.XML.value:
         raise NotImplementedError('XML encoding not implemented.')
-    else:
-        raise ValueError(f'Unknown encoding {encoding} ({type(encoding)}).')
+    raise ValueError(f'Unknown encoding {encoding} ({type(encoding)}).')

@@ -513,7 +513,7 @@ def main(args, logger, activity_logger):  # pylint: disable=too-many-locals
             acs_config["api_version"] = get_metadata_from_connection(connection).get("apiVersion", "2023-07-01-preview")
         elif "endpoint_key_name" in acs_config:
             connection_args["connection_type"] = "workspace_keyvault"
-            from azureml.core import Run  # pylint: disable=import-error
+            from azureml.core import Run  # pylint: disable=import-error, no-name-in-module
 
             run = Run.get_context()
             ws = run.experiment.workspace

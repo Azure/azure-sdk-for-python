@@ -220,8 +220,7 @@ class TikaLoader(BaseDocumentLoader):
         except TypeError as e:
             if "expected string or bytes-like object" in str(e):
                 raise Exception(f"content needs to be of type str but it was of type {type(content)}.") from e
-            else:
-                raise e
+            raise e
         return [StaticDocument(data=text, metadata=self.metadata)]
 
     @classmethod

@@ -99,8 +99,7 @@ def decode_example(example: str, label_keys: List[str], encoding: Encoding = Enc
         return try_decode_json(example, label_keys)
     if encoding == Encoding.XML:
         raise NotImplementedError("XML encoding not implemented.")
-    else:
-        raise ValueError(f"Unknown encoding {encoding}.")
+    raise ValueError(f"Unknown encoding {encoding}.")
 
 
 def try_decode_json(example: str, label_keys: List[str]) -> Dict[str, Any]:
@@ -124,8 +123,7 @@ def try_decode_json(example: str, label_keys: List[str]) -> Dict[str, Any]:
 
     if last_error is not None:
         raise last_error
-    else:
-        raise ValueError("Failed to decode example: " + example)
+    raise ValueError("Failed to decode example: " + example)
 
 
 def get_majority_value(numbers):

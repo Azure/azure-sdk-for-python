@@ -71,6 +71,7 @@ def get_langchain_splitter(file_extension: str, arguments: dict) -> TextSplitter
     # Handle non-natural language splitters
     if file_extension == ".py":
         from azure.ai.resources._index._langchain.vendor.text_splitter import Language, RecursiveCharacterTextSplitter
+
         with tiktoken_cache_dir():
             return RecursiveCharacterTextSplitter.from_tiktoken_encoder(
                 **{
@@ -198,7 +199,7 @@ def split_documents(  # pylint: disable=too-many-statements
         if "chunk_overlap" in local_splitter_args:
             chunk_overlap = local_splitter_args["chunk_overlap"]
 
-        def filter_short_docs(chunked_document):
+        def filter_short_docs(chunked_document, chunk_overlap):
             for doc in chunked_document.chunks:
                 doc_len = len(doc.page_content)
                 if doc_len < chunk_overlap:
@@ -208,7 +209,7 @@ def split_documents(  # pylint: disable=too-many-statements
                     continue
                 yield doc
 
-        def merge_metadata(chunked_document):
+        def merge_metadata(chunked_document, document_metadata):
             for chunk in chunked_document.chunks:
                 chunk.metadata = merge_dicts(chunk.metadata, document_metadata)
             return chunked_document
@@ -216,7 +217,9 @@ def split_documents(  # pylint: disable=too-many-statements
         if document.source.path:
             document_source_path: Path = Path(document.source.path)
             splitter = file_extension_splitters.get(document_source_path.suffix.lower())(**local_splitter_args)
-            split_docs = splitter.split_documents(list(filter_short_docs(merge_metadata(document))))
+            split_docs = splitter.split_documents(
+                list(filter_short_docs(merge_metadata(document, document_metadata), chunk_overlap))
+            )
 
             i = -1
             file_chunks = []
@@ -280,6 +283,7 @@ class MarkdownHeaderSplitter(TextSplitter):
     def __init__(self, remove_hyperlinks: bool = True, remove_images: bool = True, **kwargs: Any):
         """Initialize Markdown Header Splitter."""
         from azure.ai.resources._index._langchain.vendor.text_splitter import TokenTextSplitter
+
         self._remove_hyperlinks = remove_hyperlinks
         self._remove_images = remove_images
         with tiktoken_cache_dir():

@@ -41,7 +41,7 @@ class Simulator:
         self.simulate_callback = simulate_callback
 
     def _to_openai_chat_completion_model(self, config: "AzureOpenAIModelConfiguration"):  # type: ignore[name-defined]
-        if config == None:
+        if config is None:
             return None
         token_manager = PlainTokenManager(
             openapi_key=config.api_key,
@@ -99,7 +99,7 @@ class Simulator:
         # create user bot
         gpt_bot = self.setup_bot(ConversationRole.USER, str(template), parameters)
 
-        if self.userConnection == None:
+        if self.userConnection is None:
             bots = [gpt_bot]
         else:
             customer_bot = self.setup_bot(ConversationRole.ASSISTANT, str(template), parameters)
@@ -150,7 +150,7 @@ class Simulator:
         return json.dumps(obj)
 
     def _get_callback_citations(self, callback_citations: dict, turn_num: Optional[int] = None):
-        if turn_num == None:
+        if turn_num is None:
             return []
         current_turn_citations = []
         current_turn_str = "turn_" + str(turn_num)
