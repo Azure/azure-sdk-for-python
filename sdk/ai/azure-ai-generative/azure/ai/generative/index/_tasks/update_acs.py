@@ -89,7 +89,7 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
                 fields.append(
                     SearchableField(name=field_name, type=SearchFieldDataType.String, analyzer_name="standard")
                 )
-            elif field_type == "url" or field_type == "filename":
+            elif field_type in {"url", "filename"}:
                 fields.append(SimpleField(name=field_name, type=SearchFieldDataType.String))
             elif field_type == "title":
                 fields.append(SearchableField(name=field_name, type=SearchFieldDataType.String))

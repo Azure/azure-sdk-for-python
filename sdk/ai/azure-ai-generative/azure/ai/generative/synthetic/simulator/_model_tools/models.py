@@ -556,16 +556,16 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
     def __init__(self, name="OpenAIChatCompletionsModel", *args, **kwargs):
         super().__init__(name=name, *args, **kwargs)
 
-    def format_request_data(self, messages: List[dict], **request_params):  # type: ignore[override]
+    def format_request_data(self, prompt: List[dict], **request_params):  # type: ignore[override]
         # Caption images if available
         if len(self.image_captions.keys()):
-            for message in messages:
+            for message in prompt:
                 message["content"] = replace_prompt_captions(
                     message["content"],
                     captions=self.image_captions,
                 )
 
-        request_data = {"messages": messages, **self.get_model_params()}
+        request_data = {"messages": prompt, **self.get_model_params()}
         request_data.update(request_params)
         return request_data
 
@@ -770,10 +770,10 @@ class LLAMAChatCompletionsModel(LLAMACompletionsModel):
         # set authentication header to Bearer, as llama apis always uses the bearer auth_header
         self.token_manager.auth_header = "Bearer"
 
-    def format_request_data(self, messages: List[dict], **request_params):  # type: ignore[override]
+    def format_request_data(self, prompt: List[dict], **request_params):  # type: ignore[override]
         # Caption images if available
         if len(self.image_captions.keys()):
-            for message in messages:
+            for message in prompt:
                 message["content"] = replace_prompt_captions(
                     message["content"],
                     captions=self.image_captions,
@@ -787,17 +787,17 @@ class LLAMAChatCompletionsModel(LLAMACompletionsModel):
         # so if we set the system meta prompt as a user message,
         # and if we have the first two messages made by user then we
         # combine the two messages in one message.
-        for _, x in enumerate(messages):
+        for _, x in enumerate(prompt):
             if x["role"] == "system":
                 x["role"] = "user"
-        if len(messages) > 1 and messages[0]["role"] == "user" and messages[1]["role"] == "user":
-            messages[0] = {"role": "user", "content": messages[0]["content"] + "\n" + messages[1]["content"]}
-            del messages[1]
+        if len(prompt) > 1 and prompt[0]["role"] == "user" and prompt[1]["role"] == "user":
+            prompt[0] = {"role": "user", "content": prompt[0]["content"] + "\n" + prompt[1]["content"]}
+            del prompt[1]
 
         # request_data = {"messages": messages, **self.get_model_params()}
         request_data = {
             "input_data": {
-                "input_string": messages,
+                "input_string": prompt,
                 "parameters": {"temperature": self.temperature, "max_new_tokens": self.max_tokens},
             },
         }

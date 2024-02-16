@@ -105,7 +105,7 @@ def get_langchain_splitter(file_extension: str, arguments: dict) -> TextSplitter
                 length_function=token_length_function(),
                 **{**arguments, "disallowed_special": (), "allowed_special": "all"},
             )
-    elif file_extension == ".html" or file_extension == ".htm":
+    elif file_extension in {".html", ".htm"}:
         from azure.ai.resources._index._langchain.vendor.text_splitter import TokenTextSplitter
 
         logger.info("Using HTML splitter.")

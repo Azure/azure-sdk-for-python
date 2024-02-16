@@ -276,7 +276,7 @@ def extract_text_document_title(text: str, file_name: str) -> Tuple[str, str]:
             logger.warning(f"Failed to get docstring for {file_name}. Exception message: {e}")
 
         return f"Title: {title}", title
-    if file_extension == ".html" or file_extension == ".htm":
+    if file_extension in {".html", ".htm"}:
         from bs4 import BeautifulSoup
 
         soup = BeautifulSoup(text, "html.parser")
