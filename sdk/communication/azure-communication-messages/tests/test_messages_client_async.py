@@ -86,7 +86,7 @@ class TestNotificationMessageClientForTextAsync(AsyncMessagesRecordedTestCase):
     
 
     @MessagesPreparersAsync.messages_test_decorator_async
-    #@recorded_by_proxy_async 
+    @recorded_by_proxy_async  
     async def test_template_with_parameters_send_message_async(self):
         
         phone_number: str = "+14254360097"
