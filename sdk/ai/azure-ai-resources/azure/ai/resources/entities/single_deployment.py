@@ -11,7 +11,7 @@ from .models import Model, PromptflowModel
 
 
 @dataclass
-class Deployment:
+class SingleDeployment:
     name: str
     model: Union[str, Model, PromptflowModel]
     app_insights_enabled: bool = True
