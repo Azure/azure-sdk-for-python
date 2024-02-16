@@ -29,8 +29,6 @@ parameters:
   - name: InjectedPackages
     type: string
     default: ''
-  - name: Matrix
-    type: string
   - name: DependsOn
     type: object
     default: []
