@@ -74,10 +74,10 @@
 # PRLabel: %Attestation
 /sdk/attestation/azure-security-attestation/                         @anilba06 @Azure/azure-sdk-write-attestation @gkostal
 
-# ServiceOwners: @cRui861 @paterasMSFT
+# ServiceOwners: @cRui861
 # ServiceLabel: %Batch
 # PRLabel: %Batch
-/sdk/batch/                                                          @jingjlii @JJJessieWang @wanghoppe @dpwatrous @wiboris @cRui861 @paterasMSFT
+/sdk/batch/                                                          @jingjlii @JJJessieWang @wanghoppe @dpwatrous @wiboris @cRui861
 
 # PRLabel: %CognitiveServices
 /sdk/cognitiveservices/                                              @kristapratico
