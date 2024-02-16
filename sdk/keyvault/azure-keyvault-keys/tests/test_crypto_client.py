@@ -49,7 +49,7 @@ NO_GET = Permissions(keys=[p.value for p in KeyPermissions if p.value != "get"])
 
 all_api_versions = get_decorator()
 only_hsm = get_decorator(only_hsm=True)
-only_vault_7_4_plus = get_decorator(only_vault=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5_PREVIEW_1])
+only_vault_7_4_plus = get_decorator(only_vault=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5])
 no_get = get_decorator(permissions=NO_GET)
 
 

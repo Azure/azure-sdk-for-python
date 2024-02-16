@@ -3,15 +3,17 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import asyncio
 import os
 from unittest import mock
 
 
 import pytest
-from devtools_testutils import (add_general_regex_sanitizer,
-                                add_oauth_response_sanitizer, is_live,
-                                test_proxy)
+from devtools_testutils import (
+    add_general_string_sanitizer,
+    add_oauth_response_sanitizer,
+    add_uri_regex_sanitizer,
+    is_live,
+)
 
 os.environ['PYTHONHASHSEED'] = '0'
 
@@ -30,15 +32,20 @@ def add_sanitizers(test_proxy):
     client_id = os.environ.get("KEYVAULT_CLIENT_ID", "service-principal-id")
     sas_token = os.environ.get("BLOB_STORAGE_SAS_TOKEN","fake-sas")
 
-    add_general_regex_sanitizer(regex=azure_keyvault_url, value="https://vaultname.vault.azure.net")
-    add_general_regex_sanitizer(regex=keyvault_tenant_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=keyvault_subscription_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=azure_managedhsm_url,value="https://managedhsmvaultname.managedhsm.azure.net")
-    add_general_regex_sanitizer(regex=azure_attestation_uri,value="https://fakeattestation.azurewebsites.net")
-    add_general_regex_sanitizer(regex=storage_name, value = "blob_storage_account_name")
-    add_general_regex_sanitizer(regex=storage_endpoint_suffix, value = "keyvault_endpoint_suffix")
-    add_general_regex_sanitizer(regex=sas_token, value="fake-sas")
-    add_general_regex_sanitizer(regex=client_id, value = "service-principal-id")
+    add_general_string_sanitizer(target=azure_keyvault_url, value="https://vaultname.vault.azure.net")
+    add_general_string_sanitizer(target=keyvault_tenant_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_string_sanitizer(target=keyvault_subscription_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_string_sanitizer(target=azure_managedhsm_url,value="https://managedhsmvaultname.managedhsm.azure.net")
+    add_general_string_sanitizer(target=azure_attestation_uri,value="https://fakeattestation.azurewebsites.net")
+    add_general_string_sanitizer(target=storage_name, value = "blob_storage_account_name")
+    add_general_string_sanitizer(target=storage_endpoint_suffix, value = "keyvault_endpoint_suffix")
+    add_general_string_sanitizer(target=sas_token, value="fake-sas")
+    add_general_string_sanitizer(target=client_id, value = "service-principal-id")
+    # Sanitize API versions of `azure-keyvault-keys` requests
+    add_uri_regex_sanitizer(
+        regex="keys/([^/]*)/create\\?api-version=(\\S*)", value="keys/$1/create?api-version=sanitized"
+    )
+    add_uri_regex_sanitizer(regex="keys/([^/]*)\\?api-version=(\\S*)", value="keys/$1?api-version=sanitized")
     add_oauth_response_sanitizer()
 
 
@@ -66,9 +73,3 @@ def patch_sleep():
 
     else:
         yield
-
-@pytest.fixture(scope="session")
-def event_loop(request):
-    loop = asyncio.get_event_loop()
-    yield loop
-    loop.close()

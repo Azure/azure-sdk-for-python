@@ -140,10 +140,10 @@ class TestLogsIngestionClient(AzureRecordedTestCase):
 
         assert on_error.called
 
-    def test_invalid_logs_format(self, monitor_info):
+    @pytest.mark.parametrize("logs", ['[{"foo": "bar"}]', "foo", {"foo": "bar"}, None])
+    def test_invalid_logs_format(self, monitor_info, logs):
         client = self.create_client_from_credential(
             LogsIngestionClient, self.get_credential(LogsIngestionClient), endpoint=monitor_info['dce'])
 
-        body = {"foo": "bar"}
         with pytest.raises(ValueError):
-            client.upload(rule_id="rule", stream_name="stream", logs=body)
+            client.upload(rule_id="rule", stream_name="stream", logs=logs)

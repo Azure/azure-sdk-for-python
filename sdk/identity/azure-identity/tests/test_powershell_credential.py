@@ -110,7 +110,9 @@ def test_get_token(stderr):
     command = args[0][-1]
     assert command.startswith("pwsh -NoProfile -NonInteractive -EncodedCommand ")
 
-    encoded_script = command.split()[-1]
+    match = re.search(r"-EncodedCommand\s+(\S+)", command)
+    assert match, "couldn't find encoded script in command line"
+    encoded_script = match.groups()[0]
     decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
     assert "TenantId" not in decoded_script
     assert "Get-AzAccessToken -ResourceUrl '{}'".format(scope) in decoded_script
@@ -250,7 +252,14 @@ def test_unexpected_error():
     assert False, "Credential should have included stderr in a DEBUG level message"
 
 
-def test_windows_powershell_fallback():
+@pytest.mark.parametrize(
+    "error_message",
+    (
+        "'pwsh' is not recognized as an internal or external command,\r\noperable program or batch file.",
+        "some other message",
+    ),
+)
+def test_windows_powershell_fallback(error_message):
     """On Windows, the credential should fall back to powershell.exe when pwsh.exe isn't on the path"""
 
     class Fake:
@@ -262,8 +271,8 @@ def test_windows_powershell_fallback():
         if args[-1].startswith("pwsh"):
             assert Fake.calls == 1, 'credential should invoke "pwsh" only once'
             stdout = ""
-            stderr = "'pwsh' is not recognized as an internal or external command,\r\noperable program or batch file."
-            return_code = 1
+            stderr = error_message
+            return_code = 9009
         else:
             assert args[-1].startswith("powershell"), 'credential should fall back to "powershell"'
             stdout = NO_AZ_ACCOUNT_MODULE
@@ -288,7 +297,9 @@ def test_multitenant_authentication():
 
     def fake_Popen(command, **_):
         assert command[-1].startswith("pwsh -NoProfile -NonInteractive -EncodedCommand ")
-        encoded_script = command[-1].split()[-1]
+        match = re.search(r"-EncodedCommand\s+(\S+)", command[-1])
+        assert match, "couldn't find encoded script in command line"
+        encoded_script = match.groups()[0]
         decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
         match = re.search(r"Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)
         tenant = match.groups()[1]
@@ -318,7 +329,9 @@ def test_multitenant_authentication_not_allowed():
 
     def fake_Popen(command, **_):
         assert command[-1].startswith("pwsh -NoProfile -NonInteractive -EncodedCommand ")
-        encoded_script = command[-1].split()[-1]
+        match = re.search(r"-EncodedCommand\s+(\S+)", command[-1])
+        assert match, "couldn't find encoded script in command line"
+        encoded_script = match.groups()[0]
         decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
         match = re.search(r"Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)
         tenant = match.groups()[1]
