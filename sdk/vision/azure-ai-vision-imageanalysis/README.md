@@ -9,11 +9,10 @@ Use the Image Analysis client library to:
 * Get the analysis result
 
 [Product documentation](https://learn.microsoft.com/azure/ai-services/computer-vision/overview-image-analysis?tabs=4-0) 
-| [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/vision/azure-ai-vision-imageanalysis/samples)
-| [Vision Studio](https://portal.vision.cognitive.azure.com/gallery/imageanalysis)
-| [API reference documentation](https://azsdk/image-analysis/ref-docs/python)
-| [Package (Pypi)](https://azsdk/image-analysis/package/pypi)
-| [Package (Conda)](https://azsdk/image-analysis/package/conda)
+| [Samples](https://aka.ms/azsdk/image-analysis/samples/python)
+| [Vision Studio](https://aka.ms/vision-studio/image-analysis)
+| [API reference documentation](https://aka.ms/azsdk/image-analysis/ref-docs/python)
+| [Package (Pypi)](https://aka.ms/azsdk/image-analysis/package/pypi)
 | [SDK source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/vision/azure-ai-vision-imageanalysis/azure/ai/vision/imageanalysis)
 
 ## Getting started
@@ -53,7 +52,7 @@ from azure.ai.vision.imageanalysis import ImageAnalysisClient
 from azure.ai.vision.imageanalysis.models import VisualFeatures
 from azure.core.credentials import AzureKeyCredential
 
-# Set the values of your computer vision endpoint and computer vision key 
+# Set the values of your computer vision endpoint and computer vision key
 # as environment variables:
 try:
     endpoint = os.environ["VISION_ENDPOINT"]
@@ -65,18 +64,23 @@ except KeyError:
 
 # Create an Image Analysis client for synchronous operations
 client = ImageAnalysisClient(
-    endpoint = endpoint,
-    credential = AzureKeyCredential(key)
+    endpoint=endpoint,
+    credential=AzureKeyCredential(key)
 )
 ```
 
 <!-- END SNIPPET -->
 
-A synchronous client supports synchronous analysis methods, meaning they will block until the service responds with analysis results. The code snippets below all use synchronous methods because it's easier for a getting-started guide. The SDK offers equivalent asynchronous APIs which are often preferred. To create an asynchronous client, simply update the above code to import `ImageAnalysisClient` from the `aio` namespace:
+A synchronous client supports synchronous analysis methods, meaning they will block until the service responds with analysis results. The code snippets below all use synchronous methods because it's easier for a getting-started guide. The SDK offers equivalent asynchronous APIs which are often preferred. To create an asynchronous client, do the following:
 
-```python
-from azure.ai.vision.imageanalysis.aio import ImageAnalysisClient
-```
+* Update the above code to import `ImageAnalysisClient` from the `aio` namespace:
+    ```python
+    from azure.ai.vision.imageanalysis.aio import ImageAnalysisClient
+    ```
+* Install the additional package [aiohttp](https://pypi.org/project/aiohttp/):
+    ```bash
+    pip install aiohttp
+    ```
 
 ## Key concepts
 
@@ -135,14 +139,14 @@ Notes:
 
 ```python
 # Load image to analyze into a 'bytes' object
-with open("sample.jpg", 'rb') as f:
+with open("sample.jpg", "rb") as f:
     image_data = f.read()
 
 # Get a caption for the image. This will be a synchronously (blocking) call.
 result = client.analyze(
-    image_data = image_data,
-    visual_features = [ VisualFeatures.CAPTION ],
-    gender_neutral_caption = True # Optional (default is False)
+    image_data=image_data,
+    visual_features=[VisualFeatures.CAPTION],
+    gender_neutral_caption=True,  # Optional (default is False)
 )
 
 # Print caption results to the console
@@ -164,10 +168,10 @@ This example is similar to the above, expect it calls the `analyze` method and p
 
 ```python
 # Get a caption for the image. This will be a synchronously (blocking) call.
-result = client.analyze(
-    image_url = "https://aka.ms/azsdk/image-analysis/sample.jpg",
-    visual_features = [ VisualFeatures.CAPTION ],
-    gender_neutral_caption = True # Optional (default is False)
+result = client.analyze_from_url(
+    image_url="https://aka.ms/azsdk/image-analysis/sample.jpg",
+    visual_features=[VisualFeatures.CAPTION],
+    gender_neutral_caption=True,  # Optional (default is False)
 )
 
 # Print caption results to the console
@@ -187,13 +191,13 @@ This example demonstrates how to extract printed or hand-written text for the im
 
 ```python
 # Load image to analyze into a 'bytes' object
-with open("sample.jpg", 'rb') as f:
+with open("sample.jpg", "rb") as f:
     image_data = f.read()
 
 # Extract text (OCR) from an image stream. This will be a synchronously (blocking) call.
 result = client.analyze(
-    image_data = image_data,
-    visual_features = [ VisualFeatures.READ ]
+    image_data=image_data,
+    visual_features=[VisualFeatures.READ]
 )
 
 # Print text (OCR) analysis results to the console
@@ -220,9 +224,9 @@ This example is similar to the above, expect it calls the `analyze` method and p
 
 ```python
 # Extract text (OCR) from an image stream. This will be a synchronously (blocking) call.
-result = client.analyze(
-    image_url = "https://aka.ms/azsdk/image-analysis/sample.jpg",
-    visual_features = [ VisualFeatures.READ ]
+result = client.analyze_from_url(
+    image_url="https://aka.ms/azsdk/image-analysis/sample.jpg",
+    visual_features=[VisualFeatures.READ]
 )
 
 # Print text (OCR) analysis results to the console
@@ -277,21 +281,21 @@ The client uses the standard [Python logging library](https://docs.python.org/3/
 import sys
 import logging
 
-# Acquire the logger for this client library. Use 'azure' to affect both 
+# Acquire the logger for this client library. Use 'azure' to affect both
 # 'azure.core` and `azure.ai.vision.imageanalysis' libraries.
-logger = logging.getLogger('azure')
+logger = logging.getLogger("azure")
 
 # Set the desired logging level. logging.INFO or logging.DEBUG are good options.
 logger.setLevel(logging.INFO)
 
 # Direct logging output to stdout (the default):
-handler = logging.StreamHandler(stream = sys.stdout)
+handler = logging.StreamHandler(stream=sys.stdout)
 # Or direct logging output to a file:
 # handler = logging.FileHandler(filename = 'sample.log')
 logger.addHandler(handler)
 
 # Optional: change the default logging format. Here we add a timestamp.
-formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(name)s:%(message)s')
+formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(message)s")
 handler.setFormatter(formatter)
 ```
 
@@ -304,9 +308,9 @@ By default logs redact the values of URL query strings, the values of some HTTP 
 ```python
 # Create an Image Analysis client with none redacted log
 client = ImageAnalysisClient(
-    endpoint = endpoint,
-    credential = AzureKeyCredential(key),
-    logging_enable = True
+    endpoint=endpoint,
+    credential=AzureKeyCredential(key),
+    logging_enable=True
 )
 ```
 

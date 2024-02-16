@@ -14,6 +14,10 @@ pointing to the root of the file share would raise an `InvalidResourceName` on a
 Python 3.12.
 - Fixed an issue where authentication errors could raise `AttributeError` instead of `ClientAuthenticationError` when
 using async OAuth credentials.
+- Fixed an issue where parameter `delete_snapshots` to `delete_share` API did not support all possible enums. This change
+makes `delete_snapshots` now accept string literals 'include' and 'include-leased'.
+- Fixed an issue where specifying datetime objects with less than 7 digits of precision as input could incorrectly raise
+`InvalidHeaderValue` due to improper precision parsing.
 
 ## 12.15.0 (2023-11-07)
 

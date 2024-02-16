@@ -43,6 +43,9 @@ GPT_4_AZURE = "gpt_4_azure"
 GPT_4_AZURE_AD = "gpt_4_azuread"
 GPT_4_OPENAI = "gpt_4_openai"
 GPT_4_ALL = [GPT_4_AZURE, GPT_4_AZURE_AD, GPT_4_OPENAI]
+ASST_AZURE = "asst_azure"
+ASST_AZUREAD = "asst_azuread"
+ASST_ALL = [ASST_AZURE, ASST_AZUREAD, GPT_4_OPENAI]
 
 # Environment variable keys
 ENV_AZURE_OPENAI_ENDPOINT = "AZ_OPENAI_ENDPOINT"
@@ -159,13 +162,13 @@ def client(api_type):
             azure_ad_token_provider=get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
             api_version=ENV_AZURE_OPENAI_API_VERSION,
         )
-    elif api_type == "dalle_azure" or api_type == "gpt_4_azure":
+    elif api_type in ["dalle_azure", "gpt_4_azure", "asst_azure"]:
         client = openai.AzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT),
             api_key=os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_KEY),
             api_version=ENV_AZURE_OPENAI_API_VERSION,
         )
-    elif api_type == "dalle_azuread" or api_type == "gpt_4_azuread":
+    elif api_type in ["dalle_azuread", "gpt_4_azuread", "asst_azuread"]:
         client = openai.AzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT),
             azure_ad_token_provider=get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
@@ -206,13 +209,13 @@ def client_async(api_type):
             azure_ad_token_provider=get_bearer_token_provider_async(AsyncDefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
             api_version=ENV_AZURE_OPENAI_API_VERSION,
         )
-    elif api_type == "dalle_azure" or api_type == "gpt_4_azure":
+    elif api_type in ["dalle_azure", "gpt_4_azure", "asst_azure"]:
         client = openai.AsyncAzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT),
             api_key=os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_KEY),
             api_version=ENV_AZURE_OPENAI_API_VERSION,
         )
-    elif api_type == "dalle_azuread" or api_type == "gpt_4_azuread":
+    elif api_type in ["dalle_azuread", "gpt_4_azuread", "asst_azuread"]:
         client = openai.AsyncAzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT),
             azure_ad_token_provider=get_bearer_token_provider_async(AsyncDefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
@@ -234,7 +237,7 @@ def build_kwargs(args, api_type):
             return {"model": ENV_AZURE_OPENAI_TTS_NAME}
     if test_feature.startswith("test_chat_completions") \
         or test_feature.startswith(("test_client", "test_models")):
-        if api_type in ["azure", "azuread"]:
+        if api_type in ["azure", "azuread", "asst_azure"]:
             return {"model": ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME}
         elif api_type == "openai":
             return {"model": ENV_OPENAI_CHAT_COMPLETIONS_MODEL}
@@ -257,6 +260,11 @@ def build_kwargs(args, api_type):
             return {"model": ENV_AZURE_OPENAI_DALLE_NAME}
         elif api_type == "openai":
             return {"model": ENV_OPENAI_DALLE_MODEL}
+    if test_feature.startswith("test_assistants"):
+        if api_type in ["asst_azure", "asst_azuread"]:
+            return {"model": ENV_AZURE_OPENAI_CHAT_COMPLETIONS_GPT4_NAME}
+        elif api_type == "gpt_4_openai":
+            return {"model": ENV_OPENAI_CHAT_COMPLETIONS_GPT4_MODEL}
     if test_feature.startswith(("test_module_client", "test_cli")):
         return {}
     raise ValueError(f"Test feature: {test_feature} needs to have its kwargs configured.")
@@ -367,32 +375,3 @@ def configure_v0(f):
 
     return wrapper
 
-
-def setup_adapter(deployment_id):
-
-    class CustomAdapter(requests.adapters.HTTPAdapter):
-
-        def send(self, request, **kwargs):
-            request.url = f"{openai.api_base}/openai/deployments/{deployment_id}/extensions/chat/completions?api-version={openai.api_version}"
-            return super().send(request, **kwargs)
-
-    session = requests.Session()
-
-    session.mount(
-        prefix=f"{openai.api_base}/openai/deployments/{deployment_id}",
-        adapter=CustomAdapter()
-    )
-
-    openai.requestssession = session
-
-
-def setup_adapter_async(deployment_id):
-
-    class CustomAdapterAsync(aiohttp.ClientRequest):
-
-        async def send(self, conn) -> aiohttp.ClientResponse:
-            self.url = yarl.URL(f"{openai.api_base}/openai/deployments/{deployment_id}/extensions/chat/completions?api-version={openai.api_version}")
-            return await super().send(conn)
-    
-    session = aiohttp.ClientSession(request_class=CustomAdapterAsync)
-    openai.aiosession.set(session)

@@ -25,6 +25,7 @@
 from typing import Any, Dict, List, Mapping, Union, Optional
 
 from azure.core.paging import ItemPaged
+from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options
@@ -62,6 +63,7 @@ class ScriptsProxy:
             return "{}/{}/{}".format(self.container_link, typ, script_or_id)
         return script_or_id["_self"]
 
+    @distributed_trace
     def list_stored_procedures(
         self,
         max_item_count: Optional[int] = None,
@@ -81,6 +83,7 @@ class ScriptsProxy:
             collection_link=self.container_link, options=feed_options, **kwargs
         )
 
+    @distributed_trace
     def query_stored_procedures(
         self,
         query: str,
@@ -107,6 +110,7 @@ class ScriptsProxy:
             **kwargs
         )
 
+    @distributed_trace
     def get_stored_procedure(self, sproc: Union[str, Mapping[str, Any]], **kwargs: Any) -> Dict[str, Any]:
         """Get the stored procedure identified by `id`.
 
@@ -122,6 +126,7 @@ class ScriptsProxy:
             sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure), options=request_options, **kwargs
         )
 
+    @distributed_trace
     def create_stored_procedure(self, body: Dict[str, Any], **kwargs: Any) -> Dict[str, Any]:
         """Create a new stored procedure in the container.
 
@@ -138,6 +143,7 @@ class ScriptsProxy:
             collection_link=self.container_link, sproc=body, options=request_options, **kwargs
         )
 
+    @distributed_trace
     def replace_stored_procedure(
         self,
         sproc: Union[str, Mapping[str, Any]],
@@ -164,6 +170,7 @@ class ScriptsProxy:
             **kwargs
         )
 
+    @distributed_trace
     def delete_stored_procedure(self, sproc: Union[str, Mapping[str, Any]], **kwargs: Any) -> None:
         """Delete a specified stored procedure from the container.
 
@@ -180,10 +187,11 @@ class ScriptsProxy:
             sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure), options=request_options, **kwargs
         )
 
+    @distributed_trace
     def execute_stored_procedure(
         self,
         sproc: Union[str, Mapping[str, Any]],
-        partition_key: Optional[Union[str, bool, int, float]] = None,
+        partition_key: Optional[Union[str, bool, int, float, List[Union[str, bool, int, float]]]] = None,
         params: Optional[List[Dict[str, Any]]] = None,
         enable_script_logging: Optional[bool] = None,
         **kwargs: Any
@@ -221,6 +229,7 @@ class ScriptsProxy:
             **kwargs
         )
 
+    @distributed_trace
     def list_triggers(self, max_item_count: Optional[int] = None, **kwargs: Any) -> ItemPaged[Dict[str, Any]]:
         """List all triggers in the container.
 
@@ -236,6 +245,7 @@ class ScriptsProxy:
             collection_link=self.container_link, options=feed_options, **kwargs
         )
 
+    @distributed_trace
     def query_triggers(
         self,
         query: str,
@@ -263,6 +273,7 @@ class ScriptsProxy:
             **kwargs
         )
 
+    @distributed_trace
     def get_trigger(self, trigger: Union[str, Mapping[str, Any]], **kwargs: Any) -> Dict[str, Any]:
         """Get a trigger identified by `id`.
 
@@ -278,6 +289,7 @@ class ScriptsProxy:
             trigger_link=self._get_resource_link(trigger, ScriptType.Trigger), options=request_options, **kwargs
         )
 
+    @distributed_trace
     def create_trigger(self, body: Dict[str, Any], **kwargs: Any) -> Dict[str, Any]:
         """Create a trigger in the container.
 
@@ -293,6 +305,7 @@ class ScriptsProxy:
             collection_link=self.container_link, trigger=body, options=request_options, **kwargs
         )
 
+    @distributed_trace
     def replace_trigger(
         self,
         trigger: Union[str, Mapping[str, Any]],
@@ -320,6 +333,7 @@ class ScriptsProxy:
             **kwargs
         )
 
+    @distributed_trace
     def delete_trigger(self, trigger: Union[str, Mapping[str, Any]], **kwargs: Any) -> None:
         """Delete a specified trigger from the container.
 
@@ -336,6 +350,7 @@ class ScriptsProxy:
             trigger_link=self._get_resource_link(trigger, ScriptType.Trigger), options=request_options, **kwargs
         )
 
+    @distributed_trace
     def list_user_defined_functions(
         self,
         max_item_count: Optional[int] = None,
@@ -355,6 +370,7 @@ class ScriptsProxy:
             collection_link=self.container_link, options=feed_options, **kwargs
         )
 
+    @distributed_trace
     def query_user_defined_functions(
         self,
         query: str,
@@ -382,6 +398,7 @@ class ScriptsProxy:
             **kwargs
         )
 
+    @distributed_trace
     def get_user_defined_function(self, udf: Union[str, Mapping[str, Any]], **kwargs: Any) -> Dict[str, Any]:
         """Get a user-defined functions identified by `id`.
 
@@ -396,6 +413,7 @@ class ScriptsProxy:
             udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction), options=request_options, **kwargs
         )
 
+    @distributed_trace
     def create_user_defined_function(self, body: Dict[str, Any], **kwargs: Any) -> Dict[str, Any]:
         """Create a user-defined function in the container.
 
@@ -411,6 +429,7 @@ class ScriptsProxy:
             collection_link=self.container_link, udf=body, options=request_options, **kwargs
         )
 
+    @distributed_trace
     def replace_user_defined_function(
         self,
         udf: Union[str, Mapping[str, Any]],
@@ -437,6 +456,7 @@ class ScriptsProxy:
             **kwargs
         )
 
+    @distributed_trace
     def delete_user_defined_function(self, udf: Union[str, Mapping[str, Any]], **kwargs: Any) -> None:
         """Delete a specified user-defined function from the container.
 

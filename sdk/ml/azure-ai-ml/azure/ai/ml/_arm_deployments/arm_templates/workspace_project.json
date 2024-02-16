@@ -664,18 +664,6 @@
     },
     "resources": [
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'))]",
-            "type": "Microsoft.OperationalInsights/workspaces",
-            "tags": "[parameters('tagValues')]",
-            "apiVersion": "2020-08-01",
-            "name": "[parameters('logAnalyticsName')]",
-            "location": "[if(or(equals(toLower(parameters('applicationInsightsLocation')),'westcentralus'), equals(toLower(parameters('applicationInsightsLocation')),'eastus2euap'), equals(toLower(parameters('applicationInsightsLocation')),'centraluseuap')),'southcentralus', parameters('applicationInsightsLocation'))]",
-            "kind": "web",
-            "properties": {
-                "Application_Type": "web"
-            }
-        },
-        {
             "condition": "[variables('enablePE')]",
             "type": "Microsoft.MachineLearningServices/workspaces",
             "apiVersion": "2023-08-01-preview",
@@ -689,6 +677,8 @@
                 "description": "[parameters('description')]",
                 "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
                 "hubResourceId": "[parameters('workspace_hub')]",
+                "enableDataIsolation": "[parameters('enable_data_isolation')]",
+                "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
                 "serverlessComputeSettings": "[parameters('serverless_compute_settings')]"
             }
         }

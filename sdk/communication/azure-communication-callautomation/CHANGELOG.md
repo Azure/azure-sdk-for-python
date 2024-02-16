@@ -6,6 +6,9 @@
 - StartRecording now accepts PauseOnStart.
 - Start, Stop, Update transcript added.
 - Start, Stop hold music added.
+- Introduced `MicrosoftTeamsAppIdentifier` for MS Teams automated scenarios.
+- Introduced `TeamsComplianceRecordingStateChanged` event.
+- Introduced `TeamsRecordingStateChanged` event.
 
 ### Breaking Changes
 
@@ -26,7 +29,7 @@
 - Recognize supports choices and freeform speech.
 - Start/Stop continuous DTMF recognition by subscribing/unsubscribing to tones.
 - Send DTMF tones to a participant in the call.
-- Mute participant in the call.
+- Mute participants in the call.
 
 ### Other Changes
 - The models `ServerCallLocator` and `GroupCallLocator` have been deprecated, and the ID values can now be passed directly into `CallAutomationClient.start_recording` as keyword arguments.

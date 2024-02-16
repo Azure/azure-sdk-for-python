@@ -68,8 +68,7 @@ setup(
     ),
     python_requires=">=3.8",
     install_requires=[
-        "azure-common~=1.1",
-        "azure-core<2.0.0,>=1.24.0",
+        "azure-core<2.0.0,>=1.29.5",
         "cryptography>=2.1.4",
         "isodate>=0.6.1",
         "typing-extensions>=4.0.1",

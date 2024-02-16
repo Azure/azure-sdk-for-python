@@ -16,7 +16,7 @@ def test_client_creation_exceptions():
 
 def test_connection_endpoint_exceptions():
     with pytest.raises(AMQPConnectionError):
-        endpoint = "fake.host.com"
+        endpoint = "sb://fake.host.com"
         connection = Connection(endpoint)
         connection.open()
 

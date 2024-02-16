@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# mypy: disable-error-code="attr-defined"
 """
 DESCRIPTION:
     This sample demonstrates how to generate up to 10 human-readable sentences (captions) that describe
@@ -30,13 +29,15 @@ USAGE:
                          where `your-resource-name` is your unique Azure Computer Vision resource name.
     2) VISION_KEY - Your Computer Vision key (a 32-character Hexadecimal number)
 """
+
+
 def sample_dense_captions_image_file():
     import os
     from azure.ai.vision.imageanalysis import ImageAnalysisClient
     from azure.ai.vision.imageanalysis.models import VisualFeatures
     from azure.core.credentials import AzureKeyCredential
 
-    # Set the values of your computer vision endpoint and computer vision key 
+    # Set the values of your computer vision endpoint and computer vision key
     # as environment variables:
     try:
         endpoint = os.environ["VISION_ENDPOINT"]
@@ -48,20 +49,20 @@ def sample_dense_captions_image_file():
 
     # Create an Image Analysis client.
     client = ImageAnalysisClient(
-        endpoint = endpoint,
-        credential = AzureKeyCredential(key)
+        endpoint=endpoint,
+        credential=AzureKeyCredential(key)
     )
 
     # Load image to analyze into a 'bytes' object.
-    with open("sample.jpg", 'rb') as f:
+    with open("sample.jpg", "rb") as f:
         image_data = f.read()
 
     # Extract multiple captions, each for a different area of the image.
     # This will be a synchronously (blocking) call.
     result = client.analyze(
-        image_data = image_data,
-        visual_features = [ VisualFeatures.DENSE_CAPTIONS ],
-        gender_neutral_caption = True # Optional (default is False)
+        image_data=image_data,
+        visual_features=[VisualFeatures.DENSE_CAPTIONS],
+        gender_neutral_caption=True,  # Optional (default is False)
     )
 
     # Print dense caption results to the console. The first caption always
@@ -69,12 +70,12 @@ def sample_dense_captions_image_file():
     print("Image analysis results:")
     print(" Dense Captions:")
     if result.dense_captions is not None:
-        for caption in result.dense_captions.values:
+        for caption in result.dense_captions.list:
             print(f"   '{caption.text}', {caption.bounding_box}, Confidence: {caption.confidence:.4f}")
     print(f" Image height: {result.metadata.height}")
     print(f" Image width: {result.metadata.width}")
     print(f" Model version: {result.model_version}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample_dense_captions_image_file()
