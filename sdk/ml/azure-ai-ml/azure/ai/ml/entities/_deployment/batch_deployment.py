@@ -44,7 +44,7 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
     :type properties: typing.Optional[Dict[str, str]]
     :param model: Model entity for the endpoint deployment. If not set, model defaults to None.
     :type model: typing.Optional[Union[str, Model]]
-    :param code_configuration: Code configuration for the endpoint deployment.If not set, code_configuration defaults to None
+    :param code_configuration: Code configuration for the endpoint deployment. If not set, code_configuration defaults to None
     :type code_configuration: typing.Optional[CodeConfiguration]
     :param environment: Environment entity for the endpoint deployment. If not set, environment defaults to None.
     :type environment: Union[str, Environment]
