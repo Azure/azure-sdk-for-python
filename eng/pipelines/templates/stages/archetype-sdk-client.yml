@@ -82,10 +82,6 @@ parameters:
   - name: AdvancedBuild
     type: boolean
     default: false
-<<<<<<< HEAD
-
-=======
->>>>>>> 1e2595ffad (Support dynamic+hardcode matrix pool hybrid)
 
 extends:
   ${{ if eq(variables['System.TeamProject'], 'internal') }}:
