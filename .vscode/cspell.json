@@ -450,7 +450,9 @@
     "aiter",
     "solft",
     "amltmp",
-    "amltemp"
+    "amltemp",
+    "deserializers",
+    "dicom",
   ],
   "overrides": [
     {
@@ -1697,6 +1699,16 @@
       "filename": "sdk/iothub/azure-iot-deviceprovisioning/azure/iot/deviceprovisioning/_serialization.py",
       "words": [
         "ctxt",
+        "wday"
+      ]
+    },
+    {
+      "filename": "sdk/healthinsights/azure-healthinsights-radiologyinsights/**",
+      "words": [
+        "ctxt",
+        "mros",
+        "Nify",
+        "loinc",
         "wday"
       ]
     }
