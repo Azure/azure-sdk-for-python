@@ -1080,9 +1080,6 @@ class PhoneNumbersOperations:
         :param body: The phone number search request. Is either a PhoneNumberSearchRequest type or a
          IO[bytes] type. Required.
         :type body: ~azure.communication.phonenumbers.models.PhoneNumberSearchRequest or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: An instance of LROPoller that returns PhoneNumberSearchResult
         :rtype:
          ~azure.core.polling.LROPoller[~azure.communication.phonenumbers.models.PhoneNumberSearchResult]
@@ -1316,9 +1313,6 @@ class PhoneNumbersOperations:
         :param body: The phone number purchase request. Is either a PhoneNumberPurchaseRequest type or
          a IO[bytes] type. Required.
         :type body: ~azure.communication.phonenumbers.models.PhoneNumberPurchaseRequest or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1621,9 +1615,6 @@ class PhoneNumbersOperations:
          PhoneNumberCapabilitiesRequest type or a IO[bytes] type. Default value is None.
         :type body: ~azure.communication.phonenumbers.models.PhoneNumberCapabilitiesRequest or
          IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are:
-         'application/merge-patch+json'. Default value is None.
-        :paramtype content_type: str
         :return: An instance of LROPoller that returns PurchasedPhoneNumber
         :rtype:
          ~azure.core.polling.LROPoller[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
@@ -1999,9 +1990,6 @@ class PhoneNumbersOperations:
         :param body: The phone number(s) whose operator information should be searched. Is either a
          OperatorInformationRequest type or a IO[bytes] type. Required.
         :type body: ~azure.communication.phonenumbers.models.OperatorInformationRequest or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: OperatorInformationResult
         :rtype: ~azure.communication.phonenumbers.models.OperatorInformationResult
         :raises ~azure.core.exceptions.HttpResponseError:
