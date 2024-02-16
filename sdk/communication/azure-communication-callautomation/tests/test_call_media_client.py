@@ -87,7 +87,7 @@ class TestCallMediaClient(unittest.TestCase):
         expected_play_request = PlayRequest(
             play_sources=[play_source._to_generated()],
             play_to=[],
-            play_options=PlayOptions(loop=False)
+            play_options=PlayOptions(loop=False, interrupt_call_media_operation=False)
         )
         mock_play.assert_called_once()
         actual_play_request = mock_play.call_args[0][1]
