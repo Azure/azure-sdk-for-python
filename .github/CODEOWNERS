@@ -22,12 +22,12 @@
 /sdk/ @lmazuel
 
 # Core
-# AzureSDKOwners: @lmazuel
+# AzureSDKOwners: @xiangyan99 @kashifkhan @pvaneck
 # ServiceLabel: %Core.Http
 # PRLabel: %Core.Http
 /sdk/core/corehttp/                                                  @pvaneck @lmazuel @annatisch @johanste @xiangyan99 @iscai-msft @kashifkhan
 
-# AzureSDKOwners: @lmazuel
+# AzureSDKOwners: @xiangyan99 @kashifkhan
 # ServiceLabel: %Azure.Core
 # PRLabel: %Azure.Core
 /sdk/core/                                                           @lmazuel @annatisch @johanste
@@ -56,6 +56,8 @@
 # PRLabel: %Event Hubs
 /sdk/eventhub/                                                       @annatisch @kashifkhan @swathipil @l0lawrence
 
+# ServiceOwners: @jalauzon-msft @vincenttran-msft
+# ServiceLabel: %Storage
 # PRLabel: %Storage
 /sdk/storage/                                                        @annatisch @jalauzon-msft @vincenttran-msft
 
@@ -64,14 +66,18 @@
 # PRLabel: %App Configuration
 /sdk/appconfiguration/                                               @YalinLi0312
 
+# ServiceOwners: @mrm9084
+# ServiceLabel: %App Configuration Provider
 # PRLabel: %App Configuration Provider
 /sdk/appconfiguration/azure-appconfiguration-provider/               @mametcal @albertofori @avanigupta @mrm9084
 
 # PRLabel: %Attestation
 /sdk/attestation/azure-security-attestation/                         @anilba06 @Azure/azure-sdk-write-attestation @gkostal
 
+# ServiceOwners: @cRui861 @paterasMSFT
+# ServiceLabel: %Batch
 # PRLabel: %Batch
-/sdk/batch/                                                          @jingjlii @JJJessieWang @wanghoppe @dpwatrous @wiboris
+/sdk/batch/                                                          @jingjlii @JJJessieWang @wanghoppe @dpwatrous @wiboris @cRui861 @paterasMSFT
 
 # PRLabel: %CognitiveServices
 /sdk/cognitiveservices/                                              @kristapratico
@@ -106,17 +112,22 @@
 # PRLabel: %Communication - Common
 /sdk/communication/**/_shared/                                       @Azure/acs-identity-sdk @AikoBB @maximrytych-ms @mjafferi-msft
 
+# ServiceOwners: @lynshi
+# ServiceLabel: %Confidential Ledger
 # PRLabel: %Confidential Ledger
-/sdk/confidentialledger/azure-confidentialledger/                    @PallabPaul
+/sdk/confidentialledger/azure-confidentialledger/                    @PallabPaul @lynshi
 
+# ServiceOwners: @mengaims
+# ServiceLabel: %Content Safety
 # PRLabel: %Content Safety
 /sdk/contentsafety/                                                  @mengaims @JieZhou000
 
 # AzureSDKOwners: @mccoyp
 # ServiceLabel: %KeyVault
 # PRLabel: %KeyVault
-/sdk/keyvault/                                                       @schaabs @mccoyp
+/sdk/keyvault/                                                       @mccoyp
 
+# ServiceLabel: %Load Testing
 # PRLabel: %Load Testing
 /sdk/loadtesting/azure-developer-loadtesting/                        @msyyc @iscai-msft
 
@@ -131,22 +142,22 @@
 # PRLabel: %Monitor
 /sdk/monitor/azure-monitor-ingestion/                                @pvaneck @Azure/azure-sdk-write-monitor-data-plane
 
-# AzureSDKOwners: @pvaneck
-# ServiceLabel: %Monitor
 # PRLabel: %Monitor
 /sdk/monitor/azure-monitor-query/                                    @pvaneck @Azure/azure-sdk-write-monitor-data-plane
 
-# AzureSDKOwners: @pvaneck
-# ServiceLabel: %Monitor
 # PRLabel: %Monitor
 /sdk/monitor/*                                                       @pvaneck
 
 # PRLabel: %Monitor - ApplicationInsights
 /sdk/applicationinsights/azure-applicationinsights/                  @azmonapplicationinsights @pvaneck
 
+# AzureSDKOwners: @lzchen
+# ServiceLabel: %Monitor - Distro
 # PRLabel: %Monitor - Distro
 /sdk/monitor/azure-monitor-opentelemetry/                            @lzchen @jeremydvoss
 
+# AzureSDKOwners: @lzchen
+# ServiceLabel: %Monitor - Exporter
 # PRLabel: %Monitor - Exporter
 /sdk/monitor/azure-monitor-opentelemetry-exporter/                   @lmazuel @lzchen @hectorhdzg @jeremydvoss
 
@@ -164,6 +175,8 @@
 # PRLabel: %Container Service
 /sdk/containerservice/                                               @zqingqing1
 
+# ServiceOwners: @simorenoh
+# ServiceLabel: %Cosmos
 # PRLabel: %Cosmos
 /sdk/cosmos/                                                         @kushagraThapar @simorenoh @xinlian12 @annatisch @bambriz
 
@@ -181,10 +194,10 @@
 # PRLabel: %Device Update
 /sdk/deviceupdate/                                                   @dpokluda @sedols
 
-# AzureSDKOwners: @l0lawrence
+# AzureSDKOwners: @kashifkhan
 # ServiceLabel: %Event Grid
 # PRLabel: %Event Grid
-/sdk/eventgrid/                                                      @lmazuel @l0lawrence
+/sdk/eventgrid/                                                      @kashifkhan @l0lawrence
 
 # PRLabel: %Image Analysis
 # ServiceLabel: %Image Analysis %Service Attention
@@ -199,6 +212,7 @@
 # PRLabel: %Machine Learning Compute
 /sdk/machinelearning/                                                @shutchings
 
+# ServiceLabel: %Machine Learning
 # PRLabel: %Machine Learning
 /sdk/ml/                                                             @paulshealy1 @singankit @diondrapeck @luigiw @kdestin @MilesHolland @needuv @ninghu @YusakuNo1
 
@@ -304,6 +318,8 @@
 # PRLabel: %OpenAI
 /sdk/openai/                                                         @kristapratico @glecaros
 
+# ServiceOwners: @yifan-zhou922
+# ServiceLabel: %Purview
 # PRLabel: %Purview
 /sdk/purview/                                                        @iscai-msft @msyyc
 
@@ -352,13 +368,15 @@
 # PRLabel: %Document Intelligence
 /sdk/documentintelligence/                                           @YalinLi0312
 
+# AzureSDKOwners: @xiangyan99
+# ServiceLabel: %Cognitive - Metrics Advisor
 # PRLabel: %Cognitive - Metrics Advisor
 /sdk/metricsadvisor/                                                 @xiangyan99 @kristapratico @iscai-msft
 
 # PRLabel: %Cognitive - Anomaly Detector
 /sdk/anomalydetector/                                                @conhua @mengaims @juaduan @moreOver0
 
-# AzureSDKOwners: @kristapratico
+# ServiceOwners: @MikeyMCZ
 # ServiceLabel: %Cognitive - Translator
 # PRLabel: %Cognitive - Translator
 /sdk/translation/                                                    @kristapratico
