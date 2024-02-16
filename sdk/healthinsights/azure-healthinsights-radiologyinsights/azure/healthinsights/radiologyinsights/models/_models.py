@@ -474,7 +474,7 @@ class DomainResource(Resource):
     """Additional Content defined by implementations."""
     modifier_extension: Optional[List["_models.Extension"]] = rest_field(name="modifierExtension")
     """Extensions that cannot be ignored."""
-    resource_type: Literal[None] = rest_discriminator(name="resourceType")
+    resource_type: Literal[None] = rest_discriminator(name="resourceType") # type: ignore
     """Required. Default value is None."""
 
     @overload
@@ -2085,7 +2085,7 @@ class Observation(DomainResource):  # pylint: disable=too-many-instance-attribut
     :vartype component: list[~azure.healthinsights.radiologyinsights.models.ObservationComponent]
     """
 
-    resource_type: Literal["Observation"] = rest_field(name="resourceType")
+    resource_type: Literal["Observation"] = rest_field(name="resourceType") # type: ignore
     """resourceType. Required. Default value is \"Observation\"."""
     identifier: Optional[List["_models.Identifier"]] = rest_field()
     """Business Identifier for observation."""
@@ -2204,7 +2204,7 @@ class Observation(DomainResource):  # pylint: disable=too-many-instance-attribut
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.resource_type: Literal["Observation"] = "Observation"
+        self.resource_type: Literal["Observation"] = "Observation" # type: ignore
 
 
 class ObservationComponent(Element):  # pylint: disable=too-many-instance-attributes
