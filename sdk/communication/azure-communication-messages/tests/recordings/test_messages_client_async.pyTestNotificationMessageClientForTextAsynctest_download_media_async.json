@@ -1,0 +1,44 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://acsxplatmsg-test.unitedstates.communication.azure.com/messages/streams/https:%2F%2Faka.ms%2Facsicon1?api-version=2024-02-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/octet-stream",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-communication-messages/1.0.0 Python/3.11.8 (Windows-10-10.0.22631-SP0)",
+        "x-ms-client-request-id": "sanitized",
+        "x-ms-content-sha256": "sanitized",
+        "x-ms-date": "sanitized",
+        "x-ms-return-client-request-id": "true"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "api-supported-versions": "2023-08-24-preview, 2024-02-01",
+        "Content-Type": "application/json",
+        "Date": "sanitized",
+        "MS-CV": "sanitized",
+        "Request-Context": "appId=",
+        "Strict-Transport-Security": "max-age=2592000",
+        "Transfer-Encoding": "chunked",
+        "X-Azure-Ref": "sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Processing-Time": "35ms"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "MediaNotFound",
+          "message": "Given media object does not exist",
+          "innererror": {
+            "code": "ErrorCode.IdentifierNotFound",
+            "message": "IdentifierNotFound"
+          }
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}
