@@ -97,6 +97,28 @@ def get_empty_deployment_arm_template():
     }
 
 
+def get_empty_azure_open_ai_arm_template():
+    return {
+        "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+        "contentVersion": "1.0.0.0",
+        "parameters": {},
+        "resources": [
+            {
+                "type": "Microsoft.MachineLearningServices/workspaces/endpoints/deployments",
+                "apiVersion": "2023-08-01-Preview",
+                "name": "[concat(parameters('workspaceName'), '/', 'Azure.OpenAI', '/', parameters('deploymentName'))]",
+                "properties": "[parameters('deploymentProperties')]",
+            },
+        ],
+        "outputs": {
+            "deployment_name": {
+                "type": "string",
+                "value": "[parameters('deploymentName')]",
+            },
+        }
+    }
+
+
 def get_default_allowed_instance_type_for_hugging_face(
     model_details: Model, credential: Any
 ) -> Tuple[Optional[Any], List[Any]]:

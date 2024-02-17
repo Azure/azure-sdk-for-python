@@ -9,6 +9,7 @@ from ._acs_output_config import ACSOutputConfig
 from ._ai_resource_operations import AIResourceOperations
 from ._connection_operations import ConnectionOperations
 from ._single_deployment_operations import SingleDeploymentOperations
+from ._azure_open_ai_deployment_operations import AzureOpenAIDeploymentOperations
 from ._index_data_source import ACSSource, GitSource, IndexDataSource, LocalSource
 from ._mlindex_operations import MLIndexOperations
 from ._pf_operations import PFOperations
@@ -30,4 +31,5 @@ __all__ = [
     "SingleDeploymentOperations",
     "DataOperations",
     "ModelOperations",
+    "AzureOpenAIDeploymentOperations",
 ]
