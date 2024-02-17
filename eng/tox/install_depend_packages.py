@@ -49,7 +49,7 @@ MINIMUM_VERSION_GENERIC_OVERRIDES = {
 
 MAXIMUM_VERSION_GENERIC_OVERRIDES = {}
 
-# SPECIFIC OVERRIDES provide additional filtering of upper and lower bound by 
+# SPECIFIC OVERRIDES provide additional filtering of upper and lower bound by
 # binding an override to the specific package being processed. As an example, when
 # processing the latest or minimum deps for "azure-eventhub", the minimum version of "azure-core"
 # will be overridden to 1.25.0.
@@ -59,6 +59,7 @@ MINIMUM_VERSION_SPECIFIC_OVERRIDES = {
     "azure-eventhub-checkpointstoreblob": {"azure-core": "1.25.0", "azure-eventhub": "5.11.0"},
     "azure-eventhub-checkpointstoretable": {"azure-core": "1.25.0", "azure-eventhub": "5.11.0"},
     "azure-identity": {"msal": "1.23.0"},
+    "azure-core-tracing-opentelemetry": {"azure-core": "1.28.0"},
 }
 
 MAXIMUM_VERSION_SPECIFIC_OVERRIDES = {}
@@ -212,7 +213,7 @@ def process_bounded_versions(originating_pkg_name: str, pkg_name: str, versions:
                     v for v in versions if parse_version(v) <= parse_version(restrictions[pkg_name])
                 ]
 
-    # upper bound package-specific 
+    # upper bound package-specific
     if (
         originating_pkg_name in MAXIMUM_VERSION_SPECIFIC_OVERRIDES
         and pkg_name in MAXIMUM_VERSION_SPECIFIC_OVERRIDES[originating_pkg_name]
