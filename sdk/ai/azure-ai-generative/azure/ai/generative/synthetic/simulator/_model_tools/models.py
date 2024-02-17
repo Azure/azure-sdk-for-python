@@ -430,7 +430,7 @@ class OpenAICompletionsModel(LLMBase):  # pylint: disable=too-many-instance-attr
                         request_data=request_data,
                     )
                     await self._add_successful_response(response["time_taken"])
-                except Exception as e:
+                except HTTPException as e:
                     response = {
                         "request": request_data,
                         "response": {

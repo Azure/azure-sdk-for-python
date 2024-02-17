@@ -164,7 +164,7 @@ class DocumentChunksIterator(Iterator):
                     repository = f"https://{org}.visualstudio.com/DefaultCollection/{project}/_git/{repository}"
                     # TODO: url encode `repo.active_branch.name`
                     remote_url = repository + f"?version=GB{repo.active_branch.name}&path="
-                except Exception as e:
+                except ValueError as e:
                     logger.warning(
                         "Failed to parse org, project and repo from Azure DevOps remote url: "
                         + f"{remote_url}\nbecause: {e}"
@@ -174,7 +174,7 @@ class DocumentChunksIterator(Iterator):
                 remote_url = f"{remote_url}/blob/{repo.active_branch.name}"
 
             return remote_url
-        except Exception:
+        except ImportError:
             return None
 
 

@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+from json import JSONDecodeError
 import logging
 from collections import Counter, defaultdict
 from typing import Any, Dict, List, Tuple, Optional
@@ -120,7 +121,7 @@ def try_decode_json(example: str, label_keys: List[str]) -> Dict[str, Any]:
             ), f"Failed to decode example.  No label keys found in example: {example_dict}"
 
             return example_dict
-        except Exception as e:
+        except ValueError as e:
             last_error = e
 
     if last_error is not None:
@@ -183,8 +184,8 @@ def try_parse_samples(
                 raise ValueError("Expected at least {} examples, but got {}".format(n_inputs, len(sample_examples)))
 
             sample_examples = sample_examples[:n_inputs]  # truncate to n_inputs
-        except Exception as e:
-            msg = f"Failed to split: Job #{job_idx} - sample #{sample_idx + 1}/{n_samples}. Error: {e}"
+        except ValueError as ve:
+            msg = f"Failed to split: Job #{job_idx} - sample #{sample_idx + 1}/{n_samples}. Error: {ve}"
             logger.info(msg)
             output_examples.append(None)
             num_failed += 1
@@ -197,7 +198,7 @@ def try_parse_samples(
             for example in sample_examples:
                 sample_examples_parsed.append(decode_example(example, prompt_template.label_keys))
             output_examples.append(sample_examples_parsed)
-        except Exception:
+        except JSONDecodeError:
             # If we failed to decode, add empty dicts to output examples
             output_examples.append([{} for _ in range(len(sample_examples))])
             num_failed += 1

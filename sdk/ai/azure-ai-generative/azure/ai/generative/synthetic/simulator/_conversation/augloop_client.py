@@ -181,7 +181,7 @@ class AugLoopClient:  # pylint: disable=client-accepts-api-version-keyword
 
                 return self.send_signal_and_wait_for_annotation(message=message, isInRecursiveCall=True)
             return {"success": False}
-        except Exception as e:
+        except ValueError as e:
             self.logger.error("Error: %s", str(e))
             # TODO: adding detailed message is not working, e disappears
             # if 'Expecting value: line 1 column 1 (char 0)' in str(e):

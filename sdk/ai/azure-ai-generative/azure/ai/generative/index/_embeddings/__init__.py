@@ -1174,7 +1174,7 @@ class EmbeddingsContainer:  # pylint: disable=too-many-instance-attributes
                     key=os.path.getmtime,
                 ).parent.name
             )
-        except Exception as e:
+        except OSError as e:
             if activity_logger:
                 activity_logger.warn("Failed to get latest folder from embeddings_container.")
             logger.warn(f"failed to get latest folder from {local_embeddings_cache} with {e}.")
@@ -1188,7 +1188,7 @@ class EmbeddingsContainer:  # pylint: disable=too-many-instance-attributes
                 )
                 if activity_logger and hasattr(activity_logger, "activity_info"):
                     activity_logger.activity_info["completionStatus"] = "Success"
-            except Exception as e:
+            except AttributeError as e:
                 if activity_logger:
                     activity_logger.warn("Failed to load from embeddings_container_dir_name.")
                 logger.warn(f"Failed to load from previous embeddings with {e}.")

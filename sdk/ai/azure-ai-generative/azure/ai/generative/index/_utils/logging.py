@@ -49,7 +49,7 @@ try:
     verbosity: Optional[int] = logging.INFO
     instrumentation_key = INSTRUMENTATION_KEY
     telemetry_enabled = True
-except Exception:
+except Exception:  # pylint: disable=broad-except
     from uuid import uuid4
 
     _ClientSessionId = str(uuid4())
@@ -108,7 +108,7 @@ class LoggerFactory:
             import mlflow
 
             self.mlflow = mlflow
-        except Exception:
+        except ImportError:
             self.mlflow = False
 
     def with_mlflow(self, mlflow=True):
@@ -117,7 +117,7 @@ class LoggerFactory:
             import mlflow
 
             self.mlflow = mlflow
-        except Exception:
+        except ImportError:
             print("MLFlow is not installed, skipping mlflow logging.")
             self.mlflow = False
         return self
@@ -219,7 +219,7 @@ class LoggerFactory:
                 file = "|".join(parts[-3:])
                 lines.append(STACK_FMT % (file, line, func))
             return "\n".join(lines)
-        except Exception:
+        except IndexError:
             return None
 
     @staticmethod
@@ -237,7 +237,7 @@ class LoggerFactory:
 
             location = os.environ.get("AZUREML_SERVICE_ENDPOINT")
             location = re.compile("//(.*?)\\.").search(location).group(1)
-        except Exception:
+        except AttributeError:
             location = os.environ.get("AZUREML_SERVICE_ENDPOINT", "")
         info["location"] = location
         try:
@@ -254,7 +254,7 @@ class LoggerFactory:
                 )
                 if info["moduleName"] != "Unknown":
                     info["moduleVersion"] = run.properties.get("azureml.moduleVersion", "Unknown")
-        except Exception:
+        except ImportError:
             pass
         return info
 
@@ -322,7 +322,7 @@ def safe_mlflow_log_metric(*args, logger, **kwargs):
         try:
             if mlflow.active_run():
                 mlflow.log_metric(*args, **kwargs)
-        except Exception as e:
+        except mlflow.exceptions.MlflowException as e:
             message = str(e)
             if "Max retries exceeded" in message:
                 logger.warning("MLFlow endpoint is not available right now, skipping log_metrics.")
@@ -339,7 +339,7 @@ def safe_mlflow_start_run(logger):
         try:
             with mlflow.start_run() as run:
                 yield run
-        except Exception as e:
+        except mlflow.exceptions.MlflowException as e:
             message = str(e)
             if "Max retries exceeded" in message:
                 logger.warning("MLFlow endpoint is not available right now, skipping start_run.")
