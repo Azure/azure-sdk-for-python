@@ -5,16 +5,15 @@ inputs:
     is_chat_input: false
   answer:
     type: string
-    default: The Alpine Explorer Tent is the most waterproof.
+    default: ""
     is_chat_input: false
   context:
     type: string
-    default: From the our product list, the alpine explorer tent is the most
-      waterproof. The Adventure Dining Tabbe has higher weight.
+    default: ""
     is_chat_input: false
   ground_truth:
     type: string
-    default: The Alpine Explorer Tent has the highest rainfly waterproof rating at 3000m
+    default: ""
     is_chat_input: false
   metrics:
     type: string
@@ -31,9 +30,6 @@ outputs:
   hate_fairness_score:
     type: string
     reference: ${concat_scores.output.hate_fairness_score}
-  ada_similarity:
-    type: string
-    reference: ${concat_scores.output.ada_similarity}
   gpt_relevance:
     type: string
     reference: ${concat_scores.output.gpt_relevance}
@@ -111,7 +107,6 @@ nodes:
     type: code
     path: concat_quality_scores.py
   inputs:
-    ada_cosine_similarity: ${ada_similarity.output}
     f1_score: ${f1_score.output}
     gpt_coherence_score: ${gpt_coherence.output}
     gpt_fluency_score: ${gpt_fluency.output}
@@ -239,44 +234,6 @@ nodes:
     path: select_metrics.py
   inputs:
     metrics: ${inputs.metrics}
-  use_variants: false
-- name: embeded_ground_truth
-  type: python
-  source:
-    type: package
-    tool: promptflow.tools.embedding.embedding
-  inputs:
-    connection: Default_AzureOpenAI
-    deployment_name: text-embedding-ada-002
-    input: ${inputs.ground_truth}
-  activate:
-    when: ${validate_input.output.ada_similarity}
-    is: true
-  use_variants: false
-- name: embeded_answer
-  type: python
-  source:
-    type: package
-    tool: promptflow.tools.embedding.embedding
-  inputs:
-    connection: Default_AzureOpenAI
-    deployment_name: text-embedding-ada-002
-    input: ${inputs.answer}
-  activate:
-    when: ${validate_input.output.ada_similarity}
-    is: true
-  use_variants: false
-- name: ada_similarity
-  type: python
-  source:
-    type: code
-    path: ada_cosine_similarity_score.py
-  inputs:
-    a: ${embeded_ground_truth.output}
-    b: ${embeded_answer.output}
-  activate:
-    when: ${validate_input.output.ada_similarity}
-    is: true
   use_variants: false
 - name: validate_input
   type: python

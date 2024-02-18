@@ -1,4 +1,12 @@
 from promptflow import tool
+import re
+
+def is_valid_string(input_string: str) -> bool:
+    # if input_string contains any letter or number, 
+    # it is a valid string
+    if not input_string:
+        return False
+    return bool(re.search(r'\d|\w', input_string))
 
 
 @tool
@@ -10,11 +18,11 @@ def validate_input(question: str, answer: str, context: str, ground_truth: str, 
                                    "gpt_coherence": set(["question", "answer"]),
                                    "gpt_similarity": set(["question", "answer", "ground_truth"]),
                                    "gpt_fluency": set(["question", "answer"]),
-                                   "f1_score": set(["answer", "ground_truth"]),
-                                   "ada_similarity": set(["answer", "ground_truth"])}
+                                   "f1_score": set(["answer", "ground_truth"])
+                                   }
     actual_input_cols = set()
     for col in expected_input_cols:
-        if input_data[col] and input_data[col].strip():
+        if input_data[col] and is_valid_string(input_data[col]):
             actual_input_cols.add(col)
     selected_quality_metrics = selected_metrics["quality_metrics"]
     data_validation = selected_quality_metrics
