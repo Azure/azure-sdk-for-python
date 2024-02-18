@@ -122,7 +122,7 @@ def resource_group():
     resource_client = ResourceManagementClient(EnvironmentCredential(), SUBSCRIPTION_ID, base_url=base_url, credential_scopes=credential_scopes)
     resource_group_name = RES_GROUP_PREFIX + str(uuid.uuid4())
     parameters = {"location": LOCATION}
-    expiry = datetime.datetime.utcnow() + datetime.timedelta(days=1)
+    expiry = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=1)
     parameters['tags'] = {'DeleteAfter': expiry.replace(microsecond=0).isoformat()}
     try:
         rg = resource_client.resource_groups.create_or_update(

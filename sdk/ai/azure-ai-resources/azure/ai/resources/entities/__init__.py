@@ -11,11 +11,15 @@ from .connection_subtypes import (
     AzureOpenAIConnection,
     AzureAISearchConnection,
     AzureAIServiceConnection,
+    GitHubConnection,
+    CustomConnection,
+    AzureBlobStoreConnection,
 )
 from .mlindex import Index
 from .project import Project
 from .data import Data
 from .configs import AzureOpenAIModelConfiguration
+from azure.ai.ml.entities import ApiKeyConfiguration
 
 __all__ = [
     "BaseConnection",
@@ -27,5 +31,9 @@ __all__ = [
     "AIResource",
     "Data",
     "AzureOpenAIModelConfiguration",
+    "GitHubConnection",
+    "CustomConnection",
+    "AzureBlobStoreConnection",
+    "ApiKeyConfiguration"
 ]
 

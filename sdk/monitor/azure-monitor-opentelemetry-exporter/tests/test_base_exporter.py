@@ -16,7 +16,10 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
 )
-from azure.monitor.opentelemetry.exporter.statsbeat._state import _REQUESTS_MAP
+from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+    _REQUESTS_MAP,
+    _STATSBEAT_STATE,
+)
 from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_DURATION_NAME,
     _REQ_EXCEPTION_NAME,
@@ -43,6 +46,7 @@ from azure.monitor.opentelemetry.exporter._generated.models import (
 
 
 TEST_AUTH_POLICY = "TEST_AUTH_POLICY"
+TEST_TEMP_DIR = "TEST_TEMP_DIR"
 
 
 def throw(exc_type, *args, **kwargs):
@@ -83,6 +87,11 @@ class TestBaseExporter(unittest.TestCase):
 
     def setUp(self) -> None:
         _REQUESTS_MAP.clear()
+        _STATSBEAT_STATE = {
+            "INITIAL_FAILURE_COUNT": 0,
+            "INITIAL_SUCCESS": False,
+            "SHUTDOWN": False,
+        }
 
     def tearDown(self):
         clean_folder(self._base.storage._path)
@@ -93,6 +102,7 @@ class TestBaseExporter(unittest.TestCase):
             api_version="2021-02-10_Preview",
             connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
             disable_offline_storage=False,
+            distro_version="1.0.0",
             storage_maintenance_period=30,
             storage_max_size=1000,
             storage_min_retry_interval=100,
@@ -107,6 +117,7 @@ class TestBaseExporter(unittest.TestCase):
             base._endpoint,
             "https://westus-0.in.applicationinsights.azure.com/",
         )
+        self.assertEqual(base._distro_version, "1.0.0")
         self.assertIsNotNone(base.storage)
         self.assertEqual(base.storage._max_size, 1000)
         self.assertEqual(base.storage._retention_period, 2000)
@@ -115,6 +126,104 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(base._api_version, "2021-02-10_Preview")
         self.assertEqual(base._storage_min_retry_interval, 100)
         self.assertEqual(base._storage_directory, "test/path")
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")
+    def test_constructor_no_storage_directory(self, mock_get_temp_dir):
+        mock_get_temp_dir.return_value = TEST_TEMP_DIR
+        base = BaseExporter(
+            api_version="2021-02-10_Preview",
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+            distro_version="1.0.0",
+            storage_maintenance_period=30,
+            storage_max_size=1000,
+            storage_min_retry_interval=100,
+            storage_retention_period=2000,
+        )
+        self.assertEqual(
+            base._instrumentation_key,
+            "4321abcd-5678-4efa-8abc-1234567890ab",
+        )
+        self.assertEqual(
+            base._endpoint,
+            "https://westus-0.in.applicationinsights.azure.com/",
+        )
+        self.assertEqual(base._distro_version, "1.0.0")
+        self.assertIsNotNone(base.storage)
+        self.assertEqual(base.storage._max_size, 1000)
+        self.assertEqual(base.storage._retention_period, 2000)
+        self.assertEqual(base._storage_maintenance_period, 30)
+        self.assertEqual(base._timeout, 10)
+        self.assertEqual(base._api_version, "2021-02-10_Preview")
+        self.assertEqual(base._storage_min_retry_interval, 100)
+        self.assertEqual(
+            base._storage_directory,
+            os.path.join(
+                TEST_TEMP_DIR, "Microsoft/AzureMonitor", "opentelemetry-python-" + "4321abcd-5678-4efa-8abc-1234567890ab"
+            )
+        )
+        mock_get_temp_dir.assert_called_once()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")
+    def test_constructor_disable_offline_storage(self, mock_get_temp_dir):
+        mock_get_temp_dir.side_effect = Exception()
+        base = BaseExporter(
+            api_version="2021-02-10_Preview",
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=True,
+            distro_version="1.0.0",
+            storage_maintenance_period=30,
+            storage_max_size=1000,
+            storage_min_retry_interval=100,
+            storage_retention_period=2000,
+        )
+        self.assertEqual(
+            base._instrumentation_key,
+            "4321abcd-5678-4efa-8abc-1234567890ab",
+        )
+        self.assertEqual(
+            base._endpoint,
+            "https://westus-0.in.applicationinsights.azure.com/",
+        )
+        self.assertEqual(base._distro_version, "1.0.0")
+        self.assertIsNone(base.storage)
+        self.assertEqual(base._storage_maintenance_period, 30)
+        self.assertEqual(base._timeout, 10)
+        self.assertEqual(base._api_version, "2021-02-10_Preview")
+        self.assertEqual(base._storage_min_retry_interval, 100)
+        self.assertIsNone(base._storage_directory)
+        mock_get_temp_dir.assert_not_called()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")
+    def test_constructor_disable_offline_storage_with_storage_directory(self, mock_get_temp_dir):
+        mock_get_temp_dir.side_effect = Exception()
+        base = BaseExporter(
+            api_version="2021-02-10_Preview",
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=True,
+            distro_version="1.0.0",
+            storage_maintenance_period=30,
+            storage_max_size=1000,
+            storage_min_retry_interval=100,
+            storage_directory="test/path",
+            storage_retention_period=2000,
+        )
+        self.assertEqual(
+            base._instrumentation_key,
+            "4321abcd-5678-4efa-8abc-1234567890ab",
+        )
+        self.assertEqual(
+            base._endpoint,
+            "https://westus-0.in.applicationinsights.azure.com/",
+        )
+        self.assertEqual(base._distro_version, "1.0.0")
+        self.assertIsNone(base.storage)
+        self.assertEqual(base._storage_maintenance_period, 30)
+        self.assertEqual(base._timeout, 10)
+        self.assertEqual(base._api_version, "2021-02-10_Preview")
+        self.assertEqual(base._storage_min_retry_interval, 100)
+        self.assertEqual(base._storage_directory, "test/path")
+        mock_get_temp_dir.assert_not_called()
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base._format_storage_telemetry_item")
     @mock.patch.object(TelemetryItem, "from_dict")
@@ -615,13 +724,15 @@ class TestBaseExporter(unittest.TestCase):
         "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
         }
     )
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.shutdown_statsbeat_metrics")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
-    def test_statsbeat_400(self, stats_mock):
+    def test_statsbeat_400(self, stats_mock, stats_shutdown_mock):
         exporter = BaseExporter(disable_offline_storage=True)
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(400, "{}")
             result = exporter._transmit(self._envelopes_to_export)
         stats_mock.assert_called_once()
+        stats_shutdown_mock.assert_called_once()
         self.assertEqual(len(_REQUESTS_MAP), 3)
         self.assertEqual(_REQUESTS_MAP[_REQ_FAILURE_NAME[1]][400], 1)
         self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])

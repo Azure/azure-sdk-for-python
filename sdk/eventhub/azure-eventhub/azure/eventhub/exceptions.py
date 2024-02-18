@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+from typing import Union, List, Optional
+
 
 class EventHubError(Exception):
     """Represents an error occurred in the client.
@@ -12,33 +14,34 @@ class EventHubError(Exception):
     :vartype error: str
     :ivar details: The error details, if included in the
      service response.
-    :vartype details: dict[str, str]
+    :vartype details: list[str]
     """
 
-    def __init__(self, message, details=None):
-        self.error = None
-        self.message = message
-        self.details = details
+    def __init__(self, message: str, details: Optional[List[str]] = None) -> None:
+        self.error: Optional[str] = None
+        self.message: str = message
+        self.details: Union[List[str]]
         if details and isinstance(details, Exception):
+            # TODO: issue #34266
             try:
-                condition = details.condition.value.decode("UTF-8")
+                condition = details.condition.value.decode("UTF-8") # type: ignore[attr-defined]
             except AttributeError:
                 try:
-                    condition = details.condition.decode("UTF-8")
+                    condition = details.condition.decode("UTF-8") # type: ignore[attr-defined]
                 except AttributeError:
                     condition = None
             if condition:
                 _, _, self.error = condition.partition(":")
                 self.message += "\nError: {}".format(self.error)
             try:
-                self._parse_error(details.description)
+                self._parse_error(details.description) # type: ignore[attr-defined]
                 for detail in self.details:
                     self.message += "\n{}".format(detail)
             except:  # pylint: disable=bare-except
                 self.message += "\n{}".format(details)
         super(EventHubError, self).__init__(self.message)
 
-    def _parse_error(self, error_list):
+    def _parse_error(self, error_list: Union[str, bytes]) -> None:
         details = []
         self.message = (
             error_list

@@ -53,7 +53,7 @@ from azure.storage.blob import BlobServiceClient
 current_window_handle = win32gui.GetForegroundWindow()
 
 credential = InteractiveBrowserBrokerCredential(parent_window_handle=current_window_handle)
-client = BlobServiceClient(account_url, credential=default_credential)
+client = BlobServiceClient(account_url, credential=credential)
 ```
 
 ## Troubleshooting

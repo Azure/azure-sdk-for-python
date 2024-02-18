@@ -10,6 +10,9 @@
 
 ### Other Changes
 
+- Bumped minimum dependency on `azure-core` to `>=1.28.0`.
+- Added additional type validation for the `logs` parameter in the `upload` method to ensure that a string hasn't been passed in. ([#33976](https://github.com/Azure/azure-sdk-for-python/pull/33976))
+
 ## 1.0.3 (2023-11-07)
 
 ### Other Changes

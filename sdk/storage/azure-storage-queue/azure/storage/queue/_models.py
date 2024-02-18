@@ -455,12 +455,11 @@ class MessagesPaged(PageIterator):
 class QueueProperties(DictMixin):
     """Queue Properties.
 
-    :keyword str name:
-        The name of the queue.
-    :keyword Optional[Dict[str, str]] metadata:
+    :keyword metadata:
         A dict containing name-value pairs associated with the queue as metadata.
         This var is set to None unless the include=metadata param was included
         for the list queues operation.
+    :paramtype metadata: Optional[Dict[str, str]]
     """
 
     name: str
@@ -471,6 +470,8 @@ class QueueProperties(DictMixin):
     """The approximate number of messages contained in the queue."""
 
     def __init__(self, **kwargs: Any) -> None:
+        # The name property will always be set to a non-None value after construction.
+        self.name = None #type: ignore [assignment]
         self.metadata = kwargs.get('metadata')
         self.approximate_message_count = kwargs.get('x-ms-approximate-messages-count')
 

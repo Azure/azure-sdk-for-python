@@ -417,93 +417,6 @@
                 "description": "Managed network settings to be used for the workspace. If not specified, isolation mode Disabled is the default"
             }
         },
-        "spark_runtime_version": {
-            "type": "string",
-            "metadata": {
-                "description": "spark version to be used by all feature sets"
-            }
-        },
-        "offline_store_connection_name": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Feature store offline store config"
-            }
-        },
-        "online_store_connection_name": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Feature store online store config"
-            }
-        },
-        "offline_store_target": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Feature store offline store connection target"
-            }
-        },
-        "offline_store_resource_group_name": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Feature store offline store resource group"
-            }
-        },
-        "offline_store_subscription_id": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Feature store offline store subscription id"
-            }
-        },
-        "online_store_target": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Feature store online store connection target"
-            }
-        },
-        "online_store_resource_group_name": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Feature store online store resource group"
-            }
-        },
-        "online_store_subscription_id": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Feature store online store subscription id"
-            }
-        },
-        "materialization_identity_client_id": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Feature store materialization credential client id"
-            }
-        },
-        "materialization_identity_resource_id": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Feature store materialization credential resource id"
-            }
-        },
-        "setup_materialization_store": {
-            "type": "string",
-            "defaultValue": "false",
-            "allowedValues": [
-                "false",
-                "true"
-            ],
-            "metadata": {
-                "description": "Whether to set up materialization store"
-            }
-        },
         "enable_data_isolation": {
             "type": "string",
             "defaultValue": "false",
@@ -549,41 +462,12 @@
             "metadata": {
                 "description": "Resource Id of Hub used for lean workspace."
             }
-        },
-        "materialization_identity_name": {
-            "defaultValue": "empty",
-            "type": "string",
-            "metadata": {
-                "description": "Feature store materialization identity name"
-            }
-        },
-        "grant_materialization_permissions": {
-            "type": "string",
-            "defaultValue": "false",
-            "allowedValues": [
-                "false",
-                "true"
-            ],
-            "metadata": {
-                "description": "Whether to grant materialization identity permissions"
-            }
         },        
         "workspace_hub_config" : {
             "type": "object",
             "defaultValue": {},
             "metadata": {
                 "description": "Additional configuration for WorkspaceHub."
-            }
-        },        
-        "set_up_feature_store" : {
-            "type": "string",
-            "defaultValue": "false",
-            "allowedValues": [
-                "false",
-                "true"
-            ],
-            "metadata": {
-                "description": "A flag to determine whether to set up feature store"
             }
         },
         "serverless_compute_settings": {
@@ -613,7 +497,133 @@
             "metadata": {
                 "description": "Testing value. Do not touch."
             }
-        } 
+        },
+        "spark_runtime_version": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "spark version to be used by all feature sets"
+            }
+        },
+        "offlineStoreStorageAccountOption": {
+            "type": "string",
+            "defaultValue": "none",
+            "allowedValues": [
+                "new",
+                "existing",
+                "none"
+            ],
+            "metadata": {
+                "description": "Determines whether or not to provision a feature store offline store storage account"
+            }
+        },
+        "offline_store_storage_account_name": {
+            "type": "string",
+            "defaultValue": "[concat('sa', uniqueString('featurestore', parameters('resourceGroupName'), parameters('workspaceName')))]",
+            "metadata": {
+                "description": "Name of the feature store storage account."
+            }
+        },
+        "offline_store_container_name": {
+            "type": "string",
+            "defaultValue": "[concat('offlinestore', newGuid())]",
+            "metadata": {
+                "description": "Feature store offline store container"
+            }
+        },
+        "offline_store_resource_group_name": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]",
+            "metadata": {
+                "description": "Feature store offline store resource group"
+            }
+        },
+        "offline_store_subscription_id": {
+            "type": "string",
+            "defaultValue": "[subscription().subscriptionId]",
+            "metadata": {
+                "description": "Feature store offline store subscription id"
+            }
+        },
+        "offline_store_connection_name": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store offline store config"
+            }
+        },
+        "online_store_resource_id": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store online store resource id"
+            }
+        },
+        "online_store_resource_group_name": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store online store resource group"
+            }
+        },
+        "online_store_subscription_id": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store online store subscription id"
+            }
+        },
+        "online_store_connection_name": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store online store config"
+            }
+        },
+        "materializationIdentityOption": {
+            "type": "string",
+            "defaultValue": "none",
+            "allowedValues": [
+                "new",
+                "existing",
+                "none"
+            ],
+            "metadata": {
+                "description": "Determines whether or not to provision a materialization identity"
+            }
+        },
+        "materialization_identity_name": {
+            "type": "string",
+            "defaultValue": "empty",
+            "metadata": {
+                "description": "Feature store materialization identity name"
+            }
+        },
+        "materialization_identity_subscription_id": {
+            "type": "string",
+            "defaultValue": "[subscription().subscriptionId]",
+            "metadata": {
+                "description": "Feature store materialization identity subscription id"
+            }
+        },
+        "materialization_identity_resource_group_name": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]",
+            "metadata": {
+                "description": "Feature store materialization identity resource group name"
+            }
+        },
+        "grant_materialization_permissions": {
+            "type": "string",
+            "defaultValue": "false",
+            "allowedValues": [
+                "false",
+                "true"
+            ],
+            "metadata": {
+                "description": "Whether to grant materialization identity permissions"
+            }
+        }
     },
     "variables": {
         "tenantId": "[subscription().tenantId]",
@@ -654,18 +664,6 @@
     },
     "resources": [
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'))]",
-            "type": "Microsoft.OperationalInsights/workspaces",
-            "tags": "[parameters('tagValues')]",
-            "apiVersion": "2020-08-01",
-            "name": "[parameters('logAnalyticsName')]",
-            "location": "[if(or(equals(toLower(parameters('applicationInsightsLocation')),'westcentralus'), equals(toLower(parameters('applicationInsightsLocation')),'eastus2euap'), equals(toLower(parameters('applicationInsightsLocation')),'centraluseuap')),'southcentralus', parameters('applicationInsightsLocation'))]",
-            "kind": "web",
-            "properties": {
-                "Application_Type": "web"
-            }
-        },
-        {
             "condition": "[variables('enablePE')]",
             "type": "Microsoft.MachineLearningServices/workspaces",
             "apiVersion": "2023-08-01-preview",
@@ -679,6 +677,8 @@
                 "description": "[parameters('description')]",
                 "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
                 "hubResourceId": "[parameters('workspace_hub')]",
+                "enableDataIsolation": "[parameters('enable_data_isolation')]",
+                "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
                 "serverlessComputeSettings": "[parameters('serverless_compute_settings')]"
             }
         }

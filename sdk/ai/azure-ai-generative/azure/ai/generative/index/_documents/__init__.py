@@ -5,7 +5,8 @@
 import json
 import re
 from pathlib import Path
-from typing import Callable, Iterable, Iterator, List, Optional, Union
+from os import PathLike
+from typing import Any, Callable, Dict, Generator, Iterable, Iterator, List, Optional, Union
 
 from azure.ai.generative.index._documents.chunking import ChunkedDocument, split_documents
 from azure.ai.generative.index._documents.cracking import (
@@ -15,8 +16,8 @@ from azure.ai.generative.index._documents.cracking import (
     crack_documents,
     files_to_document_source,
 )
-from azure.ai.generative.index._documents.document import Document, StaticDocument
 from azure.ai.generative.index._utils.logging import get_logger
+from azure.ai.resources._index._documents.document import Document, StaticDocument
 
 logger = get_logger(__name__)
 
@@ -28,17 +29,17 @@ class DocumentChunksIterator(Iterator):
             self,
             files_source: Union[str, Path],
             glob: str,
-            base_url: str = "",
-            document_path_replacement_regex: Optional[str] = None,
+            base_url: Optional[str],
+            document_path_replacement_regex: Optional[Dict[str, str]] = None,
             file_filter: Optional[Callable[[Iterable[DocumentSource]], Iterator[DocumentSource]]]=None,
-            source_loader: Callable[[Iterable[DocumentSource]], Iterator[ChunkedDocument]]=crack_documents,
+            source_loader: Callable[[Iterator[DocumentSource], Any], Iterator[ChunkedDocument]]=crack_documents,
             chunked_document_processors: Optional[List[Callable[[Iterable[ChunkedDocument]], Iterator[ChunkedDocument]]]] = [
                 lambda docs: split_documents(docs, splitter_args={"chunk_size": 1024, "chunk_overlap": 0})
             ]):
         """Initialize a document chunks iterator."""
         self.files_source = files_source
         self.glob = glob
-        self.base_url = base_url
+        self.base_url = base_url if base_url else ""
         self.document_path_replacement_regex = document_path_replacement_regex
         if file_filter is None:
             file_filter = self._document_statistics
@@ -46,14 +47,14 @@ class DocumentChunksIterator(Iterator):
         self.source_loader = source_loader
 
         self.chunked_document_processors = chunked_document_processors
-        self.document_chunks_iterator = None
+        self.document_chunks_iterator: Optional[Iterator[ChunkedDocument]] = None
         self.__document_statistics = None
         self.span = None
 
     def __iter__(self) -> Iterator[ChunkedDocument]:
         """Iterate over document chunks."""
         if self.document_path_replacement_regex:
-            document_path_replacement = json.loads(self.document_path_replacement_regex)
+            document_path_replacement = self.document_path_replacement_regex
             url_replacement_match = re.compile(document_path_replacement["match_pattern"])
 
             def process_url(url):
@@ -68,13 +69,13 @@ class DocumentChunksIterator(Iterator):
         source_documents = files_to_document_source(self.files_source, self.glob, self.base_url, process_url)
         if self.file_filter is not None:
             source_documents = self.file_filter(source_documents)
-        document_chunks_iterator = self.source_loader(source_documents)
+        document_chunks_iterator = self.source_loader(source_documents)  # type: ignore[call-arg]
 
         if self.chunked_document_processors is not None:
             for chunked_document_processor in self.chunked_document_processors:
                 document_chunks_iterator = chunked_document_processor(document_chunks_iterator)
 
-        self.document_chunks_iterator = document_chunks_iterator
+        self.document_chunks_iterator = document_chunks_iterator  # type: ignore[no-redef]
 
         return self
 
@@ -100,28 +101,30 @@ class DocumentChunksIterator(Iterator):
         """
         return self.__document_statistics
 
-    def _document_statistics(self, sources: Iterable[DocumentSource], allowed_extensions=SUPPORTED_EXTENSIONS) -> Iterator[DocumentSource]:
+    def _document_statistics(self, sources: Iterable[DocumentSource], allowed_extensions=SUPPORTED_EXTENSIONS) -> Generator[DocumentSource, None, None]:
         """Filter out sources with extensions not in allowed_extensions."""
         if self.__document_statistics is None:
-            self.__document_statistics = {
+            self.__document_statistics = {  # type: ignore
                 "total_files": 0,
                 "skipped_files": 0,
                 "skipped_extensions": {},
                 "kept_extensions": {}
             }
         for source in sources:
-            self.__document_statistics["total_files"] += 1
+            source_path: Path = Path(source.path)  # type: ignore[arg-type]
+            self.__document_statistics: Dict[str, object]  # type: ignore[no-redef]
+            self.__document_statistics["total_files"] += 1  # type: ignore[index]
             if allowed_extensions is not None:
-                if source.path.suffix not in allowed_extensions:
-                    self.__document_statistics["skipped_files"] += 1
-                    ext_skipped = self.__document_statistics["skipped_extensions"].get(source.path.suffix.lower(), 0)
-                    self.__document_statistics["skipped_extensions"][source.path.suffix.lower()] = ext_skipped + 1
-                    logger.debug(f'Filtering out extension "{source.path.suffix.lower()}" source: {source.filename}')
+                if source_path.suffix not in allowed_extensions:
+                    self.__document_statistics["skipped_files"] += 1  # type: ignore[index]
+                    ext_skipped = self.__document_statistics["skipped_extensions"].get(source_path.suffix.lower(), 0)  # type: ignore[index]
+                    self.__document_statistics["skipped_extensions"][source_path.suffix.lower()] = ext_skipped + 1  # type: ignore[index]
+                    logger.debug(f'Filtering out extension "{source_path.suffix.lower()}" source: {source.filename}') 
                     continue
-            ext_kept = self.__document_statistics["kept_extensions"].get(source.path.suffix.lower(), 0)
-            self.__document_statistics["kept_extensions"][source.path.suffix.lower()] = ext_kept + 1
+            ext_kept = self.__document_statistics["kept_extensions"].get(source_path.suffix.lower(), 0)  # type: ignore[index]
+            self.__document_statistics["kept_extensions"][source_path.suffix.lower()] = ext_kept + 1  # type: ignore[index]
             yield source
-        logger.info(f"[DocumentChunksIterator::filter_extensions] Filtered {self.__document_statistics['skipped_files']} files out of {self.__document_statistics['total_files']}")
+        logger.info(f"[DocumentChunksIterator::filter_extensions] Filtered {self.__document_statistics['skipped_files']} files out of {self.__document_statistics['total_files']}")  # type: ignore[index]
         if self.span is not None:
             self.span.set_attributes({
                 f"document_statistics.{k}": v for k, v in self.__document_statistics.items()
@@ -157,7 +160,7 @@ class DocumentChunksIterator(Iterator):
 
             return remote_url
         except Exception:
-            pass
+            return None
 
 
 __all__ = [

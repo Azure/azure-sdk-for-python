@@ -7,7 +7,7 @@ from __future__ import annotations
 import asyncio
 import time
 import logging
-from typing import Union, cast, TYPE_CHECKING, List
+from typing import Union, cast, TYPE_CHECKING
 
 from ..._pyamqp import constants, error as errors
 from ..._pyamqp.aio import AMQPClientAsync, SendClientAsync, ReceiveClientAsync
@@ -36,7 +36,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     """
 
     @staticmethod
-    async def create_connection_async(**kwargs):
+    async def create_connection_async(**kwargs) -> ConnectionAsync:
         """
         Creates and returns the pyamqp Connection object.
         :keyword str host: The hostname, used by pyamqp.
@@ -376,7 +376,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         #     raise error
         elif isinstance(exception, errors.MessageException):
             _LOGGER.info("%r Event data send error (%r)", name, exception)
-            error = EventDataSendError(str(exception), exception)
+            # TODO: issue #34266
+            error = EventDataSendError(str(exception), exception)   # type: ignore[arg-type]
             raise error
         else:
             try:

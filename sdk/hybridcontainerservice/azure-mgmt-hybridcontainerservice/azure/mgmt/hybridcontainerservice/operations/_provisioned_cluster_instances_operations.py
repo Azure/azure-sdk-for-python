@@ -43,7 +43,7 @@ def build_get_request(connected_cluster_resource_uri: str, **kwargs: Any) -> Htt
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -72,7 +72,7 @@ def build_create_or_update_request(connected_cluster_resource_uri: str, **kwargs
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -104,7 +104,7 @@ def build_delete_request(connected_cluster_resource_uri: str, **kwargs: Any) -> 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -133,7 +133,7 @@ def build_list_request(connected_cluster_resource_uri: str, **kwargs: Any) -> Ht
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -162,7 +162,7 @@ def build_get_upgrade_profile_request(connected_cluster_resource_uri: str, **kwa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -191,7 +191,7 @@ def build_list_user_kubeconfig_request(connected_cluster_resource_uri: str, **kw
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -220,7 +220,7 @@ def build_list_admin_kubeconfig_request(connected_cluster_resource_uri: str, **k
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -265,17 +265,17 @@ class ProvisionedClusterInstancesOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(self, connected_cluster_resource_uri: str, **kwargs: Any) -> _models.ProvisionedClusters:
+    def get(self, connected_cluster_resource_uri: str, **kwargs: Any) -> _models.ProvisionedCluster:
         """Gets the provisioned cluster instance.
 
-        Gets the Hybrid AKS provisioned cluster instance.
+        Gets the provisioned cluster instance.
 
-        :param connected_cluster_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param connected_cluster_resource_uri: The fully qualified Azure Resource Manager identifier of
          the connected cluster resource. Required.
         :type connected_cluster_resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ProvisionedClusters or the result of cls(response)
-        :rtype: ~azure.mgmt.hybridcontainerservice.models.ProvisionedClusters
+        :return: ProvisionedCluster or the result of cls(response)
+        :rtype: ~azure.mgmt.hybridcontainerservice.models.ProvisionedCluster
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -290,7 +290,7 @@ class ProvisionedClusterInstancesOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.ProvisionedClusters] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ProvisionedCluster] = kwargs.pop("cls", None)
 
         request = build_get_request(
             connected_cluster_resource_uri=connected_cluster_resource_uri,
@@ -314,7 +314,7 @@ class ProvisionedClusterInstancesOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ProvisionedClusters", pipeline_response)
+        deserialized = self._deserialize("ProvisionedCluster", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -328,9 +328,9 @@ class ProvisionedClusterInstancesOperations:
     def _create_or_update_initial(
         self,
         connected_cluster_resource_uri: str,
-        provisioned_cluster_instance: Union[_models.ProvisionedClusters, IO],
+        provisioned_cluster_instance: Union[_models.ProvisionedCluster, IO],
         **kwargs: Any
-    ) -> _models.ProvisionedClusters:
+    ) -> _models.ProvisionedCluster:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -344,7 +344,7 @@ class ProvisionedClusterInstancesOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ProvisionedClusters] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ProvisionedCluster] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -352,7 +352,7 @@ class ProvisionedClusterInstancesOperations:
         if isinstance(provisioned_cluster_instance, (IOBase, bytes)):
             _content = provisioned_cluster_instance
         else:
-            _json = self._serialize.body(provisioned_cluster_instance, "ProvisionedClusters")
+            _json = self._serialize.body(provisioned_cluster_instance, "ProvisionedCluster")
 
         request = build_create_or_update_request(
             connected_cluster_resource_uri=connected_cluster_resource_uri,
@@ -380,10 +380,10 @@ class ProvisionedClusterInstancesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize("ProvisionedClusters", pipeline_response)
+            deserialized = self._deserialize("ProvisionedCluster", pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize("ProvisionedClusters", pipeline_response)
+            deserialized = self._deserialize("ProvisionedCluster", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -398,21 +398,21 @@ class ProvisionedClusterInstancesOperations:
     def begin_create_or_update(
         self,
         connected_cluster_resource_uri: str,
-        provisioned_cluster_instance: _models.ProvisionedClusters,
+        provisioned_cluster_instance: _models.ProvisionedCluster,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.ProvisionedClusters]:
-        """Creates the provisioned cluster instance.
+    ) -> LROPoller[_models.ProvisionedCluster]:
+        """Creates or updates the provisioned cluster instance.
 
-        Creates the Hybrid AKS provisioned cluster instance.
+        Creates or updates the provisioned cluster instance.
 
-        :param connected_cluster_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param connected_cluster_resource_uri: The fully qualified Azure Resource Manager identifier of
          the connected cluster resource. Required.
         :type connected_cluster_resource_uri: str
-        :param provisioned_cluster_instance: Required.
+        :param provisioned_cluster_instance: Provisioned Cluster resource definition. Required.
         :type provisioned_cluster_instance:
-         ~azure.mgmt.hybridcontainerservice.models.ProvisionedClusters
+         ~azure.mgmt.hybridcontainerservice.models.ProvisionedCluster
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -424,10 +424,10 @@ class ProvisionedClusterInstancesOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either ProvisionedClusters or the result of
+        :return: An instance of LROPoller that returns either ProvisionedCluster or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.hybridcontainerservice.models.ProvisionedClusters]
+         ~azure.core.polling.LROPoller[~azure.mgmt.hybridcontainerservice.models.ProvisionedCluster]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -439,15 +439,15 @@ class ProvisionedClusterInstancesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.ProvisionedClusters]:
-        """Creates the provisioned cluster instance.
+    ) -> LROPoller[_models.ProvisionedCluster]:
+        """Creates or updates the provisioned cluster instance.
 
-        Creates the Hybrid AKS provisioned cluster instance.
+        Creates or updates the provisioned cluster instance.
 
-        :param connected_cluster_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param connected_cluster_resource_uri: The fully qualified Azure Resource Manager identifier of
          the connected cluster resource. Required.
         :type connected_cluster_resource_uri: str
-        :param provisioned_cluster_instance: Required.
+        :param provisioned_cluster_instance: Provisioned Cluster resource definition. Required.
         :type provisioned_cluster_instance: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -460,10 +460,10 @@ class ProvisionedClusterInstancesOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either ProvisionedClusters or the result of
+        :return: An instance of LROPoller that returns either ProvisionedCluster or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.hybridcontainerservice.models.ProvisionedClusters]
+         ~azure.core.polling.LROPoller[~azure.mgmt.hybridcontainerservice.models.ProvisionedCluster]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -471,20 +471,20 @@ class ProvisionedClusterInstancesOperations:
     def begin_create_or_update(
         self,
         connected_cluster_resource_uri: str,
-        provisioned_cluster_instance: Union[_models.ProvisionedClusters, IO],
+        provisioned_cluster_instance: Union[_models.ProvisionedCluster, IO],
         **kwargs: Any
-    ) -> LROPoller[_models.ProvisionedClusters]:
-        """Creates the provisioned cluster instance.
+    ) -> LROPoller[_models.ProvisionedCluster]:
+        """Creates or updates the provisioned cluster instance.
 
-        Creates the Hybrid AKS provisioned cluster instance.
+        Creates or updates the provisioned cluster instance.
 
-        :param connected_cluster_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param connected_cluster_resource_uri: The fully qualified Azure Resource Manager identifier of
          the connected cluster resource. Required.
         :type connected_cluster_resource_uri: str
-        :param provisioned_cluster_instance: Is either a ProvisionedClusters type or a IO type.
-         Required.
+        :param provisioned_cluster_instance: Provisioned Cluster resource definition. Is either a
+         ProvisionedCluster type or a IO type. Required.
         :type provisioned_cluster_instance:
-         ~azure.mgmt.hybridcontainerservice.models.ProvisionedClusters or IO
+         ~azure.mgmt.hybridcontainerservice.models.ProvisionedCluster or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -496,10 +496,10 @@ class ProvisionedClusterInstancesOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either ProvisionedClusters or the result of
+        :return: An instance of LROPoller that returns either ProvisionedCluster or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.hybridcontainerservice.models.ProvisionedClusters]
+         ~azure.core.polling.LROPoller[~azure.mgmt.hybridcontainerservice.models.ProvisionedCluster]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -507,7 +507,7 @@ class ProvisionedClusterInstancesOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ProvisionedClusters] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ProvisionedCluster] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -525,7 +525,7 @@ class ProvisionedClusterInstancesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("ProvisionedClusters", pipeline_response)
+            deserialized = self._deserialize("ProvisionedCluster", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
@@ -605,9 +605,9 @@ class ProvisionedClusterInstancesOperations:
     def begin_delete(self, connected_cluster_resource_uri: str, **kwargs: Any) -> LROPoller[None]:
         """Deletes the provisioned cluster instance.
 
-        Deletes the Hybrid AKS provisioned cluster instance.
+        Deletes the provisioned cluster instance.
 
-        :param connected_cluster_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param connected_cluster_resource_uri: The fully qualified Azure Resource Manager identifier of
          the connected cluster resource. Required.
         :type connected_cluster_resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -667,25 +667,25 @@ class ProvisionedClusterInstancesOperations:
     }
 
     @distributed_trace
-    def list(self, connected_cluster_resource_uri: str, **kwargs: Any) -> Iterable["_models.ProvisionedClusters"]:
-        """Gets the provisioned cluster instances associated with the connected cluster.
+    def list(self, connected_cluster_resource_uri: str, **kwargs: Any) -> Iterable["_models.ProvisionedCluster"]:
+        """Lists the ProvisionedClusterInstance resource associated with the ConnectedCluster.
 
-        Gets the Hybrid AKS provisioned cluster instances associated with the connected cluster.
+        Lists the ProvisionedClusterInstance resource associated with the ConnectedCluster.
 
-        :param connected_cluster_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param connected_cluster_resource_uri: The fully qualified Azure Resource Manager identifier of
          the connected cluster resource. Required.
         :type connected_cluster_resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ProvisionedClusters or the result of cls(response)
+        :return: An iterator like instance of either ProvisionedCluster or the result of cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.hybridcontainerservice.models.ProvisionedClusters]
+         ~azure.core.paging.ItemPaged[~azure.mgmt.hybridcontainerservice.models.ProvisionedCluster]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.ProvisionedClustersListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ProvisionedClusterListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -727,7 +727,7 @@ class ProvisionedClusterInstancesOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("ProvisionedClustersListResult", pipeline_response)
+            deserialized = self._deserialize("ProvisionedClusterListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -759,11 +759,11 @@ class ProvisionedClusterInstancesOperations:
     def get_upgrade_profile(
         self, connected_cluster_resource_uri: str, **kwargs: Any
     ) -> _models.ProvisionedClusterUpgradeProfile:
-        """Gets the upgrade profile of a provisioned cluster instance.
+        """Gets the upgrade profile of a provisioned cluster.
 
-        Gets the upgrade profile of a provisioned cluster instance.
+        Gets the upgrade profile of a provisioned cluster.
 
-        :param connected_cluster_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param connected_cluster_resource_uri: The fully qualified Azure Resource Manager identifier of
          the connected cluster resource. Required.
         :type connected_cluster_resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -878,11 +878,13 @@ class ProvisionedClusterInstancesOperations:
     def begin_list_user_kubeconfig(
         self, connected_cluster_resource_uri: str, **kwargs: Any
     ) -> LROPoller[_models.ListCredentialResponse]:
-        """Listing the AAD user credentials of a provisioned cluster instance used only in direct mode.
+        """Lists the user credentials of the provisioned cluster (can only be used within private
+        network).
 
-        Lists the AAD user credentials of a provisioned cluster instance used only in direct mode.
+        Lists the user credentials of the provisioned cluster (can only be used within private
+        network).
 
-        :param connected_cluster_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param connected_cluster_resource_uri: The fully qualified Azure Resource Manager identifier of
          the connected cluster resource. Required.
         :type connected_cluster_resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -1005,11 +1007,13 @@ class ProvisionedClusterInstancesOperations:
     def begin_list_admin_kubeconfig(
         self, connected_cluster_resource_uri: str, **kwargs: Any
     ) -> LROPoller[_models.ListCredentialResponse]:
-        """Listing the admin credentials of a provisioned cluster instance used only in direct mode.
+        """Lists the admin credentials of the provisioned cluster (can only be used within private
+        network).
 
-        Lists the admin credentials of a provisioned cluster instance used only in direct mode.
+        Lists the admin credentials of the provisioned cluster (can only be used within private
+        network).
 
-        :param connected_cluster_resource_uri: The fully qualified Azure Resource manager identifier of
+        :param connected_cluster_resource_uri: The fully qualified Azure Resource Manager identifier of
          the connected cluster resource. Required.
         :type connected_cluster_resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response

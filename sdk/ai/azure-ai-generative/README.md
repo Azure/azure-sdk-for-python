@@ -6,9 +6,9 @@ The Azure AI Generative package is part of the Azure AI SDK for Python and conta
 | [Package (PyPI)][ai_pypi]
 | [API reference documentation][ai_ref_docs]
 | [Product documentation][product_documentation]
-| [Samples][ml_samples]
+| [Samples][generative_samples]
 
-This package has been tested with Python 3.7, 3.8, 3.9 and 3.10.
+This package has been tested with Python 3.8, 3.9, 3.10, 3.11 and 3.12.
 
 For a more complete set of Azure libraries, see https://aka.ms/azsdk/python/all.
 
@@ -19,11 +19,12 @@ For a more complete set of Azure libraries, see https://aka.ms/azsdk/python/all.
 - Python 3.7 or later is required to use this package.
 - You must have an [Azure subscription][azure_subscription].
 - An [Azure Machine Learning Workspace][workspace].
+- An [Azure AI Studio project][ai_project].
 
 ### Install the package
 Install the Azure AI generative package for Python with pip:
 
-```dotnetcli
+```
 pip install azure-ai-generative[index,evaluate,promptflow]
 pip install azure-identity
 ```
@@ -118,8 +119,9 @@ If you encounter any bugs or have suggestions, please file an issue in the [Issu
 <!-- LINKS -->
 
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-generative
+[ai_project]: https://aka.ms/azureaistudio
 [ai_pypi]: https://pypi.org/project/azure-ai-generative/
-[ai_ref_docs]: https://learn.microsoft.com/python/api/overview/azure/ai-generative-readme?view=azure-python
+[ai_ref_docs]: https://learn.microsoft.com/python/api/azure-ai-generative/?view=azure-python-preview
 [generative_samples]: https://github.com/Azure-Samples/azureai-samples
 [product_documentation]: https://docs.microsoft.com/azure/machine-learning/
 [azure_subscription]: https://azure.microsoft.com/free/
@@ -131,7 +133,6 @@ If you encounter any bugs or have suggestions, please file an issue in the [Issu
 [azure_core_ref_docs]: https://aka.ms/azsdk-python-core-policies
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
-[python_logging]: https://docs.python.org/3/library/logging.html
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/

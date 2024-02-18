@@ -7,16 +7,22 @@ import os
 from pathlib import Path
 import shutil
 import tempfile
-from typing import Any, List, Union, Iterable
+from typing import Any, Dict, List, Tuple, Union, Iterable, Optional
+import uuid
 
 
 from azure.ai.ml import MLClient
-from azure.ai.ml.entities import ManagedOnlineDeployment, ManagedOnlineEndpoint, Model as AzureMLModel, DataCollector, DeploymentCollection, Environment, BuildContext
+from azure.ai.ml.entities import ManagedOnlineDeployment, Model as AzureMLModel, DataCollector, DeploymentCollection, Environment, BuildContext
+from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
+from azure.ai.ml._utils._endpoint_utils import upload_dependencies
 from azure.core.tracing.decorator import distributed_trace
+from azure.mgmt.resource import ResourceManagementClient
+from azure.mgmt.resource.resources.models import DeploymentMode
+from azure.core.polling import LROPoller
 
 from .._utils._scoring_script_utils import create_chat_scoring_script, create_mlmodel_file
 from .._utils._registry_utils import get_registry_model
-from .._utils._deployment_utils import get_default_allowed_instance_type_for_hugging_face
+from .._utils._deployment_utils import get_default_allowed_instance_type_for_hugging_face, get_empty_deployment_arm_template
 from ..entities.deployment import Deployment
 from ..entities.deployment_keys import DeploymentKeys
 from ..entities.models import Model, PromptflowModel
@@ -32,10 +38,11 @@ class DeploymentOperations:
         self._ml_client = ml_client
         self._connections = connections
         ops_logger.update_info(kwargs)
+        self._resource_management_client = ResourceManagementClient(self._ml_client._credential, self._ml_client.subscription_id)
 
     @distributed_trace
-    @monitor_with_activity(logger, "Deployment.CreateOrUpdate", ActivityType.PUBLICAPI)
-    def create_or_update(self, deployment: Deployment) -> Any:
+    @monitor_with_activity(logger, "Deployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    def begin_create_or_update(self, deployment: Deployment) -> LROPoller[Deployment]:
         model = deployment.model
         endpoint_name = deployment.endpoint_name if deployment.endpoint_name else deployment.name
 
@@ -53,15 +60,7 @@ class DeploymentOperations:
                 sampling_rate=1,
             )
 
-        v2_endpoint = ManagedOnlineEndpoint(
-            name=endpoint_name,
-            properties={
-                "enforce_access_to_default_secret_stores": "enabled"
-            }
-        )
-        created_endpoint = self._ml_client.begin_create_or_update(v2_endpoint).result()
         model = deployment.model
-        v2_deployment = None
         temp_dir = tempfile.TemporaryDirectory()
         if isinstance(model, PromptflowModel):
             if not deployment.instance_type:
@@ -85,7 +84,7 @@ class DeploymentOperations:
             deployment_environment_variables = (
                 deployment.environment_variables if deployment.environment_variables else {}
             )
-            v2_deployment = ManagedOnlineDeployment(
+            v2_deployment: ManagedOnlineDeployment = ManagedOnlineDeployment(  # type: ignore[no-redef]
                 name=deployment.name,
                 endpoint_name=endpoint_name,
                 model=azureml_model,
@@ -129,7 +128,7 @@ class DeploymentOperations:
                         " specifying conda_file and one of loader_module or chat_module for deployment."
                     )
 
-            v2_deployment = ManagedOnlineDeployment(
+            v2_deployment: ManagedOnlineDeployment = ManagedOnlineDeployment(  # type: ignore[no-redef]
                 name=deployment.name,
                 endpoint_name=endpoint_name,
                 model=azureml_model,
@@ -154,6 +153,7 @@ class DeploymentOperations:
                     default_instance_type, allowed_instance_types = get_default_allowed_instance_type_for_hugging_face(
                         model_details, self._ml_client._credential
                     )
+                    default_instance_type = str(default_instance_type)  # type: ignore[no-redef]
                     self._check_default_instance_type_and_populate(
                         default_instance_type, deployment, allowed_instance_types=allowed_instance_types
                     )
@@ -177,7 +177,7 @@ class DeploymentOperations:
                     )
                     # create mapping of allowed SKU to (SKU family, number of vCPUs, and cost per hour on linux)
                     filtered_vm_sizes = [vm_size for vm_size in vm_sizes.value if vm_size.name in allowed_skus]
-                    sku_to_family_vcpu_cost_map = {}
+                    sku_to_family_vcpu_cost_map: Dict[Any, Tuple[Any, Any, Optional[Any]]] = {}
                     sku_families = []
                     for vm_size in filtered_vm_sizes:
                         cost = None
@@ -189,7 +189,7 @@ class DeploymentOperations:
 
                     # sort allowed skus by price and find the first vm that has enough quota
                     sku_to_family_vcpu_cost_map = dict(
-                        sorted(sku_to_family_vcpu_cost_map.items(), key=lambda item: item[1][2])
+                        sorted(sku_to_family_vcpu_cost_map.items(), key=lambda item: item[1][2])  # type: ignore
                     )
                     # get usage info and filter it down to dedicated usage for each SKU family
                     usage_info = self._ml_client.compute.list_usage()
@@ -218,7 +218,7 @@ class DeploymentOperations:
                             "with more quota."
                         )
 
-            v2_deployment = ManagedOnlineDeployment(
+            v2_deployment: ManagedOnlineDeployment = ManagedOnlineDeployment(  # type: ignore[no-redef]
                 name=deployment.name,
                 endpoint_name=endpoint_name,
                 model=model_id,
@@ -227,22 +227,50 @@ class DeploymentOperations:
                 app_insights_enabled=deployment.app_insights_enabled,
                 data_collector=data_collector,
             )
-
+        if deployment.data_collector_enabled:
+            self._ml_client.online_deployments._register_collection_data_assets(v2_deployment)
+        orchestrators = OperationOrchestrator(
+            operation_container=self._ml_client.online_deployments._all_operations,
+            operation_scope=self._ml_client.online_deployments._operation_scope,
+            operation_config=self._ml_client.online_deployments._operation_config,
+        )
+        upload_dependencies(v2_deployment, orchestrators)
+        location = self._ml_client.online_deployments._get_workspace_location()
         v2_deployment.tags = deployment.tags
         v2_deployment.properties = deployment.properties
-        create_deployment_poller = self._ml_client.begin_create_or_update(v2_deployment)
         shutil.rmtree(temp_dir.name)
-        created_deployment = create_deployment_poller.result()
+    
+        template = get_empty_deployment_arm_template()
+        template["parameters"]["workspaceName"] = {"defaultValue": self._ml_client.workspace_name, "type": "String"}
+        template["parameters"]["onlineEndpointName"] = {"defaultValue": endpoint_name, "type": "String"}
+        template["parameters"]["onlineDeploymentName"] = {"defaultValue": deployment.name, "type": "String"}
+        template["parameters"]["onlineDeploymentProperties"] = {"defaultValue": v2_deployment._to_rest_object(location=location).properties.serialize(), "type": "Object"}
+        template["parameters"]["location"] = {"defaultValue": location, "type": "String"}
+        template["parameters"]["deploymentInstanceCount"] = {"defaultValue": deployment.instance_count, "type": "int"}
 
-        v2_endpoint.traffic = {deployment.name: 100}
-        update_endpoint_poller = self._ml_client.begin_create_or_update(v2_endpoint)
-        updated_endpoint = update_endpoint_poller.result()
 
-        return Deployment._from_v2_endpoint_deployment(updated_endpoint, deployment)
+        def lro_callback(raw_response, deserialized, headers):
+            outputs = deserialized.properties.outputs
+            return Deployment._from_v2_endpoint_deployment(
+                self._ml_client.online_endpoints.get(outputs["online_endpoint_name"]["value"]),
+                self._ml_client.online_deployments.get(outputs["online_deployment_name"]["value"], outputs["online_endpoint_name"]["value"])
+            )
+
+        return self._resource_management_client.deployments.begin_create_or_update(
+            self._ml_client.resource_group_name,
+            str(uuid.uuid4()),
+            {
+                "properties": {
+                    "template": template,
+                    "mode": DeploymentMode.incremental,
+                }
+            },
+            cls=lro_callback,
+        )
 
     @distributed_trace
     @monitor_with_activity(logger, "Deployment.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, endpoint_name: str = None) -> Deployment:
+    def get(self, name: str, endpoint_name: Optional[str] = None) -> Deployment:
         endpoint_name = endpoint_name if endpoint_name else name
         deployment = self._ml_client.online_deployments.get(
             name=name,
@@ -264,13 +292,13 @@ class DeploymentOperations:
 
     @distributed_trace
     @monitor_with_activity(logger, "Deployment.GetKeys", ActivityType.PUBLICAPI)
-    def get_keys(self, name: str, endpoint_name: str = None) -> DeploymentKeys:
+    def get_keys(self, name: str, endpoint_name: Optional[str] = None) -> DeploymentKeys:
         endpoint_name = endpoint_name if endpoint_name else name
         return DeploymentKeys._from_v2_endpoint_keys(self._ml_client.online_endpoints.get_keys(endpoint_name))
 
     @distributed_trace
     @monitor_with_activity(logger, "Deployment.Delete", ActivityType.PUBLICAPI)
-    def delete(self, name: str, endpoint_name: str = None) -> None:
+    def delete(self, name: str, endpoint_name: Optional[str] = None) -> None:
         self._ml_client.online_deployments.delete(
             name=name,
             endpoint_name=endpoint_name if endpoint_name else name,
@@ -278,7 +306,7 @@ class DeploymentOperations:
 
     @distributed_trace
     @monitor_with_activity(logger, "Deployment.Invoke", ActivityType.PUBLICAPI)
-    def invoke(self, name: str, request_file: Union[str, os.PathLike], endpoint_name: str = None) -> Any:
+    def invoke(self, name: str, request_file: Union[str, os.PathLike], endpoint_name: Optional[str] = None) -> Any:
         return self._ml_client.online_endpoints.invoke(
             endpoint_name=endpoint_name if endpoint_name else name,
             request_file=request_file,
@@ -289,9 +317,9 @@ class DeploymentOperations:
         self,
         instance_type: str,
         deployment: Deployment,
-        allowed_instance_types: List[str] = None,
-        min_sku_spec: str = None,
-    ) -> bool:
+        allowed_instance_types: Optional[List[str]] = None,
+        min_sku_spec: Optional[str] = None,
+    ) -> None:
         vm_sizes = self._ml_client.compute.list_sizes()
         inference_sku_vm_info = [vm for vm in vm_sizes if vm.name == instance_type][0]
         usage_info = self._ml_client.compute.list_usage()

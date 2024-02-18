@@ -186,6 +186,8 @@ SPARK_ENVIRONMENT_WARNING_MESSAGE = (
 CONNECTION_API_VERSION_KEY = "ApiVersion"
 CONNECTION_API_TYPE_KEY = "ApiType"
 CONNECTION_KIND_KEY = "Kind"
+CONNECTION_CONTAINER_NAME_KEY = "ContainerName"
+CONNECTION_ACCOUNT_NAME_KEY = "AccountName"
 
 
 class DefaultOpenEncoding:
@@ -330,6 +332,7 @@ class ArmConstants:
     DEFAULT_VALUE = "defaultValue"
 
     STORAGE = "StorageAccount"
+    STORAGE_CONTAINER = "StorageContainer"
     KEY_VAULT = "KeyVault"
     APP_INSIGHTS = "AppInsights"
     LOG_ANALYTICS = "LogAnalytics"
@@ -787,6 +790,13 @@ class InputOutputModes:
     """Evaluation download asset type."""
     DIRECT = "direct"
     """Direct asset type."""
+
+
+class WorkspaceConnectionTypes:
+    """Names for workspace connection types that are different from that underlying api enum values
+    from the ConnectionCategory class."""
+
+    CUSTOM = "custom"  # Corresponds to "custom_keys".
 
 
 class LegacyAssetTypes:

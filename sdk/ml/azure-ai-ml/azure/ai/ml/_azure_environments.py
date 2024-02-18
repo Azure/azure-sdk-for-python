@@ -9,11 +9,9 @@ import os
 from typing import Dict, List, Optional
 
 from azure.ai.ml._utils.utils import _get_mfe_url_override
-from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
-from azure.ai.ml.constants._common import ArmConstants
+from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME, ArmConstants
 from azure.core.rest import HttpRequest
 from azure.mgmt.core import ARMPipelineClient
-
 
 module_logger = logging.getLogger(__name__)
 
@@ -72,7 +70,7 @@ def _get_cloud(cloud: str) -> Dict[str, str]:
     arm_clouds = _get_clouds_by_metadata_url(arm_url)
     try:
         new_cloud = arm_clouds[cloud]
-        _environments.update(new_cloud)
+        _environments.update(new_cloud)  # type: ignore[arg-type]
         return new_cloud
     except KeyError as e:
         raise Exception('Unknown cloud environment "{0}".'.format(cloud)) from e
@@ -86,7 +84,7 @@ def _get_default_cloud_name() -> str:
     return os.getenv(AZUREML_CLOUD_ENV_NAME, AzureEnvironments.ENV_DEFAULT)
 
 
-def _get_cloud_details(cloud: str = AzureEnvironments.ENV_DEFAULT) -> Dict[str, str]:
+def _get_cloud_details(cloud: Optional[str] = AzureEnvironments.ENV_DEFAULT) -> Dict[str, str]:
     """Returns a Cloud endpoints object for the specified Azure Cloud.
 
     :param cloud: cloud name
@@ -134,7 +132,7 @@ def _get_base_url_from_metadata(cloud_name: Optional[str] = None, is_local_mfe: 
         base_url = _get_mfe_url_override()
     if base_url is None:
         cloud_details = _get_cloud_details(cloud_name)
-        base_url = cloud_details.get(EndpointURLS.RESOURCE_MANAGER_ENDPOINT).strip("/")
+        base_url = str(cloud_details.get(EndpointURLS.RESOURCE_MANAGER_ENDPOINT)).strip("/")
     return base_url
 
 
@@ -147,7 +145,7 @@ def _get_aml_resource_id_from_metadata(cloud_name: Optional[str] = None) -> str:
     :rtype: str
     """
     cloud_details = _get_cloud_details(cloud_name)
-    aml_resource_id = cloud_details.get(EndpointURLS.AML_RESOURCE_ID).strip("/")
+    aml_resource_id = str(cloud_details.get(EndpointURLS.AML_RESOURCE_ID)).strip("/")
     return aml_resource_id
 
 
@@ -160,7 +158,7 @@ def _get_active_directory_url_from_metadata(cloud_name: Optional[str] = None) ->
     :rtype: str
     """
     cloud_details = _get_cloud_details(cloud_name)
-    active_directory_url = cloud_details.get(EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT).strip("/")
+    active_directory_url = str(cloud_details.get(EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT)).strip("/")
     return active_directory_url
 
 
@@ -174,7 +172,7 @@ def _get_storage_endpoint_from_metadata(cloud_name: Optional[str] = None) -> str
     """
     cloud_details = _get_cloud_details(cloud_name)
     storage_endpoint = cloud_details.get(EndpointURLS.STORAGE_ENDPOINT)
-    return storage_endpoint
+    return str(storage_endpoint)
 
 
 def _get_azure_portal_id_from_metadata(cloud_name: Optional[str] = None) -> str:
@@ -187,7 +185,7 @@ def _get_azure_portal_id_from_metadata(cloud_name: Optional[str] = None) -> str:
     """
     cloud_details = _get_cloud_details(cloud_name)
     azure_portal_id = cloud_details.get(EndpointURLS.AZURE_PORTAL_ENDPOINT)
-    return azure_portal_id
+    return str(azure_portal_id)
 
 
 def _get_cloud_information_from_metadata(cloud_name: Optional[str] = None, **kwargs) -> Dict:
@@ -199,10 +197,12 @@ def _get_cloud_information_from_metadata(cloud_name: Optional[str] = None, **kwa
     :rtype: Dict
     """
     cloud_details = _get_cloud_details(cloud_name)
-    credential_scopes = _resource_to_scopes(cloud_details.get(EndpointURLS.RESOURCE_MANAGER_ENDPOINT).strip("/"))
+    credential_scopes = _resource_to_scopes(
+        cloud_details.get(EndpointURLS.RESOURCE_MANAGER_ENDPOINT).strip("/")  # type: ignore[union-attr]
+    )
 
     # Update the kwargs with the cloud information
-    client_kwargs = {"cloud": cloud_name}
+    client_kwargs: Dict = {"cloud": cloud_name}
     if credential_scopes is not None:
         client_kwargs["credential_scopes"] = credential_scopes
     kwargs.update(client_kwargs)
@@ -219,7 +219,7 @@ def _get_registry_discovery_endpoint_from_metadata(cloud_name: Optional[str] = N
     """
     cloud_details = _get_cloud_details(cloud_name)
     registry_discovery_endpoint = cloud_details.get(EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT)
-    return registry_discovery_endpoint
+    return str(registry_discovery_endpoint)
 
 
 def _resource_to_scopes(resource: str) -> List[str]:
@@ -250,7 +250,7 @@ def _get_registry_discovery_url(cloud: dict, cloud_suffix: str = "") -> str:
     """
     cloud_name = cloud["name"]
     if cloud_name in _environments:
-        return _environments[cloud_name].registry_url
+        return _environments[cloud_name].registry_url  # type: ignore[attr-defined]
 
     registry_discovery_region = os.environ.get(
         ArmConstants.REGISTRY_DISCOVERY_REGION_ENV_NAME,

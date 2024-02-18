@@ -7,14 +7,14 @@ import time
 import traceback
 import json
 import pinecone
-import yaml
+import yaml  # type: ignore[import]
 from pathlib import Path
 from typing import Optional
 
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.ai.generative.index._embeddings import EmbeddingsContainer, ReferenceEmbeddedDocument
 from azure.ai.generative.index._mlindex import MLIndex
-from azure.ai.generative.index._utils import get_connection_credential
+from azure.ai.resources._index._utils.connections import get_connection_credential
 from azure.ai.generative.index._utils.logging import (
     _logger_factory,
     get_logger,
@@ -44,7 +44,7 @@ def pinecone_index_client_from_config(pinecone_config: dict, api_key: str):
     return pinecone.Index(pinecone_config["index_name"])
 
 
-def create_pinecone_index_sdk(pinecone_config: dict, api_key: str, embeddings: Optional[EmbeddingsContainer] = None):
+def create_pinecone_index_sdk(pinecone_config: dict, api_key: str, embeddings: EmbeddingsContainer):
     """
     Create a Pinecone index using the Pinecone SDK.
 
@@ -197,7 +197,8 @@ def create_index_from_raw_embeddings(
                 # is_local=False when the EmbeddedDocuments data/embeddings are referenced from a remote source,
                 # which is the case when the data was reused from a previous snapshot. is_local=True means the data
                 # was generated for this snapshot and needs to pushed to the index.
-                if syncing_index and isinstance(emb_doc, ReferenceEmbeddedDocument) and not emb_doc.is_local:
+                if syncing_index and isinstance(emb_doc, ReferenceEmbeddedDocument) and not emb_doc.is_local:  # type: ignore[attr-defined]
+                    # TODO: Bug 2879174
                     skipped_doc_prefix_count += 1
                     if verbosity > 2:
                         logger.info(f"Skipping document as it should already be in index: {doc_id}")
@@ -302,7 +303,7 @@ def main(args, logger, activity_logger):
         if args.connection_id is not None:
             connection_args["connection_type"] = "workspace_connection"
             connection_args["connection"] = {"id": args.connection_id}
-            from azure.ai.generative.index._utils.connections import (
+            from azure.ai.resources._index._utils.connections import (
                 get_connection_by_id_v2,
                 get_metadata_from_connection,
             )

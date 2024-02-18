@@ -6,8 +6,9 @@ import copy
 import gzip
 import time
 from collections import OrderedDict
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, Union
 
+import cloudpickle
 from azure.core.credentials import TokenCredential
 from azure.ai.resources._index._embeddings.openai import OpenAIEmbedder
 from azure.ai.resources._index._langchain.vendor.embeddings.base import Embeddings as Embedder
@@ -16,7 +17,7 @@ from azure.ai.resources._index._utils.logging import get_logger
 
 logger = get_logger(__name__)
 
-def get_langchain_embeddings(embedding_kind: str, arguments: dict, credential: Optional[TokenCredential] = None) -> Embedder:
+def get_langchain_embeddings(embedding_kind: str, arguments: dict, credential: Optional[TokenCredential] = None) -> Union[OpenAIEmbedder, Embedder]:
     """Get an instance of Embedder from the given arguments."""
     if "open_ai" in embedding_kind:
         # return _args_to_openai_embedder(arguments)
@@ -26,8 +27,8 @@ def get_langchain_embeddings(embedding_kind: str, arguments: dict, credential: O
         arguments = init_open_ai_from_config(arguments, credential=credential)
 
         embedder = OpenAIEmbedder(
-            model=arguments.get("model"),
-            api_base=arguments.get("api_base", openai.api_base),
+            model=arguments.get("model", ""),
+            api_base=arguments.get("api_base", openai.api_base if hasattr(openai, "api_base") else openai.base_url),
             api_type=arguments.get("api_type", openai.api_type),
             api_version=arguments.get("api_version", openai.api_version),
             api_key=arguments.get("api_key", openai.api_key),
@@ -51,7 +52,7 @@ def get_langchain_embeddings(embedding_kind: str, arguments: dict, credential: O
             raise ValueError("HuggingFace embeddings require a model name.")
 
         class ActivitySafeHuggingFaceEmbeddings(Embedder):
-            """HuggingFaceEmbeddings with kwargs argument to embed_doceuments to support loggers being passed in."""
+            """HuggingFaceEmbeddings with kwargs argument to embed_documents to support loggers being passed in."""
 
             def __init__(self, embeddings):
                 """Initialize the ActivitySafeHuggingFaceEmbeddings."""
@@ -112,8 +113,8 @@ def get_embed_fn(embedding_kind: str, arguments: dict, credential: Optional[Toke
         arguments = init_open_ai_from_config(arguments, credential=credential)
 
         embedder = OpenAIEmbedder(
-            model=arguments.get("model"),
-            api_base=arguments.get("api_base", openai.api_base),
+            model=arguments.get("model", ""),
+            api_base=arguments.get("api_base", openai.api_base if hasattr(openai, "api_base") else openai.base_url),
             api_type=arguments.get("api_type", openai.api_type),
             api_version=arguments.get("api_version", openai.api_version),
             api_key=arguments.get("api_key", openai.api_key),
@@ -141,7 +142,7 @@ def get_embed_fn(embedding_kind: str, arguments: dict, credential: Optional[Toke
 
         return embed
     elif embedding_kind == "hugging_face":
-        embedder = get_langchain_embeddings(embedding_kind, arguments, credential=credential)
+        embedder: Union[OpenAIEmbedder, Embedder] = get_langchain_embeddings(embedding_kind, arguments, credential=credential)  # type: ignore[no-redef]
 
         return embedder.embed_documents
     elif embedding_kind == "custom":
@@ -200,7 +201,7 @@ class EmbeddingsContainer:
         self._document_sources = OrderedDict()
         self._deleted_sources = OrderedDict()
         self._document_embeddings = OrderedDict()
-        self._deleted_documents = OrderedDict()
+        self._deleted_documents = OrderedDict()  # type: ignore[assignment]
         self._embeddings_container_path = None
         self.dimension = kwargs.get("dimension", None)
         self.statistics = {
@@ -218,9 +219,33 @@ class EmbeddingsContainer:
         """Set the path to the embeddings container."""
         self._embeddings_container_path = value
 
+    def as_langchain_embeddings(self, credential: Optional[TokenCredential] = None) -> Embedder:
+        """Returns a langchain Embedder that can be used to embed text."""
+        return get_langchain_embeddings(self.kind, self.arguments, credential=credential)
+
     @staticmethod
     def from_uri(uri: str, credential: Optional[TokenCredential] = None, **kwargs) -> "EmbeddingsContainer":
         """Create an embeddings object from a URI."""
         config = parse_model_uri(uri, **kwargs)
         kwargs["credential"] = credential
         return EmbeddingsContainer(**{**config, **kwargs})
+    
+    @staticmethod
+    def from_metadata(metadata: dict) -> "EmbeddingsContainer":
+        """Create an embeddings object from metadata."""
+        schema_version = metadata.get("schema_version", "1")
+        if schema_version == "1":
+            embeddings = EmbeddingsContainer(metadata["kind"], **metadata["arguments"])
+            return embeddings
+        elif schema_version == "2":
+            kind = metadata["kind"]
+            del metadata["kind"]
+            if kind == "custom":
+                metadata["embedding_fn"] = cloudpickle.loads(
+                    gzip.decompress(metadata["pickled_embedding_fn"]))
+                del metadata["pickled_embedding_fn"]
+
+            embeddings = EmbeddingsContainer(kind, **metadata)
+            return embeddings
+        else:
+            raise ValueError(f"Schema version {schema_version} is not supported")

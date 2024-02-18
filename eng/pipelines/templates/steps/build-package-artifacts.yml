@@ -70,10 +70,20 @@ steps:
     displayName: Update package properties with dev version
     condition: and(succeeded(),eq(variables['SetDevVersion'],'true'))
 
+  - script: |
+      sudo apt-get update
+      sudo apt-get install -y qemu-user-static
+      sudo update-binfmts --enable qemu-aarch64
+    displayName: 'Install QEMU Dependencies'
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
+
   - pwsh: |
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
     displayName: 'Generate Packages'
     condition: succeededOrFailed()
+    timeoutInMinutes: 80
+    env:
+      CIBW_BUILD_VERBOSITY: 3
 
   - script: |
       pip install twine==4.0.2
@@ -88,11 +98,6 @@ steps:
       parameters:
         ArtifactPath: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'packages'
-
-    - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-      parameters:
-        ArtifactPath: '$(Build.SourcesDirectory)/.logs'
-        ArtifactName: 'build_logs'
 
     - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
       - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
@@ -111,11 +116,6 @@ steps:
       parameters:
         ArtifactPath: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'packages_${{ parameters.ArtifactSuffix }}'
-
-    - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-      parameters:
-        ArtifactPath: '$(Build.SourcesDirectory)/.logs'
-        ArtifactName: 'build_logs_${{ parameters.ArtifactSuffix }}'
 
     - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
       - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0

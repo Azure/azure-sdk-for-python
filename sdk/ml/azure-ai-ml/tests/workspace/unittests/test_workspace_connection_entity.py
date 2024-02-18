@@ -8,6 +8,7 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionAuthTyp
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities import WorkspaceConnection, AzureOpenAIWorkspaceConnection
 from azure.ai.ml.entities._credentials import PatTokenConfiguration
+from azure.ai.ml.constants._common import WorkspaceConnectionTypes
 
 
 @pytest.mark.unittest
@@ -44,6 +45,7 @@ class TestWorkspaceConnectionEntity:
             "./tests/test_configs/workspace_connection/git_pat.yaml",
         )
 
+    def test_managed_identity(self):
         ws_connection = load_workspace_connection(
             source="./tests/test_configs/workspace_connection/container_registry_managed_identity.yaml"
         )
@@ -56,6 +58,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.target == "https://test-feed.com"
         assert ws_connection.tags == {}
 
+    def test_python_feed(self):
         ws_connection = load_workspace_connection(
             source="./tests/test_configs/workspace_connection/python_feed_pat.yaml"
         )
@@ -67,6 +70,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.target == "https://test-feed.com"
         assert ws_connection.tags == {}
 
+    def test_s3_access_key(self):
         ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/s3_access_key.yaml")
 
         assert ws_connection.type == camel_to_snake(ConnectionCategory.S3)
@@ -77,6 +81,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.target == "dummy"
         assert ws_connection.tags == {}
 
+    def test_snowflake(self):
         ws_connection = load_workspace_connection(
             source="./tests/test_configs/workspace_connection/snowflake_user_pwd.yaml"
         )
@@ -89,6 +94,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.target == "dummy"
         assert ws_connection.tags == {}
 
+    def test_azure_sql_db(self):
         ws_connection = load_workspace_connection(
             source="./tests/test_configs/workspace_connection/azure_sql_db_user_pwd.yaml"
         )
@@ -101,6 +107,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.target == "dummy"
         assert ws_connection.tags == {}
 
+    def test_synapse_analytics(self):
         ws_connection = load_workspace_connection(
             source="./tests/test_configs/workspace_connection/azure_synapse_analytics_user_pwd.yaml"
         )
@@ -113,6 +120,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.target == "dummy"
         assert ws_connection.tags == {}
 
+    def test_my_sql_db(self):
         ws_connection = load_workspace_connection(
             source="./tests/test_configs/workspace_connection/azure_my_sql_db_user_pwd.yaml"
         )
@@ -125,6 +133,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.target == "dummy"
         assert ws_connection.tags == {}
 
+    def test_postgres_db(self):
         ws_connection = load_workspace_connection(
             source="./tests/test_configs/workspace_connection/azure_postgres_db_user_pwd.yaml"
         )
@@ -137,6 +146,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.target == "dummy"
         assert ws_connection.tags == {}
 
+    def test_open_ai(self):
         ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/open_ai.yaml")
 
         assert ws_connection.type == camel_to_snake(ConnectionCategory.AZURE_OPEN_AI)
@@ -149,6 +159,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.api_version == None
         assert ws_connection.api_type == "Azure"
 
+    def test_cog_search(self):
         ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/cog_search.yaml")
 
         assert ws_connection.type == camel_to_snake(ConnectionCategory.COGNITIVE_SEARCH)
@@ -159,6 +170,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.tags["ApiVersion"] == "dummy"
         assert ws_connection.api_version == "dummy"
 
+    def test_cog_service(self):
         ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/cog_service.yaml")
 
         assert ws_connection.type == camel_to_snake(ConnectionCategory.COGNITIVE_SERVICE)
@@ -171,6 +183,28 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.kind == "some_kind"
         assert ws_connection.api_version == "dummy"
 
+    def test_custom(self):
+        ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/custom.yaml")
+
+        assert ws_connection.type == camel_to_snake(WorkspaceConnectionTypes.CUSTOM)
+        assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
+        assert ws_connection.credentials.key == "4444"
+        assert ws_connection.name == "test_ws_conn_custom_keys"
+        assert ws_connection.target == "my_endpoint"
+        assert ws_connection.tags["one"] == "two"
+
+    def test_blob_storage(self):
+        ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/blob_store.yaml")
+
+        assert ws_connection.type == camel_to_snake("azure_blob")  # TODO replace with connetion category reference
+        assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
+        assert ws_connection.credentials.key == "9876"
+        assert ws_connection.name == "test_ws_conn_blob_store"
+        assert ws_connection.target == "my_endpoint"
+        assert ws_connection.tags["four"] == "five"
+        assert ws_connection.container_name == "some_container"
+        assert ws_connection.account_name == "some_account"
+
     def test_ws_conn_rest_conversion(self):
         ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/open_ai.yaml")
         rest_conn = ws_connection._to_rest_object()
@@ -182,3 +216,32 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.tags["hello"] == new_ws_conn.tags["hello"]
         assert ws_connection.api_version == new_ws_conn.api_version
         assert ws_connection.api_type == new_ws_conn.api_type
+        assert ws_connection.is_shared
+
+    def empty_credentials_rest_conversion(self):
+        ws_connection = WorkspaceConnection(
+            target="dummy_target",
+            type=camel_to_snake(ConnectionCategory.PYTHON_FEED),
+            credentials=None,
+            name="dummy_connection",
+            tags=None,
+        )
+        rest_conn = ws_connection._to_rest_object()
+        new_ws_conn = AzureOpenAIWorkspaceConnection._from_rest_object(rest_obj=rest_conn)
+        assert new_ws_conn.credentials == None
+
+    def test_ws_conn_subtype_restriction(self):
+        with pytest.raises(ValueError):
+            _ = WorkspaceConnection(
+                target="dummy_target",
+                type=ConnectionCategory.AZURE_OPEN_AI,
+                name="dummy_connection",
+                strict_typing=True,
+                credentials=None,
+            )
+        _ = AzureOpenAIWorkspaceConnection(
+            target="dummy_target",
+            name="dummy_connection",
+            strict_typing=True,
+            credentials=None,
+        )

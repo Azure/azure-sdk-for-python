@@ -13,12 +13,11 @@ DESCRIPTION:
     This sample demonstrates how to detect languages from the document using the
     add-on 'LANGUAGES' capability.
 
-    Add-on capabilities are available within all models except for the Business card
-    model. This sample uses Layout model to demonstrate.
+    This sample uses Layout model to demonstrate.
 
-    Add-on capabilities accept a list of strings containing values from the `AnalysisFeature`
+    Add-on capabilities accept a list of strings containing values from the `DocumentAnalysisFeature `
     enum class. For more information, see:
-    https://learn.microsoft.com/en-us/python/api/azure-ai-formrecognizer/azure.ai.formrecognizer.analysisfeature?view=azure-python.
+    https://aka.ms/azsdk/python/documentintelligence/analysisfeature.
 
     The following capabilities are free:
     - BARCODES
@@ -28,6 +27,7 @@ DESCRIPTION:
     - FORMULAS
     - OCR_HIGH_RESOLUTION
     - STYLE_FONT
+    - QUERY_FIELDS
 
     See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
 
@@ -53,29 +53,32 @@ def analyze_languages():
     # [START analyze_languages]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence import DocumentIntelligenceClient
-    from azure.ai.documentintelligence.models import DocumentAnalysisFeature
+    from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
-    document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Specify which add-on capabilities to enable.
     with open(path_to_sample_documents, "rb") as f:
-        poller = document_analysis_client.begin_analyze_document(
+        poller = document_intelligence_client.begin_analyze_document(
             "prebuilt-layout",
             analyze_request=f,
             features=[DocumentAnalysisFeature.LANGUAGES],
             content_type="application/octet-stream",
         )
-    result = poller.result()
+    result: AnalyzeResult = poller.result()
 
     print("----Languages detected in the document----")
-    print(f"Detected {len(result.languages)} languages:")
-    for lang_idx, lang in enumerate(result.languages):
-        print(f"- Language #{lang_idx}: locale '{lang.locale}'")
-        print(f"  Confidence: {lang.confidence}")
-        print(f"  Text: '{','.join([result.content[span.offset : span.offset + span.length] for span in lang.spans])}'")
+    if result.languages:
+        print(f"Detected {len(result.languages)} languages:")
+        for lang_idx, lang in enumerate(result.languages):
+            print(f"- Language #{lang_idx}: locale '{lang.locale}'")
+            print(f"  Confidence: {lang.confidence}")
+            print(
+                f"  Text: '{','.join([result.content[span.offset : span.offset + span.length] for span in lang.spans])}'"
+            )
 
     print("----------------------------------------")
     # [END analyze_languages]
@@ -89,10 +92,6 @@ if __name__ == "__main__":
         load_dotenv(find_dotenv())
         analyze_languages()
     except HttpResponseError as error:
-        print(
-            "For more information about troubleshooting errors, see the following guide: "
-            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
-        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

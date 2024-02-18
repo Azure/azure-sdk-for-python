@@ -50,29 +50,38 @@ if TYPE_CHECKING:
         "EventHubSharedKeyCredential",
         TokenCredential,
     ]
+    from ._consumer_client import EventHubConsumerClient
+    from ._producer_client import EventHubProducerClient
+    from ._transport._base import AmqpTransport
     try:
         from uamqp import Message as uamqp_Message
         from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
+        from uamqp import ReceiveClient as uamqp_AMQPRecieveClient
+        from uamqp import SendClient as uamqp_AMQPSendClient
     except ImportError:
-        uamqp_Message = None
-        uamqp_JWTTokenAuth = None
+        pass
     from ._pyamqp.message import Message
     from ._pyamqp.authentication import JWTTokenAuth
+    from ._pyamqp import ReceiveClient as pyamqp_AMQPRecieveClient
+    from ._pyamqp import SendClient as pyamqp_AMQPSendClient
 
 _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple("_Address", "hostname path")
 
 
-def _parse_conn_str(conn_str, **kwargs):
-    # type: (str, Any) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]
+def _parse_conn_str(
+        conn_str: str,  # pylint:disable=unused-argument
+        *,
+        eventhub_name: Optional[str] = None,
+        check_case: bool = False,
+        **kwargs: Any
+    ) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]:
     endpoint = None
     shared_access_key_name = None
     shared_access_key = None
-    entity_path = None  # type: Optional[str]
-    shared_access_signature = None  # type: Optional[str]
+    entity_path: Optional[str] = None
+    shared_access_signature: Optional[str] = None
     shared_access_signature_expiry = None
-    eventhub_name = kwargs.pop("eventhub_name", None)  # type: Optional[str]
-    check_case = kwargs.pop("check_case", False)  # type: bool
     conn_settings = core_parse_connection_string(
         conn_str, case_sensitive_keys=check_case
     )
@@ -148,8 +157,7 @@ def _parse_conn_str(conn_str, **kwargs):
     )
 
 
-def _generate_sas_token(uri, policy, key, expiry=None):
-    # type: (str, str, str, Optional[timedelta]) -> AccessToken
+def _generate_sas_token(uri: str, policy: str, key: str, expiry: Optional[timedelta] = None) -> AccessToken:
     """Create a shared access signature token as a string literal.
 
     :param str uri: The resource URI.
@@ -167,8 +175,7 @@ def _generate_sas_token(uri, policy, key, expiry=None):
     token = generate_sas_token(uri, policy, key, abs_expiry)
     return AccessToken(token=token, expires_on=abs_expiry)
 
-def _build_uri(address, entity):
-    # type: (str, Optional[str]) -> str
+def _build_uri(address: str, entity: str) -> str:
     parsed = urlparse(address)
     if parsed.path:
         return address
@@ -186,55 +193,50 @@ def _get_backoff_time(retry_mode, backoff_factor, backoff_max, retried_times):
     return min(backoff_max, backoff_value)
 
 
-class EventHubSharedKeyCredential(object):
+class EventHubSharedKeyCredential:
     """The shared access key credential used for authentication.
 
     :param str policy: The name of the shared access policy.
     :param str key: The shared access key.
     """
 
-    def __init__(self, policy, key):
-        # type: (str, str) -> None
+    def __init__(self, policy: str, key: str) -> None:
         self.policy = policy
         self.key = key
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         if not scopes:
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
-class EventhubAzureNamedKeyTokenCredential(object):
+class EventhubAzureNamedKeyTokenCredential:
     """The named key credential used for authentication.
 
     :param credential: The AzureNamedKeyCredential that should be used.
     :type credential: ~azure.core.credentials.AzureNamedKeyCredential
     """
 
-    def __init__(self, azure_named_key_credential):
-        # type: (AzureNamedKeyCredential) -> None
+    def __init__(self, azure_named_key_credential: AzureNamedKeyCredential) -> None:
         self._credential = azure_named_key_credential
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         if not scopes:
             raise ValueError("No token scope provided.")
         name, key = self._credential.named_key
         return _generate_sas_token(scopes[0], name, key)
 
 
-class EventHubSASTokenCredential(object):
+class EventHubSASTokenCredential:
     """The shared access token credential used for authentication.
 
     :param str token: The shared access token string
     :param int expiry: The epoch timestamp
     """
 
-    def __init__(self, token, expiry):
-        # type: (str, int) -> None
+    def __init__(self, token: str, expiry: int) -> None:
         """
         :param str token: The shared access token string
         :param float expiry: The epoch timestamp
@@ -243,8 +245,7 @@ class EventHubSASTokenCredential(object):
         self.expiry = expiry
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """
         This method is automatically called when token is about to expire.
 
@@ -255,7 +256,7 @@ class EventHubSASTokenCredential(object):
         return AccessToken(self.token, self.expiry)
 
 
-class EventhubAzureSasTokenCredential(object):
+class EventhubAzureSasTokenCredential:
     """The shared access token credential used for authentication
     when AzureSasCredential is provided.
 
@@ -263,8 +264,7 @@ class EventhubAzureSasTokenCredential(object):
     :type azure_sas_credential: ~azure.core.credentials.AzureSasCredential
     """
 
-    def __init__(self, azure_sas_credential):
-        # type: (AzureSasCredential) -> None
+    def __init__(self, azure_sas_credential: AzureSasCredential) -> None:
         """The shared access token credential used for authentication
          when AzureSasCredential is provided.
 
@@ -274,8 +274,7 @@ class EventhubAzureSasTokenCredential(object):
         self._credential = azure_sas_credential
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """
         This method is automatically called when token is about to expire.
 
@@ -284,10 +283,10 @@ class EventhubAzureSasTokenCredential(object):
         :rtype: ~azure.core.credentials.AccessToken
         """
         signature, expiry = parse_sas_credential(self._credential)
-        return AccessToken(signature, expiry)
+        return AccessToken(signature, cast(int, expiry))
 
 
-class ClientBase(object):  # pylint:disable=too-many-instance-attributes
+class ClientBase:  # pylint:disable=too-many-instance-attributes
     def __init__(
         self,
         fully_qualified_namespace: str,
@@ -312,7 +311,6 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             self._credential = EventhubAzureNamedKeyTokenCredential(credential)  # type: ignore
         else:
             self._credential = credential  # type: ignore
-        self._keep_alive = kwargs.get("keep_alive", 30)
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
         self._auth_uri = f"sb://{self._address.hostname}{self._address.path}"
         self._config = Configuration(
@@ -328,8 +326,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self._idle_timeout = kwargs.get("idle_timeout", None)
 
     @staticmethod
-    def _from_connection_string(conn_str, **kwargs):
-        # type: (str, Any) -> Dict[str, Any]
+    def _from_connection_string(conn_str: str, **kwargs: Any) -> Dict[str, Any]:
         host, policy, key, entity, token, token_expiry = _parse_conn_str(
             conn_str, **kwargs
         )
@@ -341,7 +338,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             kwargs["credential"] = EventHubSharedKeyCredential(policy, key)
         return kwargs
 
-    def _create_auth(self) -> Union[uamqp_JWTTokenAuth, JWTTokenAuth]:
+    def _create_auth(self) -> Union["uamqp_JWTTokenAuth", JWTTokenAuth]:
         """
         Create an ~uamqp.authentication.SASTokenAuth instance
          to authenticate the session.
@@ -370,14 +367,16 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             update_token=False,
         )
 
-    def _close_connection(self):
-        # type: () -> None
+    def _close_connection(self) -> None:
         self._conn_manager.reset_connection_if_broken()
 
     def _backoff(
-        self, retried_times, last_exception, timeout_time=None, entity_name=None
-    ):
-        # type: (int, Exception, Optional[int], Optional[str]) -> None
+        self,
+        retried_times: int,
+        last_exception: Exception,
+        timeout_time: Optional[float] = None,
+        entity_name: Optional[str] = None
+    ) -> None:
         entity_name = entity_name or self._container_id
         backoff = _get_backoff_time(
             self._config.retry_mode,
@@ -420,7 +419,8 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 mgmt_client.open(connection=conn)
                 while not mgmt_client.client_ready():
                     time.sleep(0.05)
-                mgmt_msg.application_properties[
+
+                cast(Dict[Union[str, bytes], Any], mgmt_msg.application_properties)[
                     "security_token"
                 ] = self._amqp_transport.get_updated_token(mgmt_auth)
                 status_code, description, response = self._amqp_transport.mgmt_client_request(
@@ -479,12 +479,10 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             ]
         return output
 
-    def _get_partition_ids(self):
-        # type:() -> List[str]
+    def _get_partition_ids(self) -> List[str]:
         return self._get_eventhub_properties()["partition_ids"]
 
-    def _get_partition_properties(self, partition_id):
-        # type:(str) -> Dict[str, Any]
+    def _get_partition_properties(self, partition_id: str) -> Dict[str, Any]:
         mgmt_msg = self._amqp_transport.build_message(
             application_properties={
                 "name": self.eventhub_name,
@@ -492,36 +490,48 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             }
         )
         response = self._management_request(mgmt_msg, op_type=MGMT_PARTITION_OPERATION)
-        partition_info = response.value  # type: Dict[bytes, Any]
-        output = {}
+        partition_info: Dict[bytes, Union[bytes, int]] = response.value
+        output: Dict[str, Any] = {}
         if partition_info:
-            output["eventhub_name"] = partition_info[b"name"].decode("utf-8")
-            output["id"] = partition_info[b"partition"].decode("utf-8")
-            output["beginning_sequence_number"] = partition_info[
-                b"begin_sequence_number"
-            ]
-            output["last_enqueued_sequence_number"] = partition_info[
-                b"last_enqueued_sequence_number"
-            ]
-            output["last_enqueued_offset"] = partition_info[
-                b"last_enqueued_offset"
-            ].decode("utf-8")
+            output["eventhub_name"] = cast(bytes, partition_info[b"name"]).decode(
+                "utf-8"
+            )
+            output["id"] = cast(bytes, partition_info[b"partition"]).decode("utf-8")
+            output["beginning_sequence_number"] = cast(
+                int, partition_info[b"begin_sequence_number"]
+            )
+            output["last_enqueued_sequence_number"] = cast(
+                int, partition_info[b"last_enqueued_sequence_number"]
+            )
+            output["last_enqueued_offset"] = cast(
+                bytes, partition_info[b"last_enqueued_offset"]
+            ).decode("utf-8")
             output["is_empty"] = partition_info[b"is_partition_empty"]
             output["last_enqueued_time_utc"] = utc_from_timestamp(
-                float(partition_info[b"last_enqueued_time_utc"] / 1000)
+                float(cast(int, partition_info[b"last_enqueued_time_utc"]) / 1000)
             )
         return output
 
-    def _close(self):
-        # type:() -> None
+    def _close(self) -> None:
         self._conn_manager.close_connection()
 
 
-class ConsumerProducerMixin(object):
-    def __enter__(self):
+class ConsumerProducerMixin():
+
+    def __init__(self) -> None:
+        self._handler: Union[
+            uamqp_AMQPRecieveClient,
+            pyamqp_AMQPRecieveClient,
+            uamqp_AMQPSendClient,
+            pyamqp_AMQPSendClient]
+        self._client: Union[EventHubConsumerClient, EventHubProducerClient]
+        self._amqp_transport: "AmqpTransport"
+        self._max_message_size_on_link: Optional[int] = None
+
+    def __enter__(self) -> ConsumerProducerMixin:
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
         self.close()
 
     def _create_handler(self, auth):
@@ -533,8 +543,12 @@ class ConsumerProducerMixin(object):
                 f"{self._name} has been closed. Please create a new one to handle event data."
             )
 
-    def _open(self):
-        """Open the EventHubConsumer/EventHubProducer using the supplied connection."""
+    def _open(self) -> bool:
+        """Open the EventHubConsumer/EventHubProducer using the supplied connection.
+
+        :return: Whether the EventHubConsumer/EventHubProducer is ready to use.
+        :rtype: bool
+        """
         # pylint: disable=protected-access
         if not self.running:
             if self._handler:
@@ -551,9 +565,11 @@ class ConsumerProducerMixin(object):
                 self._amqp_transport.get_remote_max_message_size(self._handler)
                 or self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
             )
-            self.running = True
+            self.running: bool = True
+            return True
+        return False
 
-    def _close_handler(self):
+    def _close_handler(self) -> None:
         if self._handler:
             self._handler.close()  # close the link (sharing connection) or connection (not sharing)
         self.running = False
@@ -607,8 +623,7 @@ class ConsumerProducerMixin(object):
                     )
                     raise last_exception from None
 
-    def close(self):
-        # type:() -> None
+    def close(self) -> None:
         """
         Close down the handler. If the handler has already closed,
         this will be a no op.

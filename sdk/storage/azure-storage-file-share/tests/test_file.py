@@ -4,10 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 import base64
-import os
 import tempfile
-import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import pytest
 import requests
@@ -230,6 +228,26 @@ class TestStorageFile(StorageRecordedTestCase):
 
         # Assert
         assert res == ('https://' + storage_account_name + '.file.core.windows.net/vhds/vhd_dir/my.vhd{}'.format(sas))
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_exists(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key)
+
+        # Act / Assert
+        assert not file_client.exists()
+
+        file_client.create_file(1024)
+        assert file_client.exists()
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -810,6 +828,39 @@ class TestStorageFile(StorageRecordedTestCase):
         assert properties.last_write_time is not None
         assert properties.creation_time is not None
         assert properties.permission_key is not None
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_set_datetime_all_ms_precision(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_client = self._create_file()
+
+        date_times = [
+            datetime(3005, 5, 11, 12, 24, 7),
+            datetime(3005, 5, 11, 12, 24, 7, 0),
+            datetime(3005, 5, 11, 12, 24, 7, 1),
+            datetime(3005, 5, 11, 12, 24, 7, 12),
+            datetime(3005, 5, 11, 12, 24, 7, 123),
+            datetime(3005, 5, 11, 12, 24, 7, 1234),
+            datetime(3005, 5, 11, 12, 24, 7, 12345),
+            datetime(3005, 5, 11, 12, 24, 7, 123456),
+            datetime(2023, 12, 8, tzinfo=timezone(-timedelta(hours=7))),
+            datetime(2023, 12, 8, tzinfo=timezone(-timedelta(hours=8))),
+        ]
+
+        # Act / Assert
+        content_settings = ContentSettings(
+            content_language='spanish',
+            content_disposition='inline')
+        for date1, date2 in zip(date_times[::2], date_times[1::2]):
+            file_client.set_http_headers(
+                content_settings=content_settings,
+                file_creation_time=date1,
+                file_last_write_time=date2
+            )
 
     @FileSharePreparer()
     @recorded_by_proxy
