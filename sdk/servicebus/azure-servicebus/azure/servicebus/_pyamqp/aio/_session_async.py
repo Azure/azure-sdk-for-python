@@ -226,7 +226,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             self._input_handles[frame[1]] = new_link
         except ValueError as e:
             # Reject Link
-            _LOGGER.error(
+            _LOGGER.debug(
                 "[Connection:%s, Session:%s] Unable to attach new link: %r",
                 e,
                 self.network_trace_params["amqpConnection"],
