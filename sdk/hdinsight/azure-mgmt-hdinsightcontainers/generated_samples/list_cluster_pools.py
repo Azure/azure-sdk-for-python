@@ -36,6 +36,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/HDInsightOnAks/preview/2023-06-01-preview/examples/ListClusterPools.json
+# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/HDInsightOnAks/preview/2023-11-01-preview/examples/ListClusterPools.json
 if __name__ == "__main__":
     main()
