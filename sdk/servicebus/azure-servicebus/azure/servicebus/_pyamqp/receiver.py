@@ -39,13 +39,24 @@ class ReceiverLink(Link):
         try:
             return self._on_transfer(frame, message)
         except Exception as e:  # pylint: disable=broad-except
-            _LOGGER.error("Transfer callback function failed with error: %r", e, extra=self.network_trace_params)
+            _LOGGER.error(
+                "[Connection:%s, Session:%s, Link:%s] Transfer callback function failed with error: %r",
+                self.network_trace_params["amqpConnection"],
+                self.network_trace_params["amqpSession"],
+                self.network_trace_params["amqpLink"],
+                e
+            )
         return None
 
     def _incoming_attach(self, frame):
         super(ReceiverLink, self)._incoming_attach(frame)
         if frame[9] is None:  # initial_delivery_count
-            _LOGGER.info("Cannot get initial-delivery-count. Detaching link", extra=self.network_trace_params)
+            _LOGGER.info(
+                "[Connection:%s, Session:%s, Link:%s] Cannot get initial-delivery-count. Detaching link",
+                self.network_trace_params["amqpConnection"],
+                self.network_trace_params["amqpSession"],
+                self.network_trace_params["amqpLink"]
+            )
             self._set_state(LinkState.DETACHED)  # TODO: Send detach now?
         self.delivery_count = frame[9]
         self.current_link_credit = self.link_credit
@@ -53,7 +64,13 @@ class ReceiverLink(Link):
 
     def _incoming_transfer(self, frame):
         if self.network_trace:
-            _LOGGER.debug("<- %r", TransferFrame(payload=b"***", *frame[:-1]), extra=self.network_trace_params)
+            _LOGGER.debug(
+                "[Connection:%s, Session:%s, Link:%s] <- %r",
+                self.network_trace_params["amqpConnection"],
+                self.network_trace_params["amqpSession"],
+                self.network_trace_params["amqpLink"],
+                TransferFrame(payload=b"***", *frame[:-1])
+            )
         # If more is false --> this is the last frame of the message
         if not frame[5]:
             self.current_link_credit -= 1
@@ -105,7 +122,13 @@ class ReceiverLink(Link):
             role=self.role, first=first, last=last, settled=settled, state=state, batchable=batchable
         )
         if self.network_trace:
-            _LOGGER.debug("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
+            _LOGGER.debug(
+                "[Connection:%s, Session:%s, Link:%s] -> %r",
+                self.network_trace_params["amqpConnection"],
+                self.network_trace_params["amqpSession"],
+                self.network_trace_params["amqpLink"],
+                DispositionFrame(*disposition_frame)
+            )
         self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
 
     def attach(self):

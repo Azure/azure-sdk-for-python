@@ -855,7 +855,11 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
                 self._link.flow(link_credit=self._link_credit)
             self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
-            _logger.info("Timeout reached, closing receiver.", extra=self._network_trace_params)
+            _logger.info(
+                "[Connection:%s, Session:%s] Timeout reached, closing receiver.",
+                self._network_trace_params["amqpConnection"],
+                self._network_trace_params["amqpSession"]
+            )
             self._shutdown = True
             return False
         return True

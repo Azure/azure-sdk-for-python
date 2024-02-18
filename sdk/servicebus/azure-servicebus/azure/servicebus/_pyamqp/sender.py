@@ -34,9 +34,11 @@ class PendingDelivery(object):
                 self.on_delivery_settled(reason, state)
             except Exception as e:  # pylint:disable=broad-except
                 _LOGGER.warning(
-                    "Message 'on_send_complete' callback failed: %r",
-                    e,
-                    extra=self._network_trace_params
+                    "[Connection:%s, Session:%s, Link:%s] Message 'on_send_complete' callback failed: %r",
+                    self._network_trace_params["amqpConnection"],
+                    self._network_trace_params["amqpSession"],
+                    self._network_trace_params["amqpLink"],
+                    e
                 )
         self.settled = True
 
@@ -77,9 +79,12 @@ class SenderLink(Link):
         rcv_delivery_count = frame[5]  # delivery_count
         if frame[4] is not None:  # handle
             if rcv_link_credit is None or rcv_delivery_count is None:
+                # pylint: disable=line-too-long
                 _LOGGER.info(
-                    "Unable to get link-credit or delivery-count from incoming ATTACH. Detaching link.",
-                    extra=self.network_trace_params
+                    "[Connection:%s, Session:%s, Link:%s] Unable to get link-credit or delivery-count from incoming ATTACH. Detaching link.",
+                    self.network_trace_params["amqpConnection"],
+                    self.network_trace_params["amqpSession"],
+                    self.network_trace_params["amqpLink"]
                 )
                 self._remove_pending_deliveries()
                 self._set_state(LinkState.DETACHED)  # TODO: Send detach now?

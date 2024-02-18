@@ -201,7 +201,13 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
             # has _not_ been sent
             self.connected = True
         except (OSError, IOError, SSLError) as e:
-            _LOGGER.info("Transport connection failed: %r", e, extra=self.network_trace_params)
+            _LOGGER.info(
+                "[Connection:%s, Session:%s, Link:%s] Transport connection failed: %r",
+                self.network_trace_params["amqpConnection"],
+                self.network_trace_params["amqpSession"],
+                self.network_trace_params["amqpLink"],
+                e
+            )
             # if not fully connected, close socket, and reraise error
             if self.sock and not self.connected:
                 self.sock.close()
@@ -396,9 +402,11 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                     # TODO: shutdown could raise OSError, Transport endpoint is not connected if the endpoint is already
                     #  disconnected. can we safely ignore the errors since the close operation is initiated by us.
                     _LOGGER.debug(
-                        "Transport endpoint is already disconnected: %r",
-                        exc,
-                        extra=self.network_trace_params
+                        "[Connection:%s, Session:%s, Link:%s] Transport endpoint is already disconnected: %r",
+                        self.network_trace_params["amqpConnection"],
+                        self.network_trace_params["amqpSession"],
+                        self.network_trace_params["amqpLink"],
+                        exc
                     )
                 self.sock.close()
                 self.sock = None
@@ -421,10 +429,12 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                 frame_type = frame_header[5]
                 if verify_frame_type is not None and frame_type != verify_frame_type:
                     _LOGGER.debug(
-                        "Received invalid frame type: %r, expected: %r",
+                        "[Connection:%s, Session:%s, Link:%s] Received invalid frame type: %r, expected: %r",
+                        self.network_trace_params["amqpConnection"],
+                        self.network_trace_params["amqpSession"],
+                        self.network_trace_params["amqpLink"],
                         frame_type,
-                        verify_frame_type,
-                        extra=self.network_trace_params
+                        verify_frame_type
                     )
                     raise ValueError(
                             f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
@@ -453,7 +463,13 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                     raise socket.timeout()
                 if get_errno(exc) not in _UNAVAIL:
                     self.connected = False
-                _LOGGER.debug("Transport read failed: %r", exc, extra=self.network_trace_params)
+                _LOGGER.debug(
+                    "[Connection:%s, Session:%s, Link:%s] Transport read failed: %r",
+                    self.network_trace_params["amqpConnection"],
+                    self.network_trace_params["amqpSession"],
+                    self.network_trace_params["amqpLink"],
+                    exc
+                )
                 raise
             offset -= 2
         return frame_header, channel, payload[offset:]
@@ -465,7 +481,13 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
             except socket.timeout:
                 raise
             except (OSError, IOError, socket.error) as exc:
-                _LOGGER.debug("Transport write failed: %r", exc, extra=self.network_trace_params)
+                _LOGGER.debug(
+                    "[Connection:%s, Session:%s, Link:%s] Transport write failed: %r",
+                    self.network_trace_params["amqpConnection"],
+                    self.network_trace_params["amqpSession"],
+                    self.network_trace_params["amqpLink"],
+                    exc
+                )
                 if get_errno(exc) not in _UNAVAIL:
                     self.connected = False
                 raise
@@ -753,7 +775,13 @@ class WebSocketTransport(_AbstractTransport):
             self.close()
             raise ConnectionError("Websocket failed to establish connection: %r" % exc) from exc
         except (OSError, IOError, SSLError) as e:
-            _LOGGER.info("Websocket connection failed: %r", e, extra=self.network_trace_params)
+            _LOGGER.info(
+                "[Connection:%s, Session:%s, Link:%s] Websocket connection failed: %r",
+                self.network_trace_params["amqpConnection"],
+                self.network_trace_params["amqpSession"],
+                self.network_trace_params["amqpLink"],
+                e
+            )
             self.close()
             raise
 

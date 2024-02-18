@@ -75,10 +75,12 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
 
     def _on_sender_state_change(self, previous_state, new_state):
         _LOGGER.info(
-            "Management link sender state changed: %r -> %r",
+            "[Connection:%s, Session:%s, Link:%s] Management link sender state changed: %r -> %r",
+            self._network_trace_params["amqpConnection"],
+            self._network_trace_params["amqpSession"],
+            self._network_trace_params["amqpLink"],
             previous_state,
-            new_state,
-            extra=self._network_trace_params
+            new_state
         )
         if new_state == previous_state:
             return
@@ -105,10 +107,12 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
 
     def _on_receiver_state_change(self, previous_state, new_state):
         _LOGGER.info(
-            "Management link receiver state changed: %r -> %r",
+            "[Connection:%s, Session:%s, Link:%s] Management link receiver state changed: %r -> %r",
+            self._network_trace_params["amqpConnection"],
+            self._network_trace_params["amqpSession"],
+            self._network_trace_params["amqpLink"],
             previous_state,
-            new_state,
-            extra=self._network_trace_params
+            new_state
         )
         if new_state == previous_state:
             return
