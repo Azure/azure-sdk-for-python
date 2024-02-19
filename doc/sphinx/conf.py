@@ -87,7 +87,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Azure SDK for Python'
-copyright = u'2019, Microsoft'
+copyright = u'2024, Microsoft'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
