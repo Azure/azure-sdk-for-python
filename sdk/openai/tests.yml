@@ -4,6 +4,7 @@ stages:
   - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: openai
+      ToxTestEnv: optional
       MatrixFilters:
         - PythonVersion=3.11.*
       EnvVars:
