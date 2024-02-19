@@ -6,7 +6,7 @@ from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.constants._common import LROConfigurations
-from azure.ai.ml.entities import AmlTokenConfiguration, CronTrigger, PipelineJob
+from azure.ai.ml.entities import AmlTokenConfiguration, CronTrigger, PipelineJob, ScheduleTriggerResult
 from azure.ai.ml.entities._load_functions import load_job, load_schedule
 
 from .._util import _SCHEDULE_TIMEOUT_SECOND, TRIGGER_ENDTIME, TRIGGER_ENDTIME_DICT
@@ -42,9 +42,9 @@ class TestSchedule(AzureRecordedTestCase):
         job: PipelineJob = rest_schedule.create_job
         assert isinstance(job.identity, AmlTokenConfiguration)
         # trigger once
-        result = client.schedules.trigger(schedule.name)
-        assert result.submission_id is not None
-        assert client.jobs.get(name=result.submission_id) is not None
+        result: ScheduleTriggerResult = client.schedules.trigger(schedule.name)
+        assert result.name is not None
+        assert client.jobs.get(name=result.name) is not None
         # disable
         rest_schedule = client.schedules.begin_disable(schedule.name).result(timeout=LROConfigurations.POLLING_TIMEOUT)
         assert rest_schedule._is_enabled is False

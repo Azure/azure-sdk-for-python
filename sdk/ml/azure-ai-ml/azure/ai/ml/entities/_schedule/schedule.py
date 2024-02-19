@@ -118,12 +118,18 @@ class Schedule(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, Resource)
 
     @property
     def create_job(self) -> Any:  # pylint: disable=useless-return
+        """The create_job entity associated with the schedule if exists."""
         module_logger.warning("create_job is not a valid property of %s", str(type(self)))
         # return None here just to be explicit
         return None
 
     @create_job.setter
     def create_job(self, value: Any) -> None:  # pylint: disable=unused-argument
+        """Set the create_job entity associated with the schedule if exists.
+
+        :param value: The create_job entity associated with the schedule if exists.
+        :type value: Any
+        """
         module_logger.warning("create_job is not a valid property of %s", str(type(self)))
 
     @property
@@ -473,14 +479,26 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         return {"trigger_type": type(self.trigger).__name__}
 
 
-class TriggerRunSubmissionDto:
-    def __init__(self, schedule_action_type, submission_id, **kwargs):  # pylint: disable=unused-argument
-        self.schedule_action_type = schedule_action_type
-        self.submission_id = submission_id
+class ScheduleTriggerResult:
+    """Schedule trigger result returned by trigger an enabled schedule once.
+
+    This class shouldn't be instantiated directly. Instead, it is used as the return type of schedule trigger.
+    """
+
+    def __init__(self, **kwargs):  # pylint: disable=unused-argument
+        self.job_name = kwargs.get("job_name", None)
+        self.schedule_action_type = kwargs.get("schedule_action_type", None)
 
     @classmethod
-    def _from_rest_object(cls, obj: RestTriggerRunSubmissionDto) -> "TriggerRunSubmissionDto":
+    def _from_rest_object(cls, obj: RestTriggerRunSubmissionDto) -> "ScheduleTriggerResult":
+        """Construct a ScheduleJob from a rest object.
+
+        :param obj: The rest object to construct from.
+        :type obj: ~azure.ai.ml._restclient.v2024_01_01_preview.models.TriggerRunSubmissionDto
+        :return: The constructed ScheduleJob.
+        :rtype: ScheduleTriggerResult
+        """
         return cls(
             schedule_action_type=obj.schedule_action_type,
-            submission_id=obj.submission_id,
+            job_name=obj.submission_id,
         )

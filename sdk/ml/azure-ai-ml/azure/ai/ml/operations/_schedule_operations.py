@@ -46,7 +46,7 @@ from ..constants._monitoring import (
     MonitorDatasetContext,
     MonitorSignalType,
 )
-from ..entities._schedule.schedule import TriggerRunSubmissionDto
+from ..entities._schedule.schedule import ScheduleTriggerResult
 from . import DataOperations, JobOperations, OnlineDeploymentOperations
 from ._job_ops_helper import stream_logs_until_completion
 from ._operation_orchestrator import OperationOrchestrator
@@ -301,20 +301,20 @@ class ScheduleOperations(_ScopeDependentOperations):
         self,
         name: str,
         **kwargs: Any,
-    ) -> TriggerRunSubmissionDto:
+    ) -> ScheduleTriggerResult:
         """Trigger a schedule once.
 
         :param name: Schedule name.
         :type name: str
         :return: TriggerRunSubmissionDto, or the result of cls(response)
-        :rtype: ~azure.ai.ml.entities._schedule.schedule.TriggerRunSubmissionDto
+        :rtype: ~azure.ai.ml.entities.ScheduleTriggerResult
         """
         return self.service_client.trigger(
             name=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
             body=TriggerOnceRequest(schedule_time=datetime.now(timezone.utc).isoformat()),
-            cls=lambda _, obj, __: TriggerRunSubmissionDto._from_rest_object(obj),
+            cls=lambda _, obj, __: ScheduleTriggerResult._from_rest_object(obj),
             **kwargs,
         )
 
