@@ -10,12 +10,12 @@ from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Union
 
 from typing_extensions import Literal
 
-from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as RestJobBase
-from azure.ai.ml._restclient.v2024_01_01_preview.models import JobScheduleAction
-from azure.ai.ml._restclient.v2024_01_01_preview.models import PipelineJob as RestPipelineJob
-from azure.ai.ml._restclient.v2024_01_01_preview.models import Schedule as RestSchedule
-from azure.ai.ml._restclient.v2024_01_01_preview.models import ScheduleActionType as RestScheduleActionType
-from azure.ai.ml._restclient.v2024_01_01_preview.models import ScheduleProperties
+from azure.ai.ml._restclient.v2023_06_01_preview.models import JobBase as RestJobBase
+from azure.ai.ml._restclient.v2023_06_01_preview.models import JobScheduleAction
+from azure.ai.ml._restclient.v2023_06_01_preview.models import PipelineJob as RestPipelineJob
+from azure.ai.ml._restclient.v2023_06_01_preview.models import Schedule as RestSchedule
+from azure.ai.ml._restclient.v2023_06_01_preview.models import ScheduleActionType as RestScheduleActionType
+from azure.ai.ml._restclient.v2023_06_01_preview.models import ScheduleProperties
 from azure.ai.ml._restclient.v2024_01_01_preview.models import TriggerRunSubmissionDto as RestTriggerRunSubmissionDto
 from azure.ai.ml._schema.schedule.schedule import JobScheduleSchema
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, is_private_preview_enabled

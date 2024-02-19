@@ -5,6 +5,7 @@
 from datetime import datetime, timezone
 from typing import Any, Iterable, List, Optional, Tuple, cast
 
+from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
 from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
@@ -68,6 +69,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
+        service_client_06_2023_preview: ServiceClient062023Preview,
         service_client_01_2024_preview: ServiceClient012024Preview,
         all_operations: OperationsContainer,
         credential: TokenCredential,
@@ -75,7 +77,10 @@ class ScheduleOperations(_ScopeDependentOperations):
     ):
         super(ScheduleOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
-        self.service_client = service_client_01_2024_preview.schedules
+        self.service_client = service_client_06_2023_preview.schedules
+        # Note: Trigger once is supported since 24_01, we don't upgrade other operations' client because there are
+        # some breaking changes, for example: AzMonMonitoringAlertNotificationSettings is removed.
+        self.schedule_trigger_service_client = service_client_01_2024_preview.schedules
         self._all_operations = all_operations
         self._stream_logs_until_completion = stream_logs_until_completion
         # Dataplane service clients are lazily created as they are needed
@@ -309,11 +314,12 @@ class ScheduleOperations(_ScopeDependentOperations):
         :return: TriggerRunSubmissionDto, or the result of cls(response)
         :rtype: ~azure.ai.ml.entities.ScheduleTriggerResult
         """
-        return self.service_client.trigger(
+        schedule_time = kwargs.pop("schedule_time", datetime.now(timezone.utc).isoformat())
+        return self.schedule_trigger_service_client.trigger(
             name=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
-            body=TriggerOnceRequest(schedule_time=datetime.now(timezone.utc).isoformat()),
+            body=TriggerOnceRequest(schedule_time=schedule_time),
             cls=lambda _, obj, __: ScheduleTriggerResult._from_rest_object(obj),
             **kwargs,
         )
