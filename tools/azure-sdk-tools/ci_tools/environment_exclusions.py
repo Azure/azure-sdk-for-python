@@ -52,7 +52,7 @@ def is_check_enabled(package_path: str, check: str, default: Any = True) -> bool
     if package_path == ".":
         package_path = os.getcwd()
 
-    ci_enabled = get_config_setting(package_path, "ci_enabled", default)
+    ci_enabled = get_config_setting(package_path, "ci_enabled", True)
     if not in_public() and ci_enabled is False:
         return False
 

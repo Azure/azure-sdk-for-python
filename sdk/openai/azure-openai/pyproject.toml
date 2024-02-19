@@ -4,8 +4,6 @@ mypy = false
 pyright = false
 type_check_samples = false
 verifytypes = false
-optional = true
-
 
 [[tool.azure-sdk-build.optional]]
 name = "main"
