@@ -5,7 +5,6 @@ from pathlib import Path
 import os
 import glob
 
-import typing
 from typing import Dict, List
 
 GENERATED_PACKAGES_LIST_FILE = "toc_tree.rst"
@@ -84,7 +83,6 @@ def is_subnamespace(version: str) -> bool:
 
 def get_package_namespaces(package_root: str) -> List[str]:
     namespace_folders = os.path.basename(package_root).split("-")
-    package_name = "-".join(namespace_folders)
     namespace = ".".join(namespace_folders)
 
     # add top namespace
@@ -96,20 +94,22 @@ def get_package_namespaces(package_root: str) -> List[str]:
     # check for subnamespaces like azure.mgmt.resource.locks
     if not valid_versions:
         subnamespaces = glob.glob(f"{api_directory}/*/")
-        for snp in subnamespaces:
-            versions = get_valid_versions(snp)
+        for snp_path in subnamespaces:
+            versions = get_valid_versions(snp_path)
             valid_versions.extend(versions)
 
     for version_path in valid_versions:
         version = os.path.relpath(version_path, start=api_directory)
         if is_subnamespace(version):
-            subnamespace, api_version = version.split("/")
-            full_namespace = ".".join([namespace, subnamespace, api_version]) 
-            namespaces.setdefault(namespace, []).append(".".join([namespace, subnamespace]))
-            namespaces.setdefault(f"{namespace}.{subnamespace}", []).append(full_namespace)
+            subnamespace_name, api_version = version.split("/")
+            full_namespace = ".".join([namespace, subnamespace_name, api_version])
+            subnamespace = ".".join([namespace, subnamespace_name])
+            if subnamespace not in namespaces[namespace]:
+                namespaces[namespace].append(subnamespace)
+            namespaces.setdefault(subnamespace, []).append(full_namespace)
         else:
             full_namespace = ".".join([namespace, version])
-            namespaces.setdefault(namespace, []).append(full_namespace)
+            namespaces[namespace].append(full_namespace)
 
     return namespaces
 
@@ -137,7 +137,7 @@ def write_multiapi_rst(namespace: str, versions: List[str], rst_path_template: s
                 title=make_title(namespace + " package"), namespace=namespace
             )
         )
-        for version in set(versions):
+        for version in versions:
             rst_file.write("   {version}\n".format(version=version))
     package_list_path.append(rst_path)
 
