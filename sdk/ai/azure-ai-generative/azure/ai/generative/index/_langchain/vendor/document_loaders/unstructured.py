@@ -18,14 +18,12 @@ def satisfies_min_unstructured_version(min_version: str) -> bool:
     for the feature in question."""
     from unstructured.__version__ import __version__ as __unstructured_version__
 
-    min_version_tuple = tuple([int(x) for x in min_version.split(".")])
+    min_version_tuple = tuple(int(x) for x in min_version.split("."))
 
     # NOTE(MthwRobinson) - enables the loader to work when you're using pre-release
     # versions of unstructured like 0.4.17-dev1
     _unstructured_version = __unstructured_version__.split("-")[0]
-    unstructured_version_tuple = tuple(
-        [int(x) for x in _unstructured_version.split(".")]
-    )
+    unstructured_version_tuple = tuple(int(x) for x in _unstructured_version.split("."))
 
     return unstructured_version_tuple >= min_version_tuple
 
@@ -45,14 +43,11 @@ class UnstructuredBaseLoader(BaseLoader, ABC):
             import unstructured  # noqa:F401
         except ImportError as e:
             raise ValueError(
-                "unstructured package not found, please install it with "
-                "`pip install unstructured`"
+                "unstructured package not found, please install it with " "`pip install unstructured`"
             ) from e
         _valid_modes = {"single", "elements", "paged"}
         if mode not in _valid_modes:
-            raise ValueError(
-                f"Got {mode} for `mode`, but should be one of `{_valid_modes}`"
-            )
+            raise ValueError(f"Got {mode} for `mode`, but should be one of `{_valid_modes}`")
         self.mode = mode
 
         if not satisfies_min_unstructured_version("0.5.4"):
@@ -115,10 +110,7 @@ class UnstructuredBaseLoader(BaseLoader, ABC):
                     meta_dict[page_number].update(metadata)
 
             # Convert the dict to a list of Document objects
-            docs = [
-                Document(page_content=text_dict[key], metadata=meta_dict[key])
-                for key in text_dict.keys()
-            ]
+            docs = [Document(page_content=text_dict[key], metadata=meta_dict[key]) for key in text_dict.keys()]
         elif self.mode == "single":
             metadata = self._get_metadata()
             text = "\n\n".join([str(el) for el in elements])

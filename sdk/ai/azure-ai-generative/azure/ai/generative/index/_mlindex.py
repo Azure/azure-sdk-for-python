@@ -607,7 +607,7 @@ class MLIndex:
                     try:
                         previous_embeddings_dir_name = str(
                             max(
-                                [dir for dir in embeddings_container.glob("*") if dir.is_dir()], key=os.path.getmtime
+                                (dir for dir in embeddings_container.glob("*") if dir.is_dir()), key=os.path.getmtime
                             ).name
                         )
                     except FileNotFoundError as e:

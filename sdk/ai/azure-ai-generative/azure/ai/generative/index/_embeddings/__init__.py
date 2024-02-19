@@ -93,7 +93,7 @@ def get_langchain_embeddings(
             def embed_documents(self, texts: List[str]) -> List[List[float]]:
                 return [[]] * len(texts)
 
-            def embed_query(self) -> List[float]:
+            def embed_query(self) -> List[float]:  # pylint: disable=arguments-differ
                 return []
 
         return NoneEmbeddings()
@@ -1166,11 +1166,11 @@ class EmbeddingsContainer:  # pylint: disable=too-many-instance-attributes
 
             embeddings_container_dir_name = str(
                 max(
-                    [
+                    (
                         file
                         for file in Path(local_embeddings_cache).glob("*/*")
                         if file.is_file() and file.parent.name != os.environ.get("AZUREML_RUN_ID")
-                    ],
+                    ),
                     key=os.path.getmtime,
                 ).parent.name
             )

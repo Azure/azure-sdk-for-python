@@ -728,6 +728,7 @@ class LLAMACompletionsModel(OpenAICompletionsModel):
         request_data.update(request_params)
         return request_data
 
+    # pylint: disable=arguments-differ
     def _parse_response(self, response_data: dict, request_data: dict) -> dict:  # type: ignore[override]
         prompt = request_data["input_data"]["input_string"][0]
 
@@ -832,6 +833,7 @@ class LLAMAChatCompletionsModel(LLAMACompletionsModel):
             request_data=request_data,
         )
 
+    # pylint: disable=arguments-differ
     def _parse_response(self, response_data: dict) -> dict:  # type: ignore[override]
         # https://platform.openai.com/docs/api-reference/chat
         samples = []

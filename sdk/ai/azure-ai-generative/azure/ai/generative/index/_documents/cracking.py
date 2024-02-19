@@ -66,7 +66,7 @@ class BaseDocumentLoader(ABC):
         return ChunkedDocument(chunks=pages, source=self.document_source, metadata=self.metadata)
 
     @classmethod
-    def file_io_mode(self) -> str:
+    def file_io_mode(cls) -> str:
         """Return the file io mode."""
         return "r"
 
@@ -99,7 +99,7 @@ class TextFileIOLoader(BaseDocumentLoader):
         return [StaticDocument(data=text, metadata=self.metadata)]
 
     @classmethod
-    def file_io_mode(self) -> str:
+    def file_io_mode(cls) -> str:
         """Return the file io mode."""
         return "rb"
 
@@ -128,7 +128,7 @@ class UnstructuredHTMLFileIOLoader(UnstructuredFileIOLoader, BaseDocumentLoader)
         return [StaticDocument(data=doc.page_content, metadata=doc.metadata) for doc in docs]
 
     @classmethod
-    def file_io_mode(self) -> str:
+    def file_io_mode(cls) -> str:
         """Return the file io mode."""
         return "rb"
 
@@ -180,7 +180,7 @@ class PDFFileLoader(BaseDocumentLoader):
         return docs
 
     @classmethod
-    def file_io_mode(self) -> str:
+    def file_io_mode(cls) -> str:
         """Return the file io mode."""
         return "rb"
 
@@ -224,7 +224,7 @@ class TikaLoader(BaseDocumentLoader):
         return [StaticDocument(data=text, metadata=self.metadata)]
 
     @classmethod
-    def file_io_mode(self) -> str:
+    def file_io_mode(cls) -> str:
         """Return the file io mode."""
         return "rb"
 
