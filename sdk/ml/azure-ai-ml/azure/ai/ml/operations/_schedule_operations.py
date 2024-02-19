@@ -251,7 +251,7 @@ class ScheduleOperations(_ScopeDependentOperations):
             # resolve ARM id for target, compute, and input datasets for each signal
             self._resolve_monitor_schedule_arm_id(schedule)
         # Create schedule
-        schedule_data = schedule._to_rest_object()
+        schedule_data = schedule._to_rest_object()  # type: ignore
         poller = self.service_client.begin_create_or_update(
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
