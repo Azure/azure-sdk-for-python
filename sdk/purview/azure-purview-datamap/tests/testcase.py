@@ -23,5 +23,5 @@ class DataMapTest(AzureRecordedTestCase):
 DataMapPowerShellPreparer = functools.partial(
     PowerShellPreparer,
     "purviewdatamap",
-    purviewdatamap_endpoint="https://fakeaccount.purview.azure.com/"
+    purviewdatamap_endpoint="https://fakeaccount.purview.azure.com"
 )

@@ -16,6 +16,6 @@ class TestDataMapSmoke(DataMapTest):
         assert client is not None
         response = client.type_definition.get()
         # cspell: disable-next-line
-        assert set(response.keys()) == set(['enumDefs', 'structDefs', 'classificationDefs', 'entityDefs', 'relationshipDefs','businessMetadataDefs'])
+        assert set(response.keys()) == set(['enumDefs', 'structDefs', 'classificationDefs', 'entityDefs', 'relationshipDefs','businessMetadataDefs','termTemplateDefs'])
 
 
