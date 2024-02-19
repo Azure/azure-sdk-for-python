@@ -14,7 +14,7 @@ from azure.mgmt.newrelicobservability import NewRelicObservabilityMgmtClient
     pip install azure-identity
     pip install azure-mgmt-newrelicobservability
 # USAGE
-    python monitors_get_maximum_set_gen.py
+    python monitored_subscriptions_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +29,14 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.monitors.get(
-        resource_group_name="rgNewRelic",
-        monitor_name="cdlymktqw",
+    response = client.monitored_subscriptions.get(
+        resource_group_name="myResourceGroup",
+        monitor_name="myMonitor",
+        configuration_name="default",
     )
     print(response)
 
 
-# x-ms-original-file: specification/newrelic/resource-manager/NewRelic.Observability/stable/2024-01-01/examples/Monitors_Get_MaximumSet_Gen.json
+# x-ms-original-file: specification/newrelic/resource-manager/NewRelic.Observability/stable/2024-01-01/examples/MonitoredSubscriptions_Get.json
 if __name__ == "__main__":
     main()

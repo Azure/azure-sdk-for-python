@@ -17,6 +17,9 @@ from ._configuration import NewRelicObservabilityMgmtClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import (
     AccountsOperations,
+    BillingInfoOperations,
+    ConnectedPartnerResourcesOperations,
+    MonitoredSubscriptionsOperations,
     MonitorsOperations,
     Operations,
     OrganizationsOperations,
@@ -29,7 +32,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class NewRelicObservabilityMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
+class NewRelicObservabilityMgmtClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """NewRelicObservabilityMgmtClient.
 
     :ivar operations: Operations operations
@@ -42,15 +45,23 @@ class NewRelicObservabilityMgmtClient:  # pylint: disable=client-accepts-api-ver
     :vartype organizations: azure.mgmt.newrelicobservability.operations.OrganizationsOperations
     :ivar plans: PlansOperations operations
     :vartype plans: azure.mgmt.newrelicobservability.operations.PlansOperations
+    :ivar billing_info: BillingInfoOperations operations
+    :vartype billing_info: azure.mgmt.newrelicobservability.operations.BillingInfoOperations
+    :ivar connected_partner_resources: ConnectedPartnerResourcesOperations operations
+    :vartype connected_partner_resources:
+     azure.mgmt.newrelicobservability.operations.ConnectedPartnerResourcesOperations
     :ivar tag_rules: TagRulesOperations operations
     :vartype tag_rules: azure.mgmt.newrelicobservability.operations.TagRulesOperations
+    :ivar monitored_subscriptions: MonitoredSubscriptionsOperations operations
+    :vartype monitored_subscriptions:
+     azure.mgmt.newrelicobservability.operations.MonitoredSubscriptionsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-07-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2024-01-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -78,7 +89,14 @@ class NewRelicObservabilityMgmtClient:  # pylint: disable=client-accepts-api-ver
         self.monitors = MonitorsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.organizations = OrganizationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.plans = PlansOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.billing_info = BillingInfoOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.connected_partner_resources = ConnectedPartnerResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.tag_rules = TagRulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.monitored_subscriptions = MonitoredSubscriptionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

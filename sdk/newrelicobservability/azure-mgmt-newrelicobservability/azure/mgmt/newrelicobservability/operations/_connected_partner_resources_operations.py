@@ -36,40 +36,50 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_list_request(subscription_id: str, *, user_email: str, location: str, **kwargs: Any) -> HttpRequest:
+def build_list_request(
+    resource_group_name: str, monitor_name: str, subscription_id: str, *, content: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/providers/NewRelic.Observability/accounts")
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/NewRelic.Observability/monitors/{monitorName}/listConnectedPartnerResources",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "monitorName": _SERIALIZER.url("monitor_name", monitor_name, "str", pattern=r"^.*$"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    _params["userEmail"] = _SERIALIZER.query("user_email", user_email, "str")
-    _params["location"] = _SERIALIZER.query("location", location, "str")
 
     # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
 
-class AccountsOperations:
+class ConnectedPartnerResourcesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.newrelicobservability.NewRelicObservabilityMgmtClient`'s
-        :attr:`accounts` attribute.
+        :attr:`connected_partner_resources` attribute.
     """
 
     models = _models
@@ -82,23 +92,35 @@ class AccountsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, user_email: str, location: str, **kwargs: Any) -> Iterable["_models.AccountResource"]:
-        """List all the existing accounts.
+    def list(
+        self, resource_group_name: str, monitor_name: str, body: Optional[str] = None, **kwargs: Any
+    ) -> Iterable["_models.ConnectedPartnerResourcesListFormat"]:
+        """List of all active deployments that are associated with the marketplace subscription linked to
+        the given monitor.
 
-        :param user_email: User Email. Required.
-        :type user_email: str
-        :param location: Location for NewRelic. Required.
-        :type location: str
+        List of all active deployments that are associated with the marketplace subscription linked to
+        the given monitor.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param monitor_name: Name of the Monitors resource. Required.
+        :type monitor_name: str
+        :param body: Email Id of the user. Default value is None.
+        :type body: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either AccountResource or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.newrelicobservability.models.AccountResource]
+        :return: An iterator like instance of either ConnectedPartnerResourcesListFormat or the result
+         of cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.newrelicobservability.models.ConnectedPartnerResourcesListFormat]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.AccountsListResponse] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[_models.ConnectedPartnerResourcesListResponse] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -110,12 +132,18 @@ class AccountsOperations:
 
         def prepare_request(next_link=None):
             if not next_link:
+                if body is not None:
+                    _content = self._serialize.body(body, "str")
+                else:
+                    _content = None
 
                 request = build_list_request(
+                    resource_group_name=resource_group_name,
+                    monitor_name=monitor_name,
                     subscription_id=self._config.subscription_id,
-                    user_email=user_email,
-                    location=location,
                     api_version=api_version,
+                    content_type=content_type,
+                    content=_content,
                     template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
@@ -142,7 +170,7 @@ class AccountsOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("AccountsListResponse", pipeline_response)
+            deserialized = self._deserialize("ConnectedPartnerResourcesListResponse", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -166,4 +194,6 @@ class AccountsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/NewRelic.Observability/accounts"}
+    list.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/NewRelic.Observability/monitors/{monitorName}/listConnectedPartnerResources"
+    }
