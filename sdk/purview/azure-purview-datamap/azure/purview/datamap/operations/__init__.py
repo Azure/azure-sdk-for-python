@@ -11,7 +11,7 @@ from ._operations import GlossaryOperations
 from ._operations import DiscoveryOperations
 from ._operations import LineageOperations
 from ._operations import RelationshipOperations
-from ._operations import TypeOperations
+from ._operations import TypeDefinitionOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -23,7 +23,7 @@ __all__ = [
     "DiscoveryOperations",
     "LineageOperations",
     "RelationshipOperations",
-    "TypeOperations",
+    "TypeDefinitionOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

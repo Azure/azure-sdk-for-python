@@ -55,7 +55,7 @@ class BusinessAttributeUpdateBehavior(str, Enum, metaclass=CaseInsensitiveEnumMe
     """Merge the business attributes. Business attributes will not be updated if not provided."""
 
 
-class Cardinality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class CardinalityValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cardinality."""
 
     SINGLE = "SINGLE"
@@ -66,15 +66,13 @@ class Cardinality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """set"""
 
 
-class Direction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Direction."""
+class EntityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status - can be active or deleted."""
 
-    BOTH = "BOTH"
-    """both"""
-    INPUT = "INPUT"
-    """input"""
-    OUTPUT = "OUTPUT"
-    """output"""
+    ACTIVE = "ACTIVE"
+    """The status is active."""
+    DELETED = "DELETED"
+    """The status is deleted."""
 
 
 class ImportStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -129,24 +127,24 @@ class RoundingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """unnecessary"""
 
 
+class SearchSortOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Search sort order."""
+
+    ASCEND = "asc"
+    """Use ascending order for sorting"""
+    DESCEND = "desc"
+    """Use descending order for sorting"""
+
+
 class SortType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type for sorting."""
 
     NONE = "NONE"
     """No sorting order"""
-    ASC = "ASC"
+    ASCEND = "ASC"
     """Use ascending order for sorting"""
-    DESC = "DESC"
+    DESCEND = "DESC"
     """Use descending order for sorting"""
-
-
-class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status - can be active or deleted."""
-
-    ACTIVE = "ACTIVE"
-    """The status is active."""
-    DELETED = "DELETED"
-    """The status is deleted."""
 
 
 class StatusAtlasRelationship(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -193,21 +191,4 @@ class TypeCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RELATIONSHIP = "RELATIONSHIP"
     """relationship"""
     TERM_TEMPLATE = "TERM_TEMPLATE"
-    """term template"""
-
-
-class Typedef(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type."""
-
-    ENUM = "enum"
-    """enum"""
-    ENTITY = "entity"
-    """entity"""
-    CLASSIFICATION = "classification"
-    """classification"""
-    RELATIONSHIP = "relationship"
-    """relationship"""
-    STRUCT = "struct"
-    """struct"""
-    TERM_TEMPLATE = "term_template"
     """term template"""

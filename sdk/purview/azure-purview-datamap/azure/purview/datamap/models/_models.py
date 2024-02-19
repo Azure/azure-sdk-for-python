@@ -29,7 +29,7 @@ class AtlasAttributeDef(_model_base.Model):  # pylint: disable=too-many-instance
 
     :ivar cardinality: single-valued attribute or multi-valued attribute. Known values are:
      "SINGLE", "LIST", and "SET".
-    :vartype cardinality: str or ~azure.purview.datamap.models.Cardinality
+    :vartype cardinality: str or ~azure.purview.datamap.models.CardinalityValue
     :ivar constraints: An array of constraints.
     :vartype constraints: list[~azure.purview.datamap.models.AtlasConstraintDef]
     :ivar default_value: The default value of the attribute.
@@ -56,7 +56,7 @@ class AtlasAttributeDef(_model_base.Model):  # pylint: disable=too-many-instance
     :vartype values_min_count: int
     """
 
-    cardinality: Optional[Union[str, "_models.Cardinality"]] = rest_field()
+    cardinality: Optional[Union[str, "_models.CardinalityValue"]] = rest_field()
     """single-valued attribute or multi-valued attribute. Known values are: \"SINGLE\", \"LIST\", and
      \"SET\"."""
     constraints: Optional[List["_models.AtlasConstraintDef"]] = rest_field()
@@ -88,7 +88,7 @@ class AtlasAttributeDef(_model_base.Model):  # pylint: disable=too-many-instance
     def __init__(
         self,
         *,
-        cardinality: Optional[Union[str, "_models.Cardinality"]] = None,
+        cardinality: Optional[Union[str, "_models.CardinalityValue"]] = None,
         constraints: Optional[List["_models.AtlasConstraintDef"]] = None,
         default_value: Optional[str] = None,
         description: Optional[str] = None,
@@ -232,7 +232,7 @@ class AtlasClassification(_model_base.Model):
     :vartype entity_guid: str
     :ivar entity_status: Status of the entity - can be active or deleted. Deleted entities are not
      removed. Known values are: "ACTIVE" and "DELETED".
-    :vartype entity_status: str or ~azure.purview.datamap.models.Status
+    :vartype entity_status: str or ~azure.purview.datamap.models.EntityStatus
     :ivar remove_propagations_on_entity_delete: Determines if propagations will be removed on
      entity deletion.
     :vartype remove_propagations_on_entity_delete: bool
@@ -248,7 +248,7 @@ class AtlasClassification(_model_base.Model):
     """ETag for concurrency control."""
     entity_guid: Optional[str] = rest_field(name="entityGuid")
     """The GUID of the entity."""
-    entity_status: Optional[Union[str, "_models.Status"]] = rest_field(name="entityStatus")
+    entity_status: Optional[Union[str, "_models.EntityStatus"]] = rest_field(name="entityStatus")
     """Status of the entity - can be active or deleted. Deleted entities are not
      removed. Known values are: \"ACTIVE\" and \"DELETED\"."""
     remove_propagations_on_entity_delete: Optional[bool] = rest_field(name="removePropagationsOnEntityDelete")
@@ -264,7 +264,7 @@ class AtlasClassification(_model_base.Model):
         type_name: Optional[str] = None,
         last_modified_t_s: Optional[str] = None,
         entity_guid: Optional[str] = None,
-        entity_status: Optional[Union[str, "_models.Status"]] = None,
+        entity_status: Optional[Union[str, "_models.EntityStatus"]] = None,
         remove_propagations_on_entity_delete: Optional[bool] = None,
         validity_periods: Optional[List["_models.TimeBoundary"]] = None,
     ):
@@ -321,27 +321,23 @@ class AtlasClassificationDef(_model_base.Model):  # pylint: disable=too-many-ins
      classifications can
      only be applied to those entityTypes.
 
+     Any subtypes of the entity types inherit the restriction.
 
-     .. raw:: html
+     Any classificationDef subtypes inherit the parents entityTypes restrictions.
 
-        <ul>
-        <li>Any subtypes
-        of the entity types inherit the restriction</li>
-        <li>Any classificationDef
-        subtypes inherit the parents entityTypes restrictions</li>
-        <li>Any
-        classificationDef subtypes can further restrict the parents entityTypes
-        restrictions by specifying a subset of the entityTypes</li>
-        <li>An empty
-        entityTypes list when there are no parent restrictions means there are no
-        restrictions</li>
-        <li>An empty entityTypes list when there are parent
-        restrictions means that the subtype picks up the parents
-        restrictions</li>
-        <li>If a list of entityTypes are supplied, where one inherits
-        from another, this will be rejected. This should encourage cleaner
-        classificationsDefs</li>
-        </ul>.
+     Any classificationDef subtypes can further restrict the parents entityTypes
+     restrictions by specifying a subset of the entityTypes.
+
+     An empty entityTypes list when there are no parent restrictions means there are no
+     restrictions.
+
+     An empty entityTypes list when there are parent
+     restrictions means that the subtype picks up the parents
+     restrictions.
+
+     If a list of entityTypes are supplied, where one inherits
+     from another, this will be rejected. This should encourage cleaner
+     classificationsDefs.
     :vartype entity_types: list[str]
     :ivar sub_types: An array of sub types.
     :vartype sub_types: list[str]
@@ -386,27 +382,23 @@ class AtlasClassificationDef(_model_base.Model):  # pylint: disable=too-many-ins
      classifications can
      only be applied to those entityTypes.
      
+     Any subtypes of the entity types inherit the restriction.
      
-     .. raw:: html
+     Any classificationDef subtypes inherit the parents entityTypes restrictions.
      
-        <ul>
-        <li>Any subtypes
-        of the entity types inherit the restriction</li>
-        <li>Any classificationDef
-        subtypes inherit the parents entityTypes restrictions</li>
-        <li>Any
-        classificationDef subtypes can further restrict the parents entityTypes
-        restrictions by specifying a subset of the entityTypes</li>
-        <li>An empty
-        entityTypes list when there are no parent restrictions means there are no
-        restrictions</li>
-        <li>An empty entityTypes list when there are parent
-        restrictions means that the subtype picks up the parents
-        restrictions</li>
-        <li>If a list of entityTypes are supplied, where one inherits
-        from another, this will be rejected. This should encourage cleaner
-        classificationsDefs</li>
-        </ul>."""
+     Any classificationDef subtypes can further restrict the parents entityTypes
+     restrictions by specifying a subset of the entityTypes.
+     
+     An empty entityTypes list when there are no parent restrictions means there are no
+     restrictions.
+     
+     An empty entityTypes list when there are parent
+     restrictions means that the subtype picks up the parents
+     restrictions.
+     
+     If a list of entityTypes are supplied, where one inherits
+     from another, this will be rejected. This should encourage cleaner
+     classificationsDefs."""
     sub_types: Optional[List[str]] = rest_field(name="subTypes")
     """An array of sub types."""
     super_types: Optional[List[str]] = rest_field(name="superTypes")
@@ -615,7 +607,7 @@ class AtlasEntity(_model_base.Model):  # pylint: disable=too-many-instance-attri
     :vartype relationship_attributes: dict[str, any]
     :ivar status: Status of the entity - can be active or deleted. Deleted entities are not
      removed. Known values are: "ACTIVE" and "DELETED".
-    :vartype status: str or ~azure.purview.datamap.models.Status
+    :vartype status: str or ~azure.purview.datamap.models.EntityStatus
     :ivar update_time: The update time of the record.
     :vartype update_time: int
     :ivar updated_by: The user who updated the record.
@@ -623,7 +615,7 @@ class AtlasEntity(_model_base.Model):  # pylint: disable=too-many-instance-attri
     :ivar version: The version of the entity.
     :vartype version: int
     :ivar contacts: The dictionary of contacts for entities. Key could be Expert or Owner.
-    :vartype contacts: dict[str, list[~azure.purview.datamap.models.ContactBasic]]
+    :vartype contacts: dict[str, list[~azure.purview.datamap.models.ContactInfo]]
     """
 
     attributes: Optional[Dict[str, Any]] = rest_field()
@@ -660,7 +652,7 @@ class AtlasEntity(_model_base.Model):  # pylint: disable=too-many-instance-attri
     """Determines if there's a proxy."""
     relationship_attributes: Optional[Dict[str, Any]] = rest_field(name="relationshipAttributes")
     """The attributes of relationship."""
-    status: Optional[Union[str, "_models.Status"]] = rest_field()
+    status: Optional[Union[str, "_models.EntityStatus"]] = rest_field()
     """Status of the entity - can be active or deleted. Deleted entities are not
      removed. Known values are: \"ACTIVE\" and \"DELETED\"."""
     update_time: Optional[int] = rest_field(name="updateTime")
@@ -669,7 +661,7 @@ class AtlasEntity(_model_base.Model):  # pylint: disable=too-many-instance-attri
     """The user who updated the record."""
     version: Optional[int] = rest_field()
     """The version of the entity."""
-    contacts: Optional[Dict[str, List["_models.ContactBasic"]]] = rest_field()
+    contacts: Optional[Dict[str, List["_models.ContactInfo"]]] = rest_field()
     """The dictionary of contacts for entities. Key could be Expert or Owner."""
 
     @overload
@@ -692,11 +684,11 @@ class AtlasEntity(_model_base.Model):  # pylint: disable=too-many-instance-attri
         provenance_type: Optional[int] = None,
         proxy: Optional[bool] = None,
         relationship_attributes: Optional[Dict[str, Any]] = None,
-        status: Optional[Union[str, "_models.Status"]] = None,
+        status: Optional[Union[str, "_models.EntityStatus"]] = None,
         update_time: Optional[int] = None,
         updated_by: Optional[str] = None,
         version: Optional[int] = None,
-        contacts: Optional[Dict[str, List["_models.ContactBasic"]]] = None,
+        contacts: Optional[Dict[str, List["_models.ContactInfo"]]] = None,
     ):
         ...
 
@@ -859,7 +851,7 @@ class AtlasEntityHeader(_model_base.Model):  # pylint: disable=too-many-instance
     :vartype meanings: list[~azure.purview.datamap.models.AtlasTermAssignmentHeader]
     :ivar status: Status of the entity - can be active or deleted. Deleted entities are not
      removed. Known values are: "ACTIVE" and "DELETED".
-    :vartype status: str or ~azure.purview.datamap.models.Status
+    :vartype status: str or ~azure.purview.datamap.models.EntityStatus
     """
 
     attributes: Optional[Dict[str, Any]] = rest_field()
@@ -884,7 +876,7 @@ class AtlasEntityHeader(_model_base.Model):  # pylint: disable=too-many-instance
     """An array of meanings."""
     meanings: Optional[List["_models.AtlasTermAssignmentHeader"]] = rest_field()
     """An array of term assignment headers."""
-    status: Optional[Union[str, "_models.Status"]] = rest_field()
+    status: Optional[Union[str, "_models.EntityStatus"]] = rest_field()
     """Status of the entity - can be active or deleted. Deleted entities are not
      removed. Known values are: \"ACTIVE\" and \"DELETED\"."""
 
@@ -903,7 +895,7 @@ class AtlasEntityHeader(_model_base.Model):  # pylint: disable=too-many-instance
         labels: Optional[List[str]] = None,
         meaning_names: Optional[List[str]] = None,
         meanings: Optional[List["_models.AtlasTermAssignmentHeader"]] = None,
-        status: Optional[Union[str, "_models.Status"]] = None,
+        status: Optional[Union[str, "_models.EntityStatus"]] = None,
     ):
         ...
 
@@ -1115,6 +1107,45 @@ class AtlasEnumElementDef(_model_base.Model):
         description: Optional[str] = None,
         ordinal: Optional[int] = None,
         value: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class AtlasErrorResponse(_model_base.Model):
+    """An error response from the service.
+
+    :ivar request_id: The request ID.
+    :vartype request_id: str
+    :ivar error_code: The error code.
+    :vartype error_code: str
+    :ivar error_message: The error message.
+    :vartype error_message: str
+    """
+
+    request_id: Optional[str] = rest_field(name="requestId")
+    """The request ID."""
+    error_code: Optional[str] = rest_field(name="errorCode")
+    """The error code."""
+    error_message: Optional[str] = rest_field(name="errorMessage")
+    """The error message."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        request_id: Optional[str] = None,
+        error_code: Optional[str] = None,
+        error_message: Optional[str] = None,
     ):
         ...
 
@@ -1518,7 +1549,7 @@ class AtlasGlossaryTerm(_model_base.Model):  # pylint: disable=too-many-instance
     :ivar resources: An array of resource link for term.
     :vartype resources: list[~azure.purview.datamap.models.ResourceLink]
     :ivar contacts: The dictionary of contacts for terms. Key could be Expert or Steward.
-    :vartype contacts: dict[str, list[~azure.purview.datamap.models.ContactBasic]]
+    :vartype contacts: dict[str, list[~azure.purview.datamap.models.ContactInfo]]
     :ivar attributes: The custom attributes of the term, which is map<string,map<string,object>>.
      The
      key of the first layer map is term template name.
@@ -1596,7 +1627,7 @@ class AtlasGlossaryTerm(_model_base.Model):  # pylint: disable=too-many-instance
     """The hierarchy information of the term."""
     resources: Optional[List["_models.ResourceLink"]] = rest_field()
     """An array of resource link for term."""
-    contacts: Optional[Dict[str, List["_models.ContactBasic"]]] = rest_field()
+    contacts: Optional[Dict[str, List["_models.ContactInfo"]]] = rest_field()
     """The dictionary of contacts for terms. Key could be Expert or Steward."""
     attributes: Optional[Dict[str, Dict[str, Any]]] = rest_field()
     """The custom attributes of the term, which is map<string,map<string,object>>.
@@ -1658,7 +1689,7 @@ class AtlasGlossaryTerm(_model_base.Model):  # pylint: disable=too-many-instance
         nick_name: Optional[str] = None,
         hierarchy_info: Optional[List["_models.PurviewObjectId"]] = None,
         resources: Optional[List["_models.ResourceLink"]] = None,
-        contacts: Optional[Dict[str, List["_models.ContactBasic"]]] = None,
+        contacts: Optional[Dict[str, List["_models.ContactInfo"]]] = None,
         attributes: Optional[Dict[str, Dict[str, Any]]] = None,
         assigned_entities: Optional[List["_models.AtlasRelatedObjectId"]] = None,
         categories: Optional[List["_models.AtlasTermCategorizationHeader"]] = None,
@@ -1862,7 +1893,7 @@ class AtlasRelatedObjectId(_model_base.Model):
     :vartype display_text: str
     :ivar entity_status: Status of the entity - can be active or deleted. Deleted entities are not
      removed. Known values are: "ACTIVE" and "DELETED".
-    :vartype entity_status: str or ~azure.purview.datamap.models.Status
+    :vartype entity_status: str or ~azure.purview.datamap.models.EntityStatus
     :ivar relationship_type: Relationship type.
     :vartype relationship_type: str
     :ivar relationship_attributes: Captures details of struct contents. Not instantiated directly,
@@ -1884,7 +1915,7 @@ class AtlasRelatedObjectId(_model_base.Model):
     """The unique attributes of the object."""
     display_text: Optional[str] = rest_field(name="displayText")
     """The display text."""
-    entity_status: Optional[Union[str, "_models.Status"]] = rest_field(name="entityStatus")
+    entity_status: Optional[Union[str, "_models.EntityStatus"]] = rest_field(name="entityStatus")
     """Status of the entity - can be active or deleted. Deleted entities are not
      removed. Known values are: \"ACTIVE\" and \"DELETED\"."""
     relationship_type: Optional[str] = rest_field(name="relationshipType")
@@ -1905,7 +1936,7 @@ class AtlasRelatedObjectId(_model_base.Model):
         type_name: Optional[str] = None,
         unique_attributes: Optional[Dict[str, Any]] = None,
         display_text: Optional[str] = None,
-        entity_status: Optional[Union[str, "_models.Status"]] = None,
+        entity_status: Optional[Union[str, "_models.EntityStatus"]] = None,
         relationship_type: Optional[str] = None,
         relationship_attributes: Optional["_models.AtlasStruct"] = None,
         relationship_guid: Optional[str] = None,
@@ -2093,7 +2124,7 @@ class AtlasRelationshipAttributeDef(_model_base.Model):  # pylint: disable=too-m
 
     :ivar cardinality: single-valued attribute or multi-valued attribute. Known values are:
      "SINGLE", "LIST", and "SET".
-    :vartype cardinality: str or ~azure.purview.datamap.models.Cardinality
+    :vartype cardinality: str or ~azure.purview.datamap.models.CardinalityValue
     :ivar constraints: An array of constraints.
     :vartype constraints: list[~azure.purview.datamap.models.AtlasConstraintDef]
     :ivar default_value: The default value of the attribute.
@@ -2124,7 +2155,7 @@ class AtlasRelationshipAttributeDef(_model_base.Model):  # pylint: disable=too-m
     :vartype relationship_type_name: str
     """
 
-    cardinality: Optional[Union[str, "_models.Cardinality"]] = rest_field()
+    cardinality: Optional[Union[str, "_models.CardinalityValue"]] = rest_field()
     """single-valued attribute or multi-valued attribute. Known values are: \"SINGLE\", \"LIST\", and
      \"SET\"."""
     constraints: Optional[List["_models.AtlasConstraintDef"]] = rest_field()
@@ -2160,7 +2191,7 @@ class AtlasRelationshipAttributeDef(_model_base.Model):  # pylint: disable=too-m
     def __init__(
         self,
         *,
-        cardinality: Optional[Union[str, "_models.Cardinality"]] = None,
+        cardinality: Optional[Union[str, "_models.CardinalityValue"]] = None,
         constraints: Optional[List["_models.AtlasConstraintDef"]] = None,
         default_value: Optional[str] = None,
         description: Optional[str] = None,
@@ -2191,58 +2222,39 @@ class AtlasRelationshipAttributeDef(_model_base.Model):  # pylint: disable=too-m
 
 class AtlasRelationshipDef(_model_base.Model):  # pylint: disable=too-many-instance-attributes
     """AtlasRelationshipDef is a TypeDef that defines a relationship.
-
-    :code:`<p>`
-    As with
-    other typeDefs the AtlasRelationshipDef has a name. Once created the
+    As with other typeDefs the AtlasRelationshipDef has a name. Once created the
     RelationshipDef has a guid.
     The name and the guid are the 2 ways that the
     RelationshipDef is identified.
-
-    :code:`<p>`
     RelationshipDefs have 2 ends, each of which
     specify cardinality, an EntityDef type name and name and optionally
     whether the
     end is a container.
-
-    :code:`<p>`
     RelationshipDefs can have AttributeDefs - though only
-    primitive types are allowed. :code:`<br>`
+    primitive types are allowed.
     RelationshipDefs have a relationshipCategory
-    specifying the UML type of relationship required :code:`<br>`
+    specifying the UML type of relationship required
     The way EntityDefs and
     RelationshipDefs are intended to be used is that EntityDefs will define
     AttributeDefs these AttributeDefs
     will not specify an EntityDef type name as
     their types.
-
-    :code:`<p>`
     RelationshipDefs introduce new attributes to the entity
     instances. For example
-
-    :code:`<p>`
     EntityDef A might have attributes attr1,attr2,attr3
-    :code:`<br>`
-    EntityDef B might have attributes attr4,attr5,attr6 :code:`<br>`
+
+    EntityDef B might have attributes attr4,attr5,attr6
     RelationshipDef
-    AtoB might define 2 ends :code:`<br>`
+    AtoB might define 2 ends
 
+    end1:  type A, name attr7
+    end2:  type B, name attr8
 
-    .. raw:: html
-
-       <pre>
-          end1:  type A, name attr7
-          end2:
-       type B, name attr8  </pre>
-
-
-    :code:`<p>`
     When an instance of EntityDef A is created, it
-    will have attributes attr1,attr2,attr3,attr7 :code:`<br>`
+    will have attributes attr1,attr2,attr3,attr7
     When an instance of EntityDef
     B is created, it will have attributes attr4,attr5,attr6,attr8
 
-    :code:`<p>`
     In this way
     relationshipDefs can be authored separately from entityDefs and can inject
     relationship attributes into
@@ -2293,22 +2305,13 @@ class AtlasRelationshipDef(_model_base.Model):  # pylint: disable=too-many-insta
     :ivar relationship_category: The Relationship category determines the style of relationship
      around
      containment and lifecycle.
-     UML terminology is used for the
-     values.
-
-     :code:`<p>`
-     ASSOCIATION is a relationship with no containment. :code:`<br>`
-     COMPOSITION
-     and AGGREGATION are containment relationships.
-
-     :code:`<p>`
-     The difference being in the
-     lifecycles of the container and its children. In the COMPOSITION case,
-     the
-     children cannot exist without the container. For AGGREGATION, the life
-     cycles
-     of the container and children are totally independent. Known values are: "ASSOCIATION",
-     "AGGREGATION", and "COMPOSITION".
+     UML terminology is used for the values.
+     ASSOCIATION is a relationship with no containment.
+     COMPOSITION and AGGREGATION are containment relationships.
+     The difference being in the lifecycles of the container and its children.
+     In the COMPOSITION case, the children cannot exist without the container.
+     For AGGREGATION, the life cycles of the container and children are totally independent. Known
+     values are: "ASSOCIATION", "AGGREGATION", and "COMPOSITION".
     :vartype relationship_category: str or ~azure.purview.datamap.models.RelationshipCategory
     :ivar relationship_label: The label of the relationship.
     :vartype relationship_label: str
@@ -2361,22 +2364,13 @@ class AtlasRelationshipDef(_model_base.Model):  # pylint: disable=too-many-insta
     )
     """The Relationship category determines the style of relationship around
      containment and lifecycle.
-     UML terminology is used for the
-     values.
-     
-     :code:`<p>`
-     ASSOCIATION is a relationship with no containment. :code:`<br>`
-     COMPOSITION
-     and AGGREGATION are containment relationships.
-     
-     :code:`<p>`
-     The difference being in the
-     lifecycles of the container and its children. In the COMPOSITION case,
-     the
-     children cannot exist without the container. For AGGREGATION, the life
-     cycles
-     of the container and children are totally independent. Known values are: \"ASSOCIATION\",
-     \"AGGREGATION\", and \"COMPOSITION\"."""
+     UML terminology is used for the values.
+     ASSOCIATION is a relationship with no containment.
+     COMPOSITION and AGGREGATION are containment relationships.
+     The difference being in the lifecycles of the container and its children.
+     In the COMPOSITION case, the children cannot exist without the container.
+     For AGGREGATION, the life cycles of the container and children are totally independent. Known
+     values are: \"ASSOCIATION\", \"AGGREGATION\", and \"COMPOSITION\"."""
     relationship_label: Optional[str] = rest_field(name="relationshipLabel")
     """The label of the relationship."""
 
@@ -2425,7 +2419,7 @@ class AtlasRelationshipEndDef(_model_base.Model):
 
     :ivar cardinality: single-valued attribute or multi-valued attribute. Known values are:
      "SINGLE", "LIST", and "SET".
-    :vartype cardinality: str or ~azure.purview.datamap.models.Cardinality
+    :vartype cardinality: str or ~azure.purview.datamap.models.CardinalityValue
     :ivar description: The description of the relationship end definition.
     :vartype description: str
     :ivar is_container: Determines if it is container.
@@ -2438,7 +2432,7 @@ class AtlasRelationshipEndDef(_model_base.Model):
     :vartype type: str
     """
 
-    cardinality: Optional[Union[str, "_models.Cardinality"]] = rest_field()
+    cardinality: Optional[Union[str, "_models.CardinalityValue"]] = rest_field()
     """single-valued attribute or multi-valued attribute. Known values are: \"SINGLE\", \"LIST\", and
      \"SET\"."""
     description: Optional[str] = rest_field()
@@ -2456,7 +2450,7 @@ class AtlasRelationshipEndDef(_model_base.Model):
     def __init__(
         self,
         *,
-        cardinality: Optional[Union[str, "_models.Cardinality"]] = None,
+        cardinality: Optional[Union[str, "_models.CardinalityValue"]] = None,
         description: Optional[str] = None,
         is_container: Optional[bool] = None,
         is_legacy_attribute: Optional[bool] = None,
@@ -2813,27 +2807,23 @@ class AtlasTypeDef(_model_base.Model):  # pylint: disable=too-many-instance-attr
      classifications can
      only be applied to those entityTypes.
 
+     Any subtypes of the entity types inherit the restriction.
 
-     .. raw:: html
+     Any classificationDef subtypes inherit the parents entityTypes restrictions.
 
-        <ul>
-        <li>Any subtypes
-        of the entity types inherit the restriction</li>
-        <li>Any classificationDef
-        subtypes inherit the parents entityTypes restrictions</li>
-        <li>Any
-        classificationDef subtypes can further restrict the parents entityTypes
-        restrictions by specifying a subset of the entityTypes</li>
-        <li>An empty
-        entityTypes list when there are no parent restrictions means there are no
-        restrictions</li>
-        <li>An empty entityTypes list when there are parent
-        restrictions means that the subtype picks up the parents
-        restrictions</li>
-        <li>If a list of entityTypes are supplied, where one inherits
-        from another, this will be rejected. This should encourage cleaner
-        classificationsDefs</li>
-        </ul>.
+     Any classificationDef subtypes can further restrict the parents entityTypes
+     restrictions by specifying a subset of the entityTypes.
+
+     An empty entityTypes list when there are no parent restrictions means there are no
+     restrictions.
+
+     An empty entityTypes list when there are parent
+     restrictions means that the subtype picks up the parents
+     restrictions.
+
+     If a list of entityTypes are supplied, where one inherits
+     from another, this will be rejected. This should encourage cleaner
+     classificationsDefs.
     :vartype entity_types: list[str]
     :ivar sub_types: An array of sub types.
     :vartype sub_types: list[str]
@@ -2859,22 +2849,15 @@ class AtlasTypeDef(_model_base.Model):  # pylint: disable=too-many-instance-attr
     :ivar relationship_category: The Relationship category determines the style of relationship
      around
      containment and lifecycle.
-     UML terminology is used for the
-     values.
+     UML terminology is used for the values.
 
-     :code:`<p>`
-     ASSOCIATION is a relationship with no containment. :code:`<br>`
-     COMPOSITION
-     and AGGREGATION are containment relationships.
+     ASSOCIATION is a relationship with no containment.
+     COMPOSITION and AGGREGATION are containment relationships.
 
-     :code:`<p>`
-     The difference being in the
-     lifecycles of the container and its children. In the COMPOSITION case,
-     the
-     children cannot exist without the container. For AGGREGATION, the life
-     cycles
-     of the container and children are totally independent. Known values are: "ASSOCIATION",
-     "AGGREGATION", and "COMPOSITION".
+     The difference being in the lifecycles of the container and its children.
+     In the COMPOSITION case, the children cannot exist without the container.
+     For AGGREGATION, the life cycles of the container and children are totally independent. Known
+     values are: "ASSOCIATION", "AGGREGATION", and "COMPOSITION".
     :vartype relationship_category: str or ~azure.purview.datamap.models.RelationshipCategory
     :ivar relationship_label: The label of the relationship.
     :vartype relationship_label: str
@@ -2917,27 +2900,23 @@ class AtlasTypeDef(_model_base.Model):  # pylint: disable=too-many-instance-attr
      classifications can
      only be applied to those entityTypes.
      
+     Any subtypes of the entity types inherit the restriction.
      
-     .. raw:: html
+     Any classificationDef subtypes inherit the parents entityTypes restrictions.
      
-        <ul>
-        <li>Any subtypes
-        of the entity types inherit the restriction</li>
-        <li>Any classificationDef
-        subtypes inherit the parents entityTypes restrictions</li>
-        <li>Any
-        classificationDef subtypes can further restrict the parents entityTypes
-        restrictions by specifying a subset of the entityTypes</li>
-        <li>An empty
-        entityTypes list when there are no parent restrictions means there are no
-        restrictions</li>
-        <li>An empty entityTypes list when there are parent
-        restrictions means that the subtype picks up the parents
-        restrictions</li>
-        <li>If a list of entityTypes are supplied, where one inherits
-        from another, this will be rejected. This should encourage cleaner
-        classificationsDefs</li>
-        </ul>."""
+     Any classificationDef subtypes can further restrict the parents entityTypes
+     restrictions by specifying a subset of the entityTypes.
+     
+     An empty entityTypes list when there are no parent restrictions means there are no
+     restrictions.
+     
+     An empty entityTypes list when there are parent
+     restrictions means that the subtype picks up the parents
+     restrictions.
+     
+     If a list of entityTypes are supplied, where one inherits
+     from another, this will be rejected. This should encourage cleaner
+     classificationsDefs."""
     sub_types: Optional[List[str]] = rest_field(name="subTypes")
     """An array of sub types."""
     super_types: Optional[List[str]] = rest_field(name="superTypes")
@@ -2965,22 +2944,15 @@ class AtlasTypeDef(_model_base.Model):  # pylint: disable=too-many-instance-attr
     )
     """The Relationship category determines the style of relationship around
      containment and lifecycle.
-     UML terminology is used for the
-     values.
+     UML terminology is used for the values.
      
-     :code:`<p>`
-     ASSOCIATION is a relationship with no containment. :code:`<br>`
-     COMPOSITION
-     and AGGREGATION are containment relationships.
+     ASSOCIATION is a relationship with no containment.
+     COMPOSITION and AGGREGATION are containment relationships.
      
-     :code:`<p>`
-     The difference being in the
-     lifecycles of the container and its children. In the COMPOSITION case,
-     the
-     children cannot exist without the container. For AGGREGATION, the life
-     cycles
-     of the container and children are totally independent. Known values are: \"ASSOCIATION\",
-     \"AGGREGATION\", and \"COMPOSITION\"."""
+     The difference being in the lifecycles of the container and its children.
+     In the COMPOSITION case, the children cannot exist without the container.
+     For AGGREGATION, the life cycles of the container and children are totally independent. Known
+     values are: \"ASSOCIATION\", \"AGGREGATION\", and \"COMPOSITION\"."""
     relationship_label: Optional[str] = rest_field(name="relationshipLabel")
     """The label of the relationship."""
     attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = rest_field(name="attributeDefs")
@@ -3131,8 +3103,8 @@ class AtlasTypesDef(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoCompleteRequest(_model_base.Model):
-    """The query of autocomplete request.
+class AutoCompleteOptions(_model_base.Model):
+    """The payload of autocomplete request.
 
     :ivar keywords: The keywords applied to all fields that support autocomplete operation. It must
      be at least 1 character, and no more than 100 characters.
@@ -3237,8 +3209,8 @@ class AutoCompleteResultValue(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BulkImportResponse(_model_base.Model):
-    """example.
+class BulkImportResult(_model_base.Model):
+    """Bulk import result.
 
     :ivar failed_import_info_list: failed importInfoList.
     :vartype failed_import_info_list: list[~azure.purview.datamap.models.ImportInfo]
@@ -3271,8 +3243,8 @@ class BulkImportResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ClassificationAssociateRequest(_model_base.Model):
-    """The request for classification association.
+class ClassificationAssociateOptions(_model_base.Model):
+    """The request payload for classification association.
 
     :ivar classification: An instance of a classification; it doesn't have an identity, this object
      exists only when associated with an entity.
@@ -3307,8 +3279,8 @@ class ClassificationAssociateRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ContactBasic(_model_base.Model):
-    """ContactBasic.
+class ContactInfo(_model_base.Model):
+    """ContactInfo.
 
     :ivar id: Azure Active Directory object Id.
     :vartype id: str
@@ -3451,8 +3423,8 @@ class DateFormat(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityMutationResponse(_model_base.Model):
-    """The mutation response of entity.
+class EntityMutationResult(_model_base.Model):
+    """The mutation response result of entity.
 
     :ivar guid_assignments: A map of GUID assignments with entities.
     :vartype guid_assignments: dict[str, str]
@@ -3476,45 +3448,6 @@ class EntityMutationResponse(_model_base.Model):
         guid_assignments: Optional[Dict[str, str]] = None,
         mutated_entities: Optional[Dict[str, List["_models.AtlasEntityHeader"]]] = None,
         partial_updated_entities: Optional[List["_models.AtlasEntityHeader"]] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class ErrorResponse(_model_base.Model):
-    """An error response from the service.
-
-    :ivar request_id: The request ID.
-    :vartype request_id: str
-    :ivar error_code: The error code.
-    :vartype error_code: str
-    :ivar error_message: The error message.
-    :vartype error_message: str
-    """
-
-    request_id: Optional[str] = rest_field(name="requestId")
-    """The request ID."""
-    error_code: Optional[str] = rest_field(name="errorCode")
-    """The error code."""
-    error_message: Optional[str] = rest_field(name="errorMessage")
-    """The error message."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        request_id: Optional[str] = None,
-        error_code: Optional[str] = None,
-        error_message: Optional[str] = None,
     ):
         ...
 
@@ -3612,8 +3545,8 @@ class LineageRelation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MoveEntitiesRequest(_model_base.Model):
-    """MoveEntitiesRequest.
+class MoveEntitiesOptions(_model_base.Model):
+    """MoveEntitiesOptions.
 
     :ivar entity_guids: An array of entity guids to be moved to target collection.
     :vartype entity_guids: list[str]
@@ -3840,6 +3773,127 @@ class PurviewObjectId(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class QueryOptions(_model_base.Model):
+    """The search query of advanced search request.
+
+    :ivar keywords: The keywords applied to all searchable fields.
+    :vartype keywords: str
+    :ivar limit: The limit of the number of the search result. default value is 50; maximum
+     value is 1000.
+    :vartype limit: int
+    :ivar continuation_token: The token used to get next batch of data. Default 'Null' to get the
+     first
+     batch, and will return new token in each response unless there's no more data.
+    :vartype continuation_token: str
+    :ivar orderby: The sort order of search results, can specify multiple fields.
+    :vartype orderby: list[any]
+    :ivar filter: The filter for the search. See examples for the usage of supported filters.
+    :vartype filter: any
+    :ivar facets: The facets for search. See examples for the usage of supported facets.
+    :vartype facets: list[~azure.purview.datamap.models.SearchFacetItem]
+    :ivar taxonomy_setting: The taxonomy setting for search.
+    :vartype taxonomy_setting: ~azure.purview.datamap.models.SearchTaxonomySetting
+    """
+
+    keywords: Optional[str] = rest_field()
+    """The keywords applied to all searchable fields."""
+    limit: Optional[int] = rest_field()
+    """The limit of the number of the search result. default value is 50; maximum
+     value is 1000."""
+    continuation_token: Optional[str] = rest_field(name="continuationToken")
+    """The token used to get next batch of data. Default 'Null' to get the first
+     batch, and will return new token in each response unless there's no more data."""
+    orderby: Optional[List[Any]] = rest_field()
+    """The sort order of search results, can specify multiple fields."""
+    filter: Optional[Any] = rest_field()
+    """The filter for the search. See examples for the usage of supported filters."""
+    facets: Optional[List["_models.SearchFacetItem"]] = rest_field()
+    """The facets for search. See examples for the usage of supported facets."""
+    taxonomy_setting: Optional["_models.SearchTaxonomySetting"] = rest_field(name="taxonomySetting")
+    """The taxonomy setting for search."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        keywords: Optional[str] = None,
+        limit: Optional[int] = None,
+        continuation_token: Optional[str] = None,
+        orderby: Optional[List[Any]] = None,
+        filter: Optional[Any] = None,  # pylint: disable=redefined-builtin
+        facets: Optional[List["_models.SearchFacetItem"]] = None,
+        taxonomy_setting: Optional["_models.SearchTaxonomySetting"] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class QueryResult(_model_base.Model):
+    """The result of the search result.
+
+    :ivar search_count: The total number of search results (not the number of documents in a single
+     page).
+    :vartype search_count: int
+    :ivar search_count_approximate: 'True' if the '@search.count' is an approximate value and vise
+     versa.
+    :vartype search_count_approximate: bool
+    :ivar continuation_token: The token used to get next batch of data. Absent if there's no more
+     data.
+    :vartype continuation_token: str
+    :ivar search_facets: A facet list that consists of index fields assetType ,classification,
+     contactId, and label. When the facet is specified in the request, the value of
+     the facet is returned as an element of @search.facets.
+    :vartype search_facets: ~azure.purview.datamap.models.SearchFacetResultValue
+    :ivar value: Search result value.
+    :vartype value: list[~azure.purview.datamap.models.SearchResultValue]
+    """
+
+    search_count: Optional[int] = rest_field(name="@search.count")
+    """The total number of search results (not the number of documents in a single
+     page)."""
+    search_count_approximate: Optional[bool] = rest_field(name="@search.count.approximate")
+    """'True' if the '@search.count' is an approximate value and vise versa."""
+    continuation_token: Optional[str] = rest_field(name="continuationToken")
+    """The token used to get next batch of data. Absent if there's no more data."""
+    search_facets: Optional["_models.SearchFacetResultValue"] = rest_field(name="@search.facets")
+    """A facet list that consists of index fields assetType ,classification,
+     contactId, and label. When the facet is specified in the request, the value of
+     the facet is returned as an element of @search.facets."""
+    value: Optional[List["_models.SearchResultValue"]] = rest_field()
+    """Search result value."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        search_count: Optional[int] = None,
+        search_count_approximate: Optional[bool] = None,
+        continuation_token: Optional[str] = None,
+        search_facets: Optional["_models.SearchFacetResultValue"] = None,
+        value: Optional[List["_models.SearchResultValue"]] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class ResourceLink(_model_base.Model):
     """ResourceLink.
 
@@ -3881,16 +3935,16 @@ class SearchFacetItem(_model_base.Model):
     :vartype count: int
     :ivar facet: The name of the facet item.
     :vartype facet: str
-    :ivar sort: Any object.
-    :vartype sort: any
+    :ivar sort: Define the sorting criteria for items.
+    :vartype sort: ~azure.purview.datamap.models.SearchFacetSort
     """
 
     count: Optional[int] = rest_field()
     """The count of the facet item."""
     facet: Optional[str] = rest_field()
     """The name of the facet item."""
-    sort: Optional[Any] = rest_field()
-    """Any object."""
+    sort: Optional["_models.SearchFacetSort"] = rest_field()
+    """Define the sorting criteria for items."""
 
     @overload
     def __init__(
@@ -3898,7 +3952,7 @@ class SearchFacetItem(_model_base.Model):
         *,
         count: Optional[int] = None,
         facet: Optional[str] = None,
-        sort: Optional[Any] = None,
+        sort: Optional["_models.SearchFacetSort"] = None,
     ):
         ...
 
@@ -4023,6 +4077,40 @@ class SearchFacetResultValue(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class SearchFacetSort(_model_base.Model):
+    """The sorting criteria.
+
+    :ivar count: Order by count. Known values are: "asc" and "desc".
+    :vartype count: str or ~azure.purview.datamap.models.SearchSortOrder
+    :ivar value: Order by value. Known values are: "asc" and "desc".
+    :vartype value: str or ~azure.purview.datamap.models.SearchSortOrder
+    """
+
+    count: Optional[Union[str, "_models.SearchSortOrder"]] = rest_field()
+    """Order by count. Known values are: \"asc\" and \"desc\"."""
+    value: Optional[Union[str, "_models.SearchSortOrder"]] = rest_field()
+    """Order by value. Known values are: \"asc\" and \"desc\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        count: Optional[Union[str, "_models.SearchSortOrder"]] = None,
+        value: Optional[Union[str, "_models.SearchSortOrder"]] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class SearchHighlights(_model_base.Model):
     """A highlight list that consists of index fields id ,qualifiedName, name,
     description, entityType. When the keyword appears in those fields, the value of
@@ -4061,161 +4149,6 @@ class SearchHighlights(_model_base.Model):
         name: Optional[List[str]] = None,
         description: Optional[List[str]] = None,
         entity_type: Optional[List[str]] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class SearchRequest(_model_base.Model):
-    """The search query of advanced search request.
-
-    :ivar keywords: The keywords applied to all searchable fields.
-    :vartype keywords: str
-    :ivar limit: The limit of the number of the search result. default value is 50; maximum
-     value is 1000.
-    :vartype limit: int
-    :ivar continuation_token: The token used to get next batch of data. Default 'Null' to get the
-     first
-     batch, and will return new token in each response unless there's no more data.
-    :vartype continuation_token: str
-    :ivar orderby: The sort order of search results, can specify multiple fields.
-    :vartype orderby: list[any]
-    :ivar filter: The filter for the search. See examples for the usage of supported filters.
-    :vartype filter: any
-    :ivar facets: The facets for search. See examples for the usage of supported facets.
-    :vartype facets: list[~azure.purview.datamap.models.SearchFacetItem]
-    :ivar taxonomy_setting: The taxonomy setting for search.
-    :vartype taxonomy_setting: ~azure.purview.datamap.models.SearchRequestTaxonomySetting
-    """
-
-    keywords: Optional[str] = rest_field()
-    """The keywords applied to all searchable fields."""
-    limit: Optional[int] = rest_field()
-    """The limit of the number of the search result. default value is 50; maximum
-     value is 1000."""
-    continuation_token: Optional[str] = rest_field(name="continuationToken")
-    """The token used to get next batch of data. Default 'Null' to get the first
-     batch, and will return new token in each response unless there's no more data."""
-    orderby: Optional[List[Any]] = rest_field()
-    """The sort order of search results, can specify multiple fields."""
-    filter: Optional[Any] = rest_field()
-    """The filter for the search. See examples for the usage of supported filters."""
-    facets: Optional[List["_models.SearchFacetItem"]] = rest_field()
-    """The facets for search. See examples for the usage of supported facets."""
-    taxonomy_setting: Optional["_models.SearchRequestTaxonomySetting"] = rest_field(name="taxonomySetting")
-    """The taxonomy setting for search."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        keywords: Optional[str] = None,
-        limit: Optional[int] = None,
-        continuation_token: Optional[str] = None,
-        orderby: Optional[List[Any]] = None,
-        filter: Optional[Any] = None,  # pylint: disable=redefined-builtin
-        facets: Optional[List["_models.SearchFacetItem"]] = None,
-        taxonomy_setting: Optional["_models.SearchRequestTaxonomySetting"] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class SearchRequestTaxonomySetting(_model_base.Model):
-    """Taxonomy setting for search request.
-
-    :ivar asset_types: Asset types.
-    :vartype asset_types: list[str]
-    :ivar facet: The content of a search facet result item.
-    :vartype facet: ~azure.purview.datamap.models.SearchFacetItem
-    """
-
-    asset_types: Optional[List[str]] = rest_field(name="assetTypes")
-    """Asset types."""
-    facet: Optional["_models.SearchFacetItem"] = rest_field()
-    """The content of a search facet result item."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        asset_types: Optional[List[str]] = None,
-        facet: Optional["_models.SearchFacetItem"] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class SearchResult(_model_base.Model):
-    """The result of the search result.
-
-    :ivar search_count: The total number of search results (not the number of documents in a single
-     page).
-    :vartype search_count: int
-    :ivar search_count_approximate: 'True' if the '@search.count' is an approximate value and vise
-     versa.
-    :vartype search_count_approximate: bool
-    :ivar continuation_token: The token used to get next batch of data. Absent if there's no more
-     data.
-    :vartype continuation_token: str
-    :ivar search_facets: A facet list that consists of index fields assetType ,classification,
-     contactId, and label. When the facet is specified in the request, the value of
-     the facet is returned as an element of @search.facets.
-    :vartype search_facets: ~azure.purview.datamap.models.SearchFacetResultValue
-    :ivar value: Search result value.
-    :vartype value: list[~azure.purview.datamap.models.SearchResultValue]
-    """
-
-    search_count: Optional[int] = rest_field(name="@search.count")
-    """The total number of search results (not the number of documents in a single
-     page)."""
-    search_count_approximate: Optional[bool] = rest_field(name="@search.count.approximate")
-    """'True' if the '@search.count' is an approximate value and vise versa."""
-    continuation_token: Optional[str] = rest_field(name="continuationToken")
-    """The token used to get next batch of data. Absent if there's no more data."""
-    search_facets: Optional["_models.SearchFacetResultValue"] = rest_field(name="@search.facets")
-    """A facet list that consists of index fields assetType ,classification,
-     contactId, and label. When the facet is specified in the request, the value of
-     the facet is returned as an element of @search.facets."""
-    value: Optional[List["_models.SearchResultValue"]] = rest_field()
-    """Search result value."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        search_count: Optional[int] = None,
-        search_count_approximate: Optional[bool] = None,
-        continuation_token: Optional[str] = None,
-        search_facets: Optional["_models.SearchFacetResultValue"] = None,
-        value: Optional[List["_models.SearchResultValue"]] = None,
     ):
         ...
 
@@ -4378,8 +4311,42 @@ class SearchResultValue(_model_base.Model):  # pylint: disable=too-many-instance
         super().__init__(*args, **kwargs)
 
 
-class SuggestRequest(_model_base.Model):
-    """The query of suggest request.
+class SearchTaxonomySetting(_model_base.Model):
+    """Taxonomy setting for search request.
+
+    :ivar asset_types: Asset types.
+    :vartype asset_types: list[str]
+    :ivar facet: The content of a search facet result item.
+    :vartype facet: ~azure.purview.datamap.models.SearchFacetItem
+    """
+
+    asset_types: Optional[List[str]] = rest_field(name="assetTypes")
+    """Asset types."""
+    facet: Optional["_models.SearchFacetItem"] = rest_field()
+    """The content of a search facet result item."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        asset_types: Optional[List[str]] = None,
+        facet: Optional["_models.SearchFacetItem"] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class SuggestOptions(_model_base.Model):
+    """The payload of suggest request.
 
     :ivar keywords: The keywords applied to all fields that support suggest operation. It must be
      at least 1 character, and no more than 100 characters. In the index schema we

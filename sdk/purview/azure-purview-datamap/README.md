@@ -13,7 +13,7 @@ python -m pip install azure-purview-datamap
 
 #### Prequisites
 
-- Python 3.7 or later is required to use this package.
+- Python 3.8 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - An existing Azure Purview Datamap instance.
 #### Create with an Azure Active Directory Credential
@@ -32,19 +32,19 @@ Set the values of the client ID, tenant ID, and client secret of the AAD applica
 Use the returned token credential to authenticate the client:
 
 ```python
->>> from azure.purview.datamap import PurviewDataMapClient
+>>> from azure.purview.datamap import DataMapClient
 >>> from azure.identity import DefaultAzureCredential
->>> client = PurviewDataMapClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
+>>> client = DataMapClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 ```
 
 ## Examples
 
 ```python
->>> from azure.purview.datamap import PurviewDataMapClient
+>>> from azure.purview.datamap import DataMapClient
 >>> from azure.identity import DefaultAzureCredential
 >>> from azure.core.exceptions import HttpResponseError
 
->>> client = PurviewDataMapClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
+>>> client = DataMapClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 >>> try:
         <!-- write test code here -->
     except HttpResponseError as e:

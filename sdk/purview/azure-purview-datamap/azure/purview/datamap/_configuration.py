@@ -17,8 +17,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class PurviewDataMapClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
-    """Configuration for PurviewDataMapClient.
+class DataMapClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for DataMapClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

@@ -14,14 +14,14 @@ from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._serialization import Deserializer, Serializer
-from ._configuration import PurviewDataMapClientConfiguration
+from ._configuration import DataMapClientConfiguration
 from .operations import (
     DiscoveryOperations,
     EntityOperations,
     GlossaryOperations,
     LineageOperations,
     RelationshipOperations,
-    TypeOperations,
+    TypeDefinitionOperations,
 )
 
 if TYPE_CHECKING:
@@ -29,11 +29,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class PurviewDataMapClient:  # pylint: disable=client-accepts-api-version-keyword
-    """Purview Data Map Service is a fully managed cloud service whose users can
-    discover the data sources they need and understand the data sources they find.
-    At the same time, Data Map helps organizations get more value from their
-    existing investments. This spec defines REST API of Purview Data Map Service.
+class DataMapClient:  # pylint: disable=client-accepts-api-version-keyword
+    """DataMapClient.
 
     :ivar entity: EntityOperations operations
     :vartype entity: azure.purview.datamap.aio.operations.EntityOperations
@@ -45,8 +42,8 @@ class PurviewDataMapClient:  # pylint: disable=client-accepts-api-version-keywor
     :vartype lineage: azure.purview.datamap.aio.operations.LineageOperations
     :ivar relationship: RelationshipOperations operations
     :vartype relationship: azure.purview.datamap.aio.operations.RelationshipOperations
-    :ivar type: TypeOperations operations
-    :vartype type: azure.purview.datamap.aio.operations.TypeOperations
+    :ivar type_definition: TypeDefinitionOperations operations
+    :vartype type_definition: azure.purview.datamap.aio.operations.TypeDefinitionOperations
     :param endpoint: Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
@@ -59,7 +56,7 @@ class PurviewDataMapClient:  # pylint: disable=client-accepts-api-version-keywor
 
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         _endpoint = "{endpoint}/datamap/api"
-        self._config = PurviewDataMapClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = DataMapClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -87,7 +84,7 @@ class PurviewDataMapClient:  # pylint: disable=client-accepts-api-version-keywor
         self.discovery = DiscoveryOperations(self._client, self._config, self._serialize, self._deserialize)
         self.lineage = LineageOperations(self._client, self._config, self._serialize, self._deserialize)
         self.relationship = RelationshipOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.type = TypeOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.type_definition = TypeDefinitionOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
@@ -120,7 +117,7 @@ class PurviewDataMapClient:  # pylint: disable=client-accepts-api-version-keywor
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "PurviewDataMapClient":
+    async def __aenter__(self) -> "DataMapClient":
         await self._client.__aenter__()
         return self
 
