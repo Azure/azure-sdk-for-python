@@ -31,16 +31,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/CapacityReservationGroupTrackedResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -79,16 +79,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/CapacityReservationGroupTrackedResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -132,17 +132,17 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "204": {
+            "description": "No Content"
+          },
           "default": {
             "description": "Error",
             "schema": {
               "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
-          },
-          "204": {
-            "description": "No Content"
-          },
-          "200": {
-            "description": "Success"
           }
         },
         "x-ms-examples": {
@@ -180,16 +180,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/CapacityReservationGroupTrackedResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -240,16 +240,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/CapacityReservationGroupTrackedResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -300,12 +300,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -316,6 +310,12 @@
             "description": "Created",
             "schema": {
               "$ref": "#/definitions/CapacityReservationGroupTrackedResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -354,16 +354,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/CodeContainerResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -410,11 +410,8 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
+          "200": {
+            "description": "Success"
           },
           "202": {
             "description": "Accepted",
@@ -437,11 +434,14 @@
               }
             }
           },
-          "200": {
-            "description": "Success"
-          },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -486,16 +486,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/CodeContainerResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -549,12 +549,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -576,6 +570,12 @@
                 "description": "URI to poll for asynchronous operation status.",
                 "type": "string"
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -639,16 +639,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/CodeVersionResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -702,11 +702,8 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
+          "200": {
+            "description": "Success"
           },
           "202": {
             "description": "Accepted",
@@ -729,11 +726,14 @@
               }
             }
           },
-          "200": {
-            "description": "Success"
-          },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -785,16 +785,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/CodeVersionResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -855,12 +855,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -882,6 +876,12 @@
                 "description": "URI to poll for asynchronous operation status.",
                 "type": "string"
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -948,16 +948,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/PendingUploadResponseDto"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -996,16 +996,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/ComponentContainerResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -1052,11 +1052,8 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
+          "200": {
+            "description": "Success"
           },
           "202": {
             "description": "Accepted",
@@ -1079,11 +1076,14 @@
               }
             }
           },
-          "200": {
-            "description": "Success"
-          },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -1128,16 +1128,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/ComponentContainerResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -1191,12 +1191,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -1218,6 +1212,12 @@
                 "description": "URI to poll for asynchronous operation status.",
                 "type": "string"
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -1287,16 +1287,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/ComponentVersionResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -1350,11 +1350,8 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
+          "200": {
+            "description": "Success"
           },
           "202": {
             "description": "Accepted",
@@ -1377,11 +1374,14 @@
               }
             }
           },
-          "200": {
-            "description": "Success"
-          },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -1433,16 +1433,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/ComponentVersionResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -1503,12 +1503,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -1530,6 +1524,12 @@
                 "description": "URI to poll for asynchronous operation status.",
                 "type": "string"
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -1599,16 +1599,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/DataContainerResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -1654,11 +1654,8 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
+          "200": {
+            "description": "Success"
           },
           "202": {
             "description": "Accepted",
@@ -1681,11 +1678,14 @@
               }
             }
           },
-          "200": {
-            "description": "Success"
-          },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -1729,16 +1729,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/DataContainerResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -1792,12 +1792,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -1819,6 +1813,12 @@
                 "description": "URI to poll for asynchronous operation status.",
                 "type": "string"
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -1914,16 +1914,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/DataVersionBaseResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -1976,11 +1976,8 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
+          "200": {
+            "description": "Success"
           },
           "202": {
             "description": "Accepted",
@@ -2003,11 +2000,14 @@
               }
             }
           },
-          "200": {
-            "description": "Success"
-          },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -2058,16 +2058,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/DataVersionBaseResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -2128,12 +2128,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -2155,6 +2149,12 @@
                 "description": "URI to poll for asynchronous operation status.",
                 "type": "string"
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -2220,16 +2220,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/PendingUploadResponseDto"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -2367,16 +2367,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/EnvironmentContainerResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -2423,11 +2423,8 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
+          "200": {
+            "description": "Success"
           },
           "202": {
             "description": "Accepted",
@@ -2450,11 +2447,14 @@
               }
             }
           },
-          "200": {
-            "description": "Success"
-          },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -2499,16 +2499,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/EnvironmentContainerResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -2562,12 +2562,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -2589,6 +2583,12 @@
                 "description": "URI to poll for asynchronous operation status.",
                 "type": "string"
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -2685,16 +2685,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/EnvironmentVersionResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -2748,11 +2748,8 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
+          "200": {
+            "description": "Success"
           },
           "202": {
             "description": "Accepted",
@@ -2775,11 +2772,14 @@
               }
             }
           },
-          "200": {
-            "description": "Success"
-          },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -2831,16 +2831,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/EnvironmentVersionResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -2901,12 +2901,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -2928,6 +2922,12 @@
                 "description": "URI to poll for asynchronous operation status.",
                 "type": "string"
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -3257,16 +3257,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/ModelContainerResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -3313,11 +3313,8 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
+          "200": {
+            "description": "Success"
           },
           "202": {
             "description": "Accepted",
@@ -3340,11 +3337,14 @@
               }
             }
           },
-          "200": {
-            "description": "Success"
-          },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -3389,16 +3389,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/ModelContainerResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -3452,12 +3452,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -3479,6 +3473,12 @@
                 "description": "URI to poll for asynchronous operation status.",
                 "type": "string"
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -3593,16 +3593,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/ModelVersionResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -3656,11 +3656,8 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
+          "200": {
+            "description": "Success"
           },
           "202": {
             "description": "Accepted",
@@ -3683,11 +3680,14 @@
               }
             }
           },
-          "200": {
-            "description": "Success"
-          },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -3739,16 +3739,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/ModelVersionResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -3809,12 +3809,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -3836,6 +3830,12 @@
                 "description": "URI to poll for asynchronous operation status.",
                 "type": "string"
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -3902,12 +3902,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
@@ -3928,6 +3922,12 @@
                 "maximum": 600,
                 "minimum": 10
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -3994,16 +3994,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/PendingUploadResponseDto"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -4049,16 +4049,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/BatchEndpointTrackedResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -4104,12 +4104,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success"
           },
@@ -4136,6 +4130,12 @@
           },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -4179,16 +4179,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/BatchEndpointTrackedResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -4242,12 +4242,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
@@ -4273,6 +4267,12 @@
                 "maximum": 600,
                 "minimum": 10
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -4327,12 +4327,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -4354,6 +4348,12 @@
                 "description": "URI to poll for asynchronous operation status.",
                 "type": "string"
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -4416,16 +4416,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/BatchDeploymentTrackedResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -4478,11 +4478,8 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
+          "200": {
+            "description": "Success"
           },
           "202": {
             "description": "Accepted",
@@ -4505,11 +4502,14 @@
               }
             }
           },
-          "200": {
-            "description": "Success"
-          },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -4560,16 +4560,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/BatchDeploymentTrackedResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -4631,12 +4631,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
@@ -4662,6 +4656,12 @@
                 "maximum": 600,
                 "minimum": 10
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -4724,12 +4724,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -4751,6 +4745,12 @@
                 "description": "URI to poll for asynchronous operation status.",
                 "type": "string"
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -4797,16 +4797,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/EndpointAuthKeys"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -4845,16 +4845,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/CodeContainerResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -4900,17 +4900,17 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success"
           },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -4950,16 +4950,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/CodeContainerResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -5013,12 +5013,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -5029,6 +5023,12 @@
             "description": "Created",
             "schema": {
               "$ref": "#/definitions/CodeContainerResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -5099,16 +5099,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/CodeVersionResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -5161,17 +5161,17 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success"
           },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -5218,16 +5218,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/CodeVersionResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -5288,12 +5288,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -5304,6 +5298,12 @@
             "description": "Created",
             "schema": {
               "$ref": "#/definitions/CodeVersionResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -5450,16 +5450,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/PendingUploadResponseDto"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -5525,16 +5525,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/ComponentContainerResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -5580,17 +5580,17 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success"
           },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -5630,16 +5630,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/ComponentContainerResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -5693,12 +5693,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -5709,6 +5703,12 @@
             "description": "Created",
             "schema": {
               "$ref": "#/definitions/ComponentContainerResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -5800,16 +5800,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/ComponentVersionResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -5862,17 +5862,17 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success"
           },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -5919,16 +5919,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/ComponentVersionResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -5989,12 +5989,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -6005,6 +5999,12 @@
             "description": "Created",
             "schema": {
               "$ref": "#/definitions/ComponentVersionResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -6155,16 +6155,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/DataContainerResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -6210,17 +6210,17 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success"
           },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -6260,16 +6260,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/DataContainerResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -6323,12 +6323,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -6339,6 +6333,12 @@
             "description": "Created",
             "schema": {
               "$ref": "#/definitions/DataContainerResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -6436,16 +6436,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/DataVersionBaseResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -6498,17 +6498,17 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success"
           },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -6555,16 +6555,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/DataVersionBaseResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -6625,12 +6625,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -6641,6 +6635,12 @@
             "description": "Created",
             "schema": {
               "$ref": "#/definitions/DataVersionBaseResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -6806,16 +6806,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/DatastoreResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -6861,17 +6861,17 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success"
           },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -6911,16 +6911,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/DatastoreResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -6981,12 +6981,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -6997,6 +6991,12 @@
             "description": "Created",
             "schema": {
               "$ref": "#/definitions/DatastoreResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -7048,17 +7048,17 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "description": "Base definition for datastore secrets.",
               "$ref": "#/definitions/DatastoreSecrets"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -7124,16 +7124,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/EnvironmentContainerResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -7179,17 +7179,17 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success"
           },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -7229,16 +7229,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/EnvironmentContainerResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -7292,12 +7292,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -7308,6 +7302,12 @@
             "description": "Created",
             "schema": {
               "$ref": "#/definitions/EnvironmentContainerResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -7399,16 +7399,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/EnvironmentVersionResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -7461,17 +7461,17 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success"
           },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -7518,16 +7518,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/EnvironmentVersionResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -7588,12 +7588,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -7604,6 +7598,12 @@
             "description": "Created",
             "schema": {
               "$ref": "#/definitions/EnvironmentVersionResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -7786,16 +7786,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/FeaturesetContainerResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -7905,16 +7905,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/FeatureResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -7976,16 +7976,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/FeatureResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -8028,12 +8028,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success"
           },
@@ -8060,6 +8054,12 @@
           },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -8103,16 +8103,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/FeaturesetContainerResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -8166,12 +8166,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -8193,6 +8187,12 @@
                 "description": "URI to poll for asynchronous operation status.",
                 "type": "string"
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -8313,16 +8313,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/FeaturesetVersionResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -8375,12 +8375,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success"
           },
@@ -8407,6 +8401,12 @@
           },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -8457,16 +8457,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/FeaturesetVersionResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -8527,12 +8527,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -8554,6 +8548,12 @@
                 "description": "URI to poll for asynchronous operation status.",
                 "type": "string"
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -8619,12 +8619,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
@@ -8645,6 +8639,12 @@
                 "maximum": 600,
                 "minimum": 10
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -8746,16 +8746,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/FeaturestoreEntityContainerResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -8801,12 +8801,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success"
           },
@@ -8833,6 +8827,12 @@
           },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -8876,16 +8876,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/FeaturestoreEntityContainerResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -8939,12 +8939,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -8966,6 +8960,12 @@
                 "description": "URI to poll for asynchronous operation status.",
                 "type": "string"
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -9086,16 +9086,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/FeaturestoreEntityVersionResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -9148,12 +9148,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success"
           },
@@ -9180,6 +9174,12 @@
           },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -9230,16 +9230,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/FeaturestoreEntityVersionResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -9300,12 +9300,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -9327,6 +9321,12 @@
                 "description": "URI to poll for asynchronous operation status.",
                 "type": "string"
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -9404,16 +9404,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/InferencePoolTrackedResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -9460,14 +9460,8 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
-          "204": {
-            "description": "No Content"
+          "200": {
+            "description": "Success"
           },
           "202": {
             "description": "Accepted",
@@ -9490,8 +9484,14 @@
               }
             }
           },
-          "200": {
-            "description": "Success"
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -9535,16 +9535,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/InferencePoolTrackedResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -9598,12 +9598,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
@@ -9629,6 +9623,12 @@
                 "maximum": 600,
                 "minimum": 10
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -9683,12 +9683,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -9710,6 +9704,12 @@
                 "description": "URI to poll for asynchronous operation status.",
                 "type": "string"
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -9756,16 +9756,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/PoolStatus"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -9818,16 +9818,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/SkuResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -9912,16 +9912,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/InferenceEndpointTrackedResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -9976,14 +9976,8 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
-          "204": {
-            "description": "No Content"
+          "200": {
+            "description": "Success"
           },
           "202": {
             "description": "Accepted",
@@ -10006,8 +10000,14 @@
               }
             }
           },
-          "200": {
-            "description": "Success"
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -10060,16 +10060,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/InferenceEndpointTrackedResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -10131,12 +10131,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
@@ -10162,6 +10156,12 @@
                 "maximum": 600,
                 "minimum": 10
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -10224,12 +10224,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -10251,6 +10245,12 @@
                 "description": "URI to poll for asynchronous operation status.",
                 "type": "string"
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -10336,16 +10336,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/InferenceGroupTrackedResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -10400,14 +10400,8 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
-          "204": {
-            "description": "No Content"
+          "200": {
+            "description": "Success"
           },
           "202": {
             "description": "Accepted",
@@ -10430,8 +10424,14 @@
               }
             }
           },
-          "200": {
-            "description": "Success"
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -10484,16 +10484,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/InferenceGroupTrackedResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -10553,12 +10553,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
@@ -10584,6 +10578,12 @@
                 "maximum": 600,
                 "minimum": 10
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -10646,12 +10646,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -10673,6 +10667,12 @@
                 "description": "URI to poll for asynchronous operation status.",
                 "type": "string"
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -10726,16 +10726,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/GroupStatus"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -10795,16 +10795,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/SkuResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -10909,16 +10909,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/JobBaseResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -10976,12 +10976,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success"
           },
@@ -11008,6 +11002,12 @@
           },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -11051,16 +11051,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/JobBaseResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -11125,16 +11125,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/JobBaseResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -11188,12 +11188,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -11204,6 +11198,12 @@
             "description": "Created",
             "schema": {
               "$ref": "#/definitions/JobBaseResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -11258,11 +11258,8 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
+          "200": {
+            "description": "Success"
           },
           "202": {
             "description": "Accepted",
@@ -11280,8 +11277,11 @@
               }
             }
           },
-          "200": {
-            "description": "Success"
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -11330,16 +11330,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/LabelingJobResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -11385,17 +11385,17 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success"
           },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -11435,16 +11435,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/LabelingJobResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -11498,10 +11498,10 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
+          "200": {
+            "description": "Create or update request is successful.",
             "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+              "$ref": "#/definitions/LabelingJobResource"
             }
           },
           "201": {
@@ -11521,10 +11521,10 @@
               }
             }
           },
-          "200": {
-            "description": "Create or update request is successful.",
+          "default": {
+            "description": "Error",
             "schema": {
-              "$ref": "#/definitions/LabelingJobResource"
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -11583,12 +11583,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
@@ -11609,6 +11603,12 @@
                 "maximum": 600,
                 "minimum": 10
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -11655,16 +11655,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/LabelingJob"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -11707,12 +11707,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
@@ -11733,6 +11727,12 @@
                 "maximum": 600,
                 "minimum": 10
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -11809,16 +11809,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/ModelContainerResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -11864,17 +11864,17 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success"
           },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -11914,16 +11914,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/ModelContainerResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -11977,12 +11977,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -11993,6 +11987,12 @@
             "description": "Created",
             "schema": {
               "$ref": "#/definitions/ModelContainerResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -12121,16 +12121,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/ModelVersionResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -12183,17 +12183,17 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success"
           },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -12240,16 +12240,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/ModelVersionResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -12310,12 +12310,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -12326,6 +12320,12 @@
             "description": "Created",
             "schema": {
               "$ref": "#/definitions/ModelVersionResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -12388,12 +12388,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
@@ -12414,6 +12408,12 @@
                 "maximum": 600,
                 "minimum": 10
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -12597,16 +12597,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/OnlineEndpointTrackedResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -12652,14 +12652,8 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
-          "204": {
-            "description": "No Content"
+          "200": {
+            "description": "Success"
           },
           "202": {
             "description": "Accepted",
@@ -12682,8 +12676,14 @@
               }
             }
           },
-          "200": {
-            "description": "Success"
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -12727,16 +12727,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/OnlineEndpointTrackedResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -12789,12 +12789,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
@@ -12820,6 +12814,12 @@
                 "maximum": 600,
                 "minimum": 10
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -12874,12 +12874,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -12901,6 +12895,12 @@
                 "description": "URI to poll for asynchronous operation status.",
                 "type": "string"
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -12963,16 +12963,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/OnlineDeploymentTrackedResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -13025,17 +13025,8 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success"
-          },
-          "204": {
-            "description": "No Content"
           },
           "202": {
             "description": "Accepted",
@@ -13056,6 +13047,15 @@
                 "maximum": 600,
                 "minimum": 10
               }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -13107,16 +13107,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/OnlineDeploymentTrackedResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -13181,12 +13181,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
@@ -13212,6 +13206,12 @@
                 "maximum": 600,
                 "minimum": 10
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -13277,12 +13277,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -13304,6 +13298,12 @@
                 "description": "URI to poll for asynchronous operation status.",
                 "type": "string"
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -13372,16 +13372,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/DeploymentLogs"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -13441,16 +13441,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/SkuResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -13499,16 +13499,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/EndpointAuthKeys"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -13563,12 +13563,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success"
           },
@@ -13586,6 +13580,12 @@
                 "maximum": 600,
                 "minimum": 10
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -13632,16 +13632,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/EndpointAuthToken"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -13707,16 +13707,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/ScheduleResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -13762,12 +13762,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success"
           },
@@ -13794,6 +13788,12 @@
           },
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -13837,16 +13837,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/ScheduleResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -13900,12 +13900,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -13927,6 +13921,12 @@
                 "description": "URI to poll for asynchronous operation status.",
                 "type": "string"
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -14033,16 +14033,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/ServerlessEndpointTrackedResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -14089,14 +14089,8 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
-          "204": {
-            "description": "No Content"
+          "200": {
+            "description": "Success"
           },
           "202": {
             "description": "Accepted",
@@ -14119,8 +14113,14 @@
               }
             }
           },
-          "200": {
-            "description": "Success"
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
           }
         },
         "x-ms-examples": {
@@ -14164,16 +14164,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/ServerlessEndpointTrackedResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -14227,12 +14227,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
@@ -14258,6 +14252,12 @@
                 "maximum": 600,
                 "minimum": 10
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -14312,12 +14312,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Create or update request is successful.",
             "schema": {
@@ -14339,6 +14333,12 @@
                 "description": "URI to poll for asynchronous operation status.",
                 "type": "string"
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -14439,16 +14439,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/EndpointAuthKeys"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -14504,12 +14504,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
@@ -14530,6 +14524,12 @@
                 "maximum": 600,
                 "minimum": 10
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
