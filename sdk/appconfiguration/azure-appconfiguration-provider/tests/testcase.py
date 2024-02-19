@@ -22,6 +22,8 @@ class AppConfigTestCase(AzureRecordedTestCase):
         secret_resolver=None,
         key_vault_options=None,
         on_refresh_success=None,
+        feature_flag_enabled=False,
+        feature_flag_refresh_enabled=False,
     ):
         cred = self.get_credential(AzureAppConfigurationClient)
         client = AzureAppConfigurationClient(appconfiguration_endpoint_string, cred)
@@ -39,6 +41,8 @@ class AppConfigTestCase(AzureRecordedTestCase):
                 user_agent="SDK/Integration",
                 keyvault_credential=keyvault_cred,
                 on_refresh_success=on_refresh_success,
+                feature_flag_enabled=feature_flag_enabled,
+                feature_flag_refresh_enabled=feature_flag_refresh_enabled,
             )
         if key_vault_options:
             if not key_vault_options.secret_resolver:
@@ -53,6 +57,8 @@ class AppConfigTestCase(AzureRecordedTestCase):
                 user_agent="SDK/Integration",
                 key_vault_options=key_vault_options,
                 on_refresh_success=on_refresh_success,
+                feature_flag_enabled=feature_flag_enabled,
+                feature_flag_refresh_enabled=feature_flag_refresh_enabled,
             )
         return load(
             credential=cred,
@@ -64,6 +70,8 @@ class AppConfigTestCase(AzureRecordedTestCase):
             user_agent="SDK/Integration",
             secret_resolver=secret_resolver,
             on_refresh_success=on_refresh_success,
+            feature_flag_enabled=feature_flag_enabled,
+            feature_flag_refresh_enabled=feature_flag_refresh_enabled,
         )
 
     def create_client(
@@ -77,6 +85,8 @@ class AppConfigTestCase(AzureRecordedTestCase):
         secret_resolver=None,
         key_vault_options=None,
         on_refresh_success=None,
+        feature_flag_enabled=False,
+        feature_flag_refresh_enabled=False,
     ):
         client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
         setup_configs(client, keyvault_secret_url)
@@ -91,6 +101,8 @@ class AppConfigTestCase(AzureRecordedTestCase):
                 user_agent="SDK/Integration",
                 keyvault_credential=self.get_credential(AzureAppConfigurationClient),
                 on_refresh_success=on_refresh_success,
+                feature_flag_enabled=feature_flag_enabled,
+                feature_flag_refresh_enabled=feature_flag_refresh_enabled,
             )
         if key_vault_options:
             if not key_vault_options.secret_resolver:
@@ -106,6 +118,8 @@ class AppConfigTestCase(AzureRecordedTestCase):
                 user_agent="SDK/Integration",
                 key_vault_options=key_vault_options,
                 on_refresh_success=on_refresh_success,
+                feature_flag_enabled=feature_flag_enabled,
+                feature_flag_refresh_enabled=feature_flag_refresh_enabled,
             )
         return load(
             connection_string=appconfiguration_connection_string,
@@ -116,6 +130,8 @@ class AppConfigTestCase(AzureRecordedTestCase):
             user_agent="SDK/Integration",
             secret_resolver=secret_resolver,
             on_refresh_success=on_refresh_success,
+            feature_flag_enabled=feature_flag_enabled,
+            feature_flag_refresh_enabled=feature_flag_refresh_enabled,
         )
 
 
@@ -167,3 +183,10 @@ def create_feature_flag_config_setting(key, label, enabled):
         label=label,
         enabled=enabled,
     )
+
+
+def has_feature_flag(client, feature_id, enabled=False):
+    for feature_flag in client["FeatureManagement"]["FeatureFlags"]:
+        if feature_flag["id"] == feature_id:
+            return feature_flag["enabled"] == enabled
+    return False

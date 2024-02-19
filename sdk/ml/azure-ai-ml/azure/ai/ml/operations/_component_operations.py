@@ -112,7 +112,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
     @property
     def _code_operations(self) -> CodeOperations:
-        res: CodeOperations = self._all_operations.get_operation(
+        res: CodeOperations = self._all_operations.get_operation(  # type: ignore[misc]
             AzureMLResourceType.CODE, lambda x: isinstance(x, CodeOperations)
         )
         return res
@@ -121,7 +121,7 @@ class ComponentOperations(_ScopeDependentOperations):
     def _environment_operations(self) -> EnvironmentOperations:
         return cast(
             EnvironmentOperations,
-            self._all_operations.get_operation(
+            self._all_operations.get_operation(  # type: ignore[misc]
                 AzureMLResourceType.ENVIRONMENT,
                 lambda x: isinstance(x, EnvironmentOperations),
             ),
@@ -131,7 +131,7 @@ class ComponentOperations(_ScopeDependentOperations):
     def _workspace_operations(self) -> WorkspaceOperations:
         return cast(
             WorkspaceOperations,
-            self._all_operations.get_operation(
+            self._all_operations.get_operation(  # type: ignore[misc]
                 AzureMLResourceType.WORKSPACE,
                 lambda x: isinstance(x, WorkspaceOperations),
             ),
@@ -141,7 +141,9 @@ class ComponentOperations(_ScopeDependentOperations):
     def _job_operations(self) -> Any:
         from ._job_operations import JobOperations
 
-        return self._all_operations.get_operation(AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations))
+        return self._all_operations.get_operation(  # type: ignore[misc]
+            AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations)
+        )
 
     @monitor_with_activity(logger, "Component.List", ActivityType.PUBLICAPI)
     def list(
@@ -288,6 +290,7 @@ class ComponentOperations(_ScopeDependentOperations):
     def _localize_environment(self, component: Component, base_dir: Path) -> None:
         from azure.ai.ml.entities import ParallelComponent
 
+        parent: Any = None
         if hasattr(component, "environment"):
             parent = component
         elif isinstance(component, ParallelComponent):
@@ -435,7 +438,7 @@ class ComponentOperations(_ScopeDependentOperations):
                 overwrite=True,
             )
         # resolve location for diagnostics from remote validation
-        result.resolve_location_for_diagnostics(component._source_path)
+        result.resolve_location_for_diagnostics(component._source_path)  # type: ignore
         return component._try_raise(  # pylint: disable=protected-access
             result,
             raise_error=raise_on_failure,
@@ -453,9 +456,7 @@ class ComponentOperations(_ScopeDependentOperations):
         # remove port number and append flow file name to get full uri for flow.dag.yaml
         component_spec["flow_definition_uri"] = f"{re.sub(r':[0-9]+/', '/', created_code.path)}/{flow_file_name}"
 
-    def _reset_version_if_no_change(
-        self, component: Component, current_name: str, current_version: str
-    ) -> Tuple[str, ComponentVersion]:
+    def _reset_version_if_no_change(self, component: Component, current_name: str, current_version: str) -> Tuple:
         """Reset component version to default version if there's no change in the component.
 
         :param component: The component object
@@ -549,7 +550,7 @@ class ComponentOperations(_ScopeDependentOperations):
     )
     def create_or_update(
         self,
-        component: Union[Component, types.FunctionType],
+        component: Component,
         version: Optional[str] = None,
         *,
         skip_validation: bool = False,
@@ -820,7 +821,7 @@ class ComponentOperations(_ScopeDependentOperations):
             _try_resolve_code_for_component(component=component, resolver=resolver)
             # resolve component's environment
             self._try_resolve_environment_for_component(
-                component=component,
+                component=component,  # type: ignore
                 resolver=resolver,
                 _="",
             )
@@ -1224,4 +1225,4 @@ def _try_resolve_code_for_component(component: Component, resolver: _AssetResolv
                 code = component._get_origin_code_value()
             if code is None:
                 return
-            component._fill_back_code_value(resolver(code, azureml_type=AzureMLResourceType.CODE))
+            component._fill_back_code_value(resolver(code, azureml_type=AzureMLResourceType.CODE))  # type: ignore

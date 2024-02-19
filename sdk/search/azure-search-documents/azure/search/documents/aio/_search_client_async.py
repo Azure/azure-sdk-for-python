@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import cast, List, Union, Any, Optional, Dict
 
+from azure.core.rest import HttpRequest, AsyncHttpResponse
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -295,6 +296,7 @@ class SearchClient(HeadersMixin):
              vector search is performed. Default is 'preFilter'. Known values are: "postFilter" and "preFilter".
         :paramtype vector_filter_mode: str or VectorFilterMode
         :return: A list of documents (dicts) matching the specified search criteria.
+        :return: List of search results.
         :rtype:  AsyncSearchItemPaged[dict]
 
         .. admonition:: Example:
@@ -426,7 +428,7 @@ class SearchClient(HeadersMixin):
             included in the results.
         :keyword int top: The number of suggestions to retrieve. The value must be a number between 1 and
             100. The default is 5.
-        :return: List of documents.
+        :return: List of suggestion results.
         :rtype:  list[dict]
 
         .. admonition:: Example:
@@ -471,6 +473,7 @@ class SearchClient(HeadersMixin):
         suggester_name: str,
         *,
         mode: Optional[Union[str, AutocompleteMode]] = None,
+        filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
         highlight_post_tag: Optional[str] = None,
         highlight_pre_tag: Optional[str] = None,
@@ -507,6 +510,7 @@ class SearchClient(HeadersMixin):
             terms. Target fields must be included in the specified suggester.
         :keyword int top: The number of auto-completed terms to retrieve. This must be a value between 1 and
             100. The default is 5.
+        :return: List of auto-completion results.
         :rtype:  list[Dict]
 
         .. admonition:: Example:
@@ -519,7 +523,7 @@ class SearchClient(HeadersMixin):
                 :caption: Get a auto-completions.
         """
         autocomplete_mode = mode
-        filter_arg = kwargs.pop("filter", None)
+        filter_arg = filter
         search_fields_str = ",".join(search_fields) if search_fields else None
         query = AutocompleteQuery(
             search_text=search_text,
@@ -703,3 +707,16 @@ class SearchClient(HeadersMixin):
 
     async def __aexit__(self, *args) -> None:
         await self._client.__aexit__(*args)
+
+    @distributed_trace_async
+    async def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs) -> AsyncHttpResponse:
+        """Runs a network request using the client's existing pipeline.
+
+        :param request: The network request you want to make.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.AsyncHttpResponse
+        """
+        request.headers = self._merge_client_headers(request.headers)
+        return await self._client._send_request(request, stream=stream, **kwargs)  # pylint:disable=protected-access

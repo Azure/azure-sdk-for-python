@@ -217,7 +217,7 @@ def build_create_or_update_request_initial(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]{2,32}$'),
-        "name": _SERIALIZER.url("name", name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,254}$'),
+        "name": _SERIALIZER.url("name", name, 'str', pattern=r'^[a-zA-Z][a-zA-Z0-9-]{0,51}$'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)

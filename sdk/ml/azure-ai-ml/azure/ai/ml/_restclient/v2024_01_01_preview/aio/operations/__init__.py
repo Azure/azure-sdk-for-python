@@ -17,6 +17,8 @@ from ._compute_operations import ComputeOperations
 from ._data_containers_operations import DataContainersOperations
 from ._data_versions_operations import DataVersionsOperations
 from ._datastores_operations import DatastoresOperations
+from ._endpoint_deployment_operations import EndpointDeploymentOperations
+from ._endpoint_operations import EndpointOperations
 from ._environment_containers_operations import EnvironmentContainersOperations
 from ._environment_versions_operations import EnvironmentVersionsOperations
 from ._features_operations import FeaturesOperations
@@ -29,10 +31,16 @@ from ._inference_groups_operations import InferenceGroupsOperations
 from ._inference_pools_operations import InferencePoolsOperations
 from ._jobs_operations import JobsOperations
 from ._labeling_jobs_operations import LabelingJobsOperations
+from ._managed_network_provisions_operations import ManagedNetworkProvisionsOperations
+from ._managed_network_settings_rule_operations import ManagedNetworkSettingsRuleOperations
+from ._marketplace_subscriptions_operations import MarketplaceSubscriptionsOperations
 from ._model_containers_operations import ModelContainersOperations
 from ._model_versions_operations import ModelVersionsOperations
 from ._online_deployments_operations import OnlineDeploymentsOperations
 from ._online_endpoints_operations import OnlineEndpointsOperations
+from ._operations import Operations
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._quotas_operations import QuotasOperations
 from ._registries_operations import RegistriesOperations
 from ._registry_code_containers_operations import RegistryCodeContainersOperations
@@ -50,7 +58,9 @@ from ._schedules_operations import SchedulesOperations
 from ._serverless_endpoints_operations import ServerlessEndpointsOperations
 from ._usages_operations import UsagesOperations
 from ._virtual_machine_sizes_operations import VirtualMachineSizesOperations
+from ._workspace_connections_operations import WorkspaceConnectionsOperations
 from ._workspace_features_operations import WorkspaceFeaturesOperations
+from ._workspaces_operations import WorkspacesOperations
 
 __all__ = [
     'UsagesOperations',
@@ -69,6 +79,7 @@ __all__ = [
     'RegistryDataReferencesOperations',
     'RegistryEnvironmentContainersOperations',
     'RegistryEnvironmentVersionsOperations',
+    'MarketplaceSubscriptionsOperations',
     'RegistryModelContainersOperations',
     'RegistryModelVersionsOperations',
     'BatchEndpointsOperations',
@@ -98,4 +109,13 @@ __all__ = [
     'OnlineDeploymentsOperations',
     'SchedulesOperations',
     'ServerlessEndpointsOperations',
+    'Operations',
+    'WorkspacesOperations',
+    'WorkspaceConnectionsOperations',
+    'EndpointDeploymentOperations',
+    'EndpointOperations',
+    'ManagedNetworkSettingsRuleOperations',
+    'PrivateEndpointConnectionsOperations',
+    'PrivateLinkResourcesOperations',
+    'ManagedNetworkProvisionsOperations',
 ]

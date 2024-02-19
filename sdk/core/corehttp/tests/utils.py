@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------
 import pytest
 import types
+import io
 
 ############################## LISTS USED TO PARAMETERIZE TESTS ##############################
 from corehttp.rest import HttpRequest
@@ -119,3 +120,9 @@ def readonly_checks(response):
         if attr == "encoding":
             # encoding is the only settable new attr
             continue
+
+
+class NamedIo(io.BytesIO):
+    def __init__(self, name: str, *args, **kwargs):
+        super(NamedIo, self).__init__(*args, **kwargs)
+        self.name = name

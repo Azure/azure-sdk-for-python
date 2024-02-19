@@ -3,9 +3,9 @@
 # ---------------------------------------------------------
 # pylint: disable=protected-access
 from datetime import datetime, timezone
-from typing import Any, Iterable, List, Tuple, cast
+from typing import Any, Iterable, List, Optional, Tuple, cast
 
-from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient010124Preview
+from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -68,7 +68,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client_01_2024_preview: ServiceClient010124Preview,
+        service_client_01_2024_preview: ServiceClient012024Preview,
         all_operations: OperationsContainer,
         credential: TokenCredential,
         **kwargs: Any,
@@ -95,14 +95,16 @@ class ScheduleOperations(_ScopeDependentOperations):
     def _job_operations(self) -> JobOperations:
         return cast(
             JobOperations,
-            self._all_operations.get_operation(AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations)),
+            self._all_operations.get_operation(  # type: ignore[misc]
+                AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations)
+            ),
         )
 
     @property
     def _online_deployment_operations(self) -> OnlineDeploymentOperations:
         return cast(
             OnlineDeploymentOperations,
-            self._all_operations.get_operation(
+            self._all_operations.get_operation(  # type: ignore[misc]
                 AzureMLResourceType.ONLINE_DEPLOYMENT, lambda x: isinstance(x, OnlineDeploymentOperations)
             ),
         )
@@ -111,7 +113,9 @@ class ScheduleOperations(_ScopeDependentOperations):
     def _data_operations(self) -> DataOperations:
         return cast(
             DataOperations,
-            self._all_operations.get_operation(AzureMLResourceType.DATA, lambda x: isinstance(x, DataOperations)),
+            self._all_operations.get_operation(  # type: ignore[misc]
+                AzureMLResourceType.DATA, lambda x: isinstance(x, DataOperations)
+            ),
         )
 
     @distributed_trace
@@ -152,7 +156,7 @@ class ScheduleOperations(_ScopeDependentOperations):
             ),
         )
 
-    def _get_polling(self, name: str) -> AzureMLPolling:
+    def _get_polling(self, name: Optional[str]) -> AzureMLPolling:
         """Return the polling with custom poll interval.
 
         :param name: The schedule name
@@ -347,7 +351,7 @@ class ScheduleOperations(_ScopeDependentOperations):
             if mdc_output_enabled_str and mdc_output_enabled_str.lower() == "true":
                 mdc_output_enabled = True
         elif target and target.model_id:
-            target.model_id = self._orchestrators.get_asset_arm_id(
+            target.model_id = self._orchestrators.get_asset_arm_id(  # type: ignore
                 target.model_id,
                 AzureMLResourceType.MODEL,
                 register_asset=False,
@@ -368,7 +372,7 @@ class ScheduleOperations(_ScopeDependentOperations):
                     error_category=ErrorCategory.USER_ERROR,
                 )
         # resolve ARM id for each signal and populate any defaults if needed
-        for signal_name, signal in schedule.create_monitor.monitoring_signals.items():
+        for signal_name, signal in schedule.create_monitor.monitoring_signals.items():  # type: ignore
             if signal.type == MonitorSignalType.GENERATION_SAFETY_QUALITY:
                 for llm_data in signal.production_data:
                     self._job_operations._resolve_job_input(llm_data.input_data, schedule._base_path)
@@ -378,6 +382,9 @@ class ScheduleOperations(_ScopeDependentOperations):
                     for inputs in signal.inputs.values():
                         self._job_operations._resolve_job_input(inputs, schedule._base_path)
                 for data in signal.input_data.values():
+                    if data.input_data is not None:
+                        for inputs in data.input_data.values():
+                            self._job_operations._resolve_job_input(inputs, schedule._base_path)
                     data.pre_processing_component = self._orchestrators.get_asset_arm_id(
                         asset=data.pre_processing_component if hasattr(data, "pre_processing_component") else None,
                         azureml_type=AzureMLResourceType.COMPONENT,
@@ -409,7 +416,7 @@ class ScheduleOperations(_ScopeDependentOperations):
                                 ),
                                 data_context=MonitorDatasetContext.MODEL_INPUTS,
                                 data_window=BaselineDataRange(
-                                    lookback_window_size="P7D", lookback_window_offset="default"
+                                    lookback_window_size="default", lookback_window_offset="default"
                                 ),
                             )
                     elif not mdc_input_enabled and not (signal.production_data and signal.reference_data):
@@ -444,7 +451,7 @@ class ScheduleOperations(_ScopeDependentOperations):
                                 ),
                                 data_context=MonitorDatasetContext.MODEL_OUTPUTS,
                                 data_window=BaselineDataRange(
-                                    lookback_window_size="P7D", lookback_window_offset="default"
+                                    lookback_window_size="default", lookback_window_offset="default"
                                 ),
                             )
                     elif not mdc_output_enabled and not (signal.production_data and signal.reference_data):
@@ -528,8 +535,8 @@ class ScheduleOperations(_ScopeDependentOperations):
 
     def _process_and_get_endpoint_deployment_names_from_id(self, target: MonitoringTarget) -> Tuple:
         target.endpoint_deployment_id = (
-            target.endpoint_deployment_id[len(ARM_ID_PREFIX) :]
-            if target.endpoint_deployment_id.startswith(ARM_ID_PREFIX)
+            target.endpoint_deployment_id[len(ARM_ID_PREFIX) :]  # type: ignore
+            if target.endpoint_deployment_id is not None and target.endpoint_deployment_id.startswith(ARM_ID_PREFIX)
             else target.endpoint_deployment_id
         )
 
@@ -539,7 +546,7 @@ class ScheduleOperations(_ScopeDependentOperations):
             snake_to_camel(AzureMLResourceType.ONLINE_ENDPOINT),
             AzureMLResourceType.DEPLOYMENT,
         ):
-            endpoint_name, deployment_name = target.endpoint_deployment_id.split(":")
+            endpoint_name, deployment_name = target.endpoint_deployment_id.split(":")  # type: ignore
             target.endpoint_deployment_id = NAMED_RESOURCE_ID_FORMAT_WITH_PARENT.format(
                 self._subscription_id,
                 self._resource_group_name,

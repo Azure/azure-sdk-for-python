@@ -42,7 +42,7 @@ class TriggerBase(RestTranslatableMixin, ABC):
         type: str,  # pylint: disable=redefined-builtin
         start_time: Optional[Union[str, datetime]] = None,
         end_time: Optional[Union[str, datetime]] = None,
-        time_zone: TimeZone = TimeZone.UTC,
+        time_zone: Union[str, TimeZone] = TimeZone.UTC,
     ) -> None:
         super().__init__()
         self.type = type
@@ -64,14 +64,14 @@ class RecurrencePattern(RestTranslatableMixin):
     """Recurrence pattern for a job schedule.
 
     :keyword hours: The number of hours for the recurrence schedule pattern.
-    :paramtype hours: Union[int, list[int]]
+    :paramtype hours: Union[int, List[int]]
     :keyword minutes: The number of minutes for the recurrence schedule pattern.
-    :paramtype minutes: Union[int, list[int]]
+    :paramtype minutes: Union[int, List[int]]
     :keyword week_days: A list of days of the week for the recurrence schedule pattern.
         Acceptable values include: "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"
-    :type week_days: Optional[Union[str, list[str]]]
+    :type week_days: Optional[Union[str, List[str]]]
     :keyword month_days: A list of days of the month for the recurrence schedule pattern.
-    :paramtype month_days: Optional[Union[int, list[int]]]
+    :paramtype month_days: Optional[Union[int, List[int]]]
 
     .. admonition:: Example:
 

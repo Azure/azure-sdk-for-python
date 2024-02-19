@@ -6,7 +6,7 @@ import logging
 import typing
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Optional, Union
+from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Union
 
 from typing_extensions import Literal
 
@@ -63,23 +63,23 @@ class Schedule(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, Resource)
         self,
         *,
         name: str,
-        trigger: Union[CronTrigger, RecurrenceTrigger],
+        trigger: Optional[Union[CronTrigger, RecurrenceTrigger]],
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         is_enabled = kwargs.pop("is_enabled", None)
         provisioning_state = kwargs.pop("provisioning_state", None)
         super().__init__(name=name, description=description, tags=tags, properties=properties, **kwargs)
         self.trigger = trigger
         self.display_name = display_name
-        self._is_enabled = is_enabled
-        self._provisioning_state = provisioning_state
-        self._type = None
+        self._is_enabled: bool = is_enabled
+        self._provisioning_state: str = provisioning_state
+        self._type: Any = None
 
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
         """Dump the schedule content into a file in YAML format.
 
         :param dest: The local path or file stream to write the YAML content to.
@@ -96,7 +96,7 @@ class Schedule(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, Resource)
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     @classmethod
-    def _create_validation_error(cls, message: str, no_personal_data_message: str):
+    def _create_validation_error(cls, message: str, no_personal_data_message: str) -> ValidationException:
         return ValidationException(
             message=message,
             no_personal_data_message=no_personal_data_message,
@@ -104,7 +104,9 @@ class Schedule(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, Resource)
         )
 
     @classmethod
-    def _resolve_cls_and_type(cls, data, params_override):  # pylint: disable=unused-argument
+    def _resolve_cls_and_type(
+        cls, data: Dict, params_override: Optional[List[Dict]] = None
+    ) -> Tuple:  # pylint: disable=unused-argument
         from azure.ai.ml.entities._data_import.schedule import ImportDataSchedule
         from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
 
@@ -115,13 +117,13 @@ class Schedule(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, Resource)
         return JobSchedule, None
 
     @property
-    def create_job(self) -> None:  # pylint: disable=useless-return
+    def create_job(self) -> Any:  # pylint: disable=useless-return
         module_logger.warning("create_job is not a valid property of %s", str(type(self)))
         # return None here just to be explicit
         return None
 
     @create_job.setter
-    def create_job(self, value) -> None:  # pylint: disable=unused-argument
+    def create_job(self, value: Any) -> None:  # pylint: disable=unused-argument
         module_logger.warning("create_job is not a valid property of %s", str(type(self)))
 
     @property
@@ -144,7 +146,7 @@ class Schedule(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, Resource)
         return self._provisioning_state
 
     @property
-    def type(self) -> str:
+    def type(self) -> Optional[str]:
         """The schedule type. Accepted values are 'job' and 'monitor'.
 
         :return: The schedule type.
@@ -153,7 +155,8 @@ class Schedule(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, Resource)
         return self._type
 
     def _to_dict(self) -> Dict:
-        return self._dump_for_validation()
+        res: dict = self._dump_for_validation()
+        return res
 
     @classmethod
     def _from_rest_object(cls, obj: RestSchedule) -> "Schedule":
@@ -163,9 +166,11 @@ class Schedule(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, Resource)
         if obj.properties.action.action_type == RestScheduleActionType.CREATE_JOB:
             return JobSchedule._from_rest_object(obj)
         if obj.properties.action.action_type == RestScheduleActionType.CREATE_MONITOR:
-            return MonitorSchedule._from_rest_object(obj)
+            res_monitor_schedule: Schedule = MonitorSchedule._from_rest_object(obj)
+            return res_monitor_schedule
         if obj.properties.action.action_type == RestScheduleActionType.IMPORT_DATA:
-            return ImportDataSchedule._from_rest_object(obj)
+            res_data_schedule: Schedule = ImportDataSchedule._from_rest_object(obj)
+            return res_data_schedule
         msg = f"Unsupported schedule type {obj.properties.action.action_type}"
         raise ScheduleException(
             message=msg,
@@ -207,13 +212,13 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         self,
         *,
         name: str,
-        trigger: Union[CronTrigger, RecurrenceTrigger],
+        trigger: Optional[Union[CronTrigger, RecurrenceTrigger]],
         create_job: Union[Job, str],
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         super().__init__(
             name=name,
@@ -251,7 +256,7 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "JobSchedule":
         data = data or {}
         params_override = params_override or []
@@ -270,7 +275,7 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "JobSchedule":
         """
         Load job schedule from rest object dict.
@@ -338,13 +343,12 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         schedule = JobSchedule(
             base_path=context[BASE_PATH_CONTEXT_KEY],
             **load_from_dict(JobScheduleSchema, data, context, **kwargs),
-            **{create_job_key: None},
         )
         schedule.create_job = create_job
         return schedule
 
     @classmethod
-    def _create_schema_for_validation(cls, context):
+    def _create_schema_for_validation(cls, context: Any) -> JobScheduleSchema:
         return JobScheduleSchema(context=context)
 
     def _customized_validate(self) -> MutableValidationResult:
@@ -447,18 +451,20 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
                 action=JobScheduleAction(job_definition=job_definition),
                 display_name=self.display_name,
                 is_enabled=self._is_enabled,
-                trigger=self.trigger._to_rest_object(),
+                trigger=self.trigger._to_rest_object() if self.trigger is not None else None,
             )
         )
 
-    def __str__(self):
+    def __str__(self) -> str:
         try:
-            return self._to_yaml()
+            res_yaml: str = self._to_yaml()
+            return res_yaml
         except BaseException:  # pylint: disable=broad-except
-            return super(JobSchedule, self).__str__()
+            res_jobSchedule: str = super(JobSchedule, self).__str__()
+            return res_jobSchedule
 
     # pylint: disable-next=docstring-missing-param
-    def _get_telemetry_values(self, *args, **kwargs) -> Dict[Literal["trigger_type"], str]:
+    def _get_telemetry_values(self, *args: Any, **kwargs: Any) -> Dict[Literal["trigger_type"], str]:
         """Return the telemetry values of schedule.
 
         :return: A dictionary with telemetry values

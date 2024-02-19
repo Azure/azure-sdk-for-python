@@ -7,7 +7,7 @@ from functools import wraps
 
 from ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
-from subprocess import check_call
+from subprocess import check_output, CalledProcessError, check_call
 from typing import Dict, Any
 from glob import glob
 import yaml
@@ -385,7 +385,11 @@ def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, r
     typespec_python = "@azure-tools/typespec-python"
 
     # call scirpt to generate sdk
-    check_call(f'pwsh {Path("eng/common/scripts/TypeSpec-Project-Process.ps1")} {(Path(spec_folder) / typespec_relative_path).resolve()} {head_sha} {rest_repo_url}', shell=True)
+    try:
+        check_output(f'pwsh {Path("eng/common/scripts/TypeSpec-Project-Process.ps1")} {(Path(spec_folder) / typespec_relative_path).resolve()} {head_sha} {rest_repo_url}', shell=True)
+    except CalledProcessError as e:
+        _LOGGER.error(f"Failed to generate sdk from typespec: {e.output.decode('utf-8')}")
+        raise e
 
     # get version of codegen used in generation
     with open(Path("eng/emitter-package.json"), "r") as file_in:

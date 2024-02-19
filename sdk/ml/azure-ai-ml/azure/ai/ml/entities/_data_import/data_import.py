@@ -6,15 +6,16 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import Dict, Optional, Union
-from azure.ai.ml._restclient.v2023_06_01_preview.models import DataImport as RestDataImport
+from typing import Any, Dict, Optional, Union
+
 from azure.ai.ml._restclient.v2023_06_01_preview.models import DatabaseSource as RestDatabaseSource
+from azure.ai.ml._restclient.v2023_06_01_preview.models import DataImport as RestDataImport
 from azure.ai.ml._restclient.v2023_06_01_preview.models import FileSystemSource as RestFileSystemSource
 from azure.ai.ml._schema import DataImportSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, AssetTypes
-from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.data_transfer import Database, FileSystem
+from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.entities._util import load_from_dict
 
 
@@ -50,7 +51,7 @@ class DataImport(Data):
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         super().__init__(
             name=name,
@@ -69,7 +70,7 @@ class DataImport(Data):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "DataImport":
         data = data or {}
         params_override = params_override or []
@@ -77,7 +78,8 @@ class DataImport(Data):
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        return load_from_dict(DataImportSchema, data, context, **kwargs)
+        res: DataImport = load_from_dict(DataImportSchema, data, context, **kwargs)
+        return res
 
     def _to_rest_object(self) -> RestDataImport:
         if isinstance(self.source, Database):
@@ -103,6 +105,7 @@ class DataImport(Data):
 
     @classmethod
     def _from_rest_object(cls, data_rest_object: RestDataImport) -> "DataImport":
+        source: Any = None
         if isinstance(data_rest_object.source, RestDatabaseSource):
             source = Database(
                 connection=data_rest_object.source.connection,

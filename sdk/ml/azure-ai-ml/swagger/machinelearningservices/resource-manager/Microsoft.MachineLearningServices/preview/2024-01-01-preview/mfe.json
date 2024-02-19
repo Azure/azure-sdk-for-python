@@ -14,6 +14,7 @@
         "tags": [
           "CapacityReservationGroup"
         ],
+        "summary": "List CapacityReservationGroups by subscription",
         "operationId": "CapacityReservationGroups_ListBySubscription",
         "produces": [
           "application/json"
@@ -58,6 +59,7 @@
         "tags": [
           "CapacityReservationGroup"
         ],
+        "summary": "Lists CapacityReservationGroups",
         "operationId": "CapacityReservationGroups_List",
         "produces": [
           "application/json"
@@ -105,6 +107,7 @@
         "tags": [
           "CapacityReservationGroup"
         ],
+        "summary": "Delete CapacityReservationGroup",
         "operationId": "CapacityReservationGroups_Delete",
         "produces": [
           "application/json"
@@ -119,6 +122,7 @@
           {
             "in": "path",
             "name": "groupId",
+            "description": "Group ID",
             "required": true,
             "type": "string",
             "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]{0,254}$"
@@ -151,6 +155,7 @@
         "tags": [
           "CapacityReservationGroup"
         ],
+        "summary": "Get CapacityReservationGroup",
         "operationId": "CapacityReservationGroups_Get",
         "produces": [
           "application/json"
@@ -165,6 +170,7 @@
           {
             "in": "path",
             "name": "groupId",
+            "description": "Group ID",
             "required": true,
             "type": "string",
             "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]{0,254}$"
@@ -197,6 +203,7 @@
         "tags": [
           "CapacityReservationGroup"
         ],
+        "summary": "Update CapacityReservationGroup",
         "operationId": "CapacityReservationGroups_Update",
         "consumes": [
           "application/json"
@@ -214,6 +221,7 @@
           {
             "in": "path",
             "name": "groupId",
+            "description": "Group ID",
             "required": true,
             "type": "string",
             "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]{0,254}$"
@@ -224,6 +232,7 @@
           {
             "in": "body",
             "name": "body",
+            "description": "Capacity Reservation Group payload to update",
             "required": true,
             "schema": {
               "$ref": "#/definitions/PartialMinimalTrackedResourceWithSkuAndIdentity"
@@ -254,6 +263,7 @@
         "tags": [
           "CapacityReservationGroup"
         ],
+        "summary": "Create or update CapacityReservationGroup",
         "operationId": "CapacityReservationGroups_CreateOrUpdate",
         "consumes": [
           "application/json"
@@ -271,6 +281,7 @@
           {
             "in": "path",
             "name": "groupId",
+            "description": "Group ID",
             "required": true,
             "type": "string",
             "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]{0,254}$"
@@ -281,6 +292,7 @@
           {
             "in": "body",
             "name": "body",
+            "description": "Capacity Reservation Group payload to create",
             "required": true,
             "schema": {
               "$ref": "#/definitions/CapacityReservationGroupTrackedResource"
@@ -2280,16 +2292,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/GetBlobReferenceSASResponseDto"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -2922,6 +2934,266 @@
         "x-ms-examples": {
           "CreateOrUpdate Registry Environment Version.": {
             "$ref": "./examples/Registry/EnvironmentVersion/createOrUpdate.json"
+          }
+        },
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "original-uri"
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/marketplaceSubscriptions": {
+      "get": {
+        "tags": [
+          "MarketplaceSubscription"
+        ],
+        "summary": "List containers.",
+        "operationId": "MarketplaceSubscriptions_List",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/PaginationParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/MarketplaceSubscriptionResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "List Workspace Marketplace Subscription.": {
+            "$ref": "./examples/Workspace/MarketplaceSubscription/list.json"
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink"
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/marketplaceSubscriptions/{name}": {
+      "delete": {
+        "tags": [
+          "MarketplaceSubscription"
+        ],
+        "summary": "Delete Marketplace Subscription (asynchronous).",
+        "operationId": "MarketplaceSubscriptions_Delete",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "description": "Marketplace Subscription name.",
+            "required": true,
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]{0,254}$"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "headers": {
+              "x-ms-async-operation-timeout": {
+                "description": "Timeout for the client to use when polling the asynchronous operation.",
+                "type": "string",
+                "format": "duration"
+              },
+              "Location": {
+                "description": "URI to poll for asynchronous operation result.",
+                "type": "string"
+              },
+              "Retry-After": {
+                "description": "Duration the client should wait between requests, in seconds.",
+                "type": "integer",
+                "format": "int32",
+                "maximum": 600,
+                "minimum": 10
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Delete Workspace Marketplace Subscription.": {
+            "$ref": "./examples/Workspace/MarketplaceSubscription/delete.json"
+          }
+        },
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
+      },
+      "get": {
+        "tags": [
+          "MarketplaceSubscription"
+        ],
+        "summary": "Get container.",
+        "operationId": "MarketplaceSubscriptions_Get",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "description": "Container name.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/MarketplaceSubscriptionResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Get Workspace Marketplace Subscription.": {
+            "$ref": "./examples/Workspace/MarketplaceSubscription/get.json"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "MarketplaceSubscription"
+        ],
+        "summary": "Create or update Marketplace Subscription (asynchronous).",
+        "operationId": "MarketplaceSubscriptions_CreateOrUpdate",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "description": "Marketplace Subscription name.",
+            "required": true,
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]{0,254}$"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Marketplace Subscription entity to apply during operation.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/MarketplaceSubscriptionResource"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Create or update request is successful.",
+            "schema": {
+              "$ref": "#/definitions/MarketplaceSubscriptionResource"
+            }
+          },
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/MarketplaceSubscriptionResource"
+            },
+            "headers": {
+              "x-ms-async-operation-timeout": {
+                "description": "Timeout for the client to use when polling the asynchronous operation.",
+                "type": "string",
+                "format": "duration"
+              },
+              "Azure-AsyncOperation": {
+                "description": "URI to poll for asynchronous operation status.",
+                "type": "string"
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "CreateOrUpdate Workspace Marketplace Subscription.": {
+            "$ref": "./examples/Workspace/MarketplaceSubscription/createOrUpdate.json"
           }
         },
         "x-ms-long-running-operation": true,
@@ -5093,12 +5365,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "202": {
             "description": "Accepted",
             "headers": {
@@ -5113,6 +5379,12 @@
                 "maximum": 600,
                 "minimum": 10
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -5794,12 +6066,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "202": {
             "description": "Accepted",
             "headers": {
@@ -5814,6 +6080,12 @@
                 "maximum": 600,
                 "minimum": 10
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -6430,12 +6702,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "202": {
             "description": "Accepted",
             "headers": {
@@ -6450,6 +6716,12 @@
                 "maximum": 600,
                 "minimum": 10
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -7393,12 +7665,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "202": {
             "description": "Accepted",
             "headers": {
@@ -7413,6 +7679,12 @@
                 "maximum": 600,
                 "minimum": 10
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -10657,6 +10929,9 @@
           "List AutoML Job.": {
             "$ref": "./examples/Job/AutoMLJob/list.json"
           },
+          "List FineTuning Job.": {
+            "$ref": "./examples/Job/FineTuningJob/list.json"
+          },
           "List Sweep Job.": {
             "$ref": "./examples/Job/SweepJob/list.json"
           },
@@ -10795,6 +11070,9 @@
           },
           "Get AutoML Job.": {
             "$ref": "./examples/Job/AutoMLJob/get.json"
+          },
+          "Get FineTuning Job.": {
+            "$ref": "./examples/Job/FineTuningJob/get.json"
           },
           "Get Sweep Job.": {
             "$ref": "./examples/Job/SweepJob/get.json"
@@ -10935,6 +11213,9 @@
           },
           "CreateOrUpdate AutoML Job.": {
             "$ref": "./examples/Job/AutoMLJob/createOrUpdate.json"
+          },
+          "CreateOrUpdate FineTuning Job.": {
+            "$ref": "./examples/Job/FineTuningJob/createOrUpdate.json"
           },
           "CreateOrUpdate Sweep Job.": {
             "$ref": "./examples/Job/SweepJob/createOrUpdate.json"
@@ -12198,12 +12479,6 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "202": {
             "description": "Accepted",
             "headers": {
@@ -12218,6 +12493,12 @@
                 "maximum": 600,
                 "minimum": 10
               }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -13704,16 +13985,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/TriggerRunSubmissionDto"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -14015,7 +14296,7 @@
             "description": "Serverless Endpoint name.",
             "required": true,
             "type": "string",
-            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]{0,254}$"
+            "pattern": "^[a-zA-Z][a-zA-Z0-9-]{0,51}$"
           },
           {
             "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
@@ -14105,16 +14386,16 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/ServerlessEndpointStatus"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
             }
           }
         },
@@ -15158,6 +15439,51 @@
         }
       },
       "x-ms-discriminator-value": "AzureMLOnline",
+      "additionalProperties": false
+    },
+    "AzureOpenAiFineTuning": {
+      "required": [
+        "modelProvider"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/FineTuningVertical"
+        }
+      ],
+      "properties": {
+        "hyperParameters": {
+          "description": "HyperParameters for fine tuning Azure Open AI model.",
+          "$ref": "#/definitions/AzureOpenAiHyperParameters",
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "AzureOpenAI",
+      "additionalProperties": false
+    },
+    "AzureOpenAiHyperParameters": {
+      "description": "Azure Open AI hyperparameters for fine tuning.",
+      "type": "object",
+      "properties": {
+        "batchSize": {
+          "format": "int32",
+          "description": "Number of examples in each batch. A larger batch size means that model parameters are updated less frequently, but with lower variance.",
+          "type": "integer",
+          "x-nullable": true
+        },
+        "learningRateMultiplier": {
+          "format": "double",
+          "description": "Scaling factor for the learning rate. A smaller learning rate may be useful to avoid over fitting.",
+          "type": "number",
+          "x-nullable": true
+        },
+        "nEpochs": {
+          "format": "int32",
+          "description": "The number of epochs to train the model for. An epoch refers to one full cycle through the training dataset.",
+          "type": "integer",
+          "x-nullable": true
+        }
+      },
       "additionalProperties": false
     },
     "BanditPolicy": {
@@ -17073,6 +17399,30 @@
           "x-nullable": true
         }
       },
+      "additionalProperties": false
+    },
+    "CustomModelFineTuning": {
+      "required": [
+        "modelProvider"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/FineTuningVertical"
+        }
+      ],
+      "properties": {
+        "hyperParameters": {
+          "description": "HyperParameters for fine tuning custom model.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          },
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "Custom",
       "additionalProperties": false
     },
     "CustomModelJobInput": {
@@ -19632,6 +19982,138 @@
       },
       "x-ms-discriminator-value": "file_system",
       "additionalProperties": false
+    },
+    "FineTuningJob": {
+      "description": "FineTuning Job definition.",
+      "required": [
+        "fineTuningDetails",
+        "jobType",
+        "outputs"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/JobBase"
+        }
+      ],
+      "properties": {
+        "fineTuningDetails": {
+          "description": "[Required] ",
+          "$ref": "#/definitions/FineTuningVertical"
+        },
+        "outputs": {
+          "description": "[Required] ",
+          "type": "object",
+          "additionalProperties": {
+            "description": "Job output definition container information on where to find job output/logs.",
+            "$ref": "#/definitions/JobOutput",
+            "x-nullable": true
+          },
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "x-ms-discriminator-value": "FineTuning",
+      "additionalProperties": false
+    },
+    "FineTuningTaskType": {
+      "enum": [
+        "ChatCompletion",
+        "TextCompletion",
+        "TextClassification",
+        "QuestionAnswering",
+        "TextSummarization",
+        "TokenClassification",
+        "TextTranslation",
+        "ImageClassification",
+        "ImageInstanceSegmentation",
+        "ImageObjectDetection",
+        "VideoMultiObjectTracking"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "FineTuningTaskType",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "ChatCompletion"
+          },
+          {
+            "value": "TextCompletion"
+          },
+          {
+            "value": "TextClassification"
+          },
+          {
+            "value": "QuestionAnswering"
+          },
+          {
+            "value": "TextSummarization"
+          },
+          {
+            "value": "TokenClassification"
+          },
+          {
+            "value": "TextTranslation"
+          },
+          {
+            "value": "ImageClassification"
+          },
+          {
+            "value": "ImageInstanceSegmentation"
+          },
+          {
+            "value": "ImageObjectDetection"
+          },
+          {
+            "value": "VideoMultiObjectTracking"
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "FineTuningVertical": {
+      "required": [
+        "model",
+        "modelProvider",
+        "taskType",
+        "trainingData"
+      ],
+      "type": "object",
+      "properties": {
+        "model": {
+          "description": "[Required] Input model for fine tuning.",
+          "$ref": "#/definitions/MLFlowModelJobInput"
+        },
+        "modelProvider": {
+          "description": "[Required] Enum to determine the type of fine tuning.",
+          "$ref": "#/definitions/ModelProvider",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "taskType": {
+          "description": "[Required] Fine tuning task type.",
+          "$ref": "#/definitions/FineTuningTaskType",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "trainingData": {
+          "description": "[Required] Training data for fine tuning.",
+          "$ref": "#/definitions/JobInput"
+        },
+        "validationData": {
+          "description": "Validation data for fine tuning.",
+          "$ref": "#/definitions/JobInput",
+          "x-nullable": true
+        }
+      },
+      "discriminator": "modelProvider"
     },
     "FixedInputData": {
       "description": "Fixed input data definition.",
@@ -22418,7 +22900,8 @@
         "Labeling",
         "Sweep",
         "Pipeline",
-        "Spark"
+        "Spark",
+        "FineTuning"
       ],
       "type": "string",
       "x-ms-enum": {
@@ -22442,6 +22925,9 @@
           },
           {
             "value": "Spark"
+          },
+          {
+            "value": "FineTuning"
           }
         ]
       },
@@ -23408,6 +23894,192 @@
       "x-ms-discriminator-value": "Managed",
       "additionalProperties": false
     },
+    "MarketplacePlan": {
+      "type": "object",
+      "properties": {
+        "offerId": {
+          "description": "The Offer ID of the Marketplace Plan.",
+          "type": "string",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "planId": {
+          "description": "The Plan ID of the Marketplace Plan.",
+          "type": "string",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "publisherId": {
+          "description": "The Publisher ID of the Marketplace Plan.",
+          "type": "string",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "MarketplaceSubscription": {
+      "required": [
+        "modelId"
+      ],
+      "type": "object",
+      "properties": {
+        "marketplacePlan": {
+          "description": "Marketplace Plan associated with the Marketplace Subscription.",
+          "$ref": "#/definitions/MarketplacePlan",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "marketplaceSubscriptionStatus": {
+          "description": "Current status of the Marketplace Subscription.",
+          "$ref": "#/definitions/MarketplaceSubscriptionStatus",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ]
+        },
+        "modelId": {
+          "description": "[Required] Target Marketplace Model ID to create a Marketplace Subscription for.",
+          "minLength": 1,
+          "pattern": "[a-zA-Z0-9_]",
+          "type": "string"
+        },
+        "provisioningState": {
+          "description": "Provisioning State of the Marketplace Subscription.",
+          "$ref": "#/definitions/MarketplaceSubscriptionProvisioningState",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ]
+        }
+      },
+      "x-ms-client-name": "MarketplaceSubscriptionProperties",
+      "additionalProperties": false
+    },
+    "MarketplaceSubscriptionProvisioningState": {
+      "enum": [
+        "Creating",
+        "Deleting",
+        "Succeeded",
+        "Failed",
+        "Updating",
+        "Canceled"
+      ],
+      "type": "string",
+      "readOnly": true,
+      "x-ms-enum": {
+        "name": "MarketplaceSubscriptionProvisioningState",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "Creating",
+            "description": "MarketplaceSubscription is being created."
+          },
+          {
+            "value": "Deleting",
+            "description": "MarketplaceSubscription is being deleted."
+          },
+          {
+            "value": "Succeeded",
+            "description": "MarketplaceSubscription is successfully provisioned."
+          },
+          {
+            "value": "Failed",
+            "description": "MarketplaceSubscription provisioning failed."
+          },
+          {
+            "value": "Updating",
+            "description": "MarketplaceSubscription is being updated."
+          },
+          {
+            "value": "Canceled"
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "MarketplaceSubscriptionResource": {
+      "description": "Azure Resource Manager resource envelope.",
+      "required": [
+        "properties"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ProxyResource"
+        }
+      ],
+      "properties": {
+        "properties": {
+          "description": "[Required] Additional attributes of the entity.",
+          "$ref": "#/definitions/MarketplaceSubscription"
+        }
+      },
+      "x-ms-client-name": "MarketplaceSubscription",
+      "additionalProperties": false
+    },
+    "MarketplaceSubscriptionResourceArmPaginatedResult": {
+      "description": "A paginated list of MarketplaceSubscription entities.",
+      "type": "object",
+      "properties": {
+        "nextLink": {
+          "description": "The link to the next page of MarketplaceSubscription objects. If null, there are no additional pages.",
+          "type": "string"
+        },
+        "value": {
+          "description": "An array of objects of type MarketplaceSubscription.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MarketplaceSubscriptionResource"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "MarketplaceSubscriptionStatus": {
+      "enum": [
+        "PendingFulfillmentStart",
+        "Subscribed",
+        "Suspended",
+        "Unsubscribed"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "MarketplaceSubscriptionStatus",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "PendingFulfillmentStart",
+            "description": "The Marketplace Subscription is being fulfilled."
+          },
+          {
+            "value": "Subscribed",
+            "description": "The customer can now use the Marketplace Subscription's\nmodel and will be billed."
+          },
+          {
+            "value": "Suspended",
+            "description": "The customer could not be billed for the Marketplace Subscription.\nThe customer will not be able to access the model."
+          },
+          {
+            "value": "Unsubscribed",
+            "description": "Marketplace Subscriptions reach this state in response to an explicit customer or CSP action.\nA Marketplace Subscription can also be canceled implicitly, as a result of nonpayment of dues,\nafter being in the Suspended state for some time."
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
     "MaterializationComputeResource": {
       "description": "Dto object representing compute resource",
       "type": "object",
@@ -23699,6 +24371,44 @@
         }
       },
       "x-ms-discriminator-value": "ModelPerformance",
+      "additionalProperties": false
+    },
+    "ModelProvider": {
+      "description": "Enum to determine the type of fine tuning.",
+      "enum": [
+        "AzureOpenAI",
+        "Custom"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "ModelProvider",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "AzureOpenAI",
+            "description": "Fine tuning using Azure Open AI model."
+          },
+          {
+            "value": "Custom",
+            "description": "Fine tuning using custom model."
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "ModelSettings": {
+      "required": [
+        "modelId"
+      ],
+      "type": "object",
+      "properties": {
+        "modelId": {
+          "description": "[Required] ",
+          "minLength": 1,
+          "pattern": "[a-zA-Z0-9_]",
+          "type": "string"
+        }
+      },
       "additionalProperties": false
     },
     "ModelSize": {
@@ -27870,9 +28580,6 @@
       "additionalProperties": false
     },
     "ServerlessEndpoint": {
-      "required": [
-        "offer"
-      ],
       "type": "object",
       "properties": {
         "authMode": {
@@ -27893,13 +28600,36 @@
           ],
           "x-nullable": true
         },
+        "marketplaceSubscriptionId": {
+          "description": "The MarketplaceSubscription ARM ID associated to this ServerlessEndpoint.",
+          "type": "string",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "modelSettings": {
+          "description": "The model settings (model id) for the model being serviced on the ServerlessEndpoint.",
+          "$ref": "#/definitions/ModelSettings",
+          "x-nullable": true
+        },
         "offer": {
-          "description": "[Required] The publisher-defined Serverless Offer to provision the endpoint with.",
-          "$ref": "#/definitions/ServerlessOffer"
+          "description": "The publisher-defined Serverless Offer to provision the endpoint with.",
+          "$ref": "#/definitions/ServerlessOffer",
+          "x-nullable": true
         },
         "provisioningState": {
           "description": "Provisioning state for the endpoint.",
           "$ref": "#/definitions/EndpointProvisioningState",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ]
+        },
+        "endpointState": {
+          "description": "State of the Serverless Endpoint.",
+          "$ref": "#/definitions/ServerlessEndpointState",
           "readOnly": true,
           "x-ms-mutability": [
             "read"
@@ -27927,6 +28657,55 @@
           "type": "integer",
           "x-nullable": true
         }
+      },
+      "additionalProperties": false
+    },
+    "ServerlessEndpointState": {
+      "description": "State of the Serverless Endpoint.",
+      "enum": [
+        "Unknown",
+        "Creating",
+        "Deleting",
+        "Suspending",
+        "Reinstating",
+        "Online",
+        "Suspended",
+        "CreationFailed",
+        "DeletionFailed"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "ServerlessEndpointState",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "Unknown"
+          },
+          {
+            "value": "Creating"
+          },
+          {
+            "value": "Deleting"
+          },
+          {
+            "value": "Suspending"
+          },
+          {
+            "value": "Reinstating"
+          },
+          {
+            "value": "Online"
+          },
+          {
+            "value": "Suspended"
+          },
+          {
+            "value": "CreationFailed"
+          },
+          {
+            "value": "DeletionFailed"
+          }
+        ]
       },
       "additionalProperties": false
     },

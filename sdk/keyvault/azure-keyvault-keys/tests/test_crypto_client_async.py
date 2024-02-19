@@ -17,7 +17,7 @@ from azure.keyvault.keys import ApiVersion, JsonWebKey, KeyCurveName, KeyOperati
 from azure.keyvault.keys.crypto._providers import NoLocalCryptography, get_local_cryptography_provider
 from azure.keyvault.keys.crypto.aio import (
     CryptographyClient,
-    EncryptionAlgorithm,
+    EncryptionAlgorithm,  # Shouldn't be imported from aio namespace, but do so to test backwards compatibility
     KeyWrapAlgorithm,
     SignatureAlgorithm,
 )
@@ -37,9 +37,7 @@ NO_GET = Permissions(keys=[p.value for p in KeyPermissions if p.value != "get"])
 
 all_api_versions = get_decorator(is_async=True)
 only_hsm = get_decorator(only_hsm=True, is_async=True)
-only_vault_7_4_plus = get_decorator(
-    only_vault=True, is_async=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5_PREVIEW_1]
-)
+only_vault_7_4_plus = get_decorator(only_vault=True, is_async=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5])
 no_get = get_decorator(is_async=True, permissions=NO_GET)
 
 

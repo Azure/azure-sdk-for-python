@@ -62,7 +62,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
         :param name: Name of a specific FeatureStoreEntity asset, optional.
         :type name: Optional[str]
         :keyword list_view_type: View type for including/excluding (for example) archived FeatureStoreEntity assets.
-        Default: ACTIVE_ONLY.
+            Default: ACTIVE_ONLY.
         :paramtype list_view_type: Optional[ListViewType]
         :return: An iterator like instance of FeatureStoreEntity objects
         :rtype: ~azure.core.paging.ItemPaged[FeatureStoreEntity]
@@ -96,7 +96,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "FeatureStoreEntity.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: str, **kwargs: Dict) -> FeatureStoreEntity:
+    def get(self, name: str, version: str, **kwargs: Dict) -> FeatureStoreEntity:  # type: ignore
         """Get the specified FeatureStoreEntity asset.
 
         :param name: Name of FeatureStoreEntity asset.

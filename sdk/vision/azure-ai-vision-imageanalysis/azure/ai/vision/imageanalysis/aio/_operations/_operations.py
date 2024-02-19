@@ -27,7 +27,7 @@ from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ..._model_base import SdkJSONEncoder, _deserialize
 from ..._operations._operations import (
-    build_image_analysis_analyze_from_buffer_request,
+    build_image_analysis_analyze_from_image_data_request,
     build_image_analysis_analyze_from_url_request,
 )
 from .._vendor import ImageAnalysisClientMixinABC
@@ -43,7 +43,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 
 class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
     @distributed_trace_async
-    async def _analyze_from_buffer(
+    async def _analyze_from_image_data(
         self,
         image_content: bytes,
         *,
@@ -89,11 +89,6 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
          If however you would like to make sure analysis results do not change over time, set this
          value to a specific model version. Default value is None.
         :paramtype model_version: str
-        :keyword content_type: The format of the HTTP payload. Default value is
-         "application/octet-stream".
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: ImageAnalysisResult. The ImageAnalysisResult is compatible with MutableMapping
         :rtype: ~azure.ai.vision.imageanalysis.models.ImageAnalysisResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -276,7 +271,7 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
 
         _content = image_content
 
-        _request = build_image_analysis_analyze_from_buffer_request(
+        _request = build_image_analysis_analyze_from_image_data_request(
             visual_features=visual_features,
             language=language,
             gender_neutral_caption=gender_neutral_caption,
@@ -409,10 +404,6 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
          If however you would like to make sure analysis results do not change over time, set this
          value to a specific model version. Default value is None.
         :paramtype model_version: str
-        :keyword content_type: The format of the HTTP payload. Default value is None.
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: ImageAnalysisResult. The ImageAnalysisResult is compatible with MutableMapping
         :rtype: ~azure.ai.vision.imageanalysis.models.ImageAnalysisResult
         :raises ~azure.core.exceptions.HttpResponseError:

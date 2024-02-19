@@ -161,6 +161,9 @@ def _populate_part_a_fields(resource: Resource):
         service_name = resource.attributes.get(ResourceAttributes.SERVICE_NAME)
         service_namespace = resource.attributes.get(ResourceAttributes.SERVICE_NAMESPACE)
         service_instance_id = resource.attributes.get(ResourceAttributes.SERVICE_INSTANCE_ID)
+        device_id = resource.attributes.get(ResourceAttributes.DEVICE_ID)
+        device_model = resource.attributes.get(ResourceAttributes.DEVICE_MODEL_NAME)
+        device_make = resource.attributes.get(ResourceAttributes.DEVICE_MANUFACTURER)
         if service_name:
             if service_namespace:
                 tags[ContextTagKeys.AI_CLOUD_ROLE] = str(service_namespace) + \
@@ -172,6 +175,12 @@ def _populate_part_a_fields(resource: Resource):
         else:
             tags[ContextTagKeys.AI_CLOUD_ROLE_INSTANCE] = platform.node()  # hostname default
         tags[ContextTagKeys.AI_INTERNAL_NODE_NAME] = tags[ContextTagKeys.AI_CLOUD_ROLE_INSTANCE]
+        if device_id:
+            tags[ContextTagKeys.AI_DEVICE_ID] = device_id # type: ignore
+        if device_model:
+            tags[ContextTagKeys.AI_DEVICE_MODEL] = device_model # type: ignore
+        if device_make:
+            tags[ContextTagKeys.AI_DEVICE_OEM_NAME] = device_make # type: ignore
     return tags
 
 # pylint: disable=W0622

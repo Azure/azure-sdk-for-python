@@ -103,7 +103,7 @@ class AlertsSuppressionRule(Resource):
     :ivar last_modified_utc: The last time this rule was modified.
     :vartype last_modified_utc: ~datetime.datetime
     :ivar expiration_date_utc: Expiration date of the rule, if value is not provided or provided as
-     null this field will default to the maximum allowed expiration date.
+     null there will no expiration at all.
     :vartype expiration_date_utc: ~datetime.datetime
     :ivar reason: The reason for dismissing the alert.
     :vartype reason: str
@@ -152,7 +152,7 @@ class AlertsSuppressionRule(Resource):
         :keyword alert_type: Type of the alert to automatically suppress. For all alert types, use '*'.
         :paramtype alert_type: str
         :keyword expiration_date_utc: Expiration date of the rule, if value is not provided or provided
-         as null this field will default to the maximum allowed expiration date.
+         as null there will no expiration at all.
         :paramtype expiration_date_utc: ~datetime.datetime
         :keyword reason: The reason for dismissing the alert.
         :paramtype reason: str

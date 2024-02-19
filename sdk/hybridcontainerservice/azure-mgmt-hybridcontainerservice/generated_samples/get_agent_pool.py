@@ -31,11 +31,11 @@ def main():
 
     response = client.agent_pool.get(
         connected_cluster_resource_uri="subscriptions/fd3c3665-1729-4b7b-9a38-238e83b0f98b/resourceGroups/testrg/providers/Microsoft.Kubernetes/connectedClusters/test-hybridakscluster",
-        agent_pool_name="test-hybridaksnodepool",
+        agent_pool_name="testnodepool",
     )
     print(response)
 
 
-# x-ms-original-file: specification/hybridaks/resource-manager/Microsoft.HybridContainerService/preview/2023-11-15-preview/examples/GetAgentPool.json
+# x-ms-original-file: specification/hybridaks/resource-manager/Microsoft.HybridContainerService/stable/2024-01-01/examples/GetAgentPool.json
 if __name__ == "__main__":
     main()

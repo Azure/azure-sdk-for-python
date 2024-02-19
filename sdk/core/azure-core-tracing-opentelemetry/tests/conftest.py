@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import os
+
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
@@ -27,3 +29,16 @@ def tracer():
 def exporter():
     span_exporter.clear()
     return span_exporter
+
+
+@pytest.fixture(scope="session")
+def config():
+    return {
+        "storage_account_name": os.environ.get("AZURE_STORAGE_ACCOUNT_NAME"),
+        "storage_account_key": os.environ.get("AZURE_STORAGE_ACCOUNT_KEY"),
+        "storage_connection_string": os.environ.get("AZURE_STORAGE_CONNECTION_STRING"),
+        "servicebus_connection_string": os.environ.get("AZURE_SERVICEBUS_CONNECTION_STRING"),
+        "servicebus_queue_name": os.environ.get("AZURE_SERVICEBUS_QUEUE_NAME"),
+        "servicebus_topic_name": os.environ.get("AZURE_SERVICEBUS_TOPIC_NAME"),
+        "servicebus_subscription_name": os.environ.get("AZURE_SERVICEBUS_SUBSCRIPTION_NAME"),
+    }

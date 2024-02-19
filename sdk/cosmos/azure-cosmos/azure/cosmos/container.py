@@ -22,10 +22,11 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 
-
-from typing import Any, Dict, List, Optional, Sequence, Union, Tuple, Mapping, Type, cast
 import warnings
+from typing import Any, Dict, List, Optional, Sequence, Union, Tuple, Mapping, Type, cast
+from typing_extensions import Literal
 
+from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 
@@ -133,6 +134,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         populate_query_metrics: Optional[bool] = None,
         populate_partition_key_range_statistics: Optional[bool] = None,
         populate_quota_info: Optional[bool] = None,
+        *,
+        session_token: Optional[str] = None,
+        priority_level: Optional[Literal["High", "Low"]] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Read the container properties.
@@ -141,7 +146,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             range statistics in response headers.
         :param bool populate_quota_info: Enable returning collection storage quota information in response headers.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Literal["High", "Low"] priority_level: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -152,8 +157,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: Dict representing the retrieved container.
         :rtype: dict[str, Any]
         """
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if priority_level is not None:
+            kwargs['priority_level'] = priority_level
+        if initial_headers is not None:
+            kwargs['initial_headers'] = initial_headers
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
@@ -167,17 +177,20 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self._properties = self.client_connection.ReadContainer(
             collection_link, options=request_options, **kwargs
         )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, self._properties)
         return self._properties
 
     @distributed_trace
     def read_item(  # pylint:disable=docstring-missing-param
         self,
         item: Union[str, Mapping[str, Any]],
-        partition_key: Optional[PartitionKeyType],
+        partition_key: PartitionKeyType,
         populate_query_metrics: Optional[bool] = None,
         post_trigger_include: Optional[str] = None,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        max_integrated_cache_staleness_in_ms: Optional[int] = None,
+        priority_level: Optional[Literal["High", "Low"]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Get the item identified by `item`.
@@ -210,35 +223,39 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 :name: update_item
         """
         doc_link = self._get_document_link(item)
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if initial_headers is not None:
+            kwargs['initial_headers'] = initial_headers
+        if priority_level is not None:
+            kwargs['priority_level'] = priority_level
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
 
-        if partition_key is not None:
-            request_options["partitionKey"] = self._set_partition_key(partition_key)
+        request_options["partitionKey"] = self._set_partition_key(partition_key)
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
-
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
-        max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
-        result = self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
-        return result
+        return self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
 
     @distributed_trace
     def read_all_items(  # pylint:disable=docstring-missing-param
         self,
         max_item_count: Optional[int] = None,
         populate_query_metrics: Optional[bool] = None,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        max_integrated_cache_staleness_in_ms: Optional[int] = None,
+        priority_level: Optional[Literal["High", "Low"]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """List all the items in the container.
@@ -256,6 +273,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if initial_headers is not None:
+            kwargs['initial_headers'] = initial_headers
+        if priority_level is not None:
+            kwargs['priority_level'] = priority_level
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
@@ -266,7 +289,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 UserWarning,
             )
             feed_options["populateQueryMetrics"] = populate_query_metrics
-        max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
         if max_integrated_cache_staleness_in_ms:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
@@ -275,8 +297,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             response_hook.clear()
 
         items = self.client_connection.ReadItems(
-            collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs
-        )
+            collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, items)
         return items
@@ -288,6 +309,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         is_start_from_beginning: bool = False,
         continuation: Optional[str] = None,
         max_item_count: Optional[int] = None,
+        *,
+        partition_key: Optional[PartitionKeyType] = None,
+        priority_level: Optional[Literal["High", "Low"]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -308,11 +332,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
+        if priority_level is not None:
+            kwargs['priority_level'] = priority_level
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if partition_key_range_id is not None:
             feed_options["partitionKeyRangeId"] = partition_key_range_id
-        partition_key = kwargs.pop("partitionKey", kwargs.pop("partition_key", None))
         if partition_key is not None:
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
         if is_start_from_beginning is not None:
@@ -342,6 +367,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         max_item_count: Optional[int] = None,
         enable_scan_in_query: Optional[bool] = None,
         populate_query_metrics: Optional[bool] = None,
+        *,
+        populate_index_metrics: Optional[bool] = None,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        max_integrated_cache_staleness_in_ms: Optional[int] = None,
+        priority_level: Optional[Literal["High", "Low"]] = None,
+        continuation_token_limit: Optional[int] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Return all results matching the given `query`.
@@ -368,9 +400,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword int continuation_token_limit: **provisional** The size limit in kb of the
-        response continuation token in the query response. Valid values are positive integers.
-        A value of 0 is the same as not passing a value (default no limit).
+        :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
+            response. Valid values are positive integers.
+            A value of 0 is the same as not passing a value (default no limit).
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
@@ -401,6 +433,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 :caption: Parameterized query to get all products that have been discontinued:
                 :name: query_items_param
         """
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if initial_headers is not None:
+            kwargs['initial_headers'] = initial_headers
+        if priority_level is not None:
+            kwargs['priority_level'] = priority_level
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if enable_cross_partition_query is not None:
@@ -409,7 +447,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             feed_options["maxItemCount"] = max_item_count
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
-        populate_index_metrics = kwargs.pop("populate_index_metrics", None)
         if populate_index_metrics is not None:
             feed_options["populateIndexMetrics"] = populate_index_metrics
         if partition_key is not None:
@@ -422,13 +459,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 feed_options["partitionKey"] = self._set_partition_key(partition_key)
         if enable_scan_in_query is not None:
             feed_options["enableScanInQuery"] = enable_scan_in_query
-        max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
         if max_integrated_cache_staleness_in_ms:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
         correlated_activity_id = GenerateGuidId()
         feed_options["correlatedActivityId"] = correlated_activity_id
-        continuation_token_limit = kwargs.pop("continuation_token_limit", None)
         if continuation_token_limit is not None:
             feed_options["responseContinuationTokenLimitInKb"] = continuation_token_limit
         if hasattr(response_hook, "clear"):
@@ -466,6 +501,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         populate_query_metrics: Optional[bool] = None,
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        priority_level: Optional[Literal["High", "Low"]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Replaces the specified item if it exists in the container.
@@ -493,8 +534,21 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: Dict[str, Any]
         """
         item_link = self._get_document_link(item)
+        if pre_trigger_include is not None:
+            kwargs['pre_trigger_include'] = pre_trigger_include
+        if post_trigger_include is not None:
+            kwargs['post_trigger_include'] = post_trigger_include
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if initial_headers is not None:
+            kwargs['initial_headers'] = initial_headers
+        if priority_level is not None:
+            kwargs['priority_level'] = priority_level
+        if etag is not None:
+            kwargs['etag'] = etag
+        if match_condition is not None:
+            kwargs['match_condition'] = match_condition
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         request_options["disableAutomaticIdGeneration"] = True
         if populate_query_metrics is not None:
             warnings.warn(
@@ -502,17 +556,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 UserWarning,
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
-        if pre_trigger_include is not None:
-            request_options["preTriggerInclude"] = pre_trigger_include
-        if post_trigger_include is not None:
-            request_options["postTriggerInclude"] = post_trigger_include
 
-        result = self.client_connection.ReplaceItem(
+        return self.client_connection.ReplaceItem(
             document_link=item_link, new_document=body, options=request_options, **kwargs
         )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
-        return result
 
     @distributed_trace
     def upsert_item(  # pylint:disable=docstring-missing-param
@@ -521,6 +568,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         populate_query_metrics: Optional[bool]=None,
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        priority_level: Optional[Literal["High", "Low"]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Insert or update the specified item.
@@ -545,8 +598,21 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
         :rtype: Dict[str, Any]
         """
+        if pre_trigger_include is not None:
+            kwargs['pre_trigger_include'] = pre_trigger_include
+        if post_trigger_include is not None:
+            kwargs['post_trigger_include'] = post_trigger_include
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if initial_headers is not None:
+            kwargs['initial_headers'] = initial_headers
+        if priority_level is not None:
+            kwargs['priority_level'] = priority_level
+        if etag is not None:
+            kwargs['etag'] = etag
+        if match_condition is not None:
+            kwargs['match_condition'] = match_condition
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         request_options["disableAutomaticIdGeneration"] = True
         if populate_query_metrics is not None:
             warnings.warn(
@@ -554,20 +620,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 UserWarning,
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
-        if pre_trigger_include is not None:
-            request_options["preTriggerInclude"] = pre_trigger_include
-        if post_trigger_include is not None:
-            request_options["postTriggerInclude"] = post_trigger_include
 
-        result = self.client_connection.UpsertItem(
+        return self.client_connection.UpsertItem(
             database_or_container_link=self.container_link,
             document=body,
             options=request_options,
             **kwargs
         )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
-        return result
 
     @distributed_trace
     def create_item(  # pylint:disable=docstring-missing-param
@@ -577,6 +636,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
         indexing_directive: Optional[int] = None,
+        *,
+        enable_automatic_id_generation: bool = False,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        priority_level: Optional[Literal["High", "Low"]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Create an item in the container.
@@ -605,29 +671,33 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
         :rtype: Dict[str, Any]
         """
+        if pre_trigger_include is not None:
+            kwargs['pre_trigger_include'] = pre_trigger_include
+        if post_trigger_include is not None:
+            kwargs['post_trigger_include'] = post_trigger_include
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if initial_headers is not None:
+            kwargs['initial_headers'] = initial_headers
+        if priority_level is not None:
+            kwargs['priority_level'] = priority_level
+        if etag is not None:
+            kwargs['etag'] = etag
+        if match_condition is not None:
+            kwargs['match_condition'] = match_condition
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
-
-        request_options["disableAutomaticIdGeneration"] = not kwargs.pop('enable_automatic_id_generation', False)
+        request_options["disableAutomaticIdGeneration"] = not enable_automatic_id_generation
         if populate_query_metrics:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
-        if pre_trigger_include is not None:
-            request_options["preTriggerInclude"] = pre_trigger_include
-        if post_trigger_include is not None:
-            request_options["postTriggerInclude"] = post_trigger_include
         if indexing_directive is not None:
             request_options["indexingDirective"] = indexing_directive
 
-        result = self.client_connection.CreateItem(
-            database_or_container_link=self.container_link, document=body, options=request_options, **kwargs
-        )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
-        return result
+        return self.client_connection.CreateItem(
+            database_or_container_link=self.container_link, document=body, options=request_options, **kwargs)
 
     @distributed_trace
     def patch_item(
@@ -635,6 +705,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         item: Union[str, Dict[str, Any]],
         partition_key: PartitionKeyType,
         patch_operations: List[Dict[str, Any]],
+        *,
+        filter_predicate: Optional[str] = None,
+        pre_trigger_include: Optional[str] = None,
+        post_trigger_include: Optional[str] = None,
+        session_token: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        priority_level: Optional[Literal["High", "Low"]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """ Patches the specified item with the provided operations if it
@@ -656,31 +734,47 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword Literal["High", "Low"] priority_level: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :returns: A dict representing the item after the patch operations went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
             given id does not exist.
         :rtype: dict[str, Any]
         """
+        if pre_trigger_include is not None:
+            kwargs['pre_trigger_include'] = pre_trigger_include
+        if post_trigger_include is not None:
+            kwargs['post_trigger_include'] = post_trigger_include
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if priority_level is not None:
+            kwargs['priority_level'] = priority_level
+        if etag is not None:
+            kwargs['etag'] = etag
+        if match_condition is not None:
+            kwargs['match_condition'] = match_condition
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         request_options["disableAutomaticIdGeneration"] = True
         request_options["partitionKey"] = self._set_partition_key(partition_key)
-        filter_predicate = kwargs.pop("filter_predicate", None)
         if filter_predicate is not None:
             request_options["filterPredicate"] = filter_predicate
 
         item_link = self._get_document_link(item)
-        result = self.client_connection.PatchItem(
+        return self.client_connection.PatchItem(
             document_link=item_link, operations=patch_operations, options=request_options, **kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
-        return result
 
     @distributed_trace
     def execute_item_batch(
         self,
         batch_operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], Dict[str, Any]]]],
         partition_key: PartitionKeyType,
+        *,
+        pre_trigger_include: Optional[str] = None,
+        post_trigger_include: Optional[str] = None,
+        session_token: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> List[Dict[str, Any]]:
         """ Executes the transactional batch for the specified partition key.
@@ -701,16 +795,22 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :raises ~azure.cosmos.exceptions.CosmosBatchOperationError: A transactional batch operation failed in the batch.
         :rtype: List[Dict[str, Any]]
         """
+        if pre_trigger_include is not None:
+            kwargs['pre_trigger_include'] = pre_trigger_include
+        if post_trigger_include is not None:
+            kwargs['post_trigger_include'] = post_trigger_include
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if etag is not None:
+            kwargs['etag'] = etag
+        if match_condition is not None:
+            kwargs['match_condition'] = match_condition
         request_options = build_options(kwargs)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
-        response_hook = kwargs.pop('response_hook', None)
         request_options["disableAutomaticIdGeneration"] = True
 
-        result = self.client_connection.Batch(
+        return self.client_connection.Batch(
             collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
-        return result
 
     @distributed_trace
     def delete_item(  # pylint:disable=docstring-missing-param
@@ -720,6 +820,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         populate_query_metrics: Optional[bool] = None,
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Delete the specified item from the container.
@@ -742,8 +847,15 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The item does not exist in the container.
         :rtype: None
         """
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if initial_headers is not None:
+            kwargs['initial_headers'] = initial_headers
+        if etag is not None:
+            kwargs['etag'] = etag
+        if match_condition is not None:
+            kwargs['match_condition'] = match_condition
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
         if populate_query_metrics is not None:
@@ -759,8 +871,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         document_link = self._get_document_link(item)
         self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, None)
 
     @distributed_trace
     def read_offer(self, **kwargs: Any) -> Offer:
@@ -827,7 +937,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             or the throughput properties could not be updated.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
-        response_hook = kwargs.pop('response_hook', None)
         properties = self._get_properties()
         link = properties["_self"]
         query_spec = {
@@ -844,8 +953,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         data = self.client_connection.ReplaceOffer(
             offer_link=throughput_properties[0]["_self"], offer=throughput_properties[0], **kwargs)
 
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, data)
         return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
 
     @distributed_trace
@@ -936,16 +1043,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: Dict[str, Any]
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
 
-        result = self.client_connection.ReadConflict(
+        return self.client_connection.ReadConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
         )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
-        return result
 
     @distributed_trace
     def delete_conflict(
@@ -968,20 +1071,23 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: None
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
 
         self.client_connection.DeleteConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
         )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, None)
 
     @distributed_trace
     def delete_all_items_by_partition_key(
         self,
         partition_key: PartitionKeyType,
+        *,
+        pre_trigger_include: Optional[str] = None,
+        post_trigger_include: Optional[str] = None,
+        session_token: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """The delete by partition key feature is an asynchronous, background operation that allows you to delete all
@@ -1001,12 +1107,19 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :rtype: None
         """
+        if pre_trigger_include is not None:
+            kwargs['pre_trigger_include'] = pre_trigger_include
+        if post_trigger_include is not None:
+            kwargs['post_trigger_include'] = post_trigger_include
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if etag is not None:
+            kwargs['etag'] = etag
+        if match_condition is not None:
+            kwargs['match_condition'] = match_condition
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         # regardless if partition key is valid we set it as invalid partition keys are set to a default empty value
         request_options["partitionKey"] = self._set_partition_key(partition_key)
 
-        self.client_connection.DeleteAllItemsByPartitionKey(collection_link=self.container_link,
-                                                            options=request_options, **kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, None)
+        self.client_connection.DeleteAllItemsByPartitionKey(
+            collection_link=self.container_link, options=request_options, **kwargs)

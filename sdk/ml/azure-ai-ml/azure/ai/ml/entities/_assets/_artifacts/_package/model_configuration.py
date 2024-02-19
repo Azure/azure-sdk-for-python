@@ -3,10 +3,12 @@
 # ----------------------------------------------------------
 
 
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ModelConfiguration as RestModelConfiguration
+from typing import Optional
+
+from azure.ai.ml._exception_helper import log_and_raise_error
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ModelConfiguration as RestModelConfiguration
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-from azure.ai.ml._exception_helper import log_and_raise_error
 
 
 @experimental
@@ -28,7 +30,7 @@ class ModelConfiguration:
             :caption: Creating a Model Configuration object.
     """
 
-    def __init__(self, *, mode: str = None, mount_path: str = None):
+    def __init__(self, *, mode: Optional[str] = None, mount_path: Optional[str] = None):
         self.mode = mode
         self.mount_path = mount_path
 
@@ -40,8 +42,8 @@ class ModelConfiguration:
         self._validate()
         return RestModelConfiguration(mode=self.mode, mount_path=self.mount_path)
 
-    def _validate(self):
-        if self.mode.lower() not in ["copy", "download"]:
+    def _validate(self) -> None:
+        if self.mode is not None and self.mode.lower() not in ["copy", "download"]:
             msg = "Mode must be either 'Copy' or 'Download'"
             err = ValidationException(
                 message=msg,

@@ -67,7 +67,9 @@ class WorkspaceOutboundRuleOperations:
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
         obj = self._rule_operation.get(resource_group, workspace_name, outbound_rule_name)
-        return OutboundRule._from_rest_object(obj.properties, name=obj.name)  # pylint: disable=protected-access
+        # pylint: disable=protected-access
+        res: OutboundRule = OutboundRule._from_rest_object(obj.properties, name=obj.name)  # type: ignore
+        return res
 
     @monitor_with_activity(logger, "WorkspaceOutboundRule.BeginCreate", ActivityType.PUBLICAPI)
     def begin_create(self, workspace_name: str, rule: OutboundRule, **kwargs: Any) -> LROPoller[OutboundRule]:
@@ -88,13 +90,14 @@ class WorkspaceOutboundRuleOperations:
                 :language: python
                 :dedent: 8
                 :caption: Create an FQDN outbound rule for a workspace with the given name,
-                similar can be done for PrivateEndpointDestination or ServiceTagDestination.
+                    similar can be done for PrivateEndpointDestination or ServiceTagDestination.
         """
 
         workspace_name = self._check_workspace_name(workspace_name)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
-        rule_params = OutboundRuleBasicResource(properties=rule._to_rest_object())  # pylint: disable=protected-access
+        # pylint: disable=protected-access
+        rule_params = OutboundRuleBasicResource(properties=rule._to_rest_object())  # type: ignore
 
         # pylint: disable=unused-argument, docstring-missing-param
         def callback(_: Any, deserialized: Any, args: Any) -> Optional[OutboundRule]:
@@ -132,13 +135,14 @@ class WorkspaceOutboundRuleOperations:
                 :language: python
                 :dedent: 8
                 :caption: Update an FQDN outbound rule for a workspace with the given name,
-                similar can be done for PrivateEndpointDestination or ServiceTagDestination.
+                    similar can be done for PrivateEndpointDestination or ServiceTagDestination.
         """
 
         workspace_name = self._check_workspace_name(workspace_name)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
-        rule_params = OutboundRuleBasicResource(properties=rule._to_rest_object())  # pylint: disable=protected-access
+        # pylint: disable=protected-access
+        rule_params = OutboundRuleBasicResource(properties=rule._to_rest_object())  # type: ignore
 
         # pylint: disable=unused-argument, docstring-missing-param
         def callback(_: Any, deserialized: Any, args: Any) -> Optional[OutboundRule]:
@@ -185,7 +189,7 @@ class WorkspaceOutboundRuleOperations:
             OutboundRule._from_rest_object(rest_obj=obj.properties, name=obj.name)  # pylint: disable=protected-access
             for obj in rest_rules
         ]
-        return result
+        return result  # type: ignore
 
     @monitor_with_activity(logger, "WorkspaceOutboundRule.Remove", ActivityType.PUBLICAPI)
     def begin_remove(self, workspace_name: str, outbound_rule_name: str, **kwargs: Any) -> LROPoller[None]:
