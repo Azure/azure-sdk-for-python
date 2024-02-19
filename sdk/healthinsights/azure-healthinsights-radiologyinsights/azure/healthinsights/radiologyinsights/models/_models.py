@@ -1,5 +1,5 @@
 # coding=utf-8
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines, too-many-locals, line-too-long
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -347,7 +347,7 @@ class CompleteOrderDiscrepancyInference(RadiologyInsightsInference, discriminato
      list[~azure.healthinsights.radiologyinsights.models.CodeableConcept]
     """
 
-    kind: Literal[RadiologyInsightsInferenceType.COMPLETE_ORDER_DISCREPANCY] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[RadiologyInsightsInferenceType.COMPLETE_ORDER_DISCREPANCY] = rest_discriminator(name="kind")  # type: ignore #pylint: disable=C0301
     """The type of the inference. Required. Complete order discrepancy inference type"""
     order_type: "_models.CodeableConcept" = rest_field(name="orderType")
     """Order Type. Required."""
