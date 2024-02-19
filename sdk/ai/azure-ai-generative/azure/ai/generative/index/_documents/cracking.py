@@ -160,7 +160,7 @@ class PDFFileLoader(BaseDocumentLoader):
         """Load file contents into Document(s)."""
         try:
             from pypdf import PdfReader
-        except Exception:
+        except ImportError:
             try:
                 # pylint: disable=import-error
                 from PyPDF2 import PdfReader  # type: ignore[no-redef]
@@ -272,7 +272,7 @@ def extract_text_document_title(text: str, file_name: str) -> Tuple[str, str]:
             docstring = _get_topdocstring(text)
             if docstring:
                 title = f"{file_name}: {docstring}"
-        except Exception as e:
+        except IOError as e:
             logger.warning(f"Failed to get docstring for {file_name}. Exception message: {e}")
 
         return f"Title: {title}", title
@@ -354,7 +354,7 @@ def crack_documents(
                 file_pre_yield_time = time.time()
                 total_time += file_pre_yield_time - file_start_time
                 yield loader.load_chunked_document()
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
             # if loader_cls has a fallback_loader, try that
             if hasattr(loader_cls, "fallback_loader"):
                 fallback_loader_cls = loader_cls.fallback_loader()

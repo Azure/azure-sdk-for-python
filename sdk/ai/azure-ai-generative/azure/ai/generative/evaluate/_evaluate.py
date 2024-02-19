@@ -463,7 +463,7 @@ def log_input(data, data_is_file):
                 )
             else:
                 mlflow.log_input(mlflow.data.from_pandas(pd.DataFrame.from_dict(data)))  # pylint: disable=no-member
-    except Exception as ex:
+    except MlflowException as ex:
         LOGGER.error("Error logging data as dataset, continuing without it")
         LOGGER.exception(ex, stack_info=True)
 

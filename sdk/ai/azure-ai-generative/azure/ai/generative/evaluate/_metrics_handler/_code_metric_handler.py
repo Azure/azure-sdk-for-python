@@ -65,7 +65,7 @@ class CodeMetricHandler(MetricHandler):
                         if "metrics" in metric_result.keys() and metric_result["metrics"] is not None:
                             metrics_dict["metrics"].update(metric_result["metrics"])
                         progress_bar.update(1)
-                    except Exception as ex:
+                    except Exception as ex:  # pylint: disable=broad-except
                         progress_bar.update(1)
                         msg_1 = f"Error calculating value for {metric_name}, "
                         msg_2 = f"failed with error {str(ex)} : Stack trace : {str(ex.__traceback__)}"
@@ -95,7 +95,7 @@ class CodeMetricHandler(MetricHandler):
             for row_metric_future in row_metric_futures:
                 try:
                     row_metric_results.append(row_metric_future.result())
-                except Exception as ex:
+                except Exception as ex:  # pylint: disable=broad-except
                     msg_1 = f"Error calculating value for a row for metric {metric.name}, "
                     msg_2 = f"failed with error {str(ex)} : Stack trace : {str(ex.__traceback__)}"
                     LOGGER.info(msg_1 + msg_2)

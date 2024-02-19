@@ -96,7 +96,7 @@ def _is_flow_local(path):
         if os.path.isdir(path):
             return os.path.isfile(os.path.join(path, "flow.dag.yaml"))
         return False
-    except Exception:
+    except (FileNotFoundError, PermissionError):
         return False
 
 

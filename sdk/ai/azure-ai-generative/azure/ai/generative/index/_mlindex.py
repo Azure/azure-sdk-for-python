@@ -171,7 +171,7 @@ class MLIndex:
 
                 try:
                     connection_credential = get_connection_credential(self.index_config, credential=credential)
-                except Exception as e:
+                except Exception as e:  # pylint: disable=broad-except
                     # azure.ai.generative has workflow where env vars are set before doing stuff.
                     # AZURE_AI_SEARCH_KEY is new key, but fall back to AZURE_COGNITIVE_SEARCH_KEY for backward compat.
                     if "AZURE_AI_SEARCH_KEY" in os.environ or "AZURE_COGNITIVE_SEARCH_KEY" in os.environ:
@@ -268,7 +268,7 @@ class MLIndex:
                             from langchain.vectorstores import FAISS
 
                             store = FAISS.load_local(str(tmpdir), embeddings)
-                        except Exception as e:
+                        except ImportError as e:
                             msg = f"retrying with vendored FAISS VectorStore.\n{e}"
                             logger.warning("Failed to load FAISS Index using installed version of langchain, " + msg)
 
@@ -286,7 +286,7 @@ class MLIndex:
                         """
                     try:
                         from azure.ai.generative.index._langchain.faiss import azureml_faiss_as_langchain_faiss
-                    except Exception as e:
+                    except ImportError as e:
                         logger.warning(error_fmt_str.format(e=e))
                         azureml_faiss_as_langchain_faiss = None  # type: ignore[assignment]
 
@@ -334,7 +334,7 @@ class MLIndex:
                             self.get_langchain_embeddings(credential=credential).embed_query,
                             text_key=self.index_config.get("field_mapping", {})["content"],
                         )
-                    except Exception as e:
+                    except Exception as e:  # pylint: disable=broad-except
                         msg = f"Failed to get Pinecone vectorstore due to {e}, "
                         logger.warn(msg + "try again by passing in `embedding` as an Embeddings object.")
                         return Pinecone.from_existing_index(
@@ -610,14 +610,14 @@ class MLIndex:
                                 [dir for dir in embeddings_container.glob("*") if dir.is_dir()], key=os.path.getmtime
                             ).name
                         )
-                    except Exception as e:
+                    except FileNotFoundError as e:
                         logger.warning(
                             f"failed to get latest folder from {embeddings_container} with {e}.", extra={"print": True}
                         )
                     if previous_embeddings_dir_name is not None:
                         try:
                             embeddings = EmbeddingsContainer.load(previous_embeddings_dir_name, embeddings_container)
-                        except Exception as e:
+                        except (IOError, ValueError) as e:
                             logger.warning(
                                 f"failed to load embeddings from {embeddings_container} with {e}.",
                                 extra={"print": True},
