@@ -153,3 +153,20 @@ class TestNotificationMessageClientForTextAsync(AsyncMessagesRecordedTestCase):
         assert message_response.to == phone_number
     
 
+    @MessagesPreparersAsync.messages_test_decorator_async
+    @recorded_by_proxy_async 
+    async def test_download_media_async(self):
+        phone_number: str = "+14254360097"
+        input_media_id: str = "315a0b04-d80d-4573-bcf1-1ce33d3f19f0"
+        raised = False
+        message_client: NotificationMessagesClient = self.create_notification_message_client()
+        try:
+            async with message_client:
+                media_stream = await message_client.download_media(input_media_id)
+                with open('media.txt', 'wb') as file:
+                    file.write(media_stream)
+        except:
+            raised = True
+            raise
+        assert raised is False
+        assert media_stream is not None

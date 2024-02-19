@@ -10,10 +10,12 @@ from typing import (
     List,
     Any,
     Awaitable,
-    TYPE_CHECKING,
+    Union,
 )
 from urllib.parse import urlparse
 from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.identity import DefaultAzureCredential
 from .._shared.utils import parse_connection_str
 from .._shared.policy import HMACCredentialsPolicy
 from ._client import (
@@ -21,10 +23,7 @@ from ._client import (
     MessageTemplateClient as MessageTemplateClientGenerated,
 )
 from .._api_versions import DEFAULT_VERSION
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials_async import AsyncTokenCredential
+from .._shared.auth_policy_utils import get_authentication_policy
 
 class NotificationMessagesClient(NotificationMessagesClientGenerated):
     """A client to interact with the AzureCommunicationService Messaging service.
@@ -40,16 +39,9 @@ class NotificationMessagesClient(NotificationMessagesClientGenerated):
         Note that overriding this default value may result in unsupported behavior.
     """
 
-    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: Union[AsyncTokenCredential, AzureKeyCredential], **kwargs: Any) -> None:
         if not credential:
             raise ValueError("credential can not be None")
-
-        # TokenCredential not supported at the moment
-        if hasattr(credential, "get_token"):
-            raise TypeError(
-                "Unsupported credential: {}. Use an AzureKeyCredential to use HMACCredentialsPolicy"
-                " for authentication".format(type(credential))
-            )
 
         try:
             if not endpoint.lower().startswith("http"):
@@ -63,7 +55,7 @@ class NotificationMessagesClient(NotificationMessagesClientGenerated):
 
         self._endpoint = endpoint
         self._credential = credential
-        self._authentication_policy = HMACCredentialsPolicy(endpoint, credential.key)
+        self._authentication_policy =  get_authentication_policy(endpoint, credential)
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         super().__init__(
             self._endpoint, self._credential, authentication_policy=self._authentication_policy, api_version=self._api_version, **kwargs
@@ -72,13 +64,18 @@ class NotificationMessagesClient(NotificationMessagesClientGenerated):
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "NotificationMessagesClient":
         """Create NotificationMessagesClient from a Connection String.
-
         
         """
         endpoint, access_key = parse_connection_str(conn_str)
         breakpoint
         return cls(endpoint, AzureKeyCredential(key=access_key), **kwargs)
-
+    
+    @classmethod
+    def from_token_credentials(cls, endpoint: str, **kwargs: Any) -> "NotificationMessagesClient":
+        """Create NotificationMessagesClient from an endpoint and TokenCredentials.
+        
+        """
+        return cls(endpoint, DefaultAzureCredential(), **kwargs)
 
 class MessageTemplateClient(MessageTemplateClientGenerated):
     """A client to interact with the AzureCommunicationService Messaging service.
@@ -94,16 +91,9 @@ class MessageTemplateClient(MessageTemplateClientGenerated):
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> "None":
+    def __init__(self, endpoint: str, credential: Union[AsyncTokenCredential, AzureKeyCredential], **kwargs: Any) -> "None":
         if not credential:
             raise ValueError("credential can not be None")
-
-        # TokenCredential not supported at the moment
-        if hasattr(credential, "get_token"):
-            raise TypeError(
-                "Unsupported credential: {}. Use an AzureKeyCredential to use HMACCredentialsPolicy"
-                " for authentication".format(type(credential))
-            )
 
         try:
             if not endpoint.lower().startswith("http"):
@@ -117,7 +107,7 @@ class MessageTemplateClient(MessageTemplateClientGenerated):
 
         self._endpoint = endpoint
         self._credential = credential
-        self._authentication_policy = HMACCredentialsPolicy(endpoint, credential.key)
+        self._authentication_policy =  get_authentication_policy(endpoint, credential)
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         super().__init__(
             self._endpoint, self._credential, authentication_policy=self._authentication_policy, api_version=self._api_version, **kwargs
@@ -131,6 +121,12 @@ class MessageTemplateClient(MessageTemplateClientGenerated):
         endpoint, access_key = parse_connection_str(conn_str)
         return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
 
+    @classmethod
+    def from_token_credentials(cls, endpoint: str, **kwargs: Any) -> "MessageTemplateClient":
+        """Create MessageTemplateClient from an endpoint and TokenCredentials.
+        
+        """
+        return cls(endpoint, DefaultAzureCredential(), **kwargs)
 
 __all__: List[str] = [
     "NotificationMessagesClient",
