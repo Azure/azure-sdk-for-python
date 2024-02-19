@@ -17,7 +17,6 @@ from conftest import (
     ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME,
     configure,
     reload,
-    ENV_OPENAI_TEST_MODE,
 )
 
 
@@ -250,9 +249,6 @@ class TestClient(AzureRecordedTestCase):
         ],
     )
     def test_parse_retry_after_ms_header(self, headers, timeout, **kwargs):
-        if os.getenv(ENV_OPENAI_TEST_MODE) != "v1":
-            pytest.skip("Skipping - tests set to run against v1.")
-
         client = openai.AzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
             api_key="key",

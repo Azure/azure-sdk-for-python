@@ -9,9 +9,6 @@ import os
 import pytest
 import importlib
 import contextlib
-import requests
-import aiohttp
-import yarl
 import functools
 import openai
 from devtools_testutils.sanitizers import add_header_regex_sanitizer, add_oauth_response_sanitizer
@@ -21,8 +18,6 @@ from azure.identity.aio import (
     get_bearer_token_provider as get_bearer_token_provider_async,
 )
 
-# controls whether we run tests against v0 or v1. Options: v0 or v1. Default: v1
-ENV_OPENAI_TEST_MODE = "OPENAI_TEST_MODE"
 
 # for pytest.parametrize
 AZURE = "azure"
@@ -128,12 +123,9 @@ def azure_openai_creds():
         "chat_completion_gpt4_model": ENV_OPENAI_CHAT_COMPLETIONS_GPT4_MODEL,
     }
 
-# openai>=1.0.0 ---------------------------------------------------------------------------
 
 @pytest.fixture
 def client(api_type):
-    if os.getenv(ENV_OPENAI_TEST_MODE, "v1") != "v1":
-        pytest.skip("Skipping - tests set to run against v1.")
     if api_type == "azure":
         client = openai.AzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
@@ -179,8 +171,6 @@ def client(api_type):
 
 @pytest.fixture
 def client_async(api_type):
-    if os.getenv(ENV_OPENAI_TEST_MODE, "v1") != "v1":
-        pytest.skip("Skipping - tests set to run against v1.")
     if api_type == "azure":
         client = openai.AsyncAzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
@@ -308,70 +298,3 @@ def reload():
         yield
     finally:
         importlib.reload(openai)
-
-
-# openai<1.0.0 ---------------------------------------------------------------------------
-
-@pytest.fixture
-def set_vars(api_type):
-    if os.getenv(ENV_OPENAI_TEST_MODE, "v1") != "v0":
-        pytest.skip("Skipping - tests set to run against v0.")
-
-    if api_type == "azure":
-        openai.api_base = os.getenv(ENV_AZURE_OPENAI_ENDPOINT).rstrip("/")
-        openai.api_key = os.getenv(ENV_AZURE_OPENAI_KEY)
-        openai.api_type = "azure"
-        openai.api_version = ENV_AZURE_OPENAI_API_VERSION
-    elif api_type == "azuread":
-        openai.api_base = os.getenv(ENV_AZURE_OPENAI_ENDPOINT).rstrip("/")
-        credential = DefaultAzureCredential()
-        token = credential.get_token("https://cognitiveservices.azure.com/.default")
-        openai.api_type = "azuread"
-        openai.api_key = token.token
-        openai.api_version = ENV_AZURE_OPENAI_API_VERSION
-    elif api_type == "openai":
-        openai.api_base = "https://api.openai.com/v1"
-        openai.api_type = "openai"
-        openai.api_key = os.getenv(ENV_OPENAI_KEY)
-        openai.api_version = None
-    elif api_type == "whisper_azure":
-        openai.api_base = os.getenv(ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT).rstrip("/")
-        openai.api_key = os.getenv(ENV_AZURE_OPENAI_NORTHCENTRALUS_KEY)
-        openai.api_type = "azure"
-        openai.api_version = ENV_AZURE_OPENAI_API_VERSION
-    elif api_type == "whisper_azuread":
-        openai.api_base = os.getenv(ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT).rstrip("/")
-        credential = DefaultAzureCredential()
-        token = credential.get_token("https://cognitiveservices.azure.com/.default")
-        openai.api_type = "azuread"
-        openai.api_key = token.token
-        openai.api_version = ENV_AZURE_OPENAI_API_VERSION
-
-
-def configure_v0_async(f):
-    @functools.wraps(f)
-    async def wrapper(*args, **kwargs):
-        api_type = kwargs.pop("api_type")
-        set_vars = kwargs.pop("set_vars")
-        azure_openai_creds = kwargs.pop("azure_openai_creds")
-        try:
-            return await f(*args, set_vars=set_vars, azure_openai_creds=azure_openai_creds, api_type=api_type, **kwargs)
-        except openai.error.RateLimitError:
-            pytest.skip(f"{str(f).split(' ')[1]}[{api_type}]: Skipping - Rate limit reached.")
-
-    return wrapper
-
-
-def configure_v0(f):
-    @functools.wraps(f)
-    def wrapper(*args, **kwargs):
-        api_type = kwargs.pop("api_type")
-        set_vars = kwargs.pop("set_vars")
-        azure_openai_creds = kwargs.pop("azure_openai_creds")
-        try:
-            return f(*args, set_vars=set_vars, azure_openai_creds=azure_openai_creds, api_type=api_type, **kwargs)
-        except openai.error.RateLimitError:
-            pytest.skip(f"{str(f).split(' ')[1]}[{api_type}]: Skipping - Rate limit reached.")
-
-    return wrapper
-
