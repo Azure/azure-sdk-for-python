@@ -470,29 +470,23 @@ class OperationOrchestrator(object):
                     error_type=ValidationErrorType.INVALID_VALUE,
                 )
             try:
-                versioned_arm_id_obj = AMLVersionedArmId(arm_id)
-                if versioned_arm_id_obj.is_registry_id:
+                arm_id_obj = AMLVersionedArmId(arm_id)
+                if arm_id_obj.is_registry_id:
                     return arm_id
-                if self._match(versioned_arm_id_obj):
-                    return str(
-                        VERSIONED_RESOURCE_NAME.format(
-                            versioned_arm_id_obj.asset_name, versioned_arm_id_obj.asset_version
-                        )
-                    )
+                if self._match(arm_id_obj):
+                    return str(VERSIONED_RESOURCE_NAME.format(arm_id_obj.asset_name, arm_id_obj.asset_version))
             except ValidationException:
                 pass  # fall back to named arm id
             try:
-                labelled_arm_id_obj = AMLLabelledArmId(arm_id)
-                if self._match(labelled_arm_id_obj):
-                    return str(
-                        LABELLED_RESOURCE_NAME.format(labelled_arm_id_obj.asset_name, labelled_arm_id_obj.asset_label)
-                    )
+                arm_id_obj = AMLLabelledArmId(arm_id)
+                if self._match(arm_id_obj):
+                    return str(LABELLED_RESOURCE_NAME.format(arm_id_obj.asset_name, arm_id_obj.asset_label))
             except ValidationException:
                 pass  # fall back to named arm id
             try:
-                named_arm_id_obj = AMLNamedArmId(arm_id)
-                if self._match(named_arm_id_obj):
-                    return str(named_arm_id_obj.asset_name)
+                arm_id_obj = AMLNamedArmId(arm_id)
+                if self._match(arm_id_obj):
+                    return str(arm_id_obj.asset_name)
             except ValidationException:
                 pass  # fall back to be not a ARM_id
         return arm_id

@@ -58,7 +58,7 @@ class Gen2StorageClient:
         self,
         source: str,
         name: str,
-        version: Optional[str],
+        version: str,
         ignore_file: IgnoreFile = IgnoreFile(None),
         asset_hash: Optional[str] = None,
         show_progress: bool = True,
@@ -132,7 +132,7 @@ class Gen2StorageClient:
             # upload must be completed before we try to generate confirmation file
             while self.uploaded_file_count < self.total_file_count:
                 time.sleep(0.5)
-            self._set_confirmation_metadata(name, version)  # type: ignore[arg-type]
+            self._set_confirmation_metadata(name, version)
         except AssetNotChangedError:
             name = str(self.name)
             version = str(self.version)

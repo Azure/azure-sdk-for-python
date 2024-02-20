@@ -181,7 +181,7 @@ class WorkspaceOperationsBase(ABC):
             credentials=self._credentials,
             resource_group_name=resource_group,
             subscription_id=self._subscription_id,
-            deployment_name=get_deployment_name(workspace.name),  # type: ignore[arg-type]
+            deployment_name=get_deployment_name(workspace.name),
         )
 
         # deploy_resource() blocks for the poller to succeed if wait is True
@@ -384,7 +384,7 @@ class WorkspaceOperationsBase(ABC):
                     credentials=self._credentials,
                     resource_group_name=resource_group,
                     subscription_id=self._subscription_id,
-                    deployment_name=get_deployment_name(workspace.name),  # type: ignore[arg-type]
+                    deployment_name=get_deployment_name(workspace.name),
                 )
 
                 # deploy_resource() blocks for the poller to succeed if wait is True
@@ -520,7 +520,7 @@ class WorkspaceOperationsBase(ABC):
         resources_being_deployed: Dict = {}
         if not workspace.location:
             workspace.location = get_resource_group_location(
-                self._credentials, self._subscription_id, workspace.resource_group  # type: ignore[arg-type]
+                self._credentials, self._subscription_id, workspace.resource_group
             )
         template = get_template(resource_type=ArmConstants.WORKSPACE_BASE)
         param = get_template(resource_type=ArmConstants.WORKSPACE_PARAM)
@@ -553,7 +553,7 @@ class WorkspaceOperationsBase(ABC):
             _set_val(param["keyVaultOption"], "existing")
             _set_val(param["keyVaultResourceGroupName"], group_name)
         else:
-            key_vault = _generate_key_vault(workspace.name, resources_being_deployed)  # type: ignore[arg-type]
+            key_vault = _generate_key_vault(workspace.name, resources_being_deployed)
             _set_val(param["keyVaultName"], key_vault)
             _set_val(
                 param["keyVaultResourceGroupName"],
@@ -566,7 +566,7 @@ class WorkspaceOperationsBase(ABC):
             _set_val(param["storageAccountOption"], "existing")
             _set_val(param["storageAccountResourceGroupName"], group_name)
         else:
-            storage = _generate_storage(workspace.name, resources_being_deployed)  # type: ignore[arg-type]
+            storage = _generate_storage(workspace.name, resources_being_deployed)
             _set_val(param["storageAccountName"], storage)
             _set_val(
                 param["storageAccountResourceGroupName"],
@@ -582,14 +582,14 @@ class WorkspaceOperationsBase(ABC):
                 group_name,
             )
         else:
-            log_analytics = _generate_log_analytics(workspace.name, resources_being_deployed)  # type: ignore[arg-type]
+            log_analytics = _generate_log_analytics(workspace.name, resources_being_deployed)
             _set_val(param["logAnalyticsName"], log_analytics)
             _set_val(
                 param["logAnalyticsArmId"],
                 get_log_analytics_arm_id(self._subscription_id, self._resource_group_name, log_analytics),
             )
 
-            app_insights = _generate_app_insights(workspace.name, resources_being_deployed)  # type: ignore[arg-type]
+            app_insights = _generate_app_insights(workspace.name, resources_being_deployed)
             _set_val(param["applicationInsightsName"], app_insights)
             _set_val(
                 param["applicationInsightsResourceGroupName"],
@@ -681,28 +681,28 @@ class WorkspaceOperationsBase(ABC):
                 _set_val(param["offlineStoreStorageAccountOption"], "new")
                 _set_val(
                     param["offline_store_container_name"],
-                    _generate_storage_container(workspace.name, resources_being_deployed),  # type: ignore[arg-type]
+                    _generate_storage_container(workspace.name, resources_being_deployed),
                 )
                 if not workspace.storage_account:
                     _set_val(param["offline_store_storage_account_name"], param["storageAccountName"]["value"])
                 else:
                     _set_val(
                         param["offline_store_storage_account_name"],
-                        _generate_storage(workspace.name, resources_being_deployed),  # type: ignore[arg-type]
+                        _generate_storage(workspace.name, resources_being_deployed),
                     )
                 _set_val(param["offline_store_resource_group_name"], workspace.resource_group)
                 _set_val(param["offline_store_subscription_id"], self._subscription_id)
 
             if online_store_target:
-                arm_id = AzureResourceId(online_store_target)  # type: ignore[assignment]
+                arm_id = AzureResourceId(online_store_target)
                 _set_val(param["online_store_resource_id"], online_store_target)
                 _set_val(param["online_store_resource_group_name"], arm_id.resource_group_name)
                 _set_val(param["online_store_subscription_id"], arm_id.subscription_id)
 
             if materialization_identity:
-                arm_id = AzureResourceId(materialization_identity.resource_id)  # type: ignore[assignment]
+                arm_id = AzureResourceId(materialization_identity.resource_id)
                 _set_val(param["materializationIdentityOption"], "existing")
-                _set_val(param["materialization_identity_name"], arm_id.asset_name)  # type: ignore[attr-defined]
+                _set_val(param["materialization_identity_name"], arm_id.asset_name)
                 _set_val(param["materialization_identity_resource_group_name"], arm_id.resource_group_name)
                 _set_val(param["materialization_identity_subscription_id"], arm_id.subscription_id)
             else:
@@ -745,9 +745,7 @@ class WorkspaceOperationsBase(ABC):
             # Hubs must have an azure container registry on-provision. If none was provided, create one.
             if not workspace.container_registry:
                 _set_val(param["containerRegistryOption"], "new")
-                container_registry = _generate_container_registry(
-                    workspace.name, resources_being_deployed  # type: ignore[arg-type]
-                )
+                container_registry = _generate_container_registry(workspace.name, resources_being_deployed)
                 _set_val(param["containerRegistryName"], container_registry)
                 _set_val(param["containerRegistryResourceGroupName"], self._resource_group_name)
 
@@ -867,7 +865,7 @@ def _set_obj_val(dict: dict, val: Any) -> None:
     dict["value"] = deepcopy(json)
 
 
-def _generate_key_vault(name: str, resources_being_deployed: dict) -> str:
+def _generate_key_vault(name: Optional[str], resources_being_deployed: dict) -> str:
     """Generates a name for a key vault resource to be created with workspace based on workspace name,
     sets name and type in resources_being_deployed.
 
@@ -886,7 +884,7 @@ def _generate_key_vault(name: str, resources_being_deployed: dict) -> str:
     return str(key_vault)
 
 
-def _generate_storage(name: str, resources_being_deployed: dict) -> str:
+def _generate_storage(name: Optional[str], resources_being_deployed: dict) -> str:
     """Generates a name for a storage account resource to be created with workspace based on workspace name,
     sets name and type in resources_being_deployed.
 
@@ -902,7 +900,7 @@ def _generate_storage(name: str, resources_being_deployed: dict) -> str:
     return str(storage)
 
 
-def _generate_storage_container(name: str, resources_being_deployed: dict) -> str:
+def _generate_storage_container(name: Optional[str], resources_being_deployed: dict) -> str:
     """Generates a name for a storage container resource to be created with workspace based on workspace name,
     sets name and type in resources_being_deployed.
 
@@ -918,7 +916,7 @@ def _generate_storage_container(name: str, resources_being_deployed: dict) -> st
     return str(storage_container)
 
 
-def _generate_log_analytics(name: str, resources_being_deployed: dict) -> str:
+def _generate_log_analytics(name: Optional[str], resources_being_deployed: dict) -> str:
     """Generates a name for a log analytics resource to be created with workspace based on workspace name,
     sets name and type in resources_being_deployed.
 
@@ -937,7 +935,7 @@ def _generate_log_analytics(name: str, resources_being_deployed: dict) -> str:
     return str(log_analytics)
 
 
-def _generate_app_insights(name: str, resources_being_deployed: dict) -> str:
+def _generate_app_insights(name: Optional[str], resources_being_deployed: dict) -> str:
     """Generates a name for an application insights resource to be created with workspace based on workspace name,
     sets name and type in resources_being_deployed.
 
@@ -958,7 +956,7 @@ def _generate_app_insights(name: str, resources_being_deployed: dict) -> str:
     return str(app_insights)
 
 
-def _generate_container_registry(name: str, resources_being_deployed: dict) -> str:
+def _generate_container_registry(name: Optional[str], resources_being_deployed: dict) -> str:
     """Generates a name for a container registry resource to be created with workspace based on workspace name,
     sets name and type in resources_being_deployed.
 

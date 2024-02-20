@@ -160,22 +160,18 @@ def upload_dependencies(deployment: Deployment, orchestrators: OperationOrchestr
 
     if not is_registry_id_for_resource(deployment.environment):
         deployment.environment = (
-            orchestrators.get_asset_arm_id(
-                deployment.environment, azureml_type=AzureMLResourceType.ENVIRONMENT
-            )  # type: ignore[assignment]
+            orchestrators.get_asset_arm_id(deployment.environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
             if deployment.environment
             else None
         )
     if not is_registry_id_for_resource(deployment.model):
         deployment.model = (
-            orchestrators.get_asset_arm_id(
-                deployment.model, azureml_type=AzureMLResourceType.MODEL
-            )  # type: ignore[assignment]
+            orchestrators.get_asset_arm_id(deployment.model, azureml_type=AzureMLResourceType.MODEL)
             if deployment.model
             else None
         )
     if isinstance(deployment, (BatchDeployment, ModelBatchDeployment)) and deployment.compute:
-        deployment.compute = orchestrators.get_asset_arm_id(  # type: ignore[assignment]
+        deployment.compute = orchestrators.get_asset_arm_id(
             deployment.compute, azureml_type=AzureMLResourceType.COMPUTE
         )
 

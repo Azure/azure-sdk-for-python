@@ -43,7 +43,6 @@ from azure.ai.ml.constants._common import (
     CommonYamlFields,
     DefaultOpenEncoding,
 )
-from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType
 from azure.core.pipeline.policies import RetryPolicy
 
 module_logger = logging.getLogger(__name__)
@@ -112,7 +111,7 @@ def _camel_to_snake_convert(text: str) -> str:
     return re.sub("([a-z0-9])([A-Z])", r"\1_\2", text).lower()
 
 
-def camel_to_snake(text: Optional[str]) -> str:
+def camel_to_snake(text: str) -> Optional[str]:
     """Convert camel name to snake.
 
      :param text: String to convert
@@ -120,10 +119,9 @@ def camel_to_snake(text: Optional[str]) -> str:
      :return:
         * None if text is None
         * Converted text from camelCase to snake_case
-    :rtype: str
+    :rtype: Optional[str]
     """
-    converted_text = _csv_parser(text, _camel_to_snake_convert)
-    return converted_text if converted_text else ""
+    return _csv_parser(text, _camel_to_snake_convert)
 
 
 # This is snake to camel back which is different from snake to camel
@@ -454,14 +452,14 @@ def dump_yaml_to_file(
             ) from e
 
 
-def dict_eq(dict1: Optional[Dict[Any, Any]], dict2: Optional[Dict[Any, Any]]) -> bool:
+def dict_eq(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> bool:
     """Compare two dictionaries.
 
     :param dict1: The first dictionary
-    :type dict1: Optional[Dict[Any, Any]]
+    :type dict1: Dict[str, Any]
     :param dict2: The second dictionary
-    :type dict2: Optional[Dict[Any, Any]]
-    :return: True if the two dictionaries are non-null and equal, False otherwise.
+    :type dict2: Dict[str, Any]
+    :return: True if the two dictionaries are equal, False otherwise
     :rtype: bool
     """
     if not dict1 and not dict2:
@@ -482,11 +480,11 @@ def xor(a: Any, b: Any) -> bool:
     return bool(a) != bool(b)
 
 
-def is_url(value: Optional[Union[PathLike, str]]) -> bool:
+def is_url(value: Union[PathLike, str]) -> bool:
     """Check if a string is a valid URL.
 
     :param value: The string to check
-    :type value: Optional[Union[PathLike, str]]
+    :type value: Union[PathLike, str]
     :return: True if the string is a valid URL, False otherwise
     :rtype: bool
     """
@@ -520,19 +518,10 @@ def resolve_short_datastore_url(value: Union[PathLike, str], workspace: Operatio
 
             data_store_path_uri = AzureMLDatastorePathUri(value)
             if data_store_path_uri.uri_type == "Datastore":
-                if workspace.workspace_name:
-                    workspace_name_str = workspace.workspace_name
-                else:
-                    raise ValidationException(
-                        message="Workspace name is not provided",
-                        no_personal_data_message="Workspace name is not provided",
-                        target=ErrorTarget.WORKSPACE,
-                        error_type=ValidationErrorType.INVALID_VALUE,
-                    )
                 return AzureMLDatastorePathUri(value).to_long_uri(
                     subscription_id=workspace.subscription_id,
                     resource_group_name=workspace.resource_group_name,
-                    workspace_name=workspace_name_str,
+                    workspace_name=workspace.workspace_name,
                 )
 
     except (ValueError, ValidationException):
@@ -1159,7 +1148,7 @@ def is_valid_node_name(name: str) -> bool:
     return isinstance(name, str) and name.isidentifier() and re.fullmatch(r"^[a-z_][a-z\d_]*", name) is not None
 
 
-def parse_args_description_from_docstring(docstring: Optional[str]) -> Dict[str, str]:
+def parse_args_description_from_docstring(docstring: str) -> Dict[str, str]:
     """Return arg descriptions in docstring with google style.
 
     e.g.
@@ -1192,7 +1181,7 @@ def parse_args_description_from_docstring(docstring: Optional[str]) -> Dict[str,
     :return: A map of parameter names to parameter descriptions
     :rtype: Dict[str, str]
     """
-    args: Dict = {}
+    args = {}
     if not isinstance(docstring, str):
         return args
     lines = [line.strip() for line in docstring.splitlines()]

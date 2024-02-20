@@ -91,15 +91,15 @@ class AdditionalIncludes:
         return len(self.origin_configs) != 0
 
     @classmethod
-    def _get_artifacts_by_config(cls, artifact_config: Dict[str, str]) -> Optional[Union[str, os.PathLike]]:
+    def _get_artifacts_by_config(cls, artifact_config: Dict[str, str]) -> Union[str, os.PathLike]:
         # config key existence has been validated in _validate_additional_include_config
-        res: Optional[Union[str, os.PathLike]] = ArtifactCache().get(
+        res: Union[str, os.PathLike] = ArtifactCache().get(
             organization=artifact_config.get("organization", None),
             project=artifact_config.get("project", None),
             feed=artifact_config["feed"],
             name=artifact_config["name"],
             version=artifact_config["version"],
-            scope=artifact_config.get("scope", "organization"),  # type: ignore[arg-type]
+            scope=artifact_config.get("scope", "organization"),
             resolve=True,
         )
         return res
@@ -154,7 +154,7 @@ class AdditionalIncludes:
                 f"{artifact_additional_include_config['name']}:{artifact_additional_include_config['version']} in "
                 f"{artifact_additional_include_config['feed']}"
             )
-            result.append((os.path.join(str(artifact_path), item), config_info))
+            result.append((os.path.join(artifact_path, item), config_info))
         return result
 
     def _resolve_artifact_additional_include_configs(

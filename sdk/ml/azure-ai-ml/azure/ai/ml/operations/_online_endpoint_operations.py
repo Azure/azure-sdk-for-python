@@ -72,7 +72,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         self._credentials = credentials
         self._init_kwargs = kwargs
 
-        self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")  # type: ignore[assignment]
+        self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
 
     @distributed_trace
     @monitor_with_activity(logger, "OnlineEndpoint.List", ActivityType.PUBLICAPI)

@@ -451,7 +451,7 @@ def _resolve_path(path: Path) -> Path:
     return _resolve_path(link_path)
 
 
-def generate_asset_id(asset_hash: Optional[str], include_directory=True) -> str:
+def generate_asset_id(asset_hash: str, include_directory=True) -> str:
     asset_id = asset_hash or str(uuid.uuid4())
     if include_directory:
         asset_id = "/".join((ARTIFACT_ORIGIN, asset_id))
@@ -738,7 +738,7 @@ def _create_or_update_autoincrement(
 
 
 def _get_next_version_from_container(
-    name: Optional[str],
+    name: str,
     container_operation: Any,
     resource_group_name: str,
     workspace_name: str,
@@ -821,7 +821,7 @@ def _get_latest(
     resource_group_name: str,
     workspace_name: Optional[str] = None,
     registry_name: Optional[str] = None,
-    order_by: Union[OrderString, str] = OrderString.CREATED_AT_DESC,
+    order_by: OrderString = OrderString.CREATED_AT_DESC,
     **kwargs,
 ) -> Union[ModelVersionData, DataVersionBaseData]:
     """Retrieve the latest version of the asset with the given name.
@@ -840,7 +840,7 @@ def _get_latest(
     :type registry_name: Optional[str]
     :param order_by: Specifies how to order the results. Accepted values are OrderString.CREATED_AT and
         OrderString.CREATED_AT_DESC]. Defaults to `OrderString.CREATED_AT_DESC`.
-    :type order_by: Union[str, ~azure.ai.ml.constants._common.OrderString]
+    :type order_by: ~azure.ai.ml.constants._common.OrderString
     :return: The latest version of the requested asset
     :rtype: Union[ModelVersionData, DataVersionBaseData]
     """
@@ -1099,7 +1099,7 @@ class DirectoryUploadProgressBar(tqdm):
 
 
 def get_storage_info_for_non_registry_asset(
-    service_client, workspace_name: Optional[str], name: Optional[str], version: Optional[str], resource_group: str
+    service_client, workspace_name: str, name: str, version: str, resource_group: str
 ) -> Dict[str, str]:
     """Get SAS uri and blob uri for non-registry asset. Note that this function won't return the same
     SAS uri and blob uri for the same asset. It will return a new SAS uri and blob uri every time it is called.
@@ -1116,29 +1116,21 @@ def get_storage_info_for_non_registry_asset(
     :return: The sas_uri and blob_uri
     :rtype: Dict[str, str]
     """
-    if all([workspace_name, name, version]):
-        request_body = PendingUploadRequestDto(pending_upload_type="TemporaryBlobReference")
-        response = service_client.code_versions.create_or_get_start_pending_upload(
-            resource_group_name=resource_group,
-            workspace_name=workspace_name,
-            name=name,
-            version=version,
-            body=request_body,
-        )
-
-        sas_info = {
-            "sas_uri": response.blob_reference_for_consumption.credential.sas_uri,
-            "blob_uri": response.blob_reference_for_consumption.blob_uri,
-        }
-
-        return sas_info
-    return ValidationException(
-        message="Workspace name, asset name and version are required to get storage info.",
-        no_personal_data_message="Workspace name, asset name and version are required to get storage info.",
-        target=ErrorTarget.ASSET,
-        error_category=ErrorCategory.USER_ERROR,
-        error_type=ValidationErrorType.INVALID_VALUE,
+    request_body = PendingUploadRequestDto(pending_upload_type="TemporaryBlobReference")
+    response = service_client.code_versions.create_or_get_start_pending_upload(
+        resource_group_name=resource_group,
+        workspace_name=workspace_name,
+        name=name,
+        version=version,
+        body=request_body,
     )
+
+    sas_info = {
+        "sas_uri": response.blob_reference_for_consumption.credential.sas_uri,
+        "blob_uri": response.blob_reference_for_consumption.blob_uri,
+    }
+
+    return sas_info
 
 
 def _get_existing_asset_name_and_version(existing_asset):

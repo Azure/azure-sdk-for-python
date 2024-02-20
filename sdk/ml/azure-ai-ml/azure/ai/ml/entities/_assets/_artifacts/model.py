@@ -100,7 +100,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         self.type = type or AssetTypes.CUSTOM_MODEL
         self.stage = stage
         if self._is_anonymous and self.path:
-            _ignore_file = get_ignore_file(Path(self.path))
+            _ignore_file = get_ignore_file(self.path)
             _upload_hash = get_object_hash(self.path, _ignore_file)
             self.name = get_md5_string(_upload_hash)
 

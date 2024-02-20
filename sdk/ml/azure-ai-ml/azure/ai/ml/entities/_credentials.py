@@ -710,10 +710,8 @@ class IdentityConfiguration(RestTranslatableMixin):
             if obj.user_assigned_identities
             else None
         )
-
-        identity_config_type: str = obj.type if obj.type else "None"  # type: ignore[assignment]
         result = cls(
-            type=camel_to_snake(identity_config_type),
+            type=camel_to_snake(obj.type),
             user_assigned_identities=from_rest_user_assigned_identities,
         )
         result.principal_id = obj.principal_id
@@ -744,10 +742,8 @@ class IdentityConfiguration(RestTranslatableMixin):
             if obj.user_assigned_identities
             else None
         )
-
-        identity_config_type: str = camel_to_snake(obj.type) if obj.type else "None"  # type: ignore[assignment]
         result = cls(
-            type=identity_config_type,
+            type=camel_to_snake(obj.type),
             user_assigned_identities=from_rest_user_assigned_identities,
         )
         result.principal_id = obj.principal_id
@@ -764,9 +760,8 @@ class IdentityConfiguration(RestTranslatableMixin):
             if obj.user_assigned_identities
             else None
         )
-        identity_config_type: str = obj.type if obj.type else "None"
         result = cls(
-            type=camel_to_snake(identity_config_type),  # type: ignore[assignment, arg-type]
+            type=camel_to_snake(obj.type),
             user_assigned_identities=from_rest_user_assigned_identities,
         )
         result.principal_id = obj.principal_id

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
-from typing import Any, Optional, Union, cast
+from typing import Any, Optional, cast
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import BanditPolicy as RestBanditPolicy
 from azure.ai.ml._restclient.v2023_04_01_preview.models import EarlyTerminationPolicy as RestEarlyTerminationPolicy
@@ -22,7 +22,7 @@ class EarlyTerminationPolicy(ABC, RestTranslatableMixin):
         delay_evaluation: int,
         evaluation_interval: int,
     ):
-        self.type: Optional[Union[EarlyTerminationPolicyType, str]] = None
+        self.type = None
         self.delay_evaluation = delay_evaluation
         self.evaluation_interval = evaluation_interval
 

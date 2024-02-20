@@ -541,22 +541,18 @@ class ScheduleOperations(_ScopeDependentOperations):
 
     def _process_and_get_endpoint_deployment_names_from_id(self, target: MonitoringTarget) -> Tuple:
         target.endpoint_deployment_id = (
-            target.endpoint_deployment_id[len(ARM_ID_PREFIX) :]
+            target.endpoint_deployment_id[len(ARM_ID_PREFIX) :]  # type: ignore
             if target.endpoint_deployment_id is not None and target.endpoint_deployment_id.startswith(ARM_ID_PREFIX)
             else target.endpoint_deployment_id
         )
 
         # if it is an ARM ID, don't process it
         if not is_ARM_id_for_parented_resource(
-            target.endpoint_deployment_id,  # type: ignore[arg-type]
-            snake_to_camel(AzureMLResourceType.ONLINE_ENDPOINT),  # type: ignore[arg-type]
+            target.endpoint_deployment_id,
+            snake_to_camel(AzureMLResourceType.ONLINE_ENDPOINT),
             AzureMLResourceType.DEPLOYMENT,
         ):
-            if target.endpoint_deployment_id:
-                endpoint_name, deployment_name = target.endpoint_deployment_id.split(":")
-            else:
-                endpoint_name, deployment_name = None, None
-
+            endpoint_name, deployment_name = target.endpoint_deployment_id.split(":")  # type: ignore
             target.endpoint_deployment_id = NAMED_RESOURCE_ID_FORMAT_WITH_PARENT.format(
                 self._subscription_id,
                 self._resource_group_name,

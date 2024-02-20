@@ -167,7 +167,7 @@ class CachedNodeResolver(object):
         if component._source_path:  # pylint: disable=protected-access
             object_hash = hashlib.sha256()
             object_hash.update(component._get_anonymous_hash().encode("utf-8"))  # pylint: disable=protected-access
-            object_hash.update(str(component._source_path).encode("utf-8"))  # pylint: disable=protected-access
+            object_hash.update(component._source_path.encode("utf-8"))  # pylint: disable=protected-access
             return _YAML_SOURCE_PREFIX + object_hash.hexdigest()
         # For components without code, like pipeline component, their dependencies have already
         # been resolved before calling this function, so we can use their anonymous hash directly
@@ -293,9 +293,7 @@ class CachedNodeResolver(object):
         """
 
         def _map_func(_cache_content: _CacheContent):
-            _cache_content.arm_id = resolver(
-                _cache_content.component_ref, azureml_type=AzureMLResourceType.COMPONENT
-            )  # type: ignore[assignment]
+            _cache_content.arm_id = resolver(_cache_content.component_ref, azureml_type=AzureMLResourceType.COMPONENT)
             if is_on_disk_cache_enabled() and is_private_preview_enabled():
                 on_disk_hash = _cache_content.on_disk_hash if _cache_content.on_disk_hash else ""
                 arm_id = _cache_content.arm_id if _cache_content.arm_id else ""

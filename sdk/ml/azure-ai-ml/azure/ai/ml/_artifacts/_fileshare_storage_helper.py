@@ -67,7 +67,7 @@ class FileStorageClient:
         self,
         source: str,
         name: str,
-        version: Optional[str],
+        version: str,
         ignore_file: IgnoreFile = IgnoreFile(None),
         asset_hash: Optional[str] = None,
         show_progress: bool = True,

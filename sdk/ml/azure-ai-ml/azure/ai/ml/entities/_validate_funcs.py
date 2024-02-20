@@ -19,7 +19,7 @@ from ._validation import PathAwareSchemaValidatableMixin, ValidationResult, Vali
 def validate_common(
     cls: Any,
     path: Union[str, PathLike, IO[AnyStr]],
-    validate_func: Optional[Union[Callable, Any]],
+    validate_func: Callable,
     params_override: Optional[List[Dict]] = None,
 ) -> ValidationResult:
     params_override = params_override or []

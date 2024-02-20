@@ -41,7 +41,7 @@ class TrainingSettings(RestTranslatableMixin):
         ensemble_model_download_timeout: Optional[int] = None,
         allowed_training_algorithms: Optional[List[str]] = None,
         blocked_training_algorithms: Optional[List[str]] = None,
-        training_mode: Optional[Union[str, TabularTrainingMode]] = None,  # type: ignore[valid-type]
+        training_mode: Optional[Union[str, TabularTrainingMode]] = None,
     ):
         """TrainingSettings class for Azure Machine Learning.
 
@@ -87,23 +87,17 @@ class TrainingSettings(RestTranslatableMixin):
         self.training_mode = training_mode
 
     @property
-    def training_mode(self) -> Optional[TabularTrainingMode]:  # type: ignore[valid-type]
-        # Bug 2951888
+    def training_mode(self) -> Optional[TabularTrainingMode]:
         return self._training_mode
 
     @training_mode.setter
-    def training_mode(self, value: Optional[Union[str, TabularTrainingMode]]) -> None:  # type: ignore[valid-type]
-        # Bug 2951888
+    def training_mode(self, value: Optional[Union[str, TabularTrainingMode]]) -> None:
         if value is None or value is TabularTrainingMode:
             self._training_mode = value
         elif hasattr(TabularTrainingMode, camel_to_snake(value).upper()):
-            self._training_mode = TabularTrainingMode[camel_to_snake(value).upper()]  # type: ignore[index]
-            # Bug 2951888
+            self._training_mode = TabularTrainingMode[camel_to_snake(value).upper()]
         else:
-            supported_values = ", ".join(
-                [f'"{camel_to_snake(mode.value)}"' for mode in TabularTrainingMode]  # type: ignore
-            )
-            # Bug 2951888
+            supported_values = ", ".join([f'"{camel_to_snake(mode.value)}"' for mode in TabularTrainingMode])
             msg = (
                 f"Unsupported training mode: {value}. Supported values are- {supported_values}. "
                 "Or you can use azure.ai.ml.constants.TabularTrainingMode enum."

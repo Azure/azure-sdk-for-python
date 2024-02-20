@@ -102,7 +102,7 @@ class FeatureStoreEntity(Asset):
         arm_id_object = get_arm_id_object_from_id(rest_obj.id)
         featurestoreEntity = FeatureStoreEntity(
             name=arm_id_object.asset_name,
-            version=arm_id_object.asset_version,  # type: ignore[union-attr]
+            version=arm_id_object.asset_version,
             index_columns=[DataColumn._from_rest_object(column) for column in rest_object_details.index_columns],
             stage=rest_object_details.stage,
             description=rest_object_details.description,
