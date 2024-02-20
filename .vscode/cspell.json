@@ -134,6 +134,9 @@
     "conda/conda-releaselogs/azure-mgmt.md"
   ],
   "words": [
+    "mros",
+    "Nify",
+    "deserializers",
     "spinup",
     "cibuildwheel",
     "aoai",
