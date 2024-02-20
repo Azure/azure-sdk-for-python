@@ -267,24 +267,35 @@ class OpenAIEmbedder:
                 tokenized_texts_to_original_texts_indices.append(i)
 
         self._statistics["num_tokens"] += num_tokens
-
+        _iter = None
         if self.show_progress_bar:
             try:
                 import tqdm
 
                 _iter = tqdm.tqdm(range(0, len(tokenized_texts), self.batch_size))
             except ImportError:
-                _iter = range(0, len(tokenized_texts), self.batch_size)
-        else:
-            _iter = range(0, len(tokenized_texts), self.batch_size)
+                logger.warning("Cannot show progress bar because failed to import tqdm.")
 
         batched_embeddings: List[List[float]] = []
-        for i in _iter:
-            response = self._dynamic_batch_size_embed_request(
-                tokenized_texts=tokenized_texts[i : i + self.batch_size],
-                **self._openai_client_params,
-            )
-            batched_embeddings.extend(r["embedding"] for r in response["data"])
+
+        if _iter:
+            for i in _iter:
+                response = self._dynamic_batch_size_embed_request(
+                    tokenized_texts=tokenized_texts[i : i + self.batch_size],
+                    **self._openai_client_params,
+                )
+                batched_embeddings.extend(r["embedding"] for r in response["data"])
+        else: 
+            start_idx = 0
+            original_batch_size = self.batch_size
+            while start_idx < len(tokenized_texts):
+                response = self._dynamic_batch_size_embed_request(
+                    tokenized_texts=tokenized_texts[start_idx : start_idx + self.batch_size],
+                    **self._openai_client_params,
+                )
+                start_idx += original_batch_size
+                original_batch_size = self.batch_size
+                batched_embeddings.extend(r["embedding"] for r in response["data"])
 
         embedding_results: List[List[List[float]]] = [[] for _ in range(len(texts))]
         num_tokens_in_batch: List[List[int]] = [[] for _ in range(len(texts))]

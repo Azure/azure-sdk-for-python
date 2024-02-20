@@ -1,0 +1,22 @@
+embeddings:
+  dimension: 768
+  kind: hugging_face
+  model: sentence-transformers/all-mpnet-base-v2
+  schema_version: '2'
+index:
+  api_version: 2023-07-01-preview
+  connection:
+    id: /subscriptions/79a1ba0c-35bb-436b-bff2-3074d5ff1f89/resourceGroups/azureml-rag-ci/providers/Microsoft.MachineLearningServices/workspaces/azureml-rag-eastus/connections/azureml-rag-acs-v2
+  connection_type: workspace_connection
+  endpoint: https://azureml-rag-acs.search.windows.net
+  engine: azure-sdk
+  field_mapping:
+    content: content
+    embedding: contentVector
+    filename: filepath
+    metadata: meta_json_string
+    title: title
+    url: url
+  index: azureml-rag-test-84370fdd-a6e4-444a-b6f6-f65c24cdc604
+  kind: acs
+  semantic_configuration_name: azureml-default

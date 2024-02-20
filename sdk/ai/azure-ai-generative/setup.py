@@ -93,6 +93,7 @@ setup(
             "scikit-learn",
             "sentence-transformers"
         ],
+        "langchain": ["langchain>=0.0.236,<=0.0.348"],
         "index": [
             "azureml-dataprep[parquet]>4.11",
             "azureml-fsspec>=1",

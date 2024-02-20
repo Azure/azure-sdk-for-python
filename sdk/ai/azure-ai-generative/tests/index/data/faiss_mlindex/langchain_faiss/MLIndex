@@ -1,0 +1,9 @@
+embeddings:
+  dimension: 768
+  kind: hugging_face
+  model: sentence-transformers/all-mpnet-base-v2
+  schema_version: '2'
+index:
+  engine: langchain.vectorstores.FAISS
+  kind: faiss
+  method: FlatL2
