@@ -6,7 +6,7 @@
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionCategory
+from azure.ai.ml._restclient.v2024_01_01_preview.models import ConnectionCategory
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._schema.workspace.connections.credentials import ApiKeyConfigurationSchema
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -62,3 +62,21 @@ class AzureAIServiceWorkspaceConnectionSchema(WorkspaceConnectionSchema):
         from azure.ai.ml.entities import AzureAIServiceWorkspaceConnection
 
         return AzureAIServiceWorkspaceConnection(**data)
+
+
+# pylint: disable-next=name-too-long
+class AzureBlobStoreWorkspaceConnectionSchema(WorkspaceConnectionSchema):
+    # type and credentials limited
+    type = StringTransformedEnum(  # TODO replace with real connection category.
+        allowed_values=ConnectionCategory.AZURE_BLOB, casing_transform=camel_to_snake, required=True
+    )
+    credentials = NestedField(ApiKeyConfigurationSchema)
+
+    account_name = fields.Str(required=True, allow_none=False)
+    container_name = fields.Str(required=True, allow_none=False)
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities import AzureBlobStoreWorkspaceConnection
+
+        return AzureBlobStoreWorkspaceConnection(**data)

@@ -110,9 +110,6 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientMixinABC):
         :paramtype project_name: str
         :keyword deployment_name: The name of the specific deployment of the project to use. Required.
         :paramtype deployment_name: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: AnswersResult
         :rtype: ~azure.ai.language.questionanswering.models.AnswersResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -222,9 +219,6 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientMixinABC):
         :param options: Post body of the request. Is either a AnswersFromTextOptions type or a
          IO[bytes] type. Required.
         :type options: ~azure.ai.language.questionanswering.models.AnswersFromTextOptions or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: AnswersFromTextResult
         :rtype: ~azure.ai.language.questionanswering.models.AnswersFromTextResult
         :raises ~azure.core.exceptions.HttpResponseError:
