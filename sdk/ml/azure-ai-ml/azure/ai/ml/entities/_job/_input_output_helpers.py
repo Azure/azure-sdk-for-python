@@ -200,28 +200,36 @@ def to_rest_dataset_literal_inputs(
     :paramtype job_type: str
     """
     rest_inputs = {}
-    # Pack up the inputs into REST format
-    for input_name, input_value in inputs.items():
-        if job_type == JobType.PIPELINE:
-            validate_pipeline_input_key_characters(input_name)
-        elif job_type:
-            # We pass job_type=None for pipeline node, and want skip this check for nodes.
-            validate_key_contains_allowed_characters(input_name)
-        if isinstance(input_value, Input):
-            if input_value.path and isinstance(input_value.path, str) and is_data_binding_expression(input_value.path):
-                input_data = LiteralJobInput(value=input_value.path)
-                # set mode attribute manually for binding job input
-                if input_value.mode:
-                    input_data.mode = INPUT_MOUNT_MAPPING_TO_REST[input_value.mode]
-                input_data.job_input_type = JobInputType.LITERAL
-            else:
-                target_cls_dict = get_input_rest_cls_dict()
 
-                if input_value.type in target_cls_dict:
-                    input_data = target_cls_dict[input_value.type](
-                        uri=input_value.path,
-                        mode=INPUT_MOUNT_MAPPING_TO_REST[input_value.mode.lower()] if input_value.mode else None,
-                    )
+    if inputs is not None:
+        # Pack up the inputs into REST format
+        for input_name, input_value in inputs.items():
+            if job_type == JobType.PIPELINE:
+                validate_pipeline_input_key_characters(input_name)
+            elif job_type:
+                # We pass job_type=None for pipeline node, and want skip this check for nodes.
+                validate_key_contains_allowed_characters(input_name)
+            if isinstance(input_value, Input):
+                if (
+                    input_value.path
+                    and isinstance(input_value.path, str)
+                    and is_data_binding_expression(input_value.path)
+                ):
+                    input_data = LiteralJobInput(value=input_value.path)
+                    # set mode attribute manually for binding job input
+                    if input_value.mode:
+                        input_data.mode = INPUT_MOUNT_MAPPING_TO_REST[input_value.mode]
+                    if input_value.path_on_compute:
+                        input_data.pathOnCompute = input_value.path_on_compute
+                    input_data.job_input_type = JobInputType.LITERAL
+                else:
+                    target_cls_dict = get_input_rest_cls_dict()
+
+                    if input_value.type in target_cls_dict:
+                        input_data = target_cls_dict[input_value.type](
+                            uri=input_value.path,
+                            mode=INPUT_MOUNT_MAPPING_TO_REST[input_value.mode.lower()] if input_value.mode else None,
+                        )
 
                     else:
                         msg = f"Job input type {input_value.type} is not supported as job input."
@@ -312,15 +320,15 @@ def to_rest_data_outputs(outputs: Optional[Dict]) -> Dict[str, RestJobOutput]:
     :rtype: Dict[str, RestJobOutput]
     """
     rest_outputs = {}
-    if outputs is not None:
-        for output_name, output_value in outputs.items():
-            validate_key_contains_allowed_characters(output_name)
-            if output_value is None:
-                # pipeline output could be none, default to URI folder with None mode
-                output_cls = RestUriFolderJobOutput
-                rest_outputs[output_name] = output_cls(mode=None)
-            else:
-                target_cls_dict = get_output_rest_cls_dict()
+<<<<<<< HEAD
+    for output_name, output_value in outputs.items():
+        validate_key_contains_allowed_characters(output_name)
+        if output_value is None:
+            # pipeline output could be none, default to URI folder with None mode
+            output_cls = RestUriFolderJobOutput
+            rest_outputs[output_name] = output_cls(mode=None)
+        else:
+            target_cls_dict = get_output_rest_cls_dict()
 
             output_value_type = output_value.type if output_value.type else AssetTypes.URI_FOLDER
             if output_value_type in target_cls_dict:
@@ -329,18 +337,40 @@ def to_rest_data_outputs(outputs: Optional[Dict]) -> Dict[str, RestJobOutput]:
                     asset_version=output_value.version,
                     uri=output_value.path,
                     mode=OUTPUT_MOUNT_MAPPING_TO_REST[output_value.mode.lower()] if output_value.mode else None,
+                    pathOnCompute=output_value.path_on_compute if output_value.path_on_compute else None,
                     description=output_value.description,
                 )
+=======
+    if outputs is not None:
+        for output_name, output_value in outputs.items():
+            validate_key_contains_allowed_characters(output_name)
+            if output_value is None:
+                # pipeline output could be none, default to URI folder with None mode
+                output_cls = RestUriFolderJobOutput
+                rest_outputs[output_name] = output_cls(mode=None)
+>>>>>>> main
             else:
-                msg = "unsupported JobOutput type: {}".format(output_value.type)
-                raise ValidationException(
-                    message=msg,
-                    no_personal_data_message=msg,
-                    target=ErrorTarget.JOB,
-                    error_category=ErrorCategory.USER_ERROR,
-                    error_type=ValidationErrorType.INVALID_VALUE,
-                )
-            rest_outputs[output_name] = output
+                target_cls_dict = get_output_rest_cls_dict()
+
+                output_value_type = output_value.type if output_value.type else AssetTypes.URI_FOLDER
+                if output_value_type in target_cls_dict:
+                    output = target_cls_dict[output_value_type](
+                        asset_name=output_value.name,
+                        asset_version=output_value.version,
+                        uri=output_value.path,
+                        mode=OUTPUT_MOUNT_MAPPING_TO_REST[output_value.mode.lower()] if output_value.mode else None,
+                        description=output_value.description,
+                    )
+                else:
+                    msg = "unsupported JobOutput type: {}".format(output_value.type)
+                    raise ValidationException(
+                        message=msg,
+                        no_personal_data_message=msg,
+                        target=ErrorTarget.JOB,
+                        error_category=ErrorCategory.USER_ERROR,
+                        error_type=ValidationErrorType.INVALID_VALUE,
+                    )
+                rest_outputs[output_name] = output
     return rest_outputs
 
 
