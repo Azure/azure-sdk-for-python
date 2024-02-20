@@ -170,6 +170,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         prefetch_count: int = 0,
         **kwargs: Any
     ) -> None:
+        self._message_count = 1
         self._session_id = None
         self._message_iter: Optional[AsyncIteratorType[Union["uamqp_Message", "pyamqp_Message"]]] = (
             None
@@ -363,7 +364,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             if self._max_wait_time
             else 0,
             # set link_credit to at least 1 so that messages can be received
-            link_credit=self._prefetch_count + 1,
+            link_credit=self._prefetch_count + 1 if self._prefetch_count else self._message_count,
             # If prefetch is 0, then keep_alive coroutine frequently listens on the connection for messages and
             # releases right away, since no "prefetched" messages should be in the internal buffer.
             keep_alive_interval=self._config.keep_alive
@@ -406,6 +407,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
     ) -> List[ServiceBusReceivedMessage]:
         # pylint: disable=protected-access
         try:
+            self._message_count = max_message_count or 1
             self._receive_context.set()
             await self._open()
 
