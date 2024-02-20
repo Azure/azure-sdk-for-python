@@ -76,54 +76,6 @@ ENV_OPENAI_DALLE_MODEL = "dall-e-3"
 ENV_OPENAI_CHAT_COMPLETIONS_GPT4_MODEL = "gpt-4-1106-preview"
 ENV_OPENAI_TTS_MODEL = "tts-1"
 
-# Fake values
-# TEST_ENDPOINT = "https://test-resource.openai.azure.com/"
-# TEST_KEY = "0000000000000000"
-# TEST_ID = "00000000-0000-0000-0000-000000000000"
-
-
-# @pytest.fixture(scope="session", autouse=True)
-# def add_sanitizers(test_proxy, environment_variables):
-#     sanitization_mapping = {
-#         ENV_AZURE_OPENAI_ENDPOINT: TEST_ENDPOINT,
-#         ENV_AZURE_OPENAI_KEY: TEST_KEY,
-#         ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT: TEST_ENDPOINT,
-#         ENV_AZURE_OPENAI_NORTHCENTRALUS_KEY: TEST_KEY,
-#         ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT: TEST_ENDPOINT,
-#         ENV_AZURE_OPENAI_SWEDENCENTRAL_KEY: TEST_KEY,
-#         ENV_SUBSCRIPTION_ID: TEST_ID,
-#         ENV_TENANT_ID: TEST_ID,
-#         ENV_CLIENT_ID: TEST_ID,
-#         ENV_CLIENT_SECRET: TEST_ID,
-#         ENV_OPENAI_KEY: TEST_KEY,
-#         ENV_AZURE_OPENAI_SEARCH_ENDPOINT: TEST_ENDPOINT,
-#         ENV_AZURE_OPENAI_SEARCH_KEY: TEST_KEY,
-#     }
-#     environment_variables.sanitize_batch(sanitization_mapping)
-#     add_oauth_response_sanitizer()
-#     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
-
-
-# @pytest.fixture(scope="session")
-# def azure_openai_creds():
-#     yield {
-#         "completions_name": ENV_AZURE_OPENAI_COMPLETIONS_NAME,
-#         "chat_completions_name": ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME,
-#         "embeddings_name": ENV_AZURE_OPENAI_EMBEDDINGS_NAME,
-#         "completions_model": ENV_OPENAI_COMPLETIONS_MODEL,
-#         "chat_completions_model": ENV_OPENAI_CHAT_COMPLETIONS_MODEL,
-#         "embeddings_model": ENV_OPENAI_EMBEDDINGS_MODEL,
-#         "search_endpoint": os.getenv(ENV_AZURE_OPENAI_SEARCH_ENDPOINT),
-#         "search_key": os.getenv(ENV_AZURE_OPENAI_SEARCH_KEY),
-#         "search_index": os.getenv(ENV_AZURE_OPENAI_SEARCH_INDEX),
-#         "audio_name": ENV_AZURE_OPENAI_AUDIO_NAME,
-#         "audio_model": ENV_OPENAI_AUDIO_MODEL,
-#         "dalle_name": ENV_AZURE_OPENAI_DALLE_NAME,
-#         "dalle_model": ENV_OPENAI_DALLE_MODEL,
-#         "chat_completion_gpt4_name": ENV_AZURE_OPENAI_CHAT_COMPLETIONS_GPT4_NAME,
-#         "chat_completion_gpt4_model": ENV_OPENAI_CHAT_COMPLETIONS_GPT4_MODEL,
-#     }
-
 
 @pytest.fixture
 def client(api_type, api_version):
