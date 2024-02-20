@@ -62,6 +62,7 @@ class TestSchedule(AzureRecordedTestCase):
             client.schedules.get(schedule.name)
         assert "not found" in str(e)
 
+
     def test_load_cron_schedule_with_job_updates(self, client: MLClient, randstr: Callable[[], str]):
         params_override = [{"name": randstr("name")}]
         test_path = "./tests/test_configs/schedule/hello_cron_schedule_with_job_updates.yml"
