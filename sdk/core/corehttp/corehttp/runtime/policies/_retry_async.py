@@ -27,7 +27,7 @@
 This module is the requests implementation of Pipeline ABC
 """
 from __future__ import annotations
-from typing import Dict, Any, Optional, cast, TypeVar, TYPE_CHECKING
+from typing import Dict, Any, Optional, cast, TYPE_CHECKING
 import logging
 import time
 
