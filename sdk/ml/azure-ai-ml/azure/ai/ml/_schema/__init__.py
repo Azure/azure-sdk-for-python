@@ -46,6 +46,7 @@ __all__ = [
     "PatchedSchemaMeta",
     "PathAwareSchema",
     "ModelSchema",
+    "MlflowModelSchema",
     "SweepJobSchema",
     "UnionField",
     "YamlFileSchema",

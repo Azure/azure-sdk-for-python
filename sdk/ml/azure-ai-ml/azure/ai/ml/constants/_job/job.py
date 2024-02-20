@@ -21,6 +21,7 @@ class JobType(object):
     IMPORT = "import"
     SPARK = "spark"
     DATA_TRANSFER = "data_transfer"
+    FINE_TUNING = "finetuning"
 
 
 class JobLimitsType(object):
