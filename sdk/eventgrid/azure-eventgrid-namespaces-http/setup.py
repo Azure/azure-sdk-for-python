@@ -12,8 +12,8 @@ import re
 from setuptools import setup, find_packages
 
 
-PACKAGE_NAME = "azure-eventgrid-http"
-PACKAGE_PPRINT_NAME = "Azure Event Grid Http"
+PACKAGE_NAME = "azure-eventgrid-namespaces-http"
+PACKAGE_PPRINT_NAME = "Azure Event Grid Namespaces Http"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")
@@ -60,7 +60,7 @@ setup(
     ),
     include_package_data=True,
     package_data={
-        "azure.eventgrid.http": ["py.typed"],
+        "azure.eventgrid.namespaces.http": ["py.typed"],
     },
     install_requires=[
         "isodate<1.0.0,>=0.6.1",
