@@ -5,3 +5,4 @@ verifytypes = false
 strict_sphinx = false
 pylint = false
 mypy = false
+cspell = false
