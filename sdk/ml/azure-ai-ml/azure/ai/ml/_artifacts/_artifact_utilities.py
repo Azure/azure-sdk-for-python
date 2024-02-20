@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, TypeVar, Union
 from typing_extensions import Literal
 
 from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
-from azure.ai.ml._artifacts._fileshare_storage_helper import FileStorageClient
+from azure.ai.ml._artifacts._file_storage_helper import FileStorageClient
 from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
 from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata
 from azure.ai.ml._restclient.v2022_10_01.models import DatastoreType
