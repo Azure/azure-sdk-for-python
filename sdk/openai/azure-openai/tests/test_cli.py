@@ -5,8 +5,7 @@
 
 import os
 import sys
-import openai
-import pytest
+import pathlib
 import subprocess
 from devtools_testutils import AzureRecordedTestCase
 from azure.identity import DefaultAzureCredential
@@ -22,7 +21,7 @@ from conftest import (
     reload
 )
 
-audio_test_file = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./assets/hello.m4a"))
+audio_test_file = pathlib.Path(__file__).parent / "./assets/hello.m4a"
 
 
 class TestCLI(AzureRecordedTestCase):
@@ -67,6 +66,8 @@ class TestCLI(AzureRecordedTestCase):
             try:
                 result = subprocess.run(
                     [
+                        sys.executable,
+                        "-m",
                         "openai",
                         "api",
                         "completions.create",
@@ -88,6 +89,8 @@ class TestCLI(AzureRecordedTestCase):
         with reload():
             result = subprocess.run(
                 [
+                    sys.executable,
+                    "-m",
                     "openai",
                     "--api-type=azure",
                     f"--azure-endpoint={os.getenv(ENV_AZURE_OPENAI_ENDPOINT)}",
@@ -108,6 +111,8 @@ class TestCLI(AzureRecordedTestCase):
         with reload():
             result = subprocess.run(
                 [
+                    sys.executable,
+                    "-m",
                     "openai",
                     "--api-type=azure",
                     f"--azure-endpoint={os.getenv(ENV_AZURE_OPENAI_ENDPOINT)}",
@@ -128,6 +133,8 @@ class TestCLI(AzureRecordedTestCase):
         with reload():
             result = subprocess.run(
                 [
+                    sys.executable,
+                    "-m",
                     "openai",
                     "--api-type=azure",
                     f"--azure-endpoint={os.getenv(ENV_AZURE_OPENAI_ENDPOINT)}",
@@ -145,11 +152,12 @@ class TestCLI(AzureRecordedTestCase):
             )
             assert result.returncode == 0
 
-    @pytest.mark.skip("Unrecognized file format")
     def test_cli_audio_transcription(self):
         with reload():
             result = subprocess.run(
                 [
+                    sys.executable,
+                    "-m",
                     "openai",
                     "--api-type=azure",
                     f"--azure-endpoint={os.getenv(ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT)}",
@@ -166,11 +174,12 @@ class TestCLI(AzureRecordedTestCase):
             )
             assert result.returncode == 0
 
-    @pytest.mark.skip("Unrecognized file format")
     def test_cli_audio_translation(self):
         with reload():
             result = subprocess.run(
                 [
+                    sys.executable,
+                    "-m",
                     "openai",
                     "--api-type=azure",
                     f"--azure-endpoint={os.getenv(ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT)}",
@@ -191,6 +200,8 @@ class TestCLI(AzureRecordedTestCase):
         with reload():
             result = subprocess.run(
                 [
+                    sys.executable,
+                    "-m",
                     "openai",
                     "--api-type=azure",
                     f"--azure-endpoint={os.getenv(ENV_AZURE_OPENAI_ENDPOINT)}",
@@ -207,6 +218,8 @@ class TestCLI(AzureRecordedTestCase):
         with reload():
             result = subprocess.run(
                 [
+                    sys.executable,
+                    "-m",
                     "openai",
                     "--api-type=azure",
                     f"--azure-endpoint={os.getenv(ENV_AZURE_OPENAI_ENDPOINT)}",

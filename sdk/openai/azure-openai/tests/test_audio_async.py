@@ -10,8 +10,8 @@ import uuid
 from devtools_testutils import AzureRecordedTestCase
 from conftest import WHISPER_AZURE, OPENAI, WHISPER_ALL, configure_async, TTS_OPENAI, TTS_AZURE, TTS_AZURE_AD
 
-audio_test_file = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./assets/hello.m4a"))
-audio_long_test_file = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./assets/wikipediaOcelot.wav"))
+audio_test_file = pathlib.Path(__file__).parent / "./assets/hello.m4a"
+audio_long_test_file = pathlib.Path(__file__).parent / "./assets/wikipediaOcelot.wav"
 
 
 class TestAudioAsync(AzureRecordedTestCase):
