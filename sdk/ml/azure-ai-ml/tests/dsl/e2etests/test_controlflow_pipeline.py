@@ -548,11 +548,11 @@ class TestDoWhilePipeline(TestControlFlowPipeline):
         assert_job_cancel(pipeline_job, client)
 
 
-# @pytest.mark.skipif(
-#     condition=is_live(),
-#     # TODO: reopen live test when parallel_for deployed to canary
-#     reason="parallel_for is not available in canary.",
-# )
+@pytest.mark.skipif(
+    condition=is_live(),
+    # TODO: reopen live test when parallel_for deployed to canary
+    reason="parallel_for is not available in canary.",
+)
 class TestParallelForPipeline(TestControlFlowPipeline):
     def test_simple_dsl_parallel_for_pipeline(self, client: MLClient):
         hello_world_component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
