@@ -320,27 +320,6 @@ def to_rest_data_outputs(outputs: Optional[Dict]) -> Dict[str, RestJobOutput]:
     :rtype: Dict[str, RestJobOutput]
     """
     rest_outputs = {}
-<<<<<<< HEAD
-    for output_name, output_value in outputs.items():
-        validate_key_contains_allowed_characters(output_name)
-        if output_value is None:
-            # pipeline output could be none, default to URI folder with None mode
-            output_cls = RestUriFolderJobOutput
-            rest_outputs[output_name] = output_cls(mode=None)
-        else:
-            target_cls_dict = get_output_rest_cls_dict()
-
-            output_value_type = output_value.type if output_value.type else AssetTypes.URI_FOLDER
-            if output_value_type in target_cls_dict:
-                output = target_cls_dict[output_value_type](
-                    asset_name=output_value.name,
-                    asset_version=output_value.version,
-                    uri=output_value.path,
-                    mode=OUTPUT_MOUNT_MAPPING_TO_REST[output_value.mode.lower()] if output_value.mode else None,
-                    pathOnCompute=output_value.path_on_compute if output_value.path_on_compute else None,
-                    description=output_value.description,
-                )
-=======
     if outputs is not None:
         for output_name, output_value in outputs.items():
             validate_key_contains_allowed_characters(output_name)
@@ -348,7 +327,6 @@ def to_rest_data_outputs(outputs: Optional[Dict]) -> Dict[str, RestJobOutput]:
                 # pipeline output could be none, default to URI folder with None mode
                 output_cls = RestUriFolderJobOutput
                 rest_outputs[output_name] = output_cls(mode=None)
->>>>>>> main
             else:
                 target_cls_dict = get_output_rest_cls_dict()
 
@@ -359,6 +337,7 @@ def to_rest_data_outputs(outputs: Optional[Dict]) -> Dict[str, RestJobOutput]:
                         asset_version=output_value.version,
                         uri=output_value.path,
                         mode=OUTPUT_MOUNT_MAPPING_TO_REST[output_value.mode.lower()] if output_value.mode else None,
+                        pathOnCompute=output_value.path_on_compute if output_value.path_on_compute else None,
                         description=output_value.description,
                     )
                 else:
