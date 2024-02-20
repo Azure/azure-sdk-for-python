@@ -4,8 +4,6 @@
 
 This version and all future versions will require Python 3.8+. Python 3.7 is no longer supported.
 
-### Features Added
-
 ### Bugs Fixed
 - Bumped dependency of `typing-extensions` to `>=4.6.0` to avoid potential `TypeError` with `typing.TypeVar` on
 Python 3.12.
