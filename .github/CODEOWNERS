@@ -50,25 +50,21 @@
 
 # AzureSdkOwners: @xiangyan99
 # ServiceLabel: %Azure.Identity
-
 # PRLabel: %Azure.Identity
 /sdk/identity/                                                       @pvaneck @xiangyan99 @Azure/azure-sdk-write-identity
 
 # AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Event Hubs
-
 # PRLabel: %Event Hubs
 /sdk/eventhub/                                                       @annatisch @kashifkhan @swathipil @l0lawrence
 
 # ServiceOwners: @jalauzon-msft @vincenttran-msft
 # ServiceLabel: %Storage
-
 # PRLabel: %Storage
 /sdk/storage/                                                        @annatisch @jalauzon-msft @vincenttran-msft
 
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %App Configuration
-
 # PRLabel: %App Configuration
 /sdk/appconfiguration/                                               @YalinLi0312
 
@@ -83,7 +79,6 @@
 
 # ServiceOwners: @cRui861
 # ServiceLabel: %Batch
-
 # PRLabel: %Batch
 /sdk/batch/                                                          @jingjlii @JJJessieWang @wanghoppe @dpwatrous @wiboris @cRui861
 
@@ -122,19 +117,16 @@
 
 # ServiceOwners: @lynshi
 # ServiceLabel: %Confidential Ledger
-
 # PRLabel: %Confidential Ledger
 /sdk/confidentialledger/azure-confidentialledger/                    @PallabPaul @lynshi
 
 # ServiceOwners: @mengaims
 # ServiceLabel: %Content Safety
-
 # PRLabel: %Content Safety
 /sdk/contentsafety/                                                  @mengaims @JieZhou000
 
 # AzureSdkOwners: @mccoyp
 # ServiceLabel: %KeyVault
-
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @mccoyp
 
@@ -149,7 +141,6 @@
 
 # AzureSdkOwners: @pvaneck
 # ServiceLabel: %Monitor
-
 # PRLabel: %Monitor
 /sdk/monitor/azure-monitor-ingestion/                                @pvaneck @Azure/azure-sdk-write-monitor-data-plane
 
@@ -182,7 +173,6 @@
 
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %Container Registry
-
 # PRLabel: %Container Registry
 /sdk/containerregistry/                                              @YalinLi0312
 
@@ -191,7 +181,6 @@
 
 # ServiceOwners: @simorenoh
 # ServiceLabel: %Cosmos
-
 # PRLabel: %Cosmos
 /sdk/cosmos/                                                         @kushagraThapar @simorenoh @xinlian12 @annatisch @bambriz
 
@@ -330,7 +319,6 @@
 
 # AzureSdkOwners: @kristapratico
 # ServiceLabel: %OpenAI
-
 # PRLabel: %OpenAI
 /sdk/openai/                                                         @kristapratico @glecaros
 
@@ -345,13 +333,11 @@
 
 # AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Schema Registry
-
 # PRLabel: %Schema Registry
 /sdk/schemaregistry/                                                 @kashifkhan @swathipil
 
 # AzureSdkOwners: @xiangyan99
 # ServiceLabel: %Search
-
 # PRLabel: %Search
 /sdk/search/                                                         @xiangyan99
 
@@ -363,7 +349,6 @@
 
 # AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Service Bus
-
 # PRLabel: %Service Bus
 /sdk/servicebus/                                                     @annatisch @kashifkhan @swathipil @l0lawrence
 
@@ -380,19 +365,16 @@
 
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %Cognitive - Form Recognizer
-
 # PRLabel: %Cognitive - Form Recognizer
 /sdk/formrecognizer/                                                 @YalinLi0312
 
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %Document Intelligence
-
 # PRLabel: %Document Intelligence
 /sdk/documentintelligence/                                           @YalinLi0312
 
 # AzureSdkOwners: @xiangyan99
 # ServiceLabel: %Cognitive - Metrics Advisor
-
 # PRLabel: %Cognitive - Metrics Advisor
 /sdk/metricsadvisor/                                                 @xiangyan99 @kristapratico @iscai-msft
 
@@ -417,7 +399,6 @@
 
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %Tables
-
 # PRLabel: %Tables
 /sdk/tables/                                                         @YalinLi0312
 
@@ -426,7 +407,6 @@
 
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %Container Registry
-
 # PRLabel: %Container Registry
 /sdk/containerregistry/                                              @YalinLi0312
 
