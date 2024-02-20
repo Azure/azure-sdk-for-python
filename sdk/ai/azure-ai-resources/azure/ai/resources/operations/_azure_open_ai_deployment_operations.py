@@ -46,16 +46,6 @@ class AzureOpenAIDeploymentOperations():
             cls=lro_callback,
         )
 
-    def begin_update(self, deployment_name: str, deployment: "AzureOpenAIDeployment") -> LROPoller["AzureOpenAIDeployment"]:
-        return self._ai_client.azure_open_ai_deployments.begin_update(
-            self._ml_client.resource_group_name,
-            self._ml_client.workspace_name,
-            "Azure.OpenAI",
-            deployment_name,
-            deployment,
-        )
-
-
     def get(self, deployment_name: str):
         return self._ai_client.azure_open_ai_deployments.get(
             self._ml_client.resource_group_name,
