@@ -4,3 +4,4 @@ type_check_samples = false
 verifytypes = false
 strict_sphinx = false
 pylint = false
+mypy = false
