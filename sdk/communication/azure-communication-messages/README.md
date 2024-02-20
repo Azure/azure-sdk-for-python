@@ -1,9 +1,25 @@
+# Azure Communication Messages Package client library for Python
 
+This package contains a Python SDK for Azure Communication Services for Messages(Advanced Messaging).
+Read more about Azure Communication Services [here][product_docs]
 
-# Communication Messages client library for Python
-<!-- write necessary description of service -->
+[Source code][source] | [Package (Pypi)][pypi] | [Product documentation][product_docs]
+
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
+
+### Prequisites
+
+- Python 3.8 or later is required to use this package.
+- You need an [Azure subscription][azure_sub] to use this package.
+- An existing Communication Messages instance.
+
+## Key concepts
+
+Azure Communication Services enables you to send and receive WhatsApp messages using the Azure Communication Services Messages SDK. It can be used to send out messages like appointment reminders, shipping updates, two-factor authentication, and other notification scenarios.
 
 ### Installating the package
 
@@ -11,12 +27,8 @@
 python -m pip install azure-communication-messages
 ```
 
-#### Prequisites
+### Create with an Azure Active Directory Credential
 
-- Python 3.8 or later is required to use this package.
-- You need an [Azure subscription][azure_sub] to use this package.
-- An existing Communication Messages instance.
-#### Create with an Azure Active Directory Credential
 To use an [Azure Active Directory (AAD) token credential][authenticate_with_token],
 provide an instance of the desired credential type obtained from the
 [azure-identity][azure_identity_credentials] library.
@@ -37,7 +49,7 @@ Use the returned token credential to authenticate the client:
 >>> client = NotificationMessagesClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 ```
 
-## Examples
+### Examples
 
 ```python
 >>> from azure.communication.messages import NotificationMessagesClient
@@ -51,6 +63,14 @@ Use the returned token credential to authenticate the client:
         print('service responds error: {}'.format(e.response.json()))
 
 ```
+
+## Troubleshooting
+
+Running into issues? This section should contain details as to what to do there.
+
+## Next steps
+
+- [Read more about Azure Communication Services Messages][nextsteps]
 
 ## Contributing
 
@@ -78,3 +98,7 @@ additional questions or comments.
 [pip]: https://pypi.org/project/pip/
 [azure_sub]: https://azure.microsoft.com/free/
 
+[source]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-messages
+[product_docs]: https://docs.microsoft.com/azure/communication-services/overview
+[pypi]: https://pypi.org
+[nextsteps]: https://learn.microsoft.com/en-us/azure/communication-services/concepts/advanced-messaging/whatsapp/whatsapp-overview
