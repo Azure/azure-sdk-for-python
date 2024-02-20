@@ -13,7 +13,7 @@ from conftest import (
     configure,
     ENV_AZURE_OPENAI_ENDPOINT,
     ENV_AZURE_OPENAI_KEY,
-    ENV_AZURE_OPENAI_API_VERSION,
+    LATEST,
     ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT,
     ENV_AZURE_OPENAI_NORTHCENTRALUS_KEY,
     ENV_AZURE_OPENAI_COMPLETIONS_NAME,
@@ -35,7 +35,7 @@ class TestModuleClient(AzureRecordedTestCase):
     def test_module_client_env_vars_key(self, client, azure_openai_creds, api_type, **kwargs):
         with reload():
             os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
-            os.environ["OPENAI_API_VERSION"] = ENV_AZURE_OPENAI_API_VERSION
+            os.environ["OPENAI_API_VERSION"] = LATEST
             os.environ["AZURE_OPENAI_API_KEY"] = os.getenv(ENV_AZURE_OPENAI_KEY)
             os.environ["OPENAI_API_TYPE"] = "azure"
 
@@ -63,7 +63,7 @@ class TestModuleClient(AzureRecordedTestCase):
     def test_module_client_env_vars_token(self, client, azure_openai_creds, api_type, **kwargs):
         with reload():
             os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
-            os.environ["OPENAI_API_VERSION"] = ENV_AZURE_OPENAI_API_VERSION
+            os.environ["OPENAI_API_VERSION"] = LATEST
             os.environ["AZURE_OPENAI_AD_TOKEN"] = DefaultAzureCredential().get_token("https://cognitiveservices.azure.com/.default").token
             os.environ["OPENAI_API_TYPE"] = "azure"
 
@@ -93,7 +93,7 @@ class TestModuleClient(AzureRecordedTestCase):
             openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
             openai.azure_ad_token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default")
-            openai.api_version = ENV_AZURE_OPENAI_API_VERSION
+            openai.api_version = LATEST
 
             completion = openai.completions.create(prompt="hello world", model=ENV_AZURE_OPENAI_COMPLETIONS_NAME)
             assert completion.id
@@ -116,7 +116,7 @@ class TestModuleClient(AzureRecordedTestCase):
             openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
             openai.azure_ad_token = DefaultAzureCredential().get_token("https://cognitiveservices.azure.com/.default").token
-            openai.api_version = ENV_AZURE_OPENAI_API_VERSION
+            openai.api_version = LATEST
 
             completion = openai.completions.create(prompt="hello world", model=ENV_AZURE_OPENAI_COMPLETIONS_NAME)
             assert completion.id
@@ -139,7 +139,7 @@ class TestModuleClient(AzureRecordedTestCase):
             openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
             openai.api_key = os.getenv(ENV_AZURE_OPENAI_KEY)
-            openai.api_version = ENV_AZURE_OPENAI_API_VERSION
+            openai.api_version = LATEST
 
             completion = openai.completions.create(prompt="hello world", model=ENV_AZURE_OPENAI_COMPLETIONS_NAME)
             assert completion.id
@@ -161,7 +161,7 @@ class TestModuleClient(AzureRecordedTestCase):
             openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
             openai.api_key = os.getenv(ENV_AZURE_OPENAI_KEY)
-            openai.api_version = ENV_AZURE_OPENAI_API_VERSION
+            openai.api_version = LATEST
 
             messages = [
                 {"role": "system", "content": "You are a helpful assistant."},
@@ -189,7 +189,7 @@ class TestModuleClient(AzureRecordedTestCase):
             openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
             openai.api_key = os.getenv(ENV_AZURE_OPENAI_KEY)
-            openai.api_version = ENV_AZURE_OPENAI_API_VERSION
+            openai.api_version = LATEST
 
             embedding = openai.embeddings.create(input="hello world", model=ENV_AZURE_OPENAI_EMBEDDINGS_NAME)
             assert embedding.object == "list"
@@ -208,7 +208,7 @@ class TestModuleClient(AzureRecordedTestCase):
             openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
             openai.api_key = os.getenv(ENV_AZURE_OPENAI_KEY)
-            openai.api_version = ENV_AZURE_OPENAI_API_VERSION
+            openai.api_version = LATEST
 
             models = openai.models.list()
             for model in models:
@@ -224,7 +224,7 @@ class TestModuleClient(AzureRecordedTestCase):
             openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT)
             openai.api_key = os.getenv(ENV_AZURE_OPENAI_NORTHCENTRALUS_KEY)
-            openai.api_version = ENV_AZURE_OPENAI_API_VERSION
+            openai.api_version = LATEST
 
             result = openai.audio.transcriptions.create(
                 file=open(audio_test_file, "rb"),

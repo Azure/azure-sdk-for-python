@@ -13,7 +13,7 @@ from conftest import (
     AZURE,
     ENV_AZURE_OPENAI_ENDPOINT,
     ENV_AZURE_OPENAI_KEY,
-    ENV_AZURE_OPENAI_API_VERSION,
+    LATEST,
     ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME,
     configure_async,
     reload,
@@ -47,7 +47,7 @@ class TestClientAsync(AzureRecordedTestCase):
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
             azure_deployment=ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME,
             api_key=os.getenv(ENV_AZURE_OPENAI_KEY),
-            api_version=ENV_AZURE_OPENAI_API_VERSION,
+            api_version=LATEST,
         )
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -83,7 +83,7 @@ class TestClientAsync(AzureRecordedTestCase):
         client = openai.AsyncAzureOpenAI(
             base_url=f"{os.getenv(ENV_AZURE_OPENAI_ENDPOINT)}/openai/deployments/{ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME}",
             api_key=os.getenv(ENV_AZURE_OPENAI_KEY),
-            api_version=ENV_AZURE_OPENAI_API_VERSION,
+            api_version=LATEST,
         )
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -118,7 +118,7 @@ class TestClientAsync(AzureRecordedTestCase):
         client = openai.AsyncAzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
             azure_ad_token=access_token.token,
-            api_version=ENV_AZURE_OPENAI_API_VERSION,
+            api_version=LATEST,
         )
         completion = await client.chat.completions.create(messages=messages, **kwargs)
         assert completion.id
@@ -143,7 +143,7 @@ class TestClientAsync(AzureRecordedTestCase):
             openai.AsyncAzureOpenAI(
                 azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
                 api_key=None,
-                api_version=ENV_AZURE_OPENAI_API_VERSION,
+                api_version=LATEST,
             )
         assert 'Missing credentials. Please pass one of `api_key`, `azure_ad_token`, `azure_ad_token_provider`, or the `AZURE_OPENAI_API_KEY` or `AZURE_OPENAI_AD_TOKEN` environment variables.' in str(e.value.args)
 
@@ -159,7 +159,7 @@ class TestClientAsync(AzureRecordedTestCase):
         client = openai.AsyncAzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
             azure_ad_token="None",
-            api_version=ENV_AZURE_OPENAI_API_VERSION,
+            api_version=LATEST,
         )
         with pytest.raises(openai.AuthenticationError) as e: 
             await client.chat.completions.create(messages=messages, **kwargs)
@@ -178,7 +178,7 @@ class TestClientAsync(AzureRecordedTestCase):
         client = openai.AsyncAzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
             azure_ad_token_provider=lambda: None,
-            api_version=ENV_AZURE_OPENAI_API_VERSION,
+            api_version=LATEST,
         )
         with pytest.raises(ValueError) as e:
             await client.chat.completions.create(messages=messages, **kwargs)
@@ -190,7 +190,7 @@ class TestClientAsync(AzureRecordedTestCase):
     async def test_client_env_vars_key(self, client_async, azure_openai_creds, api_type, **kwargs):
         with reload():
             os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
-            os.environ["OPENAI_API_VERSION"] = ENV_AZURE_OPENAI_API_VERSION
+            os.environ["OPENAI_API_VERSION"] = LATEST
             os.environ["AZURE_OPENAI_API_KEY"] = os.getenv(ENV_AZURE_OPENAI_KEY)
 
             try:
@@ -223,7 +223,7 @@ class TestClientAsync(AzureRecordedTestCase):
     async def test_client_env_vars_token(self, client_async, azure_openai_creds, api_type, **kwargs):
         with reload():
             os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
-            os.environ["OPENAI_API_VERSION"] = ENV_AZURE_OPENAI_API_VERSION
+            os.environ["OPENAI_API_VERSION"] = LATEST
             credential = DefaultAzureCredential()
             access_token = await credential.get_token("https://cognitiveservices.azure.com/.default")
             os.environ["AZURE_OPENAI_AD_TOKEN"] = access_token.token
@@ -267,7 +267,7 @@ class TestClientAsync(AzureRecordedTestCase):
         client = openai.AsyncAzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
             api_key="key",
-            api_version=ENV_AZURE_OPENAI_API_VERSION,
+            api_version=LATEST,
         )
         response_headers = httpx.Headers(headers)
         options = openai._models.FinalRequestOptions(method="post", url="/completions")
