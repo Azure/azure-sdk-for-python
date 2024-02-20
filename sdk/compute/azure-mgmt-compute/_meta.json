@@ -1,5 +1,5 @@
 {
-  "commit": "4792bce7667477529991457890b4a6b670e70508",
+  "commit": "f1872412241b16b5e8f0e00408b8fd807bcb75a8",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.9.7",
   "use": [
@@ -51,5 +51,6 @@
   "package-2023-04-02-only": "2023-08-07 20:58:57 -0400 b9403296f0b0e112b0d8222ad05fd1d79ee10e03 Microsoft.Compute/DiskRP/stable/2023-04-02/snapshot.json",
   "package-2023-09-01-only": "2023-12-05 16:05:55 -0500 378977e71101fdf224414b86e9f7d8c776cd07ec Microsoft.Compute/ComputeRP/stable/2023-09-01/virtualMachineScaleSet.json",
   "package-2022-08-03-only": "2023-11-28 14:37:35 -0500 a4d77e0bd0f00b66d42940a9be143fdb38534b1e Microsoft.Compute/GalleryRP/stable/2022-08-03/sharedGallery.json",
-  "package-2023-10-02-only": "2023-12-19 03:18:52 -0500 4a4e7c0083937d49061641e857bc876043bb1f5b Microsoft.Compute/DiskRP/stable/2023-10-02/snapshot.json"
+  "package-2023-10-02-only": "2023-12-19 03:18:52 -0500 4a4e7c0083937d49061641e857bc876043bb1f5b Microsoft.Compute/DiskRP/stable/2023-10-02/snapshot.json",
+  "package-2023-07-03-only": "2024-02-08 13:16:01 -0500 f715b7fee5e648d06b17467b08473f6cbeee84e0 Microsoft.Compute/GalleryRP/stable/2023-07-03/sharedGallery.json"
 }
