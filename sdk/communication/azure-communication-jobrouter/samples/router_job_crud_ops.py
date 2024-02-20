@@ -13,7 +13,7 @@ DESCRIPTION:
 USAGE:
     python router_job_crud_ops.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_ENDPOINT - Communication Service endpoint url
+    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - Communication Service connection string
 """
 
 from datetime import datetime, timedelta
@@ -22,7 +22,7 @@ import time
 
 
 class RouterJobSamples(object):
-    endpoint = os.environ["AZURE_COMMUNICATION_SERVICE_ENDPOINT"]
+    connection_string = os.environ["AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING"]
 
     _job_id = "sample_job"
     _job_w_cp_id = "sample_job_w_cp"
@@ -34,7 +34,7 @@ class RouterJobSamples(object):
     _worker_id = "sample_worker"
 
     def setup_distribution_policy(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         distribution_policy_id = self._distribution_policy_id
         from azure.communication.jobrouter import JobRouterAdministrationClient
         from azure.communication.jobrouter.models import LongestIdleMode, DistributionPolicy
@@ -51,7 +51,7 @@ class RouterJobSamples(object):
         )
 
     def setup_queue(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         queue_id = self._queue_id
         from azure.communication.jobrouter import JobRouterAdministrationClient
         from azure.communication.jobrouter.models import RouterQueue
@@ -63,7 +63,7 @@ class RouterJobSamples(object):
         )
 
     def setup_classification_policy(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         classification_policy_id = self._classification_policy_id
 
         from azure.communication.jobrouter import (
@@ -95,7 +95,7 @@ class RouterJobSamples(object):
         )
 
     def setup_worker(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         worker_id = self._worker_id
         queue_id = self._queue_id
 
@@ -114,7 +114,7 @@ class RouterJobSamples(object):
         )
 
     def create_job(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         job_id = self._job_id
         job_w_cp_id = self._job_w_cp_id
         scheduled_job_id = self._job_scheduled_id
@@ -165,7 +165,7 @@ class RouterJobSamples(object):
         # [END create_job]
 
     def update_job(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         job_id = self._job_id
         # [START update_job]
         from azure.communication.jobrouter import (
@@ -182,7 +182,7 @@ class RouterJobSamples(object):
         # [END update_job]
 
     def get_job(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         job_id = self._job_id
         # [START get_job]
         from azure.communication.jobrouter import JobRouterClient
@@ -195,7 +195,7 @@ class RouterJobSamples(object):
         # [END get_job]
 
     def get_job_position(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         job_id = self._job_id
         # [START get_job_position]
         from azure.communication.jobrouter import JobRouterClient
@@ -208,7 +208,7 @@ class RouterJobSamples(object):
         # [END get_job_position]
 
     def reclassify_job(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         job_id = self._job_w_cp_id
         # [START reclassify_job]
         from azure.communication.jobrouter import JobRouterClient
@@ -221,7 +221,7 @@ class RouterJobSamples(object):
         # [END reclassify_job]
 
     def unassign_job(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         job_id = self._job_w_cp_id
         assignment_id = self._assignment_id
         # [START unassign_job]
@@ -235,7 +235,7 @@ class RouterJobSamples(object):
         # [END unassign_job]
 
     def accept_job_offer(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         job_id = self._job_id
         worker_id = self._worker_id
 
@@ -291,7 +291,7 @@ class RouterJobSamples(object):
             print(f"Error encountered")
 
     def complete_and_close_job(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         job_id = self._job_id
 
         # [START complete_job]
@@ -326,7 +326,7 @@ class RouterJobSamples(object):
         # [END close_job]
 
     def list_jobs(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         # [START list_jobs]
         from azure.communication.jobrouter import JobRouterClient
 
@@ -341,7 +341,7 @@ class RouterJobSamples(object):
         # [END list_jobs]
 
     def list_jobs_batched(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         # [START list_jobs_batched]
         from azure.communication.jobrouter import JobRouterClient
 
@@ -360,7 +360,7 @@ class RouterJobSamples(object):
         # [END list_jobs_batched]
 
     def list_scheduled_jobs(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         # [START list_scheduled_jobs]
         from datetime import datetime
         from azure.communication.jobrouter import JobRouterClient
@@ -382,7 +382,7 @@ class RouterJobSamples(object):
         # [END list_scheduled_jobs]
 
     def cancel_job(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         job_id = self._job_w_cp_id
 
         # [START cancel_job]
@@ -395,7 +395,7 @@ class RouterJobSamples(object):
         # [END cancel_job]
 
     def clean_up(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         job_id = self._job_id
 
         # [START delete_job]

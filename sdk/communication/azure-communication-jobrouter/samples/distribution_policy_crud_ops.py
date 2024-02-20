@@ -13,19 +13,19 @@ DESCRIPTION:
 USAGE:
     python distribution_policy_crud_ops.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_ENDPOINT - Communication Service endpoint url
+    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - Communication Service connection string
 """
 
 import os
 
 
 class DistributionPolicySamples(object):
-    endpoint = os.environ["AZURE_COMMUNICATION_SERVICE_ENDPOINT"]
+    connection_string = os.environ["AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING"]
 
     _dp_policy_id = "sample_dp_policy"
 
     def create_distribution_policy(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         policy_id = self._dp_policy_id
         # [START create_distribution_policy]
         from azure.communication.jobrouter import (
@@ -53,7 +53,7 @@ class DistributionPolicySamples(object):
         # [END create_distribution_policy]
 
     def update_distribution_policy(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         policy_id = self._dp_policy_id
         # [START update_distribution_policy]
         from azure.communication.jobrouter import (
@@ -76,7 +76,7 @@ class DistributionPolicySamples(object):
         # [END update_distribution_policy]
 
     def get_distribution_policy(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         policy_id = self._dp_policy_id
         # [START get_distribution_policy]
         from azure.communication.jobrouter import JobRouterAdministrationClient
@@ -89,7 +89,7 @@ class DistributionPolicySamples(object):
         # [END get_distribution_policy]
 
     def list_distribution_policies(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         # [START list_distribution_policies]
         from azure.communication.jobrouter import JobRouterAdministrationClient
 
@@ -104,7 +104,7 @@ class DistributionPolicySamples(object):
         # [END list_distribution_policies]
 
     def list_distribution_policies_batched(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         # [START list_distribution_policies_batched]
         from azure.communication.jobrouter import JobRouterAdministrationClient
 
@@ -123,7 +123,7 @@ class DistributionPolicySamples(object):
         # [END list_distribution_policies_batched]
 
     def clean_up(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         policy_id = self._dp_policy_id
 
         # [START delete_distribution_policy]

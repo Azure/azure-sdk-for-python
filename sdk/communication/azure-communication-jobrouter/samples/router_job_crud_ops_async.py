@@ -13,7 +13,7 @@ DESCRIPTION:
 USAGE:
     python router_job_crud_ops_async.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_ENDPOINT - Communication Service endpoint url
+    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - Communication Service connection string
 """
 
 import os
@@ -21,7 +21,7 @@ import asyncio
 
 
 class RouterJobSamplesAsync(object):
-    endpoint = os.environ["AZURE_COMMUNICATION_SERVICE_ENDPOINT"]
+    connection_string = os.environ["AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING"]
 
     _job_id = "sample_job"
     _job_w_cp_id = "sample_job_w_cp"
@@ -33,7 +33,7 @@ class RouterJobSamplesAsync(object):
     _worker_id = "sample_worker"
 
     async def setup_distribution_policy(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         distribution_policy_id = self._distribution_policy_id
 
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
@@ -52,7 +52,7 @@ class RouterJobSamplesAsync(object):
             )
 
     async def setup_queue(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         queue_id = self._queue_id
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
         from azure.communication.jobrouter.models import RouterQueue
@@ -65,7 +65,7 @@ class RouterJobSamplesAsync(object):
             )
 
     async def setup_classification_policy(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         classification_policy_id = self._classification_policy_id
 
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
@@ -96,7 +96,7 @@ class RouterJobSamplesAsync(object):
             )
 
     async def setup_worker(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         worker_id = self._worker_id
         queue_id = self._queue_id
 
@@ -117,7 +117,7 @@ class RouterJobSamplesAsync(object):
             )
 
     async def create_job(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         job_id = self._job_id
         job_w_cp_id = self._job_w_cp_id
         scheduled_job_id = self._job_scheduled_id
@@ -171,7 +171,7 @@ class RouterJobSamplesAsync(object):
         # [END create_job_async]
 
     async def update_job(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         job_id = self._job_id
         # [START update_job_async]
         from azure.communication.jobrouter.aio import (
@@ -189,7 +189,7 @@ class RouterJobSamplesAsync(object):
         # [END update_job_async]
 
     async def get_job(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         job_id = self._job_id
         # [START get_job_async]
         from azure.communication.jobrouter.aio import JobRouterClient
@@ -203,7 +203,7 @@ class RouterJobSamplesAsync(object):
         # [END get_job_async]
 
     async def get_job_position(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         job_id = self._job_id
         # [START get_job_position_async]
         from azure.communication.jobrouter.aio import JobRouterClient
@@ -217,7 +217,7 @@ class RouterJobSamplesAsync(object):
         # [END get_job_position_async]
 
     async def reclassify_job(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         job_id = self._job_w_cp_id
         # [START reclassify_job_async]
         from azure.communication.jobrouter.aio import JobRouterClient
@@ -231,7 +231,7 @@ class RouterJobSamplesAsync(object):
         # [END reclassify_job_async]
 
     async def unassign_job(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         job_id = self._job_w_cp_id
         assignment_id = self._assignment_id
         # [START unassign_job_async]
@@ -245,7 +245,7 @@ class RouterJobSamplesAsync(object):
         # [END unassign_job_async]
 
     async def accept_job_offer(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         job_id = self._job_id
         worker_id = self._worker_id
 
@@ -304,7 +304,7 @@ class RouterJobSamplesAsync(object):
                 print(f"Error encountered")
 
     async def complete_and_close_job(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         job_id = self._job_id
 
         # [START complete_job_async]
@@ -343,7 +343,7 @@ class RouterJobSamplesAsync(object):
         # [END close_job_async]
 
     async def list_jobs(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         # [START list_jobs_async]
         from azure.communication.jobrouter.aio import JobRouterClient
 
@@ -359,7 +359,7 @@ class RouterJobSamplesAsync(object):
         # [END list_jobs_async]
 
     async def list_jobs_batched(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         # [START list_jobs_batched_async]
         from azure.communication.jobrouter.aio import JobRouterClient
 
@@ -379,7 +379,7 @@ class RouterJobSamplesAsync(object):
         # [END list_jobs_batched_async]
 
     async def list_scheduled_jobs(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         # [START list_scheduled_jobs_async]
         from datetime import datetime
         from azure.communication.jobrouter.aio import JobRouterClient
@@ -402,7 +402,7 @@ class RouterJobSamplesAsync(object):
         # [END list_scheduled_jobs_async]
 
     async def cancel_job(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         job_id = self._job_w_cp_id
 
         # [START cancel_job_async]
@@ -416,7 +416,7 @@ class RouterJobSamplesAsync(object):
         # [END cancel_job_async]
 
     async def clean_up(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         job_id = self._job_id
 
         # [START delete_job_async]

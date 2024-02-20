@@ -13,19 +13,19 @@ DESCRIPTION:
 USAGE:
     python classification_policy_crud_ops.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_ENDPOINT - Communication Service endpoint url
+    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - Communication Service connection string
 """
 
 import os
 
 
 class ClassificationPolicySamples(object):
-    endpoint = os.environ["AZURE_COMMUNICATION_SERVICE_ENDPOINT"]
+    connection_string = os.environ["AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING"]
 
     _cp_policy_id = "sample_cp_policy"
 
     def create_classification_policy(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         policy_id = self._cp_policy_id
         # [START create_classification_policy]
         from azure.communication.jobrouter import (
@@ -90,7 +90,7 @@ class ClassificationPolicySamples(object):
         # [END create_classification_policy]
 
     def update_classification_policy(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         policy_id = self._cp_policy_id
         # [START update_classification_policy]
         from azure.communication.jobrouter import (
@@ -114,7 +114,7 @@ class ClassificationPolicySamples(object):
         # [END update_classification_policy]
 
     def get_classification_policy(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         policy_id = self._cp_policy_id
         # [START get_classification_policy]
         from azure.communication.jobrouter import JobRouterAdministrationClient
@@ -128,7 +128,7 @@ class ClassificationPolicySamples(object):
         # [END get_classification_policy]
 
     def list_classification_policies_batched(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         # [START list_classification_policies_batched]
         from azure.communication.jobrouter import JobRouterAdministrationClient
 
@@ -147,7 +147,7 @@ class ClassificationPolicySamples(object):
         # [END list_classification_policies_batched]
 
     def list_classification_policies(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         # [START list_classification_policies]
         from azure.communication.jobrouter import JobRouterAdministrationClient
 
@@ -162,7 +162,7 @@ class ClassificationPolicySamples(object):
         # [END list_classification_policies]
 
     def clean_up(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         policy_id = self._cp_policy_id
 
         # [START delete_classification_policy]
