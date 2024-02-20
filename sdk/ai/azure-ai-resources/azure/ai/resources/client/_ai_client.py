@@ -361,7 +361,7 @@ class AIClient:
             source=IndexSource(
                 input_data=Data(
                     type="uri_folder",
-                    path="<This will be replaced later>",
+                    path=".",
                 ),
                 input_glob=input_glob,
                 chunk_size=chunk_size,

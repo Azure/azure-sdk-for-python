@@ -10,11 +10,12 @@ from dataclasses import dataclass
 from functools import lru_cache
 from typing import Any, Iterable, Iterator, List, Optional, Sequence
 
-from azure.ai.generative.index._documents.document import Document, DocumentSource, StaticDocument
-from azure.ai.generative.index._langchain.vendor.text_splitter import TextSplitter
+from azure.ai.generative.index._documents.document import DocumentSource
 from azure.ai.generative.index._utils import merge_dicts
 from azure.ai.generative.index._utils.logging import get_logger, safe_mlflow_log_metric
-from azure.ai.generative.index._utils.tokens import tiktoken_cache_dir, token_length_function
+from azure.ai.resources._index._langchain.vendor.text_splitter import TextSplitter
+from azure.ai.resources._index._utils.tokens import tiktoken_cache_dir, token_length_function
+from azure.ai.resources._index._documents.document import Document, StaticDocument
 
 logger = get_logger(__name__)
 
@@ -68,7 +69,7 @@ def get_langchain_splitter(file_extension: str, arguments: dict) -> TextSplitter
 
     # Handle non-natural language splitters
     if file_extension == ".py":
-        from azure.ai.generative.index._langchain.vendor.text_splitter import Language, RecursiveCharacterTextSplitter
+        from azure.ai.resources._index._langchain.vendor.text_splitter import Language, RecursiveCharacterTextSplitter
         with tiktoken_cache_dir():
             return RecursiveCharacterTextSplitter.from_tiktoken_encoder(
                 **{
@@ -84,7 +85,7 @@ def get_langchain_splitter(file_extension: str, arguments: dict) -> TextSplitter
     # If configured to use NLTK for splitting on sentence boundaries use that for non-code text formats
     if use_nltk:
         _init_nltk()
-        from azure.ai.generative.index._langchain.vendor.text_splitter import NLTKTextSplitter
+        from azure.ai.resources._index._langchain.vendor.text_splitter import NLTKTextSplitter
 
         return NLTKTextSplitter(
             length_function=token_length_function(),
@@ -97,7 +98,7 @@ def get_langchain_splitter(file_extension: str, arguments: dict) -> TextSplitter
     # Finally use any text format specific splitters
     formats_to_treat_as_txt_once_loaded = [".pdf", ".ppt", ".pptx", ".doc", ".docx", ".xls", ".xlsx"]
     if file_extension == ".txt" or file_extension in formats_to_treat_as_txt_once_loaded:
-        from azure.ai.generative.index._langchain.vendor.text_splitter import TokenTextSplitter
+        from azure.ai.resources._index._langchain.vendor.text_splitter import TokenTextSplitter
 
         with tiktoken_cache_dir():
             return TokenTextSplitter(
@@ -106,7 +107,7 @@ def get_langchain_splitter(file_extension: str, arguments: dict) -> TextSplitter
                 **{**arguments, "disallowed_special": (), "allowed_special": "all"}
             )
     elif file_extension == ".html" or file_extension == ".htm":
-        from azure.ai.generative.index._langchain.vendor.text_splitter import TokenTextSplitter
+        from azure.ai.resources._index._langchain.vendor.text_splitter import TokenTextSplitter
 
         logger.info("Using HTML splitter.")
         with tiktoken_cache_dir():
@@ -117,7 +118,7 @@ def get_langchain_splitter(file_extension: str, arguments: dict) -> TextSplitter
             )
     elif file_extension == ".md":
         if use_rcts:
-            from azure.ai.generative.index._langchain.vendor.text_splitter import MarkdownTextSplitter
+            from azure.ai.resources._index._langchain.vendor.text_splitter import MarkdownTextSplitter
 
             with tiktoken_cache_dir():
                 return MarkdownTextSplitter.from_tiktoken_encoder(
@@ -265,7 +266,7 @@ class MarkdownHeaderSplitter(TextSplitter):
 
     def __init__(self, remove_hyperlinks: bool = True, remove_images: bool = True, **kwargs: Any):
         """Initialize Markdown Header Splitter."""
-        from azure.ai.generative.index._langchain.vendor.text_splitter import TokenTextSplitter
+        from azure.ai.resources._index._langchain.vendor.text_splitter import TokenTextSplitter
         self._remove_hyperlinks = remove_hyperlinks
         self._remove_images = remove_images
         with tiktoken_cache_dir():

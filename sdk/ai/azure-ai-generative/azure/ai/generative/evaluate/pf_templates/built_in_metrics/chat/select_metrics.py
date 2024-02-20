@@ -15,9 +15,9 @@ def select_metrics_from_metric_list(user_selected_metrics: list, supported_metri
 # Please update the function name/signature per need
 @tool
 def select_metrics(metrics: str) -> str:
-    from constants import RAG_EVALUATION_SET, NON_RAG_EAVLUATION_SET, CONTENT_HARM_METRICS
+    from constants import RAG_EVALUATION_SET, NON_RAG_EVALUATION_SET, CONTENT_HARM_METRICS
     supported_rag_metrics = RAG_EVALUATION_SET
-    supported_non_rag_metrics = NON_RAG_EAVLUATION_SET
+    supported_non_rag_metrics = NON_RAG_EVALUATION_SET
     supported_safety_metrics = CONTENT_HARM_METRICS
     user_selected_metrics = [metric.strip() for metric in metrics.split(',') if metric]
     metric_selection_dict = {}

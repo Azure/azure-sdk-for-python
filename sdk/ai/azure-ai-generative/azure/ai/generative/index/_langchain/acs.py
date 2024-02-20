@@ -7,16 +7,16 @@ import json
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 from azure.ai.generative.index._utils.logging import get_logger
-from azure.ai.generative.index._utils.requests import send_post_request
+from azure.ai.resources._index._utils.requests import send_post_request
 
 try:
     from langchain.schema.document import Document
     from langchain.schema.embeddings import Embeddings
     from langchain.schema.vectorstore import VectorStore
 except ImportError:
-    from azure.ai.generative.index._langchain.vendor.embeddings.base import Embeddings
-    from azure.ai.generative.index._langchain.vendor.schema.document import Document
-    from azure.ai.generative.index._langchain.vendor.vectorstores.base import VectorStore
+    from azure.ai.resources._index._langchain.vendor.embeddings.base import Embeddings
+    from azure.ai.resources._index._langchain.vendor.schema.document import Document
+    from azure.ai.resources._index._langchain.vendor.vectorstores.base import VectorStore
 
 logger = get_logger("langchain.acs")
 

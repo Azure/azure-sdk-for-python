@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._key_vault_client import KeyVaultClient
+from ._client import KeyVaultClient
 
 try:
     from ._patch import __all__ as _patch_all

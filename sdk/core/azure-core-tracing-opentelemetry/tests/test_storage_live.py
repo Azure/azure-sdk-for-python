@@ -27,8 +27,18 @@ class TestStorageTracing:
 
         http_span: ReadableSpan = spans[0]
         assert http_span.kind == SpanKind.CLIENT
+        assert http_span.parent
         assert http_span.parent.span_id == spans[1].context.span_id
+
+        assert http_span.attributes
+        assert http_span.attributes["http.request.method"] == "GET"
+        assert http_span.attributes["url.full"]
+        assert http_span.attributes["server.address"]
+        assert http_span.attributes["http.response.status_code"] == 200
+        assert http_span.attributes["az.client_request_id"]
+        assert http_span.attributes["az.service_request_id"]
 
         method_span: ReadableSpan = spans[1]
         assert method_span.kind == SpanKind.INTERNAL
+        assert method_span.parent
         assert method_span.parent.span_id == spans[2].context.span_id
