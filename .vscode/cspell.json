@@ -1272,6 +1272,19 @@
       ]
     },
     {
+      "filename": "sdk/openai/azure-openai/**",
+      "words": [
+        "azuread",
+        "AZUREAD",
+        "dall",
+        "Lepardus",
+        "WEBVTT",
+        "logit",
+        "byod",
+        "logprobs"
+      ]
+    },
+    {
       "filename": "sdk/attestation/azure-security-attestation/tests/conftest.py",
       "words":[
         "sharedwus"
