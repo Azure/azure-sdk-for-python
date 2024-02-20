@@ -4,6 +4,8 @@
 # ------------------------------------
 
 import os
+import sys
+import openai
 import pytest
 import subprocess
 from devtools_testutils import AzureRecordedTestCase
@@ -36,6 +38,8 @@ class TestCLI(AzureRecordedTestCase):
             try:
                 result = subprocess.run(
                     [
+                        sys.executable,
+                        "-m",
                         "openai",
                         "api",
                         "completions.create",
