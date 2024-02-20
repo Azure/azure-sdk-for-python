@@ -39,8 +39,8 @@ class IndexDocumentsBatch:
         replaced in the update case.
 
         :param documents: Documents to upload to an Azure search index. May be
-         a single list of documents, or documents as individual parameters.
-        :type documents: Dict or List[Dict]
+            a single list of documents, or documents as individual parameters.
+        :type documents: dict or list[dict]
         :return: the added actions
         :rtype: list[IndexAction]
         """
@@ -59,8 +59,8 @@ class IndexDocumentsBatch:
         result in a 200 status code.
 
         :param documents: Documents to delete from an Azure search index. May be
-         a single list of documents, or documents as individual parameters.
-        :type documents: Dict or List[Dict]
+            a single list of documents, or documents as individual parameters.
+        :type documents: dict or list[dict]
         :return: the added actions
         :rtype: list[IndexAction]
         """
@@ -76,8 +76,8 @@ class IndexDocumentsBatch:
         to collections of primitive and complex types.
 
         :param documents: Documents to merge into an Azure search index. May be
-         a single list of documents, or documents as individual parameters.
-        :type documents: Dict or List[Dict]
+            a single list of documents, or documents as individual parameters.
+        :type documents: dict or list[dict]
         :return: the added actions
         :rtype: list[IndexAction]
         """
@@ -92,8 +92,8 @@ class IndexDocumentsBatch:
         like *upload* with a new document.
 
         :param documents: Documents to merge or upload into an Azure search
-         index. May be a single list of documents, or documents as individual
-         parameters.
+            index. May be a single list of documents, or documents as individual
+            parameters.
         :type documents: dict or list[dict]
         :return: the added actions
         :rtype: list[IndexAction]

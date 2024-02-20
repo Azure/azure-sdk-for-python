@@ -6,11 +6,11 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
-from azure.ai.ml._restclient.v2023_10_01.models import FeatureWindow
 from azure.ai.ml._schema._feature_set.feature_set_backfill_schema import FeatureSetBackfillSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.entities._feature_set.feature_window import FeatureWindow
 from azure.ai.ml.entities._feature_set.materialization_compute_resource import MaterializationComputeResource
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._util import load_from_dict
@@ -31,8 +31,8 @@ class FeatureSetBackfillRequest(RestTranslatableMixin):
     :type tags: Optional[dict[str, str]]
     :keyword resource: The compute resource settings. Defaults to None.
     :paramtype resource: Optional[~azure.ai.ml.entities.MaterializationComputeResource]
-    :param spark_conf: Specifies the spark configuration. Defaults to None.
-    :type spark_conf: Optional[dict[str, str]]
+    :param spark_configuration: Specifies the spark configuration. Defaults to None.
+    :type spark_configuration: Optional[dict[str, str]]
     """
 
     def __init__(
@@ -44,24 +44,24 @@ class FeatureSetBackfillRequest(RestTranslatableMixin):
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         resource: Optional[MaterializationComputeResource] = None,
-        spark_conf: Optional[Dict[str, str]] = None,
+        spark_configuration: Optional[Dict[str, str]] = None,
         data_status: Optional[List[str]] = None,
         job_id: Optional[str] = None,
-        **kwargs,
-    ) -> None:
+        **kwargs: Any,
+    ):
         self.name = name
         self.version = version
         self.feature_window = feature_window
         self.description = description
         self.resource = resource
         self.tags = tags
-        self.spark_conf = spark_conf
+        self.spark_configuration = spark_configuration
         self.data_status = data_status
         self.job_id = job_id
 
     @classmethod
     # pylint: disable=unused-argument
-    def _resolve_cls_and_type(cls, data, params_override):
+    def _resolve_cls_and_type(cls, data: Dict, params_override: Tuple) -> Tuple:
         """Resolve the class to use for deserializing the data. Return current class if no override is provided.
 
         :param data: Data to deserialize.
@@ -79,7 +79,7 @@ class FeatureSetBackfillRequest(RestTranslatableMixin):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "FeatureSetBackfillRequest":
         data = data or {}
         params_override = params_override or []

@@ -163,7 +163,6 @@ When calling the methods, some properties can be configured by passing in as kwa
 | logging_enable| Use to enable per operation. Defaults to `False`. |
 | logger | If specified, it will be used to log information. |
 | response_encoding | The encoding to use if known for this service (will disable auto-detection). |
-| proxies | Maps protocol or protocol and hostname to the URL of the proxy. |
 | raw_request_hook | Callback function. Will be invoked on request. |
 | raw_response_hook | Callback function. Will be invoked on response. |
 | network_span_namer | A callable to customize the span name. |

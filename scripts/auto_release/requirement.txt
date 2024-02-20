@@ -1,6 +1,7 @@
 azure-identity
 python-dotenv==0.15.0
 ghapi==0.1.19
+PyGithub==1.55
 packaging==23.1
 pytest==6.2.5
 azure-storage-blob==12.9.0

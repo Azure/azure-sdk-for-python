@@ -2,59 +2,53 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=protected-access
-from typing import Any, Iterable
+from datetime import datetime, timezone
+from typing import Any, Iterable, List, Optional, Tuple, cast
 
 from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
+from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
     OperationScope,
     _ScopeDependentOperations,
 )
-
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import Job, JobSchedule, Schedule
-from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
-from azure.ai.ml.entities._monitoring.target import MonitoringTarget
-from azure.ai.ml.entities._monitoring.signals import (
-    ProductionData,
-    ReferenceData,
-    BaselineDataRange,
-    FADProductionData,
-)
 from azure.ai.ml.entities._inputs_outputs.input import Input
-from azure.ai.ml.exceptions import ScheduleException, ErrorCategory, ErrorTarget
+from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
+from azure.ai.ml.entities._monitoring.signals import BaselineDataRange, FADProductionData, ProductionData, ReferenceData
+from azure.ai.ml.entities._monitoring.target import MonitoringTarget
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ScheduleException
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
 from .._restclient.v2022_10_01.models import ScheduleListViewType
-from .._utils._arm_id_utils import (
-    is_ARM_id_for_parented_resource,
-    AMLNamedArmId,
-    AMLVersionedArmId,
-)
-from .._utils.utils import snake_to_camel
+from .._restclient.v2024_01_01_preview.models import TriggerOnceRequest
+from .._utils._arm_id_utils import AMLNamedArmId, AMLVersionedArmId, is_ARM_id_for_parented_resource
 from .._utils._azureml_polling import AzureMLPolling
+from .._utils.utils import snake_to_camel
 from ..constants._common import (
     ARM_ID_PREFIX,
+    AZUREML_RESOURCE_PROVIDER,
+    NAMED_RESOURCE_ID_FORMAT_WITH_PARENT,
     AzureMLResourceType,
     LROConfigurations,
-    NAMED_RESOURCE_ID_FORMAT_WITH_PARENT,
-    AZUREML_RESOURCE_PROVIDER,
 )
 from ..constants._monitoring import (
-    MonitorSignalType,
+    DEPLOYMENT_MODEL_INPUTS_COLLECTION_KEY,
     DEPLOYMENT_MODEL_INPUTS_NAME_KEY,
     DEPLOYMENT_MODEL_INPUTS_VERSION_KEY,
+    DEPLOYMENT_MODEL_OUTPUTS_COLLECTION_KEY,
     DEPLOYMENT_MODEL_OUTPUTS_NAME_KEY,
     DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY,
-    DEPLOYMENT_MODEL_INPUTS_COLLECTION_KEY,
-    DEPLOYMENT_MODEL_OUTPUTS_COLLECTION_KEY,
     MonitorDatasetContext,
+    MonitorSignalType,
 )
-from . import JobOperations, OnlineDeploymentOperations, DataOperations
+from ..entities._schedule.schedule import ScheduleTriggerResult
+from . import DataOperations, JobOperations, OnlineDeploymentOperations
 from ._job_ops_helper import stream_logs_until_completion
 from ._operation_orchestrator import OperationOrchestrator
 
@@ -76,6 +70,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         operation_scope: OperationScope,
         operation_config: OperationConfig,
         service_client_06_2023_preview: ServiceClient062023Preview,
+        service_client_01_2024_preview: ServiceClient012024Preview,
         all_operations: OperationsContainer,
         credential: TokenCredential,
         **kwargs: Any,
@@ -83,6 +78,9 @@ class ScheduleOperations(_ScopeDependentOperations):
         super(ScheduleOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self.service_client = service_client_06_2023_preview.schedules
+        # Note: Trigger once is supported since 24_01, we don't upgrade other operations' client because there are
+        # some breaking changes, for example: AzMonMonitoringAlertNotificationSettings is removed.
+        self.schedule_trigger_service_client = service_client_01_2024_preview.schedules
         self._all_operations = all_operations
         self._stream_logs_until_completion = stream_logs_until_completion
         # Dataplane service clients are lazily created as they are needed
@@ -100,17 +98,30 @@ class ScheduleOperations(_ScopeDependentOperations):
 
     @property
     def _job_operations(self) -> JobOperations:
-        return self._all_operations.get_operation(AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations))
+        return cast(
+            JobOperations,
+            self._all_operations.get_operation(  # type: ignore[misc]
+                AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations)
+            ),
+        )
 
     @property
     def _online_deployment_operations(self) -> OnlineDeploymentOperations:
-        return self._all_operations.get_operation(
-            AzureMLResourceType.ONLINE_DEPLOYMENT, lambda x: isinstance(x, OnlineDeploymentOperations)
+        return cast(
+            OnlineDeploymentOperations,
+            self._all_operations.get_operation(  # type: ignore[misc]
+                AzureMLResourceType.ONLINE_DEPLOYMENT, lambda x: isinstance(x, OnlineDeploymentOperations)
+            ),
         )
 
     @property
     def _data_operations(self) -> DataOperations:
-        return self._all_operations.get_operation(AzureMLResourceType.DATA, lambda x: isinstance(x, DataOperations))
+        return cast(
+            DataOperations,
+            self._all_operations.get_operation(  # type: ignore[misc]
+                AzureMLResourceType.DATA, lambda x: isinstance(x, DataOperations)
+            ),
+        )
 
     @distributed_trace
     @monitor_with_activity(logger, "Schedule.List", ActivityType.PUBLICAPI)
@@ -118,7 +129,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         self,
         *,
         list_view_type: ScheduleListViewType = ScheduleListViewType.ENABLED_ONLY,  # pylint: disable=unused-argument
-        **kwargs,
+        **kwargs: Any,
     ) -> Iterable[Schedule]:
         """List schedules in specified workspace.
 
@@ -129,7 +140,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         :rtype: Iterable[Schedule]
         """
 
-        def safe_from_rest_object(objs):
+        def safe_from_rest_object(objs: Any) -> List:
             result = []
             for obj in objs:
                 try:
@@ -138,16 +149,19 @@ class ScheduleOperations(_ScopeDependentOperations):
                     print(f"Translate {obj.name} to Schedule failed with: {e}")
             return result
 
-        return self.service_client.list(
-            resource_group_name=self._operation_scope.resource_group_name,
-            workspace_name=self._workspace_name,
-            list_view_type=list_view_type,
-            cls=safe_from_rest_object,
-            **self._kwargs,
-            **kwargs,
+        return cast(
+            Iterable[Schedule],
+            self.service_client.list(
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                list_view_type=list_view_type,
+                cls=safe_from_rest_object,
+                **self._kwargs,
+                **kwargs,
+            ),
         )
 
-    def _get_polling(self, name: str) -> AzureMLPolling:
+    def _get_polling(self, name: Optional[str]) -> AzureMLPolling:
         """Return the polling with custom poll interval.
 
         :param name: The schedule name
@@ -170,7 +184,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     def begin_delete(
         self,
         name: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> LROPoller[None]:
         """Delete schedule.
 
@@ -194,7 +208,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     def get(
         self,
         name: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> Schedule:
         """Get a schedule.
 
@@ -217,7 +231,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     def begin_create_or_update(
         self,
         schedule: Schedule,
-        **kwargs,
+        **kwargs: Any,
     ) -> LROPoller[Schedule]:
         """Create or update schedule.
 
@@ -237,8 +251,7 @@ class ScheduleOperations(_ScopeDependentOperations):
             # resolve ARM id for target, compute, and input datasets for each signal
             self._resolve_monitor_schedule_arm_id(schedule)
         # Create schedule
-        schedule_data = schedule._to_rest_object()
-        print(schedule_data.properties.tags)
+        schedule_data = schedule._to_rest_object()  # type: ignore
         poller = self.service_client.begin_create_or_update(
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
@@ -256,7 +269,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     def begin_enable(
         self,
         name: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> LROPoller[Schedule]:
         """Enable a schedule.
 
@@ -274,7 +287,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     def begin_disable(
         self,
         name: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> LROPoller[Schedule]:
         """Disable a schedule.
 
@@ -286,6 +299,30 @@ class ScheduleOperations(_ScopeDependentOperations):
         schedule = self.get(name=name)
         schedule._is_enabled = False
         return self.begin_create_or_update(schedule, **kwargs)
+
+    @distributed_trace
+    @monitor_with_activity(logger, "Schedule.Trigger", ActivityType.PUBLICAPI)
+    def trigger(
+        self,
+        name: str,
+        **kwargs: Any,
+    ) -> ScheduleTriggerResult:
+        """Trigger a schedule once.
+
+        :param name: Schedule name.
+        :type name: str
+        :return: TriggerRunSubmissionDto, or the result of cls(response)
+        :rtype: ~azure.ai.ml.entities.ScheduleTriggerResult
+        """
+        schedule_time = kwargs.pop("schedule_time", datetime.now(timezone.utc).isoformat())
+        return self.schedule_trigger_service_client.trigger(
+            name=name,
+            resource_group_name=self._operation_scope.resource_group_name,
+            workspace_name=self._workspace_name,
+            body=TriggerOnceRequest(schedule_time=schedule_time),
+            cls=lambda _, obj, __: ScheduleTriggerResult._from_rest_object(obj),
+            **kwargs,
+        )
 
     def _resolve_monitor_schedule_arm_id(  # pylint:disable=too-many-branches,too-many-statements
         self, schedule: MonitorSchedule
@@ -320,7 +357,7 @@ class ScheduleOperations(_ScopeDependentOperations):
             if mdc_output_enabled_str and mdc_output_enabled_str.lower() == "true":
                 mdc_output_enabled = True
         elif target and target.model_id:
-            target.model_id = self._orchestrators.get_asset_arm_id(
+            target.model_id = self._orchestrators.get_asset_arm_id(  # type: ignore
                 target.model_id,
                 AzureMLResourceType.MODEL,
                 register_asset=False,
@@ -341,7 +378,7 @@ class ScheduleOperations(_ScopeDependentOperations):
                     error_category=ErrorCategory.USER_ERROR,
                 )
         # resolve ARM id for each signal and populate any defaults if needed
-        for signal_name, signal in schedule.create_monitor.monitoring_signals.items():
+        for signal_name, signal in schedule.create_monitor.monitoring_signals.items():  # type: ignore
             if signal.type == MonitorSignalType.GENERATION_SAFETY_QUALITY:
                 for llm_data in signal.production_data:
                     self._job_operations._resolve_job_input(llm_data.input_data, schedule._base_path)
@@ -351,6 +388,9 @@ class ScheduleOperations(_ScopeDependentOperations):
                     for inputs in signal.inputs.values():
                         self._job_operations._resolve_job_input(inputs, schedule._base_path)
                 for data in signal.input_data.values():
+                    if data.input_data is not None:
+                        for inputs in data.input_data.values():
+                            self._job_operations._resolve_job_input(inputs, schedule._base_path)
                     data.pre_processing_component = self._orchestrators.get_asset_arm_id(
                         asset=data.pre_processing_component if hasattr(data, "pre_processing_component") else None,
                         azureml_type=AzureMLResourceType.COMPONENT,
@@ -370,7 +410,9 @@ class ScheduleOperations(_ScopeDependentOperations):
                                     type=self._data_operations.get(model_inputs_name, model_inputs_version).type,
                                 ),
                                 data_context=MonitorDatasetContext.MODEL_INPUTS,
-                                data_window_size="P7D",
+                                data_window=BaselineDataRange(
+                                    lookback_window_size="default", lookback_window_offset="P0D"
+                                ),
                             )
                         if not signal.reference_data:
                             signal.reference_data = ReferenceData(
@@ -379,7 +421,9 @@ class ScheduleOperations(_ScopeDependentOperations):
                                     type=self._data_operations.get(model_inputs_name, model_inputs_version).type,
                                 ),
                                 data_context=MonitorDatasetContext.MODEL_INPUTS,
-                                data_window=BaselineDataRange(trailing_window_size="P7D", trailing_window_offset="P7D"),
+                                data_window=BaselineDataRange(
+                                    lookback_window_size="default", lookback_window_offset="default"
+                                ),
                             )
                     elif not mdc_input_enabled and not (signal.production_data and signal.reference_data):
                         # if target or baseline dataset is absent and data collector for input is not enabled,
@@ -401,7 +445,9 @@ class ScheduleOperations(_ScopeDependentOperations):
                                     type=self._data_operations.get(model_outputs_name, model_outputs_version).type,
                                 ),
                                 data_context=MonitorDatasetContext.MODEL_OUTPUTS,
-                                data_window_size="P7D",
+                                data_window=BaselineDataRange(
+                                    lookback_window_size="default", lookback_window_offset="P0D"
+                                ),
                             )
                         if not signal.reference_data:
                             signal.reference_data = ReferenceData(
@@ -410,7 +456,9 @@ class ScheduleOperations(_ScopeDependentOperations):
                                     type=self._data_operations.get(model_outputs_name, model_outputs_version).type,
                                 ),
                                 data_context=MonitorDatasetContext.MODEL_OUTPUTS,
-                                data_window=BaselineDataRange(trailing_window_size="P7D", trailing_window_offset="P7D"),
+                                data_window=BaselineDataRange(
+                                    lookback_window_size="default", lookback_window_offset="default"
+                                ),
                             )
                     elif not mdc_output_enabled and not (signal.production_data and signal.reference_data):
                         # if target dataset is absent and data collector for output is not enabled,
@@ -433,7 +481,9 @@ class ScheduleOperations(_ScopeDependentOperations):
                                         type=self._data_operations.get(model_inputs_name, model_inputs_version).type,
                                     ),
                                     data_context=MonitorDatasetContext.MODEL_INPUTS,
-                                    data_window_size="P7D",
+                                    data_window=BaselineDataRange(
+                                        lookback_window_size="default", lookback_window_offset="P0D"
+                                    ),
                                 ),
                                 FADProductionData(
                                     input_data=Input(
@@ -441,7 +491,9 @@ class ScheduleOperations(_ScopeDependentOperations):
                                         type=self._data_operations.get(model_outputs_name, model_outputs_version).type,
                                     ),
                                     data_context=MonitorDatasetContext.MODEL_OUTPUTS,
-                                    data_window_size="P7D",
+                                    data_window=BaselineDataRange(
+                                        lookback_window_size="default", lookback_window_offset="P0D"
+                                    ),
                                 ),
                             ]
                     elif not mdc_output_enabled and not signal.production_data:
@@ -487,10 +539,10 @@ class ScheduleOperations(_ScopeDependentOperations):
                 asset=signal.reference_data.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
             )
 
-    def _process_and_get_endpoint_deployment_names_from_id(self, target: MonitoringTarget):
+    def _process_and_get_endpoint_deployment_names_from_id(self, target: MonitoringTarget) -> Tuple:
         target.endpoint_deployment_id = (
-            target.endpoint_deployment_id[len(ARM_ID_PREFIX) :]
-            if target.endpoint_deployment_id.startswith(ARM_ID_PREFIX)
+            target.endpoint_deployment_id[len(ARM_ID_PREFIX) :]  # type: ignore
+            if target.endpoint_deployment_id is not None and target.endpoint_deployment_id.startswith(ARM_ID_PREFIX)
             else target.endpoint_deployment_id
         )
 
@@ -500,7 +552,7 @@ class ScheduleOperations(_ScopeDependentOperations):
             snake_to_camel(AzureMLResourceType.ONLINE_ENDPOINT),
             AzureMLResourceType.DEPLOYMENT,
         ):
-            endpoint_name, deployment_name = target.endpoint_deployment_id.split(":")
+            endpoint_name, deployment_name = target.endpoint_deployment_id.split(":")  # type: ignore
             target.endpoint_deployment_id = NAMED_RESOURCE_ID_FORMAT_WITH_PARENT.format(
                 self._subscription_id,
                 self._resource_group_name,

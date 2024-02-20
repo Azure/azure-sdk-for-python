@@ -3,9 +3,12 @@
 # ----------------------------------------------------------
 
 
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ModelConfiguration as RestModelConfiguration
+from typing import Optional
+
+from azure.ai.ml._exception_helper import log_and_raise_error
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ModelConfiguration as RestModelConfiguration
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml._utils.utils import snake_to_camel
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 
 @experimental
@@ -27,7 +30,7 @@ class ModelConfiguration:
             :caption: Creating a Model Configuration object.
     """
 
-    def __init__(self, *, mode: str = None, mount_path: str = None):
+    def __init__(self, *, mode: Optional[str] = None, mount_path: Optional[str] = None):
         self.mode = mode
         self.mount_path = mount_path
 
@@ -36,4 +39,17 @@ class ModelConfiguration:
         return ModelConfiguration(mode=rest_obj.mode, mount_path=rest_obj.mount_path)
 
     def _to_rest_object(self) -> RestModelConfiguration:
-        return RestModelConfiguration(mode=snake_to_camel(self.mode), mount_path=self.mount_path)
+        self._validate()
+        return RestModelConfiguration(mode=self.mode, mount_path=self.mount_path)
+
+    def _validate(self) -> None:
+        if self.mode is not None and self.mode.lower() not in ["copy", "download"]:
+            msg = "Mode must be either 'Copy' or 'Download'"
+            err = ValidationException(
+                message=msg,
+                target=ErrorTarget.MODEL,
+                no_personal_data_message=msg,
+                error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
+            )
+            log_and_raise_error(err)

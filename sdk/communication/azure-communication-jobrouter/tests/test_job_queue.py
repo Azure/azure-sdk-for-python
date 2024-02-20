@@ -34,13 +34,13 @@ class TestJobQueue(RouterRecordedTestCase):
             router_client: JobRouterAdministrationClient = self.create_admin_client()
             if self._testMethodName in self.queue_ids and any(self.queue_ids[self._testMethodName]):
                 for _id in set(self.queue_ids[self._testMethodName]):
-                    router_client.delete_queue(id=_id)
+                    router_client.delete_queue(queue_id=_id)
 
             if self._testMethodName in self.distribution_policy_ids and any(
                 self.distribution_policy_ids[self._testMethodName]
             ):
                 for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
-                    router_client.delete_distribution_policy(id=policy_id)
+                    router_client.delete_distribution_policy(distribution_policy_id=policy_id)
 
     def get_distribution_policy_id(self, **kwargs):
         return self._testMethodName + "_tst_dp"
@@ -56,9 +56,7 @@ class TestJobQueue(RouterRecordedTestCase):
             name=distribution_policy_id,
         )
 
-        distribution_policy = client.create_distribution_policy(
-            id=distribution_policy_id, distribution_policy=policy
-        )
+        distribution_policy = client.upsert_distribution_policy(distribution_policy_id, policy)
 
         # add for cleanup later
         if self._testMethodName in self.distribution_policy_ids:
@@ -82,7 +80,7 @@ class TestJobQueue(RouterRecordedTestCase):
             labels=queue_labels,
         )
 
-        job_queue = router_client.create_queue(id=dp_identifier, queue=job_queue)
+        job_queue = router_client.upsert_queue(dp_identifier, job_queue)
 
         # add for cleanup
         self.queue_ids[self._testMethodName] = [dp_identifier]
@@ -110,7 +108,7 @@ class TestJobQueue(RouterRecordedTestCase):
             labels=queue_labels,
         )
 
-        job_queue = router_client.create_queue(id=dp_identifier, queue=job_queue)
+        job_queue = router_client.upsert_queue(dp_identifier, job_queue)
 
         # add for cleanup
         self.queue_ids[self._testMethodName] = [dp_identifier]
@@ -125,13 +123,13 @@ class TestJobQueue(RouterRecordedTestCase):
         )
 
         # Act
-        job_queue = router_client.get_queue(id=dp_identifier)
+        job_queue = router_client.get_queue(queue_id=dp_identifier)
         updated_queue_labels = dict(queue_labels)
         updated_queue_labels["key6"] = "Key6"
 
         job_queue.labels = updated_queue_labels
 
-        update_job_queue = router_client.update_queue(dp_identifier, job_queue)
+        update_job_queue = router_client.upsert_queue(dp_identifier, job_queue)
 
         assert update_job_queue is not None
         JobQueueValidator.validate_queue(
@@ -156,7 +154,7 @@ class TestJobQueue(RouterRecordedTestCase):
             labels=queue_labels,
         )
 
-        job_queue = router_client.create_queue(id=dp_identifier, queue=job_queue)
+        job_queue = router_client.upsert_queue(dp_identifier, job_queue)
 
         # add for cleanup
         self.queue_ids[self._testMethodName] = [dp_identifier]
@@ -171,13 +169,13 @@ class TestJobQueue(RouterRecordedTestCase):
         )
 
         # Act
-        job_queue = router_client.get_queue(id=dp_identifier)
+        job_queue = router_client.get_queue(queue_id=dp_identifier)
         updated_queue_labels = dict(queue_labels)
         updated_queue_labels["key6"] = "Key6"
 
         job_queue.labels = updated_queue_labels
 
-        update_job_queue = router_client.update_queue(dp_identifier, labels=updated_queue_labels)
+        update_job_queue = router_client.upsert_queue(dp_identifier, labels=updated_queue_labels)
 
         assert update_job_queue is not None
         JobQueueValidator.validate_queue(
@@ -200,7 +198,7 @@ class TestJobQueue(RouterRecordedTestCase):
             distribution_policy_id=self.get_distribution_policy_id(), name=dp_identifier, labels=queue_labels
         )
 
-        job_queue = router_client.create_queue(id=dp_identifier, queue=job_queue)
+        job_queue = router_client.upsert_queue(dp_identifier, job_queue)
 
         # add for cleanup
         self.queue_ids[self._testMethodName] = [dp_identifier]
@@ -214,7 +212,7 @@ class TestJobQueue(RouterRecordedTestCase):
             distribution_policy_id=self.get_distribution_policy_id(),
         )
 
-        queried_job_queue = router_client.get_queue(id=dp_identifier)
+        queried_job_queue = router_client.get_queue(queue_id=dp_identifier)
 
         JobQueueValidator.validate_queue(
             queried_job_queue,
@@ -236,7 +234,7 @@ class TestJobQueue(RouterRecordedTestCase):
             distribution_policy_id=self.get_distribution_policy_id(), name=dp_identifier, labels=queue_labels
         )
 
-        job_queue = router_client.create_queue(id=dp_identifier, queue=job_queue)
+        job_queue = router_client.upsert_queue(dp_identifier, job_queue)
 
         assert job_queue is not None
         JobQueueValidator.validate_queue(
@@ -247,9 +245,9 @@ class TestJobQueue(RouterRecordedTestCase):
             distribution_policy_id=self.get_distribution_policy_id(),
         )
 
-        router_client.delete_queue(id=dp_identifier)
+        router_client.delete_queue(queue_id=dp_identifier)
         with pytest.raises(ResourceNotFoundError) as nfe:
-            router_client.get_queue(id=dp_identifier)
+            router_client.get_queue(queue_id=dp_identifier)
         assert nfe.value.reason == "Not Found"
         assert nfe.value.status_code == 404
 
@@ -269,7 +267,7 @@ class TestJobQueue(RouterRecordedTestCase):
                 distribution_policy_id=self.get_distribution_policy_id(), name=identifier, labels=queue_labels
             )
 
-            job_queue = router_client.create_queue(id=identifier, queue=job_queue)
+            job_queue = router_client.upsert_queue(identifier, job_queue)
 
             # add for cleanup
             self.queue_ids[self._testMethodName].append(identifier)
@@ -291,13 +289,13 @@ class TestJobQueue(RouterRecordedTestCase):
             assert len(list_of_queues) <= 2
 
             for q_item in list_of_queues:
-                response_at_creation = created_q_response.get(q_item.queue.id, None)
+                response_at_creation = created_q_response.get(q_item.id, None)
 
                 if not response_at_creation:
                     continue
 
                 JobQueueValidator.validate_queue(
-                    q_item.queue,
+                    q_item,
                     identifier=response_at_creation.id,
                     name=response_at_creation.name,
                     labels=response_at_creation.labels,

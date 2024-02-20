@@ -4,6 +4,7 @@ import os
 import re
 import typing
 
+LIVE_ENDPOINT = "liveendpoint"
 INGESTION_ENDPOINT = "ingestionendpoint"
 INSTRUMENTATION_KEY = "instrumentationkey"
 
@@ -28,10 +29,11 @@ class ConnectionStringParser:
 
     def __init__(
         self,
-        connection_string: str = None
+        connection_string: typing.Optional[str] = None
     ) -> None:
         self.instrumentation_key = None
         self.endpoint = ""
+        self.live_endpoint = ""
         self._connection_string = connection_string
         self._initialize()
         self._validate_instrumentation_key()
@@ -51,12 +53,12 @@ class ConnectionStringParser:
         # 3. Key from connection string in environment variable
         # 4. Key from instrumentation key in environment variable
         self.instrumentation_key = (
-            code_cs.get(INSTRUMENTATION_KEY)
+            code_cs.get(INSTRUMENTATION_KEY) # type: ignore
             or code_ikey
             or env_cs.get(INSTRUMENTATION_KEY)
             or env_ikey
         )
-        # The priority of the ingestion endpoint is as follows:
+        # The priority of the endpoints is as follows:
         # 1. The endpoint explicitly passed in connection string
         # 2. The endpoint from the connection string in environment variable
         # 3. The default breeze endpoint
@@ -65,6 +67,12 @@ class ConnectionStringParser:
             or env_cs.get(INGESTION_ENDPOINT)
             or "https://dc.services.visualstudio.com"
         )
+        self.live_endpoint = (
+            code_cs.get(LIVE_ENDPOINT)
+            or env_cs.get(LIVE_ENDPOINT)
+            or "https://rt.services.visualstudio.com"
+        )
+
 
     def _validate_instrumentation_key(self) -> None:
         """Validates the instrumentation key used for Azure Monitor.
@@ -93,22 +101,34 @@ class ConnectionStringParser:
         auth = result.get("authorization")
         if auth is not None and auth.lower() != "ikey":
             raise ValueError("Invalid authorization mechanism")
-        # Construct the ingestion endpoint if not passed in explicitly
+
+        # Construct the endpoints if not passed in explicitly
+        endpoint_suffix = ""
+        location_prefix = ""
+        suffix = result.get("endpointsuffix")
+        # Get regional information if provided
+        prefix = result.get("location")
+        if suffix is not None:
+            endpoint_suffix = suffix
+            # Get regional information if provided
+            prefix = result.get("location")
+            if prefix is not None:
+                location_prefix = prefix + "."
+        # Construct the endpoints if not passed in explicitly
         if result.get(INGESTION_ENDPOINT) is None:
-            endpoint_suffix = ""
-            location_prefix = ""
-            suffix = result.get("endpointsuffix")
-            if suffix is not None:
-                endpoint_suffix = suffix
-                # Get regional information if provided
-                prefix = result.get("location")
-                if prefix is not None:
-                    location_prefix = prefix + "."
-                endpoint = "https://{0}dc.{1}".format(
+            if endpoint_suffix:
+                result[INGESTION_ENDPOINT] = "https://{0}dc.{1}".format(
                     location_prefix, endpoint_suffix
                 )
-                result[INGESTION_ENDPOINT] = endpoint
             else:
                 # Default to None if cannot construct
                 result[INGESTION_ENDPOINT] = None
+        if result.get(LIVE_ENDPOINT) is None:
+            if endpoint_suffix:
+                result[LIVE_ENDPOINT] = "https://{0}live.{1}".format(
+                    location_prefix, endpoint_suffix
+                )
+            else:
+                result[LIVE_ENDPOINT] = None
+
         return result

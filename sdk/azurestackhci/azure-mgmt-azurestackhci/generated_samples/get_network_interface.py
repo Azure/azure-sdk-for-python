@@ -29,13 +29,13 @@ def main():
         subscription_id="fd3c3665-1729-4b7b-9a38-238e83b0f98b",
     )
 
-    response = client.networkinterfaces.retrieve(
+    response = client.network_interfaces.get(
         resource_group_name="test-rg",
-        networkinterfaces_name="test-nic",
+        network_interface_name="test-nic",
     )
     print(response)
 
 
-# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/preview/2021-09-01-preview/examples/GetNetworkInterface.json
+# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/preview/2023-09-01-preview/examples/GetNetworkInterface.json
 if __name__ == "__main__":
     main()

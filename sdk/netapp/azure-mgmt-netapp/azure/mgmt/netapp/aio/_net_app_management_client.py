@@ -16,11 +16,17 @@ from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import NetAppManagementClientConfiguration
 from .operations import (
+    AccountBackupsOperations,
     AccountsOperations,
     BackupPoliciesOperations,
+    BackupVaultsOperations,
     BackupsOperations,
+    BackupsUnderAccountOperations,
+    BackupsUnderBackupVaultOperations,
+    BackupsUnderVolumeOperations,
     NetAppResourceOperations,
     NetAppResourceQuotaLimitsOperations,
+    NetAppResourceRegionInfosOperations,
     Operations,
     PoolsOperations,
     SnapshotPoliciesOperations,
@@ -46,6 +52,9 @@ class NetAppManagementClient:  # pylint: disable=client-accepts-api-version-keyw
     :ivar net_app_resource_quota_limits: NetAppResourceQuotaLimitsOperations operations
     :vartype net_app_resource_quota_limits:
      azure.mgmt.netapp.aio.operations.NetAppResourceQuotaLimitsOperations
+    :ivar net_app_resource_region_infos: NetAppResourceRegionInfosOperations operations
+    :vartype net_app_resource_region_infos:
+     azure.mgmt.netapp.aio.operations.NetAppResourceRegionInfosOperations
     :ivar accounts: AccountsOperations operations
     :vartype accounts: azure.mgmt.netapp.aio.operations.AccountsOperations
     :ivar pools: PoolsOperations operations
@@ -58,6 +67,8 @@ class NetAppManagementClient:  # pylint: disable=client-accepts-api-version-keyw
     :vartype snapshot_policies: azure.mgmt.netapp.aio.operations.SnapshotPoliciesOperations
     :ivar backups: BackupsOperations operations
     :vartype backups: azure.mgmt.netapp.aio.operations.BackupsOperations
+    :ivar account_backups: AccountBackupsOperations operations
+    :vartype account_backups: azure.mgmt.netapp.aio.operations.AccountBackupsOperations
     :ivar backup_policies: BackupPoliciesOperations operations
     :vartype backup_policies: azure.mgmt.netapp.aio.operations.BackupPoliciesOperations
     :ivar volume_quota_rules: VolumeQuotaRulesOperations operations
@@ -66,14 +77,23 @@ class NetAppManagementClient:  # pylint: disable=client-accepts-api-version-keyw
     :vartype volume_groups: azure.mgmt.netapp.aio.operations.VolumeGroupsOperations
     :ivar subvolumes: SubvolumesOperations operations
     :vartype subvolumes: azure.mgmt.netapp.aio.operations.SubvolumesOperations
+    :ivar backup_vaults: BackupVaultsOperations operations
+    :vartype backup_vaults: azure.mgmt.netapp.aio.operations.BackupVaultsOperations
+    :ivar backups_under_backup_vault: BackupsUnderBackupVaultOperations operations
+    :vartype backups_under_backup_vault:
+     azure.mgmt.netapp.aio.operations.BackupsUnderBackupVaultOperations
+    :ivar backups_under_volume: BackupsUnderVolumeOperations operations
+    :vartype backups_under_volume: azure.mgmt.netapp.aio.operations.BackupsUnderVolumeOperations
+    :ivar backups_under_account: BackupsUnderAccountOperations operations
+    :vartype backups_under_account: azure.mgmt.netapp.aio.operations.BackupsUnderAccountOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-05-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-05-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -100,6 +120,9 @@ class NetAppManagementClient:  # pylint: disable=client-accepts-api-version-keyw
         self.net_app_resource_quota_limits = NetAppResourceQuotaLimitsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.net_app_resource_region_infos = NetAppResourceRegionInfosOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.accounts = AccountsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.pools = PoolsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.volumes = VolumesOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -108,12 +131,23 @@ class NetAppManagementClient:  # pylint: disable=client-accepts-api-version-keyw
             self._client, self._config, self._serialize, self._deserialize
         )
         self.backups = BackupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.account_backups = AccountBackupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.backup_policies = BackupPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.volume_quota_rules = VolumeQuotaRulesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.volume_groups = VolumeGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.subvolumes = SubvolumesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.backup_vaults = BackupVaultsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.backups_under_backup_vault = BackupsUnderBackupVaultOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backups_under_volume = BackupsUnderVolumeOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backups_under_account = BackupsUnderAccountOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.

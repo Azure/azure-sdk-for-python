@@ -3,17 +3,19 @@
 # ---------------------------------------------------------
 """Document parsing and chunking utilities."""
 import copy
+from pathlib import Path
 import re
 import time
 from dataclasses import dataclass
 from functools import lru_cache
-from typing import Any, Iterable, Iterator, List, Optional
+from typing import Any, Iterable, Iterator, List, Optional, Sequence
 
-from azure.ai.generative.index._documents.document import Document, DocumentSource, StaticDocument
-from azure.ai.generative.index._langchain.vendor.text_splitter import TextSplitter
+from azure.ai.generative.index._documents.document import DocumentSource
 from azure.ai.generative.index._utils import merge_dicts
 from azure.ai.generative.index._utils.logging import get_logger, safe_mlflow_log_metric
-from azure.ai.generative.index._utils.tokens import tiktoken_cache_dir, token_length_function
+from azure.ai.resources._index._langchain.vendor.text_splitter import TextSplitter
+from azure.ai.resources._index._utils.tokens import tiktoken_cache_dir, token_length_function
+from azure.ai.resources._index._documents.document import Document, StaticDocument
 
 logger = get_logger(__name__)
 
@@ -22,7 +24,7 @@ logger = get_logger(__name__)
 class ChunkedDocument:
     """Chunked Document."""
 
-    chunks: List[Document]
+    chunks: Sequence[Document]
     source: DocumentSource
     metadata: dict
 
@@ -67,7 +69,7 @@ def get_langchain_splitter(file_extension: str, arguments: dict) -> TextSplitter
 
     # Handle non-natural language splitters
     if file_extension == ".py":
-        from azure.ai.generative.index._langchain.vendor.text_splitter import Language, RecursiveCharacterTextSplitter
+        from azure.ai.resources._index._langchain.vendor.text_splitter import Language, RecursiveCharacterTextSplitter
         with tiktoken_cache_dir():
             return RecursiveCharacterTextSplitter.from_tiktoken_encoder(
                 **{
@@ -83,7 +85,7 @@ def get_langchain_splitter(file_extension: str, arguments: dict) -> TextSplitter
     # If configured to use NLTK for splitting on sentence boundaries use that for non-code text formats
     if use_nltk:
         _init_nltk()
-        from azure.ai.generative.index._langchain.vendor.text_splitter import NLTKTextSplitter
+        from azure.ai.resources._index._langchain.vendor.text_splitter import NLTKTextSplitter
 
         return NLTKTextSplitter(
             length_function=token_length_function(),
@@ -96,7 +98,7 @@ def get_langchain_splitter(file_extension: str, arguments: dict) -> TextSplitter
     # Finally use any text format specific splitters
     formats_to_treat_as_txt_once_loaded = [".pdf", ".ppt", ".pptx", ".doc", ".docx", ".xls", ".xlsx"]
     if file_extension == ".txt" or file_extension in formats_to_treat_as_txt_once_loaded:
-        from azure.ai.generative.index._langchain.vendor.text_splitter import TokenTextSplitter
+        from azure.ai.resources._index._langchain.vendor.text_splitter import TokenTextSplitter
 
         with tiktoken_cache_dir():
             return TokenTextSplitter(
@@ -105,7 +107,7 @@ def get_langchain_splitter(file_extension: str, arguments: dict) -> TextSplitter
                 **{**arguments, "disallowed_special": (), "allowed_special": "all"}
             )
     elif file_extension == ".html" or file_extension == ".htm":
-        from azure.ai.generative.index._langchain.vendor.text_splitter import TokenTextSplitter
+        from azure.ai.resources._index._langchain.vendor.text_splitter import TokenTextSplitter
 
         logger.info("Using HTML splitter.")
         with tiktoken_cache_dir():
@@ -116,7 +118,7 @@ def get_langchain_splitter(file_extension: str, arguments: dict) -> TextSplitter
             )
     elif file_extension == ".md":
         if use_rcts:
-            from azure.ai.generative.index._langchain.vendor.text_splitter import MarkdownTextSplitter
+            from azure.ai.resources._index._langchain.vendor.text_splitter import MarkdownTextSplitter
 
             with tiktoken_cache_dir():
                 return MarkdownTextSplitter.from_tiktoken_encoder(
@@ -157,7 +159,7 @@ file_extension_splitters = {
 
 def split_documents(documents: Iterable[ChunkedDocument], splitter_args: dict, file_extension_splitters=file_extension_splitters) -> Iterator[ChunkedDocument]:
     """Split documents into chunks."""
-    total_time = 0
+    total_time: float = 0.0
     total_documents = 0
     total_splits = 0
     log_batch_size = 100
@@ -205,32 +207,37 @@ def split_documents(documents: Iterable[ChunkedDocument], splitter_args: dict, f
                 chunk.metadata = merge_dicts(chunk.metadata, document_metadata)
             return chunked_document
 
-        splitter = file_extension_splitters.get(document.source.path.suffix.lower())(**local_splitter_args)
-        split_docs = splitter.split_documents(list(filter_short_docs(merge_metadata(document))))
+        if document.source.path:
+            document_source_path: Path = Path(document.source.path)
+            splitter = file_extension_splitters.get(document_source_path.suffix.lower())(**local_splitter_args)
+            split_docs = splitter.split_documents(list(filter_short_docs(merge_metadata(document))))
 
-        i = -1
-        file_chunks = []
-        for chunk in split_docs:
-            i += 1
-            if "chunk_prefix" in chunk.metadata:
-                del chunk.metadata["chunk_prefix"]
-            # Normalize line endings to just '\n'
-            file_chunks.append(StaticDocument(
-                chunk_prefix.replace("\r", "") + chunk.page_content.replace("\r", ""),
-                merge_dicts(chunk.metadata, document_metadata),
-                document_id=document.source.filename + str(i),
-                mtime=document.source.mtime
-            ))
+            i = -1
+            file_chunks = []
+            for chunk in split_docs:
+                i += 1
+                if "chunk_prefix" in chunk.metadata:
+                    del chunk.metadata["chunk_prefix"]
+                # Normalize line endings to just '\n'
+                file_chunks.append(StaticDocument(
+                    chunk_prefix.replace("\r", "") + chunk.page_content.replace("\r", ""),
+                    merge_dicts(chunk.metadata, document_metadata),
+                    document_id=document.source.filename + str(i),
+                    mtime=document.source.mtime
+                ))
 
-        file_pre_yield_time = time.time()
-        total_time += file_pre_yield_time - file_start_time
-        if len(file_chunks) < 1:
-            logger.info("No file_chunks to yield, continuing")
-            continue
-        total_splits += len(file_chunks)
-        if i % log_batch_size == 0:
-            safe_mlflow_log_metric("total_chunked_documents", total_splits, logger=logger, step=int(time.time() * 1000))
-        document.chunks = file_chunks
+            file_pre_yield_time = time.time()
+            total_time += file_pre_yield_time - file_start_time
+            if len(file_chunks) < 1:
+                logger.info("No file_chunks to yield, continuing")
+                continue
+            total_splits += len(file_chunks)
+            if i % log_batch_size == 0:
+                safe_mlflow_log_metric("total_chunked_documents", total_splits, logger=logger, step=int(time.time() * 1000))
+            document.chunks = file_chunks
+        else:
+            total_time = 0
+            total_splits = 0
         yield document
 
     safe_mlflow_log_metric("total_source_documents", total_documents, logger=logger, step=int(time.time() * 1000))
@@ -259,7 +266,7 @@ class MarkdownHeaderSplitter(TextSplitter):
 
     def __init__(self, remove_hyperlinks: bool = True, remove_images: bool = True, **kwargs: Any):
         """Initialize Markdown Header Splitter."""
-        from azure.ai.generative.index._langchain.vendor.text_splitter import TokenTextSplitter
+        from azure.ai.resources._index._langchain.vendor.text_splitter import TokenTextSplitter
         self._remove_hyperlinks = remove_hyperlinks
         self._remove_images = remove_images
         with tiktoken_cache_dir():
@@ -273,7 +280,7 @@ class MarkdownHeaderSplitter(TextSplitter):
 
     def create_documents(
         self, texts: List[str], metadatas: Optional[List[dict]] = None
-    ) -> List[StaticDocument]:
+    ) -> List[StaticDocument]:  # type: ignore[override]
         """Create documents from a list of texts."""
         _metadatas = metadatas or [{}] * len(texts)
         documents = []
@@ -322,7 +329,7 @@ class MarkdownHeaderSplitter(TextSplitter):
         blocks = [b for b in blocks if b.strip()]
 
         markdown_blocks = []
-        header_stack = []
+        header_stack: List = []
 
         if not blocks[0].startswith("#"):
             markdown_blocks.append(MarkdownBlock(header=None, content=blocks[0]))

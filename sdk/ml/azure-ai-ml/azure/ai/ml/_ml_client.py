@@ -32,10 +32,14 @@ from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWork
 from azure.ai.ml._restclient.v2023_04_01 import AzureMachineLearningWorkspaces as ServiceClient042023
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
+from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
 
 # Same object, but was renamed starting in v2023_08_01_preview
-from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningServices as ServiceClient082023Preview
 from azure.ai.ml._restclient.v2023_10_01 import AzureMachineLearningServices as ServiceClient102023
+from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
+from azure.ai.ml._restclient.workspace_dataplane import (
+    AzureMachineLearningWorkspaces as ServiceClientWorkspaceDataplane,
+)
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
 from azure.ai.ml._user_agent import USER_AGENT
@@ -166,8 +170,8 @@ class MLClient:
             )
 
         self._credential = credential
-        self._ws_rg = None
-        self._ws_sub = None
+        self._ws_rg: Any = None
+        self._ws_sub: Any = None
         show_progress = kwargs.pop("show_progress", True)
         enable_telemetry = kwargs.pop("enable_telemetry", True)
         self._operation_config = OperationConfig(show_progress=show_progress, enable_telemetry=enable_telemetry)
@@ -208,14 +212,14 @@ class MLClient:
         if registry_name or registry_reference:
             # get the workspace location here if workspace_reference is provided
             self._ws_operation_scope = OperationScope(
-                subscription_id,
-                resource_group_name,
+                str(subscription_id),
+                str(resource_group_name),
                 workspace_name,
             )
             workspace_reference = kwargs.pop("workspace_reference", None)
             if workspace_reference or registry_reference:
                 ws_ops = WorkspaceOperations(
-                    OperationScope(subscription_id, resource_group_name, workspace_reference),
+                    OperationScope(str(subscription_id), str(resource_group_name), workspace_reference),
                     ServiceClient042023Preview(
                         credential=self._credential,
                         subscription_id=subscription_id,
@@ -242,8 +246,8 @@ class MLClient:
                 workspace_name = workspace_reference
 
         self._operation_scope = OperationScope(
-            subscription_id,
-            resource_group_name,
+            str(subscription_id),
+            str(resource_group_name),
             workspace_name,
             registry_name,
             workspace_id,
@@ -290,6 +294,13 @@ class MLClient:
             **kwargs,
         )
 
+        self._service_client_workspace_dataplane = ServiceClientWorkspaceDataplane(
+            subscription_id=self._operation_scope._subscription_id,
+            credential=self._credential,
+            base_url=base_url,
+            **kwargs,
+        )
+
         self._service_client_02_2022_preview = ServiceClient022022Preview(
             subscription_id=self._operation_scope._subscription_id,
             credential=self._credential,
@@ -328,6 +339,13 @@ class MLClient:
         )
 
         self._service_client_10_2023 = ServiceClient102023(
+            credential=self._credential,
+            subscription_id=self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
+        self._service_client_01_2024_preview = ServiceClient012024Preview(
             credential=self._credential,
             subscription_id=self._operation_scope._subscription_id,
             base_url=base_url,
@@ -397,18 +415,29 @@ class MLClient:
             **kwargs,
         )
 
+        self._service_client_01_2024_preview = ServiceClient012024Preview(
+            credential=self._credential,
+            subscription_id=self._ws_operation_scope._subscription_id
+            if registry_reference
+            else self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
         self._workspaces = WorkspaceOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
             self._service_client_08_2023_preview,
             self._operation_container,
             self._credential,
+            requests_pipeline=self._requests_pipeline,
+            dataplane_client=self._service_client_workspace_dataplane,
             **app_insights_handler_kwargs,
         )
-        self._operation_container.add(AzureMLResourceType.WORKSPACE, self._workspaces)
+        self._operation_container.add(AzureMLResourceType.WORKSPACE, self._workspaces)  # type: ignore[arg-type]
 
         self._workspace_outbound_rules = WorkspaceOutboundRuleOperations(
             self._operation_scope,
-            self._service_client_06_2023_preview,
+            self._service_client_08_2023_preview,
             self._operation_container,
             self._credential,
             **kwargs,
@@ -422,12 +451,12 @@ class MLClient:
             self._credential,
             **app_insights_handler_kwargs,
         )
-        self._operation_container.add(AzureMLResourceType.REGISTRY, self._registries)
+        self._operation_container.add(AzureMLResourceType.REGISTRY, self._registries)  # type: ignore[arg-type]
 
         self._workspace_connections = WorkspaceConnectionsOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_06_2023_preview,
+            self._service_client_08_2023_preview,
             self._operation_container,
             self._credential,
         )
@@ -440,7 +469,7 @@ class MLClient:
         self._compute = ComputeOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2022_preview,
+            self._service_client_08_2023_preview,
             **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.COMPUTE, self._compute)
@@ -448,6 +477,7 @@ class MLClient:
             operation_scope=self._operation_scope,
             operation_config=self._operation_config,
             serviceclient_2023_04_01_preview=self._service_client_04_2023_preview,
+            serviceclient_2024_01_01_preview=self._service_client_01_2024_preview,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.DATASTORE, self._datastores)
@@ -498,7 +528,7 @@ class MLClient:
         self._batch_endpoints = BatchEndpointOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_05_2022,
+            self._service_client_10_2023,
             self._operation_container,
             self._credential,
             requests_pipeline=self._requests_pipeline,
@@ -519,7 +549,7 @@ class MLClient:
         self._batch_deployments = BatchDeploymentOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_05_2022,
+            self._service_client_10_2023,
             self._operation_container,
             credentials=self._credential,
             requests_pipeline=self._requests_pipeline,
@@ -533,6 +563,7 @@ class MLClient:
             self._operation_scope,
             self._operation_config,
             self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview,
+            self._service_client_01_2024_preview,
             self._datastores,
             requests_pipeline=self._requests_pipeline,
             all_operations=self._operation_container,
@@ -542,7 +573,7 @@ class MLClient:
         self._components = ComponentOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_10_2022,
+            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_01_2024_preview,
             self._operation_container,
             self._preflight,
             **ops_kwargs,
@@ -556,6 +587,7 @@ class MLClient:
             self._credential,
             _service_client_kwargs=kwargs,
             requests_pipeline=self._requests_pipeline,
+            service_client_01_2024_preview=self._service_client_01_2024_preview,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.JOB, self._jobs)
@@ -563,6 +595,7 @@ class MLClient:
             self._operation_scope,
             self._operation_config,
             self._service_client_06_2023_preview,
+            self._service_client_01_2024_preview,
             self._operation_container,
             self._credential,
             _service_client_kwargs=kwargs,
@@ -579,13 +612,15 @@ class MLClient:
                 _service_client_kwargs=kwargs,
                 **ops_kwargs,
             )
-            self._operation_container.add(AzureMLResourceType.VIRTUALCLUSTER, self._virtual_clusters)
+            self._operation_container.add(
+                AzureMLResourceType.VIRTUALCLUSTER, self._virtual_clusters  # type: ignore[arg-type]
+            )
         except Exception as ex:  # pylint: disable=broad-except
             module_logger.debug("Virtual Cluster operations could not be initialized due to %s ", ex)
 
         self._featurestores = FeatureStoreOperations(
             self._operation_scope,
-            self._service_client_06_2023_preview,
+            self._service_client_08_2023_preview,
             self._operation_container,
             self._credential,
             **app_insights_handler_kwargs,
@@ -609,14 +644,14 @@ class MLClient:
 
         self._workspace_hubs = WorkspaceHubOperations(
             self._operation_scope,
-            self._service_client_06_2023_preview,
+            self._service_client_08_2023_preview,
             self._operation_container,
             self._credential,
             **app_insights_handler_kwargs,
         )
-        self._operation_container.add(AzureMLResourceType.WORKSPACE_HUB, self._workspace_hubs)
+        self._operation_container.add(AzureMLResourceType.WORKSPACE_HUB, self._workspace_hubs)  # type: ignore[arg-type]
 
-        self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)
+        self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)  # type: ignore[arg-type]
         self._operation_container.add(AzureMLResourceType.FEATURE_SET, self._featuresets)
         self._operation_container.add(AzureMLResourceType.FEATURE_STORE_ENTITY, self._featurestoreentities)
 
@@ -680,6 +715,7 @@ class MLClient:
         """
 
         path = Path(".") if path is None else Path(path)
+        found_path: Optional[Union[Path, str]]
 
         if path.is_file():
             found_path = path
@@ -728,7 +764,7 @@ class MLClient:
                     error_category=ErrorCategory.USER_ERROR,
                 )
 
-        subscription_id, resource_group, workspace_name = MLClient._get_workspace_info(found_path)
+        subscription_id, resource_group, workspace_name = MLClient._get_workspace_info(str(found_path))
 
         module_logger.info("Found the config file in: %s", found_path)
         return MLClient(
@@ -984,7 +1020,7 @@ class MLClient:
 
     @classmethod
     def _get_workspace_info(cls, found_path: Optional[str]) -> Tuple[str, str, str]:
-        with open(found_path, encoding=DefaultOpenEncoding.READ) as config_file:
+        with open(str(found_path), encoding=DefaultOpenEncoding.READ) as config_file:
             config = json.load(config_file)
 
         # Checking the keys in the config.json file to check for required parameters.

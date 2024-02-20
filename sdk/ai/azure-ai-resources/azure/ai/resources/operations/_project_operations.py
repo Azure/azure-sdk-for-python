@@ -14,9 +14,9 @@ from azure.ai.ml.constants._common import Scope
 from azure.ai.ml.entities import Workspace
 from azure.core.polling import LROPoller
 
-from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, OpsLogger
+from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, ActivityLogger
 
-ops_logger = OpsLogger(__name__)
+ops_logger = ActivityLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
@@ -47,7 +47,7 @@ class ProjectOperations:
         :keyword name: Name of the project.
         :paramtype name: str
         :return: The project with the provided name.
-        :rtype: Project
+        :rtype: ~azure.ai.resource.entities.Project
         """
 
         workspace = self._ml_client._workspaces.get(name=name, **kwargs)
@@ -62,7 +62,7 @@ class ProjectOperations:
         :keyword scope: The scope of the listing. Can be either "resource_group" or "subscription", and defaults to "resource_group".
         :paramtype scope: str
         :return: An iterator like instance of Project objects
-        :rtype: Iterable[Project]
+        :rtype: Iterable[~azure.ai.resource.entities.Project]
         """
 
         workspaces = []

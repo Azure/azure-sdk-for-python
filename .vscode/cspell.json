@@ -32,6 +32,8 @@
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/batch/azure-batch/**",
     "sdk/ai/**/index/**",
+    "sdk/ai/azure-ai-generative/tests/**",
+    "sdk/ai/azure-ai-resources/azure/ai/resources/_index/_langchain/vendor/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customsearch/**",
@@ -67,6 +69,8 @@
     "sdk/healthinsights/azure-healthinsights-clinicalmatching/azure/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_forms/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/**",
+    "sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_forms/**",
+    "sdk/documentintelligence/azure-ai-documentintelligence/tests/sample_forms/**",
     "sdk/personalizer/azure-ai-personalizer/azure/ai/personalizer/**",
     "sdk/identity/azure-identity/images/**",
     "sdk/identity/azure-identity/tests/pod-identity/**",
@@ -86,6 +90,7 @@
     "sdk/translation/azure-ai-translation-document/samples/assets/**",
     "sdk/translation/azure-ai-translation-document/tests/glossaries-valid.csv",
     "sdk/storage/azure-storage-blob/**",
+    "sdk/storage/azure-storage-extensions/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_utils/_virtual_cluster_utils/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
@@ -94,6 +99,8 @@
     "sdk/ml/azure-ai-ml/swagger/**",
     "sdk/ml/azure-ai-ml/NOTICE.txt",
     "sdk/ml/azure-ai-ml/.pre-commit-config.yaml",
+    "sdk/monitor/azure-monitor-opentelemetry/samples/tracing/django/sample/db.sqlite3",
+    "sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/django/sample/db.sqlite3",
     "sdk/loadtestservice/azure-developer-loadtesting/**",
     "sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_serialization.py",
     "sdk/translation/azure-ai-translation-text/tests/test_break_sentence.py",
@@ -102,6 +109,7 @@
     "sdk/translation/azure-ai-translation-text/tests/test_break_sentence_async.py",
     "sdk/translation/azure-ai-translation-text/tests/test_translation_async.py",
     "sdk/translation/azure-ai-translation-text/tests/test_transliteration_async.py",
+    "sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_model_base.py",
     "sdk/translation/test-resources.json",
     "eng/**/*.json",
     "eng/*.txt",
@@ -109,6 +117,7 @@
     "eng/common/docgeneration/Generate-DocIndex.ps1",
     "eng/**/*.py",
     ".gitignore",
+    "tools/azure-sdk-tools/ci_tools/github_tools.py",
     "tools/azure-sdk-tools/devtools_testutils/fake_credentials.py",
     "tools/azure-sdk-tools/packaging_tools/**",
     "tools/azure-sdk-tools/setup.py",
@@ -125,6 +134,8 @@
     "conda/conda-releaselogs/azure-mgmt.md"
   ],
   "words": [
+    "spinup",
+    "cibuildwheel",
     "aoai",
     "pyprojects",
     "certifi",
@@ -154,6 +165,7 @@
     "alru",
     "amqp",
     "amqps",
+    "anyio",
     "apim",
     "Asal",
     "asgi",
@@ -161,6 +173,7 @@
     "AsyncIterable",
     "asyncio",
     "avroencoder",
+    "Avs",
     "azcmagent",
     "azsdk",
     "azurecr",
@@ -468,7 +481,9 @@
         "Fproviders",
         "Fdeployments",
         "roups",
-        "mltable"
+        "mltable",
+        "wsid",
+        "runid"
       ]
     },
     {
@@ -534,6 +549,13 @@
       "words": [
         "Rlcw",
         "Jwcmlud"
+      ]
+    },
+    {
+      "filename": "sdk/identity/test-resources*",
+      "words": [
+        "kubelet",
+        "otsv"
       ]
     },
     {
@@ -646,7 +668,7 @@
         "engelska",
         "fhir",
         "FHIR",
-        "naam",
+        "naam"
       ]
     },
     {
@@ -762,6 +784,31 @@
         "rrggbb",
         "UPCA",
         "UPCE"
+      ]
+    },
+    {
+      "filename": "sdk/documentintelligence/azure-ai-documentintelligence/tests/*.py",
+      "words": [
+        "WDLABCD"
+      ]
+    },
+    {
+      "filename": "sdk/documentintelligence/azure-ai-documentintelligence/**",
+      "words": [
+        "allinone",
+        "dmac",
+        "ierr",
+        "mymodel",
+        "heif",
+        "racwd",
+        "rrggbb",
+        "UPCA",
+        "UPCE",
+        "mros",
+        "Nify",
+        "deserializers",
+        "ctxt",
+        "wday"
       ]
     },
     {
@@ -897,7 +944,11 @@
       "filename": "sdk/monitor/azure-monitor-*/**/*",
       "words": [
         "ctxt",
-        "wday"
+        "wday",
+        "percentilesw",
+        "plotly",
+        "nbformat",
+        "nbconvert"
       ]
     },
     {
@@ -1207,6 +1258,13 @@
       ]
     },
     {
+      "filename": "sdk/ai/azure-ai-generative/**",
+      "words": [
+        "tqdm",
+        "genai"
+      ]
+    },
+    {
       "filename": "sdk/attestation/azure-security-attestation/tests/conftest.py",
       "words":[
         "sharedwus"
@@ -1265,7 +1323,8 @@
         "Fdirectory",
         "Ffile",
         "Fsubdir",
-        "Fdir"
+        "Fdir",
+        "adal"
       ]
     },
     {
@@ -1358,7 +1417,8 @@
         "Docoptype",
         "mycontainer",
         "iscontinuationexpected",
-        "aalapatirvbd"
+        "aalapatirvbd",
+        "unconfigure"
       ]
     },
     {
@@ -1372,6 +1432,21 @@
         "adreadonly",
         "Shenzen",
         "myusername"
+      ]
+    },
+    {
+      "filename": "sdk/ai/azure-ai-resources/**",
+      "words": [
+        "azuread",
+        "all-mpnet-base-v2",
+        "dtype",
+        "LLMRAG",
+        "pipelinerunid",
+        "pydantic",
+        "swigfaiss",
+        "tiktokens",
+        "tqdm",
+        "wasb"
       ]
     },
     {
@@ -1606,6 +1681,16 @@
         "wday",
         "JSONify",
         "Nify"
+      ]
+    },
+    {
+      "filename": "sdk/vision/azure-ai-vision-imageanalysis/azure/ai/vision/imageanalysis/**/*.py",
+      "words": [
+        "mros",
+        "Nify",
+        "deserializers",
+        "ctxt",
+        "wday"
       ]
     },
     {

@@ -3,36 +3,33 @@
 # ---------------------------------------------------------
 
 from pathlib import Path
-from typing import Union
+from typing import Dict, Optional, Union
 
-import yaml
+import yaml  # type: ignore[import]
+from packaging import version
 
-from azure.ai.resources.entities.mlindex import Index
-from azure.ai.resources.operations._index_data_source import ACSSource, LocalSource
-from azure.ai.resources.operations._acs_output_config import ACSOutputConfig
 from azure.ai.resources._utils._open_ai_utils import build_open_ai_protocol
+from azure.ai.resources.entities.mlindex import Index
+from azure.ai.resources.operations._acs_output_config import ACSOutputConfig
+from azure.ai.resources.operations._index_data_source import ACSSource, LocalSource
 
 
 def build_index(
     *,
-    ######## required args ##########
     output_index_name: str,
     vector_store: str,
-    ######## embedding model information ##########
-    embeddings_model: str = None,
-    aoai_connection_id: str = None,
-    ######## chunking information ##########
-    data_source_url: str = None,
+    index_input_config: Union[ACSSource, LocalSource],
+    acs_config: ACSOutputConfig,  # todo better name?
+    embeddings_model: str,
+    aoai_connection_id: Optional[str] = None,
+    data_source_url: Optional[str] = None,
     chunk_size: int = 1024,
     chunk_overlap: int = 0,
     input_glob: str = "**/*",
-    max_sample_files: int = None,
-    chunk_prepend_summary: bool = None,
-    document_path_replacement_regex: str = None,
-    embeddings_cache_path: str = None,
-    ######## data source info ########
-    index_input_config: Union[ACSSource, LocalSource] = None,
-    acs_config: ACSOutputConfig = None,  # todo better name?
+    max_sample_files: Optional[int] = None,
+    chunk_prepend_summary: Optional[bool] = None,
+    document_path_replacement_regex: Optional[Dict[str, str]] = None,
+    embeddings_cache_path: Optional[str] = None,
 ) -> Index:
 
     """Generates embeddings locally and stores Index reference in memory
@@ -41,8 +38,8 @@ def build_index(
         from azure.ai.generative.index._documents import DocumentChunksIterator, split_documents
         from azure.ai.generative.index._embeddings import EmbeddingsContainer
         from azure.ai.generative.index._tasks.update_acs import create_index_from_raw_embeddings
-        from azure.ai.generative.index._utils.connections import get_connection_by_id_v2
         from azure.ai.generative.index._utils.logging import disable_mlflow
+        from azure.ai.resources._index._utils.connections import get_connection_by_id_v2
     except ImportError as e:
         print("In order to use build_index to build an Index locally, you must have azure-ai-generative[index] installed")
         raise e
@@ -53,15 +50,17 @@ def build_index(
     if vector_store == "azure_cognitive_search" and isinstance(index_input_config, ACSSource):
         return _create_mlindex_from_existing_acs(
             output_index_name=output_index_name,
-            embedding_model=embeddings_model,
+            # TODO: Fix Bug 2818331
+            embedding_model=embeddings_model,  # type: ignore[no-redef,arg-type]
             aoai_connection=aoai_connection_id,
             acs_config=index_input_config,
         )
-    embeddings_cache_path = Path(embeddings_cache_path) if embeddings_cache_path else Path.cwd()
-    save_path = embeddings_cache_path/f"{output_index_name}-mlindex"
+    embeddings_cache_path = str(Path(embeddings_cache_path) if embeddings_cache_path else Path.cwd())
+    save_path = str(Path(embeddings_cache_path)/f"{output_index_name}-mlindex")
     splitter_args= {
         'chunk_size': chunk_size,
         'chunk_overlap': chunk_overlap,
+        'use_rcts': True
     }
     if max_sample_files is not None:
         splitter_args["max_sample_files"] = max_sample_files
@@ -92,15 +91,22 @@ def build_index(
                 "endpoint": aoai_connection["properties"]["target"]
             }
         else:
+            import openai
+            api_key = "OPENAI_API_KEY"
+            api_base = "OPENAI_API_BASE"
+            if version.parse(openai.version.VERSION) >= version.parse("1.0.0"):
+                api_key = "AZURE_OPENAI_KEY"
+                api_base = "AZURE_OPENAI_ENDPOINT"
             connection_args = {
                 "connection_type": "environment",
-                "connection": {"key": "OPENAI_API_KEY"},
-                "endpoint": os.getenv("OPENAI_API_BASE"),
+                "connection": {"key": api_key},
+                "endpoint": os.getenv(api_base),
             }
     embedder = EmbeddingsContainer.from_uri(
         uri=embeddings_model,
         **connection_args,
     )
+
     embeddings = embedder.embed(chunked_docs)
 
     if vector_store.lower() == "faiss":
@@ -165,12 +171,12 @@ def build_index(
 def _create_mlindex_from_existing_acs(
     output_index_name: str,
     embedding_model: str,
-    aoai_connection: str,
+    aoai_connection: Optional[str],
     acs_config: ACSSource,
 ) -> Index:
     try:
         from azure.ai.generative.index._embeddings import EmbeddingsContainer
-        from azure.ai.generative.index._utils.connections import get_connection_by_id_v2
+        from azure.ai.resources._index._utils.connections import get_connection_by_id_v2
     except ImportError as e:
         print("In order to use build_index to build an Index locally, you must have azure-ai-generative[index] installed")
         raise e
@@ -209,6 +215,7 @@ def _create_mlindex_from_existing_acs(
     if acs_config.acs_metadata_key:
         mlindex_config["index"]["field_mapping"]["metadata"] = acs_config.acs_metadata_key
 
+    model_connection_args: Dict[str, Optional[Union[str, Dict]]]
     if not aoai_connection:
         import openai
         model_connection_args = {
@@ -220,7 +227,7 @@ def _create_mlindex_from_existing_acs(
             "connection": {"id": aoai_connection}
         }
 
-    embedding = EmbeddingsContainer.from_uri(embedding_model, **model_connection_args)
+    embedding = EmbeddingsContainer.from_uri(embedding_model, credential=None, **model_connection_args)
     mlindex_config["embeddings"] = embedding.get_metadata()
 
     path = Path.cwd() / f"import-acs-{acs_config.acs_index_name}-mlindex"

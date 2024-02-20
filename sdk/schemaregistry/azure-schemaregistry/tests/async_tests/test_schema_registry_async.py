@@ -17,24 +17,35 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import os
 import functools
 import pytest
 import json
+import sys
 
 from azure.schemaregistry.aio import SchemaRegistryClient
+from azure.schemaregistry import ApiVersion
 from azure.identity.aio import ClientSecretCredential
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
 
+# TODO: add protobuf env var for live testing when protobuf changes have been rolled out
+is_livetest = str(os.getenv("AZURE_TEST_RUN_LIVE")).lower()
+sr_namespaces = {
+    "schemaregistry_avro_fully_qualified_namespace": "fake_resource_avro.servicebus.windows.net",
+    "schemaregistry_json_fully_qualified_namespace": "fake_resource_json.servicebus.windows.net",
+    "schemaregistry_custom_fully_qualified_namespace": "fake_resource_custom.servicebus.windows.net",
+    "schemaregistry_group": "fakegroup"
+}
+if is_livetest != "true":
+    sr_namespaces["schemaregistry_protobuf_fully_qualified_namespace"] = "fake_resource_protobuf.servicebus.windows.net"
+
 SchemaRegistryEnvironmentVariableLoader = functools.partial(
     EnvironmentVariableLoader,
     "schemaregistry",
-    schemaregistry_avro_fully_qualified_namespace="fake_resource_avro.servicebus.windows.net",
-    schemaregistry_json_fully_qualified_namespace="fake_resource_json.servicebus.windows.net",
-    schemaregistry_custom_fully_qualified_namespace="fake_resource_custom.servicebus.windows.net",
-    schemaregistry_group="fakegroup"
+    **sr_namespaces
 )
 AVRO_SCHEMA_STR = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
 JSON_SCHEMA = {
@@ -60,17 +71,34 @@ JSON_SCHEMA = {
 }
 JSON_SCHEMA_STR = json.dumps(JSON_SCHEMA, separators=(",", ":"))
 CUSTOM_SCHEMA_STR = "My favorite color is yellow."
+current_path = os.getcwd()
+current_folder = current_path.split("\\")[-1]
+if current_folder == "tests":
+    proto_file = os.path.join(os.getcwd(), 'person.proto' )
+elif current_folder == "async_tests":
+    proto_file = os.path.join(os.getcwd(), '..', 'person.proto' )
+else: #current_folder == "azure-schemaregistry"
+    proto_file = os.path.join(os.getcwd(), 'tests', 'person.proto' )
+
+with open(proto_file, "r") as f:
+    PROTOBUF_SCHEMA_STR = f.read()
 
 AVRO_FORMAT = "Avro"
 JSON_FORMAT = "Json"
 CUSTOM_FORMAT = "Custom"
+PROTOBUF_FORMAT = "Protobuf"
 
 avro_args = (AVRO_FORMAT, AVRO_SCHEMA_STR)
 json_args = (JSON_FORMAT, JSON_SCHEMA_STR)
 custom_args = (CUSTOM_FORMAT, CUSTOM_SCHEMA_STR)
+protobuf_args = (PROTOBUF_FORMAT, PROTOBUF_SCHEMA_STR)
 
+# TODO: add protobuf schema group to arm template + enable livetests
 format_params = [avro_args, json_args, custom_args]
 format_ids = [AVRO_FORMAT, JSON_FORMAT, CUSTOM_FORMAT]
+if is_livetest != "true":   # protobuf changes have not been rolled out
+    format_params.append(protobuf_args)
+    format_ids.append(PROTOBUF_FORMAT)
 
 class ArgPasser:
     def __call__(self, fn):
@@ -210,14 +238,11 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
     async def test_schema_negative_wrong_endpoint_async(self, format, schema_str, **kwargs):
         schemaregistry_group = kwargs.pop("schemaregistry_group")
         client = self.create_client(fully_qualified_namespace="fake.servicebus.windows.net")
+        name = self.get_resource_name(f"test-schema-nonexist-async-{format.lower()}")
         async with client:
-            name = self.get_resource_name(f"test-schema-nonexist-async-{format.lower()}")
             # accepting both errors for now due to: https://github.com/Azure/azure-sdk-tools/issues/2907
             with pytest.raises((ServiceRequestError, HttpResponseError)) as exc_info:
                 await client.register_schema(schemaregistry_group, name, schema_str, format)
-            if exc_info.type is HttpResponseError:
-                response_content = json.loads(exc_info.value.response.content)
-                assert any([(m in response_content["Message"]) for m in ["Name does not resolve", "Unable to find a record"]])
 
         await client._generated_client._config.credential.close()
 
@@ -338,3 +363,27 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
             assert e.value.error.code == 'InvalidRequest'
             assert e.value.status_code == 400
             assert e.value.reason == 'Bad Request'
+
+    @SchemaRegistryEnvironmentVariableLoader()
+    @pytest.mark.parametrize("format, schema_str", format_params, ids=format_ids)
+    @ArgPasser()
+    @recorded_by_proxy_async
+    async def test_schema_apiversion(self, format, schema_str, **kwargs):
+        schemaregistry_fully_qualified_namespace = kwargs.pop(f"schemaregistry_{format.lower()}_fully_qualified_namespace")
+        schemaregistry_group = kwargs.pop("schemaregistry_group")
+
+        apiversion_2021_10 = ApiVersion.V2021_10
+        client_2021_10 = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace, api_version=apiversion_2021_10)
+        name = self.get_resource_name(f"test-schema-apiversion-{format.lower()}")
+
+        schema_properties = await client_2021_10.register_schema(schemaregistry_group, name, schema_str, format, logging_enable=True)
+
+        assert schema_properties.id is not None
+        assert schema_properties.format == format
+
+        apiversion_2022_10 = ApiVersion.V2022_10
+        client_2022_10 = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace, api_version=apiversion_2022_10)
+        schema_properties = await client_2022_10.register_schema(schemaregistry_group, name, schema_str, format, logging_enable=True)
+
+        assert schema_properties.id is not None
+        assert schema_properties.format == format

@@ -25,19 +25,19 @@
 # operations, multiply (MU) and rotate (R), used in its inner loop. Unlike cryptographic hash functions, it is not
 # specifically designed to be difficult to reverse by an adversary, making it unsuitable for cryptographic purposes.
 
- # This contains a Python port of the 128-bit hash function from Austin Appleby's original C++ code in SMHasher.
+# This contains a Python port of the 128-bit hash function from Austin Appleby's original C++ code in SMHasher.
 
- # This is public domain code with no copyrights. From home page of
- # <a href="https://github.com/aappleby/smhasher">SMHasher</a>:
- #  "All MurmurHash versions are public domain software, and the author disclaims all copyright to their code."
+# This is public domain code with no copyrights. From home page of
+# <a href="https://github.com/aappleby/smhasher">SMHasher</a>:
+#  "All MurmurHash versions are public domain software, and the author disclaims all copyright to their code."
 from ._cosmos_integers import UInt128, UInt64
 
 
-def rotate_left_64(val, shift):
+def rotate_left_64(val: int, shift: int) -> int:
     return (val << shift) | (val >> (64 - shift))
 
 
-def mix(value):
+def mix(value: UInt64) -> UInt64:
     value ^= value >> 33
     value *= 0xff51afd7ed558ccd
     value = value & 0xFFFFFFFFFFFFFFFF
@@ -48,7 +48,7 @@ def mix(value):
     return value
 
 
-def murmurhash3_128(span: bytearray, seed: UInt128) -> UInt128:
+def murmurhash3_128(span: bytearray, seed: UInt128) -> UInt128:  # pylint: disable=too-many-statements
     """
     Python implementation of 128 bit murmurhash3 from Dot Net SDK. To match with other SDKs, It is recommended to
     do the following with number values, especially floats as other SDKs use Doubles
@@ -61,11 +61,12 @@ def murmurhash3_128(span: bytearray, seed: UInt128) -> UInt128:
     :return:
         The hash value as a UInt128
     :rtype:
-        UInt128"""
+        UInt128
+    """
     c1 = UInt64(0x87c37b91114253d5)
     c2 = UInt64(0x4cf5ad432745937f)
-    h1 = UInt64(seed.get_low())
-    h2 = UInt64(seed.get_high())
+    h1 = seed.get_low()
+    h2 = seed.get_high()
 
     position = 0
     while position < len(span) - 15:
@@ -145,4 +146,4 @@ def murmurhash3_128(span: bytearray, seed: UInt128) -> UInt128:
     h1 += h2
     h2 += h1
 
-    return UInt128.create(int(h1.value), int(h2.value))
+    return UInt128(int(h1.value), int(h2.value))

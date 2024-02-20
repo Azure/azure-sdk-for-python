@@ -1,14 +1,28 @@
 # Release History
 
-## 4.8.0b2 (Unreleased)
+## 4.8.0b3 (Unreleased)
 
 ### Features Added
+- Added support for service API version `7.5`
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+- Python 3.7 is no longer supported. Please use Python version 3.8 or later.
+- `asyncio` is no longer directly referenced by the library
+  ([#33819](https://github.com/Azure/azure-sdk-for-python/pull/33819))
+- Updated minimum `azure-core` version to 1.29.5
+- Dropped `azure-common` requirement
+
+## 4.8.0b2 (2023-11-03)
+
+### Features Added
+- Added support for service API version `7.5-preview.1`
+
+### Other Changes
+- Key Vault API version `7.5-preview.1` is now the default
 
 ## 4.8.0b1 (2023-05-16)
 

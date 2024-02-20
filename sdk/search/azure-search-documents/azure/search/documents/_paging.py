@@ -10,7 +10,8 @@ import itertools
 import json
 
 from azure.core.paging import ItemPaged, PageIterator, ReturnType
-from ._generated.models import SearchRequest, SearchDocumentsResult, AnswerResult
+from ._generated.models import SearchRequest, SearchDocumentsResult, QueryAnswerResult
+from ._api_versions import DEFAULT_VERSION
 
 
 def convert_search_result(result):
@@ -22,7 +23,7 @@ def convert_search_result(result):
     return ret
 
 
-def pack_continuation_token(response, api_version="2020-06-30"):
+def pack_continuation_token(response, api_version=DEFAULT_VERSION):
     if response.next_page_parameters is not None:
         token = {
             "apiVersion": api_version,
@@ -83,13 +84,14 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         """
         return cast(int, self._first_iterator_instance().get_count())
 
-    def get_answers(self) -> Optional[List[AnswerResult]]:
-        """Return answers.
+    def get_answers(self) -> Optional[List[QueryAnswerResult]]:
+        """Return semantic answers. Only included if the semantic ranker is used
+        and answers are requested in the search query via the query_answer parameter.
 
         :return: answers
-        :rtype: list[~azure.search.documents.models.AnswerResult] or None
+        :rtype: list[~azure.search.documents.models.QueryAnswerResult] or None
         """
-        return cast(List[AnswerResult], self._first_iterator_instance().get_answers())
+        return cast(List[QueryAnswerResult], self._first_iterator_instance().get_answers())
 
 
 # The pylint error silenced below seems spurious, as the inner wrapper does, in
@@ -116,7 +118,7 @@ class SearchPageIterator(PageIterator):
         self._initial_query = initial_query
         self._kwargs = kwargs
         self._facets = None
-        self._api_version = kwargs.pop("api_version", "2020-06-30")
+        self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
 
     def _get_next_cb(self, continuation_token):
         if continuation_token is None:
@@ -154,7 +156,7 @@ class SearchPageIterator(PageIterator):
         return cast(int, response.count)
 
     @_ensure_response
-    def get_answers(self) -> Optional[List[AnswerResult]]:
+    def get_answers(self) -> Optional[List[QueryAnswerResult]]:
         self.continuation_token = None
         response = cast(SearchDocumentsResult, self._response)
         return response.answers

@@ -34,7 +34,9 @@ create_monitor:
           data_context: model_inputs
           data_column_names:
             correlation_id: inference_correlation_id
-          data_window_size: P7D
+          data_window:
+            lookback_window_size: P7D
+            lookback_window_offset: P0D
         - input_data:
             path: azureml:my_model_outputs_data:1
             type: mltable
@@ -43,13 +45,16 @@ create_monitor:
             prediction: is_fraud
             prediction_probability: is_fraud_probability
             correlation_id: inference_correlation_id
-          data_window_size: P7D
+          data_window:
+            lookback_window_size: P7D
+            lookback_window_offset: P0D
       reference_data:
         input_data:
           path: azureml:my_model_training_data:1
           type: mltable
         data_context: training
-        target_column_name: target
+        data_column_names:
+          target_column: target
       alert_enabled: true
       metric_thresholds:
         normalized_discounted_cumulative_gain: 0.2

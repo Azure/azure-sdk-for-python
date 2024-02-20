@@ -17,11 +17,12 @@ from ._configuration import HybridContainerServiceMgmtClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import (
     AgentPoolOperations,
-    HybridContainerServiceOperations,
+    HybridContainerServiceMgmtClientOperationsMixin,
     HybridIdentityMetadataOperations,
+    KubernetesVersionsOperations,
     Operations,
-    ProvisionedClustersOperations,
-    StorageSpacesOperations,
+    ProvisionedClusterInstancesOperations,
+    VMSkusOperations,
     VirtualNetworksOperations,
 )
 
@@ -30,35 +31,37 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class HybridContainerServiceMgmtClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class HybridContainerServiceMgmtClient(
+    HybridContainerServiceMgmtClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """The Microsoft.HybridContainerService Rest API spec.
 
-    :ivar provisioned_clusters: ProvisionedClustersOperations operations
-    :vartype provisioned_clusters:
-     azure.mgmt.hybridcontainerservice.operations.ProvisionedClustersOperations
+    :ivar provisioned_cluster_instances: ProvisionedClusterInstancesOperations operations
+    :vartype provisioned_cluster_instances:
+     azure.mgmt.hybridcontainerservice.operations.ProvisionedClusterInstancesOperations
     :ivar hybrid_identity_metadata: HybridIdentityMetadataOperations operations
     :vartype hybrid_identity_metadata:
      azure.mgmt.hybridcontainerservice.operations.HybridIdentityMetadataOperations
     :ivar agent_pool: AgentPoolOperations operations
     :vartype agent_pool: azure.mgmt.hybridcontainerservice.operations.AgentPoolOperations
-    :ivar hybrid_container_service: HybridContainerServiceOperations operations
-    :vartype hybrid_container_service:
-     azure.mgmt.hybridcontainerservice.operations.HybridContainerServiceOperations
+    :ivar kubernetes_versions: KubernetesVersionsOperations operations
+    :vartype kubernetes_versions:
+     azure.mgmt.hybridcontainerservice.operations.KubernetesVersionsOperations
+    :ivar vm_skus: VMSkusOperations operations
+    :vartype vm_skus: azure.mgmt.hybridcontainerservice.operations.VMSkusOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.hybridcontainerservice.operations.Operations
-    :ivar storage_spaces: StorageSpacesOperations operations
-    :vartype storage_spaces: azure.mgmt.hybridcontainerservice.operations.StorageSpacesOperations
     :ivar virtual_networks: VirtualNetworksOperations operations
     :vartype virtual_networks:
      azure.mgmt.hybridcontainerservice.operations.VirtualNetworksOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-09-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2024-01-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -74,24 +77,24 @@ class HybridContainerServiceMgmtClient:  # pylint: disable=client-accepts-api-ve
         self._config = HybridContainerServiceMgmtClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.provisioned_clusters = ProvisionedClustersOperations(
+        self.provisioned_cluster_instances = ProvisionedClusterInstancesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.hybrid_identity_metadata = HybridIdentityMetadataOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.agent_pool = AgentPoolOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.hybrid_container_service = HybridContainerServiceOperations(
+        self.kubernetes_versions = KubernetesVersionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.vm_skus = VMSkusOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.storage_spaces = StorageSpacesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.virtual_networks = VirtualNetworksOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

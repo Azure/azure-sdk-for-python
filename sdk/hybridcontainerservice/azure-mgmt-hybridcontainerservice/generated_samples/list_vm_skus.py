@@ -29,12 +29,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.hybrid_container_service.list_vm_skus(
+    response = client.vm_skus.list(
         custom_location_resource_uri="subscriptions/a3e42606-29b1-4d7d-b1d9-9ff6b9d3c71b/resourceGroups/test-arcappliance-resgrp/providers/Microsoft.ExtendedLocation/customLocations/testcustomlocation",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/hybridaks/resource-manager/Microsoft.HybridContainerService/preview/2022-09-01-preview/examples/ListVMSkus.json
+# x-ms-original-file: specification/hybridaks/resource-manager/Microsoft.HybridContainerService/stable/2024-01-01/examples/ListVmSkus.json
 if __name__ == "__main__":
     main()

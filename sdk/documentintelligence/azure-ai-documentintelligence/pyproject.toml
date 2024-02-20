@@ -1,0 +1,3 @@
+[tool.azure-sdk-build]
+pyright = false
+pylint = false

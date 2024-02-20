@@ -2,6 +2,7 @@ import os
 import ast
 import textwrap
 import re
+import fnmatch
 
 try:
     # py 311 adds this library natively
@@ -23,6 +24,7 @@ from pkg_resources import (
 
 # this assumes the presence of "packaging"
 from packaging.specifiers import SpecifierSet
+from setuptools import Extension
 
 
 NEW_REQ_PACKAGES = ["azure-core", "azure-mgmt-core"]
@@ -46,6 +48,8 @@ class ParsedSetup:
         include_package_data: bool,
         classifiers: List[str],
         keywords: List[str],
+        ext_package: str,
+        ext_modules: List[Extension],
     ):
         self.name: str = name
         self.version: str = version
@@ -58,6 +62,8 @@ class ParsedSetup:
         self.include_package_data: bool = include_package_data
         self.classifiers: List[str] = classifiers
         self.keywords: List[str] = keywords
+        self.ext_package = ext_package
+        self.ext_modules = ext_modules
 
         self.folder = os.path.dirname(self.setup_filename)
 
@@ -75,6 +81,8 @@ class ParsedSetup:
             include_package_data,
             classifiers,
             keywords,
+            ext_package,
+            ext_modules,
         ) = parse_setup(parse_directory_or_file)
 
         return cls(
@@ -89,16 +97,24 @@ class ParsedSetup:
             include_package_data,
             classifiers,
             keywords,
+            ext_package,
+            ext_modules,
         )
 
     def get_build_config(self) -> Dict[str, Any]:
         return get_build_config(self.folder)
 
+    def get_config_setting(self, setting: str, default: Any = True) -> Any:
+        return get_config_setting(self.folder, setting, default)
+
+    def is_reporting_suppressed(self, setting: str) -> bool:
+        return compare_string_to_glob_array(setting, self.get_config_setting("suppressed_skip_warnings", []))
+
 
 def update_build_config(package_path: str, new_build_config: Dict[str, Any]) -> Dict[str, Any]:
     """
     Attempts to update a pyproject.toml's [tools.azure-sdk-tools] section with a new check configuration.
-    
+
     This function can only append or override existing check values. It cannot delete them.
     """
     if os.path.isfile(package_path):
@@ -118,6 +134,7 @@ def update_build_config(package_path: str, new_build_config: Dict[str, Any]) -> 
 
     with open(toml_file, "wb") as f:
         import tomli_w
+
         tomli_w.dump(toml_dict, f)
 
     return new_build_config
@@ -177,7 +194,7 @@ def read_setup_py_content(setup_filename: str) -> str:
 
 def parse_setup(
     setup_filename: str,
-) -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str]]:
+) -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], str, List[Extension]]:
     """
     Used to evaluate a setup.py (or a directory containing a setup.py) and return a tuple containing:
     (
@@ -191,7 +208,9 @@ def parse_setup(
         <package_data dict>,
         <include_package_data bool>,
         <classifiers>,
-        <keywords>
+        <keywords>,
+        <ext_packages>,
+        <ext_modules>
     )
     """
     if not setup_filename.endswith("setup.py"):
@@ -239,36 +258,24 @@ def parse_setup(
     except KeyError as e:
         python_requires = ">=2.7"
 
-    version = kwargs["version"]
-    name = kwargs["name"]
+    version = kwargs.get("version")
+    name = kwargs.get("name")
     name_space = name.replace("-", ".")
+    packages = kwargs.get("packages", [])
 
-    if "packages" in kwargs.keys():
-        packages = kwargs["packages"]
-        if packages:
-            name_space = packages[0]
+    if packages:
+        name_space = packages[0]
 
-    requires = []
-    if "install_requires" in kwargs:
-        requires = kwargs["install_requires"]
-
-    package_data = None
-    if "package_data" in kwargs:
-        package_data = kwargs["package_data"]
-
-    include_package_data = None
-    if "include_package_data" in kwargs:
-        include_package_data = kwargs["include_package_data"]
-
-    classifiers = []
-    if "classifiers" in kwargs:
-        classifiers = kwargs["classifiers"]
-
-    keywords = []
-    if "keywords" in kwargs:
-        keywords = kwargs["keywords"]
+    requires = kwargs.get("install_requires", [])
+    package_data = kwargs.get("package_data", None)
+    include_package_data = kwargs.get("include_package_data", None)
+    classifiers = kwargs.get("classifiers", [])
+    keywords = kwargs.get("keywords", [])
 
     is_new_sdk = name in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x)[0] in NEW_REQ_PACKAGES), requires))
+
+    ext_package = kwargs.get("ext_package", None)
+    ext_modules = kwargs.get("ext_modules", [])
 
     return (
         name,
@@ -282,6 +289,8 @@ def parse_setup(
         include_package_data,
         classifiers,
         keywords,
+        ext_package,
+        ext_modules,
     )
 
 
@@ -311,7 +320,7 @@ def parse_require(req: str) -> Tuple[str, SpecifierSet]:
     return (pkg_name, spec)
 
 
-def parse_requirements_file(file_location: str) -> Dict[str, str]:
+def parse_freeze_output(file_location: str) -> Dict[str, str]:
     """
     Takes a python requirements file and returns a dictionary representing the contents.
     """
@@ -328,3 +337,10 @@ def get_name_from_specifier(version: str) -> str:
     "azure-core<2.0.0,>=1.11.0" -> azure-core
     """
     return re.split(r"[><=]", version)[0]
+
+
+def compare_string_to_glob_array(string: str, glob_array: List[str]) -> bool:
+    """
+    This function is used to easily compare a string to a set of glob strings, if it matches any of them, returns True.
+    """
+    return any([fnmatch.fnmatch(string, glob) for glob in glob_array])

@@ -3,9 +3,18 @@
 # ---------------------------------------------------------
 import os.path
 import json
+import pathlib
 import re
+import shutil
+import time
 from pathlib import Path
+from typing import Optional, Dict, List
+
+import mlflow
 import pandas as pd
+import tempfile
+
+from pydash import flow
 
 _SUB_ID = "sub-id"
 _RES_GRP = "res-grp"
@@ -22,6 +31,55 @@ def load_jsonl_to_df(path):
         return pd.read_json(path, lines=True)
     else:
         raise Exception("File not found: {}".format(path))
+
+def df_to_dict_list(df, extra_kwargs: Optional[Dict] = None):
+    if extra_kwargs is not None:
+        return df.assign(**extra_kwargs).to_dict("records")
+    return df.to_dict("records")
+
+
+def run_pf_flow_with_dict_list(flow_path, data: List[Dict], flow_params=None):
+    from promptflow import PFClient
+
+
+    columns = data[0].keys()
+    column_mapping = {col: f"${{data.{col}}}" for col in columns} # e.g. {"question": "${data.question}"}
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmp_path = os.path.join(tmpdir, "test_data.jsonl")
+        with open(tmp_path, "w") as f:
+            for line in data:
+                f.write(json.dumps(line) + "\n")
+
+        pf_client = PFClient()
+
+        if flow_params is None:
+            flow_params = {}
+
+        env_vars = None
+        if mlflow.get_tracking_uri() and mlflow.get_tracking_uri().startswith("azureml:"):
+            env_vars = {
+                "MLFLOW_TRACKING_URI": mlflow.get_tracking_uri()
+            }
+
+        return pf_client.run(
+            flow=flow_path,
+            data=tmp_path,
+            column_mapping=column_mapping,
+            environment_variables=env_vars,
+            **flow_params
+        )
+
+def wait_for_pf_run_to_complete(run_name):
+    from promptflow import PFClient
+    from promptflow._sdk._constants import RunStatus
+
+    pf_client = PFClient()
+    while True:
+        status = pf_client.runs.get(run_name).status
+        if status in [RunStatus.COMPLETED, RunStatus.FAILED, RunStatus.CANCELED]:
+            break
+        time.sleep(2)
 
 def _has_column(data, column_name):
     if data is None:
@@ -104,3 +162,40 @@ def _write_properties_to_run_history(properties: dict, logger) -> None:
             response.raise_for_status()
     except AttributeError as e:
         logger.error("Fail writing properties '%s' to run history: %s", properties, e)
+
+
+def _get_ai_studio_url(tracking_uri: str, evaluation_id: str):
+    _PROJECT_INFO_REGEX = (
+        r".*/subscriptions/(.+)/resourceGroups/(.+)"
+        r"/providers/Microsoft.MachineLearningServices/workspaces/([^/]+)"
+    )
+
+    pattern = re.compile(_PROJECT_INFO_REGEX)
+
+    mo: Optional[re.Match[str]] = pattern.match(tracking_uri)
+
+    ret = {}
+    ret[_SUB_ID] = mo.group(1) if mo else mo
+    ret[_RES_GRP] = mo.group(2) if mo else mo
+    ret[_WS_NAME] = mo.group(3) if mo else mo
+
+    studio_base_url = os.getenv("AI_STUDIO_BASE_URL", "https://ai.azure.com")
+
+    studio_url = f"{studio_base_url}/build/evaluation/{evaluation_id}?wsid=/subscriptions/{ret[_SUB_ID]}" \
+                 f"/resourceGroups/{ret[_RES_GRP]}/providers/Microsoft.MachineLearningServices/workspaces" \
+                 f"/{ret[_WS_NAME]}"
+
+    return studio_url
+
+
+def _copy_artifact(source, destination):
+    """
+    Copies files from source to destination.If destination does not exists creates it.
+    """
+
+    pathlib.Path(destination).mkdir(exist_ok=True, parents=True)
+    shutil.copy2(source, destination)
+
+
+def is_lambda_function(obj):
+    return callable(obj) and obj.__name__ == "<lambda>"

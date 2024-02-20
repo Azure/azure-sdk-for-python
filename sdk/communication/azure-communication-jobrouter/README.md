@@ -105,9 +105,9 @@ distribution_policy: DistributionPolicy = DistributionPolicy(
     )
 )
 
-distribution_policy: DistributionPolicy = router_admin_client.create_distribution_policy(
-    id = "distribution-policy-1",
-    distribution_policy = distribution_policy
+distribution_policy: DistributionPolicy = router_admin_client.upsert_distribution_policy(
+    "distribution-policy-1",
+    distribution_policy
 )
 ```
 ### Queue
@@ -122,9 +122,9 @@ queue: RouterQueue = RouterQueue(
     distribution_policy_id = "distribution-policy-1"
 )
 
-queue: RouterQueue = router_admin_client.create_queue(
-    id = "queue-1",
-    queue = queue
+queue: RouterQueue = router_admin_client.upsert_queue(
+    "queue-1",
+    queue
 )
 ```
 
@@ -147,9 +147,9 @@ router_job: RouterJob = RouterJob(
     ]
 )
 
-job: RouterJob = router_client.create_job(
-    id = "jobId-1",
-    router_job = router_job
+job: RouterJob = router_client.upsert_job(
+    "jobId-1",
+    router_job
 )
 ```
 
@@ -158,26 +158,26 @@ Now, we register a worker to receive work from that queue, with a label of `Some
 ```python
 from azure.communication.jobrouter.models import (
     RouterWorker,
-    ChannelConfiguration
+    RouterChannel
 )
 
 router_worker: RouterWorker = RouterWorker(
-    total_capacity = 1,
-    queue_assignments = {
-        "queue-1": {}
-    },
+    capacity = 1,
+    queues = [
+        "queue-1"
+    ],
     labels = {
         "Some-Skill": 11
     },
-    channel_configurations = {
-        "my-channel": ChannelConfiguration(capacity_cost_per_job = 1)
-    },
+    channels = [
+        RouterChannel(channel_id = "my-channel", capacity_cost_per_job = 1)
+    ],
     available_for_offers = True
 )
 
-worker = router_client.create_worker(
-    worker_id = "worker-1",
-    router_worker = router_worker
+worker = router_client.upsert_worker(
+    "worker-1",
+    router_worker
 )
 ```
 
@@ -249,11 +249,15 @@ print(f"Job assignment has been successful: {updated_job.job_status == RouterJob
 Once the worker is done with the job, the worker has to mark the job as `completed`.
 ```python
 import datetime
-
+from azure.communication.jobrouter.models import (
+    CompleteJobOptions
+)
 complete_job_result = router_client.complete_job(
-    job_id = "jobId-1",
-    assignment_id = accept_job_offer_result.assignment_id,
-    note = f"Job has been completed by {router_worker.id} at {datetime.datetime.utcnow()}"
+    "jobId-1",
+    accept_job_offer_result.assignment_id,
+    CompleteJobOptions(
+        note = f"Job has been completed by {router_worker.id} at {datetime.datetime.utcnow()}"
+    )
 )
 
 print(f"Job has been successfully completed.")
@@ -264,13 +268,16 @@ After a job has been completed, the worker can perform wrap up actions to the jo
 ```python
 from azure.communication.jobrouter.models import (
     RouterJob,
-    RouterJobStatus
+    RouterJobStatus,
+    CloseJobOptions,
 )
 
 close_job_result = router_client.close_job(
-    job_id = "jobId-1",
-    assignment_id = accept_job_offer_result.assignment_id,
-    note = f"Job has been closed by {router_worker.id} at {datetime.datetime.utcnow()}"
+    "jobId-1",
+    accept_job_offer_result.assignment_id,
+    CloseJobOptions(
+        note = f"Job has been closed by {router_worker.id} at {datetime.datetime.utcnow()}"
+    )
 )
 
 print(f"Job has been successfully closed.")
@@ -284,14 +291,17 @@ import time
 from datetime import datetime, timedelta
 from azure.communication.jobrouter.models import (
     RouterJob,
-    RouterJobStatus
+    RouterJobStatus,
+    CloseJobOptions,
 )
 
 close_job_in_future_result = router_client.close_job(
-    job_id = "jobId-1",
-    assignment_id = accept_job_offer_result.assignment_id,
-    note = f"Job has been closed by {router_worker.id} at {datetime.utcnow()}",
-    close_at = datetime.utcnow() + timedelta(seconds = 2)
+    "jobId-1",
+    accept_job_offer_result.assignment_id,
+    CloseJobOptions(
+        note = f"Job has been closed by {router_worker.id} at {datetime.utcnow()}",
+        close_at = datetime.utcnow() + timedelta(seconds = 2)
+    )
 )
 
 print(f"Job has been marked to close")
@@ -333,7 +343,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][coc]. For m
 [communication_resource_create_net]: https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource?tabs=windows&pivots=platform-net
 [nextsteps]:https://docs.microsoft.com/azure/communication-services/concepts/router/concepts
 
-[//]: # ([source]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter)
+[source]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter
 [product_docs]: https://docs.microsoft.com/azure/communication-services/overview
 [classification_concepts]: https://docs.microsoft.com/azure/communication-services/concepts/router/classification-concepts
 [subscribe_events]: https://docs.microsoft.com/azure/communication-services/how-tos/router-sdk/subscribe-events
@@ -344,4 +354,4 @@ This project has adopted the [Microsoft Open Source Code of Conduct][coc]. For m
 [pypi]: https://pypi.org
 [pip]: https://pypi.org/project/pip/
 
-[//]: # ([job_router_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/communication/azure-communication-jobrouter/samples)
+[job_router_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/communication/azure-communication-jobrouter/samples

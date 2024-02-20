@@ -2,8 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import yaml
-from typing import Dict, Optional
+import yaml  # type: ignore[import]
+from typing import Dict, Optional, Union
+from pathlib import Path
 from dataclasses import dataclass
 
 from azure.ai.ml.entities import Data
@@ -13,8 +14,8 @@ from azure.ai.resources.entities import AzureOpenAIConnection, AzureAISearchConn
 @dataclass
 class Index:
     name: str
-    path: str
-    version: str = None
+    path: Union[str, Path]
+    version: Optional[str] = None
     description: Optional[str] = None
     tags: Optional[Dict[str, str]] = None
     properties: Optional[Dict[str, str]] = None
@@ -22,7 +23,7 @@ class Index:
 
     def query(self, text: str):
         try:
-            from azure.ai.resources.index._mlindex import MLIndex as InternalMLIndex
+            from azure.ai.resources._index._mlindex import MLIndex as InternalMLIndex
         except ImportError as e:
             print("In order to query an Index, you must have azure-ai-generative[index] installed")
             raise e
@@ -30,8 +31,8 @@ class Index:
         retriever = InternalMLIndex(str(self.path)).as_langchain_retriever()
         return retriever.get_relevant_documents(text)
 
-    def override_connections(self, aoai_connection: AzureOpenAIConnection = None, acs_connection: AzureAISearchConnection = None) -> None:
-        with open(self.path/"MLIndex", "r") as f:
+    def override_connections(self, aoai_connection: Optional[AzureOpenAIConnection] = None, acs_connection: Optional[AzureAISearchConnection] = None) -> None:
+        with open(Path(self.path)/"MLIndex", "r") as f:
             mlindex_dict = yaml.safe_load(f)
 
         embeddings_dict = mlindex_dict["embeddings"]
@@ -47,7 +48,7 @@ class Index:
             else:
                 index_dict["connection_type"] = "workspace_connection"
                 index_dict["connection"] = {"id": acs_connection.id}
-        with open(self.path/"MLIndex", "w") as f:
+        with open(Path(self.path)/"MLIndex", "w") as f:
             yaml.safe_dump(mlindex_dict, f)
 
     @classmethod

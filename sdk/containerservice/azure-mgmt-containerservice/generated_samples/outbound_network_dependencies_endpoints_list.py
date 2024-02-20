@@ -26,7 +26,7 @@ from azure.mgmt.containerservice import ContainerServiceClient
 def main():
     client = ContainerServiceClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid1",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     response = client.managed_clusters.list_outbound_network_dependencies_endpoints(
@@ -37,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-08-01/examples/OutboundNetworkDependenciesEndpointsList.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2024-01-01/examples/OutboundNetworkDependenciesEndpointsList.json
 if __name__ == "__main__":
     main()

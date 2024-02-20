@@ -8,14 +8,16 @@ from corehttp.transport.aiohttp import AioHttpTransport
 import aiohttp
 
 import pytest
-from utils import HTTP_REQUESTS, AIOHTTP_TRANSPORT_RESPONSES, create_transport_response
+from corehttp.rest import HttpRequest
+from corehttp.rest._aiohttp import RestAioHttpTransportResponse
+
+from utils import create_transport_response
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-async def test_basic_aiohttp(port, http_request):
+async def test_basic_aiohttp(port):
 
-    request = http_request("GET", "http://localhost:{}/basic/string".format(port))
+    request = HttpRequest("GET", "http://localhost:{}/basic/string".format(port))
     async with AioHttpTransport() as sender:
         response = await sender.send(request)
         assert response.content is not None
@@ -25,10 +27,9 @@ async def test_basic_aiohttp(port, http_request):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-async def test_aiohttp_auto_headers(port, http_request):
+async def test_aiohttp_auto_headers(port):
 
-    request = http_request("POST", "http://localhost:{}/basic/string".format(port))
+    request = HttpRequest("POST", "http://localhost:{}/basic/string".format(port))
     async with AioHttpTransport() as sender:
         response = await sender.send(request)
         auto_headers = response._internal_response.request_info.headers
@@ -41,6 +42,7 @@ def _create_aiohttp_response(http_response, body_bytes, headers=None):
             self._body = body_bytes
             self._headers = headers
             self._cache = {}
+            self._loop = None
             self.status = 200
             self.reason = "OK"
 
@@ -53,22 +55,20 @@ def _create_aiohttp_response(http_response, body_bytes, headers=None):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_response", AIOHTTP_TRANSPORT_RESPONSES)
-async def test_aiohttp_response_text(http_response):
+async def test_aiohttp_response_text():
 
     for encoding in ["utf-8", "utf-8-sig", None]:
 
-        res = _create_aiohttp_response(http_response, b"\xef\xbb\xbf56", {"Content-Type": "text/plain"})
+        res = _create_aiohttp_response(RestAioHttpTransportResponse, b"\xef\xbb\xbf56", {"Content-Type": "text/plain"})
         await res.read()
         assert res.text(encoding) == "56", "Encoding {} didn't work".format(encoding)
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_response", AIOHTTP_TRANSPORT_RESPONSES)
-async def test_aiohttp_response_decompression(http_response):
+async def test_aiohttp_response_decompression():
     # cSpell:disable
     res = _create_aiohttp_response(
-        http_response,
+        RestAioHttpTransportResponse,
         b"\x1f\x8b\x08\x00\x00\x00\x00\x00\x04\x00\x8d\x8d\xb1n\xc30\x0cD"
         b"\xff\x85s\x14HVlY\xda\x8av.\n4\x1d\x9a\x8d\xa1\xe5D\x80m\x01\x12="
         b"\x14A\xfe\xbd\x92\x81d\xceB\x1c\xef\xf8\x8e7\x08\x038\xf0\xa67Fj+"
@@ -92,13 +92,12 @@ async def test_aiohttp_response_decompression(http_response):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("http_response", AIOHTTP_TRANSPORT_RESPONSES)
-async def test_aiohttp_response_decompression_negative(http_response):
+async def test_aiohttp_response_decompression_negative():
     import zlib
 
     # cSpell:disable
     res = _create_aiohttp_response(
-        http_response,
+        RestAioHttpTransportResponse,
         b"\xff\x85s\x14HVlY\xda\x8av.\n4\x1d\x9a\x8d\xa1\xe5D\x80m\x01\x12="
         b"\x14A\xfe\xbd\x92\x81d\xceB\x1c\xef\xf8\x8e7\x08\x038\xf0\xa67Fj+"
         b"\x946\x9d8\x0c4\x08{\x96(\x94mzkh\x1cM/a\x07\x94<\xb2\x1f>\xca8\x86"
@@ -114,9 +113,8 @@ async def test_aiohttp_response_decompression_negative(http_response):
         res.content()
 
 
-@pytest.mark.parametrize("http_response", AIOHTTP_TRANSPORT_RESPONSES)
-def test_repr(http_response):
-    res = _create_aiohttp_response(http_response, b"\xef\xbb\xbf56", {"content-type": "text/plain"})
+def test_repr():
+    res = _create_aiohttp_response(RestAioHttpTransportResponse, b"\xef\xbb\xbf56", {"content-type": "text/plain"})
 
     class_name = "AsyncHttpResponse"
     assert repr(res) == f"<{class_name}: 200 OK, Content-Type: text/plain>"

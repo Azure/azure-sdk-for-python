@@ -1,6 +1,46 @@
 # Release History
 
-## 1.0.1 (Unreleased)
+## 1.2.1 (Unreleased)
+
+### Features Added
+
+- Add custom span processors configuration option
+    ([#34326](https://github.com/Azure/azure-sdk-for-python/pull/34326))
+
+### Bugs Fixed
+
+### Other Changes
+
+- Update configure_azure_monitor signature and Django sample
+    ([#33834](https://github.com/Azure/azure-sdk-for-python/pull/33834))
+- Remove support for Python 3.7
+    ([#34252](https://github.com/Azure/azure-sdk-for-python/pull/34252))
+
+## 1.2.0 (2024-01-18)
+
+### Other Changes
+
+- Implement distro detection for statsbeat feature
+    ([#33761](https://github.com/Azure/azure-sdk-for-python/pull/33761))
+- Fix siteName in diagnostic logging
+    ([#33808](https://github.com/Azure/azure-sdk-for-python/pull/33808))
+- Update min dependency versions opentelemetry-resource-detector-azure~=0.1.1, exporter~=1.0.0b21, OTel SDK/API~= 1.21
+    ([#33866](https://github.com/Azure/azure-sdk-for-python/pull/33866))
+- Update configure_azure_monitor signature and Django sample
+    ([#33834](https://github.com/Azure/azure-sdk-for-python/pull/33834))
+
+## 1.1.1 (2023-12-04)
+
+### Features Added
+
+- Add App Service Resource Detector to Auto-Instrumentation.
+    ([#33340](https://github.com/Azure/azure-sdk-for-python/pull/33340))
+- Default Resource Detector environment variable to enable configuration.
+    ([#33305](https://github.com/Azure/azure-sdk-for-python/pull/33305))
+    ([#33373](https://github.com/Azure/azure-sdk-for-python/pull/33373))
+    ([#33390](https://github.com/Azure/azure-sdk-for-python/pull/33390))
+
+## 1.1.0 (2023-11-08)
 
 ### Features Added
 
@@ -11,14 +51,10 @@
 - Allow OTEL_PYTHON_DISABLED_INSTRUMENTATIONS functionality for Azure Core Tracing in Auto-instrumentation
     ([#32331](https://github.com/Azure/azure-sdk-for-python/pull/32331))
 
-### Breaking Changes
-
 ### Bugs Fixed
 
 - Updated django samples with clearly artificial secret key
     ([#32698](https://github.com/Azure/azure-sdk-for-python/pull/32698))
-
-### Other Changes
 
 ## 1.0.0 (2023-09-12)
 

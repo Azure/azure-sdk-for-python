@@ -26,7 +26,7 @@ from azure.mgmt.containerservice import ContainerServiceClient
 def main():
     client = ContainerServiceClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid1",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     response = client.agent_pools.begin_create_or_update(
@@ -36,7 +36,7 @@ def main():
         parameters={
             "properties": {
                 "count": 3,
-                "hostGroupID": "/subscriptions/subid1/resourcegroups/rg/providers/Microsoft.Compute/hostGroups/hostgroup1",
+                "hostGroupID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg/providers/Microsoft.Compute/hostGroups/hostgroup1",
                 "orchestratorVersion": "",
                 "osType": "Linux",
                 "vmSize": "Standard_DS2_v2",
@@ -46,6 +46,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-08-01/examples/AgentPoolsCreate_DedicatedHostGroup.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2024-01-01/examples/AgentPoolsCreate_DedicatedHostGroup.json
 if __name__ == "__main__":
     main()
