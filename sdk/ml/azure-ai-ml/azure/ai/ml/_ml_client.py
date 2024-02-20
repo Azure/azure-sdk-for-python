@@ -345,6 +345,13 @@ class MLClient:
             **kwargs,
         )
 
+        self._service_client_01_2024_preview = ServiceClient012024Preview(
+            credential=self._credential,
+            subscription_id=self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
         # A general purpose, user-configurable pipeline for making
         # http requests
         self._requests_pipeline = HttpPipeline(**kwargs)
@@ -566,7 +573,7 @@ class MLClient:
         self._components = ComponentOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_10_2022,
+            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_01_2024_preview,
             self._operation_container,
             self._preflight,
             **ops_kwargs,
@@ -580,7 +587,7 @@ class MLClient:
             self._credential,
             _service_client_kwargs=kwargs,
             requests_pipeline=self._requests_pipeline,
-            service_client_08_2023_preview=self._service_client_08_2023_preview,
+            service_client_01_2024_preview=self._service_client_01_2024_preview,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.JOB, self._jobs)
@@ -588,6 +595,7 @@ class MLClient:
             self._operation_scope,
             self._operation_config,
             self._service_client_06_2023_preview,
+            self._service_client_01_2024_preview,
             self._operation_container,
             self._credential,
             _service_client_kwargs=kwargs,

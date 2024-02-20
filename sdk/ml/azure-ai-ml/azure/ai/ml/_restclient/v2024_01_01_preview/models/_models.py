@@ -6,8 +6,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.core.exceptions import HttpResponseError
 import msrest.serialization
+
+from azure.core.exceptions import HttpResponseError
 
 
 class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
